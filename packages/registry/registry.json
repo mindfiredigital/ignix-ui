@@ -55,10 +55,36 @@
         }
       }
     },
+    "dialog": {
+      "name": "Dialog",
+      "description": "A dialog-box component with animation and different variants",
+      "dependencies": ["framer-motion"],
+      "files": {
+        "main": {
+          "path": "components/dialog-box/index.tsx",
+          "type": "component"
+        },
+        "hook": {
+          "path": "components/dialog-box/use-dialog.ts",
+          "type": "hook"
+        }
+      }
+    },
+    "badge": {
+      "name": "Badge",
+      "description": "A badge component with animation and different variants",
+      "dependencies": ["framer-motion"],
+      "files": {
+        "main": {
+          "path": "components/badge/index.tsx",
+          "type": "component"
+        }
+      }
+    },
     "toast": {
       "name": "Toast",
       "description": "A toast notification component with animation and different variants",
-      "dependencies": ["@radix-ui/react-toast", "framer-motion", "lucide-react"],
+      "dependencies": ["@radix-ui/react-icons", "framer-motion"],
       "files": {
         "main": {
           "path": "components/toast/index.tsx",
@@ -71,10 +97,6 @@
         "hook": {
           "path": "components/toast/use-toast.ts",
           "type": "hook"
-        },
-        "config": {
-          "path": "components/toast/config.ts",
-          "type": "tailwind-config"
         }
       }
     }
