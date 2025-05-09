@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useId } from "react";
 import { TriangleDownIcon, TriangleUpIcon } from "@radix-ui/react-icons";
 import { Flex, Table as TableR, Theme, ThemeProps } from "@radix-ui/themes";
-import Pagination, { PaginationProps } from "@/components/pagination";
+import { Pagination, PaginationProps } from "@/components/pagination";
 import { motion, useAnimation } from "framer-motion";
 import styles from "./Table.module.css";
 
