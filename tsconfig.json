@@ -16,7 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "@animation-ui/*": ["packages/*/src"]
-    }
+    },
+    "jsx": "react-jsx"
   },
   "exclude": ["**/node_modules", "**/dist", "**/coverage"]
 }
