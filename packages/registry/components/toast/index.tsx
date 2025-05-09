@@ -27,19 +27,19 @@ export const ToastContext = React.createContext<ToastManagerRef | undefined>(und
 
 const animationVariants = {
   slide: {
-      hidden: { x: '100%', opacity: 0},
-      visible: { x: 0, opacity: 1 },
-      exit: { x: '100%', opacity: 0 },
+      hidden: { x: '100%', opacity: 0, skewX: -30, scale: 0.5 },
+      visible: { x: 0, opacity: 1, skewX: 0, scale: 1  },
+      exit: { x: '100%', opacity: 0, skewX: 30, scale: 0.5  },
   },
   fade: {
-      hidden: { opacity: 0 },
-      visible: { opacity: 1 },
-      exit: { opacity: 0 },
+      hidden: { opacity: 0},
+      visible: { opacity: 1},
+      exit: { opacity: 0},
   },
   bounce: {
       hidden: { y: -50, opacity: 0 },
       visible: { y: 0, opacity: 1 },
-      exit: { y: 50, opacity: 0 },
+      exit: { y: -50, opacity: 0 },
   },
   pop: {
       hidden: { opacity: 0, scale: 0.5 },
@@ -48,7 +48,7 @@ const animationVariants = {
   },
 };
 
-const getVariantStyles = (appearance: 'glow'|'gradient', variant:'success' | 'error' | 'info' | 'warning' | 'default', gradientColor: string) => {
+const getVariantStyles = (appearance: 'glow'|'gradient', variant: ToastVariantTypes, gradientColor: string) => {
 if(appearance === 'glow') 
   {
     switch (variant) {
@@ -114,7 +114,7 @@ export const ToastProvider = ({ children, maxToasts = 100 }: { children: React.R
       return (
         <ToastContext.Provider value={{addToast}}>
             {children}
-            {toasts?.length && <div className="fixed top-5 right-5 mt-4 mr-4 w-sm space-y-8">
+            <div className="fixed top-5 right-5 mt-4 mr-4 w-sm space-y-8">
                 <AnimatePresence>
                 {toasts.map((toast) => (
                 <Toast
@@ -133,7 +133,7 @@ export const ToastProvider = ({ children, maxToasts = 100 }: { children: React.R
                 />
                 ))}
                 </AnimatePresence>
-            </div>}
+            </div>
         </ToastContext.Provider>
       );
 }

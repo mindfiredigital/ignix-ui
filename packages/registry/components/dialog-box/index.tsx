@@ -17,45 +17,46 @@ export type DialogAnimationTypes = 'popIn'
 export type DialogTypes = 'success' | 'confirm' | 'error' | 'alert';
 export const animations = {
   popIn: {
-    initial: { scale: 0.8, opacity: 0 },
+    initial: { scale: 0.4, opacity: 0 },
     animate: { scale: 1, opacity: 1 },
-    exit: { scale: 0.9, opacity: 0 },
-    transition: { stiffness: 400, ease: 'easeOut' },
+    exit: { scale: 0.4, opacity: 0 },
+    transition: { duration: 0.4, ease: 'easeOut' },
   },
   springPop: {
-    initial: { y: 100, opacity: 0, scale:0.2 },
-    animate: { y: [50, 0], opacity: 1, scale: 1, transition: { duration: 0.1, type:'spring', stiffness:200, ease: 'easeOut' }, },
-    exit: { y: 100, opacity: 0 },
+    initial: { y: 100, opacity: 0, scale:0.2, transition: { duration: 0.4 }},
+    animate: { y: [50, 0], opacity: 1, scale: 1, transition: { duration: 1.2, type:'spring', stiffness:100, ease: 'easeOut' }, },
+    exit: { y: 100, scale: 0.2, opacity: [0.8, 0.4, 0], transition: { duration: 0.4 } },
     
   },
   backdropZoom: {
       initial: { scale: 1.2, opacity: 0 },
-      animate: { scale: 1, opacity: 1 },
+      animate: { scale: 1, opacity: 1, transition: { duration: 0.8, type:'spring', stiffness:200, ease: 'easeInOut' } },
       exit: { scale: 0.95, opacity: 0 },
   },
   flip3D: {
     initial: { rotateY: -180, opacity: 0 },
     animate: { rotateY: 0, opacity: 1 },
     exit: { rotateY: -180, opacity: 0 },
-    transition: { duration: 0.2 },
+    transition: { duration: 0.7, ease: 'easeInOut' },
   },
   skewSlide: {
-    initial: { skewY: 10, y: -100, opacity: 0 },
-    animate: { skewY: 0, y: 0, opacity: 1 },
-    exit: { y: -100, opacity: 0 },
+    initial: { skewY: -30, skewX:-30, scale: 0.2, y: -300, x: -300, opacity: 0 },
+    animate: { skewY: 0, skewX:0, scale: 1, y: 0, x: 0, opacity: [0.5, 1] },
+    exit: { skewY: 30, skewX:30, scale: 0.2, y: -300, x: 300, opacity: [0.8, 0.4, 0] },
+    transition: { duration: 1, ease: 'easeInOut' },
   },
   glassBlur: {
     initial: { opacity: 0 },
-    animate: { opacity: 1 },
+    animate: { opacity: [0.5, 1] },
     exit: { opacity: 0 },
-    transition: { duration: 0.2 },
+    transition: { duration: 0.8, ease: 'easeInOut' },
   },
   skyDrop: {
     initial: { y: -300, opacity: 0 },
-    animate: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300, damping: 15 }, },
+    animate: { y: 0, opacity: [0.5, 1]},
     exit: { y: -300, opacity: 0 },
-    
-  },
+    transition: { duration: 0.6, ease: 'easeInOut' },
+  }
 };
 
 interface DialogProps{
