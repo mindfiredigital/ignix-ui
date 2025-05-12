@@ -4,8 +4,7 @@
  */
 export const REGISTRY_CONFIG = {
   /** Base URL for the component registry */
-  BASE_URL:
-    'https://raw.githubusercontent.com/lakinmindfire/animate-ui/feature/tailwind-merge-config/packages/registry',
+  BASE_URL: 'https://raw.githubusercontent.com/mindfiredigital/ignix-ui/main/packages/registry',
 
   /** Registry path configuration */
   PATHS: {

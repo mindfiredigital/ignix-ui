@@ -1,5 +1,5 @@
 {
-  "name": "@ignix-ui/cli",
+  "name": "@mindfiredigital/ignix-ui",
   "version": "1.0.0",
   "description": "CLI tool for Ignix UI component library",
   "type": "commonjs",
@@ -8,9 +8,13 @@
   "bin": {
     "animation-ui": "./dist/index.js"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
   "files": [
     "dist",
-    "README.md"
+    " README.md"
   ],
   "scripts": {
     "build": "tsup",
@@ -28,9 +32,6 @@
   ],
   "author": "Deepak Yadav",
   "license": "MIT",
-  "publishConfig": {
-    "access": "public"
-  },
   "dependencies": {
     "@antfu/ni": "^23.3.1",
     "axios": "^1.8.2",

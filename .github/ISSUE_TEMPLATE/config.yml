@@ -1,5 +1,5 @@
 blank_issues_enabled: true
 contact_links:
-  - name: animate-ui
-    url: https://mindfiredigital.github.io/animate-ui/
-    about: TextIgniterJS is a tool that allows developers to integrate HTML Editor using Typescript.
+  - name:Ignix UI
+    url: https://github.com/mindfiredigital/ignix-ui
+    about: A modern, high-performance animated component library built with Radix UI, managed through a pnpm monorepo structure with Turborepo for optimal development experience.

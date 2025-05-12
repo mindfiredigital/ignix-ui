@@ -1,6 +1,8 @@
 packages:
   # all packages in direct subdirs of packages/
   - 'packages/*'
+  - 'packages/cli'
+  - 'packages/registry'
   # all packages in subdirs of apps/
   - 'apps/*'  
   # exclude packages that are inside test directories

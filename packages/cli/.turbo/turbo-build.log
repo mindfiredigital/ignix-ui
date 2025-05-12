@@ -1,18 +1,19 @@
 
-> @ignix-ui/cli@1.0.0 build C:\Users\deepaky\Documents\Backup\foss-projects\animate-ui\packages\cli
+
+> @mindfiredigital/ignix-ui@1.0.0 build /Users/deepakyadav/Desktop/ignix-ui/packages/cli
 > tsup
 
 [34mCLI[39m Building entry: src/index.ts
 [34mCLI[39m Using tsconfig: tsconfig.json
 [34mCLI[39m tsup v6.5.0
-[34mCLI[39m Using tsup config: C:\Users\deepaky\Documents\Backup\foss-projects\animate-ui\packages\cli\tsup.config.ts
+[34mCLI[39m Using tsup config: /Users/deepakyadav/Desktop/ignix-ui/packages/cli/tsup.config.ts
 [34mCLI[39m Target: node14
 [34mCLI[39m Cleaning output folder
 [34mCJS[39m Build start
-[34mDTS[39m Build start
 "promises" and "existsSync" are imported from external module "fs" but never used in "dist/index.js".
-[32mDTS[39m ⚡️ Build success in 18635ms
-[32mDTS[39m [1mdist\index.d.ts [22m[32m1.00 B[39m
-[32mCJS[39m [1mdist\index.js     [22m[32m1.08 MB[39m
-[32mCJS[39m [1mdist\index.js.map [22m[32m1.54 MB[39m
-[32mCJS[39m ⚡️ Build success in 31239ms
+[34mDTS[39m Build start
+[32mDTS[39m ⚡️ Build success in 3496ms
+[32mDTS[39m [1mdist/index.d.ts [22m[32m1.00 B[39m
+[32mCJS[39m [1mdist/index.js     [22m[32m1.09 MB[39m
+[32mCJS[39m [1mdist/index.js.map [22m[32m1.55 MB[39m
+[32mCJS[39m ⚡️ Build success in 4308ms

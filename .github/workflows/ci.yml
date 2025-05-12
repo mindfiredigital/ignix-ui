@@ -1,36 +1,102 @@
-name: CI
+name: Deployment Workflow
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   build:
+    name: '@mindfiredigital/ignix-ui'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      pull-requests: write
+      actions: write
     steps:
-      - uses: actions/checkout@v3
-      
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Enable Corepack
+        run: npm install -g pnpm
+
+      - name: 'Install dependencies with pnpm'
+        run: pnpm install
+
+      - name: 'Build application'
+        run: pnpm turbo run build
+
+      - name: 'Set Git user name and email'
+        run: |
+          git config --local user.email "github-actions@github.com"
+          git config --local user.name "GitHub Actions"
+
+      - name: Generate Changeset from commit messages
+        run: pnpm changeset:autogenerate
+
+      - name: Create Release Pull Request or Publish to npm
+        id: changesets
+        uses: changesets/action@v1.4.1
+        with:
+          commit: 'chore(release): version packages'
+          title: 'chore(release): version packages'
+          version: node .github/changeset-version.js
+          publish: npx changeset publish
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Auto-merge release PR
+        if: steps.changesets.outputs.pullRequestNumber != ''
+        run: |
+          gh pr merge ${{ steps.changesets.outputs.pullRequestNumber }} --squash --delete-branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8
-          
+        uses: actions/setup-node@v4
+
+      - name: Enable Corepack
+        run: npm install -g pnpm
+
       - name: Install dependencies
         run: pnpm install
-        
-      # Run tasks in parallel for better performance
-      - name: Run Parallel Tasks
+
+      - name: Pull latest changes
         run: |
-          pnpm turbo run lint typecheck --parallel
-        
-      - name: Test
-        run: pnpm test:ci
-        
-      - name: Build all packages
-        run: pnpm build:packages
+          git pull origin main
+
+      - name: Publish to npm
+        id: changesets
+        uses: changesets/action@v1.4.1
+        with:
+          run: |
+            git checkout main
+            git pull origin main
+          commit: 'chore(release): version packages'
+          title: 'chore(release): version packages'
+          version: node .github/changeset-version.js
+          publish: npx changeset publish
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

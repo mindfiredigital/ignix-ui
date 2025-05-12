@@ -9,7 +9,7 @@ import { InitCommand } from './commands/init';
 const program = new Command();
 
 // Configure CLI metadata
-program.name('animation-ui').description('CLI for adding animation-ui components').version('0.1.0');
+program.name('ignix-ui').description('CLI for adding ignix-ui components').version('0.1.0');
 
 // Initialize command
 program
