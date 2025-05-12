@@ -1,0 +1,22 @@
+@import "@radix-ui/themes/styles.css";
+
+.button {
+	transition:
+		transform 0.2s ease-in-out,
+		box-shadow 0.2s ease-in-out;
+}
+
+.button:hover {
+	transform: scale(1.05);
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.button:active {
+	transform: scale(0.95);
+	box-shadow: none;
+}
+
+.button:disabled {
+	transform: scale(1);
+	box-shadow: none;
+}

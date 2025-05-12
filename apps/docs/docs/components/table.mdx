@@ -1,0 +1,114 @@
+# Table Component
+
+Table component with different variants.
+
+## Installation
+
+```bash
+npm install @animate-ui/core
+```
+
+## Usage
+
+```tsx
+import { useState, useMemo, useCallBack } from "react";
+import { Table, TableSortBy } from "@animate-ui/core";
+
+const headings = [
+	{ label: "ID", key: "id", sort: "asc" as "asc" | "desc" },
+	{ label: "Name", key: "name", sort: "asc" as "asc" | "desc" },
+	{ label: "City", key: "city", sort: "asc" as "asc" | "desc" },
+	{ label: "Country", key: "country", sort: "asc" as "asc" | "desc" },
+	{ label: "Email", key: "email", sort: "asc" as "asc" | "desc" },
+	{ label: "Phone", key: "phone", sort: "asc" as "asc" | "desc" },
+];
+
+function getRandomPageData(pageNumber: number) {
+	const data: Array<Record<string, string>> = [];
+	for (let i = 0; i < 10; i++) {
+		const id = `${pageNumber}_${i + 1}`;
+		data.push({
+			id,
+			name: `User ${id}`,
+			city: `City ${id}`,
+			country: `Country ${id}`,
+			email: `user${id}@example.com`,
+			phone: `${Math.floor(Math.random() * 900) + 100}-${
+				Math.floor(Math.random() * 900) + 100
+			}-${Math.floor(Math.random() * 9000) + 1000}`,
+		});
+	}
+	return data;
+}
+
+export default function TableDemo() {
+  	const [currentPage, setCurrentPage] = useState(1);
+	const [headings, setHeadings] = useState(headings);
+	const data = useMemo(() => {
+		return getRandomPageData(currentPage);
+	}, [currentPage]);
+
+	const handleApplySort = useCallback(function (
+		key: string,
+		value: TableSortBy,
+	) {
+		setHeadings(v => {
+			const index = v.findIndex(ele => ele.key === key);
+			if (index >= 0) {
+				v[index] = { ...v[index], sort: value };
+				return [...v];
+			}
+			return v;
+		});
+	}, []);
+
+  return (
+		<Table
+			headings={headings}
+			data={data}
+			applySort={handleApplySort}
+			appearance="light"
+			variant="surface"
+			style={{ padding: "0.5rem", borderRadius: "0.5rem" }}
+			currentPage={currentPage}
+			totalPages={15}
+			onPageChange={setCurrentPage}
+		/>
+  )
+}
+```
+
+## Props
+
+### Pagination
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `currentPage` | `number` | NA | This is the current active page. |
+| `totalPages` | `number` | NA | number of total pages. |
+| `onPageChange` | `(value: number) => void` | NA | On clicking any page button this callback function will be invoked. |
+| `color` | `"gray" \| "gold" \| "bronze" \| "brown" \| "yellow" \| "amber" \| "orange" \| "tomato" \| "red" \| "ruby" \| "crimson" \| "pink" \| "plum" \| "purple" \| "violet" \| "iris" \| "indigo" \| "blue" \| "cyan" \| "teal" \| "jade" \| "green" \| "grass" \| "lime" \| "mint" \| "sky"` | `"gray"` | Button background. |
+| `borderRadius` | `"small" \| "none" \| "medium" \| "large" \| "full"` | `"full"` | Border shape. |
+| `activeColor` | Same as `color` | `"blue"` | Active button background. |
+| `alignment` | `"center" \| "start" \| "end" \| "between"` | `"end"` | Component alignment. |
+
+### Table
+| Prop             | Type                                                               | Default     | Description                                                                  |
+| ---------------- | ------------------------------------------------------------------ | ----------- | ---------------------------------------------------------------------------- |
+| `headings`       | `{ label: React.ReactNode; key: string; sort: "asc" \| "desc" }[]` | –           | Array of header definitions with display label, key, and sort direction.     |
+| `data`           | `Record<string, React.ReactNode>[]`                                | –           | Table row data, where each record maps keys from `headings` to cell content. |
+| `applySort`      | `(key: string, value: "asc" \| "desc") => void`                    | –           | Callback triggered when a header cell is clicked to toggle sort order.       |
+| `variant`        | `"surface" \| "ghost"`                                             | `"surface"` | Visual style of the table (solid or transparent background).                 |
+| `headingVariant` | `"row" \| "column"`                                                | `"column"`  | Determines whether headings appear in the first row or the first column.     |
+
+### Table Theme
+| Prop              | Type                            | Default | Description                                              |
+| ----------------- | ------------------------------- | ------- | -------------------------------------------------------- |
+| `accentColor`     | `ThemeProps["accentColor"]`     | –       | Accent color used for interactive elements in the table. |
+| `grayColor`       | `ThemeProps["grayColor"]`       | –       | Grayscale palette used for the theme.                    |
+| `panelBackground` | `ThemeProps["panelBackground"]` | –       | Background color of the panel (i.e., table container).   |
+| `scaling`         | `ThemeProps["scaling"]`         | –       | Global scaling applied to text and spacing.              |
+| `radius`          | `ThemeProps["radius"]`          | –       | Border radius applied across themed components.          |
+| `appearance`      | `ThemeProps["appearance"]`      | –       | Theme mode, such as `"light"` or `"dark"`.               |
+| `style`           | `React.CSSProperties`           | –       | Inline styles applied to the root theme wrapper.         |
+| `className`       | `string`                        | –       | Custom class name for styling the outer wrapper.         |

@@ -209,6 +209,28 @@
           "type": "component"
         }
       }
+    },
+    "table": {
+      "name": "Table",
+      "description": "An animated table component with different variants",
+        "dependencies": ["@radix-ui/themes", "@radix-ui/react-icons", "framer-motion"],
+        "files": {
+        "main": {
+          "path": "components/table/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "pagination": {
+      "name": "Pagination",
+      "description": "An animated pagination component with different variants",
+      "dependencies": ["@radix-ui/themes", "@radix-ui/react-icons", "react-responsive"],
+      "files": {
+        "main": {
+          "path": "components/pagination/index.tsx",
+          "type": "component"
+        }
+      }
     }
   }
 }

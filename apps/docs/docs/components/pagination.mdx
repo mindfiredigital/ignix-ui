@@ -1,0 +1,50 @@
+# Pagination Component
+
+Pagination component with different color combination.
+
+## Installation
+
+```bash
+npm install @animate-ui/core
+```
+
+## Usage
+
+```tsx
+import { useState, useCallBack } from "react";
+import { Pagination } from "@animate-ui/core";
+
+export default function PaginationDemo() {
+	const [currentPage, setCurrentPage] = useState(1);
+
+	const handlePageChange = useCallBack((page: number) => {
+		setCurrentPage(page);
+	}, []);
+
+  return (
+    <Pagination
+      currentPage={currentPage}
+      totalPages={15}
+		  alignment={"center"}
+      onPageChange={handlePageChange}
+      color="red"
+      activeColor="green"
+      borderRadius="small"
+    />
+  )
+}
+```
+
+## Props
+
+### Pagination
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `currentPage` | `number` | NA | This is the current active page. |
+| `totalPages` | `number` | NA | number of total pages. |
+| `onPageChange` | `(value: number) => void` | NA | On clicking any page button this callback function will be invoked. |
+| `color` | `"gray" \| "gold" \| "bronze" \| "brown" \| "yellow" \| "amber" \| "orange" \| "tomato" \| "red" \| "ruby" \| "crimson" \| "pink" \| "plum" \| "purple" \| "violet" \| "iris" \| "indigo" \| "blue" \| "cyan" \| "teal" \| "jade" \| "green" \| "grass" \| "lime" \| "mint" \| "sky"` | `"gray"` | Button background. |
+| `borderRadius` | `"small" \| "none" \| "medium" \| "large" \| "full"` | `"full"` | Border shape. |
+| `activeColor` | Same as `color` | `"blue"` | Active button background. |
+| `alignment` | `"center" \| "start" \| "end" \| "between"` | `"end"` | Component alignment. |
