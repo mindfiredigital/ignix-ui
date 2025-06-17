@@ -3,46 +3,51 @@ sidebar_position: 2
 ---
 # Installation
 
-Get started with Animate UI in your project.
+Get started with Ignix UI in your project.
 
 ## Prerequisites
 
-Animate UI is built for React applications. Make sure you have the following installed:
+Ignix UI is built for React applications. Make sure you have the following installed:
 
 - Node.js 16 or higher
-- npm 7+ or yarn 1.22+
+- npm 7+ or yarn 1.22+ or pnpm
 
 ## Setup
 
-1. Install Animate UI and its peer dependencies:
+1. Install Ignix UI and its peer dependencies:
 
 ```bash
-# npm
-
+# Using npm
 npm i @mindfiredigital/ignix-ui framer-motion
 
-# yarn
-
+# Using yarn
 yarn add @mindfiredigital/ignix-ui framer-motion
 
-# pnpm
-
+# Using pnpm
 pnpm add @mindfiredigital/ignix-ui framer-motion
-
-# initialize package
-
-npx animation-ui init 
-
-npx ignix-ui add <component-name>
 ```
 
-2. Add the following to your `tailwind.config.js`:
+2. Initialize the package:
+
+```bash
+npx @mindfiredigital/ignix-ui init
+```
+
+3. Add components as needed:
+
+```bash
+npx @mindfiredigital/ignix-ui add <component-name>
+```
+
+## Configuration
+
+Add the following to your `tailwind.config.js`:
 
 ```js
 module.exports = {
   content: [
     // ...
-    './node_modules/@animate-ui/core/dist/**/*.{js,ts,jsx,tsx}',
+    './node_modules/@mindfiredigital/ignix-ui/dist/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
@@ -61,15 +66,15 @@ module.exports = {
 3. Import and use components in your project:
 
 ```tsx
-import { Accordion } from '@animate-ui/core'
+import { Accordion } from '@mindfiredigital/ignix-ui'
 
 export default function App() {
   return (
     <Accordion>
       <Accordion.Item>
-        <Accordion.Trigger>What is Animate UI?</Accordion.Trigger>
+        <Accordion.Trigger>What is Ignix UI?</Accordion.Trigger>
         <Accordion.Content>
-          Animate UI is a beautiful component library with built-in animations.
+          Ignix UI is a beautiful component library with built-in animations.
         </Accordion.Content>
       </Accordion.Item>
     </Accordion>
@@ -79,13 +84,10 @@ export default function App() {
 
 ## TypeScript
 
-Animate UI is written in TypeScript and includes type definitions out of the box.
+Ignix UI is written in TypeScript and includes type definitions out of the box.
 
 ## Next Steps
 
-Now that you have Animate UI installed, check out our components:
+Now that you have Ignix UI installed, check out our components:
 
 - [Accordion](/docs/components/accordion)
-- [Fade](/docs/components/fade)
-- [Slide](/docs/components/slide)
-- [Toast](/docs/components/toast) 

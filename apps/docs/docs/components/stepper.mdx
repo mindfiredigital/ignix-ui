@@ -1,42 +1,283 @@
-# Stepper Component
-
-A visual stepper UI component that displays a sequence of steps with labels, optional descriptions, and active/completed state styling. Useful for forms, wizards, or multi-stage flows.
-
-## ✨ Features
-
-- Visual indicators for active and completed steps  
-- Optional descriptions per step  
-- Responsive horizontal layout  
-- Light and dark mode styling support
-
+---
+sidebar_position: 14
+title: Stepper
+description: A flexible and animated stepper component for displaying multi-step processes.
 ---
 
-## 🧩 Props
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { Stepper } from '@site/src/components/UI/stepper';
+import StepperDemo from '@site/src/components/UI/stepper/demo';
 
-### `StepperProps`
+## Overview
 
-| Name         | Type              | Required | Description                                             |  
-|--------------|-------------------|----------|---------------------------------------------------------|  
-| `steps`      | `Step[]`          | ✅       | Array of step objects with labels and optional descriptions |  
-| `activeStep` | `number`          | ✅       | The index (0-based) of the currently active step        |  
-| `className`  | `string`          | ❌       | Optional additional className for container styling     |
+The Stepper component helps visualize progress through a multi-step process. It's perfect for forms, wizards, or any sequential workflow in your application. The component includes support for completed states, active states, and optional descriptions for each step.
 
-### `Step`
+## Preview
 
-| Name           | Type     | Required | Description                           |  
-|----------------|----------|----------|---------------------------------------|  
-| `label`        | `string` | ✅       | The title or name of the step         |  
-| `description`  | `string` | ❌       | Optional subtitle or explanation text |
+<Tabs defaultValue="preview">
+  <TabItem value="preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 rounded-lg border ">
+      <div className="p-6 rounded-lg">
+        <Stepper
+          steps={[
+            { label: 'Details', description: 'Personal info' },
+            { label: 'Address', description: 'Shipping info' },
+            { label: 'Payment', description: 'Card details' },
+            { label: 'Review', description: 'Final check' },
+          ]}
+          activeStep={1}
+        />
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    import { Stepper } from '@mindfiredigital/ignix-ui';
 
----
+    function StepperDemo() {
+      return (
+        <Stepper
+          steps={[
+            { label: 'Details', description: 'Personal info' },
+            { label: 'Address', description: 'Shipping info' },
+            { label: 'Payment', description: 'Card details' },
+            { label: 'Review', description: 'Final check' },
+          ]}
+          activeStep={1}
+        />
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
 
-## 🎨 Visual States
+## Installation
 
-- ✅ **Completed steps**: Green background with checkmark (✓)  
-- 🔵 **Active step**: Blue border with step number  
-- ⚪ **Inactive step**: Greyed out styling
+<Tabs>
+  <TabItem value="npm" label="npm" default>
+    ```bash
+    npx @mindfiredigital/ignix-ui add stepper
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+    ```bash
+    yarn @mindfiredigital/ignix-ui add stepper
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm @mindfiredigital/ignix-ui add stepper
+    ```
+  </TabItem>
+</Tabs>
 
----
+## Usage
 
-## 📦 Usage
+Import the component:
 
+```tsx
+import { Stepper } from '@mindfiredigital/ignix-ui';
+```
+
+### Basic Usage
+
+```tsx
+function BasicStepper() {
+  const [currentStep, setCurrentStep] = useState(0);
+  
+  const steps = [
+    { label: 'Step 1' },
+    { label: 'Step 2' },
+    { label: 'Step 3' },
+  ];
+
+  return (
+    <Stepper
+      steps={steps}
+      activeStep={currentStep}
+    />
+  );
+}
+```
+
+## Examples
+
+### Basic Stepper
+
+<Tabs>
+  <TabItem value="basic-preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 border rounded-lg">
+      <div className="p-6 rounded-lg">
+        <Stepper
+          steps={[
+            { label: 'Step 1' },
+            { label: 'Step 2' },
+            { label: 'Step 3' },
+          ]}
+          activeStep={1}
+        />
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="basic-code" label="Code">
+    ```tsx
+    <Stepper
+      steps={[
+        { label: 'Step 1' },
+        { label: 'Step 2' },
+        { label: 'Step 3' },
+      ]}
+      activeStep={1}
+    />
+    ```
+  </TabItem>
+</Tabs>
+
+### With Descriptions
+
+<Tabs>
+  <TabItem value="descriptions-preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 border rounded-lg">
+      <div className="p-6 rounded-lg">
+        <Stepper
+          steps={[
+            { label: 'Account', description: 'Create account' },
+            { label: 'Profile', description: 'Complete profile' },
+            { label: 'Verify', description: 'Verification' },
+            { label: 'Done', description: 'Final step' },
+          ]}
+          activeStep={2}
+        />
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="descriptions-code" label="Code">
+    ```tsx
+    <Stepper
+      steps={[
+        { label: 'Account', description: 'Create account' },
+        { label: 'Profile', description: 'Complete profile' },
+        { label: 'Verify', description: 'Verification' },
+        { label: 'Done', description: 'Final step' },
+      ]}
+      activeStep={2}
+    />
+    ```
+  </TabItem>
+</Tabs>
+
+### Interactive Example
+
+<Tabs>
+  <TabItem value="interactive-preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 border rounded-lg">
+      <div className="p-6 rounded-lg space-y-4">
+       <StepperDemo />
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="interactive-code" label="Code">
+    ```tsx
+    function InteractiveStepper() {
+      const [step, setStep] = useState(0);
+      
+      return (
+        <div className="space-y-4">
+          <Stepper
+            steps={[
+              { label: 'Cart', description: 'Review items' },
+              { label: 'Shipping', description: 'Delivery info' },
+              { label: 'Payment', description: 'Card details' },
+            ]}
+            activeStep={step}
+          />
+          <div className="flex justify-between mt-4">
+            <button
+              onClick={() => setStep(Math.max(0, step - 1))}
+              disabled={step === 0}
+              className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <button
+              onClick={() => setStep(Math.min(2, step + 1))}
+              disabled={step === 2}
+              className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `steps` | `Array<{ label: string; description?: string; }>` | `[]` | Array of step objects with labels and optional descriptions |
+| `activeStep` | `number` | `0` | Current active step (0-based index) |
+| `className` | `string` | - | Additional CSS classes |
+
+## Customization
+
+### Custom Styling
+
+You can customize the appearance using Tailwind CSS classes:
+
+```tsx
+<Stepper
+  className="max-w-2xl mx-auto"
+  steps={[
+    { label: 'Start', description: 'Begin here' },
+    { label: 'Middle', description: 'Continue' },
+    { label: 'End', description: 'Complete' },
+  ]}
+  activeStep={1}
+/>
+```
+
+### Form Integration Example
+
+```tsx
+function StepperForm() {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [formData, setFormData] = useState({
+    personal: {},
+    address: {},
+    payment: {},
+  });
+
+  const steps = [
+    { label: 'Personal', description: 'Basic info' },
+    { label: 'Address', description: 'Shipping details' },
+    { label: 'Payment', description: 'Payment method' },
+  ];
+
+  const renderStepContent = (step: number) => {
+    switch (step) {
+      case 0:
+        return <PersonalInfoForm data={formData.personal} onSave={handleSave} />;
+      case 1:
+        return <AddressForm data={formData.address} onSave={handleSave} />;
+      case 2:
+        return <PaymentForm data={formData.payment} onSave={handleSave} />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <Stepper steps={steps} activeStep={currentStep} />
+      <div className="mt-8">
+        {renderStepContent(currentStep)}
+      </div>
+    </div>
+  );
+}
+```

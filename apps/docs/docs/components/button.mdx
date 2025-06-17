@@ -1,0 +1,283 @@
+---
+sidebar_position: 4
+title: Button
+description: A customizable button component with variants, sizes, and animations.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { Button } from '@site/src/components/UI/button';
+import { Mail, ArrowRight, Loader2 } from 'lucide-react';
+
+## Overview
+
+Buttons allow users to take actions with a single tap. They can be customized with different styles, sizes, and animations.
+
+## Preview
+
+<Tabs defaultValue="preview">
+  <TabItem value="preview" label="Preview" default>
+    <div className="p-4 border rounded-lg">
+      <Button>Click me</Button>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    import { Button } from '@mindfiredigital/ignix-ui';
+
+    function MyComponent() {
+      return <Button>Click me</Button>;
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+## Installation
+
+<Tabs>
+  <TabItem value="npm" label="npm" default>
+    ```bash
+    npx @mindfiredigital/ignix-ui add button
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+    ```bash
+    yarn @mindfiredigital/ignix-ui add button
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm @mindfiredigital/ignix-ui add button
+    ```
+  </TabItem>
+</Tabs>
+
+## Variants
+
+### Basic Variants
+
+Use the `variant` prop to change the button's style:
+
+<Tabs>
+  <TabItem value="preview" label="Preview" default>
+    <div className="flex flex-wrap gap-4 p-4 border rounded-lg">
+      <Button>Default</Button>
+      <Button variant="primary">Primary</Button>
+      <Button variant="secondary">Secondary</Button>
+      <Button variant="success">Success</Button>
+      <Button variant="warning">Warning</Button>
+      <Button variant="danger">Danger</Button>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    <div className="flex flex-wrap gap-4">
+      <Button>Default</Button>
+      <Button variant="primary">Primary</Button>
+      <Button variant="secondary">Secondary</Button>
+      <Button variant="success">Success</Button>
+      <Button variant="warning">Warning</Button>
+      <Button variant="danger">Danger</Button>
+    </div>
+    ```
+  </TabItem>
+</Tabs>
+
+### Additional Variants
+
+<Tabs>
+  <TabItem value="preview" label="Preview" default>
+    <div className="flex flex-wrap gap-4 p-4 border rounded-lg">
+      <Button variant="outline">Outline</Button>
+      <Button variant="ghost">Ghost</Button>
+      <Button variant="link">Link</Button>
+      <Button variant="glass">Glass</Button>
+      <Button variant="neon">Neon</Button>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    <div className="flex flex-wrap gap-4">
+      <Button variant="outline">Outline</Button>
+      <Button variant="ghost">Ghost</Button>
+      <Button variant="link">Link</Button>
+      <Button variant="glass">Glass</Button>
+      <Button variant="neon">Neon</Button>
+    </div>
+    ```
+    
+  </TabItem>
+</Tabs>
+
+## Sizes
+
+Use the `size` prop to change the button's size:
+
+<Tabs>
+  <TabItem value="preview" label="Preview" default>
+    <div className="flex flex-col gap-4 p-4 border rounded-lg">
+      <div className="flex items-center gap-4">
+        <Button size="xs">Extra Small</Button>
+        <Button size="sm">Small</Button>
+        <Button size="md">Medium</Button>
+        <Button size="lg">Large</Button>
+      </div>
+      <div className="flex items-center gap-4">
+        <Button size="icon">
+          <Mail className="h-4 w-4" />
+        </Button>
+        <Button size="pill" variant="primary">Pill</Button>
+        <Button size="block" className="w-full">Full Width</Button>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center gap-4">
+        <Button size="xs">Extra Small</Button>
+        <Button size="sm">Small</Button>
+        <Button size="md">Medium</Button>
+        <Button size="lg">Large</Button>
+      </div>
+      <div className="flex items-center gap-4">
+        <Button size="icon">
+          <Mail className="h-4 w-4" />
+        </Button>
+        <Button size="pill" variant="primary">Pill</Button>
+        <Button size="block" className="w-full">Full Width</Button>
+      </div>
+    </div>
+    ```
+  </TabItem>
+</Tabs>
+
+## States
+
+<Tabs>
+  <TabItem value="preview" label="Preview" default>
+    <div className="flex flex-wrap gap-4 p-4 border rounded-lg">
+      <Button disabled>Disabled</Button>
+      <Button isLoading>Loading</Button>
+      <Button disabled variant="primary">
+        <Mail className="mr-2 h-4 w-4" />
+        Disabled with Icon
+      </Button>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    <div className="flex flex-wrap gap-4">
+      <Button disabled>Disabled</Button>
+      <Button isLoading>Loading</Button>
+      <Button disabled variant="primary">
+        <Mail className="mr-2 h-4 w-4" />
+        Disabled with Icon
+      </Button>
+    </div>
+    ```
+  </TabItem>
+</Tabs>
+
+## With Icons
+
+<Tabs>
+  <TabItem value="preview" label="Preview" default>
+    <div className="flex flex-wrap gap-4 p-4 border rounded-lg">
+      <Button>
+        <Mail className="mr-2 h-4 w-4" />
+        Email me
+      </Button>
+      <Button variant="primary">
+        Send Email
+        <ArrowRight className="ml-2 h-4 w-4" />
+      </Button>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    <div className="flex flex-wrap gap-4">
+      <Button>
+        <Mail className="mr-2 h-4 w-4" />
+        Email me
+      </Button>
+      <Button variant="primary">
+        Send Email
+        <ArrowRight className="ml-2 h-4 w-4" />
+      </Button>
+    </div>
+    ```
+  </TabItem>
+</Tabs>
+
+## Animation
+
+Add animations with the `animationVariant` prop:
+
+<Tabs>
+  <TabItem value="preview" label="Preview" default>
+    <div className="flex flex-wrap gap-4 p-4 border rounded-lg">
+      <Button animationVariant="bounce">Bounce</Button>
+      <Button animationVariant="pulse">Pulse</Button>
+      <Button animationVariant="scale">Scale</Button>
+      <Button animationVariant="shake">Shake</Button>
+      <Button animationVariant="ping">Ping</Button>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    <div className="flex flex-wrap gap-4">
+      <Button animationVariant="bounce">Bounce</Button>
+      <Button animationVariant="pulse">Pulse</Button>
+      <Button animationVariant="scale">Scale</Button>
+      <Button animationVariant="shake">Shake</Button>
+      <Button animationVariant="ping">Ping</Button>
+    </div>
+    ```
+  </TabItem>
+</Tabs>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `string` | `default` | Button style variant |
+| `size` | `string` | `md` | Button size |
+| `animationVariant` | `string` | - | Animation effect |
+| `disabled` | `boolean` | `false` | Disable the button |
+| `isLoading` | `boolean` | `false` | Show loading state |
+| `className` | `string` | - | Additional CSS classes |
+| All other button props | - | - | Standard button attributes |
+
+## Examples
+
+### Button with Icon
+
+```tsx
+<Button variant="primary">
+  <Mail className="mr-2 h-4 w-4" />
+  Send Email
+</Button>
+```
+
+### Loading State
+
+```tsx
+<Button isLoading variant="primary">
+  Processing...
+</Button>
+```
+
+### Full Width
+
+```tsx
+<Button className="w-full">Full Width Button</Button>
+```
+
+### As Link
+
+```tsx
+<Button as="a" href="/docs">
+  View Documentation
+</Button>
+```

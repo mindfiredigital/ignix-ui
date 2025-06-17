@@ -1,0 +1,333 @@
+---
+sidebar_position: 12
+title: Slider
+description: A flexible and animated slider component for displaying content and capturing user input.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { Slider } from '@site/src/components/UI/slider';
+import { useState } from 'react';
+
+## Overview
+
+The Slider component is a highly customizable input element that allows users to select a value within a range. Built with Radix UI and Framer Motion, it offers various styles, animations, and interactive features.
+
+## Preview
+
+<Tabs defaultValue="preview">
+  <TabItem value="preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 border rounded-lg">
+      <div className="p-6 rounded-lg">
+        <Slider
+          defaultValue={[50]}
+          max={100}
+          step={1}
+          variant="default"
+          showValue
+          valueSuffix="%"
+        />
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    import { Slider } from '@mindfiredigital/ignix-ui';
+
+    function SliderDemo() {
+      return (
+        <Slider
+          defaultValue={[50]}
+          max={100}
+          step={1}
+          variant="default"
+          showValue
+          valueSuffix="%"
+        />
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+## Installation
+
+<Tabs>
+  <TabItem value="npm" label="npm" default>
+    ```bash
+    npx @mindfiredigital/ignix-ui add slider
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+    ```bash
+    yarn @mindfiredigital/ignix-ui add slider
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm @mindfiredigital/ignix-ui add slider
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+Import the component:
+
+```tsx
+import { Slider } from '@mindfiredigital/ignix-ui';
+```
+
+### Basic Usage
+
+```tsx
+function BasicSlider() {
+  const [value, setValue] = useState([50]);
+  
+  return (
+    <Slider
+      value={value}
+      onValueChange={setValue}
+      max={100}
+      step={1}
+    />
+  );
+}
+```
+
+## Variants
+
+The Slider component comes with several style variants to suit different design needs.
+
+### Style Variants
+
+<Tabs>
+  <TabItem value="style-preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 border rounded-lg">
+      <div className="p-6 rounded-lg">
+        <div>
+          <h3 className="text-sm font-medium mb-3">Default</h3>
+          <Slider defaultValue={[50]} max={100} variant="default" showValue />
+        </div>
+        <div>
+          <h3 className="text-sm font-medium mb-3">Minimal</h3>
+          <Slider defaultValue={[30]} max={100} variant="minimal" showValue />
+        </div>
+        <div>
+          <h3 className="text-sm font-medium mb-3">Gradient</h3>
+          <Slider defaultValue={[70]} max={100} variant="gradient" showValue />
+        </div>
+        <div>
+          <h3 className="text-sm font-medium mb-3">Glass</h3>
+          <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-4 rounded-lg">
+            <Slider defaultValue={[60]} max={100} variant="glass" showValue />
+          </div>
+        </div>
+        <div>
+          <h3 className="text-sm font-medium mb-3">Neon</h3>
+          <div className="bg-gray-900 p-4 rounded-lg">
+            <Slider defaultValue={[80]} max={100} variant="neon" showValue />
+          </div>
+        </div>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="style-code" label="Code">
+    ```tsx
+    <Slider defaultValue={[50]} max={100} variant="default" showValue />
+    <Slider defaultValue={[30]} max={100} variant="minimal" showValue />
+    <Slider defaultValue={[70]} max={100} variant="gradient" showValue />
+    <Slider defaultValue={[60]} max={100} variant="glass" showValue />
+    <Slider defaultValue={[80]} max={100} variant="neon" showValue />
+    ```
+  </TabItem>
+</Tabs>
+
+### Animation Variants
+
+<Tabs>
+  <TabItem value="animation-preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 border rounded-lg">
+      <div className="p-6 rounded-lg">
+        <div>
+          <h3 className="text-sm font-medium mb-3">Slide Animation</h3>
+          <Slider defaultValue={[50]} max={100} animationType="slide" showValue />
+        </div>
+        <div>
+          <h3 className="text-sm font-medium mb-3">Breathe Animation</h3>
+          <Slider defaultValue={[70]} max={100} animationType="breathe" showValue />
+        </div>
+        <div>
+          <h3 className="text-sm font-medium mb-3">Rainbow Animation</h3>
+          <Slider defaultValue={[60]} max={100} animationType="rainbow" showValue />
+        </div>
+        <div>
+          <h3 className="text-sm font-medium mb-3">Pulse Animation</h3>
+          <Slider defaultValue={[40]} max={100} animationType="pulse" showValue />
+        </div>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="animation-code" label="Code">
+    ```tsx
+    <Slider defaultValue={[50]} max={100} animationType="slide" showValue />
+    <Slider defaultValue={[70]} max={100} animationType="breathe" showValue />
+    <Slider defaultValue={[60]} max={100} animationType="rainbow" showValue />
+    <Slider defaultValue={[40]} max={100} animationType="pulse" showValue />
+    ```
+  </TabItem>
+</Tabs>
+
+### Theme Variants
+
+<Tabs>
+  <TabItem value="theme-preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 border rounded-lg">
+      <div className="p-6 rounded-lg">
+        <div>
+          <h3 className="text-sm font-medium mb-3">Material Design</h3>
+          <Slider defaultValue={[60]} max={100} variant="material" showValue />
+        </div>
+        <div>
+          <h3 className="text-sm font-medium mb-3">Neumorphic</h3>
+          <Slider defaultValue={[45]} max={100} variant="neumorphic" showValue />
+        </div>
+        <div>
+          <h3 className="text-sm font-medium mb-3">Retro</h3>
+          <Slider defaultValue={[75]} max={100} variant="retro" showValue />
+        </div>
+        <div>
+          <h3 className="text-sm font-medium mb-3">Cyberpunk</h3>
+          <div className="bg-gray-900 p-4 rounded-lg">
+            <Slider defaultValue={[80]} max={100} variant="cyberpunk" showValue />
+          </div>
+        </div>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="theme-code" label="Code">
+    ```tsx
+    <Slider defaultValue={[60]} max={100} variant="material" showValue />
+    <Slider defaultValue={[45]} max={100} variant="neumorphic" showValue />
+    <Slider defaultValue={[75]} max={100} variant="retro" showValue />
+    <Slider defaultValue={[80]} max={100} variant="cyberpunk" showValue />
+    ```
+  </TabItem>
+</Tabs>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `SliderVariant` | `'default'` | Visual style variant |
+| `animationType` | `SliderAnimationType` | `'none'` | Type of animation effect |
+| `animationDuration` | `number` | `0.3` | Duration of the animation in seconds |
+| `showValue` | `boolean` | `false` | Whether to display the current value |
+| `valuePrefix` | `string` | `''` | Prefix to add before the value |
+| `valueSuffix` | `string` | `''` | Suffix to add after the value |
+| `defaultValue` | `number[]` | - | Default value of the slider |
+| `min` | `number` | `0` | Minimum value |
+| `max` | `number` | `100` | Maximum value |
+| `step` | `number` | `1` | Step increment value |
+| `disabled` | `boolean` | `false` | Whether the slider is disabled |
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Orientation of the slider |
+| `className` | `string` | - | Additional CSS classes |
+
+### Available Variants
+
+- `default` - Standard slider style
+- `minimal` - Simplified, minimal design
+- `rounded` - Rounded, softer appearance
+- `gradient` - Gradient color effect
+- `glass` - Glassmorphism effect
+- `outline` - Outlined style
+- `shadow` - Shadow effect
+- `neon` - Neon glow effect
+- `material` - Material Design style
+- `neumorphic` - Neumorphic design
+- `retro` - Retro-inspired design
+- `cyberpunk` - Cyberpunk aesthetic
+- `brutalist` - Brutalist design
+- `skeuomorphic` - Realistic, skeuomorphic design
+
+### Animation Types
+
+- `none` - No animation
+- `slide` - Sliding effect
+- `fade` - Fade in/out
+- `zoom` - Zoom effect
+- `spring` - Spring animation
+- `elastic` - Elastic movement
+- `parallax` - Parallax effect
+- `flip` - Flip animation
+- `morph` - Shape morphing
+- `hover` - Hover interaction
+- `pulse` - Pulsing effect
+- `breathe` - Breathing effect
+- `wave` - Wave motion
+- `rainbow` - Color cycling
+- `bounce` - Bouncing motion
+
+## Customization
+
+### Custom Styling
+
+You can customize the appearance using the provided className props:
+
+```tsx
+<Slider
+  className="w-64"
+  trackClassName="h-3 bg-gray-200"
+  rangeClassName="bg-blue-500"
+  thumbClassName="h-6 w-6 bg-white"
+  valueClassName="text-sm font-medium"
+  defaultValue={[50]}
+  showValue
+/>
+```
+
+### Custom Range Values
+
+Create a slider with custom range and step values:
+
+```tsx
+<Slider
+  defaultValue={[0]}
+  min={-50}
+  max={50}
+  step={5}
+  showValue
+  valuePrefix="Temperature: "
+  valueSuffix="°C"
+/>
+```
+
+### With Form Integration
+
+```tsx
+import { useForm, Controller } from 'react-hook-form';
+
+function FormSlider() {
+  const { control } = useForm({
+    defaultValues: {
+      volume: [50],
+    },
+  });
+
+  return (
+    <Controller
+      name="volume"
+      control={control}
+      render={({ field }) => (
+        <Slider
+          value={field.value}
+          onValueChange={field.onChange}
+          variant="material"
+          showValue
+          valueSuffix="%"
+        />
+      )}
+    />
+  );
+}
+```

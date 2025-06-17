@@ -10,8 +10,7 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'Components',
-      items: ['components/accordion', 'components/fade', 'components/slide', 'components/toast','components/navbar', 'components/sidebar', 'components/tab', 'components/breadcrumbs', 'components/tooltip','components/input',
-        'components/textArea','components/spinner','components/dropdown'],
+      items: ['components/accordion', 'components/badge', 'components/breadcrumbs', 'components/button', 'components/dialog-box', 'components/dropdown', 'components/input', 'components/navbar', 'components/sidebar', 'components/slider', 'components/spinner', 'components/stepper', 'components/switch', 'components/tab', 'components/textarea', 'components/toast', 'components/tooltip'],
     },
   ],
 };

@@ -1,0 +1,253 @@
+---
+sidebar_position: 3
+title: Badge
+description: A small status descriptor for UI elements that can display numbers, text, or a small dot.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { Badge } from '@site/src/components/UI/badge';
+import { Mail } from 'lucide-react';
+
+## Overview
+
+Badges are small status descriptors that can be used to highlight specific information, such as notification counts, status indicators, or labels. They can include text, numbers, or just a dot indicator.
+
+## Preview
+
+<Tabs defaultValue="preview">
+  <TabItem value="preview" label="Preview" default>
+    <div className="flex items-center gap-8 border rounded-lg p-4">
+      <div className="relative inline-flex items-center">
+        <Mail className="h-6 w-6" />
+        <Badge text="3" type="primary" />
+      </div>
+      <div className="relative inline-flex items-center">
+        <span className="text-lg font-medium">Notifications</span>
+        <Badge text="99+" type="error" variant="pulse" />
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    import { Badge } from '@mindfiredigital/ignix-ui';
+    import { Mail } from 'lucide-react';
+
+
+    function BadgeDemo() {
+      return (
+        <div className="flex items-center gap-8">
+          <div className="relative inline-flex items-center">
+            <Mail className="h-6 w-6" />
+            <Badge text="3" type="primary" />
+          </div>
+          <div className="relative inline-flex items-center">
+            <span className="text-lg font-medium">Notifications</span>
+            <Badge text="99+" type="error" variant="pulse" />
+          </div>
+        </div>
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+## Installation
+
+<Tabs>
+  <TabItem value="npm" label="npm" default>
+    ```bash
+    npx @mindfiredigital/ignix-ui add badge
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+    ```bash
+    yarn @mindfiredigital/ignix-ui add badge
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm @mindfiredigital/ignix-ui add badge
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+Import the component:
+
+```tsx
+import { Badge } from '@mindfiredigital/ignix-ui';
+```
+
+### Basic Usage
+
+```tsx
+function BasicBadge() {
+  return (
+    <div className="relative inline-flex items-center">
+      <Mail className="h-6 w-6" />
+      <Badge text="3" type="primary" />
+    </div>
+  );
+}
+```
+
+## Variants
+
+The Badge component comes with several animation variants to suit different use cases.
+
+<Tabs>
+  <TabItem value="pulse" label="Pulse" default>
+    A subtle pulsing animation to draw attention.
+    
+    <Tabs>
+      <TabItem value="pulse-preview" label="Preview" default>
+        <div className="p-4 border rounded-lg my-4">
+          <div className="relative inline-flex items-center">
+            <Mail className="h-6 w-6" />
+            <Badge text="3" type="error" variant="pulse" />
+          </div>
+        </div>
+      </TabItem>
+      <TabItem value="pulse-code" label="Code">
+        ```tsx
+        <div className="relative inline-flex items-center">
+          <Mail className="h-6 w-6" />
+          <Badge text="3" type="error" variant="pulse" />
+        </div>
+        ```
+      </TabItem>
+    </Tabs>
+  </TabItem>
+
+  <TabItem value="bounce" label="Bounce">
+    A bouncing animation when the component mounts.
+    
+    <Tabs>
+      <TabItem value="bounce-preview" label="Preview" default>
+        <div className="p-4 border rounded-lg my-4">
+          <div className="relative inline-flex items-center">
+            <Mail className="h-6 w-6" />
+            <Badge text="New" type="success" variant="bounce" />
+          </div>
+        </div>
+      </TabItem>
+      <TabItem value="bounce-code" label="Code">
+        ```tsx
+        <div className="relative inline-flex items-center">
+          <Mail className="h-6 w-6" />
+          <Badge text="New" type="success" variant="bounce" />
+        </div>
+        ```
+      </TabItem>
+    </Tabs>
+  </TabItem>
+
+  <TabItem value="tinypop" label="Tiny Pop">
+    A subtle scaling animation that loops continuously.
+    
+    <Tabs>
+      <TabItem value="tinypop-preview" label="Preview" default>
+        <div className="p-4 border rounded-lg my-4">
+          <div className="relative inline-flex items-center">
+            <Mail className="h-6 w-6" />
+            <Badge text="1" type="warning" variant="tinypop" />
+          </div>
+        </div>
+      </TabItem>
+      <TabItem value="tinypop-code" label="Code">
+        ```tsx
+        <div className="relative inline-flex items-center">
+          <Mail className="h-6 w-6" />
+          <Badge text="1" type="warning" variant="tinypop" />
+        </div>
+        ```
+      </TabItem>
+    </Tabs>
+  </TabItem>
+</Tabs>
+
+## Types
+
+The Badge component supports different visual types to indicate various states.
+
+<Tabs>
+  <TabItem value="primary" label="Primary" default>
+    <div className="p-4 border rounded-lg my-4">
+      <div className="relative inline-flex items-center">
+        <Mail className="h-6 w-6" />
+        <Badge text="Primary" type="primary" />
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="secondary" label="Secondary">
+    <div className="p-4 border rounded-lg my-4">
+      <div className="relative inline-flex items-center">
+        <Mail className="h-6 w-6" />
+        <Badge text="Secondary" type="secondary" />
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="success" label="Success">
+    <div className="p-4 border rounded-lg my-4">
+      <div className="relative inline-flex items-center">
+        <Mail className="h-6 w-6" />
+        <Badge text="Success" type="success" />
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="warning" label="Warning">
+    <div className="p-4 border rounded-lg my-4">
+      <div className="relative inline-flex items-center">
+        <Mail className="h-6 w-6" />
+        <Badge text="Warning" type="warning" />
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="error" label="Error">
+    <div className="p-4 border rounded-lg my-4">
+      <div className="relative inline-flex items-center">
+        <Mail className="h-6 w-6" />
+        <Badge text="Error" type="error" />
+      </div>
+    </div>
+  </TabItem>
+</Tabs>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `text` | `string` | - | The text to display inside the badge (required) |
+| `type` | `'primary' | 'secondary' | 'success' | 'warning' | 'error'` | `'primary'` | The visual style of the badge |
+| `variant` | `'pulse' | 'bounce' | 'tinypop'` | `'tinypop'` | The animation variant of the badge |
+| `className` | `string` | - | Additional CSS classes to apply to the badge |
+| `children` | `React.ReactNode` | - | The element that the badge will be positioned relative to |
+
+## Customization
+
+### Custom Styling
+
+You can customize the badge appearance by passing custom class names:
+
+```tsx
+<Badge 
+  text="Custom" 
+  className="h-8 w-8 text-sm font-bold"
+  type="primary"
+/>
+```
+
+### With Custom Content
+
+The badge can be used with any React node as children:
+
+```tsx
+<div className="relative inline-flex items-center">
+  <button className="px-4 py-2 bg-blue-500 text-white rounded">
+    Profile
+  </button>
+  <Badge text="New" type="primary" variant="pulse" />
+</div>
+```

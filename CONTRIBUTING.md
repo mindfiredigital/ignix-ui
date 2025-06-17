@@ -1,6 +1,6 @@
 # Contributing to AnimateUI
 
-We welcome and appreciate your contribution to Animate UI. These guidelines will help ensure a smooth and collaborative process for everyone.
+We welcome and appreciate your contribution to Ignix UI. These guidelines will help ensure a smooth and collaborative process for everyone.
 
 ## How To Make Simlink Locally?
 

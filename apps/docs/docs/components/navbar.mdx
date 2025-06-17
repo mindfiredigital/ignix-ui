@@ -1,127 +1,355 @@
-import { Navbar } from "../../src/components/UI/navbar"
-import React from 'react';
-import  NavbarDemo  from "../../src/components/UI/navbar/navbarDemo"
-import  InstallationBlock  from "../../src/components/UI/navbar/installation"
+---
+sidebar_position: 9
+title: Navbar
+description: A flexible and animated navbar component for displaying content and capturing user input.
+---
 
-# Navbar
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { Navbar } from '@site/src/components/UI/navbar';
+import { Button } from '@site/src/components/UI/button';
 
 ## Overview
 
-The `Navbar` component is a customizable and animated navigation bar built with **React**, **Framer Motion**, and **Tailwind CSS**. It supports a variety of animation styles, themes, submenu behaviors, and layout directions.
+The Navbar component is a versatile and animated navigation bar that supports multiple styles, animations, and layouts. Built with Framer Motion, it offers smooth animations and various interactive features including submenu support and spotlight effects.
 
----
+## Preview
 
-<div className="not-prose">
-  <NavbarDemo />
-</div>
+<Tabs defaultValue="preview">
+  <TabItem value="preview" label="Preview" default>
+    <div className="space-y-4">
+      <Navbar variant="default" size="md">
+        <div className="flex gap-4">
+          <Button>Home</Button>
+          <Button>About</Button>
+          <Button>Contact</Button>
+        </div>
+      </Navbar>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    import { Navbar } from '@mindfiredigital/ignix-ui';
+
+    function NavbarDemo() {
+      return (
+        <Navbar variant="default" size="md">
+          <div className="flex gap-4">
+            <Button>Home</Button>
+            <Button>About</Button>
+            <Button>Contact</Button>
+          </div>
+        </Navbar>
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
 
 ## Installation
 
-<div className="not-prose">
-  <InstallationBlock />
-</div>
+<Tabs>
+  <TabItem value="npm" label="npm" default>
+    ```bash
+    npx @mindfiredigital/ignix-ui add navbar
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+    ```bash
+    yarn @mindfiredigital/ignix-ui add navbar
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm @mindfiredigital/ignix-ui add navbar
+    ```
+  </TabItem>
+</Tabs>
 
 ## Usage
 
-```jsx
-<Navbar animationType="spotlight" variant="dark" className="gap-6">
-    {add your content here}
-</Navbar>
+Import the component:
+
+```tsx
+import { Navbar } from '@mindfiredigital/ignix-ui';
 ```
 
----
+### Basic Usage
+
+```tsx
+function BasicNavbar() {
+  return (
+    <Navbar variant="default" size="md">
+      <div className="flex gap-4">
+        <Button>Home</Button>
+        <Button>About</Button>
+        <Button>Contact</Button>
+      </div>
+    </Navbar>
+  );
+}
+```
+
+## Variants
+
+The Navbar component comes with several variants to suit different use cases.
+
+### Style Variants
+
+<Tabs>
+  <TabItem value="style-preview" label="Preview" default>
+    <div className="space-y-4">
+      <Navbar variant="default" size="md">
+        <div className="flex gap-4">
+          <Button>Default</Button>
+          <Button>Navbar</Button>
+        </div>
+      </Navbar>
+      <Navbar variant="dark" size="md">
+        <div className="flex gap-4">
+          <Button variant="secondary">Dark</Button>
+          <Button variant="secondary">Navbar</Button>
+        </div>
+      </Navbar>
+      <Navbar variant="glass" size="md">
+        <div className="flex gap-4">
+          <Button>Glass</Button>
+          <Button>Navbar</Button>
+        </div>
+      </Navbar>
+      <Navbar variant="gradient" size="md">
+        <div className="flex gap-4">
+          <Button>Gradient</Button>
+          <Button>Navbar</Button>
+        </div>
+      </Navbar>
+    </div>
+  </TabItem>
+  <TabItem value="style-code" label="Code">
+    ```tsx
+    <Navbar variant="default" size="md">
+      <div className="flex gap-4">
+        <Button>Default</Button>
+        <Button>Navbar</Button>
+      </div>
+    </Navbar>
+
+    <Navbar variant="dark" size="md">
+      <div className="flex gap-4">
+        <Button variant="secondary">Dark</Button>
+        <Button variant="secondary">Navbar</Button>
+      </div>
+    </Navbar>
+
+    <Navbar variant="glass" size="md">
+      <div className="flex gap-4">
+        <Button>Glass</Button>
+        <Button>Navbar</Button>
+      </div>
+    </Navbar>
+
+    <Navbar variant="gradient" size="md">
+      <div className="flex gap-4">
+        <Button>Gradient</Button>
+        <Button>Navbar</Button>
+      </div>
+    </Navbar>
+    ```
+  </TabItem>
+</Tabs>
+
+### Animation Types
+
+<Tabs>
+  <TabItem value="animation-preview" label="Preview" default>
+    <div className="space-y-4">
+      <Navbar animationType="slide" variant="default" size="md">
+        <div className="flex gap-4">
+          <Button>Slide Animation</Button>
+          <Button>Example</Button>
+        </div>
+      </Navbar>
+      <Navbar animationType="glow" variant="default" size="md">
+        <div className="flex gap-4">
+          <Button>Glow Animation</Button>
+          <Button>Example</Button>
+        </div>
+      </Navbar>
+      <Navbar animationType="spotlight" variant="default" size="md">
+        <div className="flex gap-4">
+          <Button>Spotlight</Button>
+          <Button>Example</Button>
+        </div>
+      </Navbar>
+    </div>
+  </TabItem>
+  <TabItem value="animation-code" label="Code">
+    ```tsx
+    <Navbar animationType="slide" variant="default" size="md">
+      <div className="flex gap-4">
+        <Button>Slide Animation</Button>
+        <Button>Example</Button>
+      </div>
+    </Navbar>
+
+    <Navbar animationType="glow" variant="default" size="md">
+      <div className="flex gap-4">
+        <Button>Glow Animation</Button>
+        <Button>Example</Button>
+      </div>
+    </Navbar>
+
+    <Navbar animationType="spotlight" variant="default" size="md">
+      <div className="flex gap-4">
+        <Button>Spotlight</Button>
+        <Button>Example</Button>
+      </div>
+    </Navbar>
+    ```
+  </TabItem>
+</Tabs>
+
+### Submenu Examples
+
+<Tabs>
+  <TabItem value="submenu-preview" label="Preview" default>
+    <div className="space-y-4">
+      <Navbar 
+        animationType="hoverSubmenu" 
+        variant="default" 
+        header="Hover Menu"
+        submenuContent={
+          <div className="space-y-2">
+            <div>Submenu Item 1</div>
+            <div>Submenu Item 2</div>
+            <div>Submenu Item 3</div>
+          </div>
+        }
+      />
+      <Navbar 
+        animationType="clickSubmenu" 
+        variant="default" 
+        header="Click Menu"
+        submenuContent={
+          <div className="space-y-2">
+            <div>Submenu Item 1</div>
+            <div>Submenu Item 2</div>
+            <div>Submenu Item 3</div>
+          </div>
+        }
+      />
+    </div>
+  </TabItem>
+  <TabItem value="submenu-code" label="Code">
+    ```tsx
+    <Navbar 
+      animationType="hoverSubmenu" 
+      variant="default" 
+      header="Hover Menu"
+      submenuContent={
+        <div className="space-y-2">
+          <div>Submenu Item 1</div>
+          <div>Submenu Item 2</div>
+          <div>Submenu Item 3</div>
+        </div>
+      }
+    />
+
+    <Navbar 
+      animationType="clickSubmenu" 
+      variant="default" 
+      header="Click Menu"
+      submenuContent={
+        <div className="space-y-2">
+          <div>Submenu Item 1</div>
+          <div>Submenu Item 2</div>
+          <div>Submenu Item 3</div>
+        </div>
+      }
+    />
+    ```
+  </TabItem>
+</Tabs>
 
 ## Props
 
-### Core Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `'default' \| 'dark' \| 'transparent' \| 'glass' \| 'gradient' \| 'primary'` | `'default'` | Visual style variant of the navbar |
+| `size` | `'sm' \| 'md' \| 'lg' \| 'xl'` | - | Size of the navbar |
+| `weight` | `'light' \| 'normal' \| 'medium' \| 'semibold' \| 'bold'` | `'semibold'` | Font weight of the text |
+| `align` | `'left' \| 'center' \| 'right'` | `'left'` | Text alignment |
+| `textColor` | `'default' \| 'muted' \| 'primary' \| 'secondary' \| 'accent' \| 'white'` | - | Color of the text |
+| `direction` | `'horizontal' \| 'vertical'` | `'horizontal'` | Layout direction |
+| `animationType` | `'slide' \| 'glow' \| 'basic' \| 'spotlight' \| 'hoverSubmenu' \| 'clickSubmenu'` | `'slide'` | Type of animation |
+| `header` | `string` | - | Header text for submenu variants |
+| `submenuContent` | `ReactNode` | - | Content to show in the submenu |
+| `className` | `string` | - | Additional CSS classes |
+| `children` | `ReactNode` | - | Content of the navbar |
 
-| Prop          | Type                                                                                     | Default      | Description                  |
-| ------------- | ---------------------------------------------------------------------------------------- | ------------ | ---------------------------- |
-| `variant`     | `"default" \| "dark" \| "transparent" \| "glass" \| "gradient" \| "primary"`             | `"default"`  | The theme of the navbar.     |
-| `size`        | `"sm" \| "md" \| "lg" \| "xl"`                                                          | `"md"`       | Height of the navbar.        |
-| `weight`      | `"light" \| "normal" \| "medium" \| "semibold" \| "bold"`                               | `"semibold"` | Font weight for text.        |
-| `align`       | `"left" \| "center" \| "right"`                                                         | `"left"`     | Text alignment.              |
-| `textColor`   | `"default" \| "muted" \| "primary" \| "secondary" \| "accent" \| "white"`               | `-`          | Text color variant.          |
-| `direction`   | `"horizontal" \| "vertical"`                                                            | `"horizontal"` | Layout direction.           |
+## Customization
 
-### Animation Props
+### Custom Styling
 
-| Prop            | Type                                                                                     | Default      | Description                              |
-| --------------- | ---------------------------------------------------------------------------------------- | ------------ | ---------------------------------------- |
-| `animationType` | `"slide" \| "glow" \| "basic" \| "spotlight" \| "hoverSubmenu" \| "clickSubmenu"`        | `"slide"`    | Type of animation to apply to navbar.    |
-| `isOpen`        | `boolean`                                                                               | `true`       | Controls open state of the navbar.       |
+You can customize the appearance using the className prop and Tailwind CSS:
 
-### Submenu Props
-
-| Prop            | Type               | Description                                   |
-| --------------- | ------------------ | --------------------------------------------- |
-| `header`        | `string`           | Header text shown in submenu navbars.         |
-| `submenuContent`| `React.ReactNode`  | Component rendered below header for submenu.  |
-
-### HTML & Motion Props
-
-Inherits all props from `motion.nav`, excluding `ref`.
-
----
-
-## Animation Variants
-
-The navbar supports the following animations:
-
-- **slide**: Slides in from the top.
-- **glow**: Adds a glowing shadow on hover.
-- **basic**: Subtle scaling on hover.
-- **spotlight**: Radial light effect on hover.
-- **hoverSubmenu**: Shows submenu on hover.
-- **clickSubmenu**: Toggles submenu on click.
-
----
-
-## Submenu Behavior
-
-When `animationType` is `hoverSubmenu` or `clickSubmenu`, the navbar displays a dropdown-style submenu. The content of the submenu is passed via the `submenuContent` prop, and the `header` prop displays a heading above the submenu.
-
-Submenu animations are handled via `AnimatePresence` and `motion.div` with basic fade/slide transitions.
-
----
-
-## Styling & Theming
-
-- Tailwind CSS is used for styling.
-- `class-variance-authority` (CVA) enables dynamic variants for size, theme, direction, etc.
-- Internal elements (like `<input>`) are styled using utility classes scoped inside the nav.
-
----
-
-## Customization Tips
-
-- Add new themes by extending `navbarVariants`.
-- Add new animation types by extending `animationVariants`.
-- Compose navbar items using your own `NavItem` components inside `<Navbar>...</Navbar>`.
-
----
-
-## Example with Submenu
-
-```jsx
+```tsx
 <Navbar
-  variant="dark"
-  animationType="hoverSubmenu"
-  header="My Menu"
-  submenuContent={<div>Dropdown Links</div>}
+  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+  size="md"
 >
-  <div>Home</div>
-  <div>Services</div>
+  <div className="flex gap-4">
+    <Button>Custom</Button>
+    <Button>Navbar</Button>
+  </div>
 </Navbar>
 ```
 
----
+### Responsive Navigation
 
-## License
+Create a responsive navigation bar that adapts to different screen sizes:
 
----
+```tsx
+import { useState } from 'react';
+import { Menu, X } from 'lucide-react';
 
-## Maintainer
+function ResponsiveNavbar() {
+  const [isOpen, setIsOpen] = useState(false);
 
----
+  return (
+    <Navbar variant="default" size="md">
+      <div className="flex justify-between w-full">
+        <div className="flex gap-4 items-center">
+          <Button>Logo</Button>
+        </div>
+        
+        {/* Mobile menu button */}
+        <button
+          className="md:hidden"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {isOpen ? <X /> : <Menu />}
+        </button>
+
+        {/* Desktop menu */}
+        <div className="hidden md:flex gap-4">
+          <Button>Home</Button>
+          <Button>About</Button>
+          <Button>Contact</Button>
+        </div>
+
+        {/* Mobile menu */}
+        {isOpen && (
+          <div className="absolute top-16 left-0 right-0 bg-white md:hidden">
+            <div className="flex flex-col gap-2 p-4">
+              <Button>Home</Button>
+              <Button>About</Button>
+              <Button>Contact</Button>
+            </div>
+          </div>
+        )}
+      </div>
+    </Navbar>
+  );
+}
 ```

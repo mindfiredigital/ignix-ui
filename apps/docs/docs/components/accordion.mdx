@@ -1,114 +1,141 @@
 ---
 sidebar_position: 1
+title: Accordion
+description: A vertically stacked set of interactive headings that each reveal a section of content.
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@site/src/components/UI/accordion';
 
-# Accordion
+## Overview
 
 A vertically stacked set of interactive headings that each reveal a section of content.
 
+## Preview
+
+<Tabs defaultValue="preview">
+  <TabItem value="preview" label="Preview" default>
+<div className="flex flex-col space-y-4 mb-8">
+  <Accordion type="single" collapsible className="w-full">
+    <AccordionItem value="item-1">
+      <AccordionTrigger>Is it accessible?</AccordionTrigger>
+      <AccordionContent>
+        Yes. It adheres to the WAI-ARIA design pattern.
+      </AccordionContent>
+    </AccordionItem>
+    <AccordionItem value="item-2">
+      <AccordionTrigger>Is it styled?</AccordionTrigger>
+      <AccordionContent>
+        Yes. It comes with default styles that matches the other components' aesthetics.
+      </AccordionContent>
+    </AccordionItem>
+    <AccordionItem value="item-3">
+      <AccordionTrigger>Is it animated?</AccordionTrigger>
+      <AccordionContent>
+        Yes! It's animated by default, but you can disable it if you prefer.
+      </AccordionContent>
+    </AccordionItem>
+  </Accordion>
+</div>
+</TabItem>
+<TabItem value="code" label="Code">
+```tsx
+<div className="flex flex-col space-y-4 mb-8">
+  <Accordion type="single" collapsible className="w-full">
+    <AccordionItem value="item-1">
+      <AccordionTrigger>Is it accessible?</AccordionTrigger>
+      <AccordionContent>
+        Yes. It adheres to the WAI-ARIA design pattern.
+      </AccordionContent>
+    </AccordionItem>
+    <AccordionItem value="item-2">
+      <AccordionTrigger>Is it styled?</AccordionTrigger>
+      <AccordionContent>
+        Yes. It comes with default styles that matches the other components' aesthetics.
+      </AccordionContent>
+    </AccordionItem>
+    <AccordionItem value="item-3">
+      <AccordionTrigger>Is it animated?</AccordionTrigger>
+      <AccordionContent>
+        Yes! It's animated by default, but you can disable it if you prefer.
+      </AccordionContent>
+    </AccordionItem>
+  </Accordion>
+</div>
+```
+</TabItem>
+</Tabs>
+
 ## Installation
 
-```bash
-npm install @animate-ui/core
-```
+<Tabs>
+  <TabItem value="npm" label="npm" default>
+    ```bash
+    npx @mindfiredigital/ignix-ui add accordion
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+    ```bash
+    yarn @mindfiredigital/ignix-ui add accordion
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm @mindfiredigital/ignix-ui add accordion
+    ```
+  </TabItem>
+</Tabs>
 
 ## Usage
 
-```tsx
-import { Accordion } from '@animate-ui/core'
+Import the components:
 
-export default function AccordionDemo() {
+```tsx
+import * as React from 'react';
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@mindfiredigital/ignix-ui';
+```
+
+### Basic Example
+
+```tsx
+export function AccordionDemo() {
   return (
-    <Accordion type="single" collapsible>
-      <Accordion.Item value="item-1">
-        <Accordion.Trigger>Is it accessible?</Accordion.Trigger>
-        <Accordion.Content>
+    <Accordion type="single" collapsible className="w-full">
+      <AccordionItem value="item-1">
+        <AccordionTrigger>Is it accessible?</AccordionTrigger>
+        <AccordionContent>
           Yes. It adheres to the WAI-ARIA design pattern.
-        </Accordion.Content>
-      </Accordion.Item>
-      <Accordion.Item value="item-2">
-        <Accordion.Trigger>Is it animated?</Accordion.Trigger>
-        <Accordion.Content>
-          Yes. It's animated by default, but you can disable it if you prefer.
-        </Accordion.Content>
-      </Accordion.Item>
+        </AccordionContent>
+      </AccordionItem>
     </Accordion>
   )
 }
 ```
 
-## Props
+## Animation Variants
 
-### Accordion
+The AccordionContent component supports different animation variants:
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `type` | `'single' \| 'multiple'` | `'single'` | Determines whether one or multiple items can be opened at the same time. |
-| `collapsible` | `boolean` | `false` | When `type` is `'single'`, allows closing content when clicking trigger. |
-| `defaultValue` | `string \| string[]` | `undefined` | The value of the item(s) to expand by default. |
-| `value` | `string \| string[]` | `undefined` | The controlled value of the item(s) to expand. |
-| `onValueChange` | `(value: string \| string[]) => void` | `undefined` | Event handler called when the expanded state changes. |
+- `fade` (default): Simple fade in/out
+- `slideDown`: Slides down from above
+- `slideUp`: Slides up from below
+- `scaleIn`: Scales in from smaller to larger
+- `rotate`: Rotates in 3D space
+- `bounce`: Bouncy spring animation
+- `flip`: Card flip animation
+- `zoomIn`: Zooms in from center
+- `elastic`: Elastic spring animation
+- `springy`: Springy slide down
 
-### Accordion.Item
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `value` | `string` | **Required** | A unique value for the item. |
-| `disabled` | `boolean` | `false` | When `true`, prevents the user from interacting with the item. |
-
-## Animation
-
-The Accordion component uses Framer Motion for smooth expand/collapse animations. You can customize the animation behavior through the following props:
+Example with custom animation:
 
 ```tsx
-<Accordion.Content
-  initial={{ height: 0 }}
-  animate={{ height: 'auto' }}
-  exit={{ height: 0 }}
-  transition={{ duration: 0.3, ease: 'easeInOut' }}
->
-  Content
-</Accordion.Content>
+<AccordionItem value="item-1">
+  <AccordionTrigger>Custom Animation</AccordionTrigger>
+  <AccordionContent variant="bounce">
+    This content will bounce in when expanded.
+  </AccordionContent>
+</AccordionItem>
 ```
-
-## Examples
-
-### Multiple Items
-
-```tsx
-<Accordion type="multiple">
-  <Accordion.Item value="item-1">
-    <Accordion.Trigger>First Item</Accordion.Trigger>
-    <Accordion.Content>First content</Accordion.Content>
-  </Accordion.Item>
-  <Accordion.Item value="item-2">
-    <Accordion.Trigger>Second Item</Accordion.Trigger>
-    <Accordion.Content>Second content</Accordion.Content>
-  </Accordion.Item>
-</Accordion>
-```
-
-### Disabled Item
-
-```tsx
-<Accordion>
-  <Accordion.Item value="item-1">
-    <Accordion.Trigger>Enabled Item</Accordion.Trigger>
-    <Accordion.Content>Enabled content</Accordion.Content>
-  </Accordion.Item>
-  <Accordion.Item value="item-2" disabled>
-    <Accordion.Trigger>Disabled Item</Accordion.Trigger>
-    <Accordion.Content>Disabled content</Accordion.Content>
-  </Accordion.Item>
-</Accordion>
-```
-
-## Accessibility
-
-The Accordion component follows the [WAI-ARIA Accordion Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/accordion/). It uses appropriate ARIA roles, states, and properties to ensure accessibility:
-
-- Each trigger has `role="button"`
-- Triggers use `aria-expanded` to indicate the expanded state
-- Content sections use `aria-hidden` when collapsed
-- Keyboard navigation support for Space, Enter, Arrow keys 
+ 

@@ -1,10 +1,10 @@
-# Animate UI Documentation
+# Ignix UI Documentation
 
-Documentation site for Animate UI, built with Docusaurus.
+Documentation site for Ignix UI, built with Docusaurus.
 
 ## Overview
 
-This package contains the documentation website for Animate UI, providing:
+This package contains the documentation website for Ignix UI, providing:
 
 - Component API documentation
 - Usage examples
@@ -116,7 +116,7 @@ Edit `docusaurus.config.js`:
 
 ```js
 module.exports = {
-  title: 'Animate UI',
+  title: 'Ignix UI',
   tagline: 'Beautiful animated components',
   // ... other configuration
 };

@@ -1,115 +1,247 @@
 ---
-sidebar_position: 8
----
-# Breadcrumbs
-
-The `Breadcrumbs` component provides a flexible and customizable way to display navigation trails, steps, or progress indicators in your application.
-
+sidebar_position: 2
+title: Breadcrumbs
+description: A navigational aid that shows the user's current location within a website's hierarchy.
 ---
 
-The `Breadcrumbs` component provides a flexible and customizable way to display navigation trails, steps, or progress indicators in your application.
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { Breadcrumbs } from '@site/src/components/UI/breadcrumbs';
+import { ChevronRight } from 'lucide-react';
 
----
+## Overview
 
-## **Usage**
+Breadcrumbs provide users with a way to navigate back to previous pages or sections in a hierarchical structure. They help users understand their current location within the website and provide quick access to parent pages.
 
+## Preview
 
-## **Props**
+<Tabs defaultValue="preview">
+  <TabItem value="preview" label="Preview" default>
+    <div className="p-4 border rounded-lg">
+      <Breadcrumbs 
+        items={[
+          { label: 'Home', href: '#' },
+          { label: 'Products', href: '#' },
+          { label: 'Electronics', href: '#' },
+          { label: 'Smartphones' }
+        ]}
+        separatorIcon={ChevronRight}
+      />
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    import { Breadcrumbs } from '@mindfiredigital/ignix-ui';
+    import { ChevronRight } from 'lucide-react';
 
-| Prop           | Type                                      | Description                                                   | Default |
-| -------------- | ----------------------------------------- | ------------------------------------------------------------- | ------- |
-| `items`        | `{ label: string; href?: string }[]`      | List of breadcrumb items. `href` is optional.                 | `[]`    |
-| `separatorIcon`| `React.ElementType`                      | Optional separator icon component between breadcrumb items.   | `/`     |
-| `steps`        | `string[]`                               | List of step names (used in `step` variant).                  | `[]`    |
-| `currentStep`  | `number`                                 | The index of the current active step (used in `step` and `custom` variants). | `0` |
-| `variant`      | `"text" | "step" | "progress"`            | Type of breadcrumb display.                                   | `"text"`|
-| `size`         | `"sm" | "md" | "lg"`                     | Size of the breadcrumbs.                                      | `"md"`  |
-| `shape`        | `"rectangle" | "round" | "pill"`         | Shape of the breadcrumb items (used in `custom` variant).     | `"rectangle"` |
-| `bgColor`      | `"blue" | "gray" | "green"`              | Background color for `custom` variant.                       | `"blue"`|
-| `textColor`    | `"white" | "black" | "gray"`             | Text color for `custom` variant.                             | `"black"`|
-| `className`    | `string`                                 | Additional custom classes.                                    | `-`     |
-| `...props`     | `React.HTMLAttributes<HTMLDivElement>`   | Other `div` props.                                            | `-`     |
+    function BreadcrumbDemo() {
+      return (
+        <Breadcrumbs 
+          items={[
+            { label: 'Home', href: '#' },
+            { label: 'Products', href: '#' },
+            { label: 'Electronics', href: '#' },
+            { label: 'Smartphones' }
+          ]}
+          separatorIcon={ChevronRight}
+        />
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
 
----
+## Installation
 
-## **Variants**
+<Tabs>
+  <TabItem value="npm" label="npm" default>
+    ```bash
+    npx @mindfiredigital/ignix-ui add breadcrumbs
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+    ```bash
+    yarn @mindfiredigital/ignix-ui add breadcrumbs
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm @mindfiredigital/ignix-ui add breadcrumbs
+    ```
+  </TabItem>
+</Tabs>
 
-### **`text` (default)**
+## Usage
 
-- Basic breadcrumbs with optional links.
-- Displays labels with separators (`/` or a custom separator icon).
-
-### **`step`**
-
-- Step indicator with number badges.
-- Highlights the current and completed steps.
-
-### **`custom`**
-
-- Button-style breadcrumbs.
-- Supports background color, text color, shape customization.
-- Highlights the current and completed steps.
-
-### **`progress`**
-
-- *(Reserved for future expansion)* You can add progress-bar style behavior later if needed.
-
----
-
-## **Examples**
-
-### **1. Text Breadcrumbs**
+Import the component:
 
 ```tsx
+import { Breadcrumbs } from '@mindfiredigital/ignix-ui';
+```
+
+### Basic Usage
+
+```tsx
+function BasicBreadcrumb() {
+  return (
+    <Breadcrumbs
+      items={[
+        { label: 'Home', href: '/' },
+        { label: 'Products', href: '/products' },
+        { label: 'Current Page' }
+      ]}
+    />
+  );
+}
+```
+
+## Variants
+
+The Breadcrumbs component comes with several variants to suit different use cases.
+
+<Tabs>
+  <TabItem value="text" label="Text (Default)" default>
+    The default text variant with simple links and separators.
+    
+    <Tabs>
+      <TabItem value="text-preview" label="Preview" default>
+        <div className="p-4 border rounded-lg my-4">
+          <Breadcrumbs
+            items={[
+              { label: 'Home', href: '#' },
+              { label: 'Documents', href: '#' },
+              { label: 'Current' }
+            ]}
+            separatorIcon={ChevronRight}
+          />
+        </div>
+      </TabItem>
+      <TabItem value="text-code" label="Code">
+        ```tsx
+        <Breadcrumbs
+          items={[
+            { label: 'Home', href: '#' },
+            { label: 'Documents', href: '#' },
+            { label: 'Current' }
+          ]}
+          separatorIcon={ChevronRight}
+        />
+        ```
+      </TabItem>
+    </Tabs>
+  </TabItem>
+
+  <TabItem value="step" label="Step">
+    Show progress through a multi-step process.
+    
+    <Tabs>
+      <TabItem value="step-preview" label="Preview" default>
+        <div className="p-4 border rounded-lg my-4">
+          <Breadcrumbs
+            variant="step"
+            steps={['Cart', 'Shipping', 'Payment', 'Review']}
+            currentStep={2}
+          />
+        </div>
+      </TabItem>
+      <TabItem value="step-code" label="Code">
+        ```tsx
+        <Breadcrumbs
+          variant="step"
+          steps={['Cart', 'Shipping', 'Payment', 'Review']}
+          currentStep={2}
+        />
+        ```
+      </TabItem>
+    </Tabs>
+  </TabItem>
+
+  <TabItem value="custom" label="Custom">
+    Fully customizable breadcrumbs with background and text colors.
+    
+    <Tabs>
+      <TabItem value="custom-preview" label="Preview" default>
+        <div className="p-4 border rounded-lg my-4">
+          <Breadcrumbs
+            variant="custom"
+            items={[
+              { label: 'Step 1', href: '#' },
+              { label: 'Step 2', href: '#' },
+              { label: 'Step 3' }
+            ]}
+            bgColor="blue"
+            textColor="white"
+            shape="pill"
+            currentStep={1}
+          />
+        </div>
+      </TabItem>
+      <TabItem value="custom-code" label="Code">
+        ```tsx
+        <Breadcrumbs
+          variant="custom"
+          items={[
+            { label: 'Step 1', href: '#' },
+            { label: 'Step 2', href: '#' },
+            { label: 'Step 3' }
+          ]}
+          bgColor="blue"
+          textColor="white"
+          shape="pill"
+          currentStep={1}
+        />
+        ```
+      </TabItem>
+    </Tabs>
+  </TabItem>
+</Tabs>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `Array<{ label: string; href?: string }>` | `[]` | Array of breadcrumb items |
+| `variant` | `'text' | 'step' | 'custom'` | `'text'` | The visual style of the breadcrumbs |
+| `size` | `'sm' | 'md' | 'lg'` | `'md'` | Size of the breadcrumb text |
+| `separatorIcon` | `React.ElementType` | - | Custom separator icon component |
+| `steps` | `string[]` | `[]` | Array of step labels (used with 'step' variant) |
+| `currentStep` | `number` | `0` | Current active step (used with 'step' and 'custom' variants) |
+| `shape` | `'rectangle' | 'round' | 'pill' | 'default'` | `'pill'` | Shape of the breadcrumb items |
+| `bgColor` | `'blue' | 'gray' | 'green' | 'red'` | - | Background color (used with 'custom' variant) |
+| `textColor` | `'white' | 'black' | 'gray' | 'blue'` | - | Text color (used with 'custom' variant) |
+
+## Customization
+
+### Custom Separator
+
+You can customize the separator between breadcrumb items using the `separatorIcon` prop:
+
+
+```tsx
+import { ChevronRight, ArrowRight, Slash } from 'lucide-react';
+
+// Using a different icon
 <Breadcrumbs
-  items={[
-    { label: "Dashboard", href: "/" },
-    { label: "Settings", href: "/settings" },
-    { label: "Profile" },
-  ]}
-  separatorIcon={() => <ChevronRightIcon />}
-  size="sm"
+  items={[...items]}
+  separatorIcon={ArrowRight}
+/>
+
+// Or a custom element
+<Breadcrumbs
+  items={[...items]}
+  separatorIcon={() => <span className="mx-2 text-gray-400">›</span>}
 />
 ```
 
-### **2. Step Breadcrumbs**
+### Styling
+
+You can customize the appearance using the provided props or by passing custom class names:
 
 ```tsx
 <Breadcrumbs
-  variant="step"
-  steps={["Login", "Shipping", "Payment", "Confirmation"]}
-  currentStep={2}
+  items={[...items]}
+  className="my-4"
+  itemClassName="hover:text-blue-700"
+  activeItemClassName="font-bold text-blue-800"
 />
 ```
-
-### **3. Custom Breadcrumbs**
-
-```tsx
-<Breadcrumbs
-  variant="custom"
-  items={[
-    { label: "Account", href: "/account" },
-    { label: "Billing", href: "/billing" },
-    { label: "Confirm" },
-  ]}
-  currentStep={1}
-  bgColor="green"
-  textColor="white"
-  shape="rectangle"
-/>
-```
-
----
-
-## **Notes**
-
-- `SeparatorIcon` can be any React element, such as a right arrow icon (`>`) or chevron.
-- `progress` variant is defined but not yet implemented; you can extend it easily.
-
-* `SeparatorIcon` can be any React element, such as a right arrow icon (`>`) or chevron.
-
-* `progress` variant is defined but not yet implemented; you can extend it easily.
-
-* When using `custom` variant, remember to pass `bgColor`, `textColor`, and `shape` for best appearance.
-
-* Accessible, keyboard-focusable, and easily styleable via utility classes.

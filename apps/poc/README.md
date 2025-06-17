@@ -1,10 +1,10 @@
-# Animate UI Playground
+# Ignix UI Playground
 
-Development playground and testing environment for Animate UI components.
+Development playground and testing environment for Ignix UI components.
 
 ## Overview
 
-This application serves as a development and testing environment for Animate UI components, providing:
+This application serves as a development and testing environment for Ignix UI components, providing:
 
 - Component development workspace
 - Visual testing environment

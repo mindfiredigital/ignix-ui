@@ -1,6 +1,6 @@
 import React from "react";
 import { motion, Variants} from "framer-motion";
-import { cn } from "apps/poc/src/utils"; //! might have to replace with the absolute path
+import { cn } from "../../../utils/cn";
 
 interface BadgeProps {
     text: string;

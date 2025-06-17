@@ -2,7 +2,7 @@
 
 import React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "../../utils/cn";
+import { cn } from "../../../utils/cn";
 
 export interface BreadcrumbsProps
   extends React.HTMLAttributes<HTMLDivElement>,

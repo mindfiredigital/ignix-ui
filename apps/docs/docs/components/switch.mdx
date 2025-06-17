@@ -1,0 +1,404 @@
+---
+sidebar_position: 15
+title: Switch
+description: A flexible and animated switch component for displaying content and capturing user input.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { Switch } from '@site/src/components/UI/switch';
+
+## Overview
+
+The Switch component is a toggleable form control built on top of Radix UI's Switch Primitive, enhanced with beautiful animations using Framer Motion. It provides a user-friendly way to toggle between two states with smooth transitions and various visual styles.
+
+## Preview
+
+<Tabs defaultValue="preview">
+  <TabItem value="preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 border rounded-lg">
+      <div className="p-6 rounded-lg">
+        <div className="flex items-center gap-4">
+          <Switch defaultChecked />
+          <Switch />
+          <Switch variant="large" defaultChecked />
+          <Switch variant="small" defaultChecked />
+        </div>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    import { Switch } from '@mindfiredigital/ignix-ui';
+
+    function SwitchDemo() {
+      return (
+        <div className="flex items-center gap-4">
+          <Switch defaultChecked />
+          <Switch />
+          <Switch variant="large" defaultChecked />
+          <Switch variant="small" defaultChecked />
+        </div>
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+## Installation
+
+<Tabs>
+  <TabItem value="npm" label="npm" default>
+    ```bash
+    npx @mindfiredigital/ignix-ui add switch
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+    ```bash
+    yarn @mindfiredigital/ignix-ui add switch
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm @mindfiredigital/ignix-ui add switch
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+Import the component:
+
+```tsx
+import { Switch } from '@mindfiredigital/ignix-ui';
+```
+
+### Basic Usage
+
+```tsx
+function BasicSwitch() {
+  return <Switch defaultChecked />;
+}
+```
+
+## Variants
+
+The Switch component comes with several variants to suit different design needs.
+
+### Size Variants
+
+<Tabs>
+  <TabItem value="size-preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 border rounded-lg">
+      <div className="p-6 rounded-lg">
+        <div className="flex items-center gap-8">
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-sm font-medium">Small</span>
+            <Switch variant="small" defaultChecked />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-sm font-medium">Default</span>
+            <Switch variant="default" defaultChecked />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-sm font-medium">Large</span>
+            <Switch variant="large" defaultChecked />
+          </div>
+        </div>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="size-code" label="Code">
+    ```tsx
+    <Switch variant="small" defaultChecked />
+    <Switch variant="default" defaultChecked />
+    <Switch variant="large" defaultChecked />
+    ```
+  </TabItem>
+</Tabs>
+
+### Shape Variants
+
+<Tabs>
+  <TabItem value="shape-preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 border rounded-lg">
+      <div className="p-6 rounded-lg">
+        <div className="flex items-center gap-8">
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-sm font-medium">Pill</span>
+            <Switch variant="pill" defaultChecked />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-sm font-medium">Square</span>
+            <Switch variant="square" defaultChecked />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-sm font-medium">Slim</span>
+            <Switch variant="slim" defaultChecked />
+          </div>
+        </div>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="shape-code" label="Code">
+    ```tsx
+    <Switch variant="pill" defaultChecked />
+    <Switch variant="square" defaultChecked />
+    <Switch variant="slim" defaultChecked />
+    ```
+  </TabItem>
+</Tabs>
+
+### Style Variants
+
+<Tabs>
+  <TabItem value="style-preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 border rounded-lg">
+      <div className="p-6 rounded-lg">
+        <div className="flex items-center gap-8">
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-sm font-medium">iOS</span>
+            <Switch variant="ios" defaultChecked />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-sm font-medium">Material</span>
+            <Switch variant="material" defaultChecked />
+          </div>
+        </div>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="style-code" label="Code">
+    ```tsx
+    <Switch variant="ios" defaultChecked />
+    <Switch variant="material" defaultChecked />
+    ```
+  </TabItem>
+</Tabs>
+
+## Animations
+
+The Switch component includes various animated transitions when toggling states.
+
+<Tabs>
+  <TabItem value="animations-preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 border rounded-lg">
+      <div className="p-6 rounded-lg">
+        <div className="grid grid-cols-4 gap-8">
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-sm font-medium">Default</span>
+            <Switch animation="default" defaultChecked />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-sm font-medium">Bounce</span>
+            <Switch animation="bounce" defaultChecked />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-sm font-medium">Scale</span>
+            <Switch animation="scale" defaultChecked />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-sm font-medium">Rotate</span>
+            <Switch animation="rotate" defaultChecked />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-sm font-medium">Fade</span>
+            <Switch animation="fade" defaultChecked />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-sm font-medium">Elastic</span>
+            <Switch animation="elastic" defaultChecked />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-sm font-medium">Pulse</span>
+            <Switch animation="pulse" defaultChecked />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-sm font-medium">Shake</span>
+            <Switch animation="shake" defaultChecked />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-sm font-medium">Flip</span>
+            <Switch animation="flip" defaultChecked />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-sm font-medium">Jelly</span>
+            <Switch animation="jelly" defaultChecked />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-sm font-medium">Glow</span>
+            <Switch animation="glow" defaultChecked />
+          </div>
+        </div>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="animations-code" label="Code">
+    ```tsx
+    <Switch animation="default" defaultChecked />
+    <Switch animation="bounce" defaultChecked />
+    <Switch animation="scale" defaultChecked />
+    <Switch animation="rotate" defaultChecked />
+    <Switch animation="fade" defaultChecked />
+    <Switch animation="elastic" defaultChecked />
+    <Switch animation="pulse" defaultChecked />
+    <Switch animation="shake" defaultChecked />
+    <Switch animation="flip" defaultChecked />
+    <Switch animation="jelly" defaultChecked />
+    <Switch animation="glow" defaultChecked />
+    ```
+  </TabItem>
+</Tabs>
+
+## Interactive Example
+
+<Tabs>
+  <TabItem value="interactive-preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 border rounded-lg">
+      <div className="p-6 rounded-lg space-y-4">
+        <div className="flex flex-col items-center gap-4">
+          <div className="flex items-center gap-4">
+            <Switch
+              variant="ios"
+              animation="bounce"
+              defaultChecked
+            />
+            <span className="text-sm">Push Notifications</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <Switch
+              variant="material"
+              animation="elastic"
+              defaultChecked
+            />
+            <span className="text-sm">Email Updates</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <Switch
+              variant="slim"
+              animation="jelly"
+            />
+            <span className="text-sm">Dark Mode</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="interactive-code" label="Code">
+    ```tsx
+    function SettingsExample() {
+      return (
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-4">
+            <Switch
+              variant="ios"
+              animation="bounce"
+              defaultChecked
+            />
+            <span>Push Notifications</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <Switch
+              variant="material"
+              animation="elastic"
+              defaultChecked
+            />
+            <span>Email Updates</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <Switch
+              variant="slim"
+              animation="jelly"
+            />
+            <span>Dark Mode</span>
+          </div>
+        </div>
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `'default' \| 'large' \| 'small' \| 'pill' \| 'square' \| 'slim' \| 'ios' \| 'material'` | `'default'` | The visual style variant of the switch |
+| `animation` | `'default' \| 'bounce' \| 'scale' \| 'rotate' \| 'fade' \| 'elastic' \| 'pulse' \| 'shake' \| 'flip' \| 'jelly' \| 'glow'` | `'default'` | The animation style when toggling states |
+| `checked` | `boolean` | - | The controlled state of the switch |
+| `defaultChecked` | `boolean` | `false` | The initial state when uncontrolled |
+| `onCheckedChange` | `(checked: boolean) => void` | - | Callback when the switch state changes |
+| `disabled` | `boolean` | `false` | Whether the switch is disabled |
+| `className` | `string` | - | Additional CSS classes for the root element |
+| `thumbClassName` | `string` | - | Additional CSS classes for the thumb element |
+
+## Customization
+
+### Custom Styling
+
+You can customize the appearance using Tailwind CSS classes:
+
+```tsx
+<Switch
+  className="bg-purple-600 data-[state=checked]:bg-green-500"
+  thumbClassName="bg-white"
+/>
+```
+
+### Form Integration Example
+
+```tsx
+function SettingsForm() {
+  const [settings, setSettings] = useState({
+    notifications: true,
+    darkMode: false,
+    emailUpdates: true,
+  });
+
+  return (
+    <form className="space-y-6">
+      <div className="flex items-center justify-between">
+        <label className="text-sm font-medium">
+          Enable Notifications
+        </label>
+        <Switch
+          checked={settings.notifications}
+          onCheckedChange={(checked) => 
+            setSettings(prev => ({...prev, notifications: checked}))
+          }
+          variant="ios"
+          animation="bounce"
+        />
+      </div>
+      
+      <div className="flex items-center justify-between">
+        <label className="text-sm font-medium">
+          Dark Mode
+        </label>
+        <Switch
+          checked={settings.darkMode}
+          onCheckedChange={(checked) => 
+            setSettings(prev => ({...prev, darkMode: checked}))
+          }
+          variant="material"
+          animation="fade"
+        />
+      </div>
+      
+      <div className="flex items-center justify-between">
+        <label className="text-sm font-medium">
+          Email Updates
+        </label>
+        <Switch
+          checked={settings.emailUpdates}
+          onCheckedChange={(checked) => 
+            setSettings(prev => ({...prev, emailUpdates: checked}))
+          }
+          variant="slim"
+          animation="elastic"
+        />
+      </div>
+    </form>
+  );
+}
+```

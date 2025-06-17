@@ -1,0 +1,327 @@
+---
+sidebar_position: 5
+title: Dialog Box
+description: A flexible and animated dialog component for displaying content and capturing user input.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { DialogProvider } from '@site/src/components/UI/dialog-box';
+import DialogDemo from '@site/src/components/UI/dialog-box/dialog-demo';
+
+## Overview
+
+The Dialog Box component provides a flexible way to display modal dialogs with various animations and types. It's built on top of Framer Motion for smooth animations and supports different dialog types like alerts, confirmations, and custom content.
+
+
+## Preview
+
+<Tabs defaultValue="preview">
+  <TabItem value="preview" label="Preview" default>
+    <div className="p-4 border rounded-lg">
+      <DialogProvider>
+        <div className="space-y-4">
+          <DialogDemo type="alert" />
+        </div>
+      </DialogProvider>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    import { DialogProvider, useDialog } from '@mindfiredigital/ignix-ui';
+    import { Button } from '@mindfiredigital/ignix-ui';
+
+    function Demo() {
+      const { openDialog } = useDialog();
+      
+      return (
+        <Button 
+          onClick={() => openDialog({
+            title: 'Alert',
+            content: 'This is an alert dialog.',
+            dialogType: 'alert'
+          })}
+        >
+          Show Alert Dialog
+        </Button>
+      );
+    }
+
+    // In your app:
+    <DialogProvider>
+      <Demo />
+    </DialogProvider>
+    ```
+  </TabItem>
+</Tabs>
+
+## Installation
+
+```bash
+npx @mindfiredigital/ignix-ui add dialog-box
+# or
+yarn @mindfiredigital/ignix-ui add dialog-box
+# or
+pnpm @mindfiredigital/ignix-ui add dialog-box
+```
+
+## Basic Usage
+
+### 1. Wrap your app with DialogProvider
+
+```tsx
+import { DialogProvider } from '@mindfiredigital/ignix-ui';
+
+function App() {
+  return (
+    <DialogProvider>
+      {/* Your app components */}
+    </DialogProvider>
+  );
+}
+```
+
+### 2. Use the useDialog hook in your components
+
+```tsx
+import { useDialog } from '@mindfiredigital/ignix-ui';
+
+function MyComponent() {
+  const { openDialog } = useDialog();
+
+  const handleClick = () => {
+    openDialog({
+      title: 'Hello',
+      content: 'This is a dialog!',
+      dialogType: 'alert'
+    });
+  };
+
+  return <button onClick={handleClick}>Open Dialog</button>;
+}
+```
+
+## Dialog Types
+
+The dialog supports several built-in types with different styles:
+
+### Alert Dialog
+
+<Tabs>
+  <TabItem value="preview" label="Preview" default>
+    <div className="p-4 border rounded-lg">
+      <DialogProvider>
+        <div className="space-y-4">
+          <DialogDemo type="alert" />
+        </div>
+      </DialogProvider>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    const { openDialog } = useDialog();
+
+    openDialog({
+      title: 'Alert',
+      content: 'This is an alert message.',
+      dialogType: 'alert'
+    });
+    ```
+  </TabItem>
+</Tabs>
+
+### Confirm Dialog
+
+<Tabs>
+  <TabItem value="preview" label="Preview" default>
+    <div className="p-4 border rounded-lg">
+      <DialogProvider>
+        <div className="space-y-4">
+          <DialogDemo type="confirm" />
+        </div>
+      </DialogProvider>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    const { openDialog } = useDialog();
+
+    openDialog({
+      title: 'Confirm Action',
+      content: 'Are you sure you want to delete this item?',
+      dialogType: 'confirm',
+      confirmationCallBack: (confirmed) => {
+        if (confirmed) {
+          // Handle confirmation
+          console.log('User confirmed the action');
+        } else {
+          console.log('User cancelled the action');
+        }
+      }
+    });
+    ```
+  </TabItem>
+</Tabs>
+
+### Error Dialog
+
+<Tabs>
+  <TabItem value="preview" label="Preview" default>
+    <div className="p-4 border rounded-lg">
+      <DialogProvider>
+        <div className="space-y-4">
+          <DialogDemo type="error" />
+        </div>
+      </DialogProvider>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    const { openDialog } = useDialog();
+
+    openDialog({
+      title: 'Error',
+      content: 'An error occurred while processing your request.',
+      dialogType: 'error'
+    });
+    ```
+  </TabItem>
+</Tabs>
+
+## Animations
+
+The dialog supports several built-in animations. Use the `animationKey` prop to specify which animation to use.
+
+### Available Animations
+
+Here are all the available animations you can use with the Dialog component:
+
+<Tabs>
+  <TabItem value="preview" label="Preview" default>
+    <div className="p-4 border rounded-lg">
+      <DialogProvider>
+        <div className="grid grid-cols-2 gap-4">
+          {['popIn', 'springPop', 'backdropZoom', 'flip3D', 'skewSlide', 'glassBlur', 'skyDrop'].map((animation) => (
+            <div key={animation} className="p-2">
+              <DialogDemo 
+                type="alert" 
+                animation={animation}
+              />
+              <div className="text-xs text-center mt-1 text-gray-500">
+                {animation}
+              </div>
+            </div>
+          ))}
+        </div>
+      </DialogProvider>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    import { useDialog } from '@mindfiredigital/ignix-ui';
+    
+    function AnimationDemo() {
+      const { openDialog } = useDialog();
+      
+      const animations = [
+        'popIn', 'springPop', 'backdropZoom', 
+        'flip3D', 'skewSlide', 'glassBlur', 'skyDrop'
+      ];
+      
+      const showDialog = (animation) => {
+        openDialog({
+          title: `${animation} Animation`,
+          content: `This dialog uses the ${animation} animation.`,
+          dialogType: 'alert',
+          animationKey: animation
+        });
+      };
+      
+      return (
+        <div className="grid grid-cols-2 gap-4">
+          {animations.map((animation) => (
+            <div key={animation} className="p-2">
+              <Button 
+                onClick={() => showDialog(animation)}
+                className="w-full"
+              >
+                {animation}
+              </Button>
+            </div>
+          ))}
+        </div>
+      );
+    }
+    
+    // In your app:
+    <DialogProvider>
+      <AnimationDemo />
+    </DialogProvider>
+    ```
+  </TabItem>
+</Tabs>
+
+## Custom Content
+
+You can pass custom JSX content to the dialog using the `children` prop:
+
+<Tabs>
+  <TabItem value="preview" label="Preview" default>
+    <div className="p-4 border rounded-lg">
+      <DialogProvider>
+        <div className="space-y-4">
+          <DialogDemo type="alert" customContent={true} />
+        </div>
+      </DialogProvider>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    const { openDialog } = useDialog();
+
+    openDialog({
+      title: 'Custom Content',
+      dialogType: 'alert',
+      children: (
+        <div className="space-y-4">
+          <p>This is a custom content area with HTML elements.</p>
+          <div className="p-3 bg-gray-100 rounded">
+            <h4 className="font-semibold mb-2">Custom Section</h4>
+            <p>You can put any React components here.</p>
+          </div>
+        </div>
+      )
+    });
+    ```
+  </TabItem>
+</Tabs>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `title` | `string` | - | The title of the dialog |
+| `content` | `string` | - | The text content of the dialog (alternative to children) |
+| `children` | `ReactNode` | - | Custom content to render in the dialog |
+| `dialogType` | `'success' | 'confirm' | 'error' | 'alert'` | `'alert'` | The type of dialog which affects the styling |
+| `animationKey` | `'popIn' | 'springPop' | 'backdropZoom' | 'flip3D' | 'skewSlide' | 'glassBlur' | 'skyDrop'` | `'popIn'` | The animation to use when opening/closing the dialog |
+| `confirmButtonText` | `string` | `'Confirm'` | Text for the confirm button |
+| `cancelButtonText` | `string` | `'Cancel'` | Text for the cancel button |
+| `defaultButtons` | `boolean` | `false` | Whether to show the default buttons |
+| `headerStyles` | `CSSProperties` | - | Custom styles for the header |
+| `confirmationCallBack` | `(confirmed: boolean) => void` | - | Callback for when the user confirms or cancels (only for 'confirm' type) |
+
+## Example with Custom Buttons
+
+```tsx
+openDialog({
+  title: 'Custom Buttons',
+  content: 'This dialog has custom button text and styles.',
+  confirmButtonText: 'Yes, Proceed',
+  cancelButtonText: 'No, Go Back',
+  headerStyles: { 
+    background: 'linear-gradient(90deg, #FF6B6B 0%, #4ECDC4 100%)',
+    color: 'white'
+  }
+});
+```

@@ -1,75 +1,230 @@
-# Tooltip
+---
+sidebar_position: 20
+title: Tooltip
+description: A flexible tooltip component for displaying additional information on hover.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { Tooltip } from '@site/src/components/UI/tooltip';
 
 ## Overview
 
-The `Tooltip` component is a customizable and animated tooltip built with **Radix UI**, **Framer Motion**, and **class-variance-authority**. It supports multiple animation styles, themes, and border radius variants.
+The Tooltip component provides additional information when users hover over or focus on an element. Built with Radix UI and Framer Motion, it supports various animations, themes, and appearance styles.
 
----
+## Preview
+
+<Tabs defaultValue="preview">
+  <TabItem value="preview" label="Preview" default>
+    <div className="w-full p-8 rounded-lg border flex items-center justify-center">
+      <Tooltip content="This is a tooltip">
+        <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+          Hover me
+        </button>
+      </Tooltip>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    import { Tooltip } from '@mindfiredigital/ignix-ui';
+
+    function TooltipDemo() {
+      return (
+        <Tooltip content="This is a tooltip">
+          <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+            Hover me
+          </button>
+        </Tooltip>
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+## Installation
+
+<Tabs>
+  <TabItem value="npm" label="npm" default>
+    ```bash
+    npx @mindfiredigital/ignix-ui add tooltip
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+    ```bash
+    yarn @mindfiredigital/ignix-ui add tooltip
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm @mindfiredigital/ignix-ui add tooltip
+    ```
+  </TabItem>
+</Tabs>
 
 ## Usage
 
 ```tsx
-<Tooltip content="Tooltip text" animation="slideUp" bg="glass" rounded="md">
-  <button>Hover me</button>
-</Tooltip>
+import { Tooltip } from '@mindfiredigital/ignix-ui';
+
+function MyComponent() {
+  return (
+    <Tooltip content="Additional information">
+      <button>Hover me</button>
+    </Tooltip>
+  );
+}
 ```
 
----
+## Features
+
+### Animations
+
+<Tabs>
+  <TabItem value="animations-preview" label="Preview" default>
+    <div className="w-full p-8 rounded-lg border">
+      <div className="flex flex-wrap gap-4 justify-center">
+        <Tooltip content="Fade animation" animation="fade">
+          <button className="px-4 py-2 bg-blue-500 text-white rounded-md">
+            Fade
+          </button>
+        </Tooltip>
+        <Tooltip content="Scale animation" animation="scale">
+          <button className="px-4 py-2 bg-blue-500 text-white rounded-md">
+            Scale
+          </button>
+        </Tooltip>
+        <Tooltip content="Slide up animation" animation="slideUp">
+          <button className="px-4 py-2 bg-blue-500 text-white rounded-md">
+            Slide Up
+          </button>
+        </Tooltip>
+        <Tooltip content="Slide down animation" animation="slideDown">
+          <button className="px-4 py-2 bg-blue-500 text-white rounded-md">
+            Slide Down
+          </button>
+        </Tooltip>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="animations-code" label="Code">
+    ```tsx
+    <Tooltip content="Fade animation" animation="fade">
+      <button>Fade</button>
+    </Tooltip>
+
+    <Tooltip content="Scale animation" animation="scale">
+      <button>Scale</button>
+    </Tooltip>
+
+    <Tooltip content="Slide up animation" animation="slideUp">
+      <button>Slide Up</button>
+    </Tooltip>
+
+    <Tooltip content="Slide down animation" animation="slideDown">
+      <button>Slide Down</button>
+    </Tooltip>
+    ```
+  </TabItem>
+</Tabs>
+
+### Backgrounds
+
+<Tabs>
+  <TabItem value="backgrounds-preview" label="Preview" default>
+    <div className="w-full p-8 rounded-lg border">
+      <div className="flex flex-wrap gap-4 justify-center">
+        <Tooltip content="Dark theme" bg="dark">
+          <button className="px-4 py-2 bg-gray-800 text-white rounded-md">
+            Dark
+          </button>
+        </Tooltip>
+        <Tooltip content="Light theme" bg="light">
+          <button className="px-4 py-2 bg-white text-gray-800 border rounded-md">
+            Light
+          </button>
+        </Tooltip>
+        <Tooltip content="Glass effect" bg="glass">
+          <button className="px-4 py-2 bg-blue-500 text-white rounded-md">
+            Glass
+          </button>
+        </Tooltip>
+        <Tooltip content="Gradient background" bg="gradient">
+          <button className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-md">
+            Gradient
+          </button>
+        </Tooltip>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="backgrounds-code" label="Code">
+    ```tsx
+    <Tooltip content="Dark theme" bg="dark">
+      <button>Dark</button>
+    </Tooltip>
+
+    <Tooltip content="Light theme" bg="light">
+      <button>Light</button>
+    </Tooltip>
+
+    <Tooltip content="Glass effect" bg="glass">
+      <button>Glass</button>
+    </Tooltip>
+
+    <Tooltip content="Gradient background" bg="gradient">
+      <button>Gradient</button>
+    </Tooltip>
+    ```
+  </TabItem>
+</Tabs>
+
+### Rounded Corners
+
+<Tabs>
+  <TabItem value="rounded-preview" label="Preview" default>
+    <div className="w-full p-8 rounded-lg border">
+      <div className="flex flex-wrap gap-4 justify-center">
+        <Tooltip content="Small radius" rounded="sm">
+          <button className="px-4 py-2 bg-blue-500 text-white rounded-md">
+            Small
+          </button>
+        </Tooltip>
+        <Tooltip content="Medium radius" rounded="md">
+          <button className="px-4 py-2 bg-blue-500 text-white rounded-md">
+            Medium
+          </button>
+        </Tooltip>
+        <Tooltip content="Full radius" rounded="full">
+          <button className="px-4 py-2 bg-blue-500 text-white rounded-md">
+            Full
+          </button>
+        </Tooltip>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="rounded-code" label="Code">
+    ```tsx
+    <Tooltip content="Small radius" rounded="sm">
+      <button>Small</button>
+    </Tooltip>
+
+    <Tooltip content="Medium radius" rounded="md">
+      <button>Medium</button>
+    </Tooltip>
+
+    <Tooltip content="Full radius" rounded="full">
+      <button>Full</button>
+    </Tooltip>
+    ```
+  </TabItem>
+</Tabs>
 
 ## Props
 
-| Prop       | Type                        | Description                                                                 |
-|------------|-----------------------------|-----------------------------------------------------------------------------|
-| `content`  | `ReactNode`                 | The tooltip text or content to display.                                    |
-| `children` | `ReactNode`                 | The trigger element over which tooltip will appear.                         |
-| `className`| `string?`                   | Optional additional classes for styling.                                   |
-| `animation`| `"fade" \| "scale" \| "slideUp" \| "slideDown" \| "slideLeft" \| "slideRight"` | Animation variant for showing/hiding the tooltip. |
-| `rounded`  | `"sm" \| "md" \| "full"`  | Controls the border radius.                                                |
-| `bg`       | `"dark" \| "light" \| "slate" \| "default" \| "transparent" \| "glass" \| "gradient" \| "primary"` | Background and text color style variants. |
-
----
-
-## Animation Variants
-
-| Name        | Description                                |
-|-------------|--------------------------------------------|
-| `fade`      | Fades in/out                               |
-| `scale`     | Scales up while fading                     |
-| `slideUp`   | Slides up into view                        |
-| `slideDown` | Slides down into view                      |
-| `slideLeft` | Slides in from the left                    |
-| `slideRight`| Slides in from the right                   |
-
----
-
-## Styling
-
-The tooltip styling is handled via `class-variance-authority (cva)` with the following style options:
-
-### `rounded`
-
-- `sm`: Small rounded corners
-- `md`: Medium rounded corners
-- `full`: Fully rounded
-
-### `bg`
-
-- `dark`, `light`, `slate`, `default`, `transparent`, `glass`, `gradient`, `primary`
-
-These variants affect both background color and text color.
-
----
-
-## Dependencies
-
-- `@radix-ui/react-tooltip`
-- `framer-motion`
-- `class-variance-authority`
-- Custom utility: `cn` (class name merger)
-
----
-
-## Notes
-
-- Tooltip appears after a delay of 200ms.
-- You can customize transitions by editing the `motionVariants` object.
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `content` | `ReactNode` | - | The content to display in the tooltip |
+| `children` | `ReactNode` | - | The element that triggers the tooltip |
+| `className` | `string` | - | Optional custom CSS classes |
+| `animation` | `'fade' \| 'scale' \| 'slideUp' \| 'slideDown' \| 'slideLeft' \| 'slideRight'` | `'fade'` | Animation style for the tooltip |
+| `rounded` | `'sm' \| 'md' \| 'full'` | `'sm'` | Border radius of the tooltip |
+| `bg` | `'dark' \| 'light' \| 'slate' \| 'default' \| 'transparent' \| 'glass' \| 'gradient' \| 'primary'` | `'dark'` | Background style of the tooltip |

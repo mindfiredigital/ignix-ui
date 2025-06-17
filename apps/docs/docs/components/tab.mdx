@@ -1,186 +1,438 @@
 ---
-sidebar_position: 7
----
-# Tabs
-
-A reusable, customizable, and animated tab selector for modern React applications — built with **TypeScript**, **Framer Motion**, **Tailwind CSS**, and **class-variance-authority**.
-
+sidebar_position: 16
+title: Tab
+description: A flexible and animated tab component for displaying content and capturing user input.
 ---
 
-## **✨ Overview**
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { Tabs as TabsComponent } from '@site/src/components/UI/tab';
 
-The `Tabs` component lets you render a row of selectable options styled as tabs. It supports:
+## Overview
 
-- Custom style **variants** (e.g., underline, filled, pill, glass).
-- Optional **themes** for light/dark/glass aesthetics.
-- Three **size** options.
-- Smooth **Framer Motion** animations on hover/tap.
-- Controlled or uncontrolled usage via `selected` and `value` props.
+The Tabs component is a versatile navigation interface that allows users to switch between different views within the same context. Built with Framer Motion for smooth animations and powered by Class Variance Authority for flexible styling, it provides multiple variants and themes for different design needs.
 
----
+## Preview
 
-## **🚀 Basic Usage**
+<Tabs defaultValue="preview">
+  <TabItem value="preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 rounded-lg border shadow-lg">
+      <div className="p-6 rounded-lg">
+        <TabsComponent
+          options={["Home", "Profile", "Settings", "About"]}
+          selected={0}
+        />
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    import { Tabs } from '@mindfiredigital/ignix-ui';
+
+    function TabsDemo() {
+      return (
+        <Tabs
+          options={["Home", "Profile", "Settings", "About"]}
+          selected={0}
+        />
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+## Installation
+
+<Tabs>
+  <TabItem value="npm" label="npm" default>
+    ```bash
+    npx @mindfiredigital/ignix-ui add tab
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+    ```bash
+    yarn @mindfiredigital/ignix-ui add tab
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm @mindfiredigital/ignix-ui add tab
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+Import the component:
 
 ```tsx
-<Tabs
-  options={["Overview", "Pricing", "Features"]}
-  selected={0}
-  value={(index) => console.log("Tab changed to:", index)}
-  variant="pill"
-  size="lg"
-  theme="glass"
-  className="my-6"
-/>
+import { Tabs } from '@mindfiredigital/ignix-ui';
 ```
 
----
+### Basic Usage
 
-## **⚙️ Component API**
-
-### **`TabsProps`**
-
-```ts
-export interface TabsProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof tabsVariants> {
-  options: string[]; // Tab labels
-  selected?: number; // Optional default selected index
-  value?: (index: number) => void; // Callback when a tab is clicked
+```tsx
+function BasicTabs() {
+  return (
+    <Tabs
+      options={["Tab 1", "Tab 2", "Tab 3"]}
+      selected={0}
+      value={(index) => console.log(`Selected tab: ${index}`)}
+    />
+  );
 }
 ```
 
-| Prop        | Type                          | Description                                           |
-| ----------- | ----------------------------- | ----------------------------------------------------- |
-| `options`   | `string[]`                    | List of tab labels to render. **Required.**          |
-| `selected`  | `number`                      | Index of initially selected tab (for uncontrolled use). |
-| `value`     | `(index: number) => void`     | Callback fired on tab click. Enables controlled behavior. |
-| `variant`   | `underline` \| `filled` \| ...| Visual style variant (see below).                    |
-| `theme`     | `light` \| `dark` \| ...      | Optional visual theme to apply.                      |
-| `size`      | `sm` \| `md` \| `lg`          | Font size of tabs. Default is `md`.                  |
-| `className` | `string`                      | Extra classes for the outer container.               |
-| `...props`  | `HTMLAttributes<HTMLDivElement>` | Any other native `div` props.                       |
+## Variants
 
----
+The Tabs component comes with several variants to suit different design needs.
 
-## **🎨 Variants**
+### Style Variants
 
-Variants are defined using **class-variance-authority (cva)** and determine the style of the tab buttons.
+<Tabs>
+  <TabItem value="style-preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 border rounded-lg shadow-lg">
+      <div className="p-6 rounded-lg shadow space-y-8">
+        <div className="space-y-4">
+          <span className="text-sm font-medium">Underline</span>
+          <TabsComponent
+            options={["Home", "Profile", "Settings"]}
+            variant="underline"
+          />
+        </div>
+        <div className="space-y-4">
+          <span className="text-sm font-medium">Filled</span>
+          <TabsComponent
+            options={["Home", "Profile", "Settings"]}
+            variant="filled"
+          />
+        </div>
+        <div className="space-y-4">
+          <span className="text-sm font-medium">Pill</span> 
+          <TabsComponent
+            options={["Home", "Profile", "Settings"]}
+            variant="pill"
+          />
+        </div>
+        <div className="space-y-4">
+          <span className="text-sm font-medium">Outline</span>
+          <TabsComponent
+            options={["Home", "Profile", "Settings"]}
+            variant="outline"
+          />
+        </div>
+        <div className="space-y-4">
+          <span className="text-sm font-medium">Ghost</span>
+          <TabsComponent
+            options={["Home", "Profile", "Settings"]}
+            variant="ghost"
+          />
+        </div>
+        <div className="space-y-4">
+          <span className="text-sm font-medium">Shadow</span>
+          <TabsComponent
+            options={["Home", "Profile", "Settings"]}
+            variant="shadow"
+          />
+        </div>
+        <div className="space-y-4">
+          <span className="text-sm font-medium">Gradient</span>
+          <TabsComponent
+            options={["Home", "Profile", "Settings"]}
+            variant="gradient"
+          />
+        </div>
+        <div className="space-y-4">
+          <span className="text-sm font-medium">Glow</span>
+          <TabsComponent
+            options={["Home", "Profile", "Settings"]}
+            variant="glow"
+          />
+        </div>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="style-code" label="Code">
+    ```tsx
+    <Tabs
+      options={["Home", "Profile", "Settings"]}
+      variant="underline"
+    />
+    <Tabs
+      options={["Home", "Profile", "Settings"]}
+      variant="filled"
+    />
+    <Tabs
+      options={["Home", "Profile", "Settings"]}
+      variant="pill"
+    />
+    <Tabs
+      options={["Home", "Profile", "Settings"]}
+      variant="outline"
+    />
+    <Tabs
+      options={["Home", "Profile", "Settings"]}
+      variant="ghost"
+    />
+    <Tabs
+      options={["Home", "Profile", "Settings"]}
+      variant="shadow"
+    />
+    <Tabs
+      options={["Home", "Profile", "Settings"]}
+      variant="gradient"
+    />
+    <Tabs
+      options={["Home", "Profile", "Settings"]}
+      variant="glow"
+    />
+    ```
+  </TabItem>
+</Tabs>
 
-### **Available `variant` values:**
+### Themes
 
-| Variant    | Description                                   |
-| ---------- | --------------------------------------------- |
-| `underline`| Tabs with underline indicator (default).      |
-| `filled`   | Solid background with white text.             |
-| `pill`     | Rounded full pill style.                      |
-| `outline`  | Border with text color, no background.        |
-| `ghost`    | Transparent tabs, with hover background.      |
-| `shadow`   | Elevated style with drop shadow.              |
-| `gradient` | Background with gradient (blue to purple).    |
-| `glow`     | White tab with glowing blue shadow.           |
-| `block`    | Block-style layout with gray border.          |
+<Tabs>
+  <TabItem value="theme-preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 rounded-lg border shadow-lg">
+      <div className="p-6 rounded-lg shadow space-y-8">
+        <div className="space-y-4">
+          <span className="text-sm font-medium">Light Theme</span>
+          <TabsComponent
+            options={["Home", "Profile", "Settings"]}
+            variant="filled"
+            theme="light"
+          />
+        </div>
+        <div className="space-y-4 bg-gray-900 p-4 rounded-lg">
+          <span className="text-sm font-medium text-white">Dark Theme</span>
+          <TabsComponent
+            options={["Home", "Profile", "Settings"]}
+            variant="filled"
+            theme="dark"
+          />
+        </div>
+        <div className="space-y-4 bg-gradient-to-r from-blue-500 to-purple-500 p-4 rounded-lg">
+          <span className="text-sm font-medium text-white">Glass Theme</span>
+          <TabsComponent
+            options={["Home", "Profile", "Settings"]}
+            variant="filled"
+            theme="glass"
+          />
+        </div>
+        <div className="space-y-4 bg-gradient-to-r from-blue-500 to-purple-500 p-4 rounded-lg">
+          <span className="text-sm font-medium text-white">Glass Gradient Theme</span>
+          <TabsComponent
+            options={["Home", "Profile", "Settings"]}
+            variant="filled"
+            theme="glassGradient"
+          />
+        </div>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="theme-code" label="Code">
+    ```tsx
+    <Tabs
+      options={["Home", "Profile", "Settings"]}
+      variant="filled"
+      theme="light"
+    />
+    <Tabs
+      options={["Home", "Profile", "Settings"]}
+      variant="filled"
+      theme="dark"
+    />
+    <Tabs
+      options={["Home", "Profile", "Settings"]}
+      variant="filled"
+      theme="glass"
+    />
+    <Tabs
+      options={["Home", "Profile", "Settings"]}
+      variant="filled"
+      theme="glassGradient"
+    />
+    ```
+  </TabItem>
+</Tabs>
 
-🧠 Internally, a background `motion.div` is animated for most styles *except* `underline`, where the underline itself is implied through CSS.
+### Size Variants
 
----
+<Tabs>
+  <TabItem value="size-preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 rounded-lg border shadow-lg">
+      <div className="p-6 rounded-lg shadow space-y-8">
+        <div className="space-y-4">
+          <span className="text-sm font-medium">Small</span>
+          <TabsComponent
+            options={["Home", "Profile", "Settings"]}
+            size="sm"
+          />
+        </div>
+        <div className="space-y-4">
+          <span className="text-sm font-medium">Medium</span>
+          <TabsComponent
+            options={["Home", "Profile", "Settings"]}
+            size="md"
+          />
+        </div>
+        <div className="space-y-4">
+          <span className="text-sm font-medium">Large</span>
+          <TabsComponent
+            options={["Home", "Profile", "Settings"]}
+            size="lg"
+          />
+        </div>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="size-code" label="Code">
+    ```tsx
+    <Tabs
+      options={["Home", "Profile", "Settings"]}
+      size="sm"
+    />
+    <Tabs
+      options={["Home", "Profile", "Settings"]}
+      size="md"
+    />
+    <Tabs
+      options={["Home", "Profile", "Settings"]}
+      size="lg"
+    />
+    ```
+  </TabItem>
+</Tabs>
 
-## **🌈 Themes**
+## Interactive Example
 
-Themes change the background/text color of the whole component or enhance visual styling (like frosted glass or gradients).
+<Tabs>
+  <TabItem value="interactive-preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 bg-slate-100 rounded-lg shadow-lg">
+      <div className="bg-white p-6 rounded-lg shadow space-y-4">
+        <TabsComponent
+          options={["Account", "Security", "Notifications", "Integration"]}
+          variant="outline"
+          size="md"
+          value={(index) => console.log(`Selected: ${index}`)}
+        />
+        <div className="mt-4 p-4 border rounded-lg">
+          <p className="text-sm text-gray-600">Content area for the selected tab</p>
+        </div>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="interactive-code" label="Code">
+    ```tsx
+    function TabsWithContent() {
+      const [activeTab, setActiveTab] = useState(0);
+      
+      const content = [
+        "Account settings and preferences",
+        "Security options and privacy",
+        "Notification preferences",
+        "Third-party integrations",
+      ];
 
-| Theme               | Description                                      |
-| ------------------- | ------------------------------------------------ |
-| `light`            | White background, dark text.                     |
-| `dark`             | Dark background, white text.                     |
-| `glass`            | Transparent white with backdrop blur and white text. |
-| `glassDark`        | Transparent dark blur + white text.              |
-| `glassLight`       | Transparent white blur + dark text.              |
-| `glassGradient`    | Blue → purple gradient with blur and white text. |
-| `glassGradientDark`| Same gradient, but dark blur and black text.     |
+      return (
+        <div className="space-y-4">
+          <Tabs
+            options={[
+              "Account",
+              "Security",
+              "Notifications",
+              "Integration"
+            ]}
+            variant="outline"
+            size="md"
+            value={setActiveTab}
+          />
+          <div className="mt-4 p-4 border rounded-lg">
+            <p className="text-sm text-gray-600">
+              {content[activeTab]}
+            </p>
+          </div>
+        </div>
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
 
----
+## Props
 
-## **🔠 Sizes**
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `options` | `string[]` | `[]` | Array of tab labels |
+| `selected` | `number` | `0` | Index of the initially selected tab |
+| `value` | `(index: number) => void` | - | Callback function when tab selection changes |
+| `variant` | `'underline' \| 'filled' \| 'pill' \| 'outline' \| 'ghost' \| 'shadow' \| 'gradient' \| 'glow' \| 'block'` | `'underline'` | Visual style variant |
+| `theme` | `'light' \| 'dark' \| 'glass' \| 'glassDark' \| 'glassLight' \| 'glassGradient' \| 'glassGradientDark'` | - | Theme variant |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Size variant |
+| `className` | `string` | - | Additional CSS classes |
 
-| Size | Class Applied | Description         |
-| ---- | ------------- | ------------------- |
-| `sm` | `text-sm`     | Small tab labels.   |
-| `md` | `text-md`     | Medium tab labels.  |
-| `lg` | `text-lg`     | Large tab labels.   |
+## Customization
 
----
+### Custom Styling
 
-## **🔄 Controlled vs Uncontrolled**
-
-- **Uncontrolled**: Use `selected` prop to set the initial tab, internal state manages changes.
-- **Controlled**: Provide a `value` callback and manage state in the parent.
-
-### **🔄 Controlled Example**
-
-Here's how you can use the `Tabs` component in a controlled manner:
+You can customize the appearance using Tailwind CSS classes:
 
 ```tsx
-import { useState } from "react";
-import { Tabs } from "your-library";
+<Tabs
+  options={["Tab 1", "Tab 2", "Tab 3"]}
+  className="bg-indigo-100 p-2 rounded-xl"
+/>
+```
 
-const ControlledTabsExample = () => {
-  const [currentTab, setCurrentTab] = useState(0);
+### Advanced Example with Content
+
+```tsx
+function TabsWithPanels() {
+  const [activeTab, setActiveTab] = useState(0);
+
+  const tabPanels = [
+    {
+      title: "Dashboard",
+      content: (
+        <div className="p-4">
+          <h3 className="text-lg font-medium">Dashboard Overview</h3>
+          <p className="mt-2 text-gray-600">Your dashboard content here</p>
+        </div>
+      ),
+    },
+    {
+      title: "Analytics",
+      content: (
+        <div className="p-4">
+          <h3 className="text-lg font-medium">Analytics Data</h3>
+          <p className="mt-2 text-gray-600">Your analytics content here</p>
+        </div>
+      ),
+    },
+    {
+      title: "Settings",
+      content: (
+        <div className="p-4">
+          <h3 className="text-lg font-medium">Settings Panel</h3>
+          <p className="mt-2 text-gray-600">Your settings content here</p>
+        </div>
+      ),
+    },
+  ];
 
   return (
-    <Tabs
-      options={["A", "B", "C"]}
-      selected={currentTab}
-      value={setCurrentTab}
-    />
+    <div className="space-y-4">
+      <Tabs
+        options={tabPanels.map(tab => tab.title)}
+        variant="gradient"
+        theme="glass"
+        value={setActiveTab}
+      />
+      <div className="mt-4 border rounded-lg overflow-hidden">
+        {tabPanels[activeTab].content}
+      </div>
+    </div>
   );
-};
-```
-
-In this example:
-
-- The `currentTab` state determines the active tab.
-- The `setCurrentTab` function updates the state when a tab is clicked.
-- This approach gives you full control over the selected tab.
-
----
-
-## **✨ Animation Behavior**
-
-Built with **Framer Motion**:
-
-- `whileHover`: Tab scales slightly on hover.
-- `whileTap`: Slight shrink effect on click.
-- `motion.div` with `layoutId` animates the background for styles like `filled`, `pill`, `shadow`, etc.
-
-This makes the transition between tabs **fluid and modern**.
-
----
-
-## **🧠 Internal Styling Logic**
-
-The core styling logic is handled via:
-
-```ts
-tabsVariants({
-  variant: "pill",
-  size: "lg",
-  theme: "glass"
-});
-```
-
-Which maps to class combinations like:
-
-```css
-"bg-blue-500 text-white rounded-full px-4 py-2 text-lg bg-white/10 backdrop-blur-lg"
-```
-
-These combinations are merged using `class-variance-authority` and `cn()` utility.
-
----
-
-## **💡 Tips**
-
-- Pair this with routing logic (e.g. React Router) to use tabs as navigational elements.
-- Use dynamic content switching below the tab row for tabbed content UI.
-- You can customize motion transitions or add icons inside the map render if needed.
+}
 ```

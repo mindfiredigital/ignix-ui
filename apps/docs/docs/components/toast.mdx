@@ -1,169 +1,261 @@
 ---
-sidebar_position: 4
+sidebar_position: 19
+title: Toast
+description: A flexible and animated toast component for displaying notifications and alerts.
 ---
-# Toast
 
-A brief message that appears at the edge of the screen with smooth animations.
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { ToastProvider } from '@site/src/components/UI/toast';
+import { BasicToastDemo, AnimationDemo, AppearanceDemo, ThemeDemo, SimpleToastDemo } from '@site/src/components/UI/toast/demos';
+
+## Overview
+
+The Toast component is a versatile notification system that provides animated, customizable alerts. Built with Framer Motion, it supports multiple variants, animations, themes, and appearance styles, making it perfect for providing feedback in your applications.
+
+## Preview
+
+<Tabs defaultValue="preview">
+  <TabItem value="preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 rounded-lg border">
+      <ToastProvider>
+        <SimpleToastDemo />
+      </ToastProvider>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    import { useToast } from '@mindfiredigital/ignix-ui';
+    import { InfoCircledIcon } from "@radix-ui/react-icons";
+
+    function ToastDemo() {
+      const toast = useToast();
+      
+      const showToast = () => {
+        toast.addToast({
+          message: "Hello from Toast!",
+          variant: "info",
+          animation: "slide",
+          icon: <InfoCircledIcon className="w-5 h-5" />
+        });
+      };
+
+      return (
+        <button
+          onClick={showToast}
+          className="px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center justify-center gap-2"
+        >
+          <InfoCircledIcon className="w-5 h-5" />
+          Show Toast
+        </button>
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
 
 ## Installation
 
-```bash
-npm install @animate-ui/core
-```
+<Tabs>
+  <TabItem value="npm" label="npm" default>
+    ```bash
+    npx @mindfiredigital/ignix-ui add toast
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+    ```bash
+    yarn @mindfiredigital/ignix-ui add toast
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm @mindfiredigital/ignix-ui add toast
+    ```
+  </TabItem>
+</Tabs>
 
 ## Usage
 
+First, wrap your application with the ToastProvider:
+
 ```tsx
-import { Toast, useToast } from '@animate-ui/core'
+import { ToastProvider } from '@mindfiredigital/ignix-ui';
 
-export default function ToastDemo() {
-  const { toast } = useToast()
-
+function App() {
   return (
-    <div>
-      <button
-        onClick={() => {
-          toast({
-            title: 'Success!',
-            description: 'Your action was completed successfully.',
-            variant: 'success',
-          })
-        }}
-      >
-        Show Toast
-      </button>
-      <Toast />
-    </div>
-  )
+    <ToastProvider>
+      <YourApp />
+    </ToastProvider>
+  );
 }
 ```
+
+Then use the toast in your components:
+
+```tsx
+import { useToast } from '@mindfiredigital/ignix-ui';
+
+function MyComponent() {
+  const toast = useToast();
+  
+  const showNotification = () => {
+    toast.addToast({
+      message: "Operation successful!",
+      variant: "success",
+      animation: "slide",
+      mode: "light",
+      icon: <CheckCircledIcon />
+    });
+  };
+  
+  return <button onClick={showNotification}>Show Toast</button>;
+}
+```
+
+## Features
+
+### Type Examples
+
+<Tabs>
+  <TabItem value="types-preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 rounded-lg border">
+      <div className="p-6 rounded-lg space-y-4">
+        <ToastProvider>
+          <BasicToastDemo />
+        </ToastProvider>  
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="types-code" label="Code">
+    ```tsx
+    const showToast = (variant: 'success' | 'error' | 'warning' | 'info') => {
+      toast.addToast({
+        message: `${variant} message`,
+        variant,
+        animation: "slide",
+        mode: "light",
+        icon: icons[variant]
+      });
+    };
+    ```
+  </TabItem>
+</Tabs>
+
+### Animations
+
+<Tabs>
+  <TabItem value="animations-preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 rounded-lg border">
+      <div className="p-6 rounded-lg space-y-4">
+        <ToastProvider>
+          <AnimationDemo />
+        </ToastProvider>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="animations-code" label="Code">
+    ```tsx
+    // Available animations: 'slide', 'fade', 'bounce', 'pop'
+    toast.addToast({
+      message: "Animated toast",
+      variant: "info",
+      animation: "slide", // Change this value
+      mode: "light"
+    });
+    ```
+  </TabItem>
+</Tabs>
+
+### Appearance Styles
+
+<Tabs>
+  <TabItem value="appearance-preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 rounded-lg border">
+      <div className="p-6 rounded-lg space-y-4">
+        <ToastProvider>
+          <AppearanceDemo />
+        </ToastProvider>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="appearance-code" label="Code">
+    ```tsx
+    // Glow Effect
+    toast.addToast({
+      message: "Glow effect toast",
+      variant: "info",
+      animation: "slide",
+      mode: "light",
+      appearance: "glow"
+    });
+
+    // Gradient Effect
+    toast.addToast({
+      message: "Gradient effect toast",
+      variant: "info",
+      animation: "slide",
+      mode: "light",
+      appearance: "gradient",
+      gradientColor: "rgba(59, 130, 246, 1)"
+    });
+    ```
+  </TabItem>
+</Tabs>
+
+### Theme Support
+
+<Tabs>
+  <TabItem value="theme-preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 rounded-lg border">
+      <div className="p-6 rounded-lg space-y-4">
+        <ToastProvider>
+          <ThemeDemo />
+        </ToastProvider>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="theme-code" label="Code">
+    ```tsx
+    function ThemeAwareToasts() {
+      const [mode, setMode] = useState<'light' | 'dark'>('light');
+      
+      const showToast = () => {
+        toast.addToast({
+          message: "Theme-aware toast",
+          variant: "info",
+          animation: "slide",
+          mode: mode
+        });
+      };
+      
+      return (
+        <button onClick={showToast}>
+          Show {mode} Toast
+        </button>
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
 
 ## Props
 
-### Toast Component Props
+### ToastProvider Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `position` | `'top-left' \| 'top-right' \| 'bottom-left' \| 'bottom-right' \| 'top-center' \| 'bottom-center'` | `'bottom-right'` | Position of the toast on the screen. |
-| `swipeDirection` | `'up' \| 'down' \| 'left' \| 'right'` | `'right'` | Direction to swipe to dismiss. |
-| `duration` | `number` | `5000` | Time in milliseconds before auto-dismissing. |
+| `maxToasts` | `number` | `100` | Maximum number of toasts to show at once |
+| `children` | `ReactNode` | - | Child components |
 
-### Toast Function Options
+### Toast Data Props
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `title` | `string` | **Required** | The title of the toast message. |
-| `description` | `string` | `undefined` | Additional description text. |
-| `variant` | `'default' \| 'success' \| 'error' \| 'warning' \| 'info'` | `'default'` | Visual style variant. |
-| `duration` | `number` | `5000` | Time in milliseconds before auto-dismissing. |
-| `action` | `{ label: string; onClick: () => void }` | `undefined` | Optional action button. |
-
-## Animation
-
-The Toast component uses Framer Motion for smooth enter/exit animations. You can customize the animation behavior:
-
-```tsx
-<Toast
-  initial={{ opacity: 0, y: 50 }}
-  animate={{ opacity: 1, y: 0 }}
-  exit={{ opacity: 0, y: 20 }}
-  transition={{ type: 'spring', stiffness: 100 }}
-/>
-```
-
-## Examples
-
-### Different Variants
-
-```tsx
-// Success Toast
-toast({
-  title: 'Success!',
-  description: 'Your changes have been saved.',
-  variant: 'success',
-})
-
-// Error Toast
-toast({
-  title: 'Error',
-  description: 'Something went wrong.',
-  variant: 'error',
-})
-
-// Warning Toast
-toast({
-  title: 'Warning',
-  description: 'Please review your input.',
-  variant: 'warning',
-})
-```
-
-### With Action
-
-```tsx
-toast({
-  title: 'File deleted',
-  description: 'The file has been moved to trash.',
-  action: {
-    label: 'Undo',
-    onClick: () => {
-      // Restore file
-    },
-  },
-})
-```
-
-### Custom Duration
-
-```tsx
-toast({
-  title: 'Quick notification',
-  duration: 2000, // 2 seconds
-})
-```
-
-### Custom Position
-
-```tsx
-<Toast position="top-center" />
-```
-
-### With Loading State
-
-```tsx
-const { toast } = useToast()
-
-const handleAction = async () => {
-  const toastId = toast({
-    title: 'Loading...',
-    description: 'Please wait while we process your request.',
-  })
-
-  try {
-    await someAsyncAction()
-    toast({
-      id: toastId,
-      title: 'Success!',
-      description: 'Action completed successfully.',
-      variant: 'success',
-    })
-  } catch (error) {
-    toast({
-      id: toastId,
-      title: 'Error',
-      description: error.message,
-      variant: 'error',
-    })
-  }
-}
-```
-
-## Accessibility
-
-The Toast component:
-- Uses `role="alert"` for important messages
-- Automatically focuses when appearing
-- Can be dismissed with keyboard (Escape key)
-- Announces messages to screen readers
-- Respects user's reduced motion preferences
-- Provides sufficient color contrast for all variants 
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `message` | `string` | - | The message to display in the toast |
+| `variant` | `'success' \| 'error' \| 'warning' \| 'info' \| 'default'` | `'default'` | The type of toast |
+| `animation` | `'slide' \| 'fade' \| 'bounce' \| 'pop'` | - | Animation style |
+| `mode` | `'dark' \| 'light'` | - | Color theme mode |
+| `icon` | `ReactNode` | - | Custom icon element |
+| `appearance` | `'glow' \| 'gradient'` | `'glow'` | Visual appearance style |
+| `gradientColor` | `string` | `'rgba(5, 1, 1, 1)'` | Color for gradient appearance |
+| `duration` | `number` | `4000` | Duration in milliseconds before auto-dismiss |

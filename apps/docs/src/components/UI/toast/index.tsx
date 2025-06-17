@@ -7,7 +7,7 @@ import { ToastVariantTypes, ToastAnimationTypes } from './types'; //! might have
 interface ToastContainerData { 
   id: number; message: string; variant: ToastVariantTypes; 
   animation: ToastAnimationTypes, 
-  mode: 'dark' | 'light', 
+  mode?: 'dark' | 'light', 
   icon: React.ReactNode,
   appearance?: 'glow' | 'gradient';
   gradientColor?: string;
@@ -114,7 +114,7 @@ export const ToastProvider = ({ children, maxToasts = 100 }: { children: React.R
       return (
         <ToastContext.Provider value={{addToast}}>
             {children}
-            <div className="fixed top-5 right-5 mt-4 mr-4 w-sm space-y-8">
+            <div className="fixed top-16 right-5 mt-4 mr-4 w-sm space-y-8">
                 <AnimatePresence>
                 {toasts.map((toast) => (
                 <Toast

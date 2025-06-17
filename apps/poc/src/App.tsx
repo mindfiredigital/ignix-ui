@@ -153,7 +153,7 @@ function App() {
         className="!fixed top-4 left-4 right-4 z-50"
         logo={
           <Link to="/" className="text-2xl font-bold" style={{ color: 'var(--button-red)' }}>
-            Animate UI
+            Ignix UI
           </Link>
         }
       />

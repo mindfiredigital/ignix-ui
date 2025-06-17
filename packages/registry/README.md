@@ -1,4 +1,4 @@
-# Animate UI Registry
+# Ignix UI Registry
 
 Core UI component library built on Radix UI primitives with beautiful animations.
 

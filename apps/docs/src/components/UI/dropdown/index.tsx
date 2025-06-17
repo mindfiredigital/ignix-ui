@@ -1,7 +1,7 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { motion } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "../../utils/cn";
+import { cn } from "../../../utils/cn";
 import { ReactNode } from "react";
 
 // Styling variants using CVA

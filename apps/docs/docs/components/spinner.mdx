@@ -1,76 +1,264 @@
-# Spinner
-
-## **Overview**
-
-The `Spinner` component is a customizable loading indicator built with Tailwind CSS and Framer Motion. It supports multiple animation variants such as a classic spinner, animated bars, and bouncing dots.
-
+---
+sidebar_position: 13
+title: Spinner
+description: A flexible and animated spinner component for displaying loading states.
 ---
 
-## **Props**
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { Spinner } from '@site/src/components/UI/spinner';
 
-| Prop        | Type                                   | Default            | Description                                           |
-|-------------|----------------------------------------|--------------------|-------------------------------------------------------|
-| `size`      | `number`                               | `40`               | Size of the spinner in pixels (width and height).     |
-| `color`     | `string`                               | `'border-gray-500'`| Border or background color depending on the variant.  |
-| `thickness` | `number`                               | `4`                | Thickness of the border or dot size depending on the variant. |
-| `variant`   | `'default' | 'bars' | 'dots-bounce'`   | `'default'`        | Type of loading animation.                            |
-| `className` | `string`                               | `""`               | Additional class names for styling.                  |
+## Overview
 
----
+The Spinner component is a versatile loading indicator that comes with multiple variants and customization options. Built with Framer Motion, it provides smooth animations and various styles to indicate loading states in your application.
 
-## **Variants**
+## Preview
 
-### **1. `default`**
+<Tabs defaultValue="preview">
+  <TabItem value="preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 border rounded-lg">
+      <div className=" p-6 rounded-lg">
+        <div className="flex items-center justify-center gap-8">
+          <Spinner size={40} color="border-blue-500" />
+          <Spinner size={40} variant="bars" color="bg-blue-500" />
+          <Spinner size={40} variant="dots-bounce" color="bg-blue-500" />
+        </div>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    import { Spinner } from '@mindfiredigital/ignix-ui';
 
-A spinning circular loader using border animation.
+    function SpinnerDemo() {
+      return (
+        <div className="flex items-center gap-8">
+          <Spinner size={40} color="border-blue-500" />
+          <Spinner size={40} variant="bars" color="bg-blue-500" />
+          <Spinner size={40} variant="dots-bounce" color="bg-blue-500" />
+        </div>
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
 
-- The top border is transparent to create a visual spinning effect.
-- Controlled via `size`, `thickness`, and `color`.
+## Installation
 
-### **2. `bars`**
+<Tabs>
+  <TabItem value="npm" label="npm" default>
+    ```bash
+    npx @mindfiredigital/ignix-ui add spinner
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+    ```bash
+    yarn @mindfiredigital/ignix-ui add spinner
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm @mindfiredigital/ignix-ui add spinner
+    ```
+  </TabItem>
+</Tabs>
 
-A circular spinner made of 8 bars that fade in and out in sequence.
+## Usage
 
-- Bars are rotated around the center.
-- Opacity animation gives a spinning illusion.
-- Uses `Framer Motion` for animations.
+Import the component:
 
-### **3. `dots-bounce`**
-
-A sequential bouncing animation of four dots.
-
-- Each dot scales and fades in a staggered sequence.
-- Good for typing or waiting indicators.
-- `thickness` defines the dot size.
-
----
-
-## **Usage**
 ```tsx
-<Spinner variant="bars" size={50} color="bg-green-500" />  
-<Spinner variant="dots-bounce" thickness={8} color="#10b981" />  
-<Spinner size={60} thickness={6} color="border-blue-500" />
+import { Spinner } from '@mindfiredigital/ignix-ui';
 ```
----
-## **Notes**
 
-* `color` acts differently depending on the variant:
+### Basic Usage
 
-    * `default`: used as a Tailwind border color class (e.g., `border-red-500`).
+```tsx
+function BasicSpinner() {
+  return <Spinner size={40} color="border-blue-500" />;
+}
+```
 
-    * `bars`: also Tailwind class (e.g., `bg-gray-400`).
+## Variants
 
-    * `dots-bounce`: treated as a raw color string (e.g., `#10b981`).
+The Spinner component comes with several variants to suit different design needs.
 
----
+### Spinner Variants
 
-## **Dependencies**
+<Tabs>
+  <TabItem value="variants-preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 border rounded-lg">
+      <div className="p-6 rounded-lg">
+        <div>
+          <h3 className="text-sm font-medium mb-4">Default Spinner</h3>
+          <div className="flex items-center gap-8 p-4 rounded-lg">
+            <Spinner size={30} color="border-blue-500" />
+            <Spinner size={40} color="border-purple-500" />
+            <Spinner size={50} color="border-green-500" />
+          </div>
+        </div>
+        
+        <div>
+          <h3 className="text-sm font-medium mb-4">Bars Spinner</h3>
+          <div className="flex items-center gap-8 p-4 rounded-lg">
+            <Spinner variant="bars" size={30} color="bg-blue-500" />
+            <Spinner variant="bars" size={40} color="bg-purple-500" />
+            <Spinner variant="bars" size={50} color="bg-green-500" />
+          </div>
+        </div>
+        
+        <div>
+          <h3 className="text-sm font-medium mb-4">Bouncing Dots</h3>
+          <div className="flex items-center gap-8 p-4 rounded-lg">
+            <Spinner variant="dots-bounce" size={30} thickness={4} color="rgb(59, 130, 246)" />
+            <Spinner variant="dots-bounce" size={40} thickness={6} color="rgb(147, 51, 234)" />
+            <Spinner variant="dots-bounce" size={50} thickness={8} color="rgb(34, 197, 94)" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="variants-code" label="Code">
+    ```tsx
+    // Default Spinner
+    <Spinner size={30} color="border-blue-500" />
+    <Spinner size={40} color="border-purple-500" />
+    <Spinner size={50} color="border-green-500" />
 
-* `Framer Motion`
+    // Bars Spinner
+    <Spinner variant="bars" size={30} color="bg-blue-500" />
+    <Spinner variant="bars" size={40} color="bg-purple-500" />
+    <Spinner variant="bars" size={50} color="bg-green-500" />
 
-* `Tailwind CSS`
+    // Bouncing Dots
+    <Spinner 
+      variant="dots-bounce" 
+      size={30} 
+      thickness={4} 
+      color="rgb(59, 130, 246)" 
+    />
+    <Spinner 
+      variant="dots-bounce" 
+      size={40} 
+      thickness={6} 
+      color="rgb(147, 51, 234)" 
+    />
+    <Spinner 
+      variant="dots-bounce" 
+      size={50} 
+      thickness={8} 
+      color="rgb(34, 197, 94)" 
+    />
+    ```
+  </TabItem>
+</Tabs>
 
-* Utility function `cn()` for conditional class merging.
+### Custom Colors
 
+<Tabs>
+  <TabItem value="colors-preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 border rounded-lg">
+      <div className="p-6 rounded-lg">
+        <div className="grid grid-cols-3 gap-8">
+          <div className="flex flex-col items-center gap-4 p-4 rounded-lg">
+            <span className="text-sm font-medium">Primary</span>
+            <Spinner size={40} color="border-blue-500" />
+          </div>
+          <div className="flex flex-col items-center gap-4 p-4 rounded-lg">
+            <span className="text-sm font-medium">Success</span>
+            <Spinner size={40} color="border-green-500" />
+          </div>
+          <div className="flex flex-col items-center gap-4 p-4 rounded-lg">
+            <span className="text-sm font-medium">Warning</span>
+            <Spinner size={40} color="border-yellow-500" />
+          </div>
+          <div className="flex flex-col items-center gap-4 p-4 rounded-lg">
+            <span className="text-sm font-medium">Error</span>
+            <Spinner size={40} color="border-red-500" />
+          </div>
+          <div className="flex flex-col items-center gap-4 p-4 rounded-lg">
+            <span className="text-sm font-medium">Purple</span>
+            <Spinner size={40} color="border-purple-500" />
+          </div>
+          <div className="flex flex-col items-center gap-4 p-4 bg-gray-900 rounded-lg">
+            <span className="text-sm font-medium text-white">Light</span>
+            <Spinner size={40} color="border-white" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="colors-code" label="Code">
+    ```tsx
+    <Spinner size={40} color="border-blue-500" />   {/* Primary */}
+    <Spinner size={40} color="border-green-500" />  {/* Success */}
+    <Spinner size={40} color="border-yellow-500" /> {/* Warning */}
+    <Spinner size={40} color="border-red-500" />    {/* Error */}
+    <Spinner size={40} color="border-purple-500" /> {/* Purple */}
+    <Spinner size={40} color="border-white" />      {/* Light */}
+    ```
+  </TabItem>
+</Tabs>
 
+## Props
 
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `size` | `number` | `40` | Size of the spinner in pixels |
+| `color` | `string` | `'border-gray-500'` | Color of the spinner (uses Tailwind CSS classes) |
+| `thickness` | `number` | `4` | Thickness of the spinner lines |
+| `variant` | `'default' \| 'bars' \| 'dots-bounce'` | `'default'` | Visual style variant |
+| `className` | `string` | - | Additional CSS classes |
+
+## Customization
+
+### Custom Styling
+
+You can customize the appearance using Tailwind CSS classes:
+
+```tsx
+<Spinner
+  className="my-4"
+  size={50}
+  color="border-indigo-500"
+  thickness={6}
+/>
+```
+
+### With Loading State
+
+Create a loading button with the spinner:
+
+```tsx
+function LoadingButton({ isLoading, children }) {
+  return (
+    <button 
+      className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded"
+      disabled={isLoading}
+    >
+      {isLoading && <Spinner size={20} color="border-white" />}
+      {children}
+    </button>
+  );
+}
+```
+
+### Loading Card Example
+
+```tsx
+function LoadingCard() {
+  return (
+    <div className="p-4 border rounded-lg flex items-center justify-center min-h-[200px]">
+      <div className="flex flex-col items-center gap-4">
+        <Spinner
+          variant="dots-bounce"
+          size={40}
+          color="rgb(59, 130, 246)"
+          thickness={6}
+        />
+        <p className="text-gray-500">Loading content...</p>
+      </div>
+    </div>
+  );
+}
+```

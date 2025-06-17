@@ -1,78 +1,306 @@
-# Dropdown
-
-A customizable and animated dropdown component built with Radix UI, Framer Motion, and `class-variance-authority` (CVA).
-
+---
+sidebar_position: 3
+title: Dropdown
+description: A reusable dropdown menu component with various styling options and animations.
 ---
 
-## ✨ Features
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { Dropdown, DropdownItem } from '@site/src/components/UI/dropdown';
+import { Button } from '@site/src/components/UI/button';
 
-- Smooth animations (fade, scale, slide, flip, etc.)
-- Theme and size variants via CVA
-- Customizable trigger and menu items
+## Overview
 
----
+The Dropdown component provides a flexible and customizable way to create dropdown menus with various styling options, animations, and sizing variants. Built with Radix UI and Framer Motion, it offers smooth animations and accessible functionality out of the box.
 
-## 🧱 Component API
+## Preview
 
-### `Dropdown`
+<Tabs defaultValue="preview">
+  <TabItem value="preview" label="Preview" default>
+    <div className="p-4 border rounded-lg">
+      <Dropdown
+        trigger={<Button>Open Menu</Button>}
+        animation="default"
+      >
+        <DropdownItem>Profile</DropdownItem>
+        <DropdownItem>Settings</DropdownItem>
+        <DropdownItem>Logout</DropdownItem>
+      </Dropdown>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    import { Dropdown, DropdownItem } from '@mindfiredigital/ignix-ui';
 
-#### Props
+    function DropdownDemo() {
+      return (
+        <Dropdown
+          trigger={<Button>Open Menu</Button>}
+          animation="default"
+        >
+          <DropdownItem>Profile</DropdownItem>
+          <DropdownItem>Settings</DropdownItem>
+          <DropdownItem>Logout</DropdownItem>
+        </Dropdown>
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
 
-| Prop       | Type                                      | Description                                      | Default    |
-|------------|-------------------------------------------|--------------------------------------------------|------------|
-| `children` | `ReactNode`                               | The dropdown menu content.                       | —          |
-| `trigger`  | `ReactNode`                               | The element that triggers the dropdown.          | —          |
-| `animation`| `"default" \| "fade" \| "scale" \| "slide" \| "flip"` | Animation style applied to dropdown. | `"default"` |
-| `size`     | `"sm" \| "md" \| "lg"`                    | Text size of the dropdown.                       | `"md"`     |
-| `rounded`  | `"none" \| "sm" \| "md" \| "full"`        | Border radius of the dropdown.                   | `"md"`     |
-| `bg`       | `"default" \| "dark" \| "transparent" \| "glass" \| "gradient" \| "primary"` | Background color variant. | `"default"` |
-| `className`| `string`                                  | Additional class names.                          | —          |
+## Installation
 
----
+<Tabs>
+  <TabItem value="npm" label="npm" default>
+    ```bash
+    npx @mindfiredigital/ignix-ui add dropdown
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+    ```bash
+    yarn @mindfiredigital/ignix-ui add dropdown
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm @mindfiredigital/ignix-ui add dropdown
+    ```
+  </TabItem>
+</Tabs>
 
-## 🎬 Animations
+## Usage
 
-Available animation variants:
-
-- `default`: Slight scale + vertical slide + fade
-- `fade`: Simple fade in/out
-- `scale`: Scale with opacity
-- `slide`: Slide down with opacity
-- `flip`: Flip animation
-
----
-
-## 🔧 Usage
+Import the components:
 
 ```tsx
-import { Dropdown, DropdownItem } from "@/components/ui/dropdown";
-import { Button } from "@/components/ui/button";
+import { Dropdown, DropdownItem } from '@mindfiredigital/ignix-ui';
+```
 
+### Basic Usage
+
+```tsx
+function BasicDropdown() {
+  return (
+    <Dropdown trigger={<Button>Click me</Button>}>
+      <DropdownItem>Option 1</DropdownItem>
+      <DropdownItem>Option 2</DropdownItem>
+      <DropdownItem>Option 3</DropdownItem>
+    </Dropdown>
+  );
+}
+```
+
+## Variants
+
+The Dropdown component comes with several variants to suit different use cases.
+
+### Size Variants
+
+<Tabs>
+  <TabItem value="size-preview" label="Preview" default>
+    <div className="p-4 border rounded-lg space-x-4">
+      <Dropdown
+        size="sm"
+        trigger={<Button size="sm">Small</Button>}
+      >
+        <DropdownItem>Small Item</DropdownItem>
+        <DropdownItem>Another Item</DropdownItem>
+      </Dropdown>
+      <Dropdown
+        size="md"
+        trigger={<Button>Medium</Button>}
+      >
+        <DropdownItem>Medium Item</DropdownItem>
+        <DropdownItem>Another Item</DropdownItem>
+      </Dropdown>
+      <Dropdown
+        size="lg"
+        trigger={<Button size="lg">Large</Button>}
+      >
+        <DropdownItem>Large Item</DropdownItem>
+        <DropdownItem>Another Item</DropdownItem>
+      </Dropdown>
+    </div>
+  </TabItem>
+  <TabItem value="size-code" label="Code">
+    ```tsx
+    <Dropdown size="sm" trigger={<Button size="sm">Small</Button>}>
+      <DropdownItem>Small Item</DropdownItem>
+      <DropdownItem>Another Item</DropdownItem>
+    </Dropdown>
+
+    <Dropdown size="md" trigger={<Button>Medium</Button>}>
+      <DropdownItem>Medium Item</DropdownItem>
+      <DropdownItem>Another Item</DropdownItem>
+    </Dropdown>
+
+    <Dropdown size="lg" trigger={<Button size="lg">Large</Button>}>
+      <DropdownItem>Large Item</DropdownItem>
+      <DropdownItem>Another Item</DropdownItem>
+    </Dropdown>
+    ```
+  </TabItem>
+</Tabs>
+
+### Background Variants
+
+<Tabs>
+  <TabItem value="bg-preview" label="Preview" default>
+    <div className="p-4 border rounded-lg space-x-4">
+      <Dropdown
+        bg="default"
+        trigger={<Button>Default</Button>}
+      >
+        <DropdownItem>Default Item</DropdownItem>
+        <DropdownItem>Another Item</DropdownItem>
+      </Dropdown>
+      <Dropdown
+        bg="dark"
+        trigger={<Button variant="secondary">Dark</Button>}
+      >
+        <DropdownItem>Dark Item</DropdownItem>
+        <DropdownItem>Another Item</DropdownItem>
+      </Dropdown>
+      <Dropdown
+        bg="glass"
+        trigger={<Button variant="outline">Glass</Button>}
+      >
+        <DropdownItem>Glass Item</DropdownItem>
+        <DropdownItem>Another Item</DropdownItem>
+      </Dropdown>
+    </div>
+  </TabItem>
+  <TabItem value="bg-code" label="Code">
+    ```tsx
+    <Dropdown bg="default" trigger={<Button>Default</Button>}>
+      <DropdownItem>Default Item</DropdownItem>
+      <DropdownItem>Another Item</DropdownItem>
+    </Dropdown>
+
+    <Dropdown bg="dark" trigger={<Button variant="secondary">Dark</Button>}>
+      <DropdownItem>Dark Item</DropdownItem>
+      <DropdownItem>Another Item</DropdownItem>
+    </Dropdown>
+
+    <Dropdown bg="glass" trigger={<Button variant="outline">Glass</Button>}>
+      <DropdownItem>Glass Item</DropdownItem>
+      <DropdownItem>Another Item</DropdownItem>
+    </Dropdown>
+    ```
+  </TabItem>
+</Tabs>
+
+### Animation Variants
+
+<Tabs>
+  <TabItem value="animation-preview" label="Preview" default>
+    <div className="p-4 border rounded-lg space-x-4">
+      <Dropdown
+        animation="fade"
+        trigger={<Button>Fade</Button>}
+      >
+        <DropdownItem>Fade Item</DropdownItem>
+        <DropdownItem>Another Item</DropdownItem>
+      </Dropdown>
+      <Dropdown
+        animation="scale"
+        trigger={<Button>Scale</Button>}
+      >
+        <DropdownItem>Scale Item</DropdownItem>
+        <DropdownItem>Another Item</DropdownItem>
+      </Dropdown>
+      <Dropdown
+        animation="slide"
+        trigger={<Button>Slide</Button>}
+      >
+        <DropdownItem>Slide Item</DropdownItem>
+        <DropdownItem>Another Item</DropdownItem>
+      </Dropdown>
+      <Dropdown
+        animation="flip"
+        trigger={<Button>Flip</Button>}
+      >
+        <DropdownItem>Flip Item</DropdownItem>
+        <DropdownItem>Another Item</DropdownItem>
+      </Dropdown>
+    </div>
+  </TabItem>
+  <TabItem value="animation-code" label="Code">
+    ```tsx
+    <Dropdown animation="fade" trigger={<Button>Fade</Button>}>
+      <DropdownItem>Fade Item</DropdownItem>
+      <DropdownItem>Another Item</DropdownItem>
+    </Dropdown>
+
+    <Dropdown animation="scale" trigger={<Button>Scale</Button>}>
+      <DropdownItem>Scale Item</DropdownItem>
+      <DropdownItem>Another Item</DropdownItem>
+    </Dropdown>
+
+    <Dropdown animation="slide" trigger={<Button>Slide</Button>}>
+      <DropdownItem>Slide Item</DropdownItem>
+      <DropdownItem>Another Item</DropdownItem>
+    </Dropdown>
+
+    <Dropdown animation="flip" trigger={<Button>Flip</Button>}>
+      <DropdownItem>Flip Item</DropdownItem>
+      <DropdownItem>Another Item</DropdownItem>
+    </Dropdown>
+    ```
+  </TabItem>
+</Tabs>
+
+## Props
+
+### Dropdown Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | - | The content of the dropdown menu |
+| `trigger` | `ReactNode` | - | The element that triggers the dropdown |
+| `animation` | `'default' \| 'fade' \| 'scale' \| 'slide' \| 'flip'` | `'default'` | Animation style for the dropdown |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Size of the dropdown menu |
+| `rounded` | `'none' \| 'sm' \| 'md' \| 'full'` | `'md'` | Border radius of the dropdown menu |
+| `bg` | `'default' \| 'dark' \| 'transparent' \| 'glass' \| 'gradient' \| 'primary'` | `'default'` | Background style of the dropdown |
+| `className` | `string` | - | Additional CSS classes |
+
+### DropdownItem Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | - | The content of the dropdown item |
+| `className` | `string` | - | Additional CSS classes |
+| `...props` | `React.ComponentProps<typeof DropdownMenu.Item>` | - | Any additional props from Radix UI's DropdownMenu.Item |
+
+## Customization
+
+### Custom Styling
+
+You can customize the appearance using the provided props or by passing custom class names:
+
+```tsx
 <Dropdown
-  trigger={<Button>Open Menu</Button>}
-  animation="slide"
+  className="my-custom-dropdown"
+  trigger={<Button>Custom Styled</Button>}
+  size="md"
+  rounded="sm"
   bg="glass"
-  rounded="md"
 >
-  <DropdownItem onSelect={() => alert("Profile")}>Profile</DropdownItem>
-  <DropdownItem onSelect={() => alert("Settings")}>Settings</DropdownItem>
-  <DropdownItem onSelect={() => alert("Logout")}>Logout</DropdownItem>
+  <DropdownItem className="hover:bg-blue-100">
+    Custom Item
+  </DropdownItem>
 </Dropdown>
 ```
 
----
+### Custom Animation
 
-## 🧩 DropdownItem
+While the component comes with predefined animations, you can extend it with custom animations using the className prop and Tailwind CSS classes:
 
-A wrapper around `@radix-ui/react-dropdown-menu.Item` with styling.
-
-### Props
-
-All props from `DropdownMenu.Item` are passed through.
-
-#### Additional Props
-
-| Prop       | Type        | Description               |
-|------------|-------------|---------------------------|
-| `children` | `ReactNode` | The content inside the item |
-| `className`| `string`    | Optional class overrides  |
+```tsx
+<Dropdown
+  className="transition-all duration-300"
+  trigger={<Button>Custom Animation</Button>}
+>
+  <DropdownItem>Animated Item</DropdownItem>
+</Dropdown>
+```

@@ -3,7 +3,7 @@
 import * as React from 'react';
 import * as SliderPrimitive from '@radix-ui/react-slider';
 import { motion, type MotionProps } from 'framer-motion';
-import { cn } from '@/utils/cn';
+import { cn } from '../../../utils/cn';
 
 // Define variant types
 export type SliderVariant =

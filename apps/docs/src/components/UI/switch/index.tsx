@@ -5,7 +5,7 @@ import { useState } from 'react';
 import * as React from 'react';
 import * as SwitchPrimitives from '@radix-ui/react-switch';
 import { motion } from 'framer-motion';
-import { cn } from '@/utils/cn';
+import { cn } from '../../../utils/cn';
 
 const animations = {
   default: {

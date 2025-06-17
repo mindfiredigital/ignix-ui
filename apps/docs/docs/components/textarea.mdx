@@ -1,0 +1,427 @@
+---
+sidebar_position: 17
+title: Textarea
+description: A flexible and animated textarea component for displaying content and capturing user input.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import AnimatedTextarea from '@site/src/components/UI/textarea';
+import { useState } from 'react';
+
+## Overview
+
+The Textarea component is an enhanced version of the standard HTML textarea with beautiful animations and interactive features. Built with Framer Motion, it provides various animation variants, auto-expanding capabilities, and interactive effects.
+
+## Preview
+
+<Tabs defaultValue="preview">
+  <TabItem value="preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 rounded-lg border">
+      <div className="p-6 rounded-lg">
+        <AnimatedTextarea
+          placeholder="Type something..."
+          variant="clean"
+          value=""
+          onChange={() => {}}
+        />
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    import { AnimatedTextarea } from '@mindfiredigital/ignix-ui';
+
+    function TextareaDemo() {
+      const [value, setValue] = useState('');
+      
+      return (
+        <AnimatedTextarea
+          placeholder="Type something..."
+          variant="clean"
+          value={value}
+          onChange={setValue}
+        />
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+## Installation
+
+<Tabs>
+  <TabItem value="npm" label="npm" default>
+    ```bash
+    npx @mindfiredigital/ignix-ui add textarea
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+    ```bash
+    yarn @mindfiredigital/ignix-ui add textarea
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm @mindfiredigital/ignix-ui add textarea
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+Import the component:
+
+```tsx
+import { AnimatedTextarea } from '@mindfiredigital/ignix-ui';
+```
+
+### Basic Usage
+
+```tsx
+function BasicTextarea() {
+  const [value, setValue] = useState('');
+  
+  return (
+    <AnimatedTextarea
+      placeholder="Enter your message"
+      variant="clean"
+      value={value}
+      onChange={setValue}
+    />
+  );
+}
+```
+
+## Animation Variants
+
+### Basic Variants
+
+<Tabs>
+  <TabItem value="basic-preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 rounded-lg border">
+      <div className="p-6 rounded-lg">
+        <div className="space-y-4">
+          <span className="text-sm font-medium">Clean</span>
+          <AnimatedTextarea
+            placeholder="Clean variant..."
+            variant="clean"
+            value=""
+            onChange={() => {}}
+          />
+        </div>
+        <div className="space-y-4">
+          <span className="text-sm font-medium">Glow Border</span>
+          <AnimatedTextarea
+            placeholder="Glow border variant..."
+            variant="glowBorder"
+            value=""
+            onChange={() => {}}
+          />
+        </div>
+        <div className="space-y-4">
+          <span className="text-sm font-medium">Neon Glow</span>
+          <AnimatedTextarea
+            placeholder="Neon glow variant..."
+            variant="neonGlow"
+            value=""
+            onChange={() => {}}
+          />
+        </div>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="basic-code" label="Code">
+    ```tsx
+    <AnimatedTextarea
+      placeholder="Clean variant..."
+      variant="clean"
+      value={value}
+      onChange={setValue}
+    />
+
+    <AnimatedTextarea
+      placeholder="Glow border variant..."
+      variant="glowBorder"
+      value={value}
+      onChange={setValue}
+    />
+
+    <AnimatedTextarea
+      placeholder="Neon glow variant..."
+      variant="neonGlow"
+      value={value}
+      onChange={setValue}
+    />
+    ```
+  </TabItem>
+</Tabs>
+
+### Interactive Variants
+
+<Tabs>
+  <TabItem value="interactive-preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 rounded-lg border">
+      <div className="p-6 rounded-lg">
+        <div className="space-y-4">
+          <span className="text-sm font-medium">Expandable</span>
+          <AnimatedTextarea
+            placeholder="Type to expand..."
+            variant="expandable"
+            value=""
+            onChange={() => {}}
+          />
+        </div>
+        <div className="space-y-4">
+          <span className="text-sm font-medium">Character Count</span>
+          <AnimatedTextarea
+            placeholder="Count characters..."
+            variant="characterCount"
+            value=""
+            onChange={() => {}}
+          />
+        </div>
+        <div className="space-y-4">
+          <span className="text-sm font-medium">Line Highlight</span>
+          <AnimatedTextarea
+            placeholder="See line highlighting..."
+            variant="lineHighlight"
+            value=""
+            onChange={() => {}}
+          />
+        </div>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="interactive-code" label="Code">
+    ```tsx
+    <AnimatedTextarea
+      placeholder="Type to expand..."
+      variant="expandable"
+      value={value}
+      onChange={setValue}
+    />
+
+    <AnimatedTextarea
+      placeholder="Count characters..."
+      variant="characterCount"
+      value={value}
+      onChange={setValue}
+    />
+
+    <AnimatedTextarea
+      placeholder="See line highlighting..."
+      variant="lineHighlight"
+      value={value}
+      onChange={setValue}
+    />
+    ```
+  </TabItem>
+</Tabs>
+
+### Special Effects
+
+<Tabs>
+  <TabItem value="effects-preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 rounded-lg border">
+      <div className="p-6 rounded-lg">
+        <div className="space-y-4">
+          <span className="text-sm font-medium">Particle Field</span>
+          <AnimatedTextarea
+            placeholder="Watch the particles..."
+            variant="particleField"
+            value=""
+            onChange={() => {}}
+          />
+        </div>
+        <div className="space-y-4">
+          <span className="text-sm font-medium">Wave</span>
+          <AnimatedTextarea
+            placeholder="Wave animation..."
+            variant="wave"
+            value=""
+            onChange={() => {}}
+          />
+        </div>
+        <div className="space-y-4">
+          <span className="text-sm font-medium">Cosmic</span>
+          <AnimatedTextarea
+            placeholder="Cosmic effects..."
+            variant="cosmic"
+            value=""
+            onChange={() => {}}
+          />
+        </div>
+        <div className="space-y-4">
+          <span className="text-sm font-medium">Hologram</span>
+          <AnimatedTextarea
+            placeholder="Holographic effect..."
+            variant="hologram"
+            value=""
+            onChange={() => {}}
+          />
+        </div>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="effects-code" label="Code">
+    ```tsx
+    <AnimatedTextarea
+      placeholder="Watch the particles..."
+      variant="particleField"
+      value={value}
+      onChange={setValue}
+    />
+
+    <AnimatedTextarea
+      placeholder="Wave animation..."
+      variant="wave"
+      value={value}
+      onChange={setValue}
+    />
+
+    <AnimatedTextarea
+      placeholder="Cosmic effects..."
+      variant="cosmic"
+      value={value}
+      onChange={setValue}
+    />
+
+    <AnimatedTextarea
+      placeholder="Holographic effect..."
+      variant="hologram"
+      value={value}
+      onChange={setValue}
+    />
+    ```
+  </TabItem>
+</Tabs>
+
+## Interactive Example
+
+<Tabs>
+  <TabItem value="interactive-full-preview" label="Preview" default>
+    <div className="w-full p-8 space-y-8 rounded-lg border">
+      <div className="p-6 rounded-lg space-y-4">
+        <select
+          className="w-full p-2 border rounded mb-4"
+          onChange={(e) => {
+            // Handle variant change
+          }}
+        >
+          <option value="clean">Clean</option>
+          <option value="expandable">Expandable</option>
+          <option value="glowBorder">Glow Border</option>
+          <option value="characterCount">Character Count</option>
+          <option value="particleField">Particle Field</option>
+          <option value="cosmic">Cosmic</option>
+        </select>
+        <AnimatedTextarea
+          placeholder="Try different variants..."
+          variant="clean"
+          value=""
+          onChange={() => {}}
+        />
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="interactive-full-code" label="Code">
+    ```tsx
+    function InteractiveTextarea() {
+      const [value, setValue] = useState('');
+      const [variant, setVariant] = useState('clean');
+      
+      return (
+        <div className="space-y-4">
+          <select
+            className="w-full p-2 border rounded"
+            value={variant}
+            onChange={(e) => setVariant(e.target.value)}
+          >
+            <option value="clean">Clean</option>
+            <option value="expandable">Expandable</option>
+            <option value="glowBorder">Glow Border</option>
+            <option value="characterCount">Character Count</option>
+            <option value="particleField">Particle Field</option>
+            <option value="cosmic">Cosmic</option>
+          </select>
+          
+          <AnimatedTextarea
+            placeholder="Try different variants..."
+            variant={variant}
+            value={value}
+            onChange={setValue}
+          />
+        </div>
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `placeholder` | `string` | - | Placeholder text for the textarea |
+| `variant` | `string` | `'clean'` | Animation variant to apply |
+| `value` | `string` | - | The controlled value of the textarea |
+| `onChange` | `(value: string) => void` | - | Callback when the value changes |
+| `textareaClassName` | `string` | - | Additional CSS classes for the textarea element |
+| `labelClassName` | `string` | - | Additional CSS classes for the label element |
+
+### Available Variants
+
+- Basic: `'clean'`, `'glowBorder'`, `'neonGlow'`
+- Expansion: `'expandable'`, `'smoothExpand'`
+- Features: `'characterCount'`, `'lineHighlight'`, `'syntaxHighlight'`
+- Effects: `'particleField'`, `'wave'`, `'spotlight'`, `'liquid'`, `'cosmic'`, `'hologram'`
+- Interactions: `'elastic'`, `'rippleEffect'`, `'gradientBorder'`
+
+## Customization
+
+### Custom Styling
+
+You can customize the appearance using CSS classes:
+
+```tsx
+<AnimatedTextarea
+  placeholder="Custom styled..."
+  variant="clean"
+  textareaClassName="border-purple-500 focus:border-purple-700"
+  labelClassName="text-purple-600"
+  value={value}
+  onChange={setValue}
+/>
+```
+
+### Advanced Example with Markdown Preview
+
+```tsx
+function MarkdownEditor() {
+  const [content, setContent] = useState('');
+  const [preview, setPreview] = useState('');
+  
+  useEffect(() => {
+    // Convert markdown to HTML (using your preferred library)
+    const html = convertMarkdownToHtml(content);
+    setPreview(html);
+  }, [content]);
+
+  return (
+    <div className="grid grid-cols-2 gap-4">
+      <AnimatedTextarea
+        placeholder="Write markdown here..."
+        variant="syntaxHighlight"
+        value={content}
+        onChange={setContent}
+        textareaClassName="font-mono"
+      />
+      <div
+        className="p-4 border rounded-md"
+        dangerouslySetInnerHTML={{ __html: preview }}
+      />
+    </div>
+  );
+}
+```

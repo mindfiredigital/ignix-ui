@@ -1,66 +1,338 @@
-# Input 
-## **Overview**
-
-`AnimatedInput` is a React component that enhances standard text inputs with a wide variety of animation styles using Framer Motion. This component is particularly useful for modern UI/UX experiences that require playful, creative, or polished input transitions.
-
+---
+sidebar_position: 4
+title: Input
+description: A collection of animated input components with various effects and styles.
 ---
 
-## **Props**
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { AnimatedInput } from '@site/src/components/UI/input';
+import { useState } from 'react';
+import { InputBasicDemo, InputAdvancedDemo } from '@site/src/components/UI/input/InputDemo';
 
-| Prop              | Type                          | Description                                                                 |
-| ------------------ | ----------------------------- | --------------------------------------------------------------------------- |
-| `placeholder`     | `string`                      | The label text that floats above the input when focused or filled.          |
-| `variant`         | `string`                      | Defines the animation style to be applied. Must match a key in `inputVariants`. |
-| `inputClassName`  | `string` *(optional)*         | Additional CSS classes for the input element.                               |
-| `labelClassName`  | `string` *(optional)*         | Additional CSS classes for the label element.                               |
-| `value`           | `string`                      | The input's current value (controlled component).                           |
-| `onChange`        | `(value: string) => void`     | Callback function invoked when the input value changes.                     |
-| `onFocus`         | `() => void` *(optional)*     | Callback function when input receives focus.                                |
-| `onBlur`          | `() => void` *(optional)*     | Callback function when input loses focus.                                   |
 
----
+## Overview
 
-## **Variants**
+The AnimatedInput component provides a rich collection of animated input fields with various effects and styles. Each variant offers unique animations for both the input field and its label, creating engaging user interactions.
 
-`AnimatedInput` supports a rich collection of animation styles. Some examples include:
+## Preview
 
-- `clean`: Simple float label and border highlight.
-- `borderBeam`: SVG border animation using stroke path animation.
-- `particles`: Floating particles above the input on focus.
-- `particleField`: Dynamic, random particles floating in a field.
-- `underline`, `floating`, `shimmer`, `glow`, `wave`, `bounce`, `typewriter`, `glitch`, and more.
+<Tabs defaultValue="preview">
+  <TabItem value="preview" label="Preview" default>
+    <div className="p-4 border rounded-lg space-y-4">
+      <InputBasicDemo />
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    import { AnimatedInput } from '@mindfiredigital/ignix-ui';
+    import { useState } from 'react';
 
-Each variant defines its own `label`, `input`, and optionally `extra` animation definitions using Framer Motion Variants.
+    function InputDemo() {
+      const [value, setValue] = useState('');
+      
+      return (
+        <AnimatedInput
+          placeholder="Type something..."
+          variant="clean"
+          value={value}
+          onChange={setValue}
+        />
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
 
----
+## Installation
 
-## **Internal Features**
+<Tabs>
+  <TabItem value="npm" label="npm" default>
+    ```bash
+    npx @mindfiredigital/ignix-ui add input
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+    ```bash
+    yarn @mindfiredigital/ignix-ui add input
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm @mindfiredigital/ignix-ui add input
+    ```
+  </TabItem>
+</Tabs>
 
-### **1. Focus Handling**
+## Usage
 
-- Internally manages `isFocused` state.
-- Applies animation when input is either focused or has a non-empty value.
+Import the component:
 
-### **2. Dynamic Effects**
+```tsx
+import { AnimatedInput } from '@mindfiredigital/ignix-ui';
+```
 
-- For `particleField`, uses DOM manipulation and `setInterval` to create randomized particles.
-- For `borderBeam`, uses an SVG rectangle with animated stroke length.
-- For `particles`, uses mapped motion divs for floating effect.
+### Basic Usage
 
-### **3. Motion Controls**
+```tsx
+function BasicInput() {
+  const [value, setValue] = useState('');
+  
+  return (
+    <AnimatedInput
+      placeholder="Enter your name"
+      variant="clean"
+      value={value}
+      onChange={(newValue) => setValue(newValue)}
+    />
+  );
+}
+```
 
-- Uses `<motion.label>` and `<motion.input>` for animating label and input fields.
-- Applies `variants` and `initial/animate` states dynamically.
+## Variants
 
----
+The AnimatedInput component comes with numerous animation variants to enhance user interaction.
 
-## **Styling**
+### Simple Variants
 
-- Tailwind CSS utility classes are used for base styles.
-- Supports full customization through `inputClassName` and `labelClassName`.
-- Includes `perspective` styling for 3D animation support (e.g., flip, rotate).
+<Tabs>
+  <TabItem value="simple-preview" label="Preview" default>
+    <div className="p-4 border rounded-lg space-y-4">
+      {() => {
+        const [values, setValues] = useState({clean: '', underline: '', floating: ''});
+        return (
+          <>
+            <AnimatedInput
+              placeholder="Clean Input"
+              variant="clean"
+              value={values.clean}
+              onChange={(v) => setValues(prev => ({...prev, clean: v}))}
+            />
+            <AnimatedInput
+              placeholder="Underline Input"
+              variant="underline"
+              value={values.underline}
+              onChange={(v) => setValues(prev => ({...prev, underline: v}))}
+            />
+            <AnimatedInput
+              placeholder="Floating Input"
+              variant="floating"
+              value={values.floating}
+              onChange={(v) => setValues(prev => ({...prev, floating: v}))}
+            />
+          </>
+        );
+      }}
+    </div>
+  </TabItem>
+  <TabItem value="simple-code" label="Code">
+    ```tsx
+    <AnimatedInput
+      placeholder="Clean Input"
+      variant="clean"
+      value={value}
+      onChange={setValue}
+    />
 
----
+    <AnimatedInput
+      placeholder="Underline Input"
+      variant="underline"
+      value={value}
+      onChange={setValue}
+    />
 
-## **Example Usage**
+    <AnimatedInput
+      placeholder="Floating Input"
+      variant="floating"
+      value={value}
+      onChange={setValue}
+    />
+    ```
+  </TabItem>
+</Tabs>
 
+### Advanced Animations
+
+<Tabs>
+  <TabItem value="advanced-preview" label="Preview" default>
+    <div className="p-4 border rounded-lg space-y-4">
+      <InputAdvancedDemo />
+    </div>
+  </TabItem>
+  <TabItem value="advanced-code" label="Code">
+    ```tsx
+    <AnimatedInput
+      placeholder="Border Beam"
+      variant="borderBeam"
+      value={value}
+      onChange={setValue}
+    />
+
+    <AnimatedInput
+      placeholder="Neon Effect"
+      variant="neon"
+      value={value}
+      onChange={setValue}
+    />
+
+    <AnimatedInput
+      placeholder="Particles"
+      variant="particles"
+      value={value}
+      onChange={setValue}
+    />
+
+    <AnimatedInput
+      placeholder="Cosmic"
+      variant="cosmic"
+      value={value}
+      onChange={setValue}
+    />
+    ```
+  </TabItem>
+</Tabs>
+
+### Material Design Inspired
+
+<Tabs>
+  <TabItem value="material-preview" label="Preview" default>
+    <div className="p-4 border rounded-lg space-y-4">
+      {() => {
+        const [values, setValues] = useState({
+          materialFloat: '',
+          gradientBorder: ''
+        });
+        return (
+          <>
+            <AnimatedInput
+              placeholder="Material Float"
+              variant="materialFloat"
+              value={values.materialFloat}
+              onChange={(v) => setValues(prev => ({...prev, materialFloat: v}))}
+            />
+            <AnimatedInput
+              placeholder="Gradient Border"
+              variant="gradientBorder"
+              value={values.gradientBorder}
+              onChange={(v) => setValues(prev => ({...prev, gradientBorder: v}))}
+            />
+          </>
+        );
+      }}
+    </div>
+  </TabItem>
+  <TabItem value="material-code" label="Code">
+    ```tsx
+    <AnimatedInput
+      placeholder="Material Float"
+      variant="materialFloat"
+      value={value}
+      onChange={setValue}
+    />
+
+    <AnimatedInput
+      placeholder="Gradient Border"
+      variant="gradientBorder"
+      value={value}
+      onChange={setValue}
+    />
+    ```
+  </TabItem>
+</Tabs>
+
+## Available Variants
+
+Here's a complete list of available animation variants:
+
+- `clean` - Simple clean animation
+- `underline` - Underline animation
+- `floating` - Floating label with spring animation
+- `borderGlow` - Glowing border effect
+- `shimmer` - Shimmering animation
+- `particles` - Particle effect animation
+- `slide` - Sliding animation
+- `scale` - Scaling animation
+- `rotate` - Rotation animation
+- `bounce` - Bouncing animation
+- `elastic` - Elastic animation
+- `glow` - Glowing effect
+- `shake` - Shaking animation
+- `wave` - Wave animation
+- `typewriter` - Typewriter effect
+- `magnetic` - Magnetic effect
+- `pulse` - Pulsing animation
+- `flip` - Flip animation
+- `morph` - Morphing animation
+- `spotlight` - Spotlight effect
+- `liquid` - Liquid animation
+- `neon` - Neon glow effect
+- `origami` - Origami folding effect
+- `glitch` - Glitch effect
+- `hologram` - Hologram effect
+- `cosmic` - Cosmic animation
+- `borderBeam` - Moving border beam
+- `gradientBorder` - Gradient border animation
+- `ripple` - Ripple effect
+- `materialFloat` - Material design floating label
+- `neonPulse` - Pulsing neon effect
+- `typewriterReveal` - Typewriter reveal animation
+- `morphing` - Shape morphing animation
+- `liquidBorder` - Liquid border effect
+- `particleField` - Particle field effect
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `placeholder` | `string` | - | Placeholder text for the input |
+| `variant` | `string` | - | Animation variant to use |
+| `value` | `string` | - | Current value of the input |
+| `type` | `string` | `'text'` | Type of the input field |
+| `onChange` | `(value: string) => void` | - | Called when input value changes |
+| `inputClassName` | `string` | - | Additional CSS classes for the input element |
+| `labelClassName` | `string` | - | Additional CSS classes for the label element |
+| `onFocus` | `() => void` | - | Called when input receives focus |
+| `onBlur` | `() => void` | - | Called when input loses focus |
+
+## Customization
+
+### Custom Styling
+
+You can customize the appearance using the provided className props:
+
+```tsx
+<AnimatedInput
+  placeholder="Custom Styled"
+  variant="clean"
+  value={value}
+  onChange={setValue}
+  inputClassName="border-blue-500 focus:ring-2 ring-blue-300"
+  labelClassName="text-blue-600"
+/>
+```
+
+### Combining with Form Libraries
+
+The AnimatedInput component can be easily integrated with form libraries like Formik or React Hook Form:
+
+```tsx
+import { useForm } from 'react-hook-form';
+
+function FormInput() {
+  const { register, watch } = useForm();
+  const value = watch('fieldName');
+
+  return (
+    <AnimatedInput
+      placeholder="Form Input"
+      variant="materialFloat"
+      value={value}
+      onChange={(newValue) => {
+        register('fieldName').onChange({
+          target: { value: newValue, name: 'fieldName' },
+        });
+      }}
+    />
+  );
+}
+```
