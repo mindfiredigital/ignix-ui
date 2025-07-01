@@ -65,7 +65,7 @@ Description of the component.
 ## Usage
 
 \`\`\`tsx
-import { ComponentName } from '@animate-ui/registry';
+import { ComponentName } from '@ignix-ui/registry';
 
 <ComponentName>Content</ComponentName>
 \`\`\`

@@ -4,154 +4,50 @@
  * work well with Docusaurus.
  */
 
-@import "tailwindcss";
+@import 'tailwindcss';
 /* Custom styles for the Docusaurus theme */
 
+:root {
+  --ifm-color-primary: hsl(var(--primary));
+  --ifm-color-primary: #99000d;
+  --ifm-color-primary-dark: #8a000c;
+  --ifm-color-primary-darker: #82000b;
+  --ifm-color-primary-darkest: #6b0009;
+  --ifm-color-primary-light: #a8000e;
+  --ifm-color-primary-lighter: #b0000f;
+  --ifm-color-primary-lightest: #c70011;
+}
 
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
+[data-theme='dark'] {
+  --ifm-color-primary: #fb6a4a;
+  --ifm-color-primary-dark: #fa502a;
+  --ifm-color-primary-darker: #fa431a;
+  --ifm-color-primary-darkest: #df2c05;
+  --ifm-color-primary-light: #fc846a;
+  --ifm-color-primary-lighter: #fc917a;
+  --ifm-color-primary-lightest: #fdb9a9;
+}
 
-    --ifm-color-primary: #99000d;
-    --ifm-color-primary-dark: #8a000c;
-    --ifm-color-primary-darker: #82000b;
-    --ifm-color-primary-darkest: #6b0009;
-    --ifm-color-primary-light: #a8000e;
-    --ifm-color-primary-lighter: #b0000f;
-    --ifm-color-primary-lightest: #c70011;
-    
-    --ifm-background-color: hsl(var(--background));
-    --ifm-font-color-base: hsl(var(--foreground));
-    --ifm-heading-color: hsl(var(--foreground));
-    --ifm-code-font-size: 95%;
-    --docusaurus-highlighted-code-line-bg: hsla(var(--accent), 0.7);
-  }
+.navbar {
+  background: hsl(var(--background) / 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom-color: hsl(var(--border));
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
 
-  [data-theme='dark'] {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: #fc9272;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    
-    --docusaurus-highlighted-code-line-bg: hsla(var(--accent), 0.5);
-    --ifm-color-primary: #fb6a4a;
-    --ifm-color-primary-dark: #fa502a;
-    --ifm-color-primary-darker: #fa431a;
-    --ifm-color-primary-darkest: #df2c05;
-    --ifm-color-primary-light: #fc846a;
-    --ifm-color-primary-lighter: #fc917a;
-    --ifm-color-primary-lightest: #fdb9a9;
-  }
-
-
-@layer base {
-  * {
-    border: var(--border);
-  }
-  body {
-    background: var(--background);
-    color: var(--foreground);
-    --primary: hsl(var(--primary));
-    --primary-foreground: hsl(var(--primary-foreground));
-    --secondary: hsl(var(--secondary));
-    --secondary-foreground: hsl(var(--secondary-foreground));
-    --muted: hsl(var(--muted));
-    --muted-foreground: hsl(var(--muted-foreground));
-    --accent: hsl(var(--accent));
-    --accent-foreground: hsl(var(--accent-foreground));
-    --destructive: hsl(var(--destructive));
-    --destructive-foreground: hsl(var(--destructive-foreground));
-    --border: hsl(var(--border));
-    --input: hsl(var(--input));
-    --ring: hsl(var(--ring));
-    --radius: var(--radius);
+  @media (min-width: 1024px) {
+    padding: 2rem 2rem;
   }
 }
 
-/* Custom animations */
-.hero__title {
-  animation: fadeInDown 1s ease-out;
+.footer {
+  background: transparent;
+  border-top-color: hsl(var(--border));
 }
-
-.hero__subtitle {
-  animation: fadeInUp 1s ease-out;
-}
-
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Component showcase animations */
-.component-demo {
-  transition: transform 0.3s ease-in-out;
-}
-
-.component-demo:hover {
-  transform: translateY(-4px);
-}
-
-/* Modern card styling */
-.card {
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
-} 
 
 .header--github-link {
   width: 32px;
@@ -166,92 +62,25 @@
   background: var(--ifm-color-emphasis-200);
 }
 
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumbs__item {
+  display: flex;
+  align-items: center;
+}
+
 .header--github-link:before {
   content: '';
   height: 100%;
   display: block;
-  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12'/%3E%3C/svg%3E") no-repeat;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12'/%3E%3C/svg%3E")
+    no-repeat;
 }
 
 html[data-theme='dark'] .header--github-link:before {
-  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='white' d='M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12'/%3E%3C/svg%3E") no-repeat;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='white' d='M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12'/%3E%3C/svg%3E")
+    no-repeat;
 }
-
-
-
-/**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well with Docusaurus.
- */
-
- @import "tailwindcss";
- /* Custom styles for the Docusaurus theme */
- 
- 
- :root {
-   --ifm-color-primary: hsl(var(--primary));
-   --ifm-color-primary: #99000d;
-   --ifm-color-primary-dark: #8a000c;
-   --ifm-color-primary-darker: #82000b;
-   --ifm-color-primary-darkest: #6b0009;
-   --ifm-color-primary-light: #a8000e;
-   --ifm-color-primary-lighter: #b0000f;
-   --ifm-color-primary-lightest: #c70011;
- }
- 
- [data-theme='dark'] {
-   --ifm-color-primary: #fb6a4a;
-   --ifm-color-primary-dark: #fa502a;
-   --ifm-color-primary-darker: #fa431a;
-   --ifm-color-primary-darkest: #df2c05;
-   --ifm-color-primary-light: #fc846a;
-   --ifm-color-primary-lighter: #fc917a;
-   --ifm-color-primary-lightest: #fdb9a9;
- }
- 
- .navbar {
-   background: hsl(var(--background) / 0.1);
-   backdrop-filter: blur(10px);
-   -webkit-backdrop-filter: blur(10px);
-   border-bottom-color: hsl(var(--border));
-   width: 100%;
-   display: flex;
-   justify-content: center;
-   align-items: center;
-   margin: 0 auto;
-
-  
-  @media (min-width: 1024px) {
-    max-width: 80%;
-  }
- }
- 
- .footer {
-   background: transparent;
-   border-top-color: hsl(var(--border));
- }
- 
- .header--github-link {
-   width: 32px;
-   height: 32px;
-   padding: 6px;
-   margin-right: 4px;
-   border-radius: 50%;
-   transition: background var(--ifm-transition-fast);
- }
- 
- .header--github-link:hover {
-   background: var(--ifm-color-emphasis-200);
- }
- 
- .header--github-link:before {
-   content: '';
-   height: 100%;
-   display: block;
-   background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12'/%3E%3C/svg%3E") no-repeat;
- }
- 
- html[data-theme='dark'] .header--github-link:before {
-   background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='white' d='M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12'/%3E%3C/svg%3E") no-repeat;
- }

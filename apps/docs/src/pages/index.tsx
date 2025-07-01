@@ -178,11 +178,7 @@ function HomepageHeader() {
               </div>
 
               <div className="text-left font-mono text-sm">
-                <div className="text-gray-500">// Import and use</div>
-                <div className="text-red-400">
-                  import <span className="text-white">{'{ Button }'}</span> from{' '}
-                  <span className="text-green-400">'@mindfiredigital/ignix-ui'</span>
-                </div>
+                <div className="text-gray-500">// Use Button Directly</div>
                 <div className="mt-2">
                   <span className="text-blue-400">{'<Button'}</span>
                   <span className="text-yellow-400"> variant</span>
