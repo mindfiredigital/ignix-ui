@@ -166,7 +166,7 @@ const ComponentShowcase = () => {
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-red-500/5 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
       </div>
 
-      <div className="max-w-7xl mx-auto relative z-10">
+      <div className="max-w-7xl mx-auto relative z-5">
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-red-500/20 to-red-500/20 border border-red-500/30 rounded-full px-4 py-2 mb-6 animate-fade-up">
             <Layers className="h-4 w-4 text-red-400" />

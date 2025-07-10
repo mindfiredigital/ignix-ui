@@ -1,4 +1,4 @@
-# Contributing to AnimateUI
+# Contributing to Ignix UI
 
 We welcome and appreciate your contribution to Ignix UI. These guidelines will help ensure a smooth and collaborative process for everyone.
 

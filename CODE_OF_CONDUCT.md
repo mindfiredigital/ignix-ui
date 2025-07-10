@@ -1,4 +1,4 @@
-# Code of Conduct - AnimateUI
+# Code of Conduct - Ignix UI
 
 ## Our Pledge
 

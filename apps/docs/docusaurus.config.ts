@@ -5,8 +5,8 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: 'Ignix UI',
   tagline: 'Beautiful, animated UI components for modern web applications',
-  favicon: 'img/favicon.ico',
-  url: 'https://your-docusaurus-site.com',
+  favicon: 'img/logo.png',
+  url: 'https://ignix-ui.com',
   baseUrl: '/ignix-ui/',
   organizationName: 'mindfiredigital',
   projectName: 'ignix-ui',
@@ -23,7 +23,7 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          editUrl: 'https://github.com/mindfiredigital/ignix-ui/tree/main/apps/docs/',
+          editUrl: 'https://mindfiredigital.github.io/ignix-ui/',
         },
         blog: false,
         theme: {
@@ -52,6 +52,13 @@ const config: Config = {
           sidebarId: 'tutorialSidebar',
           position: 'left',
           label: 'Documentation',
+        },
+        {
+          type: 'docsVersionDropdown',
+          position: 'right',
+          versions: {
+            '1.0.0': {label: 'Version 1.0'},
+          },
         },
         {
           href: 'https://github.com/mindfiredigital/ignix-ui',

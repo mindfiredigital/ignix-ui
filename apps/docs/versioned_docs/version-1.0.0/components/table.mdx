@@ -1,0 +1,162 @@
+---
+sidebar_position: 16
+title: Table
+description: A flexible and customizable table component with sorting and pagination support.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { useState } from 'react';
+import { Table } from '@site/src/components/UI/table';
+import TableExample from '@site/src/components/Examples/TableExample';
+
+## Overview
+
+The Table component provides a way to display data in a structured format with support for sorting, pagination, and customizable styling. It's built on top of Radix UI's table primitives for accessibility and performance.
+
+## Preview
+
+<Tabs defaultValue="preview" groupId="preview">
+  <TabItem value="preview" label="Preview" default>
+    <div className="p-4 border rounded-lg ">
+      <TableExample />
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    import { useState } from 'react';
+    import { Table } from '@mindfiredigital/ignix-ui';
+
+    function TableExample() {
+      const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'asc' });
+      const [currentPage, setCurrentPage] = useState(1);
+      const totalPages = 3;
+
+      const data = [
+        { id: 1, name: 'John Doe', email: 'john@example.com', status: 'Active' },
+        { id: 2, name: 'Jane Smith', email: 'jane@example.com', status: 'Inactive' },
+        { id: 3, name: 'Bob Johnson', email: 'bob@example.com', status: 'Active' },
+      ];
+
+      const handleSort = (key, direction) => {
+        setSortConfig({ key, direction });
+        // Implement your sorting logic here
+      };
+
+      const handlePageChange = (page) => {
+        setCurrentPage(page);
+        // Fetch or update data for the new page
+      };
+
+      return (
+        <Table
+          headings={[
+            { label: 'Name', key: 'name', sort: 'asc' },
+            { label: 'Email', key: 'email', sort: 'asc' },
+            { label: 'Status', key: 'status', sort: 'asc' },
+          ]}
+          data={data}
+          applySort={handleSort}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+## Installation
+
+<Tabs>
+  <TabItem value="npm" label="npm" default>
+    ```bash
+    npx @mindfiredigital/ignix-ui add table
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+    ```bash
+    yarn @mindfiredigital/ignix-ui add table
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm @mindfiredigital/ignix-ui add table
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+### Basic Usage
+
+```tsx
+import { Table } from '@mindfiredigital/ignix-ui';
+
+function MyTable() {
+  const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'asc' });
+  
+  const data = [
+    { id: 1, name: 'John Doe', email: 'john@example.com' },
+    { id: 2, name: 'Jane Smith', email: 'jane@example.com' },
+  ];
+
+  const handleSort = (key, direction) => {
+    setSortConfig({ key, direction });
+    // Implement sorting logic
+  };
+
+  return (
+    <Table
+      headings={[
+        { label: 'Name', key: 'name', sort: 'asc' },
+        { label: 'Email', key: 'email', sort: 'asc' },
+      ]}
+      data={data}
+      applySort={handleSort}
+    />
+  );
+}
+```
+
+### With Pagination
+
+```tsx
+function PaginatedTable() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = 5;
+
+  // ... rest of your component code ...
+
+  return (
+    <Table
+      // ... other props ...
+      currentPage={currentPage}
+      totalPages={totalPages}
+      onPageChange={setCurrentPage}
+    />
+  );
+}
+```
+
+### Custom Styling
+
+```tsx
+<Table
+  // ... other props ...
+  variant="ghost"
+  accentColor="blue"
+  radius="large"
+  className="custom-table"
+  style={{ '--accent-9': 'var(--blue-9)' }}
+/>
+```
+
+## Best Practices
+
+- Always provide a unique `key` for each column in the `headings` array
+- Implement proper error handling for pagination
+- Use the `applySort` callback to handle sorting logic in your parent component
+- Consider using the `variant` prop to match your application's design system
+- For large datasets, implement virtualization for better performance

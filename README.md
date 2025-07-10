@@ -1,4 +1,4 @@
-# Animated UI Kit
+# Ignix UI
 
 A modern, high-performance animated component library built with Radix UI, managed through a pnpm monorepo structure with Turborepo for optimal development experience.
 
@@ -52,7 +52,7 @@ This monorepo contains several key packages and applications that work together 
 ## Project Structure
 
 ```
-animate-ui/
+ignix-ui/
 ├── apps/
 │   ├── docs/                 # Docusaurus documentation site
 │   │   ├── docs/            # Documentation content
@@ -96,8 +96,8 @@ animate-ui/
 
 2. **Installation**:
    ```bash
-   git clone https://github.com/yourusername/animate-ui
-   cd animate-ui
+   git clone https://github.com/mindfiredigital/ignix-ui
+   cd ignix-ui
    pnpm install
    pnpm build
    ```
@@ -197,8 +197,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Support
 
 - 📚 [Documentation](https://your-docs-url.com)
-- 🐛 [Issue Tracker](https://github.com/yourusername/animate-ui/issues)
-- 💬 [Discussions](https://github.com/yourusername/animate-ui/discussions)
+- 🐛 [Issue Tracker](https://github.com/mindfiredigital/ignix-ui/issues)
+- 💬 [Discussions](https://github.com/mindfiredigital/ignix-ui/discussions)
 
 ## Features
 
@@ -214,7 +214,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ```bash
 # Clone the repository
-git clone https://github.com/lakinmindfire/animate-ui
+git clone https://github.com/mindfiredigital/ignix-ui
 
 # Install dependencies
 pnpm install
