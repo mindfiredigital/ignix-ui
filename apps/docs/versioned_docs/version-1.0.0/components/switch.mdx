@@ -18,27 +18,17 @@ The Switch component is a toggleable form control built on top of Radix UI's Swi
   <TabItem value="preview" label="Preview" default>
     <div className="w-full p-8 space-y-8 border rounded-lg">
       <div className="p-6 rounded-lg">
-        <div className="flex items-center gap-4">
-          <Switch defaultChecked />
           <Switch />
-          <Switch variant="large" defaultChecked />
-          <Switch variant="small" defaultChecked />
-        </div>
       </div>
     </div>
   </TabItem>
   <TabItem value="code" label="Code">
     ```tsx
-    import { Switch } from '@mindfiredigital/ignix-ui';
+    import { Switch } from './components/ui';
 
     function SwitchDemo() {
       return (
-        <div className="flex items-center gap-4">
-          <Switch defaultChecked />
           <Switch />
-          <Switch variant="large" defaultChecked />
-          <Switch variant="small" defaultChecked />
-        </div>
       );
     }
     ```
@@ -70,7 +60,7 @@ The Switch component is a toggleable form control built on top of Radix UI's Swi
 Import the component:
 
 ```tsx
-import { Switch } from '@mindfiredigital/ignix-ui';
+import { Switch } from './components/ui';
 ```
 
 ### Basic Usage

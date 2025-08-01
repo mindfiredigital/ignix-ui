@@ -48,9 +48,9 @@ const DialogBoxDemo = () => {
           variants={dialogAnimations}
           selectedVariant={animation}
           onSelectVariant={setAnimation}
-          type="animation"
+          type="Animation"
         />
-        <VariantSelector variants={dialogTypes} selectedVariant={type} onSelectVariant={setType} type="type" />
+        <VariantSelector variants={dialogTypes} selectedVariant={type} onSelectVariant={setType} type="Type" />
       </div>
       <Tabs>
         <TabItem value="preview" label="Preview">

@@ -10,7 +10,7 @@ interface DialogDemoProps {
 
 const DialogDemo = ({ 
   type = 'alert', 
-  animation = 'popIn', 
+  animation = 'glassBlur', 
   customContent = false 
 }: DialogDemoProps) => {
     const { openDialog } = useDialog();

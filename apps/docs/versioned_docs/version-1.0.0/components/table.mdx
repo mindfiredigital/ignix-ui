@@ -6,8 +6,7 @@ description: A flexible and customizable table component with sorting and pagina
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import { useState } from 'react';
-import { Table } from '@site/src/components/UI/table';
+import TableDemo from '@site/src/components/Demo/TableDemo';
 import TableExample from '@site/src/components/Examples/TableExample';
 
 ## Overview
@@ -25,7 +24,7 @@ The Table component provides a way to display data in a structured format with s
   <TabItem value="code" label="Code">
     ```tsx
     import { useState } from 'react';
-    import { Table } from '@mindfiredigital/ignix-ui';
+    import { Table } from './components/ui';
 
     function TableExample() {
       const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'asc' });
@@ -67,6 +66,7 @@ The Table component provides a way to display data in a structured format with s
   </TabItem>
 </Tabs>
 
+
 ## Installation
 
 <Tabs>
@@ -92,7 +92,7 @@ The Table component provides a way to display data in a structured format with s
 ### Basic Usage
 
 ```tsx
-import { Table } from '@mindfiredigital/ignix-ui';
+import { Table } from './components/ui';
 
 function MyTable() {
   const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'asc' });
@@ -140,23 +140,6 @@ function PaginatedTable() {
 }
 ```
 
-### Custom Styling
+### Variants
 
-```tsx
-<Table
-  // ... other props ...
-  variant="ghost"
-  accentColor="blue"
-  radius="large"
-  className="custom-table"
-  style={{ '--accent-9': 'var(--blue-9)' }}
-/>
-```
-
-## Best Practices
-
-- Always provide a unique `key` for each column in the `headings` array
-- Implement proper error handling for pagination
-- Use the `applySort` callback to handle sorting logic in your parent component
-- Consider using the `variant` prop to match your application's design system
-- For large datasets, implement virtualization for better performance
+<TableDemo />

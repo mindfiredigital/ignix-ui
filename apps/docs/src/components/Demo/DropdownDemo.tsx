@@ -28,14 +28,14 @@ const DropdownDemo = () => {
 
   return (
     <div className="flex flex-col space-y-4 mb-8">
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-wrap gap-4 sm:justify-end justify-start">
         <VariantSelector
           variants={dropdownAnimations}
           selectedVariant={animation}
           onSelectVariant={setAnimation}
-          type="animation"
+          type="Animation"
         />
-        <VariantSelector variants={dropdownBgs} selectedVariant={bg} onSelectVariant={setBg} type="bg" />
+        <VariantSelector variants={dropdownBgs} selectedVariant={bg} onSelectVariant={setBg} type="Bg" />
       </div>
       <Tabs>
         <TabItem value="preview" label="Preview">

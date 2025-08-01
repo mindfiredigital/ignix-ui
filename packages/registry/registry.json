@@ -227,7 +227,18 @@
       "dependencies": ["@radix-ui/themes", "@radix-ui/react-icons", "react-responsive"],
       "files": {
         "main": {
-          "path": "components/pagination/index.tsx",
+          "path": "components/table/pagination/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "card": {
+      "name": "Card",
+      "description": "An animated card component with different variants",
+      "dependencies": ["framer-motion", "lucide-react", "class-variance-authority"],
+      "files": {
+        "main": {
+          "path": "components/card/index.tsx",
           "type": "component"
         }
       }

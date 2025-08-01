@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, HTMLMotionProps } from 'framer-motion';
+import { motion } from 'framer-motion';
 import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
@@ -10,7 +10,8 @@ export interface ButtonProps
   extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onDrag'>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
-  animationVariant?: keyof typeof animations;
+  animationVariant?: string;
+  children?: React.ReactNode;
 }
 
 const buttonVariants = cva(
@@ -18,20 +19,20 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'px-4 py-2 bg-blue-500 text-white hover:bg-blue-600',
-        primary: 'px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700',
-        secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300',
-        success: 'bg-green-500 text-white hover:bg-green-600',
-        warning: 'bg-yellow-500 text-white hover:bg-yellow-600',
-        danger: 'bg-red-500 text-white hover:bg-red-600',
-        outline: 'border border-gray-500 bg-white hover:border-gray-700',
-        ghost: 'hover:bg-gray-100 text-gray-900',
-        link: 'text-blue-600 underline-offset-4 hover:underline',
-        subtle: 'bg-gray-100 text-gray-900 hover:bg-gray-200',
-        elevated: 'bg-white shadow-md hover:shadow-lg',
+        default: 'px-4 py-2 bg-primary text-white hover:bg-primary/90',
+        primary: 'px-4 py-2 bg-secondary text-secondary-foreground hover:bg-secondary/90',
+        secondary: 'bg-muted text-muted-foreground hover:bg-muted/90',
+        success: 'bg-success text-success-foreground hover:bg-success/90',
+        warning: 'bg-warning text-warning-foreground hover:bg-warning/90',
+        danger: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+        outline: 'border border-input bg-transparent hover:bg-accent hover:text-accent-foreground',
+        ghost: 'hover:bg-accent hover:text-accent-foreground',
+        link: 'text-primary underline-offset-4 hover:underline',
+        subtle: 'bg-accent text-accent-foreground hover:bg-accent/80',
+        elevated: 'bg-background shadow-md hover:shadow-lg',
         glass: 'bg-black/10 backdrop-blur-lg text-white hover:bg-black/20',
         neon: 'bg-pink-500 text-white shadow-lg shadow-pink-500/50 hover:bg-pink-600',
-        pill: 'rounded-full px-6 py-2 bg-purple-500 text-white hover:bg-purple-600',
+        pill: 'rounded-full px-6 py-2 bg-pill text-white hover:bg-pill/90',
         none: '',
       },
       size: {
@@ -307,46 +308,66 @@ const ninaBeforeVariants = {
 };
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, animationVariant, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, animationVariant, children, ...props }, ref) => {
     const animationProps = animationVariant ? animations[animationVariant] || {} : {};
 
     const slotProps = asChild ? { ...props } : {};
     const motionProps = !asChild ? { ...props, ...animationProps } : {};
 
-    return asChild ? (
-      <Slot className={cn(buttonVariants({ variant, size }), className)} ref={ref} {...slotProps} />
-    ) : animationVariant === 'nina' ? (
-      <>
-        <motion.button
-          className={cn(buttonVariants({ variant, size }), className)}
-          ref={ref}
-          {...(motionProps as HTMLMotionProps<'button'>)}
-          initial="initial"
-          whileHover="hover"
-        >
+    const renderNinaVariant = () => {
+      const content = typeof children === 'string' ? (
+        <>
           <motion.span
             className="absolute inset-0 flex items-center justify-center"
             variants={ninaBeforeVariants}
           >
-            {props.children}
+            {children}
           </motion.span>
           <motion.div className="relative flex gap-1" initial="initial" whileHover="hover">
-            {props.children &&
-              typeof props.children === 'string' &&
-              props.children.split('').map((char, i) => (
-                <motion.span key={i} custom={i} variants={ninaTextVariants}>
-                  {char}
-                </motion.span>
-              ))}
+            {children.split('').map((char, i) => (
+              <motion.span key={i} custom={i} variants={ninaTextVariants}>
+                {char}
+              </motion.span>
+            ))}
           </motion.div>
+        </>
+      ) : (
+        <span>{children}</span>
+      );
+
+      return (
+        <motion.button
+          className={cn(buttonVariants({ variant, size }), className, 'relative overflow-hidden')}
+          ref={ref}
+          {...(motionProps as any)}
+          initial="initial"
+          whileHover="hover"
+        >
+          {content}
         </motion.button>
-      </>
-    ) : (
+      );
+    };
+
+    if (asChild) {
+      return (
+        <Slot className={cn(buttonVariants({ variant, size }), className)} ref={ref} {...slotProps}>
+          {children}
+        </Slot>
+      );
+    }
+
+    if (animationVariant === 'nina') {
+      return renderNinaVariant();
+    }
+
+    return (
       <motion.button
         className={cn(buttonVariants({ variant, size }), className)}
         ref={ref}
-        {...(motionProps as HTMLMotionProps<'button'>)}
-      />
+        {...(motionProps as any)}
+      >
+        {children}
+      </motion.button>
     );
   }
 );

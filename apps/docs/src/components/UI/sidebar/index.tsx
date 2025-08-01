@@ -35,7 +35,7 @@ const sidebarVariants = cva("absolute h-full overflow-hidden transition-all", {
       false: "w-20 h-full",
     },
     variant: {
-      default: "bg-gray-900 text-white",
+      default: "bg-background text-foreground",
       dark: "bg-black text-white",
       light: "bg-white text-gray-900 border-r",
       glass: "bg-white/10 backdrop-blur-lg text-white",

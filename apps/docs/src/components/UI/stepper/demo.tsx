@@ -18,14 +18,14 @@ const StepperDemo = () => {
           <button
             onClick={() => setStep(Math.max(0, step - 1))}
             disabled={step === 0}
-            className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+            className="px-4 py-2 bg-primary text-white rounded disabled:opacity-50"
           >
             Previous
           </button>
           <button
             onClick={() => setStep(Math.min(2, step + 1))}
             disabled={step === 2}
-            className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+            className="px-4 py-2 bg-primary text-white rounded disabled:opacity-50"
           >
             Next
           </button>

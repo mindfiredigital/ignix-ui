@@ -16,14 +16,15 @@ const ToastDemo = () => {
   const toast = useToast();
   return (
       <Button
-          variant="primary"
+          variant="default"
           size="lg"
           onClick={() => toast.addToast({
-              message: "Notification from Ignix UI!",
-              variant: 'info',
+              message: "Hello from Ignix UI!",
+              variant: 'error',
               animation: 'slide',
               icon: <InfoCircledIcon className="w-5 h-5" />
           })}
+          className='m-12'
       >
           Show Toast
       </Button>
@@ -42,7 +43,7 @@ const ComponentShowcase = () => {
       description: "Elegant and adaptive navigation",
       size: 'large',
       demo: (
-        <div className="w-full h-full relative overflow-hidden rounded-lg bg-secondary/50">
+        <div className="w-full min-h-[400px] relative overflow-hidden rounded-lg">
         <Sidebar
             links={[
                 { label: 'Home', href: '#', icon: Home },
@@ -50,7 +51,7 @@ const ComponentShowcase = () => {
                 { label: 'Settings', href: '#', icon: Settings },
             ]}
             brandName="Ignix"
-            variant="glass"
+            // variant="glass"
         />
         <div className="absolute top-6 right-6 text-muted-foreground text-sm hidden lg:block">
             Main content area
@@ -65,8 +66,8 @@ const ComponentShowcase = () => {
       size: 'medium',
       demo: (
         <div className="w-3/4 flex flex-col gap-4">
-        <Slider defaultValue={[75]} max={100} variant="cyberpunk" showValue />
-        <Slider defaultValue={[50]} max={100} variant="gradient" showValue />
+        <Slider defaultValue={[75]} max={100} variant="default" animationType='breathe' showValue />
+        <Slider defaultValue={[50]} max={100} variant="retro" showValue />
       </div>
       )
     },
@@ -77,8 +78,8 @@ const ComponentShowcase = () => {
       size: 'medium',
       demo: (
         <div className="flex flex-col gap-4 items-center justify-center h-full">
-        <Button variant="primary" size="lg" animationVariant="scaleUp">Get Started</Button>
-        <Button variant="neon" animationVariant="neonGlow">Neon Glow</Button>
+        <Button variant="outline" size="lg" animationVariant="scaleUp">Get Started</Button>
+        <Button variant="default" animationVariant="wobble">Wobble</Button>
     </div>
       )
     },
@@ -88,7 +89,7 @@ const ComponentShowcase = () => {
       description: "Customizable reveal animations",
       size: 'large',
       demo: (
-        <div className="w-full h-full p-4 flex items-center justify-center">
+        <div className="w-full min-h-[400px] p-4 flex items-center justify-center">
         <Accordion type="single" collapsible className="w-full text-foreground">
             <AccordionItem value="item-1">
                 <AccordionTrigger>Is it animated?</AccordionTrigger>
@@ -127,7 +128,7 @@ const ComponentShowcase = () => {
       description: "Satisfying toggle animations",
       size: 'medium',
       demo: (
-        <div className="flex items-center justify-center gap-6 h-full">
+        <div className="flex items-center justify-center gap-6 h-full m-14">
         <Switch variant="ios" animation="bounce" defaultChecked />
         <Switch variant="material" animation="jelly" />
         <Switch variant="slim" animation="rotate" defaultChecked />
@@ -175,21 +176,22 @@ const ComponentShowcase = () => {
         </div>
         
         {/* Bento Grid */}
-        <motion.div className="grid grid-cols-1 md:grid-cols-4 gap-4 auto-rows-fr max-w-6xl mx-auto"
+        <motion.div className="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-6xl mx-auto"
         initial={{ y: 20 }}
         animate={{ y: 0 }}
         transition={{ duration: 1, ease: "easeInOut", delay: 0.2 }}
         >
           {showcaseItems.map((item, index) => (
             <Card 
+            variant='glass'
               key={item.id}
-              className={`${getBentoSize(item.size)} border-gray-700/50 hover:border-red-500/50 transition-all duration-500 group animate-fade-up backdrop-blur-sm relative overflow-hidden min-h-[200px]`}
+              className={`${getBentoSize(item.size)} border-gray-700 hover:border-red-500/50 transition-all duration-500 group animate-fade-up backdrop-blur-sm relative overflow-hidden min-h-[200px]`}
               style={{ 
                 animationDelay: `${index * 0.1}s`,
               }}
             >
               {/* Hover Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 via-transparent to-red-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 via-transparent to-red-500/10 opacity-0 group-hover:opacity-100 transition-all duration-200"></div>
               
               <CardContent className="p-6 h-full flex flex-col relative z-10">
                 <div className="flex-1 flex items-center justify-center mb-4">
@@ -208,7 +210,7 @@ const ComponentShowcase = () => {
               </CardContent>
               
               {/* Corner Accent */}
-              <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-red-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-red-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
             </Card>
           ))}
         </motion.div>

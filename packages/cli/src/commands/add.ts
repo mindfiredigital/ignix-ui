@@ -42,6 +42,22 @@ export class AddCommand {
       await this.componentService.installComponent(component);
       spinner.succeed(chalk.green(`Successfully added ${component.name}`));
 
+      if (componentName === 'table') {
+        spinner.start('Adding pagination component...');
+        try {
+          const paginationComponent = await this.componentService.getComponent('pagination');
+          if (paginationComponent.dependencies?.length) {
+            await this.dependencyService.installDependencies(paginationComponent.dependencies);
+          }
+          await this.componentService.installComponent(paginationComponent);
+          spinner.succeed(chalk.green('Successfully added pagination component'));
+          this.logger.printUsageInstructions(paginationComponent);
+        } catch (error) {
+          spinner.fail();
+          this.logger.error('Failed to add pagination component.');
+        }
+      }
+
       // Track successful installation
       await telemetry.trackEvent('add_command_success', {
         component: componentName,

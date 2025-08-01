@@ -7,6 +7,7 @@ description: A flexible tooltip component for displaying additional information 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import { Tooltip } from '@site/src/components/UI/tooltip';
+import { Button } from '@site/src/components/UI/button';
 
 ## Overview
 
@@ -17,23 +18,24 @@ The Tooltip component provides additional information when users hover over or f
 <Tabs defaultValue="preview">
   <TabItem value="preview" label="Preview" default>
     <div className="w-full p-8 rounded-lg border flex items-center justify-center">
-      <Tooltip content="This is a tooltip">
-        <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+      <Tooltip content="Hi, I am a tooltip">
+        <Button className="flex items-center gap-2 justify-center">
           Hover me
-        </button>
+        </Button>
       </Tooltip>
     </div>
   </TabItem>
   <TabItem value="code" label="Code">
     ```tsx
-    import { Tooltip } from '@mindfiredigital/ignix-ui';
+    import { Tooltip } from './components/ui';
+    import { Button } from './components/ui';
 
     function TooltipDemo() {
       return (
-        <Tooltip content="This is a tooltip">
-          <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+        <Tooltip content="Hi, I am a tooltip">
+          <Button>
             Hover me
-          </button>
+          </Button>
         </Tooltip>
       );
     }
@@ -64,7 +66,7 @@ The Tooltip component provides additional information when users hover over or f
 ## Usage
 
 ```tsx
-import { Tooltip } from '@mindfiredigital/ignix-ui';
+import { Tooltip } from './components/ui';
 
 function MyComponent() {
   return (

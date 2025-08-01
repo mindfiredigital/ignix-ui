@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "../../utils/cn";
+import { cn } from "../../../utils/cn";
 import { motion } from "framer-motion";
 
 export interface TabsProps
@@ -16,28 +16,28 @@ export interface TabsProps
 const tabsVariants = cva("relative flex items-center", {
   variants: {
     variant: {
-      underline: "border-b-2 border-transparent border-blue-500",
-      filled: "bg-blue-500 text-white",
-      pill: "bg-blue-500 text-white rounded-full px-4 py-2",
-      outline: "border border-blue-500 text-blue-500 rounded-md px-4 py-2",
+      underline: "border-b-2 border-transparent border-primary",
+      filled: "bg-primary text-primary-foreground",
+      pill: "bg-primary text-primary-foreground rounded-full px-4 py-2",
+      outline: "border border-primary text-primary rounded-md px-4 py-2",
       ghost:
-        "bg-transparent text-blue-500 hover:bg-blue-500 hover:text-white rounded-md px-4 py-2",
-      shadow: "shadow-lg bg-white text-gray-900 rounded-md px-4 py-2",
+        "bg-transparent text-primary hover:bg-primary hover:text-primary-foreground rounded-md px-4 py-2",
+      shadow: "shadow-lg bg-background text-foreground rounded-md px-4 py-2",
       gradient:
-        "bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-md px-4 py-2",
-      glow: "bg-white text-gray-900 rounded-md px-4 py-2 shadow-lg shadow-blue-500/50",
-      block: "border border-gray-300 rounded-md",
+        "bg-gradient-to-r from-primary to-accent text-primary-foreground rounded-md px-4 py-2",
+      glow: "bg-background text-foreground rounded-md px-4 py-2 shadow-lg shadow-primary/50",
+      block: "border border-border rounded-md",
     },
     theme: {
-      light: "bg-white text-gray-900",
-      dark: "bg-gray-900 text-white",
-      glass: "bg-white/10 backdrop-blur-lg text-white",
-      glassDark: "bg-gray-900/10 backdrop-blur-lg text-white",
-      glassLight: "bg-white/10 backdrop-blur-lg text-gray-900",
+      light: "bg-background text-foreground",
+      dark: "bg-card text-card-foreground",
+      glass: "bg-background/10 backdrop-blur-lg text-foreground",
+      glassDark: "bg-card/10 backdrop-blur-lg text-card-foreground",
+      glassLight: "bg-background/10 backdrop-blur-lg text-foreground",
       glassGradient:
-        "bg-gradient-to-r from-blue-500 to-purple-500/10 backdrop-blur-lg text-white",
+        "bg-gradient-to-r from-primary to-accent/10 backdrop-blur-lg text-primary-foreground",
       glassGradientDark:
-        "bg-gradient-to-r from-blue-500 to-purple-500/10 backdrop-blur-lg text-gray-900",
+        "bg-gradient-to-r from-primary to-accent/10 backdrop-blur-lg text-foreground",
     },
 
     size: {
@@ -89,7 +89,7 @@ export const Tabs: React.FC<TabsProps> = ({
               "relative px-4 py-2 transition-all",
               isActive
                 ? tabsVariants({ variant, size })
-                : "text-gray-500 hover:text-blue-500"
+                : "text-gray-500 hover:text-primary"
             )}
           >
             {option}

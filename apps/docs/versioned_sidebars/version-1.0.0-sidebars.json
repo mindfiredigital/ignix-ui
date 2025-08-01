@@ -16,6 +16,7 @@
         "components/badge",
         "components/breadcrumbs",
         "components/button",
+        "components/card",
         "components/dialog-box",
         "components/dropdown",
         "components/input",

@@ -5,7 +5,7 @@ import {
   X,
 } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "../../utils/cn";
+import { cn } from "../../../utils/cn";
 
 interface LinkItem {
   label: string;
@@ -22,7 +22,7 @@ interface SidebarProps
   onClose?: () => void;
 }
 
-const sidebarVariants = cva("fixed h-full overflow-hidden transition-all", {
+const sidebarVariants = cva("absolute h-full overflow-hidden transition-all", {
   variants: {
     position: {
       left: "top-0 left-0",
@@ -31,13 +31,13 @@ const sidebarVariants = cva("fixed h-full overflow-hidden transition-all", {
       bottomRight: "bottom-0 right-0",
     },
     isOpen: {
-      true: "w-fit h-full",
-      false: "w-20  h-full",
+      true: "w-64 h-full",
+      false: "w-20 h-full",
     },
     variant: {
-      default: "bg-gray-900 text-white",
+      default: "bg-background text-foreground",
       dark: "bg-black text-white",
-      light: "bg-white text-gray-900",
+      light: "bg-white text-gray-900 border-r",
       glass: "bg-white/10 backdrop-blur-lg text-white",
     },
 
@@ -74,8 +74,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <motion.div
-      initial={{ x: position === "left" ? "-100%" : "100%" }}
-      animate={{ x: isOpen ? 0 : position === "left" ? "-300%" : "0%" }}
+      initial={{ x: 0 }}
+      animate={{ x: 0 }}
       transition={{ duration: 0.4 }}
       className={cn(
         sidebarVariants({ position, isOpen: open, variant, direction }),

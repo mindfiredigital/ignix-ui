@@ -34,14 +34,14 @@ const TabDemo = () => {
 
   return (
     <div className="flex flex-col space-y-4 mb-8">
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-wrap gap-4 sm:justify-end justify-start">
         <VariantSelector
           variants={tabVariants}
           selectedVariant={variant}
           onSelectVariant={setVariant}
-          type="variant"
+          type="Variant"
         />
-        <VariantSelector variants={tabThemes} selectedVariant={theme} onSelectVariant={setTheme} type="theme" />
+        <VariantSelector variants={tabThemes} selectedVariant={theme} onSelectVariant={setTheme} type="Theme" />
       </div>
       <Tabs>
         <TabItem value="preview" label="Preview">

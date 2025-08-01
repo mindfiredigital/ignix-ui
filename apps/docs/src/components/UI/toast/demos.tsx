@@ -27,7 +27,7 @@ export const SimpleToastDemo = () => {
   return (
     <button
       onClick={showToast}
-      className="px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center justify-center gap-2"
+      className="px-6 py-3 bg-primary text-white rounded-md hover:bg-primary/80 flex items-center justify-center gap-2"
     >
       <InfoCircledIcon className="w-5 h-5" />
       Show Toast

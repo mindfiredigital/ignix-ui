@@ -1,0 +1,108 @@
+---
+sidebar_position: 5
+title: Card
+description: A versatile card component for displaying content in a structured format.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@site/src/components/UI/card';
+import {CardsDemo, FeatureCardDemo, StatCardDemo} from '@site/src/components/Demo/CardsDemo';
+
+## Overview
+
+The card component is a container for text, photos, and actions in the context of a single subject.
+
+## Preview
+
+<Tabs defaultValue="preview">
+  <TabItem value="preview" label="Preview" default>
+    <div className="p-4 border rounded-lg">
+      <Card>
+        <CardHeader>
+          <CardTitle>Card Title</CardTitle>
+          <CardDescription>Card Description</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p>Card Content</p>
+        </CardContent>
+        <CardFooter>
+          Card Footer
+        </CardFooter>
+      </Card>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    import { Card } from './components/ui';
+
+    function MyComponent() {
+      return <Card>
+        <CardHeader>
+          <CardTitle>Card Title</CardTitle>
+          <CardDescription>Card Description</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p>Card Content</p>
+        </CardContent>
+        <CardFooter>
+          Card Footer
+        </CardFooter>
+      </Card>;
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+## Installation
+
+<Tabs>
+  <TabItem value="npm" label="npm" default>
+    ```bash
+    npx @mindfiredigital/ignix-ui add card
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+    ```bash
+    yarn @mindfiredigital/ignix-ui add card
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm @mindfiredigital/ignix-ui add card
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+Import the component:
+
+```tsx
+import { Card } from '@mindfiredigital/ignix-ui';
+```
+
+### Basic Usage
+
+```tsx
+function BasicCard() {
+  return (
+    <Card>
+      This is a basic card.
+    </Card>
+  );
+}
+```
+
+## Examples
+
+<CardsDemo />
+
+## Feature Card
+
+<FeatureCardDemo />
+
+## Stat Card
+
+<StatCardDemo />
+

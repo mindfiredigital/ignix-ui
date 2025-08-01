@@ -22,7 +22,7 @@ const BadgeDemo = () => {
 
   return (
     <div className="flex flex-col space-y-4 mb-8">
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-wrap gap-4 justify-start md:justify-end">
         <VariantSelector
           variants={badgeVariants}
           selectedVariant={variant}
@@ -32,6 +32,7 @@ const BadgeDemo = () => {
           variants={badgeTypes}
           selectedVariant={type}
           onSelectVariant={setType}
+          type='Type'
         />
       </div>
       <Tabs>

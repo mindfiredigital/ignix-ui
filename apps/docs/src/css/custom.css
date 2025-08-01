@@ -8,7 +8,6 @@
 /* Custom styles for the Docusaurus theme */
 
 :root {
-  --ifm-color-primary: hsl(var(--primary));
   --ifm-color-primary: #99000d;
   --ifm-color-primary-dark: #8a000c;
   --ifm-color-primary-darker: #82000b;
@@ -16,6 +15,63 @@
   --ifm-color-primary-light: #a8000e;
   --ifm-color-primary-lighter: #b0000f;
   --ifm-color-primary-lightest: #c70011;
+  --ifm-background-color: #ffffff;
+
+
+  /* Theme Colors */
+  --radius: 0.625rem;
+  --background: var(--ifm-background-color, #ffffff);
+  --foreground: var(--ifm-font-color-base, #1c1e21);
+  --card: var(--ifm-card-background-color, #ffffff);
+  --card-foreground: var(--ifm-font-color-base, #1c1e21);
+  --popover: var(--ifm-card-background-color, #ffffff);
+  --popover-foreground: var(--ifm-font-color-base, #1c1e21);
+  --primary: var(--ifm-color-primary);
+  --primary-foreground: #ffffff;
+  --secondary: var(--ifm-color-emphasis-200, #f5f5f5);
+  --secondary-foreground: var(--ifm-color-emphasis-800, #3e3e3e);
+  --muted: var(--ifm-color-emphasis-300, #e0e0e0);
+  --muted-foreground: var(--ifm-color-emphasis-600, #757575);
+  --accent: var(--ifm-color-emphasis-200, #f5f5f5);
+  --accent-foreground: var(--ifm-color-emphasis-800, #3e3e3e);
+  --destructive: var(--ifm-color-danger, #d93636);
+  --border: var(--ifm-color-emphasis-300, #e0e0e0);
+  --input: var(--ifm-color-emphasis-300, #e0e0e0);
+  --ring: var(--ifm-color-primary-light);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: var(--ifm-background-color, #ffffff);
+  --sidebar-foreground: var(--ifm-font-color-base, #1c1e21);
+  --sidebar-primary: var(--ifm-color-primary);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--ifm-color-emphasis-200, #f5f5f5);
+  --sidebar-accent-foreground: var(--ifm-color-emphasis-800, #3e3e3e);
+  --sidebar-border: var(--ifm-color-emphasis-300, #e0e0e0);
+  --sidebar-ring: var(--ifm-color-primary-light);
+  --warning: var(--ifm-color-warning);
+  --warning-foreground: var(--ifm-color-warning-foreground);
+  --success: var(--ifm-color-success);
+  --success-foreground: var(--ifm-color-success-foreground);
+  --error: var(--ifm-color-error);
+  --error-foreground: var(--ifm-color-error-foreground);
+
+  --primary-light: var(--ifm-color-primary-light);
+  --primary-dark: var(--ifm-color-primary-dark);
+  --destructive-light: #ef4444; /* red-400 */
+  --destructive-dark: #b91c1c; /* red-700 */
+  --success-light: #34d399; /* emerald-400 */
+  --success-dark: #047857; /* emerald-700 */
+  --warning-light: #fbbf24; /* yellow-300 */
+  --warning-dark: #b45309; /* yellow-500 */
+  --info: #06b6d4; /* cyan-500 */
+  --info-light: #22d3ee; /* cyan-400 */
+  --info-dark: #0e7490; /* cyan-600 */
+  --info-foreground: #ffffff;
+
+  
 }
 
 [data-theme='dark'] {
@@ -26,6 +82,120 @@
   --ifm-color-primary-light: #fc846a;
   --ifm-color-primary-lighter: #fc917a;
   --ifm-color-primary-lightest: #fdb9a9;
+  /* Theme Colors */
+  --radius: 0.625rem;
+  --background: var(--ifm-background-color, #000000);
+  --foreground: var(--ifm-font-color-base, #ffffff);
+  --card: var(--ifm-card-background-color, #242526);
+  --card-foreground: var(--ifm-font-color-base, #ffffff);
+  --popover: var(--ifm-card-background-color, #242526);
+  --popover-foreground: var(--ifm-font-color-base, #ffffff);
+  --primary: var(--ifm-color-primary);
+  --primary-foreground: #121212;
+  --secondary: var(--ifm-color-emphasis-200, #303030);
+  --secondary-foreground: var(--ifm-color-emphasis-800, #d4d4d4);
+  --muted: var(--ifm-color-emphasis-300, #424242);
+  --muted-foreground: var(--ifm-color-emphasis-600, #a3a3a3);
+  --accent: var(--ifm-color-emphasis-200, #303030);
+  --accent-foreground: var(--ifm-color-emphasis-800, #d4d4d4);
+  --destructive: var(--ifm-color-danger, #ff6b6b);
+  --border: var(--ifm-color-emphasis-300, #424242);
+  --input: var(--ifm-color-emphasis-300, #424242);
+  --ring: var(--ifm-color-primary-light);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: var(--ifm-background-color, #121212);
+  --sidebar-foreground: var(--ifm-font-color-base, #ffffff);
+  --sidebar-primary: var(--ifm-color-primary);
+  --sidebar-primary-foreground: #121212;
+  --sidebar-accent: var(--ifm-color-emphasis-200, #303030);
+  --sidebar-accent-foreground: var(--ifm-color-emphasis-800, #d4d4d4);
+  --sidebar-border: var(--ifm-color-emphasis-300, #424242);
+  --sidebar-ring: var(--ifm-color-primary-light);
+  --warning: var(--ifm-color-warning);
+  --warning-foreground: var(--ifm-color-warning-foreground);
+  --success: var(--ifm-color-success);
+  --success-foreground: var(--ifm-color-success-foreground);
+  --error: var(--ifm-color-error);
+  --error-foreground: var(--ifm-color-error-foreground);
+
+  --primary-light: var(--ifm-color-primary-light);
+  --primary-dark: var(--ifm-color-primary-dark);
+  --destructive-light: #ef4444; /* red-400 */
+  --destructive-dark: #b91c1c; /* red-700 */
+  --success-light: #34d399; /* emerald-400 */
+  --success-dark: #047857; /* emerald-700 */
+  --warning-light: #fbbf24; /* yellow-300 */
+  --warning-dark: #b45309; /* yellow-500 */
+  --info: #06b6d4; /* cyan-500 */
+  --info-light: #22d3ee; /* cyan-400 */
+  --info-dark: #0e7490; /* cyan-600 */
+  --info-foreground: #ffffff;
+
+}
+
+@theme inline{
+  --color-primary: var(--primary);
+  --color-background: var(--background);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);  
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-warning: var(--warning);
+  --color-success: var(--success);
+  --color-error: var(--error);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-success-foreground: var(--success-foreground);
+  --color-error-foreground: var(--error-foreground);
+
+  --color-primary-light: var(--primary-light);
+  --color-primary-dark: var(--primary-dark);
+  --color-destructive-light: var(--destructive-light);
+  --color-destructive-dark: var(--destructive-dark);
+  --color-success-light: var(--success-light);
+  --color-success-dark: var(--success-dark);
+  --color-warning-light: var(--warning-light);
+  --color-warning-dark: var(--warning-dark);
+  --color-info: var(--info);
+  --color-info-light: var(--info-light);
+  --color-info-dark: var(--info-dark);
+  --color-info-foreground: var(--info-foreground);
+}
+
+.theme-code-block {
+  background: #10642c;
+  font-size: 1.1rem;
+}
+
+.theme-code-block-highlighted-line {
+  background-color: #ffeeba;
 }
 
 .navbar {
@@ -84,4 +254,5 @@
 html[data-theme='dark'] .header--github-link:before {
   background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='white' d='M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12'/%3E%3C/svg%3E")
     no-repeat;
-}
+  }
+ 

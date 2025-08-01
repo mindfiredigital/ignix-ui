@@ -35,7 +35,7 @@ export const Stepper = ({ steps, activeStep, className }: StepperProps) => {
                 isCompleted
                   ? "bg-green-500 border-green-500 text-white"
                   : isActive
-                  ? "bg-white dark:bg-zinc-900 border-blue-500 text-blue-500"
+                  ? "bg-white dark:bg-zinc-900 border-primary text-primary"
                   : "bg-white dark:bg-zinc-900 border-zinc-300 text-zinc-400"
               )}
             >

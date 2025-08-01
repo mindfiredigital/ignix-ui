@@ -44,6 +44,7 @@ const TextareaDemo = () => {
         variants={textareaVariants}
         selectedVariant={variant}
         onSelectVariant={setVariant}
+        type="Variant"
       />
       <Tabs>
         <TabItem value="preview" label="Preview">

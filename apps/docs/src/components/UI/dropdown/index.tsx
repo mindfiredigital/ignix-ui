@@ -19,12 +19,12 @@ const dropdownVariants = cva("z-50 min-w-[10rem] border p-2 shadow-lg", {
       full: "rounded-full",
     },
     bg: {
-      default: "bg-white text-gray-900",
-      dark: "bg-gray-900 text-white",
+      default: "bg-background text-foreground",
+      dark: "bg-card text-card-foreground",
       transparent: "bg-transparent text-transparent",
-      glass: "bg-white/10 backdrop-blur-lg text-blue-200",
-      gradient: "bg-gradient-to-r from-blue-500 to-purple-500 text-white",
-      primary: "bg-blue-400 text-white",
+      glass: "bg-white/10 backdrop-blur-lg text-[var(--color-glass-text)]",
+      gradient: "bg-gradient-to-r from-[var(--color-gradient-from-dropdown)] to-[var(--color-gradient-to-dropdown)] text-white",
+      primary: "bg-primary text-primary-foreground",
     },
   },
   defaultVariants: {

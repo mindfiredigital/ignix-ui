@@ -30,18 +30,18 @@ const SidebarDemo = () => {
 
   return (
     <div className="flex flex-col space-y-4 mb-8">
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-wrap gap-4 sm:justify-end justify-start">
         <VariantSelector
           variants={sidebarVariants}
           selectedVariant={variant}
           onSelectVariant={setVariant}
-          type="variant"
+          type="Variant"
         />
         <VariantSelector
           variants={sidebarPositions}
           selectedVariant={position}
           onSelectVariant={setPosition}
-          type="position"
+          type="Position"
         />
       </div>
       <Tabs>

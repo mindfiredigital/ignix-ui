@@ -4,7 +4,7 @@
  */
 export const REGISTRY_CONFIG = {
   /** Base URL for the components registry */
- 
+
   BASE_URL: 'https://raw.githubusercontent.com/mindfiredigital/ignix-ui/main/packages/registry',
 
   /** Registry path configuration */
@@ -25,6 +25,8 @@ export const PROJECT_PATHS = {
   COMPONENTS_DIR: 'src/components/ui',
   /** Directory for utility functions */
   UTILS_DIR: 'src/utils',
+  /** Directory for global styles */
+  STYLES_DIR: 'src/styles',
   /** Configuration file paths */
   CONFIG_FILES: {
     /** Tailwind configuration file */

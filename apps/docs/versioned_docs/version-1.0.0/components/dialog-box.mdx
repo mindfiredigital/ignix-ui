@@ -21,15 +21,15 @@ The Dialog Box component provides a flexible way to display modal dialogs with v
     <div className="p-4 border rounded-lg">
       <DialogProvider>
         <div className="space-y-4">
-          <DialogDemo type="alert" />
+          <DialogDemo />
         </div>
       </DialogProvider>
     </div>
   </TabItem>
   <TabItem value="code" label="Code">
     ```tsx
-    import { DialogProvider, useDialog } from '@mindfiredigital/ignix-ui';
-    import { Button } from '@mindfiredigital/ignix-ui';
+    import { DialogProvider, useDialog } from './components/ui';
+    import { Button } from './components/ui';
 
     function Demo() {
       const { openDialog } = useDialog();
@@ -80,7 +80,7 @@ The Dialog Box component provides a flexible way to display modal dialogs with v
 ### 1. Wrap your app with DialogProvider
 
 ```tsx
-import { DialogProvider } from '@mindfiredigital/ignix-ui';
+import { DialogProvider } from './components/ui';
 
 function App() {
   return (
@@ -94,7 +94,7 @@ function App() {
 ### 2. Use the useDialog hook in your components
 
 ```tsx
-import { useDialog } from '@mindfiredigital/ignix-ui';
+import { useDialog } from './components/ui';
 
 function MyComponent() {
   const { openDialog } = useDialog();

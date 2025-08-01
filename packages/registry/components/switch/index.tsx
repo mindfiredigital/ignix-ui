@@ -1,193 +1,417 @@
 'use client';
 
 import { useState } from 'react';
-
 import * as React from 'react';
 import * as SwitchPrimitives from '@radix-ui/react-switch';
 import { motion } from 'framer-motion';
-import { cn } from '@/utils/cn';
+import { cn } from '../../../utils/cn';
 
+// Enhanced animations with premium effects
 const animations = {
   default: {
-    checked: { x: 16 },
-    unchecked: { x: 0 },
+    checked: { 
+      x: 16,
+      transition: { type: 'spring', stiffness: 300, damping: 20 }
+    },
+    unchecked: { 
+      x: 0,
+      transition: { type: 'spring', stiffness: 300, damping: 20 }
+    },
   },
   bounce: {
     checked: {
       x: 16,
-      transition: { type: 'spring', stiffness: 500, damping: 15 },
+      scale: [1, 1.1, 1],
+      transition: { 
+        type: 'spring', 
+        stiffness: 500, 
+        damping: 15,
+        scale: { duration: 0.3 }
+      },
     },
     unchecked: {
       x: 0,
-      transition: { type: 'spring', stiffness: 500, damping: 15 },
+      scale: [1, 1.1, 1],
+      transition: { 
+        type: 'spring', 
+        stiffness: 500, 
+        damping: 15,
+        scale: { duration: 0.3 }
+      },
     },
   },
   scale: {
     checked: {
       x: 16,
-      scale: 1.2,
-      transition: { type: 'spring', stiffness: 400, damping: 10 },
+      scale: 1.1,
+      filter: "brightness(1.1)",
+      transition: { 
+        type: 'spring', 
+        stiffness: 400, 
+        damping: 12,
+        duration: 0.5
+      },
     },
     unchecked: {
       x: 0,
       scale: 1,
-      transition: { type: 'spring', stiffness: 400, damping: 10 },
+      filter: "brightness(1)",
+      transition: { 
+        type: 'spring', 
+        stiffness: 400, 
+        damping: 12,
+        duration: 0.5
+      },
     },
   },
   rotate: {
     checked: {
       x: 16,
       rotate: 180,
-      transition: { type: 'spring', stiffness: 300, damping: 10 },
+      scale: 1.1,
+      filter: "brightness(1.2)",
+      transition: { 
+        type: 'spring', 
+        stiffness: 300, 
+        damping: 15,
+        duration: 0.6
+      },
     },
     unchecked: {
       x: 0,
       rotate: 0,
-      transition: { type: 'spring', stiffness: 300, damping: 10 },
+      scale: 1,
+      filter: "brightness(1)",
+      transition: { 
+        type: 'spring', 
+        stiffness: 300, 
+        damping: 15,
+        duration: 0.6
+      },
     },
   },
   fade: {
     checked: {
       x: 16,
-      opacity: [0, 1],
-      transition: { duration: 0.2 },
+      opacity: 1,
+      scale: 1,
+      filter: "blur(0px)",
+      transition: { 
+        duration: 0.4, 
+        ease: [0.4, 0, 0.2, 1],
+        type: 'tween' // Using tween for opacity/filter animations
+      },
     },
     unchecked: {
       x: 0,
-      opacity: [0, 1],
-      transition: { duration: 0.2 },
+      opacity: 0.7,
+      scale: 0.95,
+      filter: "blur(1px)",
+      transition: { 
+        duration: 0.4, 
+        ease: [0.4, 0, 0.2, 1],
+        type: 'tween' // Using tween for opacity/filter animations
+      },
     },
   },
   elastic: {
     checked: {
       x: 16,
+      scale: 1.1,
       transition: {
         type: 'spring',
         stiffness: 300,
-        damping: 8,
+        damping: 10,
         restDelta: 0.001,
+        duration: 0.8
       },
     },
     unchecked: {
       x: 0,
+      scale: 1,
       transition: {
         type: 'spring',
         stiffness: 300,
-        damping: 8,
+        damping: 10,
         restDelta: 0.001,
+        duration: 0.8
       },
     },
   },
   pulse: {
     checked: {
       x: 16,
-      scale: [1, 1.2, 1],
-      transition: { duration: 0.3 },
+      scale: [1, 1.3, 1],
+      boxShadow: [
+        '0 0 0 0 rgba(59, 130, 246, 0.4)',
+        '0 0 0 8px rgba(59, 130, 246, 0.1)',
+        '0 0 0 0 rgba(59, 130, 246, 0.4)'
+      ],
+      transition: { duration: 0.5, ease: "easeInOut" },
     },
     unchecked: {
       x: 0,
-      scale: [1, 1.2, 1],
-      transition: { duration: 0.3 },
+      scale: [1, 1.3, 1],
+      boxShadow: [
+        '0 0 0 0 rgba(100, 116, 139, 0.4)',
+        '0 0 0 8px rgba(100, 116, 139, 0.1)',
+        '0 0 0 0 rgba(100, 116, 139, 0.4)'
+      ],
+      transition: { duration: 0.5, ease: "easeInOut" },
     },
   },
   shake: {
     checked: {
-      x: [0, 4, 8, 12, 16],
-      y: [0, -2, 0, 2, 0],
-      transition: { duration: 0.4 },
+      x: [0, 2, 6, 10, 14, 16],
+      y: [0, -3, 0, 3, 0, 0],
+      rotate: [0, -5, 5, -3, 3, 0],
+      transition: { duration: 0.6, ease: "easeInOut" },
     },
     unchecked: {
-      x: [16, 12, 8, 4, 0],
-      y: [0, 2, 0, -2, 0],
-      transition: { duration: 0.4 },
+      x: [16, 14, 10, 6, 2, 0],
+      y: [0, 3, 0, -3, 0, 0],
+      rotate: [0, 3, -3, 5, -5, 0],
+      transition: { duration: 0.6, ease: "easeInOut" },
     },
   },
   flip: {
     checked: {
       x: 16,
-      rotateY: 180,
-      transition: { duration: 0.4 },
+      rotateY: [0, 180, 360],
+      scale: [1, 0.8, 1],
+      filter: ["brightness(1)", "brightness(1.5)", "brightness(1)"],
+      transition: { duration: 0.6, ease: "easeInOut" },
     },
     unchecked: {
       x: 0,
-      rotateY: 0,
-      transition: { duration: 0.4 },
+      rotateY: [360, 180, 0],
+      scale: [1, 0.8, 1],
+      filter: ["brightness(1)", "brightness(1.5)", "brightness(1)"],
+      transition: { duration: 0.6, ease: "easeInOut" },
     },
   },
   jelly: {
     checked: {
       x: 16,
-      scale: [1, 1.25, 0.75, 1.15, 0.95, 1.05, 1],
-      transition: { duration: 0.6 },
+      scale: [1, 1.4, 0.6, 1.3, 0.8, 1.2, 0.9, 1.1, 0.95, 1.05, 1],
+      rotate: [0, 10, -8, 6, -4, 2, -1, 0],
+      transition: { duration: 1, ease: [0.68, -0.55, 0.265, 1.55] },
     },
     unchecked: {
       x: 0,
-      scale: [1, 1.25, 0.75, 1.15, 0.95, 1.05, 1],
-      transition: { duration: 0.6 },
+      scale: [1, 1.4, 0.6, 1.3, 0.8, 1.2, 0.9, 1.1, 0.95, 1.05, 1],
+      rotate: [0, -10, 8, -6, 4, -2, 1, 0],
+      transition: { duration: 1, ease: [0.68, -0.55, 0.265, 1.55] },
     },
   },
   glow: {
     checked: {
       x: 16,
       boxShadow: [
-        '0 0 0 0 rgba(255, 255, 255, 0)',
-        '0 0 0 8px rgba(255, 255, 255, 0.5)',
-        '0 0 0 0 rgba(255, 255, 255, 0)',
+        '0 0 0 0 rgba(59, 130, 246, 0)',
+        '0 0 0 4px rgba(59, 130, 246, 0.3)',
+        '0 0 0 12px rgba(59, 130, 246, 0.1)',
+        '0 0 0 0 rgba(59, 130, 246, 0)',
       ],
-      transition: { duration: 0.5 },
+      filter: ["brightness(1)", "brightness(1.3)", "brightness(1)"],
+      scale: [1, 1.1, 1],
+      transition: { duration: 0.8, ease: "easeInOut" },
     },
     unchecked: {
       x: 0,
       boxShadow: [
-        '0 0 0 0 rgba(255, 255, 255, 0)',
-        '0 0 0 8px rgba(255, 255, 255, 0.5)',
-        '0 0 0 0 rgba(255, 255, 255, 0)',
+        '0 0 0 0 rgba(100, 116, 139, 0)',
+        '0 0 0 4px rgba(100, 116, 139, 0.3)',
+        '0 0 0 12px rgba(100, 116, 139, 0.1)',
+        '0 0 0 0 rgba(100, 116, 139, 0)',
       ],
-      transition: { duration: 0.5 },
+      filter: ["brightness(1)", "brightness(1.3)", "brightness(1)"],
+      scale: [1, 1.1, 1],
+      transition: { duration: 0.8, ease: "easeInOut" },
     },
   },
 };
 
+// Enhanced variants with premium styling
 const variants = {
   default: {
-    root: 'h-5 w-9',
-    thumb: 'h-4 w-4',
-    thumbOffset: 16,
-  },
-  large: {
-    root: 'h-7 w-12',
-    thumb: 'h-6 w-6',
+    root: cn(
+      'h-6 w-11 rounded-full',
+      'bg-gradient-to-r from-muted/80 to-muted/60 backdrop-blur-sm',
+      'border border-border/60 shadow-lg shadow-black/5',
+      'data-[state=checked]:from-primary data-[state=checked]:to-primary/80',
+      'data-[state=checked]:shadow-primary/30 data-[state=checked]:border-primary/60',
+      'dark:shadow-white/5 dark:data-[state=checked]:shadow-primary/30',
+      'transition-all duration-300 ease-in-out',
+      'hover:data-[state=unchecked]:from-muted/90 hover:data-[state=unchecked]:to-muted/70',
+      'hover:data-[state=checked]:from-primary/90 hover:data-[state=checked]:to-primary/70'
+    ),
+    thumb: cn(
+      'h-5 w-5 rounded-full',
+      'bg-gradient-to-br from-background via-background to-muted/20',
+      'shadow-lg shadow-black/15 dark:shadow-white/10',
+      'border border-border/40',
+      'before:absolute before:inset-0 before:rounded-full',
+      'before:bg-gradient-to-t before:from-white/20 before:to-white/40',
+      'before:pointer-events-none'
+    ),
     thumbOffset: 20,
   },
-  small: {
-    root: 'h-4 w-7',
-    thumb: 'h-3 w-3',
-    thumbOffset: 12,
-  },
-  pill: {
-    root: 'h-5 w-9 rounded-full',
-    thumb: 'h-4 w-4 rounded-full',
-    thumbOffset: 16,
-  },
-  square: {
-    root: 'h-5 w-9 rounded-md',
-    thumb: 'h-4 w-4 rounded-sm',
-    thumbOffset: 16,
-  },
-  slim: {
-    root: 'h-4 w-10 rounded-full',
-    thumb: 'h-3 w-3 rounded-full',
+  large: {
+    root: cn(
+      'h-8 w-14 rounded-full',
+      'bg-gradient-to-r from-muted/80 to-muted backdrop-blur-sm',
+      'border border-border/60 shadow-xl shadow-black/10',
+      'data-[state=checked]:from-primary/90 data-[state=checked]:to-primary',
+      'data-[state=checked]:shadow-primary/30 data-[state=checked]:border-primary/40',
+      'dark:shadow-white/5 dark:data-[state=checked]:shadow-primary/25',
+      'transition-all duration-300'
+    ),
+    thumb: cn(
+      'h-7 w-7 rounded-full',
+      'bg-gradient-to-br from-background via-background to-muted/20',
+      'shadow-xl shadow-black/20 dark:shadow-white/15',
+      'border border-border/40',
+      'before:absolute before:inset-0 before:rounded-full',
+      'before:bg-gradient-to-t before:from-white/20 before:to-white/40',
+      'before:pointer-events-none'
+    ),
     thumbOffset: 24,
   },
+  small: {
+    root: cn(
+      'h-4 w-8 rounded-full',
+      'bg-gradient-to-r from-muted/80 to-muted backdrop-blur-sm',
+      'border border-border/60 shadow-md shadow-black/5',
+      'data-[state=checked]:from-primary/90 data-[state=checked]:to-primary',
+      'data-[state=checked]:shadow-primary/20 data-[state=checked]:border-primary/40',
+      'dark:shadow-white/5 dark:data-[state=checked]:shadow-primary/15',
+      'transition-all duration-300'
+    ),
+    thumb: cn(
+      'h-3 w-3 rounded-full',
+      'bg-gradient-to-br from-background via-background to-muted/20',
+      'shadow-md shadow-black/10 dark:shadow-white/5',
+      'border border-border/40',
+      'before:absolute before:inset-0 before:rounded-full',
+      'before:bg-gradient-to-t before:from-white/20 before:to-white/40',
+      'before:pointer-events-none'
+    ),
+    thumbOffset: 16,
+  },
+  pill: {
+    root: cn(
+      'h-6 w-11 rounded-full',
+      'bg-gradient-to-r from-muted/60 via-muted/80 to-muted/60 backdrop-blur-sm',
+      'border border-border/60 shadow-lg shadow-black/5',
+      'data-[state=checked]:from-primary/80 data-[state=checked]:via-primary data-[state=checked]:to-primary/80',
+      'data-[state=checked]:shadow-primary/25 data-[state=checked]:border-primary/40',
+      'dark:shadow-white/5 dark:data-[state=checked]:shadow-primary/20',
+      'transition-all duration-300',
+      'before:absolute before:inset-0 before:rounded-full',
+      'before:bg-gradient-to-t before:from-black/5 before:to-white/10',
+      'before:pointer-events-none'
+    ),
+    thumb: cn(
+      'h-5 w-5 rounded-full',
+      'bg-gradient-to-br from-background via-background to-muted/20',
+      'shadow-lg shadow-black/15 dark:shadow-white/10',
+      'border border-border/40',
+      'before:absolute before:inset-0 before:rounded-full',
+      'before:bg-gradient-to-br before:from-white/30 before:to-transparent',
+      'before:pointer-events-none'
+    ),
+    thumbOffset: 20,
+  },
+  square: {
+    root: cn(
+      'h-6 w-11 rounded-lg',
+      'bg-gradient-to-br from-muted/80 to-muted backdrop-blur-sm',
+      'border border-border/60 shadow-lg shadow-black/5',
+      'data-[state=checked]:from-primary/90 data-[state=checked]:to-primary',
+      'data-[state=checked]:shadow-primary/25 data-[state=checked]:border-primary/40',
+      'dark:shadow-white/5 dark:data-[state=checked]:shadow-primary/20',
+      'transition-all duration-300'
+    ),
+    thumb: cn(
+      'h-5 w-5 rounded-md',
+      'bg-gradient-to-br from-background via-background to-muted/20',
+      'shadow-lg shadow-black/15 dark:shadow-white/10',
+      'border border-border/40',
+      'before:absolute before:inset-0 before:rounded-md',
+      'before:bg-gradient-to-t before:from-white/20 before:to-white/40',
+      'before:pointer-events-none'
+    ),
+    thumbOffset: 20,
+  },
+  slim: {
+    root: cn(
+      'h-4 w-12 rounded-full',
+      'bg-gradient-to-r from-muted/70 to-muted/90 backdrop-blur-sm',
+      'border border-border/60 shadow-md shadow-black/5',
+      'data-[state=checked]:from-primary/85 data-[state=checked]:to-primary/95',
+      'data-[state=checked]:shadow-primary/20 data-[state=checked]:border-primary/40',
+      'dark:shadow-white/5 dark:data-[state=checked]:shadow-primary/15',
+      'transition-all duration-300'
+    ),
+    thumb: cn(
+      'h-3 w-3 rounded-full',
+      'bg-gradient-to-br from-background via-background to-muted/20',
+      'shadow-md shadow-black/10 dark:shadow-white/5',
+      'border border-border/40',
+      'before:absolute before:inset-0 before:rounded-full',
+      'before:bg-gradient-to-t before:from-white/20 before:to-white/40',
+      'before:pointer-events-none'
+    ),
+    thumbOffset: 32,
+  },
   ios: {
-    root: 'h-6 w-11 rounded-full bg-gray-300 data-[state=checked]:bg-green-500',
-    thumb: 'h-5 w-5 rounded-full shadow-md',
+    root: cn(
+      'h-7 w-12 rounded-full',
+      'bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200',
+      'dark:from-gray-600 dark:via-gray-700 dark:to-gray-600',
+      'shadow-inner shadow-black/10 dark:shadow-white/5',
+      'border border-gray-300/60 dark:border-gray-600/60',
+      'data-[state=checked]:from-emerald-400 data-[state=checked]:via-emerald-500 data-[state=checked]:to-emerald-400',
+      'data-[state=checked]:shadow-emerald-500/25 data-[state=checked]:border-emerald-400/40',
+      'transition-all duration-300 backdrop-blur-sm',
+      'before:absolute before:inset-0 before:rounded-full',
+      'before:bg-gradient-to-t before:from-black/5 before:to-white/15',
+      'before:pointer-events-none'
+    ),
+    thumb: cn(
+      'h-6 w-6 rounded-full',
+      'bg-gradient-to-br from-white via-white to-gray-50',
+      'dark:from-gray-100 dark:via-gray-200 dark:to-gray-100',
+      'shadow-xl shadow-black/20 dark:shadow-black/40',
+      'border border-white/60 dark:border-gray-200/60',
+      'before:absolute before:inset-0 before:rounded-full',
+      'before:bg-gradient-to-br before:from-white/40 before:to-transparent',
+      'before:pointer-events-none'
+    ),
     thumbOffset: 20,
   },
   material: {
-    root: 'h-5 w-10 rounded-full bg-gray-400 data-[state=checked]:bg-blue-500',
-    thumb: 'h-4 w-4 rounded-full shadow-md',
-    thumbOffset: 20,
+    root: cn(
+      'h-6 w-12 rounded-full',
+      'bg-gradient-to-r from-gray-300 via-gray-400 to-gray-300',
+      'dark:from-gray-600 dark:via-gray-700 dark:to-gray-600',
+      'shadow-inner shadow-black/15 dark:shadow-white/5',
+      'border border-gray-400/40 dark:border-gray-600/40',
+      'data-[state=checked]:from-blue-400 data-[state=checked]:via-blue-500 data-[state=checked]:to-blue-400',
+      'data-[state=checked]:shadow-blue-500/25 data-[state=checked]:border-blue-400/40',
+      'transition-all duration-300 backdrop-blur-sm'
+    ),
+    thumb: cn(
+      'h-5 w-5 rounded-full',
+      'bg-gradient-to-br from-background via-background to-muted/10',
+      'shadow-lg shadow-black/15 dark:shadow-white/10',
+      'border border-border/40',
+      'before:absolute before:inset-0 before:rounded-full',
+      'before:bg-gradient-to-t before:from-white/20 before:to-white/40',
+      'before:pointer-events-none'
+    ),
+    thumbOffset: 24,
   },
 };
 
@@ -195,13 +419,23 @@ export interface SwitchProps extends React.ComponentPropsWithoutRef<typeof Switc
   variant?: keyof typeof variants;
   animation?: keyof typeof animations;
   thumbClassName?: string;
+  glowEffect?: boolean;
 }
 
 const Switch = React.forwardRef<React.ComponentRef<typeof SwitchPrimitives.Root>, SwitchProps>(
-  ({ className, variant = 'default', animation = 'default', thumbClassName, ...props }, ref) => {
+  ({ 
+    className, 
+    variant = 'default', 
+    animation = 'default', 
+    thumbClassName, 
+    glowEffect = false,
+    ...props 
+  }, ref) => {
     const selectedVariant = variants[variant] || variants.default;
+    const [isChecked, setIsChecked] = useState(props.checked || false);
+    const [isHovered, setIsHovered] = useState(false);
 
-    const thumbOffset = selectedVariant.thumbOffset || 16;
+    const thumbOffset = selectedVariant.thumbOffset || 20;
     const dynamicAnimation = {
       ...animations[animation],
       checked: {
@@ -209,8 +443,6 @@ const Switch = React.forwardRef<React.ComponentRef<typeof SwitchPrimitives.Root>
         x: thumbOffset,
       },
     };
-
-    const [isChecked, setIsChecked] = useState(props.checked || false);
 
     React.useEffect(() => {
       if (props.checked !== undefined) {
@@ -224,30 +456,96 @@ const Switch = React.forwardRef<React.ComponentRef<typeof SwitchPrimitives.Root>
     };
 
     return (
-      <SwitchPrimitives.Root
-        className={cn(
-          'peer inline-flex shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input',
-          selectedVariant.root,
-          className
-        )}
-        {...props}
-        checked={isChecked}
-        onCheckedChange={handleCheckedChange}
-        ref={ref}
-      >
-        <SwitchPrimitives.Thumb asChild>
-          <motion.span
-            className={cn(
-              'pointer-events-none block rounded-full bg-background shadow-lg ring-0',
-              selectedVariant.thumb,
-              thumbClassName
-            )}
-            initial={false}
-            animate={isChecked ? 'checked' : 'unchecked'}
-            variants={dynamicAnimation}
+      <div className="relative inline-block">
+        {/* Enhanced glow effect */}
+        {glowEffect && isChecked && (
+          <motion.div
+            className="absolute inset-0 rounded-full opacity-30"
+            style={{
+              background: `radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, transparent 70%)`,
+              filter: "blur(8px)",
+              transform: "scale(1.5)"
+            }}
+            animate={{
+              scale: [1.5, 1.7, 1.5],
+              opacity: [0.3, 0.5, 0.3]
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
           />
-        </SwitchPrimitives.Thumb>
-      </SwitchPrimitives.Root>
+        )}
+
+        <SwitchPrimitives.Root
+          className={cn(
+            'peer inline-flex shrink-0 cursor-pointer items-center',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+            'disabled:cursor-not-allowed disabled:opacity-50',
+            'transform-gpu will-change-transform',
+            'hover:scale-105 active:scale-95 transition-transform duration-200',
+            selectedVariant.root,
+            className
+          )}
+          {...props}
+          checked={isChecked}
+          onCheckedChange={handleCheckedChange}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          ref={ref}
+        >
+          {/* Track shimmer effect */}
+          <motion.div
+            className="absolute inset-0 rounded-[inherit] bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 pointer-events-none"
+            transition={{
+              x: {
+                duration: 1,
+                repeat: isHovered ? Infinity : 0,
+                repeatDelay: 0.5,
+                ease: "easeInOut"
+              }
+            }}
+          />
+
+          <SwitchPrimitives.Thumb asChild>
+            <motion.span
+              className={cn(
+                'pointer-events-none block ring-0 relative overflow-hidden',
+                'transform-gpu will-change-transform',
+                selectedVariant.thumb,
+                thumbClassName
+              )}
+              initial={false}
+              animate={isChecked ? 'checked' : 'unchecked'}
+              variants={dynamicAnimation}
+              whileHover={{
+                scale: 1.05,
+                transition: { duration: 0.2 }
+              }}
+              whileTap={{
+                scale: 0.95,
+                transition: { duration: 0.1 }
+              }}
+            >
+              {/* Thumb shimmer effect */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 pointer-events-none rounded-[inherit]"
+                animate={{
+                  x: isChecked ? ["-100%", "100%"] : "-100%"
+                }}
+                transition={{
+                  x: {
+                    duration: 0.8,
+                    delay: 0.2,
+                    ease: "easeInOut"
+                  }
+                }}
+              />
+            </motion.span>
+          </SwitchPrimitives.Thumb>
+        </SwitchPrimitives.Root>
+      </div>
     );
   }
 );

@@ -19,23 +19,23 @@ The Spinner component is a versatile loading indicator that comes with multiple 
     <div className="w-full p-8 space-y-8 border rounded-lg">
       <div className=" p-6 rounded-lg">
         <div className="flex items-center justify-center gap-8">
-          <Spinner size={40} color="border-orange-500" />
-          <Spinner size={40} variant="bars" color="bg-orange-500" />
-          <Spinner size={40} variant="dots-bounce" color="bg-orange-500" />
+          <Spinner size={40} color="border-primary" />
+          <Spinner size={40} variant="bars" color="bg-primary" />
+          <Spinner size={40} variant="dots-bounce" color="bg-primary" />
         </div>
       </div>
     </div>
   </TabItem>
   <TabItem value="code" label="Code">
     ```tsx
-    import { Spinner } from '@mindfiredigital/ignix-ui';
+    import { Spinner } from './components/ui';
 
     function SpinnerDemo() {
       return (
         <div className="flex items-center gap-8">
-          <Spinner size={40} color="border-orange-500" />
-          <Spinner size={40} variant="bars" color="bg-orange-500" />
-          <Spinner size={40} variant="dots-bounce" color="bg-orange-500" />
+          <Spinner size={40} color="border-primary" />
+          <Spinner size={40} variant="bars" color="bg-primary" />
+          <Spinner size={40} variant="dots-bounce" color="bg-primary" />
         </div>
       );
     }
@@ -68,14 +68,14 @@ The Spinner component is a versatile loading indicator that comes with multiple 
 Import the component:
 
 ```tsx
-import { Spinner } from '@mindfiredigital/ignix-ui';
+import { Spinner } from './components/ui';
 ```
 
 ### Basic Usage
 
 ```tsx
 function BasicSpinner() {
-  return <Spinner size={40} color="border-orange-500" />;
+  return <Spinner size={40} color="border-primary" />;
 }
 ```
 
@@ -95,7 +95,7 @@ You can customize the appearance using Tailwind CSS classes:
 <Spinner
   className="my-4"
   size={50}
-  color="border-indigo-500"
+  color="border-primary"
   thickness={6}
 />
 ```
