@@ -1,82 +1,138 @@
 # How to Contribute
 
-We deeply appreciate your interest in contributing to the Ignix UI project. Your valuable contributions play a pivotal role in enhancing this project.
+We deeply appreciate your interest in contributing to the Ignix UI project. Your valuable contributions play a pivotal role in enhancing this project. Please read this guide to understand how you can contribute.
 
 ## Table of Contents
-- [Getting Started](#getting-started)
-- [Selecting an Issue or Feature](#selecting-an-issue-or-feature)
-- [Making Changes](#making-changes)
-- [Submitting a Pull Request](#submitting-a-pull-request)
-- [Code of Conduct](#code-of-conduct)
-- [Licensing](#licensing)
 
-## Getting Started
-
-1. **Set up your development environment**
-   - Fork the [Ignix UI repository](https://github.com/mindfiredigital/ignix-ui)
-   - Clone your forked repository
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Start the development server**
-   ```bash
-   npm run dev
-   ```
-
-## Selecting an Issue or Feature
-
-1. Check our [issue tracker](https://github.com/mindfiredigital/ignix-ui/issues) for open issues
-2. Look for issues you are interested in
-3. If you want to work on a new feature, please open an issue first to discuss it with the maintainers
-
-## Making Changes
-
-1. **Create a new branch**
-   ```bash
-   git checkout -b fix/description-of-fix
-   # or
-   git checkout -b feature/description-of-feature
-   ```
-
-2. **Make your changes**
-   - Follow the project's coding style and conventions
-   - Write clear commit messages
-   - Keep your changes focused and atomic
-
-3. **Add tests**
-   - Ensure all tests pass before submitting a PR
-   ```bash
-   npm test
-   ```
-
-## Submitting a Pull Request
-
-1. Push your changes to your fork
-   ```bash
-   git push origin your-branch-name
-   ```
-
-2. Open a Pull Request (PR) against the `development` branch
-   - Provide a clear title and description
-   - Reference any related issues using `#issue-number`
-   - Include screenshots or videos for UI changes
-
-3. Address review feedback
-   - Make requested changes
-   - Push updates to your branch
-   - The PR will be merged once approved
+  - [Code of Conduct](https://www.google.com/search?q=%23code-of-conduct)
+  - [Finding Something to Work On](https://www.google.com/search?q=%23finding-something-to-work-on)
+  - [Contribution Workflow](https://www.google.com/search?q=%23contribution-workflow)
+      - [1. Setup Your Environment](https://www.google.com/search?q=%231-setup-your-environment)
+      - [2. Create a Branch](https://www.google.com/search?q=%232-create-a-branch)
+      - [3. Add a New Component](https://www.google.com/search?q=%233-add-a-new-component)
+      - [4. Add Documentation](https://www.google.com/search?q=%234-add-documentation)
+      - [5. Write Tests](https://www.google.com/search?q=%235-write-tests)
+      - [6. Commit and Push Your Changes](https://www.google.com/search?q=%236-commit-and-push-your-changes)
+      - [7. Create a Pull Request](https://www.google.com/search?q=%237-create-a-pull-request)
+  - [Code Review Process](https://www.google.com/search?q=%23code-review-process)
+  - [Licensing](https://www.google.com/search?q=%23licensing)
 
 ## Code of Conduct
 
-Please review our [Code of Conduct](code-of-conduct) before contributing. We are committed to providing a welcoming and inclusive environment for all contributors.
+We are committed to providing a welcoming and inclusive environment for all. Before contributing, please review our [Code of Conduct](https://www.google.com/search?q=./CODE_OF_CONDUCT.md).
+
+## Finding Something to Work On
+
+1.  Check our [issue tracker](https://github.com/mindfiredigital/ignix-ui/issues) for open issues.
+2.  Look for issues you are interested to work on.
+3.  If you have an idea for a new feature, please open an issue first to discuss it with the maintainers. This helps prevent duplicate work.
+
+## Contribution Workflow
+
+### 1\. Setup Your Environment
+
+First, get the project set up on your local machine.
+
+  - **Fork the repository:** Click the "Fork" button at the top-right of the [Ignix UI repository](https://github.com/mindfiredigital/ignix-ui) page.
+
+  - **Clone your forked repository:**
+
+    ```bash
+    git clone https://github.com/your-username/ignix-ui.git
+    cd ignix-ui
+    ```
+
+  - **Install dependencies:** This project uses `pnpm` for package management.
+
+    ```bash
+    pnpm install
+    ```
+
+  - **Start the development server:**
+
+    ```bash
+    pnpm run dev
+    ```
+
+### 2\. Create a Branch
+
+Create a new branch for your changes. Use a descriptive name that follows our conventions:
+
+  - For new features: `feature/description-of-feature`
+  - For bug fixes: `fix/description-of-fix`
+
+<!-- end list -->
+
+```bash
+# Example for a new feature
+git checkout -b feature/add-new-component
+
+# Example for a bug fix
+git checkout -b fix/fix-button-style
+```
+
+### 3\. Add a New Component
+
+  - Create the new component file inside `packages/registry/components/`.
+  - Ensure you follow the existing folder structure and file conventions used by other components.
+  - After creating the component, you must register it. Update the `packages/registry/registry.json` file with the details of your new component.
+
+### 4\. Add Documentation
+
+Documentation is crucial for every component.
+
+  - Create a new documentation file for your component inside the `apps/docs/docs/components/` directory. Use the `.mdx` format (e.g., `new-component.mdx`).
+  - Add a link to your new documentation page in the sidebar by updating the `apps/docs/sidebars.ts` file.
+
+### 5\. Write Tests
+
+We require tests for all new features and bug fixes.
+
+  - Add test cases for your component in a file located alongside the component source code.
+  - Ensure all tests pass before submitting your changes. Run the tests using:
+    ```bash
+    pnpm test
+    ```
+
+### 6\. Commit and Push Your Changes
+
+  - Stage your changes for commit.
+    ```bash
+    git add .
+    ```
+  - Commit your changes with a clear and descriptive message. We follow the [Conventional Commits](https://gitlab.mindfire.co.in/mindfire-foss/open-source-guidelines/-/blob/main/contribution-guidelines/commit-messages.md) specification.
+    ```bash
+    # Example for a new feature
+    git commit -m "feat: add new awesome component"
+
+    # Example for a bug fix
+    git commit -m "fix: resolve style issue in button component"
+    ```
+  - Push your branch to your forked repository.
+    ```bash
+    git push origin feature/add-new-component
+    ```
+
+### 7\. Create a Pull Request
+
+  - Go to your forked repository on GitHub and click "Compare & pull request".
+  - Set the base branch to `development`.
+  - Fill out the Pull Request (PR) template with the required information:
+      - Provide a clear title and a detailed description of your changes.
+      - Reference any related issues using `#issue-number`.
+      - Include screenshots or videos for any UI changes.
+  - Click "Create pull request" to submit it for review.
+
+## Code Review Process
+
+  - Once your PR is submitted, the project maintainers will review it.
+  - If changes are requested, make the necessary updates on your branch and push them. Your PR will update automatically.
+  - Once the PR is approved, a maintainer will merge it into the `development` branch.
 
 ## Licensing
 
-By contributing to Ignix UI, you agree that your contributions will be licensed under the project's [MIT License](https://choosealicense.com/licenses/mit/).
+By contributing to Ignix UI, you agree that your contributions will be licensed under the project's MIT License.
 
----
+-----
 
-Thank you for your interest in contributing to Ignix UI! We appreciate your time and effort in making this project better.
+Thank you for your interest in contributing to Ignix UI\! We appreciate your time and effort in making this project better.

@@ -264,6 +264,17 @@
           "type": "component"
         }
       }
+    },
+    "container": {
+      "name": "Container",
+      "description": "A flexible container component for constraining content width with responsive padding and centering options.",
+      "dependencies": ["class-variance-authority"],
+      "files": {
+        "main": {
+          "path": "components/layout/container/index.tsx",
+          "type": "component"
+        }
+      }
     }
   }
 }

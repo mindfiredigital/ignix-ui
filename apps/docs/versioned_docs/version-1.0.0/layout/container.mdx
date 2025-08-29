@@ -1,0 +1,118 @@
+---
+sidebar_position: 1
+title: Container
+description: A flexible container component for constraining content width with responsive padding and centering options.
+---
+
+import Container from '@site/src/components/UI/layout/container';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## Overview
+
+The Container component is a flexible layout component that constrains content width, adds consistent padding, and handles responsive behavior. It's perfect for creating readable content areas with proper spacing.
+
+## Preview
+
+Try out the Container component with different settings:
+
+import ContainerDemo from '@site/src/components/Demo/ContainerDemo';
+
+<ContainerDemo />
+
+
+## Installation
+
+<Tabs>
+  <TabItem value="npm" label="npm" default>
+    ```bash
+    npx @mindfiredigital/ignix-ui add container
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+    ```bash
+    yarn @mindfiredigital/ignix-ui add container
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm @mindfiredigital/ignix-ui add container
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+Import the component:
+
+```tsx
+import { Container } from './components/ui';
+```
+
+## Basic Usage
+
+```tsx
+import { Container } from './components/ui';
+
+function MyComponent() {
+  return (
+    <Container>
+      Your content here
+    </Container>
+  );
+}
+```
+
+## Props
+
+| Prop      | Type                                | Default   | Description                                      |
+|-----------|-------------------------------------|-----------|--------------------------------------------------|
+| size      | 'small' \| 'normal' \| 'large' \| 'full' \| 'readable' | 'normal' | Controls the maximum width of the container      |
+| center    | boolean                             | true      | Whether to center the container horizontally    |
+| padding   | 'none' \| 'small' \| 'normal' \| 'large' \| 'xl' | 'normal' | Controls the padding around the content         |
+| maxWidth  | 'sm' \| 'md' \| 'lg' \| 'xl' \| 'full' \| string | 'lg' | Custom max-width for the container (overrides size) |
+| responsive | boolean                            | true      | Adds responsive padding on the sides            |
+| className | string                              | ''        | Additional CSS classes                          |
+| children  | ReactNode                           | -         | Content to be rendered inside the container     |
+
+## Examples
+
+### Different Sizes
+
+```tsx
+<Container size="small">Small container</Container>
+<Container size="normal">Normal container (default)</Container>
+<Container size="large">Large container</Container>
+<Container size="readable">Readable text width</Container>
+<Container size="full">Full width container</Container>
+```
+
+### Custom Padding
+
+```tsx
+<Container padding="none">No padding</Container>
+<Container padding="small">Small padding</Container>
+<Container padding="normal">Normal padding (default)</Container>
+<Container padding="large">Large padding</Container>
+<Container padding="xl">Extra large padding</Container>
+```
+
+### Disable Centering
+
+```tsx
+<Container center={false}>Not centered</Container>
+```
+
+### Custom Max Width
+
+```tsx
+<Container maxWidth="md">Medium max width</Container>
+<Container maxWidth="800px">Custom pixel width</Container>
+```
+
+## Best Practices
+
+- Use the `readable` size for long-form text content to maintain optimal line length
+- Consider disabling responsive padding (`responsive={false}`) for full-bleed components
+- Use the `full` size with caution, as it removes the max-width constraint
+- Combine with other layout components for complex page structures
