@@ -1,0 +1,246 @@
+---
+sidebar_position: 8
+title: Form
+description: A smart layout component for responsive form fields with proper spacing and alignment.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { Form, FormField, InputWrapper } from '@site/src/components/UI/form';
+import { Button } from '@site/src/components/UI/button';
+import { Spacer } from '@site/src/components/UI/spacer';
+import FormDemo from '@site/src/components/Demo/FormDemo';
+
+## Overview
+
+The **Form** component is a layout component that provides smart, responsive layouts for form fields with proper spacing and alignment. It handles multi-column layouts and label positioning automatically.
+
+## Preview
+
+<Tabs defaultValue="preview">
+  <TabItem value="preview" label="Preview" default>
+    <div className="p-6 border rounded-lg">
+      <Form 
+        columns={{desktop: 2, mobile: 1}}
+        spacing="comfortable"
+        labels="top"
+        maxWidth="readable"
+      >
+        <FormField>
+          <label htmlFor="firstName">First Name</label>
+          <InputWrapper>
+            <input
+              id="firstName"
+              type="text"
+              placeholder="Enter your first name"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+            />
+          </InputWrapper>
+        </FormField>
+        
+        <FormField>
+          <label htmlFor="lastName">Last Name</label>
+          <InputWrapper>
+            <input
+              id="lastName"
+              type="text"
+              placeholder="Enter your last name"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+            />
+          </InputWrapper>
+        </FormField>
+        
+        <FormField>
+          <label htmlFor="email">Email Address</label>
+          <InputWrapper>
+            <input
+              id="email"
+              type="email"
+              placeholder="Enter your email"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+            />
+          </InputWrapper>
+        </FormField>
+        
+        <FormField>
+          <label htmlFor="phone">Phone Number</label>
+          <InputWrapper>
+            <input
+              id="phone"
+              type="tel"
+              placeholder="Enter your phone number"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+            />
+          </InputWrapper>
+        </FormField>
+        
+        <FormField className="md:col-span-2">
+          <label htmlFor="message">Message</label>
+          <InputWrapper>
+            <textarea
+              id="message"
+              rows={4}
+              placeholder="Enter your message"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none"
+            />
+          </InputWrapper>
+        </FormField>
+        
+        <div className="md:col-span-2 flex gap-2">
+          <Button variant="default">Submit</Button>
+          <Button variant="outline">Cancel</Button>
+        </div>
+      </Form>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code" className='whitespace-pre-wrap max-h-[500px] overflow-y-scroll'>
+    ```tsx
+    import { Form, FormField, InputWrapper } from './components/ui/form';
+    import { Button } from './components/ui/button';
+
+    function ContactForm() {
+      return (
+        <Form 
+          columns={{desktop: 2, mobile: 1}}
+          spacing="comfortable"
+          labels="top"
+          maxWidth="readable"
+        >
+          <FormField>
+            <label htmlFor="firstName">First Name</label>
+            <InputWrapper>
+              <input
+                id="firstName"
+                type="text"
+                placeholder="Enter your first name"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              />
+            </InputWrapper>
+          </FormField>
+          
+          <FormField>
+            <label htmlFor="lastName">Last Name</label>
+            <InputWrapper>
+              <input
+                id="lastName"
+                type="text"
+                placeholder="Enter your last name"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              />
+            </InputWrapper>
+          </FormField>
+          
+          <FormField>
+            <label htmlFor="email">Email Address</label>
+            <InputWrapper>
+              <input
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              />
+            </InputWrapper>
+          </FormField>
+          
+          <FormField>
+            <label htmlFor="phone">Phone Number</label>
+            <InputWrapper>
+              <input
+                id="phone"
+                type="tel"
+                placeholder="Enter your phone number"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              />
+            </InputWrapper>
+          </FormField>
+          
+          <FormField className="md:col-span-2">
+            <label htmlFor="message">Message</label>
+            <InputWrapper>
+              <textarea
+                id="message"
+                rows={4}
+                placeholder="Enter your message"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none"
+              />
+            </InputWrapper>
+          </FormField>
+          
+          <div className="md:col-span-2 flex gap-2">
+            <Button variant="default">Submit</Button>
+            <Button variant="outline">Cancel</Button>
+          </div>
+        </Form>
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+## Installation
+
+<Tabs>
+  <TabItem value="npm" label="npm" default>
+    ```bash
+    npx @mindfiredigital/ignix-ui add form
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+    ```bash
+    yarn @mindfiredigital/ignix-ui add form
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm @mindfiredigital/ignix-ui add form
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+Import the components:
+
+```tsx
+import { Form, FormField, InputWrapper } from './components/ui/form';
+```
+
+### Basic Usage
+
+```tsx
+function BasicForm() {
+  return (
+    <Form spacing="comfortable" maxWidth="readable">
+      <FormField>
+        <label htmlFor="username">Username</label>
+        <InputWrapper>
+          <input
+            id="username"
+            type="text"
+            placeholder="Enter username"
+            className="w-full px-3 py-2 border rounded-md"
+          />
+        </InputWrapper>
+      </FormField>
+      
+      <FormField>
+        <label htmlFor="password">Password</label>
+        <InputWrapper>
+          <input
+            id="password"
+            type="password"
+            placeholder="Enter password"
+            className="w-full px-3 py-2 border rounded-md"
+          />
+        </InputWrapper>
+      </FormField>
+    </Form>
+  );
+}
+```
+
+## Examples
+
+<FormDemo />
+
+

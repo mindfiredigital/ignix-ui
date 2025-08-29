@@ -13,9 +13,11 @@
       "label": "Layout",
       "items": [
         "layout/spacer",
-        "layout/center"
+        "layout/center",
+        "layout/form"
       ]
     },
+    
     {
       "type": "category",
       "label": "Components",
