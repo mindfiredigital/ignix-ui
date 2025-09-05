@@ -12,12 +12,16 @@
       "type": "category",
       "label": "Layouts",
       "items": [
-        "layouts/spacer",
         "layouts/aspect-ratio",
         "components/box",
         "layouts/center",
         "layouts/container",
-        "layouts/form"
+        "layouts/form",
+        "layouts/pin",
+        "layouts/responsive-grid",
+        "layouts/spacer",
+        "layouts/auto-grid"
+
       ]
     },
     

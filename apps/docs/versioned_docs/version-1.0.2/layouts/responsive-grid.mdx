@@ -1,0 +1,129 @@
+---
+sidebar_position: 6
+title: ResponsiveGrid
+description: A powerful layout component for creating complex, responsive grids declaratively without media queries.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import ResponsiveGrid from '@site/src/components/UI/responsive-grid';
+
+## Overview
+
+The **ResponsiveGrid** component allows developers to build responsive grid layouts declaratively, without writing media queries.  
+It supports dynamic column counts across breakpoints, configurable gaps, equal-height items, and animations.
+
+## Preview
+
+<Tabs defaultValue="preview">
+  <TabItem value="preview" label="Preview" default>
+    <div className="p-4 border rounded-lg">
+      <ResponsiveGrid 
+        columns={{ mobile: 1, tablet: 2, desktop: 4 }}
+        gap="normal"
+        minItemWidth="100px"
+        equalHeight
+      >
+        <div className="bg-red-600 text-white p-4 rounded">Item 1</div>
+        <div className="bg-red-600 text-white p-4 rounded">Item 2</div>
+        <div className="bg-red-600 text-white p-4 rounded">Item 3</div>
+        <div className="bg-red-600 text-white p-4 rounded">Item 4</div>
+      </ResponsiveGrid>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    import ResponsiveGrid from './components/ui';
+
+    function Example() {
+      return (
+        <ResponsiveGrid 
+          columns={{ mobile: 1, tablet: 2, desktop: 4 }}
+          gap="normal"
+          minItemWidth="100px"
+          equalHeight
+        >
+          <div>Item 1</div>
+          <div>Item 2</div>
+          <div>Item 3</div>
+          <div>Item 4</div>
+        </ResponsiveGrid>
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+## Installation
+
+<Tabs>
+  <TabItem value="npm" label="npm" default>
+    ```bash
+    npx @mindfiredigital/ignix-ui add responsive-grid
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+    ```bash
+    yarn @mindfiredigital/ignix-ui add responsive-grid
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm @mindfiredigital/ignix-ui add responsive-grid
+    ```
+  </TabItem>
+</Tabs>
+
+## Variants
+
+import ResponsiveGridDemo from '@site/src/components/Demo/ResponsiveGridDemo';
+
+<ResponsiveGridDemo />
+
+
+## Usage
+
+### Basic Example
+
+```tsx
+function ProductGrid() {
+  return (
+    <ResponsiveGrid 
+      columns={{ mobile: 1, tablet: 2, desktop: 3 }}
+      gap="large"
+    >
+      <ProductCard />
+      <ProductCard />
+      <ProductCard />
+    </ResponsiveGrid>
+  );
+}
+```
+
+### Image Gallery
+
+```tsx
+function Gallery() {
+  return (
+    <ResponsiveGrid 
+      columns={{ mobile: 2, tablet: 3, desktop: 5 }}
+      gap="small"
+      animation="stagger"
+    >
+      {images.map((src, i) => (
+        <img key={i} src={src} className="rounded shadow" />
+      ))}
+    </ResponsiveGrid>
+  );
+}
+```
+
+## Props
+
+| Prop          | Type                                                                 | Default   | Description                                                                 |
+|---------------|----------------------------------------------------------------------|-----------|-----------------------------------------------------------------------------|
+| `columns`     | `{ mobile?: number, tablet?: number, desktop?: number }`             | `{}`      | Defines column counts for each breakpoint.                                  |
+| `gap`         | `"small" \| "normal" \| "large" \| string`                           | `"normal"`| Gap between grid items.                                                     |
+| `minItemWidth`| `string`                                                             | `"auto"`  | Minimum width of each grid item before wrapping.                            |
+| `equalHeight` | `boolean`                                                            | `false`   | Ensures all items in a row have equal height.                               |
+| `animation`   | `"none" \| "fade" \| "stagger" \| "scale"`                           | `"none"`  | Defines animation for layout changes.                                       |
