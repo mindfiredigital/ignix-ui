@@ -1,0 +1,107 @@
+---
+sidebar_position: 6
+title: Pin
+description: A utility component for absolute positioning, letting you "pin" elements to corners or edges of their parent.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import Pin from '@site/src/components/UI/pin';
+
+## Overview
+
+The **Pin** component makes absolute positioning **declarative**.  
+It lets you "pin" elements like close buttons, badges, or floating actions to a corner or edge of their nearest relative container.
+
+## Preview
+
+<Tabs defaultValue="preview">
+  <TabItem value="preview" label="Preview" default>
+    <div className="border p-6 rounded-lg">
+            <div className="relative p-10 w-40 sm:w-96 m-auto border rounded-lg min-h-[200px]">
+              <Pin
+                to={"top-right"}
+                offset={"normal"}
+                zIndex={"normal"} mobile={undefined} className={undefined}            >
+                <button className="bg-red-600 text-white w-6 h-6 rounded-full shadow">
+                  ✕
+                </button>
+              </Pin>
+              <p className="mt-8 text-gray-700">Pinned button inside a card</p>
+            </div>
+          </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    import Pin from './components/ui';
+
+    function Example() {
+      return (
+        <div className="relative p-10 border rounded-lg">
+          <Pin to="top-right" offset="normal" zIndex="high">
+            <button>✕</button>
+          </Pin>
+          <p>Card Content</p>
+        </div>
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+## Installation
+
+<Tabs>
+  <TabItem value="npm" label="npm" default>
+    ```bash
+    npx @mindfiredigital/ignix-ui add pin
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+    ```bash
+    yarn @mindfiredigital/ignix-ui add pin
+    ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm @mindfiredigital/ignix-ui add pin
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+```tsx
+import Pin from './components/ui';
+
+function BasicPin() {
+  return (
+    <div className="relative">
+      <Pin to="bottom-right" offset="large">
+        <button className="bg-blue-600 text-white p-2 rounded-full">+</button>
+      </Pin>
+    </div>
+  );
+}
+```
+
+## Variants
+
+import PinDemo from '@site/src/components/Demo/PinDemo';
+
+<PinDemo />
+
+## Props
+
+| Prop      | Type                                                     | Default     | Description                                         |
+|-----------|----------------------------------------------------------|-------------|-----------------------------------------------------|
+| `to`      | `"top-left" \| "top-right" \| "bottom-left" \| "bottom-right"` | `"top-right"` | Position of the pinned element.                     |
+| `offset`  | `"none" \| "small" \| "normal" \| "large" \| "xl"`       | `"normal"`  | Spacing offset from edges.                          |
+| `zIndex`  | `"low" \| "normal" \| "high" \| number`                  | `"normal"`  | Z-index control (preset or custom number).          |
+| `mobile`  | `"relative" \| "absolute"`                               | `undefined` | Override positioning behavior on mobile.            |
+| `as`      | `React.ElementType`                                      | `"div"`     | Custom wrapper element (e.g., `span`, `button`).    |
+| `children`| `ReactNode`                                              | `—`         | Element(s) to pin.                                  |
+
+---
+
+⚠️ **Note**: Parent container must have `position: relative` for `<Pin>` to work properly.
