@@ -12,12 +12,12 @@
       "type": "category",
       "label": "Layouts",
       "items": [
-        "layouts/spacer",
         "layouts/aspect-ratio",
-        "components/box",
+        "layouts/box",
         "layouts/center",
         "layouts/container",
-        "layouts/form"
+        "layouts/form",
+        "layouts/spacer"
       ]
     },
     
@@ -29,7 +29,6 @@
         "components/badge",
         "components/breadcrumbs",
         "components/button",
-        "components/box",
         "components/card",
         "components/dialog-box",
         "components/dropdown",
