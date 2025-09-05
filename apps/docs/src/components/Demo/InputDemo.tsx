@@ -75,7 +75,7 @@ const InputDemo = () => {
       />
       <Tabs>
         <TabItem value="preview" label="Preview">
-          <div className="p-4 border rounded-lg mt-4">
+          <div className="p-4 pt-[30px] border rounded-lg mt-4">
             <AnimatedInput
               placeholder="Type something..."
               variant={variant}
