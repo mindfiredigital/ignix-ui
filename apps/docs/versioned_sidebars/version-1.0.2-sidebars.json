@@ -17,6 +17,8 @@
         "components/box",
         "layouts/center",
         "layouts/container",
+        "feat/container",
+        "layouts/split",
         "layouts/form"
       ]
     },
