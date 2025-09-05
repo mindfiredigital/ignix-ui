@@ -36,13 +36,15 @@
         "main": {
           "path": "components/layouts/aspect-ratio/index.tsx",
           "type": "component"
-          }
+        }
       }
     },
     "box": {
       "name": "Box",
       "description": "A versatile container component",
-      "dependencies": ["framer-motion"],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": {
         "main": {
           "path": "components/box/index.tsx",
@@ -74,6 +76,21 @@
       "files": {
         "main": {
           "path": "components/layouts/center/index.ts",
+          "type": "component"
+        }
+      }
+    },
+    "pin": {
+      "name": "Pin",
+      "description": "A layout utility component for Pin content",
+      "dependencies": [
+        "react",
+        "@radix-ui/react-slot",
+        "clsx"
+      ],
+      "files": {
+        "main": {
+          "path": "components/layouts/pin/index.ts",
           "type": "component"
         }
       }

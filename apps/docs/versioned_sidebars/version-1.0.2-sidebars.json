@@ -16,6 +16,7 @@
         "layouts/aspect-ratio",
         "components/box",
         "layouts/center",
+        "layouts/pin",
         "layouts/container",
         "layouts/form"
       ]
