@@ -27,9 +27,14 @@ jobs:
 
       # Step 4: Deploy to Netlify
       - name: Deploy to Netlify
+        id: deploy
         uses: nwtgck/actions-netlify@v1.1
         with:
           publish-dir: ./apps/docs/build
           production-deploy: false
           NETLIFY_AUTH_TOKEN: "nfp_Q8sH3AGrH97GSD98iucDJCvbESrjHkhs6d25"
           NETLIFY_SITE_ID: "12c707e1-3f03-4c66-9f24-1fc0115a98da"
+
+      # Step 5: Log the preview URL
+      - name: Log Preview URL
+        run: echo "Preview URL: ${{ steps.deploy.outputs.preview-url }}"
