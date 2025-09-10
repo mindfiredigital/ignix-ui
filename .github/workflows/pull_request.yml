@@ -1,4 +1,4 @@
-name: Deploy Docusaurus Docs to Netlify
+name: Deploy Docusaurus Docs to GitHub Pages
 
 on:
   pull_request:
@@ -25,11 +25,31 @@ jobs:
           npm install
           npm run build
 
-      # Step 4: Deploy to Netlify
-      - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@v1.1
-        with:
-          publish-dir: ./apps/docs/build
-          production-deploy: false
-          NETLIFY_AUTH_TOKEN: "nfp_Q8sH3AGrH97GSD98iucDJCvbESrjHkhs6d25"
-          NETLIFY_SITE_ID: "12c707e1-3f03-4c66-9f24-1fc0115a98da"
+      # Step 4: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Create a temporary branch for the PR
+          TEMP_BRANCH="gh-pages-pr-${{ github.event.pull_request.number }}"
+          cd apps/docs
+          # Copy the build artifacts to a temporary directory
+          mkdir -p /tmp/temp-directory
+          cp -r build/* /tmp/temp-directory/
+          # Switch to the temporary branch
+          git fetch origin
+          git checkout gh-pages || git checkout -b gh-pages
+          git pull origin gh-pages
+          git checkout -b $TEMP_BRANCH
+          # Remove all files and copy the new build
+          rm -rf *
+          cp -r /tmp/temp-directory/* .
+          # Commit and push the changes
+          git add .
+          git commit -m "chore(docs): deploy PR #${{ github.event.pull_request.number }} to GitHub Pages"
+          git push origin $TEMP_BRANCH --force
+          echo "Deployed to GitHub Pages branch: $TEMP_BRANCH"
+
+      # Step 5: Log the preview URL
+      - name: Log Preview URL
+        run: echo "Preview URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/$TEMP_BRANCH"

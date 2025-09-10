@@ -1,0 +1,17 @@
+name: Cleanup Temporary Branches
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Delete temporary branch
+        run: |
+          TEMP_BRANCH="gh-pages-pr-${{ github.event.pull_request.number }}"
+          git push origin --delete $TEMP_BRANCH
