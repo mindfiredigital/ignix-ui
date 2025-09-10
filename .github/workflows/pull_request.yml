@@ -1,0 +1,35 @@
+name: Deploy Docusaurus Docs to Netlify
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      # Step 3: Install dependencies and build Docusaurus
+      - name: Install dependencies and build
+        run: |
+          cd apps/docs
+          npm install
+          npm run build
+
+      # Step 4: Deploy to Netlify
+      - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v1.1
+        with:
+          publish-dir: ./apps/docs/build
+          production-deploy: false
+          NETLIFY_AUTH_TOKEN: "nfp_Q8sH3AGrH97GSD98iucDJCvbESrjHkhs6d25"
+          NETLIFY_SITE_ID: "12c707e1-3f03-4c66-9f24-1fc0115a98da"
