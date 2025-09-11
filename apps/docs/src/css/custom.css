@@ -524,6 +524,11 @@ h1 {
   inset: 0;
 }
 
-ul {
-  list-style-type: disc;
+.table-of-contents > li > ul {
+  padding: 0px;
+  list-style-type: none; /* disables disc bullets */
+}
+
+.table-of-contents > li > ul > li {
+  margin-left: 0px;
 }
