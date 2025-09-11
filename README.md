@@ -56,6 +56,29 @@ npx @mindfiredigital/ignix-ui add <component-name>
 
 For full documentation, visit [mindfiredigital.github.io/ignix-ui](https://mindfiredigital.github.io/ignix-ui/).
 
+## Component Generator (For Contributors)
+
+Ignix UI includes a **scaffolding script** that helps contributors quickly create new components with all the necessary boilerplate files.  
+This ensures consistency, speeds up development, and keeps the project structure clean.
+
+### Usage
+
+Run the following command from the project root:
+
+```bash
+pnpm run generate-component --name=componentName
+```
+
+### What the Script Does
+
+- Creates a new folder for your component.
+
+- Adds base files (like .tsx, .test.tsx, index.tsx,).
+
+- update registry.json
+
+- Ensures naming consistency.
+
 ## Contributing
 
 Please follow our [contributing guidelines](https://mindfiredigital.github.io/ignix-ui/docs/contribution-guide/how-to-contribute).
