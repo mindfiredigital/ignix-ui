@@ -434,10 +434,27 @@
         }
       }
     },
+    "breakpoint": {
+      "name": "Breakpoint",
+      "description": "A flexible container component for constraining content width with responsive padding and centering options.",
+      "dependencies": [
+        "class-variance-authority", 
+        "lucide-react"
+      ],
+      "files": {
+        "main": {
+          "path": "components/layouts/container/index.tsx",
+          "type": "component"
+        }
+      }
+    },
     "stack": {
       "name": "Stack",
       "description": "A layout component for arranging elements in a stack with adjustable spacing and alignment.",
-      "dependencies": ["class-variance-authority"],
+      "dependencies": [
+        "class-variance-authority",
+        "lucide-react"
+      ],
       "files": {
         "main": {
           "path": "components/layouts/stack/index.tsx",
