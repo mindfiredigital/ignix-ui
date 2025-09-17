@@ -286,17 +286,22 @@
 }
 
 .navbar {
-  background: var(--background);
+  background: var(--background)/0.5;
   width: 100%;
   display: flex;
   box-shadow: none;
   justify-content: center;
   align-items: center;
   margin: 0 auto;
-
+  backdrop-filter: blur(10px);
+  
   @media (min-width: 1024px) {
     padding: 2rem 2rem;
   }
+}
+
+.navbar-sidebar--show{
+backdrop-filter: none;
 }
 
 .footer {

@@ -35,6 +35,7 @@ const config: Config = {
   ],
 
   themeConfig: {
+    image: 'img/docusaurus-social-card.jpg',
     metadata: [
       {
         name: 'description',
@@ -62,7 +63,6 @@ const config: Config = {
       disableSwitch: false,
       respectPrefersColorScheme: false,
     },
-    image: 'img/social-card.png',
     navbar: {
       title: 'Ignix UI',
       logo: {

@@ -49,10 +49,23 @@ export function Container({
   className,
   ...props
 }: ContainerProps) {
-  // If maxWidth is provided, it takes precedence over size
-  const widthClass = maxWidth 
-    ? (typeof maxWidth === 'string' ? maxWidthClasses[maxWidth as keyof typeof maxWidthClasses] : maxWidth)
-    : sizeClasses[size];
+  // Handle maxWidth - support both predefined classes and custom values as inline styles
+  const maxWidthStyle: React.CSSProperties = {};
+  let widthClass = sizeClasses[size];
+  
+  if (maxWidth) {
+    if (typeof maxWidth === 'string' && maxWidth in maxWidthClasses) {
+      // Use predefined class
+      widthClass = maxWidthClasses[maxWidth as keyof typeof maxWidthClasses];
+    } else {
+      // Apply custom value as inline style
+      if (typeof maxWidth === 'number') {
+        maxWidthStyle.maxWidth = `${maxWidth}px`;
+      } else {
+        maxWidthStyle.maxWidth = maxWidth;
+      }
+    }
+  }
 
   return (
     <div
@@ -64,6 +77,7 @@ export function Container({
         responsive && "px-4 sm:px-6 lg:px-8",
         className
       )}
+      style={maxWidthStyle}
       {...props}
     >
       {children}

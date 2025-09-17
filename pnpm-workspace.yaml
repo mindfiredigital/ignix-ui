@@ -4,7 +4,7 @@ packages:
   - 'packages/cli'
   - 'packages/registry'
   # all packages in subdirs of apps/
-  - 'apps/docs'  
+  - 'apps/*'  
   # exclude packages that are inside test directories
   - '!**/test/**'
   # exclude packages that are inside dist directories
