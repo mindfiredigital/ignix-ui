@@ -72,6 +72,7 @@ const Box: React.FC<BoxProps> = ({
         roundedClass,
         shadowClass,
         bgClass,
+        "max-w-full overflow-auto ",
         className
       )}
     >
