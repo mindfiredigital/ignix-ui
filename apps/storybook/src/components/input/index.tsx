@@ -2,7 +2,8 @@
 
 import type React from "react";
 import { useState, useEffect, useRef } from "react";
-import { motion, Variants, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import type { Variants } from "framer-motion";
 import { Eye, EyeOff, Check, AlertCircle } from "lucide-react";
 import { cn } from "../../../utils/cn";
 
