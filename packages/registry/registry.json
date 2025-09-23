@@ -534,6 +534,20 @@
         }
       }
     },
+    "DebugBox": {
+  "name": "DebugBox",
+  "description": "A development utility that overlays grid, spacing, breakpoints, and dimensions for debugging layouts.",
+  "dependencies": [],
+  "files": {
+    "main": {
+      "path": "components/DebugBox/index.tsx",
+      "type": "component"
+    }
+  }
+}
+  }
+}
+=======
     "header-layout": {
       "name": "HeaderLayout",
       "description": "A flexible layout component with header, sidebar, and footer that supports responsive design and various configuration options.",
@@ -577,3 +591,4 @@
     }
   }
 }
+

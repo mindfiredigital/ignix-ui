@@ -1,0 +1,79 @@
+---
+sidebar_position: 6
+title: DebugBox
+description: A development utility to visualize layout overlays including grid, spacing, breakpoints, and dimensions.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { DebugBox } from '@site/src/components/UI/DebugBox';
+import { Box } from '@site/src/components/UI/box';
+
+## Overview
+
+**DebugBox** is a utility wrapper that overlays **grid**, **spacing guides**, **breakpoints**, and **dimensions** on any component, helping developers debug layouts visually.
+
+## Preview
+
+<Tabs defaultValue="preview">
+  <TabItem value="preview" label="Preview" default>
+    <DebugBox showGrid showSpacing showBreakpoints showDimensions>
+      <Box style={{ height: 120, padding: 16, border: '1px solid #ddd', borderRadius: 8 }}>
+        DebugBox Overlay Example
+      </Box>
+    </DebugBox>
+  </TabItem>
+
+  <TabItem value="code" label="Code">
+    ```tsx
+    import { DebugBox } from '@site/src/components/UI/DebugBox';
+    import { Box } from '@site/src/components/UI/box';
+
+    function DebugBoxExample() {
+      return (
+        <DebugBox showGrid showSpacing showBreakpoints showDimensions>
+          <Box style={{ height: 120, padding: 16, border: '1px solid #ddd', borderRadius: 8 }}>
+            DebugBox Overlay Example
+          </Box>
+        </DebugBox>
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+## Installation
+
+<Tabs>
+  <TabItem value="npm" label="npm" default>
+    ```bash
+    npx @mindfiredigital/ignix-ui add debugbox
+    ```
+  </TabItem>
+
+  <TabItem value="yarn" label="Yarn">
+    ```bash
+    yarn @mindfiredigital/ignix-ui add debugbox
+    ```
+  </TabItem>
+
+  <TabItem value="pnpm" label="pnpm">
+    ```bash
+    pnpm @mindfiredigital/ignix-ui add debugbox
+    ```
+  </TabItem>
+
+  <TabItem value="manual" label="Manual" className="max-h-[500px] overflow-y-auto">
+    ```tsx
+   // Import DebugBox.tsx and wrap your component inside src/components/Demo
+   import { DebugBox } from '@site/src/components/UI/DebugBox';
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+Import the components:
+
+```tsx
+import { DebugBox } from '@site/src/components/UI/DebugBox';
