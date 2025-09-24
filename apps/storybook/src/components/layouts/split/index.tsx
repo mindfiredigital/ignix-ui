@@ -1,4 +1,4 @@
-import { cn } from "../../../utils/cn";
+import { cn } from "../../../../utils/cn";
 import { useRef, useState, useEffect, type ReactNode } from "react";
 
 export type Ratio = "30:70" | "40:60" | "50:50" | "60:40" | "70:30";

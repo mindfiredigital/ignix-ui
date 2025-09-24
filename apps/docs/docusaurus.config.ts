@@ -5,7 +5,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: 'Ignix UI',
   tagline: 'Beautiful, animated UI components for modern web applications',
-  favicon: 'img/favicon-512x512.jpeg',
+  favicon: 'img/logo.png',
   url: 'https://ignix-ui.com',
   baseUrl: '/ignix-ui/',
   organizationName: 'mindfiredigital',
@@ -35,6 +35,7 @@ const config: Config = {
   ],
 
   themeConfig: {
+    image: 'img/docusaurus-social-card.jpg',
     metadata: [
       {
         name: 'description',
@@ -62,7 +63,6 @@ const config: Config = {
       disableSwitch: false,
       respectPrefersColorScheme: false,
     },
-    image: 'img/social-card.png',
     navbar: {
       title: 'Ignix UI',
       logo: {

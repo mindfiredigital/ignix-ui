@@ -40,7 +40,7 @@ pnpm install
 pnpm dev
 
 # Run tests
-pnpm test
+pnpm vitest
 
 # Run visual regression tests
 pnpm test:visual

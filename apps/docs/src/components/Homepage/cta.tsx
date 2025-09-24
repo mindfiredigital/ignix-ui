@@ -36,11 +36,7 @@ export function CTASection() {
         {/* Content */}
         <div className="relative z-10 flex flex-col justify-start items-center gap-8 max-w-4xl mx-auto">
           <div className="flex flex-col justify-start items-center gap-6 text-center">
-            {/* <SectionTitleCapsule highlight='Ignite'>
-              Ready to Ignite your next project?
-            </SectionTitleCapsule> */}
             <h1 className="font-semibold tracking-tight text-3xl sm:text-4xl lg:text-5xl leading-[1.08] text-foreground text-center">Ready to <span className="text-primary">Ignite</span> your next project?</h1>
-            {/* <p className="text-center text-muted-foreground"> */}
             <p className="text-foreground text-lg md:text-xl font-medium leading-relaxed max-w-3xl">
               Join thousands of developers who are building faster, shipping sooner, and creating better user experiences with Ignix UI.
             </p>

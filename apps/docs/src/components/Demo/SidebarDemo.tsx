@@ -1,11 +1,11 @@
 
 import React, { useState } from 'react';
-import Sidebar from '@site/src/components/UI/sidebar';
 import VariantSelector from './VariantSelector';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import CodeBlock from '@theme/CodeBlock';
 import { Home, Settings, User, HelpCircle } from 'lucide-react';
+import {SidebarProvider, Sidebar} from '@site/src/components/UI/sidebar';
 
 const sidebarVariants = ['default', 'dark', 'light', 'glass'];
 const sidebarPositions = ['left', 'right'];
@@ -29,6 +29,7 @@ const SidebarDemo = () => {
 `;
 
   return (
+    <SidebarProvider>
     <div className="flex flex-col space-y-4 mb-8">
       <div className="flex flex-wrap gap-4 sm:justify-end justify-start">
         <VariantSelector
@@ -73,6 +74,7 @@ const SidebarDemo = () => {
         </TabItem>
       </Tabs>
     </div>
+    </SidebarProvider>
   );
 };
 

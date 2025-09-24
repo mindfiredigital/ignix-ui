@@ -167,7 +167,7 @@ We require tests for all new features to maintain code quality.
 - Add test cases for your component in a file located alongside the component source code.
 - Ensure all tests pass before submitting your changes.
   ```bash
-  pnpm test
+  pnpm vitest
   ```
 
 ### 7\. Commit and Push Your Changes

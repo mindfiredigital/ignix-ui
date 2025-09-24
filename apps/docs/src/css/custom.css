@@ -286,17 +286,22 @@
 }
 
 .navbar {
-  background: var(--background);
+  background: var(--background)/0.5;
   width: 100%;
   display: flex;
   box-shadow: none;
   justify-content: center;
   align-items: center;
   margin: 0 auto;
-
+  backdrop-filter: blur(10px);
+  
   @media (min-width: 1024px) {
     padding: 2rem 2rem;
   }
+}
+
+.navbar-sidebar--show{
+backdrop-filter: none;
 }
 
 .footer {
@@ -365,11 +370,10 @@ h1 {
 
 /* ---------- hero typography ---------- */
 .hero-h1 {
-  font-size: clamp(2rem, 6.5vw, 4.25rem);
   line-height: 0.95;
   letter-spacing: -0.02em;
   -webkit-font-smoothing: antialiased;
-  text-wrap: balance; /* modern browsers: improves headline wrapping */
+  text-wrap: balance;
 }
 
 /* emphasis / animated gradient on rotating word */
@@ -394,21 +398,6 @@ h1 {
   0% { background-position: 0% 50% }
   50% { background-position: 100% 50% }
   100% { background-position: 0% 50% }
-}
-
-/* spotlight (radial) and noise */
-.hero-spotlight {
-  position: absolute;
-  left: 50%;
-  top: 20%;
-  width: 60rem;
-  height: 42rem;
-  transform: translate3d(0,0,0);
-  border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(255,60,60,0.12), rgba(0,0,0,0) 35%);
-  filter: blur(48px);
-  pointer-events: none;
-  mix-blend-mode: screen;
 }
 
 .hero-noise {
@@ -461,8 +450,6 @@ h1 {
 
 /* focus rings for accessibility */
 :focus-visible { outline: none; box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 14%, transparent); border-radius: 8px; }
-
-
 
 /* respect reduced motion */
 @media (prefers-reduced-motion: reduce) {

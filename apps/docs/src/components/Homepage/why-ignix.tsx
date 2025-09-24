@@ -58,9 +58,6 @@ export function WhyIgnixSection() {
             Why developers love Ignix UI
           </div>
 
-          {/* <SectionTitleCapsule highlight="developers">
-            Built by developers, for developers
-          </SectionTitleCapsule> */}
           <h1 className="font-semibold tracking-tight text-3xl sm:text-4xl lg:text-5xl leading-[1.08] text-foreground text-center">Built by <span className="text-primary">developers</span>, for <span className="text-primary">developers</span></h1>
 
           <p
@@ -81,10 +78,11 @@ export function WhyIgnixSection() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-            gap: '1.5rem',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
+            gap: '1.25rem',
             maxWidth: '1200px',
             margin: '0 auto',
+            padding: '0 1rem',
           }}
         >
           <FeatureCard
@@ -106,6 +104,7 @@ export function WhyIgnixSection() {
             title="Domain-Specific Kits"
             desc="Launch faster with specialized component kits for industries like healthcare and fintech, providing ready-to-use, domain-specific UI patterns."
             gradient="linear-gradient(135deg, color-mix(in oklab, var(--primary) 8%, transparent), transparent)"
+            tag="Soon"
           />
         </div>
 
@@ -162,11 +161,13 @@ function FeatureCard({
   title,
   desc,
   gradient,
+  tag,
 }: {
   icon: React.ReactNode;
   title: string;
   desc: string;
   gradient: string;
+  tag?: string;
 }) {
   return (
     <div
@@ -196,31 +197,52 @@ function FeatureCard({
 
       {/* Content */}
       <div style={{ position: 'relative', zIndex: 1 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
           <div
             style={{
-              display: 'inline-flex',
-              width: '48px',
-              height: '48px',
+              display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              borderRadius: '50%',
-              background: 'color-mix(in oklab, var(--primary) 12%, transparent)',
-              border: '2px solid color-mix(in oklab, var(--primary) 25%, transparent)',
+              width: '2.25rem',
+              height: '2.25rem',
+              borderRadius: '0.625rem',
+              backgroundColor: 'var(--primary/0.08)',
+              flexShrink: 0,
+              marginTop: '0.125rem',
             }}
           >
             {icon}
           </div>
-          <h3
-            style={{
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+              <h3
+                style={{
               fontSize: '1.25rem',
               fontWeight: '600',
-              color: 'var(--foreground)',
+                  color: 'var(--foreground)',
               margin: 0,
-            }}
-          >
-            {title}
-          </h3>
+              marginRight: '0.5rem',
+                }}
+              >
+                {title}
+              </h3>
+              {tag && (
+                <span 
+                  style={{ 
+                    fontSize: '0.75rem',
+                    padding: '0.125rem 0.5rem',
+                    borderRadius: '0.5rem',
+                    backgroundColor: 'var(--muted)',
+                    color: 'var(--muted-foreground)',
+                    fontWeight: 500,
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {tag}
+                </span>
+              )}
+            </div>
+          </div>
         </div>
 
         <p
@@ -229,6 +251,11 @@ function FeatureCard({
             lineHeight: '1.6',
             color: 'var(--muted-foreground)',
             margin: '0 0 1.5rem 0',
+            textAlign: 'justify',
+            textJustify: 'inter-word',
+            hyphens: 'auto',
+            wordBreak: 'break-word',
+            maxWidth: '100%',
           }}
         >
           {desc}

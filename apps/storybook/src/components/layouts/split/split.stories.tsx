@@ -1,7 +1,7 @@
 import { Split, Left, Right } from ".";
 
 export default {
-  title: "Components/Split",
+  title: "Layouts/Split",
   component: Split,
   parameters: {
     layout: "fullscreen",

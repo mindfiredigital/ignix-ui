@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
 import { motion } from "framer-motion";
 import {
   Menu,
@@ -19,7 +19,6 @@ interface SidebarProps
   links: LinkItem[];
   brandName?: string;
   position?: "left" | "right" | "bottomLeft" | "bottomRight";
-  onClose?: () => void;
 }
 
 const sidebarVariants = cva("absolute h-full overflow-hidden transition-all", {
@@ -32,7 +31,7 @@ const sidebarVariants = cva("absolute h-full overflow-hidden transition-all", {
     },
     isOpen: {
       true: "w-64 h-full",
-      false: "w-20 h-full",
+      false: `w-20 h-full`,
     },
     variant: {
       default: "bg-background text-foreground",
@@ -54,23 +53,85 @@ const sidebarVariants = cva("absolute h-full overflow-hidden transition-all", {
   },
 });
 
+interface SidebarContextType {
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+  toggle: () => void;
+  onClose: () => void;
+  onOpen: () => void;
+}
+
+const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
+
+interface SidebarProviderProps {
+  children: ReactNode;
+  initialOpen?: boolean;
+}
+
+export const SidebarProvider: React.FC<SidebarProviderProps> = ({ 
+  children, 
+  initialOpen = true 
+}) => {
+  const [isOpen, setIsOpen] = useState(initialOpen);
+
+  const toggle = useCallback(() => {
+    setIsOpen(prev => !prev);
+  }, []);
+
+  const onClose = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
+  const onOpen = useCallback(() => {
+    setIsOpen(true);
+  }, []);
+
+  const value: SidebarContextType = {
+    isOpen,
+    setIsOpen,
+    toggle,
+    onClose,
+    onOpen,
+  };
+
+  return (
+    <SidebarContext.Provider value={value}>
+      {children}
+    </SidebarContext.Provider>
+  );
+};
+
+export const useSidebar = () => {
+  const context = useContext(SidebarContext);
+  if (context === undefined) {
+    throw new Error('useSidebar must be used within a SidebarProvider');
+  }
+  return context;
+};
+
 const Sidebar: React.FC<SidebarProps> = ({
   links,
   brandName = "Brand",
   position = "left",
-  onClose,
-  isOpen = true,
   variant,
   className,
   direction,
 }) => {
-  const [open, setOpen] = useState(isOpen);
-
-  const toggleSidebar = () => setOpen((prev) => !prev);
-
-  const handleClose = () => {
-    onClose?.();
-  };
+  const { isOpen, onClose, onOpen } = useSidebar();
+    const [isMobile, setIsMobile] = React.useState(false);
+  
+    // breakpoint width
+    const bp = 768; // 1024;
+  
+    React.useEffect(() => {
+      const check = () => {
+        const mobile = window.innerWidth < bp;
+        setIsMobile(mobile);
+      };
+      check();
+      window.addEventListener("resize", check);
+      return () => window.removeEventListener("resize", check);
+    }, [bp]);
 
   return (
     <motion.div
@@ -78,24 +139,27 @@ const Sidebar: React.FC<SidebarProps> = ({
       animate={{ x: 0 }}
       transition={{ duration: 0.4 }}
       className={cn(
-        sidebarVariants({ position, isOpen: open, variant, direction }),
+        sidebarVariants({ position, isOpen, variant, direction }),
+        isMobile ? !isOpen ? "w-0" : isOpen: '',
         className
       )}
     >
       {/* Sidebar Header */}
       <div className="p-4 flex items-center justify-between gap-4">
-        {open && <h1 className="text-xl font-bold">{brandName}</h1>}
-        <button onClick={() => [toggleSidebar(), handleClose()]}>
-          {open ? (
+        {isOpen && <h1 className="text-xl font-bold">{brandName}</h1>}
+          {isOpen ? (
+        <button onClick={onClose}>
             <span title="Close">
               <X size={24} />
             </span>
-          ) : (
-            <span title="Open">
-              <Menu size={24} />
-            </span>
-          )}
         </button>
+          ) : (
+            <button onClick={onOpen}>
+              <span title="Open">
+                <Menu size={24} />
+              </span>
+            </button>
+          )}
       </div>
 
       {/* Sidebar Links */}
@@ -112,7 +176,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             className="flex items-center p-4 gap-4 "
           >
             <link.icon size={24} />
-            {open && <span>{link.label}</span>}
+            {isOpen && <span>{link.label}</span>}
           </a>
         ))}
       </motion.nav>

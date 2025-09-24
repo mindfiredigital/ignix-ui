@@ -218,7 +218,6 @@ export default function ComponentShowcase() {
 
       {/* Spacing/container adjusted to match the example; colors unchanged */}
       <section className="relative py-12 px-4 overflow-hidden" aria-label="Featured components">
-        {/* Optional background floaters (kept neutral; remove if not needed) */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-black/0 rounded-full blur-3xl animate-float" />
           <div
@@ -238,9 +237,6 @@ export default function ComponentShowcase() {
             aria-label="Featured components"
           > */}
           <header className="mb-8">
-            {/* <SectionTitleCapsule highlight="components" align="center" caseInsensitive>
-                Featured Components
-              </SectionTitleCapsule> */}
             <h1 className="font-semibold tracking-tight text-3xl sm:text-4xl lg:text-5xl leading-[1.08] text-foreground text-center">
               Featured <span className="text-primary">Components</span>
             </h1>

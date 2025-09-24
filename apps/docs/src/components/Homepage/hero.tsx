@@ -47,7 +47,7 @@ export function HeroSection() {
 
   return (
     <section aria-label="Hero" className="relative overflow-hidden">
-      {/* Background veil (already in your code) */}
+      {/* Background veil */}
       <div
         className="display-component-display fixed inset-0 pointer-events-none -z-10"
         aria-hidden
@@ -59,36 +59,28 @@ export function HeroSection() {
         ) : (
           <div className="fixed inset-0">
             <DarkVeil speed={0.6} hueShift={234} warpAmount={1.4} />
+            <div className="absolute inset-0 bg-black/20" />
           </div>
         )}
-        {/* Spotlight + noise overlay */}
-        <div
-          ref={spotlightRef}
-          className="hero-spotlight -z-20"
-          aria-hidden
-          style={{ willChange: 'transform' }}
-        />
         <div className="hero-noise -z-10" aria-hidden />
       </div>
 
-      <header className={clsx(styles.heroBanner, 'flex items-center justify-center py-24')}>
+      <header className={clsx(styles.heroBanner, 'flex items-center justify-center sm:py-24 py-16')}>
         <div className={clsx(styles.heroContent, 'w-full relative z-10')}>
           <div className="max-w-7xl mx-auto px-6 text-center md:text-left">
-            {/* headline */}
-            {/* <GlassCard /> */}
             <GlassText />
             <motion.div
-              className="mx-auto mb-6 text-center"
+              className="mx-auto mb-6 sm:text-center text-left"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
             >
-              <h1
-                className="hero-h1 font-extrabold leading-tight tracking-tight"
+              <div
+                className="hero-h1 md:text-7xl sm:text-6xl text-5xl font-extrabold tracking-tight sm:text-center text-left pb-2"
                 style={{ lineHeight: 0.95 }}
               >
                 <span className="block">Ship Your Vision,</span>
-                <span className="block">
+                <span className="sm:block flex flex-col gap-2 mt-2">
                   Not Your{' '}
                   <span className="gradient-anim emphasis inline-block">
                     <TextType
@@ -101,9 +93,9 @@ export function HeroSection() {
                     />
                   </span>
                 </span>
-              </h1>
+              </div>
 
-              <span className="mt-4 max-w-3xl text-lg md:text-xl text-foreground mx-auto text-center">
+              <span className="mt-4 max-w-3xl text-lg text-xl text-foreground mx-auto font-medium sm:text-center text-left">
                 Build stunning UIs <span className="text-primary font-semibold">faster</span> with
                 our powerful &amp; versatile components library.
               </span>
@@ -111,7 +103,7 @@ export function HeroSection() {
 
             {/* CTAs */}
             <motion.div
-              className="flex flex-wrap justify-center gap-4 mt-8"
+              className="flex flex-wrap sm:justify-center justify-left gap-4 mt-8"
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.75 }}
@@ -138,15 +130,15 @@ export function HeroSection() {
 
             {/* quick info / pills */}
             <motion.div
-              className="flex flex-wrap justify-center gap-3 mt-10"
+              className="flex flex-wrap sm:justify-center justify-left gap-3 mt-12"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.95 }}
             >
-              <div className="code-pill inline-flex items-center gap-3 px-4 py-2 rounded-full backdrop-blur-sm min-w-[280px] max-w-full overflow-hidden">
+              <div className="code-pill inline-flex items-center gap-3 px-4 py-2 rounded-xl backdrop-blur-sm min-w-[280px] max-w-full overflow-hidden">
                 <ShineBorder
                   shineColor="var(--primary)"
-                  className="rounded-full"
+                  className="rounded-xl"
                   borderWidth={1}
                   duration={8}
                 />
@@ -154,10 +146,10 @@ export function HeroSection() {
                 <span className="text-mono ml-1 truncate">npm i @mindfiredigital/ignix-ui</span>
               </div>
 
-              <div className="code-pill inline-flex items-center gap-3 px-4 py-2 rounded-full backdrop-blur-sm">
+              <div className="code-pill inline-flex items-center gap-3 px-4 py-2 rounded-xl backdrop-blur-sm">
                 <ShineBorder
                   shineColor="var(--primary)"
-                  className="rounded-full"
+                  className="rounded-xl"
                   borderWidth={1}
                   duration={8}
                 />
@@ -206,41 +198,11 @@ function CopyButton({ text }: { text: string }) {
   );
 }
 
-// Animation variants for cleaner code
-const cardAnimation = {
-  initial: {
-    opacity: 0,
-    y: 16,
-  },
-  animate: {
-    opacity: 1,
-    y: [0, -8, 0],
-    transition: {
-      y: {
-        duration: 4,
-        repeat: Infinity,
-        ease: 'easeInOut',
-      },
-    },
-  },
-};
-
-const logoAnimation = {
-  animate: {
-    y: [0, 6, 0],
-    transition: {
-      duration: 3.5,
-      repeat: Infinity,
-      ease: 'easeInOut',
-    },
-  },
-};
-
 function GlassText() {
   return (
-    <div className="relative flex justify-center items-center">
+    <div className="relative flex sm:justify-center items-center mb-2">
       <motion.div
-        className="text-4xl font-bold text-center relative z-0"
+        className="sm:text-4xl text-3xl font-bold sm:text-center text-left relative z-0"
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.2 }}
@@ -248,27 +210,5 @@ function GlassText() {
         <AuroraText colors={['#f7777f', '#f01622', '#e30613']}>Ignix UI</AuroraText>
       </motion.div>
     </div>
-  );
-}
-
-export function GlassCard() {
-  return (
-    <motion.div
-      className="relative w-18 h-18 mx-auto rounded-2xl border border-border/50 bg-background/10 backdrop-blur-sm shadow-lg"
-      variants={cardAnimation}
-      initial="initial"
-      animate="animate"
-    >
-      <div className="absolute inset-0 flex items-center justify-center">
-        <motion.img
-          src="img/logo.png"
-          alt="Mindfire logo"
-          className="w-6 h-full object-contain"
-          variants={logoAnimation}
-          whileHover={{ scale: 1.1 }}
-          transition={{ duration: 0.3 }}
-        />
-      </div>
-    </motion.div>
   );
 }

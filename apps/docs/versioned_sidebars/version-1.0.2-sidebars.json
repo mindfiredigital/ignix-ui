@@ -28,7 +28,10 @@
         "layouts/responsive-grid",
         "layouts/spacer",
         "layouts/split",
-        "layouts/stack"
+        "layouts/cluster",
+        "layouts/section",
+        "layouts/stack",
+        "layouts/header-layout"
       ]
     },
     {
@@ -41,6 +44,7 @@
         "components/button",
         "components/card",
         "components/dialog-box",
+        "components/drawer",
         "components/dropdown",
         "components/input",
         "components/navbar",

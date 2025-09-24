@@ -483,6 +483,28 @@
         }
       }
     },
+    "section": {
+      "name": "Section",
+      "description": "A layout component for creating distinct vertical blocks with consistent vertical rhythm, spacing, and background styling.",
+      "dependencies": ["class-variance-authority"],
+      "files": {
+        "main": {
+          "path": "components/layouts/section/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "cluster": {
+      "name": "Cluster",
+      "description": "A layout component for creating distinct group related items with consistent spacing and alignment.",
+      "dependencies": ["class-variance-authority"],
+      "files": {
+        "main": {
+          "path": "components/layouts/cluster/index.tsx",
+          "type": "component"
+        }
+      }
+    },
     "breakpoint": {
       "name": "Breakpoint",
       "description": "A flexible container component for constraining content width with responsive padding and centering options.",
@@ -492,7 +514,7 @@
       ],
       "files": {
         "main": {
-          "path": "components/layouts/container/index.tsx",
+          "path": "components/layouts/breakpoint/index.tsx",
           "type": "component"
         }
       }
@@ -508,6 +530,36 @@
       "files": {
         "main": {
           "path": "components/layouts/stack/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "header-layout": {
+      "name": "HeaderLayout",
+      "description": "A flexible layout component with header, sidebar, and footer that supports responsive design and various configuration options.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "files": {
+        "main": {
+          "path": "components/layouts/header-layout/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "drawer": {
+      "name": "Drawer",
+      "description": "A drawer component with animation and different variants",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "files": {
+        "main": {
+          "path": "components/drawer/index.tsx",
           "type": "component"
         }
       }
