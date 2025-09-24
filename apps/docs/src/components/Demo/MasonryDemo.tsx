@@ -17,12 +17,12 @@ const MasonryDemo = () => {
   const columnOptions = ["1", "2", "3", "4"];
 
   const colors = [
-    "bg-red-600 p-10",
-    "bg-red-600 p-4",
-    "bg-red-600 p-12",
-    "bg-red-600 p-40",
-    "bg-red-600 p-20",
-    "bg-red-600 p-6",
+    "bg-red-600 p-3 sm:p-8 md:p-10",   
+    "bg-red-600 p-2 sm:p-3 md:p-4",   
+    "bg-red-600 p-4 sm:p-10 md:p-12",  
+    "bg-red-600 p-6 sm:p-20 md:p-40",
+    "bg-red-600 p-4 sm:p-12 md:p-20", 
+    "bg-red-600 p-2 sm:p-5 md:p-6",   
   ];
 
   const codeString = `
