@@ -25,14 +25,14 @@ const HeaderLayoutDemo = () => {
 
   const mainContent = (
     <div className="p-6 space-y-6">
-      <div className="bg-white rounded-lg p-6 shadow-sm border">
+      <div className="rounded-lg p-6 shadow-sm border">
         <h2 className="text-2xl font-bold mb-4">Welcome to Header Layout</h2>
-        <p className="text-gray-600 mb-4">
+        <p className="mb-4">
           This is a demonstration of the HeaderLayout component with various configuration options.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-blue-50 p-4 rounded-lg">
-            <h3 className="font-semibold mb-2">Features</h3>
+            <p className="font-semibold text-xl mb-2 text-gray-700">Features</p>
             <ul className="text-sm space-y-1 text-gray-700">
               <li>• Responsive sidebar with mobile support</li>
               <li>• Configurable animations and transitions</li>
@@ -41,7 +41,7 @@ const HeaderLayoutDemo = () => {
             </ul>
           </div>
           <div className="bg-green-50 p-4 rounded-lg">
-            <h3 className="font-semibold mb-2">Configuration</h3>
+            <p className="font-semibold text-xl mb-2 text-gray-700">Configuration</p>
             <ul className="text-sm space-y-1 text-gray-700">
               <li>• Variant: {variant}</li>
               <li>• Sidebar Position: {sidebarPosition}</li>
@@ -51,9 +51,9 @@ const HeaderLayoutDemo = () => {
         </div>
       </div>
       
-      <div className="bg-white rounded-lg p-6 shadow-sm border">
+      <div className="rounded-lg p-6 shadow-sm border">
         <h3 className="text-lg font-semibold mb-4">Interactive Demo</h3>
-        <p className="text-gray-600 mb-4">
+        <p className="mb-4">
           Try resizing the browser window to see the responsive behavior in action.
         </p>
         <div className="flex flex-wrap gap-2">
@@ -63,9 +63,9 @@ const HeaderLayoutDemo = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg p-6 shadow-sm border">
+      <div className="rounded-lg p-6 shadow-sm border">
         <h3 className="text-lg font-semibold mb-4">Content Area</h3>
-        <p className="text-gray-600">
+        <p className="mb-4">
           This is the main content area. The HeaderLayout component provides a flexible layout system
           with a header, sidebar, and footer that can be configured in various ways.
         </p>

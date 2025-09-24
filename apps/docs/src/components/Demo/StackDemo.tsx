@@ -5,6 +5,7 @@ import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 import CodeBlock from "@theme/CodeBlock";
 import { Button } from "@site/src/components/UI/button";
+import { cn } from "@site/src/utils/cn";
 
 const directionOptions = ["vertical", "horizontal"];
 const alignOptions = ["start", "center", "end", "stretch"];
@@ -13,8 +14,8 @@ const spacingOptions = ["none", "xs", "sm", "normal", "lg", "xl"];
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const StackDemo = () => {
-  const [direction, setDirection] = useState("vertical");
-  const [align, setAlign] = useState("stretch");
+  const [direction, setDirection] = useState("horizontal");
+  const [align, setAlign] = useState("center");
   const [justify, setJustify] = useState("start");
   const [spacing, setSpacing] = useState("normal");
   const [wrap, setWrap] = useState(false);
@@ -72,19 +73,24 @@ const StackDemo = () => {
       </div>
       <Tabs>
         <TabItem value="preview" label="Preview">
-          <div className="p-6 border rounded-lg mt-4 flex items-center justify-center">
-            <Stack
-              direction={direction as any}
-              align={align as any}
-              justify={justify as any}
-              spacing={spacing as any}
-              wrap={wrap}
-              style={{ minHeight: 100, minWidth: 200 }}
-            >
-              <Button>One</Button>
-              <Button>Two</Button>
-              <Button>Three</Button>
-            </Stack>
+          <div className="p-6 border rounded-lg mt-4 w-full">
+            <div className={cn(
+              "mb-4 p-2 rounded",
+              direction === 'vertical' ? 'h-64' : 'h-32',
+            )}>
+              <Stack
+                direction={direction as any}
+                align={align as any}
+                justify={justify as any}
+                spacing={spacing as any}
+                wrap={wrap}
+                className="h-full"
+              >
+                <Button className="whitespace-nowrap">Button One</Button>
+                <Button className="whitespace-nowrap">Button Two</Button>
+                <Button className="whitespace-nowrap">Button Three</Button>
+              </Stack>
+            </div>
           </div>
         </TabItem>
         <TabItem value="code" label="Code">

@@ -1,7 +1,7 @@
 import { Breakpoint } from "./index";
 
 export default {
-  title: "Layout/Breakpoint",
+  title: "Layouts/Breakpoint",
   component: Breakpoint,
    tags: ['autodocs'],
   argTypes: {

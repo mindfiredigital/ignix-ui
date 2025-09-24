@@ -47,7 +47,7 @@ const DrawerDemo = () => {
 >
   <div className="p-4">
     <h3 className="text-lg font-semibold mb-4">Drawer Content</h3>
-    <p className="text-gray-600 mb-4">
+    <p className="mb-4">
       This is the main content area of the drawer. You can put any content here.
     </p>
     <div className="space-y-2">
@@ -62,7 +62,7 @@ const DrawerDemo = () => {
   const drawerContent = (
     <div className="p-4">
       <h3 className="text-lg font-semibold mb-4">Drawer Content</h3>
-      <p className="text-gray-600 mb-4">
+      <p className="mb-4">
         This is the main content area of the drawer. You can put any content here including forms, lists, or other components.
       </p>
       <div className="space-y-2">

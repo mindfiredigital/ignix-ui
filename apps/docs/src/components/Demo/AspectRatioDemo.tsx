@@ -36,7 +36,7 @@ const AspectRatioDemo = () => {
               placeholder="Custom (e.g., 5:4)"
               value={ratios.includes(ratio) ? '' : ratio}
               onChange={(e) => setRatio(e.target.value)}
-              className="border border-input rounded px-2 py-1 text-sm mb-4"
+              className="border border-input rounded px-2 py-2 text-sm mb-4"
             />
           </div>
         </div>
@@ -55,7 +55,7 @@ const AspectRatioDemo = () => {
               placeholder="Custom (e.g., 500px)"
               value={maxWidths.includes(maxWidth) ? '' : maxWidth}
               onChange={(e) => setMaxWidth(e.target.value)}
-              className="border border-input rounded px-2 py-1 text-sm mb-4"
+              className="border border-input rounded px-2 py-2 text-sm mb-4"
             />
           </div>
         </div>

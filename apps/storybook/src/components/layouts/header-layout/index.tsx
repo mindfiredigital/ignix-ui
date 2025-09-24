@@ -1,7 +1,7 @@
 import * as React from "react";
 import { motion, AnimatePresence, type PanInfo } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "../../../../utils/cn";
+import { cn } from '../../../../utils/cn';
 import { Menu, X } from "lucide-react";
 import { SidebarProvider, useSidebar } from "../../sidebar";
 
@@ -143,7 +143,7 @@ const HeaderLayoutContent: React.FC<HeaderLayoutProps> = ({
       {/* Fixed header with reserved space via padding on the main shell */}
       {header && (
         <header
-          className="fixed inset-x-0 top-0"
+          className="inset-x-0 top-0"
           style={{ height: headerHeight, zIndex: zIndex.header }}
         >
           {header}
@@ -152,7 +152,6 @@ const HeaderLayoutContent: React.FC<HeaderLayoutProps> = ({
 
       <div
         className={cn(
-          "pt-[var(--header-h)]",
           // Desktop grid: sidebar + content
           "md:grid md:min-h-screen",
           sidebar && !sidebarCollapsed ? "md:grid-cols-[auto_1fr]" : "md:grid-cols-1"
@@ -206,11 +205,14 @@ const HeaderLayoutContent: React.FC<HeaderLayoutProps> = ({
           <AnimatePresence>
             {overlay && (
               <motion.div
-                className="fixed inset-0"
-                style={{ zIndex: zIndex.overlay }}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/50"
+                style={{ zIndex: zIndex.overlay, pointerEvents: isOpen ? 'auto' : 'none' }}
+                initial={{ opacity: 0, pointerEvents: 'none' }}
+                animate={{ 
+                  opacity: isOpen ? 1 : 0,
+                  pointerEvents: isOpen ? 'auto' : 'none'
+                }}
+                exit={{ opacity: 0, pointerEvents: 'none' }}
                 transition={{ duration: transitionDuration }}
                 onClick={() => toggleSidebar(false)}
               />
@@ -226,9 +228,14 @@ const HeaderLayoutContent: React.FC<HeaderLayoutProps> = ({
             style={{
               zIndex: (zIndex.sidebar ?? 90) + 10,
             }}
-            initial={false}
+            initial={{
+              x: sidebarOnLeft ? -sidebarWidth : sidebarWidth
+            }}
             animate={{
-              x: !sidebarCollapsed ? 0 : (sidebarOnLeft ? -sidebarWidth : sidebarWidth),
+              x: isOpen ? 0 : (sidebarOnLeft ? -sidebarWidth : sidebarWidth),
+            }}
+            exit={{
+              x: sidebarOnLeft ? -sidebarWidth : sidebarWidth
             }}
             transition={{ duration: transitionDuration, ease: "easeInOut" }}
             drag={enableGestures ? "x" : false}
@@ -242,9 +249,9 @@ const HeaderLayoutContent: React.FC<HeaderLayoutProps> = ({
           {/* Mobile toggle button */}
           <button
             className={cn(
-              "fixed z-[999] p-2 rounded-lg bg-background shadow-lg",
-              sidebarOnLeft && "left-4 top-1/2 -translate-y-1/2",
-              sidebarOnRight && "right-4 top-1/2 -translate-y-1/2"
+              "fixed z-[999] p-2 rounded-lg bg-background shadow-lg top-4",
+              sidebarOnLeft && "left-4",
+              sidebarOnRight && "right-4"
             )}
             onClick={() => setIsOpen(!isOpen)}
             aria-label={isOpen ? "Close sidebar" : "Open sidebar"}

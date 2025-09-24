@@ -1,7 +1,7 @@
 import { LazyLoad } from "./index";
 
 export default {
-  title: "Layout/LazyLoad",
+  title: "Layouts/LazyLoad",
   component: LazyLoad,
    tags: ['autodocs'],
   argTypes: {
