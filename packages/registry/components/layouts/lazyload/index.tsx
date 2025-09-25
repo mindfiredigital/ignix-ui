@@ -1,67 +1,62 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-export interface LazyLoadProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface LazyLoadProps {
   children: React.ReactNode;
   className?: string;
-  threshold?: string; 
-  placeholder?: React.ReactNode; 
+  threshold?: string; // e.g. "100px"
+  placeholder?: React.ReactNode;
   once?: boolean;
-  animation?: "fade" | "slide" | "none"; 
+  animation?: "fade" | "slide" | "none";
 }
 
 export const LazyLoad: React.FC<LazyLoadProps> = ({
   children,
   className,
-  threshold = "100px",
+  threshold = "0px",
   placeholder = null,
   once = true,
-  animation = "fade",
-  ...rest 
+  animation = "none",
 }) => {
+  const ref = useRef<HTMLDivElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!ref.current) return;
+
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          if (once) observer.disconnect(); 
-        }
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsVisible(true);
+            if (once) {
+              observer.disconnect(); // unobserve after first load
+            }
+          } else if (!once) {
+            setIsVisible(false); // re-hide if once=false
+          }
+        });
       },
       { rootMargin: threshold }
     );
 
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
+    observer.observe(ref.current);
 
-    return () => {
-      if (containerRef.current) observer.unobserve(containerRef.current);
-    };
+    return () => observer.disconnect();
   }, [threshold, once]);
 
-  const getAnimationStyle = () => {
-    switch (animation) {
-      case "fade":
-        return { opacity: isVisible ? 1 : 0, transition: "opacity 0.5s ease" };
-      case "slide":
-        return {
-          transform: isVisible ? "translateY(0)" : "translateY(20px)",
-          opacity: isVisible ? 1 : 0,
-          transition: "transform 0.5s ease, opacity 0.5s ease",
-        };
-      default:
-        return {};
-    }
-  };
+  // Animation classes
+  const animationClass =
+    animation === "fade"
+      ? "transition-opacity duration-700 ease-in-out opacity-0 data-[visible=true]:opacity-100"
+      : animation === "slide"
+      ? "transition-transform duration-700 ease-in-out translate-y-4 opacity-0 data-[visible=true]:translate-y-0 data-[visible=true]:opacity-100"
+      : "";
 
   return (
     <div
-      ref={containerRef}
-      className={className}
-      style={getAnimationStyle()}
-      {...rest}
+      ref={ref}
+      className={`${className ?? ""} ${animationClass}`}
+      data-visible={isVisible}
     >
       {isVisible ? children : placeholder}
     </div>

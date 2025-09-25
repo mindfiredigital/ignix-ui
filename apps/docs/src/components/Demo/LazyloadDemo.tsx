@@ -1,103 +1,94 @@
 import React, { useState } from "react";
-import { LazyLoad } from "../UI/lazyload";
+import {LazyLoad} from "@site/src/components/UI/lazyload";
+import VariantSelector from "./VariantSelector";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 import CodeBlock from "@theme/CodeBlock";
 
-const LazyloadDemo: React.FC = () => {
-  const [threshold, setThreshold] = useState("100px");
-  const [animation, setAnimation] = useState<"fade" | "slide" | "none">("fade");
-  const [once, setOnce] = useState(true);
+const LazyLoadDemo = () => {
+  const [threshold, setThreshold] = useState("0px");
+  const [animation, setAnimation] = useState("fade");
+  const [once, setOnce] = useState(false);
+
+  const thresholds = ["0px", "100px", "200px", "400px"];
+  const animations = ["none", "fade", "slide"];
+  const onceOptions = ["true", "false"];
+
+  const colors = [
+    "bg-blue-600 p-12",
+    "bg-green-600 p-20",
+    "bg-pink-600 p-16",
+    "bg-purple-600 p-24",
+    "bg-yellow-600 p-14",
+  ];
 
   const codeString = `
 <LazyLoad 
-  threshold="${threshold}" 
-  animation="${animation}" 
+  threshold="${threshold}"
+  animation="${animation}"
   once={${once}}
-  placeholder={<div style={{ height: "200px", background: "#eee" }}>Loading...</div>}
+  placeholder={<div className="p-6 text-center">Loading...</div>}
 >
-  <div style={{
-    height: "200px", 
-    background: "#ccc", 
-    display: "flex", 
-    justifyContent: "center", 
-    alignItems: "center"
-  }}>
-    Loaded Content
+  <div className="bg-gray-200 rounded-lg shadow text-center p-10">
+    Your Content
   </div>
 </LazyLoad>
 `;
 
   return (
     <div className="space-y-6 mb-8">
-      {/* Variant selectors */}
-      <div className="flex flex-wrap gap-4 justify-start sm:justify-end">
-        {/* Threshold */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium">Threshold</label>
-          <input
-            type="text"
-            value={threshold}
-            onChange={(e) => setThreshold(e.target.value)}
-            className="border rounded px-2 py-1 text-sm"
-          />
-        </div>
-
-        {/* Animation */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium">Animation</label>
-          <select
-            value={animation}
-            onChange={(e) => setAnimation(e.target.value as "fade" | "slide" | "none")}
-            className="border rounded px-2 py-1 text-sm"
-          >
-            <option value="fade">Fade</option>
-            <option value="slide">Slide</option>
-            <option value="none">None</option>
-          </select>
-        </div>
-
-        {/* Once */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium">Load Once</label>
-          <input
-            type="checkbox"
-            checked={once}
-            onChange={(e) => setOnce(e.target.checked)}
-            className="border rounded px-2 py-1 text-sm"
-          />
-        </div>
+      {/* Uniform controls */}
+      <div className="flex flex-wrap gap-6 justify-start sm:justify-end">
+        <VariantSelector
+          variants={thresholds}
+          selectedVariant={threshold}
+          onSelectVariant={setThreshold}
+          type="Threshold"
+        />
+        <VariantSelector
+          variants={animations}
+          selectedVariant={animation}
+          onSelectVariant={setAnimation}
+          type="Animation"
+        />
+        <VariantSelector
+          variants={onceOptions}
+          selectedVariant={String(once)}
+          onSelectVariant={(val) => setOnce(val === "true")}
+          type="Once"
+        />
       </div>
 
       {/* Tabs for preview/code */}
       <Tabs>
         <TabItem value="preview" label="Preview">
-          <div className="border p-6 rounded-lg">
-            <LazyLoad
-              threshold={threshold}
-              animation={animation}
-              once={once}
-              placeholder={<div style={{ height: "200px", background: "#eee" }}>Loading...</div>}
-            >
-              <div
-                style={{
-                  height: "200px",
-                  background: "#ccc",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
+          <div className="border p-6 rounded-lg space-y-6">
+            {colors.map((color, i) => (
+              <LazyLoad
+                key={`${animation}-${threshold}-${once}-${i}`}
+                threshold={threshold}
+                animation={animation as "fade" | "slide" | "none"}
+                once={once}
+                placeholder={
+                  <div className="p-6 text-center bg-gray-100 rounded-lg shadow">
+                    Loading...
+                  </div>
+                }
               >
-                Loaded Content
-              </div>
-            </LazyLoad>
+                <div
+                  className={`${color} text-white rounded-lg shadow-md text-center`}
+                >
+                  Item {i + 1}
+                </div>
+              </LazyLoad>
+            ))}
           </div>
         </TabItem>
 
         <TabItem value="code" label="Code">
           <div className="mt-4">
             <CodeBlock language="tsx" className="text-sm">
-              {codeString.trim()}
+              {codeString}
             </CodeBlock>
           </div>
         </TabItem>
@@ -106,4 +97,4 @@ const LazyloadDemo: React.FC = () => {
   );
 };
 
-export default LazyloadDemo;
+export default LazyLoadDemo;
