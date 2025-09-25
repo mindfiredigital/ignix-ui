@@ -13,7 +13,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        //Custom Colors
+          secondary: "#f5f5f5",
       },
     },
   },
