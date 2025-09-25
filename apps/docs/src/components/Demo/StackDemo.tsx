@@ -8,7 +8,7 @@ import { Button } from "@site/src/components/UI/button";
 
 const directionOptions = ["vertical", "horizontal"];
 const alignOptions = ["start", "center", "end", "stretch"];
-const justifyOptions = ["start", "center", "end", "between", "around"];
+const justifyOptions = ["start", "center", "end", "between", "around", "evenly"];
 const spacingOptions = ["none", "xs", "sm", "normal", "lg", "xl"];
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -26,6 +26,7 @@ const StackDemo = () => {
   justify="${justify}"
   spacing="${spacing}"
   wrap={${wrap}}
+  className = "${direction === "vertical" ? "h-64" : "w-full"}"
 >
   <Button>One</Button>
   <Button>Two</Button>
@@ -79,7 +80,7 @@ const StackDemo = () => {
               justify={justify as any}
               spacing={spacing as any}
               wrap={wrap}
-              style={{ minHeight: 100, minWidth: 200 }}
+              className={direction === "vertical" ? "h-64 w-full" : "w-full"}
             >
               <Button>One</Button>
               <Button>Two</Button>

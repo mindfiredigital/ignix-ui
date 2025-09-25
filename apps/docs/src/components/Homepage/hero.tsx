@@ -95,7 +95,7 @@ export function HeroSection() {
                 </span>
               </div>
 
-              <span className="mt-4 max-w-3xl text-lg text-xl text-foreground mx-auto font-medium sm:text-center text-left">
+              <span className="mt-4 max-w-3xl text-xl text-foreground mx-auto font-medium sm:text-center text-left">
                 Build stunning UIs <span className="text-primary font-semibold">faster</span> with
                 our powerful &amp; versatile components library.
               </span>
