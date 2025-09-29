@@ -36,7 +36,7 @@
     "@tailwindcss/typography": "^0.5.16",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.0.0",
-    "framer-motion": "^12.4.10",
+    "framer-motion": "^11.18.2",
     "gsap": "^3.13.0",
     "lucide-react": "^0.511.0",
     "ogl": "^1.0.11",
