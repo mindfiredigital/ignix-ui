@@ -19,6 +19,7 @@ const widthMap: Record<string, string> = {
   large: "w-96",
   full: "w-full",
 };
+
 const heightMap: Record<string, string> = {
   auto: "h-auto",
   small: "h-16",
@@ -26,12 +27,14 @@ const heightMap: Record<string, string> = {
   large: "h-64",
   screen: "h-screen",
 };
+
 const paddingMap: Record<string, string> = {
   none: "p-0",
   sm: "p-2",
   normal: "p-4",
   lg: "p-8",
 };
+
 const roundedMap: Record<string, string> = {
   none: "rounded-none",
   sm: "rounded-sm",
@@ -39,6 +42,7 @@ const roundedMap: Record<string, string> = {
   lg: "rounded-lg",
   full: "rounded-full",
 };
+
 const shadowMap: Record<string, string> = {
   none: "shadow-none",
   subtle: "shadow-sm",
@@ -73,6 +77,7 @@ export const Box: React.FC<BoxProps> = ({
         roundedClass,
         shadowClass,
         bgClass,
+        "max-w-full overflow-auto scrollbar-hidden",
         className
       )}
       {...props}

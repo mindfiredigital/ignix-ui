@@ -519,3 +519,13 @@ h1 {
 .table-of-contents > li > ul > li {
   margin-left: 0px;
 }
+
+/* Hide scrollbar but allow scrolling */
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hidden {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
