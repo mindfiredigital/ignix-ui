@@ -30,7 +30,7 @@
         "layouts/responsive-grid",
         "layouts/spacer",
         "layouts/split",
-        "layouts/DebugBox"
+        "layouts/DebugBox",
         "layouts/cluster",
         "layouts/section",
         "layouts/split",
