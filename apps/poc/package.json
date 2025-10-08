@@ -21,7 +21,7 @@
     "@tailwindcss/vite": "^4.0.8",
     "autoprefixer": "^10.4.20",
     "clsx": "^2.1.1",
-    "framer-motion": "^12.4.10",
+    "framer-motion": "^11.18.2",
     "lucide-react": "^0.477.0",
     "postcss": "^8.5.3",
     "react": "^19.0.0",
