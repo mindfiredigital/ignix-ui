@@ -131,7 +131,7 @@
         }
       }
     },
-    "appShell": {
+    "app-shell": {
       "name": "AppShell",
       "description": "A high-level layout component that structures the entire application frame, providing responsive navigation (side, top, or drawer), brand placement, user profile integration, and optional footer support.",
       "dependencies": [
