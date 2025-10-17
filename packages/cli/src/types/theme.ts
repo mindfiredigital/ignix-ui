@@ -22,13 +22,9 @@ export interface ThemeColors {
   borderLight: string;
   borderHover: string;
   success: string;
-  successHover: string;
   warning: string;
-  warningHover: string;
   error: string;
-  errorHover: string;
   info: string;
-  infoHover: string;
 }
 
 export interface ThemeMetadata {
@@ -87,3 +83,18 @@ export type ThemeAction =
   | { type: 'RESET_THEME' }
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_ERROR'; payload: string | null };
+
+export type ContrastLevel = 'AA' | 'AAA';
+
+export type CreateThemeInput = {
+  id: string;
+  name: string;
+  category: string;
+  primary: string;
+  secondary?: string;
+  accent?: string;
+  description?: string;
+  generateDark?: boolean;
+  contrastLevel?: ContrastLevel;
+  mode?: ThemeMode; // initial generation mode, defaults to light
+};

@@ -1,0 +1,183 @@
+---
+title: Hooks
+sidebar_label: Hooks
+description: API reference for React Hooks in the Ignix UI theming system
+sidebar_position: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import Admonition from '@theme/Admonition';
+
+# Hooks API Reference
+
+## useTheme()
+
+The primary hook for accessing and controlling the current theme state.
+
+### Import
+
+```tsx
+import { useTheme } from '@ignix-ui/themes';
+```
+
+### Return Value
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `theme` | `ThemeConfig` | Current theme object |
+| `setTheme` | `(themeId: string) => void` | Change the current theme |
+| `mode` | `'light' \| 'dark'` | Current color mode |
+| `toggleMode` | `() => void` | Toggle between light/dark modes |
+
+### Example
+
+```tsx
+function ThemeController() {
+  const { theme, mode, toggleMode, setTheme } = useTheme();
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <p>Current theme: <strong>{theme.name}</strong></p>
+        <p>Current mode: <strong>{mode}</strong></p>
+      </div>
+      
+      <div className="flex gap-2">
+        <button 
+          onClick={toggleMode}
+          className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded"
+        >
+          Toggle Mode
+        </button>
+        <button 
+          onClick={() => setTheme('ocean-breeze')}
+          className="px-4 py-2 bg-blue-500 text-white rounded"
+        >
+          Set Ocean Breeze
+        </button>
+      </div>
+    </div>
+  );
+}
+```
+
+---
+
+## useThemePresets()
+
+Access the library of preset themes and categories.
+
+### Import
+
+```tsx
+import { useThemePresets } from '@ignix-ui/themes';
+```
+
+### Return Value
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `categories` | `Category[]` | All theme categories |
+| `themes` | `ThemeConfig[]` | All available themes |
+| `searchThemes` | `(query: string) => ThemeConfig[]` | Search themes by name/tags |
+
+### Example
+
+```tsx
+function ThemeBrowser() {
+  const { categories, themes, searchThemes } = useThemePresets();
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  const filteredThemes = searchQuery 
+    ? searchThemes(searchQuery)
+    : themes;
+
+  return (
+    <div>
+      <input
+        type="text"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        placeholder="Search themes..."
+        className="w-full p-2 mb-4 border rounded"
+      />
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filteredThemes.map((theme) => (
+          <ThemePreview key={theme.id} theme={theme} />
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+---
+
+## useThemeValidation()
+
+Utilities for validating color contrast and accessibility.
+
+### Import
+
+```tsx
+import { useThemeValidation } from '@ignix-ui/themes';
+```
+
+### Return Value
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `validateContrast` | `(color1: string, color2: string) => number` | Get contrast ratio |
+| `checkAccessibility` | `(contrast: number, level: 'AA' \| 'AAA') => boolean` | Check WCAG compliance |
+
+### Example
+
+```tsx
+function ContrastChecker() {
+  const [color1, setColor1] = useState('#000000');
+  const [color2, setColor2] = useState('#ffffff');
+  
+  const { validateContrast, checkAccessibility } = useThemeValidation();
+  
+  const contrast = validateContrast(color1, color2);
+  const meetsAA = checkAccessibility(contrast, 'AA');
+  const meetsAAA = checkAccessibility(contrast, 'AAA');
+
+  return (
+    <div className="space-y-4">
+      <div className="flex gap-4">
+        <div>
+          <label>Foreground</label>
+          <input 
+            type="color" 
+            value={color1} 
+            onChange={(e) => setColor1(e.target.value)}
+          />
+        </div>
+        <div>
+          <label>Background</label>
+          <input 
+            type="color"
+            value={color2}
+            onChange={(e) => setColor2(e.target.value)}
+          />
+        </div>
+      </div>
+      
+      <div>
+        <p>Contrast Ratio: <strong>{contrast.toFixed(2)}:1</strong></p>
+        <p>WCAG AA: {meetsAA ? '✅' : '❌'}</p>
+        <p>WCAG AAA: {meetsAAA ? '✅' : '❌'}</p>
+      </div>
+    </div>
+  );
+}
+```
+
+## Related
+
+- [Components API](/docs/theming/api-reference/components)
+- [Utilities API](/docs/theming/api-reference/utilities)
+- [Theme Wizard](/docs/theming/theme-wizard)

@@ -10,7 +10,7 @@ export interface TabsProps
     VariantProps<typeof tabsVariants> {
   options: string[];
   selected?: number;
-  value?: (index: number) => void;
+  value?: (index: any) => void;
 }
 
 const tabsVariants = cva("relative flex items-center", {

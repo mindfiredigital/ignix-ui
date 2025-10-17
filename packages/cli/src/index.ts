@@ -32,3 +32,5 @@ program
   });
 
 program.parse();
+
+export * from './themes';

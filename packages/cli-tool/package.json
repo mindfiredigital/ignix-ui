@@ -1,0 +1,49 @@
+{
+  "name": "@mindfiredigital/ignix-cli",
+  "version": "1.0.0",
+  "description": "CLI tool for the Ignix UI component library",
+  "type": "commonjs",
+  "bin": {
+    "ignix": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "templates"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "start": "node dist/index.js",
+    "clean": "rimraf dist",
+    "lint": "eslint src --ext .ts"
+  },
+  "keywords": [
+    "ignix-ui",
+    "cli",
+    "components",
+    "ui",
+    "react"
+  ],
+  "author": "Ignix UI Team",
+  "license": "MIT",
+  "dependencies": {
+    "@antfu/ni": "^0.21.12",
+    "axios": "^1.7.2",
+    "chalk": "^4.1.2",
+    "commander": "^12.1.0",
+    "fs-extra": "^11.2.0",
+    "ora": "^5.4.1",
+    "prompts": "^2.4.2"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.12.12",
+    "@types/prompts": "^2.4.9",
+    "rimraf": "^5.0.7",
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

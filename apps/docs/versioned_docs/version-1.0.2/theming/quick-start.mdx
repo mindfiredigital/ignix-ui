@@ -1,0 +1,80 @@
+---
+sidebar_position: 1
+title: Quick Start
+description: Get started with Ignix UI theming in less than 5 minutes by adding a theme provider and a theme switcher to your React application.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import Admonition from '@theme/Admonition';
+
+# Quick Start: Theming in 5 Minutes
+
+Welcome to Ignix UI Theming! This guide will get you up and running with a fully functional, multi-theme setup in your React application in just a few minutes. This single package includes the core ThemeProvider, all theme-related components like ThemeSwitcher, and the entire library of 200+ preset themes.
+
+## Basic Usage
+
+### 1. Add ThemeProvider
+
+Wrap your application with the `ThemeProvider` component to enable theming throughout your app:
+
+```tsx
+// our layout component or entrypoint of app
+import { ThemeProvider } from '@ignix-ui/themes';
+
+function Layout() {
+  return (
+    <ThemeProvider defaultThemeId="cyberpunk-neon">
+      {children}
+    </ThemeProvider>
+  );
+}
+
+export default Layout;
+```
+
+### 2. Add Theme Switcher
+
+Add the `ThemeSwitcher` component to allow users to change themes:
+
+```tsx
+import { ThemeSwitcher } from '@ignix-ui/themes';
+import { Button, Card } from '@ignix-ui/components';
+
+export default function YourAppComponent() {
+  return (
+    <div className="p-8">
+      <header className="flex justify-between items-center mb-8">
+        <h1 className="text-2xl font-bold">My Awesome App</h1>
+        <ThemeSwitcher layout="dropdown" />
+      </header>
+      
+      <Card>
+        <h2 className="text-xl mb-4">Welcome!</h2>
+        <p className="mb-4">
+          Try changing the theme using the dropdown in the header.
+        </p>
+        <Button>Click Me</Button>
+      </Card>
+    </div>
+  );
+}
+```
+
+## Live Example
+
+<Admonition type="tip" title="Try it out">
+  The dropdown in the top-right corner is a live ThemeSwitcher component. Give it a try!
+</Admonition>
+
+## Next Steps
+
+- 🎨 **Style Your Own Components**: Learn how to use theme variables in your components
+- 🧙‍♂️ **Create Custom Themes**: Build your own unique themes
+- 📚 **Explore the API**: Check out all available theming options
+
+## Related
+
+- [Core Concepts](/docs/theming/core-concepts)
+- [API Reference](/docs/theming/api-reference)
+- [Theme Wizard](/docs/theming/theme-wizard)

@@ -25,7 +25,7 @@ export class CLIError extends Error {
 export class ComponentNotFoundError extends CLIError {
   constructor(componentName: string) {
     super(`Component "${componentName}" not found in registry`, 'COMPONENT_NOT_FOUND', [
-      'Check available components with: npx animation-ui list',
+      'Check available components with: ignix list components',
     ]);
   }
 }

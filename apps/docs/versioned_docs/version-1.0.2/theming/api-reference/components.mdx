@@ -1,0 +1,221 @@
+---
+title: Components
+sidebar_label: Components
+description: Detailed API reference for all Ignix UI theming components
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import Admonition from '@theme/Admonition';
+
+# Components API Reference
+
+## ThemeProvider
+
+The root provider component that powers the theming system. Must wrap your application.
+
+### Import
+
+```tsx
+import { ThemeProvider } from '@ignix-ui/themes';
+```
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | - | Your application's components |
+| `defaultThemeId` | `string` | `'ignix-light'` | Initial theme if none is found in storage |
+| `persistKey` | `string` | `'ignix-theme'` | localStorage key for theme persistence |
+| `onThemeChange` | `(theme: ThemeConfig) => void` | - | Callback when theme changes |
+| `enableSystemPreference` | `boolean` | `true` | Respect OS color scheme preference |
+
+### Example
+
+```tsx
+function App() {
+  return (
+    <ThemeProvider defaultThemeId="cyberpunk-neon">
+      <YourApp />
+    </ThemeProvider>
+  );
+}
+```
+
+---
+
+## ThemeSwitcher
+
+A component that allows users to browse and select themes.
+
+### Import
+
+```tsx
+import { ThemeSwitcher } from '@ignix-ui/themes';
+```
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `layout` | `'dropdown' \| 'grid' \| 'list'` | `'dropdown'` | Visual layout type |
+| `showPreview` | `boolean` | `true` | Show color swatches |
+| `showCategories` | `boolean` | `true` | Group themes by category |
+| `showModeToggle` | `boolean` | `true` | Show light/dark toggle |
+| `className` | `string` | - | Additional CSS class |
+| `onThemeSelect` | `(theme: ThemeConfig) => void` | - | Theme selection callback |
+
+### Example
+
+```tsx
+<ThemeSwitcher 
+  layout="grid"
+  onThemeSelect={(theme) => console.log('Selected:', theme.id)}
+/>
+```
+---
+
+## ThemeEngine
+
+The core engine that powers the Ignix UI theming system. Provides methods for creating, validating, and converting themes.
+
+### Import
+
+```typescript
+import { ThemeEngine } from '@ignix-ui/themes';
+```
+
+### `ThemeEngine.createTheme(input: CreateThemeInput)`
+
+Creates a new theme with automatic color generation and dark mode support.
+
+#### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `input` | `CreateThemeInput` | Configuration object for the theme |
+
+#### Example
+
+```typescript
+const theme = ThemeEngine.createTheme({
+  id: 'ocean-theme',
+  name: 'Ocean Theme',
+  category: 'brand',
+  primary: '#2563EB',
+  secondary: '#14B8A6',
+  accent: '#F59E0B',
+  description: 'A cool, ocean-inspired color palette',
+  generateDark: true,
+  contrastLevel: 'AA',
+  mode: 'light', // defaults to 'light'
+});
+```
+
+### `ThemeEngine.validateAndFix(theme: ThemeConfig, level: ContrastLevel)`
+
+Validates a theme against accessibility standards and attempts to fix any issues.
+
+#### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `theme` | `ThemeConfig` | The theme to validate |
+| `level` | `'AA' | 'AAA'` | WCAG contrast level to validate against |
+
+#### Returns
+
+```typescript
+{
+  theme: ThemeConfig;     // The fixed theme (if changes were made)
+  validation: {
+    isValid: boolean;     // Whether the theme passes validation
+    errors: string[];     // Array of error messages
+    warnings: string[];   // Array of warning messages
+    score: number;        // Overall accessibility score (0-100)
+  }
+}
+```
+
+#### Example
+
+```typescript
+const { theme: fixedTheme, validation } = ThemeEngine.validateAndFix(theme, 'AA');
+console.log(validation.isValid); // true
+console.log(validation.errors); // []
+console.log(validation.score); // 100
+```
+
+### `ThemeEngine.toCss(theme: ThemeConfig)`
+
+Generates CSS custom properties from a theme.
+
+#### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `theme` | `ThemeConfig` | The theme to convert to CSS |
+
+#### Returns
+
+A string containing CSS custom properties for both light and dark modes.
+
+#### Example
+
+```typescript
+const css = ThemeEngine.toCss(theme);
+// Returns CSS with :root and .dark selectors
+```
+
+## ColorUtils
+
+Utility class for color manipulation and contrast checking.
+
+### Import
+
+```typescript
+import { ColorUtils } from '@ignix-ui/themes';
+```
+
+### Methods
+
+#### Color Conversion
+
+```typescript
+// Convert between color formats
+const hsl = ColorUtils.hexToHsl('#2563EB');
+const hex = ColorUtils.hslToHex(210, 83, 57);
+```
+
+#### Color Adjustments
+
+```typescript
+// Adjust color properties
+const lighter = ColorUtils.adjustLightness('#2563EB', 10);
+const moreSaturated = ColorUtils.adjustSaturation('#2563EB', 20);
+const shiftedHue = ColorUtils.adjustHue('#2563EB', 30);
+```
+
+#### Color Relationships
+
+```typescript
+// Get color relationships
+const complementary = ColorUtils.getComplementary('#2563EB');
+const [analogous1, analogous2] = ColorUtils.getAnalogous('#2563EB');
+const [triadic1, triadic2] = ColorUtils.getTriadic('#2563EB');
+```
+
+#### Contrast Checking
+
+```typescript
+// Check contrast ratios
+const ratio = ColorUtils.getContrastRatio('#FFFFFF', '#000000');
+const isAccessible = ColorUtils.isAccessible('#FFFFFF', '#000000', 'AA');
+```
+
+## Related
+
+- [Quick Start](/docs/theming/quick-start)
+- [Core Concepts](/docs/theming/core-concepts)
+- [Theme Wizard](/docs/theming/theme-wizard)
