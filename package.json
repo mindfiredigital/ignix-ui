@@ -9,7 +9,7 @@
   "scripts": {
     "build": "turbo run build --filter=!./apps/storybook --filter=!./apps/poc",
     "dev": "turbo run dev",
-    "lint": "turbo run lint",
+    "lint": "turbo run lint --filter=./apps/storybook",
     "generate-component": "node --no-warnings --no-deprecation --loader ts-node/esm scripts/generate-component.ts",
     "test": "turbo run test",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
