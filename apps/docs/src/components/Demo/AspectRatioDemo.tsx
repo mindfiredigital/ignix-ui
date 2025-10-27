@@ -15,7 +15,7 @@ const AspectRatioDemo = () => {
 
   const codeString = `
     <AspectRatio ratio="${ratio}" maxWidth="${maxWidth}">
-    <img src={image} alt="Demo Image" />
+       <img src={image} alt="Demo Image" className="object-cover w-full h-full" />
     </AspectRatio>
     `;
 
