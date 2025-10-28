@@ -40,9 +40,18 @@ const AspectRatio = React.forwardRef<HTMLDivElement, AspectRatioProps>(
           height: '100%',
         };
 
+  const enhancedChildren = React.Children.map(children, (child) => {
+   if (React.isValidElement(child) && child.type === 'img') {
+     return React.cloneElement(child as React.ReactElement<React.ImgHTMLAttributes<HTMLImageElement>>, {
+      className: cn('w-full h-full object-cover', (child.props as React.ImgHTMLAttributes<HTMLImageElement>).className),
+    });
+  }
+  return child;
+});
+
     return (
       <div ref={ref} className={cn('aspect-ratio-container', className)} style={containerStyle} {...props}>
-        <div style={contentStyle}>{children}</div>
+        <div className="w-full h-full" style={contentStyle}>{enhancedChildren}</div>
       </div>
     );
   }
