@@ -22,23 +22,13 @@ Box is a flexible layout component for wrapping content with customizable width,
         width="large"
         height="normal"
         padding="lg"
-        background="white"
+        background="default"
         rounded="lg"
         shadow="medium"
-        className="border border-black/20"
+        className="border"
       >
-        <h2 className="font-bold text-lg mb-2">Box Component</h2>
+        <h2 className={`font-bold text-lg mb-2`}>Box Component</h2>
         <p>This is a general-purpose content box.</p>
-      </Box>
-      <Box
-        width="small"
-        height="lg"
-        padding="sm"
-        background="secondary"
-        rounded="full"
-        shadow="strong"
-      >
-        <span className="text-primary font-semibold text-center block">Small Box</span>
       </Box>
     </div>
   </TabItem>
@@ -53,7 +43,7 @@ Box is a flexible layout component for wrapping content with customizable width,
             width="large"
             height="normal"
             padding="lg"
-            background="white"
+            background="default"
             rounded="lg"
             shadow="medium"
           >
@@ -202,7 +192,7 @@ function BasicBox() {
     <Box
       width="full"
       padding="normal"
-      background="white"
+      background="default"
       rounded="md"
       shadow="subtle"
     >
@@ -227,8 +217,8 @@ function BasicBox() {
 | background  | string  | "white"   | Background color (from theme or custom)           |
 | rounded     | string  | "md"      | Border radius: "none", "sm", "md", "lg", "full"   |
 | shadow      | string  | "subtle"  | Box shadow: "none", "subtle", "medium", "strong"  |
-| className   | string  |           | Additional CSS classes                            |
-| children    | node    |           | Content inside the box                            |
+| className   | string  |  null      | Additional CSS classes                            |
+| children    | node    |  null     | Content inside the box                            |
 
 ## Use Cases
 - Cards
