@@ -58,21 +58,23 @@ The Dialog Box component provides a flexible way to display modal dialogs with v
 ## Installation
 
 <Tabs>
-  <TabItem value="npm" label="npm" default>
+  <TabItem value="cli" label="CLI" default>
     ```bash
-    npx @mindfiredigital/ignix-ui add dialog-box
+    ignix add component dialog-box
     ```
   </TabItem>
-  <TabItem value="yarn" label="yarn">
-    ```bash
-    yarn @mindfiredigital/ignix-ui add dialog-box
-    ```
-  </TabItem>
-  <TabItem value="pnpm" label="pnpm">
-    ```bash
-    pnpm @mindfiredigital/ignix-ui add dialog-box
-    ```
-  </TabItem>
+  <TabItem value="manual" label="manual" className="max-h-[500px] overflow-y-auto">
+
+    ```tsx
+import { motion, AnimatePresence } from 'framer-motion';
+import { createContext, CSSProperties, useState } from 'react';
+import { X, Check, AlertTriangle, Info, XCircle } from 'lucide-react';
+
+// types/dialog.ts
+export interface DialogRef {
+  open: (options?: DialogProps) => void;
+  close: () => void;
+}
   <TabItem value="manual" label="manual" className="max-h-[500px] overflow-y-auto">
 
     ```tsx

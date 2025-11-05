@@ -29,7 +29,7 @@
       }
     },
     "aspect-ratio": {
-      "name": "Aspect Ratio",
+      "name": "AspectRatio",
       "description": "A responsive container that maintains a consistent aspect ratio for its content",
       "dependencies": [],
       "files": {
@@ -108,7 +108,7 @@
       }
     },
     "auto-grid": {
-      "name": "Auto Grid",
+      "name": "AutoGrid",
       "description": "A self-calculating grid layout that automatically determines columns based on available space and minimum item width, with support for max columns, gap, and balanced heights.",
       "dependencies": [],
       "files": {

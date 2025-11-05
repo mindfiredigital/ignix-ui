@@ -142,8 +142,8 @@ export function HeroSection() {
                   borderWidth={1}
                   duration={8}
                 />
-                <CopyButton text="npm i @mindfiredigital/ignix-ui" />
-                <span className="text-mono ml-1 truncate">npm i @mindfiredigital/ignix-ui</span>
+                <CopyButton text="npm install -g @mindfiredigital/ignix-cli" />
+                <span className="text-mono ml-1 truncate">npm install -g @mindfiredigital/ignix-cli</span>
               </div>
 
               <div className="code-pill inline-flex items-center gap-3 px-4 py-2 rounded-xl backdrop-blur-sm">

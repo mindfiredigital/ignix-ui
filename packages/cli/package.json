@@ -2,22 +2,18 @@
   "name": "@mindfiredigital/ignix-ui",
   "version": "1.0.4",
   "private": false,
-  "description": "CLI tool for Ignix UI component library",
+  "description": "Ignix UI component library",
   "type": "commonjs",
   "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "bin": {
-    "ignix-ui": "./dist/index.js"
-  },
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public"
   },
   "files": [
     "dist",
-    " README.md",
-    "themes",
-    "types"
+    " README.md"
   ],
   "scripts": {
     "build": "tsup",
@@ -28,7 +24,8 @@
   },
   "keywords": [
     "ignix-ui",
-    "cli",
+    "themes",
+    "react",
     "components",
     "ui",
     "animation"
@@ -36,35 +33,36 @@
   "author": "Deepak Yadav",
   "license": "MIT",
   "dependencies": {
-    "@antfu/ni": "^23.3.1",
-    "autoprefixer": "^10.4.21",
-    "axios": "^1.8.2",
-    "chalk": "^4.1.2",
     "clsx": "^2.1.1",
-    "commander": "^9.4.1",
+    "tailwind-merge": "^3.0.2"
+  },
+  "peerDependencies": {
     "framer-motion": "^12.4.10",
-    "fs-extra": "^10.1.0",
-    "ora": "^5.4.1",
-    "postcss": "^8.5.6",
-    "tailwind-merge": "^3.0.2",
-    "tailwindcss": "^4.1.14"
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
   },
   "devDependencies": {
-    "@types/fs-extra": "^9.0.13",
-    "@types/node": "^18.11.9",
+    "autoprefixer": "^10.4.21",
+    "framer-motion": "^12.4.10",
+    "postcss": "^8.5.6",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
     "rimraf": "^3.0.2",
+    "tailwindcss": "^4.1.14",
     "tsup": "^6.5.0",
     "typescript": "^4.9.3"
   },
   "engines": {
     "node": ">=14.0.0"
   },
+  "sideEffects": false,
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
       "require": "./dist/index.js",
-      "import": "./dist/index.js"
+      "default": "./dist/index.mjs"
     },
-    "./tailwind": "./dist/tailwind.js"
+    "./package.json": "./package.json"
   }
 }
