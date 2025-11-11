@@ -9,7 +9,6 @@ import prompts from 'prompts';
 import { ThemeService } from '../services/ThemeService';
 
 const DEFAULT_CONFIG_PATH = 'ignix.config.js';
-const TAILWIND_CONFIG_PATH = 'tailwind.config.js';
 
 export const initCommand = new Command()
   .name('init')
@@ -29,6 +28,8 @@ export const initCommand = new Command()
 
       // 4. Set up Ignix UI alias
       await setupIgnixUIAlias();
+
+      await setupTailwindInViteConfig();
 
       // 5. Create directories
       const configPath = path.resolve(process.cwd(), DEFAULT_CONFIG_PATH);
@@ -157,58 +158,102 @@ async function createConfigFiles() {
   await createUtilsFile();
   await createLlmsTxtFile();
   await createIgnixConfigFIle();
-  await createTailwindConfigFile();
 }
 
-async function setupIgnixUIAlias() {
+async function setupIgnixUIAlias(): Promise<void> {
   const root = process.cwd();
-  const rootTsconfigPath = path.resolve(root, 'tsconfig.json');
-  let rootTsconfig: any = {};
 
-  if (await fs.pathExists(rootTsconfigPath)) {
+  // 1️⃣ Update tsconfig.app.json (merge safely)
+  const tsconfigPath = path.resolve(root, 'tsconfig.app.json');
+  let tsconfig: any = {};
+
+  if (await fs.pathExists(tsconfigPath)) {
     try {
-      rootTsconfig = await fs.readJSON(rootTsconfigPath);
+      tsconfig = await fs.readJSON(tsconfigPath);
     } catch {
-      rootTsconfig = {};
+      tsconfig = {};
     }
   }
 
-  rootTsconfig.compilerOptions = {
-    ...(rootTsconfig.compilerOptions || {}),
-    baseUrl: rootTsconfig.compilerOptions?.baseUrl || '.',
+  // Ensure compilerOptions + paths
+  tsconfig.compilerOptions = {
+    ...(tsconfig.compilerOptions || {}),
+    baseUrl: tsconfig.compilerOptions?.baseUrl || '.',
     paths: {
-      ...(rootTsconfig.compilerOptions?.paths || {}),
+      ...(tsconfig.compilerOptions?.paths || {}),
+      '@ignix-ui': ['./src/components/ui/index.ts'],
       '@ignix-ui/*': ['./src/components/ui/*'],
     },
   };
 
-  await fs.writeJSON(rootTsconfigPath, rootTsconfig, { spaces: 2 });
-  logger.success('Root tsconfig.json updated with @ignix-ui alias');
+  // Write merged config back
+  await fs.writeJSON(tsconfigPath, tsconfig, { spaces: 2 });
+  logger.success('✔ Updated tsconfig.app.json with @ignix-ui alias');
 
-  // Create webpack alias plugin if using webpack
+  // 2️⃣ Update vite.config.ts alias
+  const viteConfigPath = path.resolve(root, 'vite.config.ts');
+  if (await fs.pathExists(viteConfigPath)) {
+    let viteConfig = await fs.readFile(viteConfigPath, 'utf8');
+    const aliasLine = `@ignix-ui: path.resolve(__dirname, "src/components/ui")`;
+
+    if (!viteConfig.includes('@ignix-ui')) {
+      const aliasRegex = /alias\s*:\s*\{([\s\S]*?)\}/m;
+      if (aliasRegex.test(viteConfig)) {
+        viteConfig = viteConfig.replace(aliasRegex, (match, inner) => {
+          return `alias: {${inner.trimEnd()},\n      ${aliasLine}}`;
+        });
+      } else {
+        const resolveRegex = /resolve\s*:\s*\{([\s\S]*?)\}/m;
+        if (resolveRegex.test(viteConfig)) {
+          viteConfig = viteConfig.replace(resolveRegex, (match, inner) => {
+            return `resolve: {${inner.trimEnd()},\n    alias: { ${aliasLine} }}`;
+          });
+        } else {
+          viteConfig += `
+            resolve: {
+              alias: {
+                ${aliasLine}
+              }
+            },`;
+        }
+      }
+
+      await fs.writeFile(viteConfigPath, viteConfig, 'utf8');
+      logger.success('✔ Added @ignix-ui alias to vite.config.ts');
+    } else {
+      logger.info('ℹ @ignix-ui alias already exists in vite.config.ts — skipping');
+    }
+  } else {
+    logger.error('⚠ vite.config.ts not found — skipping alias update');
+  }
+
+  // 2) Create plugins/webpack-alias.ts
   const pluginsDir = path.resolve(root, 'plugins');
+  await fs.ensureDir(pluginsDir);
   const webpackAliasFile = path.join(pluginsDir, 'webpack-alias.ts');
 
   if (!(await fs.pathExists(webpackAliasFile))) {
-    await fs.ensureDir(pluginsDir);
     const pluginCode = `import path from 'path';
-  
-  export default function webpackAliasPlugin() {
-    return {
-      name: 'webpack-alias-plugin',
-      configureWebpack() {
+
+      export default function webpackAliasPlugin() {
         return {
-          resolve: {
-            alias: {
-              '@ignix-ui': path.resolve(process.cwd(), 'src/components/ui'),
-            },
+          name: 'webpack-alias-plugin',
+          configureWebpack() {
+            return {
+              resolve: {
+                alias: {
+                  '@ignix-ui': path.resolve(process.cwd(), 'node_modules/@mindfiredigital/ignix-ui/components'),
+                },
+              },
+            };
           },
         };
-      },
-    };
-  }`;
+      }
+      `;
     await fs.writeFile(webpackAliasFile, pluginCode, 'utf8');
-    logger.success('Created plugins/webpack-alias.ts');
+    logger.success('✔ Created plugins/webpack-alias.ts');
+  } else {
+    logger.info('plugins/webpack-alias.ts already exists — skipping');
   }
 }
 
@@ -260,12 +305,34 @@ async function createIgnixConfigFIle() {
   }
 }
 
-async function createTailwindConfigFile() {
-  const tailwindTemplatePath = path.resolve(__dirname, './templates/tailwind.config.js');
-  if (await fs.pathExists(TAILWIND_CONFIG_PATH)) {
-    logger.info('`tailwind.config.js` already exists. Please merge configurations manually.');
-  } else {
-    await fs.copy(tailwindTemplatePath, TAILWIND_CONFIG_PATH);
-    logger.success('Created `tailwind.config.js`.');
+async function setupTailwindInViteConfig(): Promise<void> {
+  const root = process.cwd();
+  const viteConfigPaths = [path.join(root, 'vite.config.ts'), path.join(root, 'vite.config.js')];
+
+  for (const configPath of viteConfigPaths) {
+    if (await fs.pathExists(configPath)) {
+      let content = await fs.readFile(configPath, 'utf-8');
+
+      // Ensure import exists
+      if (!content.includes('@tailwindcss/vite')) {
+        content = `import tailwindcss from '@tailwindcss/vite';\n` + content;
+      }
+
+      // Ensure plugin is added
+      if (!content.includes('tailwindcss()')) {
+        content = content.replace(
+          /plugins\s*:\s*\[([\s\S]*?)\]/,
+          (match, inner) => `plugins: [${inner.trim()}${inner.trim() ? ', ' : ''}tailwindcss()]`
+        );
+      }
+
+      await fs.writeFile(configPath, content, 'utf-8');
+      logger.success('✅ TailwindCSS Vite plugin added to vite.config');
+      return;
+    }
   }
+
+  logger.error(
+    '⚠️ No vite.config.js or vite.config.ts found. Please add `@tailwindcss/vite` manually.'
+  );
 }
