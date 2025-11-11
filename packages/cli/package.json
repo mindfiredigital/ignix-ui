@@ -5,7 +5,7 @@
   "description": "Ignix UI component library",
   "type": "commonjs",
   "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
@@ -59,10 +59,9 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
+      "import": "./dist/index.js",
       "require": "./dist/index.js",
-      "default": "./dist/index.mjs"
-    },
-    "./package.json": "./package.json"
+      "default": "./dist/index.js"
+    }
   }
 }
