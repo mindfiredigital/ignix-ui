@@ -96,6 +96,17 @@
     },
     {
       "type": "category",
+      "label": "Templates",
+      "items":[
+        {
+          "type": "category",
+          "label": "Starter",
+          "items": ["starters/monorepo"]
+        }
+      ]
+    },
+    {
+      "type": "category",
       "label": "Contribution Guide",
       "items": [
         "contribution-guide/how-to-contribute",
