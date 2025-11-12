@@ -18,8 +18,6 @@ async function showThemeMenu(): Promise<void> {
         { title: 'List available themes', value: 'list' },
         { title: 'Install a theme preset', value: 'install' },
         { title: 'View theme info', value: 'info' },
-        { title: 'Remove a theme', value: 'remove' },
-        { title: 'Validate theme', value: 'validate' },
         { title: 'Exit', value: 'exit' },
       ],
     });
@@ -102,14 +100,6 @@ async function showThemeMenu(): Promise<void> {
           }
           break;
         }
-
-        case 'remove':
-          logger.info(chalk.yellow('Remove theme feature coming soon!'));
-          break;
-
-        case 'validate':
-          logger.info(chalk.yellow('Validate theme feature coming soon!'));
-          break;
       }
     } catch (error) {
       spinner.fail('An error occurred');

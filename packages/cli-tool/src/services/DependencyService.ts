@@ -1,4 +1,4 @@
-import { execa } from 'execa'; // Using execa for better process management
+import { execa } from 'execa';
 import { getPackageManager } from '../utils/getPackageManager';
 import { logger } from '../utils/logger';
 

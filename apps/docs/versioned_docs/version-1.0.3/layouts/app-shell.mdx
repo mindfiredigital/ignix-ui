@@ -1,0 +1,215 @@
+---
+sidebar_position: 8
+title: AppShell
+description: A high-level layout component for structuring a complete application with header, navigation, sidebar, footer, and main content.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import AppShell from '@site/src/components/UI/app-shell';
+import AppShellDemo from '@site/src/components/Demo/AppShellDemo';
+
+## Overview
+
+The **AppShell** component provides a complete application frame.  
+It offers slots for **brand/logo**, **navigation**, **user profile**, **sidebar**, **footer**, and the **main content area**, with built-in responsive handling.
+
+This makes it ideal for **dashboards, admin panels, and single-page apps**.
+
+---
+
+## Preview
+
+<Tabs defaultValue="preview">
+  <TabItem value="preview" label="Preview" default>
+    <div className="p-4 border rounded-lg h-[420px] overflow-hidden">
+      <AppShell
+        navigation="side"
+        responsive={true}
+        sidebarWidth="normal"
+        brand={<h2 className="text-base font-bold">My App</h2>}
+        menu={
+          <nav className="space-y-2">
+            <a href="#" className="block p-2 rounded-lg hover:bg-gray-700 !text-white dark:text-black">Dashboard</a>
+            <a href="#" className="block p-2 rounded-lg hover:bg-gray-700 !text-white">Analytics</a>
+            <a href="#" className="block p-2 rounded-lg hover:bg-gray-700 !text-white">Settings</a>
+          </nav>
+        }
+        user={
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-purple-500 rounded-full flex justify-center items-center"><span className='text-white'>U</span></div>
+            <span className="hidden md:block text-gray-300">Hello User</span>
+          </div>
+        }
+        footer={<div className="p-1 text-center text-gray-400">© 2025 My App</div>}
+      >
+        <div className="p-6">
+          <h2 className="text-2xl font-semibold text-gray-800">Welcome to the Dashboard</h2>
+          <p className="mt-2 text-gray-300">This is the main content area of your application.</p>
+        </div>
+      </AppShell>
+    </div>
+  </TabItem>
+
+  <TabItem value="code" label="Code">
+    ```tsx
+    import AppShell from './components/ui/app-shell';
+    import Logo from './components/Logo';
+    import UserProfile from './components/UserProfile';
+
+    export default function Demo() {
+      const menu = [
+        { label: 'Dashboard', href: '/dashboard' },
+        { label: 'Analytics', href: '/analytics' },
+        { label: 'Settings', href: '/settings' },
+      ];
+
+      return (
+        <AppShell
+          navigation="side"
+          theme="dark"
+          responsive={true}
+          sidebarWidth="normal"
+          brand={<Logo />}
+          menu={menu}
+          user={<UserProfile />}
+          footer={<div>© 2025 My App</div>}
+        >
+          <MainContent />
+        </AppShell>
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component app-shell
+    ```
+  </TabItem>
+
+  <TabItem value="manual" label="manual" className="max-h-[500px] overflow-y-auto">
+    ```tsx
+    // Minimal AppShell example (manual)
+    import React from 'react';
+    import AppShell from './components/ui/app-shell';
+    import Logo from './components/Logo';
+    import UserProfile from './components/UserProfile';
+
+    const menu = [
+      { label: 'Dashboard', href: '/dashboard' },
+      { label: 'Projects', href: '/projects' },
+    ];
+
+    export default function AppShellManualDemo() {
+      return (
+        <AppShell
+          navigation="side"
+          brand={<Logo />}
+          menu={menu}
+          user={<UserProfile />}
+          responsive
+          sidebarWidth="normal"
+          theme="light"
+        >
+          <div className="p-6">Main content goes here</div>
+        </AppShell>
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Variants
+
+<AppShellDemo />
+
+---
+
+
+## Usage Examples
+
+### Side Navigation with Footer
+
+```tsx
+<AppShell 
+  navigation="side" 
+  footer={<Footer />} 
+  brand={<Logo />} 
+  menu={menu} 
+  user={user}
+>
+  {children}
+</AppShell>
+```
+
+---
+
+### Top Navigation
+
+```tsx
+<AppShell 
+  navigation="top" 
+  brand={<Logo />} 
+  menu={menu} 
+  user={user}
+>
+  {children}
+</AppShell>
+```
+
+---
+
+### Drawer (Mobile Friendly)
+
+```tsx
+<AppShell 
+  navigation="drawer" 
+  responsive 
+  brand={<Logo />} 
+  menu={menu}
+>
+  {children}
+</AppShell>
+```
+
+---
+
+## Theming
+
+Switch layout styles using the `theme` prop:
+
+```tsx
+<AppShell theme="light" ... />
+<AppShell theme="dark" ... />
+<AppShell theme="corporate" ... />
+```
+
+---
+
+## Props
+
+| Prop           | Type                                                                 | Default   | Description |
+|----------------|----------------------------------------------------------------------|-----------|-------------|
+| `navigation`   | `"top" \| "side" \| "bottom" \| "drawer"`                            | `"top"`   | Navigation placement |
+| `brand`        | `ReactNode`                                                          | `null`    | Brand/logo slot |
+| `menu`         | `Array<{ label: string, href?: string, icon?: ReactNode, children?: any[] }> \| ReactNode` | `[]` | Menu items (JSON or custom JSX) |
+| `user`         | `ReactNode`                                                          | `null`    | User profile/avatar |
+| `footer`       | `ReactNode`                                                          | `null`    | Footer slot |
+| `responsive`   | `boolean`                                                            | `true`    | Enables mobile drawer on small screens |
+| `sidebarWidth` | `"narrow" \| "normal" \| "wide"`                                     | `"normal"`| Sidebar width |
+| `theme`        | `"light" \| "dark" \| "modern" \| "custom"`                       | `"dark"` | Built-in theme support |
+| `className`    | `string`                                                             | `""`      | Custom classes |
+| `children`     | `ReactNode`                                                          | —         | Main content |
+
+---
+
+

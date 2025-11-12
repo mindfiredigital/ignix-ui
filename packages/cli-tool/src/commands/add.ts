@@ -23,20 +23,21 @@ export const addCommand = new Command()
         const componentNames = availableComponents.map((c) => c.name.toLowerCase());
 
         if (identifiers.length === 0) {
-          const response = await prompts({
-            type: 'multiselect',
-            name: 'components',
-            message: chalk.green('Select components to add:'),
+          const installResponse = await prompts({
+            type: 'select',
+            name: 'component',
+            message: chalk.green('Select a component to add:'),
             choices: availableComponents.map((c) => ({
               title: c.name,
               value: c.name.toLowerCase(),
             })),
           });
-          identifiers = response.components || [];
+          // Convert the single selected component to an array
+          identifiers = installResponse.component ? [installResponse.component] : [];
         }
 
         if (!identifiers || identifiers.length === 0) {
-          logger.warn('No components selected. Exiting.');
+          logger.warn('No component selected. Exiting.');
           return;
         }
 

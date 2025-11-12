@@ -1,20 +1,23 @@
 import { Command } from 'commander';
+import chalk from 'chalk';
+import prompts from 'prompts';
 import { addCommand } from './commands/add';
 import { initCommand } from './commands/init';
-import { themesCommand } from './commands/theme';
 import { listCommand } from './commands/list';
-import prompts from 'prompts';
-import chalk from 'chalk';
+import { themesCommand } from './commands/theme';
+import { startersCommand } from './commands/starters';
+import { logger } from './utils/logger';
+import { RegistryService } from './services/RegistryService';
 
 const program = new Command();
 
 program.version(chalk.red('1.0.0'));
-
 // Register Commands
 program.addCommand(initCommand);
 program.addCommand(addCommand);
 program.addCommand(listCommand);
 program.addCommand(themesCommand);
+program.addCommand(startersCommand);
 // Display welcome message
 function showWelcome(): void {
   console.log(`
@@ -46,6 +49,7 @@ async function startInteractiveCLI(): Promise<void> {
           { title: chalk.hex('#FF8C00')('➕ Add components'), value: 'add' },
           { title: chalk.hex('#FF6B35')('📋 List components'), value: 'list' },
           { title: chalk.hex('#FF7F50')('🎨 Manage themes'), value: 'themes' },
+          { title: chalk.hex('#33A06F')('📦 Starters Template'), value: 'starters' },
           { title: chalk.red('❌ Exit'), value: 'exit' },
         ],
         initial: 0,
@@ -65,17 +69,34 @@ async function startInteractiveCLI(): Promise<void> {
           break;
         }
         case 'add': {
-          const addResponse = await prompts([
-            {
-              type: 'text',
-              name: 'identifiers',
-              message: 'Enter component names (space-separated):',
-            },
-          ]);
+          // Show interactive component selection
+          const registryService = new RegistryService();
+          const availableComponents = await registryService.getAvailableComponents();
 
-          if (addResponse.identifiers) {
-            const ids = addResponse.identifiers.split(' ').filter((id: string) => id.trim());
-            await addCommand.parseAsync(['node', 'ignix', 'component', ...ids]);
+          if (availableComponents.length === 0) {
+            logger.warn('No components available in the registry.');
+            break;
+          }
+
+          const response = await prompts({
+            type: 'select',
+            name: 'components',
+            message: 'Select components to add:',
+            choices: availableComponents.map((c: any) => ({
+              title: c.name,
+              value: c.name,
+              description: c.description || ' ',
+            })),
+            instructions: false,
+            hint: '- Space to select. Return to submit',
+          });
+
+          const identifiers = response.components ? [response.components] : [];
+
+          if (identifiers && identifiers.length > 0) {
+            await addCommand.parseAsync(['node', 'ignix', 'component', ...identifiers]);
+          } else {
+            logger.info('No components selected.');
           }
           break;
         }
@@ -87,9 +108,22 @@ async function startInteractiveCLI(): Promise<void> {
           await themesCommand.parseAsync(['node', 'ignix']);
           break;
         }
+        case 'starters': {
+          const resp = await prompts({
+            type: 'select',
+            name: 'starter',
+            message: 'Select a starter to scaffold:',
+            choices: [{ title: 'Monorepo (Turborepo + pnpm)', value: 'monorepo' }],
+            initial: 0,
+          });
+          if (resp.starter === 'monorepo') {
+            await startersCommand.parseAsync(['node', 'ignix', 'starters', 'monorepo']);
+          }
+          break;
+        }
       }
 
-      console.log(''); // Add spacing after command execution
+      console.log('');
     } catch (error) {
       if (error instanceof Error) {
         console.error(chalk.red(`\n❌ Error: ${error.message}\n`));

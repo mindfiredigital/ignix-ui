@@ -1,8 +1,13 @@
+import { cn } from '@site/src/utils/cn';
 import * as React from 'react';
-import { cn } from '../../../utils/cn';
 
 export interface AspectRatioProps extends React.HTMLAttributes<HTMLDivElement> {
   ratio?: '1:1' | '4:3' | '16:9' | '21:9' | string;
+  /**
+   * The maximum width of the container.
+   * - Accepts a string (e.g., '50%', '30rem', '400px')
+   * - Or a number (auto-converted to 'px')
+   */
   maxWidth?: string | number;
   children: React.ReactNode;
 }
@@ -15,11 +20,16 @@ const parseRatio = (ratio: string) => {
 const AspectRatio = React.forwardRef<HTMLDivElement, AspectRatioProps>(
   ({ ratio = '1:1', maxWidth, children, className, style, ...props }, ref) => {
     const { w, h } = parseRatio(ratio);
-    
-    const isAspectRatioSupported = typeof CSS !== 'undefined' && CSS.supports('aspect-ratio', '1/1');
+
+    const isAspectRatioSupported =
+      typeof CSS !== 'undefined' && CSS.supports('aspect-ratio', '1/1');
+
+    const computedMaxWidth =
+      typeof maxWidth === 'number' ? `${maxWidth}px` : maxWidth;
+
     const containerStyle: React.CSSProperties = {
       width: '100%',
-      maxWidth: maxWidth,
+      maxWidth: computedMaxWidth,
       ...style,
     };
 
@@ -40,18 +50,34 @@ const AspectRatio = React.forwardRef<HTMLDivElement, AspectRatioProps>(
           height: '100%',
         };
 
-  const enhancedChildren = React.Children.map(children, (child) => {
-   if (React.isValidElement(child) && child.type === 'img') {
-     return React.cloneElement(child as React.ReactElement<React.ImgHTMLAttributes<HTMLImageElement>>, {
-      className: cn('w-full h-full object-cover', (child.props as React.ImgHTMLAttributes<HTMLImageElement>).className),
+    const enhancedChildren = React.Children.map(children, (child) => {
+      if (
+        React.isValidElement(child) &&
+        typeof child.type === 'string' &&
+        child.type === 'img'
+      ) {
+        const imgElement = child as React.ReactElement<
+          React.ImgHTMLAttributes<HTMLImageElement>
+        >;
+
+        return React.cloneElement(imgElement, {
+          className: cn(
+            imgElement.props.className,
+            'object-cover w-full h-full'
+          ),
+        });
+      }
+      return child;
     });
-  }
-  return child;
-});
 
     return (
-      <div ref={ref} className={cn('aspect-ratio-container', className)} style={containerStyle} {...props}>
-        <div className="w-full h-full" style={contentStyle}>{enhancedChildren}</div>
+      <div
+        ref={ref}
+        className={cn('aspect-ratio-container', className)}
+        style={containerStyle}
+        {...props}
+      >
+        <div style={contentStyle}>{enhancedChildren}</div>
       </div>
     );
   }
@@ -59,4 +85,4 @@ const AspectRatio = React.forwardRef<HTMLDivElement, AspectRatioProps>(
 
 AspectRatio.displayName = 'AspectRatio';
 
-export { AspectRatio }; 
+export { AspectRatio };

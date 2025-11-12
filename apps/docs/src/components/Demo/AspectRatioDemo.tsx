@@ -4,7 +4,6 @@ import VariantSelector from './VariantSelector';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import CodeBlock from '@theme/CodeBlock';
-import image from "../../../static/img/demo-img.jpg"
 
 const ratios = ['1:1', '4:3', '16:9', '21:9', '3:2'];
 const maxWidths = ['200px', '400px', '600px', '800px'];
@@ -14,9 +13,15 @@ const AspectRatioDemo = () => {
   const [maxWidth, setMaxWidth] = useState('400px');
 
   const codeString = `
-    <AspectRatio ratio="${ratio}" maxWidth="${maxWidth}">
-       <img src={image} alt="Demo Image" />
-    </AspectRatio>
+  import { AspectRatio } from '@ignix-ui';
+
+  function MyComponent() {
+    return (
+      <AspectRatio ratio="${ratio}" maxWidth="${maxWidth}">
+        <img src="https://thumbs.wbm.im/pw/medium/859204cf5b71808ed4c6bd19d95974c6.jpg" alt="Demo Image" />
+      </AspectRatio>
+    );
+  }
     `;
 
   return (
@@ -66,7 +71,7 @@ const AspectRatioDemo = () => {
           <div className="p-6 border rounded-lg mt-4 flex justify-center">
             <AspectRatio ratio={ratio} maxWidth={maxWidth}>
               <img
-                src={image}
+                src="https://thumbs.wbm.im/pw/medium/859204cf5b71808ed4c6bd19d95974c6.jpg"
                 alt="Demo Image"
               />
             </AspectRatio>

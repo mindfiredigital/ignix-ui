@@ -1,0 +1,117 @@
+{
+  "tutorialSidebar": [
+    {
+      "type": "category",
+      "label": "Getting Started",
+      "items": [
+        "introduction",
+        "installation"
+      ]
+    },
+    {
+      "type": "category",
+      "label": "Theming",
+      "link": {
+        "type": "doc",
+        "id": "theming/quick-start"
+      },
+      "items": [
+        {
+          "type": "doc",
+          "id": "theming/quick-start",
+          "label": "Quick Start"
+        },
+        {
+          "type": "doc",
+          "id": "theming/core-concepts",
+          "label": "Core Concepts"
+        },
+        {
+          "type": "category",
+          "label": "API Reference",
+          "items": [
+            "theming/api-reference/components",
+            "theming/api-reference/hooks"
+          ]
+        },
+        {
+          "type": "doc",
+          "id": "theming/theme-wizard",
+          "label": "Theme Wizard"
+        }
+      ]
+    },
+    {
+      "type": "category",
+      "label": "Layouts",
+      "items": [
+        "layouts/app-shell",
+        "layouts/aspect-ratio",
+        "layouts/auto-grid",
+        "layouts/box",
+        "layouts/breakpoint",
+        "layouts/center",
+        "layouts/cluster",
+        "layouts/container",
+        "layouts/DebugBox",
+        "layouts/field-group",
+        "layouts/form",
+        "layouts/header-layout",
+        "layouts/lazyload",
+        "layouts/masonry",
+        "layouts/pin",
+        "layouts/responsive",
+        "layouts/responsive-grid",
+        "layouts/section",
+        "layouts/split",
+        "layouts/spacer",
+        "layouts/stack"
+      ]
+    },
+    {
+      "type": "category",
+      "label": "Components",
+      "items": [
+        "components/accordion",
+        "components/badge",
+        "components/breadcrumbs",
+        "components/button",
+        "components/card",
+        "components/dialog-box",
+        "components/drawer",
+        "components/dropdown",
+        "components/input",
+        "components/navbar",
+        "components/sidebar",
+        "components/slider",
+        "components/spinner",
+        "components/stepper",
+        "components/switch",
+        "components/tab",
+        "components/table",
+        "components/textarea",
+        "components/toast",
+        "components/tooltip"
+      ]
+    },
+    {
+      "type": "category",
+      "label": "Templates",
+      "items":[
+        {
+          "type": "category",
+          "label": "Starter",
+          "items": ["starters/monorepo"]
+        }
+      ]
+    },
+    {
+      "type": "category",
+      "label": "Contribution Guide",
+      "items": [
+        "contribution-guide/how-to-contribute",
+        "contribution-guide/code-of-conduct"
+      ]
+    }
+  ]
+}
