@@ -113,11 +113,16 @@ async function startInteractiveCLI(): Promise<void> {
             type: 'select',
             name: 'starter',
             message: 'Select a starter to scaffold:',
-            choices: [{ title: 'Monorepo (Turborepo + pnpm)', value: 'monorepo' }],
+            choices: [
+              { title: 'Next.js App (App Router + TypeScript + Tailwind)', value: 'nextjs-app' },
+              { title: 'Monorepo (Turborepo + pnpm)', value: 'monorepo' },
+            ],
             initial: 0,
           });
           if (resp.starter === 'monorepo') {
             await startersCommand.parseAsync(['node', 'ignix', 'starters', 'monorepo']);
+          } else if (resp.starter === 'nextjs-app') {
+            await startersCommand.parseAsync(['node', 'ignix', 'starters', 'nextjs-app']);
           }
           break;
         }
