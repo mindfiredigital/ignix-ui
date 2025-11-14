@@ -1,4 +1,4 @@
-// import { execa } from 'execa';
+import { execa } from 'execa';
 import { getPackageManager } from '../utils/getPackageManager';
 import { logger } from '../utils/logger';
 
@@ -19,7 +19,7 @@ export class DependencyService {
       logger.info(
         `Installing dependencies: ${packageManager} ${args.join(' ')} { stdio: 'inherit' }`
       );
-      // await execa(packageManager, args, { stdio: 'inherit' });
+      await execa(packageManager, args, { stdio: 'inherit' });
     } catch (error) {
       logger.error(error as string);
       throw new Error(`Failed to install dependencies: ${packages.join(', ')}`);
