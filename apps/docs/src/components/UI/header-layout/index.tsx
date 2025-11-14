@@ -208,7 +208,7 @@ const HeaderLayoutContent: React.FC<HeaderLayoutProps> = ({
                 className="fixed inset-0 bg-black/50"
                 style={{ zIndex: zIndex.overlay, pointerEvents: isOpen ? 'auto' : 'none' }}
                 initial={{ opacity: 0, pointerEvents: 'none' }}
-                animate={{ 
+                animate={{
                   opacity: isOpen ? 1 : 0,
                   pointerEvents: isOpen ? 'auto' : 'none'
                 }}
@@ -222,7 +222,7 @@ const HeaderLayoutContent: React.FC<HeaderLayoutProps> = ({
           <motion.aside
             className={cn(
               "fixed inset-y-0 w-[var(--sidebar-w)]",
-              sidebarOnLeft && "left-0" ,
+              sidebarOnLeft && "left-0",
               sidebarOnRight && "right-0"
             )}
             style={{

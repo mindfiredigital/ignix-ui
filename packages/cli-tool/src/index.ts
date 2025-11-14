@@ -5,6 +5,7 @@ import { addCommand } from './commands/add';
 import { initCommand } from './commands/init';
 import { listCommand } from './commands/list';
 import { themesCommand } from './commands/theme';
+import { templateCommand } from './commands/template';
 import { logger } from './utils/logger';
 import { RegistryService } from './services/RegistryService';
 
@@ -16,6 +17,7 @@ program.addCommand(initCommand);
 program.addCommand(addCommand);
 program.addCommand(listCommand);
 program.addCommand(themesCommand);
+program.addCommand(templateCommand);
 // Display welcome message
 function showWelcome(): void {
   console.log(`
@@ -47,6 +49,7 @@ async function startInteractiveCLI(): Promise<void> {
           { title: chalk.hex('#FF8C00')('➕ Add components'), value: 'add' },
           { title: chalk.hex('#FF6B35')('📋 List components'), value: 'list' },
           { title: chalk.hex('#FF7F50')('🎨 Manage themes'), value: 'themes' },
+          { title: chalk.hex('#FF7F50')('📦 Manage templates'), value: 'templates' },
           { title: chalk.red('❌ Exit'), value: 'exit' },
         ],
         initial: 0,
@@ -103,6 +106,10 @@ async function startInteractiveCLI(): Promise<void> {
         }
         case 'themes': {
           await themesCommand.parseAsync(['node', 'ignix']);
+          break;
+        }
+        case 'templates': {
+          await templateCommand.parseAsync(['node', 'ignix']);
           break;
         }
       }

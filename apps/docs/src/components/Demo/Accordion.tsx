@@ -51,7 +51,7 @@ const AccordionDemo = () => {
   return (
     <div className="flex flex-col space-y-4 mb-8">
       <VariantSelector variants={animationVariants} selectedVariant={variant} onSelectVariant={setVariant} />
-       <Tabs>
+      <Tabs>
         <TabItem value="preview" label="Preview">
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="item-1">
