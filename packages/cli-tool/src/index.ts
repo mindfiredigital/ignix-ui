@@ -5,7 +5,7 @@ import { addCommand } from './commands/add';
 import { initCommand } from './commands/init';
 import { listCommand } from './commands/list';
 import { themesCommand } from './commands/theme';
-import { startersCommand } from './commands/starters';
+import { startersCommandMonorepo, startersCommandNextjsApp } from './commands/starters';
 import { logger } from './utils/logger';
 import { RegistryService } from './services/RegistryService';
 
@@ -17,7 +17,8 @@ program.addCommand(initCommand);
 program.addCommand(addCommand);
 program.addCommand(listCommand);
 program.addCommand(themesCommand);
-program.addCommand(startersCommand);
+program.addCommand(startersCommandMonorepo);
+program.addCommand(startersCommandNextjsApp);
 // Display welcome message
 function showWelcome(): void {
   console.log(`
@@ -120,9 +121,9 @@ async function startInteractiveCLI(): Promise<void> {
             initial: 0,
           });
           if (resp.starter === 'monorepo') {
-            await startersCommand.parseAsync(['node', 'ignix', 'starters', 'monorepo']);
+            await startersCommandMonorepo.parseAsync(['node', 'ignix', 'starters', 'monorepo']);
           } else if (resp.starter === 'nextjs-app') {
-            await startersCommand.parseAsync(['node', 'ignix', 'starters', 'nextjs-app']);
+            await startersCommandNextjsApp.parseAsync(['node', 'ignix', 'starters', 'nextjs-app']);
           }
           break;
         }
