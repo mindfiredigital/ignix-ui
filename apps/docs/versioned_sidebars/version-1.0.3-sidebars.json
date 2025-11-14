@@ -120,7 +120,8 @@
                 "type": "category",
                 "label": "Authentication",
                 "items": [
-                  "templates/pages/authentication/forgot-password-page"
+                  "templates/pages/authentication/forgot-password-page",
+                  "templates/pages/sign-in"
                 ]
           }]
         }
