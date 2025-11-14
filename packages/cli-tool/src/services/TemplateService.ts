@@ -87,10 +87,6 @@ export class TemplateService {
 
   public async getAvailableTemplateLayout(): Promise<Registry[]> {
     const templates = await this.fetchTemplates();
-    // return Object.entries(templates).map(([key, tpl]) => ({
-    //   key, // "sidebarleft-layout"
-    //   ...tpl, // id, name, description, files
-    // }));
     return Object.values(templates);
   }
 
@@ -109,7 +105,7 @@ export class TemplateService {
       return this.templates;
     } catch (error) {
       spinner.fail('Failed to fetch templates');
-      logger.error('Could not connect to the theme registry. Please check your connection.');
+      logger.error('Could not connect to the template registry. Please check your connection.');
       process.exit(1);
     }
   }
