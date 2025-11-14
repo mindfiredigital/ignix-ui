@@ -313,12 +313,6 @@ importers:
       react-dom:
         specifier: ^19.1.1
         version: 19.1.1(react@19.1.1)
-      react-icons:
-        specifier: ^5.5.0
-        version: 5.5.0(react@19.1.1)
-      zod:
-        specifier: ^4.1.13
-        version: 4.1.13
     devDependencies:
       '@chromatic-com/storybook':
         specifier: ^4.1.1
@@ -21953,6 +21947,14 @@ packages:
       {
         integrity: sha512-MEFcXdkP3dLo8uumGI5xN3lDFNsRtrjbOEKDLD7yv76v4wpnEq2Lt2qeHaQOr34I/wPN3s3+N08WkQ+CW37Xiw==,
       }
+    peerDependencies:
+      react: '*'
+    dependencies:
+      react: 19.1.1
+    dev: false
+
+  /react-icons@5.5.0(react@19.1.1):
+    resolution: {integrity: sha512-MEFcXdkP3dLo8uumGI5xN3lDFNsRtrjbOEKDLD7yv76v4wpnEq2Lt2qeHaQOr34I/wPN3s3+N08WkQ+CW37Xiw==}
     peerDependencies:
       react: '*'
     dependencies:
