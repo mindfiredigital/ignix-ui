@@ -1,0 +1,14 @@
+{
+  "components": {
+    "single-column-layout": {
+      "name": "SingleColumnLayout",
+      "description": "A clean, responsive single-column layout with header, constrained content area, and footer. Supports multiple theme variants and animations.",
+      "dependencies": ["framer-motion", "lucide-react", "class-variance-authority"],
+      "files": {
+        "main": {
+          "path": "templates/single-column-layout/index.tsx",
+          "type": "component"
+        }
+      }
+    }
+}

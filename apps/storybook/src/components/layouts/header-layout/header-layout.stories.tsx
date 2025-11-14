@@ -102,7 +102,7 @@ export const Basic: Story = {
       <div className="space-y-6">
         <h2 className="text-2xl font-bold">Welcome to HeaderLayout</h2>
         <p className="text-muted-foreground">
-          This is a comprehensive layout component with advanced features including animations, 
+          This is a comprehensive layout component with advanced features including animations,
           responsive behavior, and theme variants.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
