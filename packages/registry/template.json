@@ -1,0 +1,20 @@
+{
+  "templates": {
+      "sidebarleft-layout": {
+      "id":"sidebar-left-layout",
+      "name": "SideBarLeftLayout",
+      "description": "A flexible layout component with header, sidebar, and footer that supports responsive design and various configuration options.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/layouts/sidebarleft-layout/index.tsx",
+          "type": "templates"
+        }
+      }
+    }
+  }
+}

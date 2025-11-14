@@ -43,6 +43,26 @@ export class RegistryService {
     }
   }
 
+  private async fetchAvailableTemplate(): Promise<Registry> {
+    if (this.registry) {
+      return this.registry;
+    }
+
+    const config = await loadConfig();
+    const spinner = ora('Fetching Template Layout...').start();
+
+    try {
+      const response = await axios.get<Registry>(config.templateUrl);
+      spinner.succeed('Registry fetched.');
+      this.registry = response.data;
+      return this.registry;
+    } catch (error) {
+      spinner.fail('Failed to fetch registry.');
+      logger.error('Could not connect to the component registry. Please check your connection.');
+      process.exit(1);
+    }
+  }
+
   public async getComponentConfig(name: string): Promise<ComponentConfig | undefined> {
     const registry = await this.fetchRegistry();
     return registry.components[name];
@@ -50,6 +70,11 @@ export class RegistryService {
 
   public async getAvailableComponents(): Promise<ComponentConfig[]> {
     const registry = await this.fetchRegistry();
+    return Object.values(registry.components);
+  }
+
+  public async getAvailableTemplates(): Promise<ComponentConfig[]> {
+    const registry = await this.fetchAvailableTemplate();
     return Object.values(registry.components);
   }
 }

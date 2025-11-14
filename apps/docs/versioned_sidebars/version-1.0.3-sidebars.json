@@ -102,6 +102,13 @@
           "type": "category",
           "label": "Starter",
           "items": ["starters/monorepo"]
+        },
+        {
+          "type": "category",
+          "label": "Layouts",
+          "items": [
+            "templates/sidebarleft-layout"
+          ]
         }
       ]
     },
