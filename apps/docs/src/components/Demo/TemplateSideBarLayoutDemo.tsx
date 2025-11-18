@@ -86,11 +86,8 @@ footer={
 © 2025 My Application. All rights reserved.
 </footer>
 }
-variant={variant as any}
-sidebarPosition={sidebarPosition as any}
-mobileBreakpoint={mobileBreakpoint as any}
+children={mainContent}
 >
-{mainContent}
 </SideBarLeftLayout>`;
 const [hasOpenButton, setHasOpenButton] = React.useState(false);
 
