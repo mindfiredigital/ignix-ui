@@ -101,7 +101,10 @@
         {
           "type": "category",
           "label": "Starter",
-          "items": ["starters/monorepo"]
+           "items": [
+            "starters/monorepo",
+            "starters/nextjs-app"
+          ]
         },
         {
           "type": "category",
