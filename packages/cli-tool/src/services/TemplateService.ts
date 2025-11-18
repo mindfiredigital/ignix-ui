@@ -8,26 +8,7 @@ import { loadConfig } from '../utils/config';
 import { logger } from '../utils/logger';
 import { DependencyService } from './DependencyService';
 
-// Define types based on your registry.json structure
-interface ComponentFile {
-  path: string;
-  type: string;
-}
-
-interface ComponentConfig {
-  id: string;
-  name: string;
-  description: string;
-  dependencies?: string[];
-  files: Record<string, ComponentFile>;
-}
-
-interface Registry {
-  components: Record<string, ComponentConfig>;
-}
-
 export class TemplateService {
-  private templates: Record<string, Registry> | null = null;
   private registryService = new RegistryService();
   private dependencyService = new DependencyService();
   private config = loadConfig();
@@ -37,8 +18,7 @@ export class TemplateService {
 
     try {
       const config = await this.config;
-      const componentConfig = await this.registryService.getComponentConfig(name);
-
+      const componentConfig = await this.registryService.getTemplateConfig(name);
       if (!componentConfig) {
         throw new Error(`Component '${name}' not found.`);
       }
@@ -51,12 +31,12 @@ export class TemplateService {
 
       // 2. Fetch and write files
       spinner.text = `Getting component files for ${name}...`;
-      const registryBaseUrl = config.registryUrl.substring(
+      const registryBaseUrl = config.templateLayoutUrl.substring(
         0,
         config.templateLayoutUrl.lastIndexOf('/')
       );
       const installedFiles: string[] = [];
-      const componentsDir = path.resolve(config.templateDir);
+      const componentsDir = path.resolve(config.templateLayoutDir);
       const componentDir = path.join(componentsDir, name.toLowerCase());
 
       // Create component directory
@@ -84,30 +64,6 @@ export class TemplateService {
       if (error instanceof Error) {
         logger.error(error.message);
       }
-      process.exit(1);
-    }
-  }
-
-  public async getAvailableTemplateLayout(): Promise<Registry[]> {
-    const templates = await this.fetchTemplates();
-    return Object.values(templates);
-  }
-
-  private async fetchTemplates(): Promise<Record<string, Registry>> {
-    if (this.templates) {
-      return this.templates;
-    }
-
-    const config = await loadConfig();
-    const spinner = ora('Fetching templates...').start();
-
-    try {
-      const response = await axios.get<Record<string, Registry>>(config.templateLayoutUrl);
-      spinner.succeed('Templates fetched successfully');
-      return response.data;
-    } catch (error) {
-      spinner.fail('Failed to fetch templates');
-      logger.error('Could not connect to the template registry. Please check your connection.');
       process.exit(1);
     }
   }
