@@ -91,7 +91,16 @@
     {
       "type": "category",
       "label": "Templates",
-      "items": ["layouts/single-column-layout"]
+      "items":[
+        {
+          "type": "category",
+          "label": "Starter",
+          "items": [
+            "starters/monorepo",
+            "starters/nextjs-app"
+          ]
+        }
+      ]
     },
     {
       "type": "category",
