@@ -24,7 +24,7 @@ The **Sidebar-Left** component provides a complete layout solution with a header
 <Tabs>
   <TabItem value="cli" label="CLI" default>
     ```bash
-    ignix add component sidebar-left-layout
+    ignix add template sidebar-left-layout
     ```
   </TabItem>
   <TabItem value="manual" label="manual" className="max-h-[500px] overflow-y-auto">
@@ -346,7 +346,8 @@ SideBarLeftLayout.displayName = "SideBarLeftLayout";
         <SideBarLeftLayout
           variant="default"
           mobileBreakpoint="md"
-          sidebarWidth="md"
+          sidebarWidth="default"
+          sidebarPosition="left"
           stickyHeader={true}
           stickyFooter={false}
           overlay={true}
@@ -354,8 +355,8 @@ SideBarLeftLayout.displayName = "SideBarLeftLayout";
           header={<div>Header Content</div>}
           sidebar={<div>Sidebar Content</div>}
           footer={<div>Footer Content</div>}
+          children={<div>Main Content</div>}
         >
-          <div>Main Content</div>
         </SidebarLeftLayout>
       );
     }
@@ -371,6 +372,7 @@ SideBarLeftLayout.displayName = "SideBarLeftLayout";
 | `children` | `React.ReactNode` | `undefined` | Main content area |
 | `variant` | `"default" \| "dark" \| "light" \| "glass" \| "gradient"` | `"default"` | Visual theme variant |
 | `sidebarWidth` | `"default" \| "custom"` | `"wide"` | `"expanded"` | Width of the sidebar |
+| `sidebarPosition` | `"left" \|` | Position of the sidebar |
 | `animation` | `"none" \| "slide" \| "fade" \| "scale" \| "bounce"` | `"slide"` | Animation type for transitions |
 | `mobileBreakpoint` | `"sm" \| "md" \| "lg"` | `"md"` | Breakpoint for mobile behavior |
 | `stickyHeader` | `boolean` | `true` | Whether header should be sticky |

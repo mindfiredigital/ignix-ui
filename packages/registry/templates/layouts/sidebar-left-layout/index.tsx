@@ -3,7 +3,7 @@ import { motion, AnimatePresence, type PanInfo } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Menu, X } from "lucide-react";
 import { cn } from "../../../utils/cn";
-import { SidebarProvider, useSidebar } from "../../../components/sidebar";
+import { SidebarProvider, useSidebar } from "../../../components/ui/sidebar";
  
 export interface SideBarLeftLayoutProps {
   header?: React.ReactNode;

@@ -107,8 +107,8 @@
           "type": "category",
           "label": "Layouts",
           "items": [
-            "templates/sidebar-left-layout",
-            "templates/sidebar-right-layout"
+            "templates/layouts/sidebar-left-layout",
+            "templates/layouts/sidebar-right-layout"
           ]
         }
       ]

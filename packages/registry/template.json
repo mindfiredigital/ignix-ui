@@ -10,7 +10,7 @@
         "class-variance-authority"
       ],
       "componentDependencies": [
-        "sidebar"
+        "sidebar","navbar"
       ],
       "files": {
         "main": {
@@ -29,7 +29,7 @@
         "class-variance-authority"
       ],
       "componentDependencies": [
-        "sidebar"
+        "sidebar","navbar"
       ],
       "files": {
         "main": {
