@@ -51,7 +51,10 @@ export class TemplateService {
 
       // 2. Fetch and write files
       spinner.text = `Getting component files for ${name}...`;
-      const registryBaseUrl = config.registryUrl.substring(0, config.templateUrl.lastIndexOf('/'));
+      const registryBaseUrl = config.registryUrl.substring(
+        0,
+        config.templateLayoutUrl.lastIndexOf('/')
+      );
       const installedFiles: string[] = [];
       const componentsDir = path.resolve(config.templateDir);
       const componentDir = path.join(componentsDir, name.toLowerCase());
@@ -99,10 +102,9 @@ export class TemplateService {
     const spinner = ora('Fetching templates...').start();
 
     try {
-      const response = await axios.get<Record<string, Registry>>(config.templateUrl);
+      const response = await axios.get<Record<string, Registry>>(config.templateLayoutUrl);
       spinner.succeed('Templates fetched successfully');
-      this.templates = response.data;
-      return this.templates;
+      return response.data;
     } catch (error) {
       spinner.fail('Failed to fetch templates');
       logger.error('Could not connect to the template registry. Please check your connection.');

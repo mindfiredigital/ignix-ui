@@ -40,7 +40,7 @@ async function showThemeMenu(): Promise<void> {
           spinner.start('Fetching templates...');
           const templates = await templateService.getAvailableTemplateLayout();
           spinner.stop();
-
+          console.log(templates, 43);
           if (templates.length === 0) {
             logger.warn('No templates available.');
           } else {

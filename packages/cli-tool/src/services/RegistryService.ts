@@ -52,7 +52,7 @@ export class RegistryService {
     const spinner = ora('Fetching Template Layout...').start();
 
     try {
-      const response = await axios.get<Registry>(config.templateUrl);
+      const response = await axios.get<Registry>(config.templateLayoutUrl);
       spinner.succeed('Registry fetched.');
       this.registry = response.data;
       return this.registry;
