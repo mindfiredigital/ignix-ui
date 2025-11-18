@@ -14,6 +14,7 @@ interface ComponentConfig {
   name: string;
   description: string;
   dependencies?: string[];
+  componentDependencies?: string[];
   files: Record<string, ComponentFile>;
 }
 

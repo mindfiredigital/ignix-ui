@@ -5,6 +5,7 @@ import { RegistryService } from '../services/RegistryService';
 import { logger } from '../utils/logger';
 import chalk from 'chalk';
 import { ThemeService } from '../services/ThemeService';
+import { TemplateService } from '../services/TemplateService';
 
 export const addCommand = new Command()
   .name('add')
@@ -81,6 +82,30 @@ export const addCommand = new Command()
           } else {
             logger.error(`Theme '${id}' not found in the registry.`);
           }
+        }
+        break;
+      }
+      case 'template':
+      case 'templates': {
+        const registryService = new RegistryService();
+        const templateService = new TemplateService();
+        logger.info('Adding Template...');
+        const availableTemplates = await registryService.getAvailableTemplates();
+
+        const templates = availableTemplates.map((tpl: any) => ({
+          title: tpl.name, // e.g., "SideBarLeftLayout"
+          value: tpl.id, // e.g., "sidebar-left-layout"
+        }));
+
+        const installResponse = await prompts({
+          type: 'select',
+          name: 'templateId',
+          message: 'Select a template to install:',
+          choices: templates,
+        });
+
+        if (installResponse.templateId) {
+          await templateService.install(installResponse.templateId);
         }
         break;
       }

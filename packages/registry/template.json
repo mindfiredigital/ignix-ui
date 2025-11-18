@@ -7,7 +7,9 @@
       "dependencies": [
         "framer-motion",
         "lucide-react",
-        "class-variance-authority",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
         "sidebar"
       ],
       "files": {
@@ -24,7 +26,9 @@
       "dependencies": [
         "framer-motion",
         "lucide-react",
-        "class-variance-authority",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
         "sidebar"
       ],
       "files": {

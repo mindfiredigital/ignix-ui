@@ -7,63 +7,81 @@ import { RegistryService } from './RegistryService';
 import { loadConfig } from '../utils/config';
 import { logger } from '../utils/logger';
 import { DependencyService } from './DependencyService';
+import { ComponentService } from './ComponentService';
 
 export class TemplateService {
   private registryService = new RegistryService();
   private dependencyService = new DependencyService();
+  private componentService = new ComponentService();
   private config = loadConfig();
 
+  private async safeWriteFile(filePath: string, content: string) {
+    if (await fs.pathExists(filePath)) {
+      logger.warn(`Skipping existing file (template): ${filePath}`);
+      return;
+    }
+    await fs.writeFile(filePath, content);
+  }
+
   public async install(name: string): Promise<void> {
-    const spinner = ora(`Installing component: ${name}...`).start();
+    const spinner = ora(`Installing template layout: ${name}...`).start();
 
     try {
       const config = await this.config;
-      const componentConfig = await this.registryService.getTemplateConfig(name);
-      if (!componentConfig) {
-        throw new Error(`Component '${name}' not found.`);
+      const templateConfig = await this.registryService.getTemplateConfig(name);
+
+      if (!templateConfig) {
+        throw new Error(`Template '${name}' not found.`);
       }
 
-      // 1. Install dependencies
-      if (componentConfig.dependencies && componentConfig.dependencies.length > 0) {
+      // 1. Install package dependencies
+      if (templateConfig.dependencies && templateConfig.dependencies?.length > 0) {
         spinner.text = `Installing dependencies for ${name}...`;
-        await this.dependencyService.install(componentConfig.dependencies, false);
+        await this.dependencyService.install(templateConfig.dependencies, false);
       }
 
-      // 2. Fetch and write files
-      spinner.text = `Getting component files for ${name}...`;
-      const registryBaseUrl = config.templateLayoutUrl.substring(
+      // 2. Install component dependencies (sidebar, header, etc.)
+      if (
+        templateConfig.componentDependencies &&
+        templateConfig.componentDependencies?.length > 0
+      ) {
+        spinner.text = `Installing internal component dependencies...`;
+
+        for (const dep of templateConfig.componentDependencies) {
+          await this.componentService.install(dep);
+        }
+      }
+
+      // 3. Download template layout files
+      spinner.text = `Downloading template layout files...`;
+
+      const templateDir = path.resolve(config.templateLayoutDir, name.toLowerCase());
+      await fs.ensureDir(templateDir);
+
+      const baseUrl = config.templateLayoutUrl.substring(
         0,
         config.templateLayoutUrl.lastIndexOf('/')
       );
-      const installedFiles: string[] = [];
-      const componentsDir = path.resolve(config.templateLayoutDir);
-      const componentDir = path.join(componentsDir, name.toLowerCase());
 
-      // Create component directory
-      await fs.ensureDir(componentDir);
+      for (const fileKey in templateConfig.files) {
+        const fileInfo = templateConfig.files[fileKey];
+        const fileUrl = `${baseUrl}/${fileInfo.path}`;
 
-      // Fetch and write each file
-      for (const fileKey in componentConfig.files) {
-        const fileInfo = componentConfig.files[fileKey];
-        const fileUrl = `${registryBaseUrl}/${fileInfo.path}`;
+        const { data: content } = await axios.get(fileUrl, {
+          responseType: 'text',
+        });
 
-        const { data: content } = await axios.get(fileUrl, { responseType: 'text' });
-
-        // Use path.basename to handle nested file structures within the component folder
         const fileName = path.basename(fileInfo.path);
-        const filePath = path.join(componentDir, fileName);
+        const filePath = path.join(templateDir, fileName);
 
-        await fs.writeFile(filePath, content);
-        installedFiles.push(filePath);
+        await this.safeWriteFile(filePath, content);
       }
 
-      spinner.succeed(chalk.green(`Successfully installed component: ${chalk.cyan(name)}`));
-      logger.info(`Component files written to ${chalk.yellow(componentDir)}`);
-    } catch (error) {
-      spinner.fail(`Failed to install component: ${name}.`);
-      if (error instanceof Error) {
-        logger.error(error.message);
-      }
+      spinner.succeed(chalk.green(`Template layout installed: ${chalk.cyan(name)}`));
+      logger.info(`Template saved at: ${chalk.yellow(templateDir)}`);
+    } catch (err) {
+      spinner.fail(`Failed to install template: ${name}`);
+      if (err instanceof Error) logger.error(err.message);
       process.exit(1);
     }
   }
