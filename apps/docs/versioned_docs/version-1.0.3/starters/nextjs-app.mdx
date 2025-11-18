@@ -1,0 +1,133 @@
+---
+id: nextjs-app
+title: Next.js App Starter (App Router)
+description: Scaffold a production-ready Next.js 14+ app with App Router, Tailwind CSS, Ignix ThemeProvider, ESLint, Prettier, and Git initialized out of the box.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## Overview
+
+The **Next.js App Starter** spins up a blank, high-quality Next.js 14+ project that is ready to ship:
+
+- ✅ App Router with TypeScript and strict mode
+- ✅ Tailwind CSS + Ignix design tokens + `ThemeProvider` wrapper
+- ✅ Hot Module Replacement (HMR) on `npm run dev`
+- ✅ ESLint (`next/core-web-vitals`) & Prettier (Tailwind plugin) configs
+- ✅ Git initialized with sensible `.gitignore`
+- ✅ Pre-built `src/` structure (`app`, `components`, `pages`, `styles`)
+- ✅ Lighthouse-friendly defaults (optimized fonts, strict mode, SWC minify)
+
+Use this starter when you need a clean Next.js canvas that already speaks Ignix UI.
+
+## Installation Methods
+
+<Tabs groupId="package-manager">
+  <TabItem value="npm" label="npm" default>
+
+```bash
+npm install -g @mindfiredigital/ignix-cli
+```
+
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+
+```bash
+yarn global add @mindfiredigital/ignix-cli
+```
+
+  </TabItem>
+  <TabItem value="npx" label="npx">
+
+```bash
+npx @mindfiredigital/ignix-cli
+```
+
+  </TabItem>
+</Tabs>
+
+## Usage Modes
+
+### Generate via CLI
+
+<Tabs>
+  <TabItem value="interactive" label="Interactive">
+
+Run the CLI and choose **Starters → Next.js App**:
+
+```bash
+ignix
+```
+
+  </TabItem>
+  <TabItem value="direct" label="Manual">
+
+Skip the menu and scaffold immediately:
+
+```bash
+ignix starters nextjs-app
+```
+
+  </TabItem>
+</Tabs>
+
+### What the CLI does
+
+1. Verifies the target directory (warns if not empty)
+2. Writes `package.json`, `tsconfig.json`, `next.config.js`
+3. Configures Tailwind + PostCSS + Prettier + ESLint
+4. Generates `src/app`, `src/components`, `src/pages`, `src/styles`
+5. Injects Ignix `ThemeProvider` via a client-side `Providers` component
+6. Creates `ignix.config.js`, `.gitignore`, and a helpful `README.md`
+7. Initializes git and installs dependencies with your detected package manager
+
+## Generated Structure
+
+```text
+.
+├─ src/
+│  ├─ app/
+│  │  ├─ layout.tsx        # Root layout w/ ThemeProvider + metadata
+│  │  ├─ page.tsx          # Welcome screen + starter checklist
+│  │  └─ providers.tsx     # 'use client' wrapper around ThemeProvider
+│  ├─ components/
+│  │  ├─ ui/               # Ignix components land here (via CLI add)
+│  │  └─ SampleComponent.tsx
+│  ├─ pages/               # Optional legacy pages dir
+│  └─ styles/globals.css   # Tailwind + CSS variables for light/dark
+├─ ignix.config.js         # Registry + default component/theme paths
+├─ next.config.js          # React strict mode + SWC minify
+├─ tailwind.config.js      # Ignix-aware theme tokens & content globs
+├─ tsconfig.json           # Strict TS + path alias `@/*`
+├─ .eslintrc.json          # extends `next/core-web-vitals`
+├─ .prettierrc             # Tailwind class sorting
+├─ .gitignore              # Node/Next/Tailwind/Vercel ignores
+└─ README.md               # Quickstart + scripts + structure
+```
+
+## Key Integrations
+
+- **ThemeProvider**: `src/app/providers.tsx` wraps every page, enabling theme persistence, OS sync, and the Ignix `ThemeSwitcher`.
+- **Tailwind CSS**: pre-wired with Ignix color tokens (`var(--primary)` etc.) and content globs that include `node_modules/@mindfiredigital/ignix-ui`.
+- **TypeScript**: strict compiler options, `@/*` alias mapped to `src/*`, `next-env.d.ts` automatically picked up.
+- **Tooling**: ESLint, Prettier, PostCSS, Tailwind, and git are all configured so `npm run lint` and `npm run format` work immediately.
+
+## Scripts
+
+| Script | Description |
+| --- | --- |
+| `npm run dev` | Starts Next.js dev server with HMR |
+| `npm run build` | Production build (`next build`) |
+| `npm run start` | Runs the built app (`next start`) |
+| `npm run lint` | ESLint using `next lint` rules |
+| `npm run format` | Prettier write with Tailwind plugin |
+
+## Next Steps
+
+1. `cd your-app && npm run dev`
+2. Add UI via `npx ignix add button`
+3. Explore themes with `npx ignix themes list`
+4. Deploy to Vercel / your platform of choice
+
+
