@@ -2,8 +2,8 @@ import * as React from "react";
 import { motion, AnimatePresence, type PanInfo } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Menu, X } from "lucide-react";
-import { SidebarProvider, useSidebar } from "../../sidebar";
 import { cn } from "../../../../utils/cn";
+import { SidebarProvider, useSidebar } from "../../../components/sidebar";
 
  
 export interface SideBarLeftLayoutProps {
@@ -78,7 +78,7 @@ const SideBarLeftLayoutContent: React.FC<SideBarLeftLayoutProps> = ({
   overlay = true,
   transitionDuration = 0.3,
   sidebarCollapsed = false,
-  sidebarPosition = "left",
+  sidebarPosition = "right",
   onSidebarToggle,
   headerHeight = 64,
   footerHeight = 64,
@@ -119,7 +119,7 @@ const SideBarLeftLayoutContent: React.FC<SideBarLeftLayoutProps> = ({
     onSidebarToggle?.(isOpen);
   }, [isOpen, onSidebarToggle]);
  
-  const sidebarOnLeft = sidebarPosition === "left";
+  const sidebarOnRight = sidebarPosition === "right";
   const toggleSidebar = React.useCallback(
     (open?: boolean) => {
       const next = open !== undefined ? open : !isOpen;
@@ -181,13 +181,30 @@ const SideBarLeftLayoutContent: React.FC<SideBarLeftLayoutProps> = ({
         }}
       >
         {/* Sidebar */}
+      
+        {/* Main content — grows automatically */}
+       <motion.div
+        className={cn("flex flex-col flex-1 overflow-y-auto")}
+        animate={{
+          marginRight:
+            !isMobile && sidebarOnRight
+              ? (sidebarCollapsed ? sidebarCollapsedWidth : 0)
+              : 0,
+        }}
+        transition={{ duration: transitionDuration }}
+        style={{
+          transition: `margin-right ${transitionDuration}s ease-in-out`,
+        }}
+      >
+        {children}
+      </motion.div>
         {sidebar && !isMobile &&
           <motion.aside
           onPanEnd={handleDragEnd}
           className={cn(
             mobileBreakpoint === "sm" ? "w-20" : "w-64"
           )}
-          animate={{ width: isOpen ? sidebarWidthPx : sidebarCollapsedWidth }}
+          animate={{ width: isOpen ? sidebarWidthPx: sidebarCollapsedWidth }}
           transition={{ duration: transitionDuration }}
           style={{
               zIndex: zIndex.sidebar,
@@ -199,22 +216,6 @@ const SideBarLeftLayoutContent: React.FC<SideBarLeftLayoutProps> = ({
           </motion.aside>
         }
  
-        {/* Main content — grows automatically */}
-       <motion.div
-        className={cn("flex flex-col flex-1 overflow-y-auto")}
-        animate={{
-          marginLeft:
-            !isMobile && sidebarOnLeft
-              ? (sidebarCollapsed ? sidebarCollapsedWidth : 0)
-              : 0,
-        }}
-        transition={{ duration: transitionDuration }}
-        style={{
-          transition: `margin-left ${transitionDuration}s ease-in-out`,
-        }}
-      >
-        {children}
-      </motion.div>
       </main>
  
      {sidebar && isMobile && (
@@ -239,19 +240,19 @@ const SideBarLeftLayoutContent: React.FC<SideBarLeftLayoutProps> = ({
           <motion.aside
             className={cn(
               "fixed inset-y-0",
-              sidebarOnLeft && "left-0" ,
+              sidebarOnRight && "right-0" ,
             )}
             style={{
               zIndex: (zIndex.sidebar ?? 90) + 10,
             }}
             initial={{
-              x: sidebarOnLeft ? -sidebarWidth : sidebarWidth
+              x: sidebarOnRight ? -sidebarWidth : sidebarWidth
             }}
             animate={{
-              x: isOpen ? 0 : (sidebarOnLeft ? -sidebarWidth : sidebarWidth),
+              x: isOpen ? 0 : (sidebarOnRight ? -sidebarWidth : sidebarWidth),
             }}
             exit={{
-              x: sidebarOnLeft ? -sidebarWidth : sidebarWidth
+              x: sidebarOnRight ? -sidebarWidth : sidebarWidth
             }}
             transition={{ duration: transitionDuration, ease: "easeInOut" }}
             drag={enableGestures ? "x" : false}
@@ -264,8 +265,8 @@ const SideBarLeftLayoutContent: React.FC<SideBarLeftLayoutProps> = ({
  
           <button
             className={cn(
-              "fixed z-[999] p-2 rounded-lg bg-background shadow-lg top-4",
-              sidebarOnLeft && "left-4",
+              "fixed z-[999] p-2 rounded-lg bg-background shadow-lg top-4 ml-2",
+              sidebarOnRight && "right-4",
             )}
             onClick={() => setIsOpen(!isOpen)}
             aria-label={isOpen ? "Close sidebar" : "Open sidebar"}
@@ -291,7 +292,7 @@ const SideBarLeftLayoutContent: React.FC<SideBarLeftLayoutProps> = ({
   );
 };
  
-export const SideBarLeftLayout: React.FC<SideBarLeftLayoutProps> = (props) => {
+export const SideBarRightLayout: React.FC<SideBarLeftLayoutProps> = (props) => {
   return (
     <SidebarProvider initialOpen={!props.sidebarCollapsed}>
       <SideBarLeftLayoutContent {...props} />
@@ -299,4 +300,4 @@ export const SideBarLeftLayout: React.FC<SideBarLeftLayoutProps> = (props) => {
   );
 };
  
-SideBarLeftLayout.displayName = "SideBarLeftLayout";
+SideBarRightLayout.displayName = "SideBarRightLayout";

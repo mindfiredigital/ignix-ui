@@ -1,6 +1,6 @@
 {
   "templates": {
-      "sidebarleft-layout": {
+      "sidebar-left-layout": {
       "id":"sidebar-left-layout",
       "name": "SideBarLeftLayout",
       "description": "A flexible layout component with header, sidebar, and footer that supports responsive design and various configuration options.",
@@ -11,7 +11,23 @@
       ],
       "files": {
         "main": {
-          "path": "templates/layouts/sidebarleft-layout/index.tsx",
+          "path": "templates/layouts/sidebar-left-layout/index.tsx",
+          "type": "templates"
+        }
+      }
+    },
+    "sidebar-right-layout": {
+      "id":"sidebar-right-layout",
+      "name": "SideBarRightLayout",
+      "description": "A flexible layout component with header, right sidebar, and footer that supports responsive design and various configuration options.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/layouts/sidebar-right-layout/index.tsx",
           "type": "templates"
         }
       }

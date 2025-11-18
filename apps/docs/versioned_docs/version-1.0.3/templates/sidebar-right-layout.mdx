@@ -1,10 +1,41 @@
+---
+sidebar_position: 1
+title: SidebarRight
+description: A flexible layout component with header, right sidebar, and footer that supports responsive design and various configuration options.
+---
+
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import HeaderLayout from '@site/src/components/UI/header-layout';
+import TemplateSideBarLayoutDemo from '@site/src/components/Demo/TemplateSideBarLayoutDemo';
+
+## Overview
+
+The **Sidebar-right** component provides a complete layout solution with a header, sidebar, scrollable main content and footer. It's designed to be highly configurable with support for responsive design, animations, and various layout variants. This component is perfect for building dashboards, and complex web applications.
+
+## Preview
+
+<TemplateSideBarLayoutDemo layout="right"/>
+
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component sidebar-right-layout
+    ```
+  </TabItem>
+  <TabItem value="manual" label="manual" className="max-h-[500px] overflow-y-auto">
+  ```tsx
 import * as React from "react";
 import { motion, AnimatePresence, type PanInfo } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
-import { SidebarProvider, useSidebar } from "../sidebar";
 import { Menu, X } from "lucide-react";
-import { cn } from "@site/src/utils/cn";
- 
+import { cn } from "../../../../utils/cn";
+import { SidebarProvider, useSidebar } from "../../../components/sidebar";
+
 export interface SideBarLeftLayoutProps {
   header?: React.ReactNode;
   sidebar?: React.ReactNode;
@@ -61,7 +92,6 @@ const LayoutVariants = cva("", {
   },
 });
  
- 
 const SideBarLeftLayoutContent: React.FC<SideBarLeftLayoutProps> = ({
   header,
   sidebar,
@@ -77,7 +107,7 @@ const SideBarLeftLayoutContent: React.FC<SideBarLeftLayoutProps> = ({
   overlay = true,
   transitionDuration = 0.3,
   sidebarCollapsed = false,
-  sidebarPosition = "left",
+  sidebarPosition = "right",
   onSidebarToggle,
   headerHeight = 64,
   footerHeight = 64,
@@ -102,7 +132,6 @@ const SideBarLeftLayoutContent: React.FC<SideBarLeftLayoutProps> = ({
       ? 768
       : 1024;
  
- 
   React.useEffect(() => {
     const check = () => {
       const mobile = window.innerWidth < bp;
@@ -118,6 +147,7 @@ const SideBarLeftLayoutContent: React.FC<SideBarLeftLayoutProps> = ({
     onSidebarToggle?.(isOpen);
   }, [isOpen, onSidebarToggle]);
  
+  const sidebarOnRight = sidebarPosition === "right";
   const toggleSidebar = React.useCallback(
     (open?: boolean) => {
       const next = open !== undefined ? open : !isOpen;
@@ -144,23 +174,6 @@ const SideBarLeftLayoutContent: React.FC<SideBarLeftLayoutProps> = ({
     ["--sidebar-w" as string]: `${sidebarWidthPx}px`,
     ["--sidebar-w-collapsed" as string]: `${sidebarCollapsedWidth}px`,
   };
-
-  const Aside = !isMobile && sidebar ? (
-  <motion.aside
-    onPanEnd={handleDragEnd}
-    className={cn(mobileBreakpoint === "sm" ? "w-20" : "w-64")}
-    animate={{ width: isOpen ? sidebarWidthPx : sidebarCollapsedWidth }}
-    transition={{ duration: transitionDuration }}
-    style={{
-      zIndex: zIndex.sidebar,
-      flexShrink: 0,
-      height: `calc(100dvh - var(--header-h) - var(--footer-h))`,
-    }}
-  >
-    {sidebar}
-  </motion.aside>
-) : null
-
  
   return (
     <div
@@ -186,43 +199,54 @@ const SideBarLeftLayoutContent: React.FC<SideBarLeftLayoutProps> = ({
  
       {/* Main area */}
       <main
-        className={cn("relative flex flex-1 transition-all duration-300 ease-in-out")}
+         className={cn(
+        "relative flex flex-1 transition-all duration-300 ease-in-out")}
         style={{
-          height: isMobile ? "auto"
+          height: isMobile
+            ? "auto"
             : `calc(100dvh - var(--header-h) - var(--footer-h))`,
-          zIndex: zIndex.header,
+            zIndex: zIndex.header
         }}
       >
-        {sidebarPosition === 'left' && Aside}
-
-        <motion.div
-          className={cn("flex flex-col flex-1 overflow-y-auto")}
-          animate={{
-            marginLeft:
-              !isMobile && sidebarPosition
-                ? (sidebarCollapsed ? sidebarCollapsedWidth : 0)
-                : 0,
-            marginRight:
-              !isMobile && !sidebarPosition
-                ? (sidebarCollapsed ? sidebarCollapsedWidth : 0)
-                : 0,
-          }}
+        {/* Sidebar */}
+      
+        {/* Main content — grows automatically */}
+       <motion.div
+        className={cn("flex flex-col flex-1 overflow-y-auto")}
+        animate={{
+          marginRight:
+            !isMobile && sidebarOnRight
+              ? (sidebarCollapsed ? sidebarCollapsedWidth : 0)
+              : 0,
+        }}
+        transition={{ duration: transitionDuration }}
+        style={{
+          transition: `margin-right ${transitionDuration}s ease-in-out`,
+        }}
+      >
+        {children}
+      </motion.div>
+        {sidebar && !isMobile &&
+          <motion.aside
+          onPanEnd={handleDragEnd}
+          className={cn(
+            mobileBreakpoint === "sm" ? "w-20" : "w-64"
+          )}
+          animate={{ width: isOpen ? sidebarWidthPx: sidebarCollapsedWidth }}
           transition={{ duration: transitionDuration }}
           style={{
-            transition: `
-              margin-left ${transitionDuration}s ease-in-out,
-              margin-right ${transitionDuration}s ease-in-out
-            `,
+              zIndex: zIndex.sidebar,
+              flexShrink: 0,
+              height: `calc(100dvh - var(--header-h) - var(--footer-h))`,
           }}
-        >
-          {children}
-        </motion.div>
-
-        {sidebarPosition==='right' && Aside}
+          >
+          {sidebar}
+          </motion.aside>
+        }
+ 
       </main>
-
-      {/** sidebar && isMobile */}  
-      {sidebar && isMobile && (
+ 
+     {sidebar && isMobile && (
         <>
           <AnimatePresence>
             {overlay && (
@@ -244,19 +268,19 @@ const SideBarLeftLayoutContent: React.FC<SideBarLeftLayoutProps> = ({
           <motion.aside
             className={cn(
               "fixed inset-y-0",
-              sidebarPosition==='left' ? "left-0" : "right-0",
+              sidebarOnRight && "right-0" ,
             )}
             style={{
               zIndex: (zIndex.sidebar ?? 90) + 10,
             }}
             initial={{
-              x: sidebarPosition ? -sidebarWidth : sidebarWidth
+              x: sidebarOnRight ? -sidebarWidth : sidebarWidth
             }}
             animate={{
-              x: isOpen ? 0 : (sidebarPosition ? -sidebarWidth : sidebarWidth),
+              x: isOpen ? 0 : (sidebarOnRight ? -sidebarWidth : sidebarWidth),
             }}
             exit={{
-              x: sidebarPosition ? -sidebarWidth : sidebarWidth
+              x: sidebarOnRight ? -sidebarWidth : sidebarWidth
             }}
             transition={{ duration: transitionDuration, ease: "easeInOut" }}
             drag={enableGestures ? "x" : false}
@@ -269,8 +293,8 @@ const SideBarLeftLayoutContent: React.FC<SideBarLeftLayoutProps> = ({
  
           <button
             className={cn(
-              "fixed z-[999] p-2 rounded-lg bg-background shadow-lg top-4",
-              sidebarPosition==='left' ? "left-4" : "right-4"
+              "fixed z-[999] p-2 rounded-lg bg-background shadow-lg top-4 ml-2",
+              sidebarOnRight && "right-4",
             )}
             onClick={() => setIsOpen(!isOpen)}
             aria-label={isOpen ? "Close sidebar" : "Open sidebar"}
@@ -296,7 +320,7 @@ const SideBarLeftLayoutContent: React.FC<SideBarLeftLayoutProps> = ({
   );
 };
  
-export const SideBarLeftLayout: React.FC<SideBarLeftLayoutProps> = (props) => {
+export const SideBarRightLayout: React.FC<SideBarLeftLayoutProps> = (props) => {
   return (
     <SidebarProvider initialOpen={!props.sidebarCollapsed}>
       <SideBarLeftLayoutContent {...props} />
@@ -304,4 +328,59 @@ export const SideBarLeftLayout: React.FC<SideBarLeftLayoutProps> = (props) => {
   );
 };
  
-SideBarLeftLayout.displayName = "SideBarLeftLayout";
+SideBarRightLayout.displayName = "SideBarRightLayout";
+  ```
+  </TabItem>
+</Tabs>
+
+
+## Usage
+
+```tsx
+  import { SideBarLeftLayout } from "@site/src/components/UI/sidebarleft-layout";
+
+    function TemplateSideBarLayoutDemo() {
+      return (
+        <SideBarRightLayout
+          variant="default"
+          mobileBreakpoint="md"
+          sidebarWidth="md"
+          stickyHeader={true}
+          stickyFooter={false}
+          overlay={true}
+          enableGestures={true}
+          header={<div>Header Content</div>}
+          sidebar={<div>Sidebar Content</div>}
+          footer={<div>Footer Content</div>}
+        >
+          <div>Main Content</div>
+        </SidebarLeftLayout>
+      );
+    }
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `header` | `React.ReactNode` | `undefined` | Content for the header section |
+| `sidebar` | `React.ReactNode` | `undefined` | Content for the sidebar section |
+| `footer` | `React.ReactNode` | `undefined` | Content for the footer section |
+| `children` | `React.ReactNode` | `undefined` | Main content area |
+| `variant` | `"default" \| "dark" \| "light" \| "glass" \| "gradient"` | `"default"` | Visual theme variant |
+| `sidebarWidth` | `"default" \| "custom"` | `"wide"` | `"expanded"` | Width of the sidebar |
+| `animation` | `"none" \| "slide" \| "fade" \| "scale" \| "bounce"` | `"slide"` | Animation type for transitions |
+| `mobileBreakpoint` | `"sm" \| "md" \| "lg"` | `"md"` | Breakpoint for mobile behavior |
+| `stickyHeader` | `boolean` | `true` | Whether header should be sticky |
+| `stickyFooter` | `boolean` | `false` | Whether footer should be sticky |
+| `overlay` | `boolean` | `true` | Whether to show overlay on mobile |
+| `enableGestures` | `boolean` | `true` | Whether to enable touch gestures |
+| `sidebarCollapsedWidth` | `number` | `80` | Collapsed width in pixels |
+| `headerHeight` | `number` | `64` | Header height in pixels |
+| `footerHeight` | `number` | `64` | Footer height in pixels |
+| `contentPadding` | `string` | `"p-4 lg:p-6"` | Padding for content area |
+| `transitionDuration` | `number` | `0.3` | Animation duration in seconds |
+| `sidebarCollapsed` | `boolean` | `false` | Whether sidebar is initially collapsed |
+| `onSidebarToggle` | `(isOpen: boolean) => void` | `undefined` | Callback for sidebar toggle |
+| `zIndex` | `object` | `{ header: 10, sidebar: 90, footer: 50, overlay: 80 }` | Z-index values for each layer |
+| `className` | `string` | `undefined` | Additional CSS classes |

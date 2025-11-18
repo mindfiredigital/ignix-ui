@@ -156,7 +156,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         isMobile ? !isOpen ? "w-0" : isOpen: '',
         className
       )}
-      style={isOpen ? style : undefined} 
+      style={isOpen && !isMobile ? style : undefined} 
     >
       {/* Sidebar Header */}
       <div className="p-4 flex items-center justify-between gap-4">
