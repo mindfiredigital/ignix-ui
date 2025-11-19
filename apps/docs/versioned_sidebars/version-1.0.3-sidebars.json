@@ -103,7 +103,8 @@
           "label": "Starter",
           "items": [
             "starters/monorepo",
-            "starters/nextjs-app"
+            "starters/nextjs-app",
+            "starters/vite-react"
           ]
         }
       ]
