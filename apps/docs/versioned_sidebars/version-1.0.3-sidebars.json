@@ -91,7 +91,7 @@
     {
       "type": "category",
       "label": "Templates",
-      "items": ["layouts/single-column-layout"]
+      "items": ["layouts/single-column-layout", "layouts/sign-up"]
     },
     {
       "type": "category",
