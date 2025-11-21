@@ -101,9 +101,16 @@
         {
           "type": "category",
           "label": "Starter",
-          "items": [
+           "items": [
             "starters/monorepo",
             "starters/nextjs-app"
+          ]
+        },
+        {
+          "type": "category",
+          "label": "Layouts",
+          "items": [
+            "templates/sidebarleft-layout"
           ]
         }
       ]
