@@ -4,14 +4,6 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from '../../../../utils/cn';
 import { Menu, X } from "lucide-react";
 import { SidebarProvider, useSidebar } from "../../../components/sidebar";
-import type { TargetAndTransition, VariantLabels } from "framer-motion";
-
-type MotionAnimation = {
-  initial?: TargetAndTransition | VariantLabels;
-  animate?: TargetAndTransition | VariantLabels;
-  exit?: TargetAndTransition | VariantLabels;
-  transition?: TargetAndTransition["transition"];
-};
 
 export interface FullHeightSidebarLayoutProps {
   // React Nodes
@@ -31,7 +23,6 @@ export interface FullHeightSidebarLayoutProps {
   transitionDuration?: number;
   sidebarCollapsed?: boolean;
   onSidebarToggle?: (isOpen: boolean) => void;
-  animation?: 'none' | 'slide' | 'fade' | 'scale' | 'bounce'
 
   // sizing via CSS vars (pixels)
   headerHeight?: number;
@@ -48,8 +39,6 @@ export interface FullHeightSidebarLayoutProps {
 
   className?: string;
 }
-
-type AnimationKey = 'none' | 'slide' | 'fade' | 'scale' | 'bounce';
 
 const FullHeightSidebarLayoutVariants = cva("min-h-screen", {
   variants: {
@@ -87,7 +76,6 @@ const FullHeightSidebarLayoutContent: React.FC<FullHeightSidebarLayoutProps> = (
   sidebarCollapsed = false,
   onSidebarToggle,
   headerHeight = 64, // px
-  animation = "none",
   zIndex = { header: 100, sidebar: 90, overlay: 80 },
 }) => {
   const { isOpen, setIsOpen } = useSidebar();
@@ -98,44 +86,6 @@ const FullHeightSidebarLayoutContent: React.FC<FullHeightSidebarLayoutProps> = (
 
   // breakpoint width
   const bp = mobileBreakpoint === "sm" ? 640 : mobileBreakpoint === "md" ? 768 : 1024;
-
-  const mainAnimations: Record<AnimationKey, MotionAnimation> = {
-    none: {
-      initial: {},
-      animate: {},
-      transition: {},
-    },
-
-    fade: {
-      initial: { opacity: 0 },
-      animate: { opacity: 1 },
-      transition: { duration: 0.5 },
-    },
-
-    slide: {
-      initial: { opacity: 0, y: 30 },
-      animate: { opacity: 1, y: 0 },
-      transition: { duration: 0.5, ease: "easeOut" },
-    },
-
-    scale: {
-      initial: { opacity: 0, scale: 0.9 },
-      animate: { opacity: 1, scale: 1 },
-      transition: { duration: 0.5, type: "spring", stiffness: 200 },
-    },
-
-    bounce: {
-      initial: { opacity: 0, y: 40, scale: 0.95 },
-      animate: { opacity: 1, y: 0, scale: 1 },
-      transition: {
-        duration: 0.7,
-        type: "spring",
-        stiffness: 160,
-        damping: 12,
-        bounce: 0.6,
-      },
-    },
-  };
 
   React.useEffect(() => {
     const check = () => {
@@ -187,11 +137,6 @@ const FullHeightSidebarLayoutContent: React.FC<FullHeightSidebarLayoutProps> = (
       {/* Fixed header with reserved space via padding on the main shell */}
       {header && (
         <motion.header
-          key={`header-${animation}-${isOpen}-${isMobile}`}
-          initial={mainAnimations[animation]?.initial ?? undefined}
-          animate={mainAnimations[animation]?.animate ?? undefined}
-          transition={mainAnimations[animation]?.transition ?? undefined}
-          viewport={{ once: false, amount: 0.2 }}
           className="relative inset-x-0 top-0"
           style={{
             height: headerHeight,
@@ -311,7 +256,7 @@ const FullHeightSidebarLayoutContent: React.FC<FullHeightSidebarLayoutProps> = (
           {/* Mobile toggle button */}
           <button
             className={cn(
-              "fixed z-[999] p-2 rounded-lg bg-background shadow-lg top-4",
+              "fixed z-999 p-2 rounded-lg bg-background shadow-lg top-4",
               sidebarOnLeft && "left-4",
               sidebarOnRight && "right-4"
             )}

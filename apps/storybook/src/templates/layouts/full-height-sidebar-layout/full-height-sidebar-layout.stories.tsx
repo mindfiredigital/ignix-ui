@@ -22,11 +22,6 @@ const meta: Meta<typeof FullHeightSidebarLayout> = {
       options: ["default", "dark", "light", "glass", "gradient"],
       description: "Visual theme variant for the layout",
     },
-    animation: {
-      control: { type: "select" },
-      options: ["none", "slide", "fade", "scale", "bounce"],
-      description: "Animation type for sidebar transitions",
-    },
     sidebarPosition: {
       control: { type: "select" },
       options: ["left", "right"],
@@ -251,20 +246,11 @@ export const MobileOptimized: Story = {
   },
 };
 
-// Animation Story 
-export const Animation: Story = {
-  args: {
-    ...Basic.args,
-    animation:"bounce",
-  },
-};
-
 // Gradient Effect + Slide Story 
 export const GradientEffect: Story = {
   args: {
     ...Basic.args,
     variant:"gradient",
-    animation:"bounce",
     sidebar: (
       <Sidebar
         links={navItems}
