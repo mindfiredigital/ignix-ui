@@ -10,8 +10,7 @@
         "class-variance-authority"
       ],
       "componentDependencies": [
-        "sidebar",
-        "navbar"
+        "sidebar"
       ],
       "files": {
         "main": {
@@ -30,12 +29,30 @@
         "class-variance-authority"
       ],
       "componentDependencies": [
-        "sidebar",
-        "navbar"
+        "sidebar"
       ],
       "files": {
         "main": {
           "path": "templates/layouts/sidebar-right-layout/index.tsx",
+          "type": "templates"
+        }
+      }
+    },
+      "full-height-sidebar-layout": {
+      "id":"full-height-sidebar-layout",
+      "name": "SideBarRightLayout",
+      "description": "A flexible layout component with header, sidebar that supports app dashboard with responsive design.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "sidebar"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/layouts/full-height-sidebar-layout/index.tsx",
           "type": "templates"
         }
       }
