@@ -111,7 +111,8 @@
           "label": "Layouts",
           "items": [
             "templates/layouts/sidebar-left-layout",
-            "templates/layouts/sidebar-right-layout"
+            "templates/layouts/sidebar-right-layout",
+            "templates/layouts/full-height-sidebar-layout"
           ]
         }
       ]

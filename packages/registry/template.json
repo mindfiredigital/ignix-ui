@@ -40,7 +40,7 @@
     },
       "full-height-sidebar-layout": {
       "id":"full-height-sidebar-layout",
-      "name": "SideBarRightLayout",
+      "name": "FullHeightSidebarLayout",
       "description": "A flexible layout component with header, sidebar that supports app dashboard with responsive design.",
       "dependencies": [
         "framer-motion",
