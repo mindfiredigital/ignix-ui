@@ -86,8 +86,8 @@ footer={
 © 2025 My Application. All rights reserved.
 </footer>
 }
->
 {mainContent}
+>
 </SideBarLeftLayout>`;
 const [hasOpenButton, setHasOpenButton] = React.useState(false);
 
