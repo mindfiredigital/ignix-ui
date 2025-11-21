@@ -588,8 +588,10 @@
           "type": "component"
         }
       }
-    },
-    "sidebar-left-layout": {
+    }
+  },
+  "templates": {
+      "sidebar-left-layout": {
       "id":"sidebar-left-layout",
       "name": "SideBarLeftLayout",
       "description": "A flexible layout component with header, sidebar, and footer that supports responsive design and various configuration options.",
