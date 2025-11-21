@@ -22,7 +22,7 @@
         }
       }
     },
-    "aspect-ratio": {
+    "aspectratio": {
       "name": "AspectRatio",
       "description": "A responsive container that maintains a consistent aspect ratio for its content",
       "dependencies": [],

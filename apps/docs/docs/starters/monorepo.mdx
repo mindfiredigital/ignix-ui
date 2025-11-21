@@ -1,0 +1,139 @@
+---
+id: monorepo
+title: Monorepo Starter (Turborepo + pnpm)
+description: Scaffold a production-ready monorepo with Turborepo, pnpm workspaces, shared configs, and a Next.js app.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## Overview
+
+The Monorepo Starter scaffolds a Turborepo + pnpm workspaces setup with:
+
+- apps/web → Next.js frontend
+- packages/components → UI component library (with design tokens)
+- packages/config → shared configs (ESLint, TypeScript, Tailwind)
+- Root `tsconfig.json`, `turbo.json`, `pnpm-workspace.yaml`
+- Caching and parallelization via Turborepo
+
+## Generate via CLI
+
+<Tabs>
+  <TabItem value="interactive" label="Interactive">
+
+Run the CLI and choose Starters → Monorepo:
+
+```bash
+npx ignix
+```
+
+  </TabItem>
+  <TabItem value="direct" label="Direct">
+
+Run the starter command directly:
+
+```bash
+npx ignix starters monorepo
+```
+
+  </TabItem>
+</Tabs>
+
+This will:
+- Create the monorepo structure
+- Write shared configs
+- Wire workspace dependencies
+- Optionally install dependencies (if enabled in your CLI)
+
+## Generated Structure
+
+```text
+.
+├─ apps/
+│  └─ web/                  # Next.js app
+│     ├─ app/page.tsx
+│     ├─ package.json
+│     ├─ next.config.mjs
+│     └─ tsconfig.json
+├─ packages/
+│  ├─ components/           # UI library
+│  │  ├─ src/
+│  │  │  ├─ Button.tsx
+│  │  │  ├─ tokens.ts
+│  │  │  └─ index.ts
+│  │  ├─ package.json
+│  │  ├─ tsconfig.json
+│  │  └─ tsconfig.build.json
+│  └─ config/               # Shared configs
+│     ├─ eslint/index.cjs
+│     ├─ tailwind/tailwind.config.cjs
+│     ├─ tsconfig/base.json
+│     └─ package.json
+├─ package.json             # Workspaces + Turbo scripts
+├─ pnpm-workspace.yaml
+├─ turbo.json               # Turborepo pipeline and caching
+└─ tsconfig.json            # Shared base
+```
+
+## Workspace Scripts
+
+From the repository root:
+
+- `pnpm dev`: run all dev servers (Turborepo orchestrated)
+- `pnpm build`: build all packages/apps with incremental caching
+- `pnpm lint`: run linters across the repo
+
+## Sharing Components across Apps
+
+The Next.js app consumes the shared UI library:
+
+```tsx
+// apps/web/app/page.tsx
+import { Button } from '@acme/components';
+
+export default function Page() {
+  return (
+    <main style={{ padding: 24 }}>
+      <h1>Ignix Monorepo</h1>
+      <Button>From components pkg</Button>
+    </main>
+  );
+}
+```
+
+Development flow:
+1. Edit components in `packages/components/src/*`
+2. In another terminal, run `pnpm dev` at the root to rebuild and run apps
+3. Turborepo caches and only rebuilds what changed
+
+## Turborepo Caching
+
+The `turbo.json` config enables:
+- Task graph with `dependsOn` to reuse upstream builds
+- Output tracking for cache hits
+- Persistent `dev` tasks
+
+Builds are significantly faster on subsequent runs or when only a subset of packages change.
+
+## Acceptance Criteria Mapping
+
+- Monorepo CLI commands work: `npx ignix` → Starters → Monorepo, or `npx ignix starters monorepo`
+- Components shared across apps: `@acme/components` consumed in `apps/web`
+- Build times optimized with Turborepo caching: configured via `turbo.json`
+
+## Troubleshooting
+
+- Ensure pnpm is installed: `npm i -g pnpm`
+- If install fails, try clearing cache: `pnpm store prune`
+- On Windows WSL, verify Node and pnpm versions match between environments
+
+## Requirements Recap
+
+- Turborepo + pnpm workspaces monorepo
+- `apps/web` Next.js app
+- `packages/components` UI library with tokens
+- `packages/config` shared ESLint, TS, Tailwind
+- Shared root `tsconfig.json`
+- Dev and build scripts at the root
+

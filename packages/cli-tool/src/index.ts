@@ -8,6 +8,7 @@ import { themesCommand } from './commands/theme';
 import { templateCommand } from './commands/template';
 import { logger } from './utils/logger';
 import { RegistryService } from './services/RegistryService';
+import { templateCommand } from './commands/template';
 
 const program = new Command();
 
@@ -113,7 +114,6 @@ async function startInteractiveCLI(): Promise<void> {
           break;
         }
       }
-
       console.log('');
     } catch (error) {
       if (error instanceof Error) {

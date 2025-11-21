@@ -116,6 +116,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   variant,
   className,
   direction,
+  style
 }) => {
   const { isOpen, onClose, onOpen } = useSidebar();
     const [isMobile, setIsMobile] = React.useState(false);
@@ -143,6 +144,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         isMobile ? !isOpen ? "w-0" : isOpen: '',
         className
       )}
+      style={isOpen ? style : undefined} 
     >
       {/* Sidebar Header */}
       <div className="p-4 flex items-center justify-between gap-4">
