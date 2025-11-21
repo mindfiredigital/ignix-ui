@@ -1,0 +1,85 @@
+---
+sidebar_position: 3
+title: SignupForm
+description: A comprehensive signup form with animated inputs, validation, password strength indicator, and multiple layout variants. Supports both centered and split layouts with modern design.
+---
+import React from 'react';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import CenteredSignupForm  from '@site/src/components/UI/signup-centered';
+import CenteredSignupFormDemo from '@site/src/components/Demo/SignupCenteredFormDemo';
+import SplitSignupForm  from '@site/src/components/UI/signup-split';
+import SplitSignupFormDemo from '@site/src/components/Demo/SignupSplitFormDemo';
+
+
+## Overview
+
+The **SignupForm** component is a feature-rich, animated signup form with comprehensive validation, password strength indicators, and multiple layout variants. It supports both centered card layouts and split-screen designs with promotional content, making it perfect for modern authentication flows.
+
+## Preview
+
+<CenteredSignupFormDemo/>
+
+<SplitSignupFormDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component signup-form
+    ```
+  </TabItem>
+  <TabItem value="manual" label="Manual">
+    ```bash
+    # Copy the component file to your project
+    cp signup-form.tsx ./src/components/Forms/
+    
+    # Install required dependencies
+    npm install framer-motion class-variance-authority lucide-react
+    ```
+  </TabItem>
+</Tabs>
+
+
+## Usage
+
+{/* ### Basic Centered Form
+
+```tsx
+import { SignupForm } from './components/Forms/SignupForm';
+
+function App() {
+  const handleSignup = (formData) => {
+    console.log('Form submitted:', formData);
+    // Handle form submission
+  };
+
+  return (
+    <SignupForm
+      layout="centered"
+      variant="modern"
+      onSubmit={handleSignup}
+    />
+  );
+}
+``` */}
+
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `"default" \| "modern" \| "minimal" \| "card" \| "glass" \| "elegant"` | `"default"` | Visual theme variant for the form
+| `layout` | `"centered" \| "split"` | `"centered"` | Layout variant (centered card or split screen)
+| `inputVariant` | `string` | `"clean"` | Animation variant for input fields
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Size of form elements
+| `showConfirmEmail` | `boolean` | `true` | Show confirm email field for verification
+| `showTerms` | `boolean` | `true` | Show terms and conditions checkbox
+| `enableCaptcha` | `boolean` | `false` | Enable CAPTCHA integration placeholder
+| `realtimeValidation` | `boolean` | `true` | Enable real-time validation as user types
+| `loading` | `boolean` | `false` | Show loading state during submission
+| `success` | `boolean` | `false` | Show success state after form submission
+| `onSubmit` | `(data: SignupFormData) => void` | `undefined` | Custom submit handler
+| `loginLink` | `string` | `"/login"` | Custom login page URL
+| `className` | `string` | `undefined` | Additional CSS classes

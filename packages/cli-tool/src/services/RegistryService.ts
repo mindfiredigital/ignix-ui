@@ -22,14 +22,8 @@ interface ComponentRegistry {
   components: Record<string, ComponentConfig>;
 }
 
-// Template registry matches your JSON exactly:
-interface TemplateRegistry {
-  templates: Record<string, ComponentConfig>;
-}
-
 export class RegistryService {
   private componentRegistry: ComponentRegistry | null = null;
-  private templateRegistry: TemplateRegistry | null = null;
 
   //------------------------------------------------------------
   // Fetch Component Registry
@@ -55,17 +49,17 @@ export class RegistryService {
   //------------------------------------------------------------
   // Fetch Template Registry
   //------------------------------------------------------------
-  private async fetchAvailableTemplate(): Promise<TemplateRegistry> {
-    if (this.templateRegistry) return this.templateRegistry;
+  private async fetchAvailableTemplate(): Promise<ComponentRegistry> {
+    if (this.componentRegistry) return this.componentRegistry;
 
     const config = await loadConfig();
     const spinner = ora('Fetching Template Layout...').start();
 
     try {
-      const response = await axios.get<TemplateRegistry>(config.templateLayoutUrl);
+      const response = await axios.get<ComponentRegistry>(config.templateLayoutUrl);
       spinner.succeed('Template layout fetched.');
-      this.templateRegistry = response.data;
-      return this.templateRegistry;
+      this.componentRegistry = response.data;
+      return this.componentRegistry;
     } catch (error) {
       spinner.fail('Failed to fetch template layout.');
       logger.error('Could not connect to the template registry. Please check your connection.');
@@ -78,7 +72,7 @@ export class RegistryService {
   //------------------------------------------------------------
   public async getTemplateConfig(name: string): Promise<ComponentConfig | undefined> {
     const registry = await this.fetchAvailableTemplate();
-    return registry.templates[name];
+    return registry.components[name];
   }
 
   //------------------------------------------------------------
@@ -86,7 +80,7 @@ export class RegistryService {
   //------------------------------------------------------------
   public async getAvailableTemplates(): Promise<ComponentConfig[]> {
     const registry = await this.fetchAvailableTemplate();
-    return Object.values(registry.templates);
+    return Object.values(registry.components);
   }
 
   //------------------------------------------------------------
@@ -94,7 +88,9 @@ export class RegistryService {
   //------------------------------------------------------------
   public async getComponentConfig(name: string): Promise<ComponentConfig | undefined> {
     const registry = await this.fetchRegistry();
-    return registry.components[name];
+    return Object.values(registry.components).find(
+      (component: any) => component.name.toLowerCase() === name.toLowerCase()
+    );
   }
 
   //------------------------------------------------------------
@@ -102,11 +98,6 @@ export class RegistryService {
   //------------------------------------------------------------
   public async getAvailableComponents(): Promise<ComponentConfig[]> {
     const registry = await this.fetchRegistry();
-    return Object.values(registry.components);
-  }
-
-  public async getAvailableTemplates(): Promise<ComponentConfig[]> {
-    const registry = await this.fetchAvailableTemplate();
     return Object.values(registry.components);
   }
 }

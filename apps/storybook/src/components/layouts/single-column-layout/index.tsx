@@ -138,6 +138,7 @@ const footerVariants = cva("w-full border-t transition-colors duration-300", {
 ────────────────────────────────────────────────────────────── */
 const SingleColumnLayout: React.FC<SingleColumnLayoutProps> = ({
   header,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   footer,
   children,
   stickyHeader = true,
