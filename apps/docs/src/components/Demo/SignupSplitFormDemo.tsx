@@ -43,8 +43,10 @@ const formVariants = ['default', 'modern', 'gradient', 'dark'];
 
 const SignupSplitFormDemo = () => {
     const [variant, setVariant] = useState('default');
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [formState, setFormState] = useState('default');
     const [companyName, setCompanyName] = useState('YourBrand');
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [showLoginLink, setShowLoginLink] = useState(true);
 
     // Mock form submission handler
