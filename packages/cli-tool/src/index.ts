@@ -5,7 +5,11 @@ import { addCommand } from './commands/add';
 import { initCommand } from './commands/init';
 import { listCommand } from './commands/list';
 import { themesCommand } from './commands/theme';
-import { startersCommandMonorepo, startersCommandNextjsApp } from './commands/starters';
+import {
+  startersCommandMonorepo,
+  startersCommandNextjsApp,
+  startersCommandViteReact,
+} from './commands/starters';
 import { logger } from './utils/logger';
 import { RegistryService } from './services/RegistryService';
 import { templateCommand } from './commands/template';
@@ -20,6 +24,7 @@ program.addCommand(listCommand);
 program.addCommand(themesCommand);
 program.addCommand(startersCommandMonorepo);
 program.addCommand(startersCommandNextjsApp);
+program.addCommand(startersCommandViteReact);
 // Display welcome message
 function showWelcome(): void {
   console.log(`
@@ -118,12 +123,15 @@ async function startInteractiveCLI(): Promise<void> {
             name: 'starter',
             message: 'Select a starter to scaffold:',
             choices: [
+              { title: 'Vite + React (TypeScript + Tailwind + HMR)', value: 'vite-react' },
               { title: 'Next.js App (App Router + TypeScript + Tailwind)', value: 'nextjs-app' },
               { title: 'Monorepo (Turborepo + pnpm)', value: 'monorepo' },
             ],
             initial: 0,
           });
-          if (resp.starter === 'monorepo') {
+          if (resp.starter === 'vite-react') {
+            await startersCommandViteReact.parseAsync(['node', 'ignix', 'starters', 'vite-react']);
+          } else if (resp.starter === 'monorepo') {
             await startersCommandMonorepo.parseAsync(['node', 'ignix', 'starters', 'monorepo']);
           } else if (resp.starter === 'nextjs-app') {
             await startersCommandNextjsApp.parseAsync(['node', 'ignix', 'starters', 'nextjs-app']);
