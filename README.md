@@ -75,7 +75,7 @@ pnpm run generate-component --name=componentName
 
 - Adds base files (like .tsx, .test.tsx, index.tsx,).
 
-- update registry.json.
+- update registry.json
 
 - Ensures naming consistency.
 
