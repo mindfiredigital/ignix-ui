@@ -1,9 +1,10 @@
 import * as React from "react";
 import { motion, AnimatePresence, type PanInfo } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
-import { SidebarProvider, useSidebar } from "../sidebar";
 import { Menu, X } from "lucide-react";
-import { cn } from "@site/src/utils/cn";
+import { SidebarProvider, useSidebar } from "../../../components/sidebar";
+import { cn } from "../../../../utils/cn";
+
  
 export interface SideBarLeftLayoutProps {
   header?: React.ReactNode;
@@ -118,6 +119,7 @@ const SideBarLeftLayoutContent: React.FC<SideBarLeftLayoutProps> = ({
     onSidebarToggle?.(isOpen);
   }, [isOpen, onSidebarToggle]);
  
+  const sidebarOnLeft = sidebarPosition === "left";
   const toggleSidebar = React.useCallback(
     (open?: boolean) => {
       const next = open !== undefined ? open : !isOpen;
@@ -144,23 +146,6 @@ const SideBarLeftLayoutContent: React.FC<SideBarLeftLayoutProps> = ({
     ["--sidebar-w" as string]: `${sidebarWidthPx}px`,
     ["--sidebar-w-collapsed" as string]: `${sidebarCollapsedWidth}px`,
   };
-
-  const Aside = !isMobile && sidebar ? (
-  <motion.aside
-    onPanEnd={handleDragEnd}
-    className={cn(mobileBreakpoint === "sm" ? "w-20" : "w-64")}
-    animate={{ width: isOpen ? sidebarWidthPx : sidebarCollapsedWidth }}
-    transition={{ duration: transitionDuration }}
-    style={{
-      zIndex: zIndex.sidebar,
-      flexShrink: 0,
-      height: `calc(100dvh - var(--header-h) - var(--footer-h))`,
-    }}
-  >
-    {sidebar}
-  </motion.aside>
-) : null
-
  
   return (
     <div
@@ -186,43 +171,53 @@ const SideBarLeftLayoutContent: React.FC<SideBarLeftLayoutProps> = ({
  
       {/* Main area */}
       <main
-        className={cn("relative flex flex-1 transition-all duration-300 ease-in-out")}
+         className={cn(
+        "relative flex flex-1 transition-all duration-300 ease-in-out")}
         style={{
-          height: isMobile ? "auto"
+          height: isMobile
+            ? "auto"
             : `calc(100dvh - var(--header-h) - var(--footer-h))`,
-          zIndex: zIndex.header,
+            zIndex: zIndex.header
         }}
       >
-        {sidebarPosition === 'left' && Aside}
-
-        <motion.div
-          className={cn("flex flex-col flex-1 overflow-y-auto")}
-          animate={{
-            marginLeft:
-              !isMobile && sidebarPosition
-                ? (sidebarCollapsed ? sidebarCollapsedWidth : 0)
-                : 0,
-            marginRight:
-              !isMobile && !sidebarPosition
-                ? (sidebarCollapsed ? sidebarCollapsedWidth : 0)
-                : 0,
-          }}
+        {/* Sidebar */}
+        {sidebar && !isMobile &&
+          <motion.aside
+          onPanEnd={handleDragEnd}
+          className={cn(
+            mobileBreakpoint === "sm" ? "w-20" : "w-64"
+          )}
+          animate={{ width: isOpen ? sidebarWidthPx : sidebarCollapsedWidth }}
           transition={{ duration: transitionDuration }}
           style={{
-            transition: `
-              margin-left ${transitionDuration}s ease-in-out,
-              margin-right ${transitionDuration}s ease-in-out
-            `,
+              zIndex: zIndex.sidebar,
+              flexShrink: 0,
+              height: `calc(100dvh - var(--header-h) - var(--footer-h))`,
           }}
-        >
-          {children}
-        </motion.div>
-
-        {sidebarPosition==='right' && Aside}
+          >
+          {sidebar}
+          </motion.aside>
+        }
+ 
+        {/* Main content — grows automatically */}
+       <motion.div
+        className={cn("flex flex-col flex-1 overflow-y-auto")}
+        animate={{
+          marginLeft:
+            !isMobile && sidebarOnLeft
+              ? (sidebarCollapsed ? sidebarCollapsedWidth : 0)
+              : 0,
+        }}
+        transition={{ duration: transitionDuration }}
+        style={{
+          transition: `margin-left ${transitionDuration}s ease-in-out`,
+        }}
+      >
+        {children}
+      </motion.div>
       </main>
-
-      {/** sidebar && isMobile */}  
-      {sidebar && isMobile && (
+ 
+     {sidebar && isMobile && (
         <>
           <AnimatePresence>
             {overlay && (
@@ -244,19 +239,19 @@ const SideBarLeftLayoutContent: React.FC<SideBarLeftLayoutProps> = ({
           <motion.aside
             className={cn(
               "fixed inset-y-0",
-              sidebarPosition==='left' ? "left-0" : "right-0",
+              sidebarOnLeft && "left-0" ,
             )}
             style={{
               zIndex: (zIndex.sidebar ?? 90) + 10,
             }}
             initial={{
-              x: sidebarPosition ? -sidebarWidth : sidebarWidth
+              x: sidebarOnLeft ? -sidebarWidth : sidebarWidth
             }}
             animate={{
-              x: isOpen ? 0 : (sidebarPosition ? -sidebarWidth : sidebarWidth),
+              x: isOpen ? 0 : (sidebarOnLeft ? -sidebarWidth : sidebarWidth),
             }}
             exit={{
-              x: sidebarPosition ? -sidebarWidth : sidebarWidth
+              x: sidebarOnLeft ? -sidebarWidth : sidebarWidth
             }}
             transition={{ duration: transitionDuration, ease: "easeInOut" }}
             drag={enableGestures ? "x" : false}
@@ -270,7 +265,7 @@ const SideBarLeftLayoutContent: React.FC<SideBarLeftLayoutProps> = ({
           <button
             className={cn(
               "fixed z-[999] p-2 rounded-lg bg-background shadow-lg top-4",
-              sidebarPosition==='left' ? "left-4" : "right-4"
+              sidebarOnLeft && "left-4",
             )}
             onClick={() => setIsOpen(!isOpen)}
             aria-label={isOpen ? "Close sidebar" : "Open sidebar"}

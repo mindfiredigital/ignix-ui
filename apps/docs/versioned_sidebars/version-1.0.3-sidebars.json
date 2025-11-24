@@ -110,7 +110,9 @@
           "type": "category",
           "label": "Layouts",
           "items": [
-            "templates/sidebarleft-layout"
+            "templates/layouts/sidebar-left-layout",
+            "templates/layouts/sidebar-right-layout",
+            "templates/layouts/full-height-sidebar-layout"
           ]
         }
       ]

@@ -52,7 +52,7 @@ async function startInteractiveCLI(): Promise<void> {
           { title: chalk.hex('#FF6B35')('📋 List components'), value: 'list' },
           { title: chalk.hex('#FF7F50')('🎨 Manage themes'), value: 'themes' },
           { title: chalk.hex('#33A06F')('📦 Starters Template'), value: 'starters' },
-          { title: chalk.hex('#FF6B35')('📦 Template'), value: 'templates' },
+          { title: chalk.hex('#FF6B35')('🚀 Manage Template'), value: 'templates' },
           { title: chalk.red('❌ Exit'), value: 'exit' },
         ],
         initial: 0,
@@ -111,6 +111,7 @@ async function startInteractiveCLI(): Promise<void> {
           await themesCommand.parseAsync(['node', 'ignix']);
           break;
         }
+
         case 'starters': {
           const resp = await prompts({
             type: 'select',
@@ -130,7 +131,7 @@ async function startInteractiveCLI(): Promise<void> {
           break;
         }
         case 'templates': {
-          await templateCommand.parseAsync(['node', 'ignix', 'component']);
+          await templateCommand.parseAsync(['node', 'ignix', 'templates']);
           break;
         }
       }

@@ -10,13 +10,12 @@ export interface IgnixConfig {
   componentsDir: string;
   themesDir: string;
   tokensDir: string;
-  templateUrl: string;
-  templateDir: string;
+  templateLayoutUrl: string;
+  templateLayoutDir: string;
 }
 
 export async function loadConfig(): Promise<IgnixConfig> {
   const configPath = path.resolve(process.cwd(), DEFAULT_CONFIG_FILENAME);
-
   if (!(await fs.pathExists(configPath))) {
     logger.error('Configuration file `ignix.config.js` not found.');
     logger.info("Please run 'npx ignix init' to create a configuration file.");

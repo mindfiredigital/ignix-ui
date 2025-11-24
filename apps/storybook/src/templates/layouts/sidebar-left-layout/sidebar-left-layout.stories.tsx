@@ -1,9 +1,9 @@
 import { SideBarLeftLayout } from "./index";
-import { Navbar } from "../../navbar";
-import Sidebar from "../../sidebar";
-import { Card } from "../../card";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Home, Settings, BookOpen, Palette, Layout } from 'lucide-react';
+import { Navbar } from "../../../components/navbar";
+import Sidebar from "../../../components/sidebar";
+import { Card } from "../../../components/card";
 
 const date = new Date()
 const year = date.getFullYear()

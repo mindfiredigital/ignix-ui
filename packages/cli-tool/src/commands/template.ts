@@ -4,6 +4,7 @@ import prompts from 'prompts';
 import ora from 'ora';
 import { logger } from '../utils/logger';
 import { TemplateService } from '../services/TemplateService';
+import { RegistryService } from '../services/RegistryService';
 
 async function showThemeMenu(): Promise<void> {
   const spinner = ora();
@@ -34,20 +35,20 @@ async function showThemeMenu(): Promise<void> {
 
     try {
       const templateService = new TemplateService();
+      const registryService = new RegistryService();
 
       switch (response.action) {
         case 'list': {
           spinner.start('Fetching templates...');
-          const templates = await templateService.getAvailableTemplateLayout();
+          const templates = await registryService.getAvailableTemplates();
           spinner.stop();
-
           if (templates.length === 0) {
             logger.warn('No templates available.');
           } else {
             console.log(chalk.bold('\nAvailable Templates:\n'));
             templates.forEach((template) => {
-              console.log(chalk.cyan(`  • ${template?.components?.name}`));
-              console.log(chalk.gray(`    ${template?.components?.description}\n`));
+              console.log(chalk.cyan(`  • ${template?.name}`));
+              console.log(chalk.gray(`    ${template?.description}\n`));
             });
           }
           break;
@@ -55,7 +56,7 @@ async function showThemeMenu(): Promise<void> {
 
         case 'install': {
           spinner.start('Fetching templates...');
-          const templateData = await templateService.getAvailableTemplateLayout();
+          const templateData = await registryService.getAvailableTemplates();
           spinner.stop();
 
           const templates = templateData.map((tpl: any) => ({

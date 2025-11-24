@@ -588,6 +588,60 @@
           "type": "component"
         }
       }
+    },
+    "sidebarleftlayout": {
+      "name": "SidebarLeftLayout",
+      "description": "A flexible layout component with header, sidebar, and footer that supports responsive design and various configuration options.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "sidebar"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/layouts/sidebar-left-layout/index.tsx",
+          "type": "template"
+        }
+      }
+    },
+    "sidebarrightlayout": {
+      "name": "SidebarRightLayout",
+      "description": "A flexible layout component with header, right sidebar, and footer that supports responsive design and various configuration options.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "sidebar"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/layouts/sidebar-right-layout/index.tsx",
+          "type": "template"
+        }
+      }
+    },
+    "fullheightsidebarlayout": {
+      "name": "FullHeightSidebarLayout",
+      "description": "A flexible layout component with header, sidebar that supports app dashboard with responsive design.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "sidebar"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/layouts/full-height-sidebar-layout/index.tsx",
+          "type": "template"
+        }
+      }
     }
   }
 }

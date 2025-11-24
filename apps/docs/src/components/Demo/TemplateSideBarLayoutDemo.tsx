@@ -10,11 +10,15 @@ import { Home, Settings, BookOpen, Palette, Layout } from 'lucide-react';
 import { SideBarLeftLayout } from '../UI/sidebarleft-layout';
 import { cn } from '@site/src/utils/cn';
 
+interface Props {
+  layout: 'left' | 'right'
+}
+
 const layoutVariants = ['default', 'dark', 'light', 'glass', 'gradient'];
 const sidebarWidth = ['default', 'compact','wide','expanded'];
 const mobileBreakpoints = ['sm', 'md', 'lg'];
 
-const SideBarLeftDemo = () => {
+const TemplateSideBarLayoutDemo = (props: Props) => {
   const [variant, setVariant] = useState('default');
   const [width, setWidth] = useState('default');
   const [mobileBreakpoint, setMobileBreakpoint] = useState('md');
@@ -43,8 +47,9 @@ const SideBarLeftDemo = () => {
   const codeString = `
 <SideBarLeftLayout
   variant="${variant}"
-  sidebarPosition="${width}"
+  sidebarWidth="${width}"
   mobileBreakpoint="${mobileBreakpoint}"
+  sidebarPosition="${props?.layout}"
 header={
   <Navbar variant={variant as any} size="md">
     <div className="flex items-center justify-between w-full">
@@ -68,7 +73,7 @@ sidebar={
     <Sidebar
       links={navItems}
       brandName="SIDEBAR"
-      position="left"
+      position="${props?.layout}"
       variant="${variant}"
       style={{
         height: "calc(100dvh - var(--header-h) - var(--footer-h))",
@@ -81,11 +86,8 @@ footer={
 © 2025 My Application. All rights reserved.
 </footer>
 }
-variant={variant as any}
-sidebarPosition={sidebarPosition as any}
-mobileBreakpoint={mobileBreakpoint as any}
->
 {mainContent}
+>
 </SideBarLeftLayout>`;
 const [hasOpenButton, setHasOpenButton] = React.useState(false);
 
@@ -107,19 +109,17 @@ React.useEffect(() => {
 
   const mainContent = (
     <>
-    {/* Main content wrapper (scrollable area) */}
-    {/* <div className={`flex flex-col gap-1 p-10  ${mobileBreakpoint === 'sm' ? 'overflow-hidden' : 'overflow-y-auto'} max-h-[calc(100dvh-var(--header-h)-var(--footer-h))]`}> */}
-      
-<div
-  className={cn(
-    "flex flex-col gap-1 p-10 max-h-[calc(100dvh-var(--header-h)-var(--footer-h))]",
-    mobileBreakpoint === "sm" && hasOpenButton
-      ? "overflow-y-auto"
-      : mobileBreakpoint === "sm"
-      ? "overflow-hidden"
-      : "overflow-y-auto"
-  )}
->
+    {/* Main content wrapper (scrollable area) */}      
+    <div
+      className={cn(
+        "flex flex-col gap-1 p-10 max-h-[calc(100dvh-var(--header-h)-var(--footer-h))]",
+        mobileBreakpoint === "sm" && hasOpenButton
+          ? "overflow-y-auto"
+          : mobileBreakpoint === "sm"
+          ? "overflow-hidden"
+          : "overflow-y-auto"
+      )}
+    >
       {/* Overview */}
       <section className="space-y-4 ">
         <h2 className="text-3xl font-bold tracking-tight">Welcome to Sidebar Layout</h2>
@@ -227,13 +227,6 @@ React.useEffect(() => {
         </Card>
       </section>
 
-      {/* Footer Note */}
-      <footer className="pt-4 text-sm text-center text-muted-foreground border-t border-border">
-        <p>
-          Built with ❤️ using <strong>React</strong>, <strong>TypeScript</strong>, and <strong>Tailwind CSS</strong>.  
-          Contributions welcome on GitHub!
-        </p>
-      </footer>
     </div>
     </>
   );
@@ -265,7 +258,7 @@ React.useEffect(() => {
           <div className="border rounded-lg overflow-hidden">
             <SideBarLeftLayout
               header={
-                <Navbar variant={variant as any} size="md" className='pl-16 md:pl-0'>
+                <Navbar variant={variant as any} size="md">
                 <div className="flex items-center justify-between w-full">
                   <div className="flex items-center gap-2">
                     <img
@@ -287,8 +280,9 @@ React.useEffect(() => {
                 <Sidebar
                   links={navItems}
                   brandName="Sidebar"
-                  position="left"
+                  position={props?.layout}
                   variant={variant as any}
+                  className="overflow-auto"
                   style={{
                     top:"2px",
                     height: breakpointValues[mobileBreakpoint] >= 768 ? `calc(100dvh - var(--header-h) - var(--footer-h))` : `full`,
@@ -304,6 +298,7 @@ React.useEffect(() => {
               sidebarWidth={width as any}
               variant={variant as any}
               mobileBreakpoint={mobileBreakpoint as any}
+              sidebarPosition={props.layout}
             >
             {/* {mainContent} */}
               <div className="relative">
@@ -331,5 +326,5 @@ React.useEffect(() => {
   );
 }
 
-export default SideBarLeftDemo;
+export default TemplateSideBarLayoutDemo;
 
