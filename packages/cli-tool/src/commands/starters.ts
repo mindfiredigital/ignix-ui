@@ -27,6 +27,22 @@ import {
   scaffoldConfigPackage,
   scaffoldNextApp,
 } from '../services/starter-template/MonorepoStarter';
+import {
+  validateEmptyDirectory as validateEmptyDirectoryVite,
+  createViteReactPackageJson,
+  createViteReactTsconfig,
+  createViteConfig,
+  createTailwindConfig as createTailwindConfigVite,
+  createPostCSSConfig as createPostCSSConfigVite,
+  createESLintConfig as createESLintConfigVite,
+  createPrettierConfig as createPrettierConfigVite,
+  createIndexHtml,
+  createSrcDirectory as createSrcDirectoryVite,
+  createGlobalStyles as createGlobalStylesVite,
+  createIgnixConfig as createIgnixConfigVite,
+  createGitignore as createGitignoreVite,
+  createViteEnvTypes,
+} from '../services/starter-template/ViteReactStarter';
 
 const execa = async (...args: any[]): Promise<any> => {
   const { execa: execaImport } = await import('execa');
@@ -145,6 +161,81 @@ export const startersCommandNextjsApp = new Command()
       logger.info(`3. Add components: ${chalk.cyan('npx ignix add <component-name>')}`);
     } catch (e) {
       spinner.fail('Failed to scaffold Next.js app');
+      if (e instanceof Error) logger.error(e.message);
+      process.exit(1);
+    }
+  });
+
+export const startersCommandViteReact = new Command()
+  .name('vite-react-starters')
+  .description(chalk.hex('#33A06F')('Starter generators for vite-react.'))
+  .command('vite-react')
+  .description('Scaffold a blank Vite + React app with TypeScript, Tailwind CSS, and Ignix UI')
+  .action(async () => {
+    const spinner = ora('Scaffolding Vite + React app...').start();
+    try {
+      const root = process.cwd();
+
+      // 1. Validate that we're in an empty directory or prompt
+      await validateEmptyDirectoryVite(root);
+
+      // 2. Create package.json
+      await createViteReactPackageJson(root);
+
+      // 3. Create TypeScript configuration
+      await createViteReactTsconfig(root);
+
+      // 4. Create Vite configuration
+      await createViteConfig(root);
+
+      // 5. Create Tailwind CSS configuration with Ignix plugin
+      await createTailwindConfigVite(root);
+
+      // 6. Create PostCSS configuration
+      await createPostCSSConfigVite(root);
+
+      // 7. Create ESLint configuration
+      await createESLintConfigVite(root);
+
+      // 8. Create Prettier configuration
+      await createPrettierConfigVite(root);
+
+      // 9. Create index.html
+      await createIndexHtml(root);
+
+      // 10. Create src directory structure
+      await createSrcDirectoryVite(root);
+
+      // 11. Create global styles
+      await createGlobalStylesVite(root);
+
+      // 12. Create Ignix config
+      await createIgnixConfigVite(root);
+
+      // 13. Create .gitignore
+      await createGitignoreVite(root);
+
+      // 14. Create vite-env.d.ts
+      await createViteEnvTypes(root);
+
+      // 16. Initialize Git repository
+      spinner.text = 'Initializing Git repository...';
+      await execa('git', ['init'], { cwd: root, stdio: 'inherit' }).catch(() => {
+        logger.warn('Git initialization failed, but continuing...');
+      });
+
+      // 17. Install dependencies
+      spinner.text = 'Installing dependencies...';
+      const packageManager = await getPackageManager();
+      await execa(packageManager, ['install'], { cwd: root, stdio: 'inherit' });
+
+      spinner.succeed(chalk.green('Vite + React app scaffolded successfully!'));
+      logger.info('\nNext steps:');
+      logger.info(`1. Start dev server: ${chalk.cyan(`${packageManager} run dev`)}`);
+      logger.info(`2. Open ${chalk.cyan('http://localhost:5173')} in your browser`);
+      logger.info(`3. Add components: ${chalk.cyan('npx ignix add <component-name>')}`);
+    } catch (e) {
+      spinner.fail('Failed to scaffold Vite + React app');
       if (e instanceof Error) logger.error(e.message);
       process.exit(1);
     }

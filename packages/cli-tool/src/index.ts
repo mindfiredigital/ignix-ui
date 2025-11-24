@@ -5,9 +5,14 @@ import { addCommand } from './commands/add';
 import { initCommand } from './commands/init';
 import { listCommand } from './commands/list';
 import { themesCommand } from './commands/theme';
-import { startersCommandMonorepo, startersCommandNextjsApp } from './commands/starters';
+import {
+  startersCommandMonorepo,
+  startersCommandNextjsApp,
+  startersCommandViteReact,
+} from './commands/starters';
 import { logger } from './utils/logger';
 import { RegistryService } from './services/RegistryService';
+import { templateCommand } from './commands/template';
 
 const program = new Command();
 
@@ -19,6 +24,7 @@ program.addCommand(listCommand);
 program.addCommand(themesCommand);
 program.addCommand(startersCommandMonorepo);
 program.addCommand(startersCommandNextjsApp);
+program.addCommand(startersCommandViteReact);
 // Display welcome message
 function showWelcome(): void {
   console.log(`
@@ -51,6 +57,7 @@ async function startInteractiveCLI(): Promise<void> {
           { title: chalk.hex('#FF6B35')('📋 List components'), value: 'list' },
           { title: chalk.hex('#FF7F50')('🎨 Manage themes'), value: 'themes' },
           { title: chalk.hex('#33A06F')('📦 Starters Template'), value: 'starters' },
+          { title: chalk.hex('#FF6B35')('🚀 Manage Template'), value: 'templates' },
           { title: chalk.red('❌ Exit'), value: 'exit' },
         ],
         initial: 0,
@@ -109,26 +116,33 @@ async function startInteractiveCLI(): Promise<void> {
           await themesCommand.parseAsync(['node', 'ignix']);
           break;
         }
+
         case 'starters': {
           const resp = await prompts({
             type: 'select',
             name: 'starter',
             message: 'Select a starter to scaffold:',
             choices: [
+              { title: 'Vite + React (TypeScript + Tailwind + HMR)', value: 'vite-react' },
               { title: 'Next.js App (App Router + TypeScript + Tailwind)', value: 'nextjs-app' },
               { title: 'Monorepo (Turborepo + pnpm)', value: 'monorepo' },
             ],
             initial: 0,
           });
-          if (resp.starter === 'monorepo') {
+          if (resp.starter === 'vite-react') {
+            await startersCommandViteReact.parseAsync(['node', 'ignix', 'starters', 'vite-react']);
+          } else if (resp.starter === 'monorepo') {
             await startersCommandMonorepo.parseAsync(['node', 'ignix', 'starters', 'monorepo']);
           } else if (resp.starter === 'nextjs-app') {
             await startersCommandNextjsApp.parseAsync(['node', 'ignix', 'starters', 'nextjs-app']);
           }
           break;
         }
+        case 'templates': {
+          await templateCommand.parseAsync(['node', 'ignix', 'templates']);
+          break;
+        }
       }
-
       console.log('');
     } catch (error) {
       if (error instanceof Error) {
