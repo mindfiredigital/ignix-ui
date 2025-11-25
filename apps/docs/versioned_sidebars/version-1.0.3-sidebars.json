@@ -91,7 +91,28 @@
     {
       "type": "category",
       "label": "Templates",
-      "items": ["layouts/single-column-layout", "layouts/sign-up"]
+      "items":[
+        {
+          "type": "category",
+          "label": "Starter",
+           "items": [
+            "starters/monorepo",
+            "starters/nextjs-app",
+            "starters/vite-react"
+          ]
+        },
+        {
+          "type": "category",
+          "label": "Layouts",
+          "items": [
+            "templates/layouts/single-column-layout", 
+            "templates/pages/sign-up",
+            "templates/layouts/sidebar-left-layout",
+            "templates/layouts/sidebar-right-layout",
+            "templates/layouts/full-height-sidebar-layout"
+          ]
+        }
+      ]
     },
     {
       "type": "category",

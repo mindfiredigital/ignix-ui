@@ -84,10 +84,18 @@ export const SidebarProvider: React.FC<SidebarProviderProps> = ({
 
   const onClose = useCallback(() => {
     setIsOpen(false);
+
+    // remove blur background dynamically
+    const overlay = document.querySelector(".sidebar-sm-ignis");
+    if (overlay) overlay.classList.remove("bg-black/50");
   }, []);
 
   const onOpen = useCallback(() => {
     setIsOpen(true);
+
+    // add blur background dynamically
+    const overlay = document.querySelector(".sidebar-sm-ignis");
+    if (overlay) overlay.classList.add("bg-black/50");
   }, []);
 
   const value: SidebarContextType = {
@@ -120,6 +128,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   variant,
   className,
   direction,
+  style
 }) => {
   const { isOpen, onClose, onOpen } = useSidebar();
     const [isMobile, setIsMobile] = React.useState(false);
@@ -147,6 +156,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         isMobile ? !isOpen ? "w-0" : isOpen: '',
         className
       )}
+      style={isOpen && !isMobile ? style : undefined} 
     >
       {/* Sidebar Header */}
       <div className="p-4 flex items-center justify-between gap-4">

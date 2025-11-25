@@ -1,8 +1,10 @@
 "use client";
 
-import { motion, HTMLMotionProps, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import type { HTMLMotionProps } from "framer-motion";
 import * as React from "react";
-import { cva, VariantProps } from "class-variance-authority";
+import { cva } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority";
 import { cn } from "../../../utils/cn";
 import { ChevronDown, ChevronUp } from "lucide-react";
 

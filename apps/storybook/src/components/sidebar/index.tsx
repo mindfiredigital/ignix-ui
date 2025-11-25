@@ -38,6 +38,7 @@ const sidebarVariants = cva("absolute h-full overflow-hidden transition-all", {
       dark: "bg-black text-white",
       light: "bg-white text-gray-900 border-r",
       glass: "bg-white/10 backdrop-blur-lg text-white",
+      gradient: "bg-gradient-to-br from-purple-500 to-purple-400 text-foreground",
     },
 
     direction: {
@@ -116,6 +117,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   variant,
   className,
   direction,
+  style
 }) => {
   const { isOpen, onClose, onOpen } = useSidebar();
     const [isMobile, setIsMobile] = React.useState(false);
@@ -143,6 +145,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         isMobile ? !isOpen ? "w-0" : isOpen: '',
         className
       )}
+      style={isOpen && !isMobile? style : undefined} 
     >
       {/* Sidebar Header */}
       <div className="p-4 flex items-center justify-between gap-4">

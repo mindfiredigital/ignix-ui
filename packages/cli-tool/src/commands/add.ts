@@ -85,6 +85,43 @@ export const addCommand = new Command()
         }
         break;
       }
+      case 'template':
+      case 'templates': {
+        const registryService = new RegistryService();
+        const templateService = new TemplateService();
+
+        logger.info('Adding components...');
+        const availabletemplates = await registryService.getAvailableTemplates();
+        const componentNames = availabletemplates.map((c) => c.id);
+
+        if (identifiers.length === 0) {
+          const installResponse = await prompts({
+            type: 'select',
+            name: 'template',
+            message: chalk.green('Select a template to add:'),
+            choices: availabletemplates.map((c) => ({
+              title: c.name,
+              value: c.id,
+            })),
+          });
+          // Convert the single selected component to an array
+          identifiers = installResponse.template ? [installResponse.template] : [];
+        }
+
+        if (!identifiers || identifiers.length === 0) {
+          logger.warn('No template selected. Exiting.');
+          return;
+        }
+
+        for (const id of identifiers) {
+          if (componentNames.includes(id.toLowerCase())) {
+            await templateService.install(id.toLowerCase());
+          } else {
+            logger.error(`Component '${id}' not found in the registry.`);
+          }
+        }
+        break;
+      }
 
       case 'template':
       case 'templates': {
