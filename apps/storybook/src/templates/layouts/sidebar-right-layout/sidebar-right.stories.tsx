@@ -10,6 +10,7 @@ const year = date.getFullYear()
 
 const meta: Meta<typeof SideBarRightLayout> = {
   title: "Templates/Layouts/SideBarRight",
+  tags: ['autodocs'],
   component: SideBarRightLayout,
   parameters: {
     layout: "fullscreen",
@@ -57,39 +58,7 @@ const navItems = [
   { label: "Pages", href: "#", icon: BookOpen},
   { label: "Component", href: "#", icon: Layout },
   { label: "Themes", href: "#", icon:Palette },
-
   { label: "Settings", href: "#", icon: Settings},
-  { label: "Settings", href: "#", icon: Settings},
-  { label: "Settings", href: "#", icon: Settings},
-  { label: "Settings", href: "#", icon: Settings},
-  { label: "Settings", href: "#", icon: Settings},
-  { label: "Settings", href: "#", icon: Settings},
-  { label: "Settings", href: "#", icon: Settings},
-  { label: "Settings", href: "#", icon: Settings},
-  { label: "Settings", href: "#", icon: Settings},
-  { label: "Settings", href: "#", icon: Settings},
-  { label: "Settings", href: "#", icon: Settings},
-  { label: "Settings", href: "#", icon: Settings},
-  { label: "Settings", href: "#", icon: Settings},
-  { label: "Settings", href: "#", icon: Settings},
-  { label: "Settings", href: "#", icon: Settings},
-  { label: "Settings", href: "#", icon: Settings},
-  { label: "Settings", href: "#", icon: Settings},
-  { label: "Settings", href: "#", icon: Settings},
-  { label: "Settings", href: "#", icon: Settings},
-  { label: "Settings", href: "#", icon: Settings},
-  { label: "Settings", href: "#", icon: Settings},
-  { label: "Settings", href: "#", icon: Settings},
-  { label: "Settings", href: "#", icon: Settings},
-  { label: "Settings", href: "#", icon: Settings},
-  { label: "Settings", href: "#", icon: Settings},
-  { label: "Settings", href: "#", icon: Settings},
-
-
-
-  { label: "Settings", href: "#", icon: Settings},
-    { label: "Settings", href: "#", icon: Settings},
-
 ];
 
 // Basic HeaderLayout Story

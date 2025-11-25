@@ -19,7 +19,10 @@
     "baseUrl": ".",
     "module": "ESNext",
     "target": "ES2020",
-    "incremental": false
+    "incremental": false,
+    "paths": {
+      "@ignix-ui/*": ["./packages/registry/components/*"]
+    }
   },
   "exclude": ["node_modules"]
 }
