@@ -91,7 +91,27 @@
     {
       "type": "category",
       "label": "Templates",
-      "items": ["layouts/single-column-layout"]
+      "items":[
+        {
+          "type": "category",
+          "label": "Starter",
+           "items": [
+            "starters/monorepo",
+            "starters/nextjs-app",
+            "starters/vite-react"
+          ]
+        },
+        {
+          "type": "category",
+          "label": "Layouts",
+          "items": [
+            "layouts/single-column-layout",
+            "templates/layouts/sidebar-left-layout",
+            "templates/layouts/sidebar-right-layout",
+            "templates/layouts/full-height-sidebar-layout"
+          ]
+        }
+      ]
     },
     {
       "type": "category",

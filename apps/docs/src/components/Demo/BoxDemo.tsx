@@ -8,7 +8,7 @@ import CodeBlock from "@theme/CodeBlock";
 const widthOptions = ["auto", "small", "normal", "large", "full"];
 const heightOptions = ["auto", "small", "normal", "large", "screen"];
 const paddingOptions = ["none", "sm", "normal", "lg"];
-const backgroundOptions = ["white", "primary", "secondary", "muted"];
+const backgroundOptions = ["default","primary", "secondary", "muted"];
 const roundedOptions = ["none", "sm", "md", "lg", "full"];
 const shadowOptions = ["none", "subtle", "medium", "strong"];
 
@@ -17,7 +17,7 @@ const BoxDemo = () => {
   const [width, setWidth] = useState("normal");
   const [height, setHeight] = useState("auto");
   const [padding, setPadding] = useState("normal");
-  const [background, setBackground] = useState("white");
+  const [background, setBackground] = useState("default");
   const [rounded, setRounded] = useState("md");
   const [shadow, setShadow] = useState("subtle");
 

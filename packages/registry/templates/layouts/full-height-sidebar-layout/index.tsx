@@ -1,0 +1,283 @@
+import * as React from "react";
+import { motion, AnimatePresence, type PanInfo } from "framer-motion";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from '../../../../utils/cn';
+import { Menu, X } from "lucide-react";
+import { SidebarProvider, useSidebar } from "../../../components/sidebar";
+
+export interface FullHeightSidebarLayoutProps {
+  // React Nodes
+  header?: React.ReactNode;
+  sidebar?: React.ReactNode;
+  children: React.ReactNode;
+
+  // layout + behavior
+  sidebarWidth?: number; // px
+  sidebarCollapsedWidth?: number; // px
+  stickyHeader?: boolean;
+  variant?: VariantProps<typeof FullHeightSidebarLayoutVariants>["variant"];
+  sidebarPosition?: "left" | "right";
+  mobileBreakpoint?: "sm" | "md" | "lg";
+  enableGestures?: boolean;
+  overlay?: boolean;
+  transitionDuration?: number;
+  sidebarCollapsed?: boolean;
+  onSidebarToggle?: (isOpen: boolean) => void;
+  animation?: 'none' | 'slide' | 'fade' | 'scale' | 'bounce'
+
+  // sizing via CSS vars (pixels)
+  headerHeight?: number;
+
+  // spacing
+  contentPadding?: string;
+
+  // z-indexing
+  zIndex?: {
+    header?: number;
+    sidebar?: number;
+    overlay?: number;
+  };
+
+  className?: string;
+}
+
+const FullHeightSidebarLayoutVariants = cva("min-h-screen", {
+  variants: {
+    variant: {
+      default: "bg-background text-foreground",
+      dark: "bg-card text-card-foreground",
+      light: "bg-white text-gray-900 border-r",
+      glass: "bg-white/10 backdrop-blur-lg text-foreground",
+      gradient: "bg-gradient-to-br from-purple-500 to-purple-400 text-white",
+    },
+    sidebarPosition: {
+      left: "",
+      right: "",
+    },
+  },
+  defaultVariants: {
+    variant: "default",
+    sidebarPosition: "left",
+  },
+});
+
+const FullHeightSidebarLayoutContent: React.FC<FullHeightSidebarLayoutProps> = ({
+  header,
+  sidebar,
+  children,
+  sidebarWidth = 256,
+  sidebarCollapsedWidth = 64,
+  className,
+  variant = "default",
+  sidebarPosition = "left",
+  mobileBreakpoint = "md",
+  enableGestures = true,
+  overlay = true,
+  transitionDuration = 0.3,
+  sidebarCollapsed = false,
+  onSidebarToggle,
+  headerHeight = 64, // px
+  zIndex = { header: 100, sidebar: 90, overlay: 80 },
+}) => {
+  const { isOpen, setIsOpen } = useSidebar();
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  // ADD REF
+  const mainRef = React.useRef<HTMLDivElement>(null);
+
+  // breakpoint width
+  const bp = mobileBreakpoint === "sm" ? 640 : mobileBreakpoint === "md" ? 768 : 1024;
+
+  React.useEffect(() => {
+    const check = () => {
+      const mobile = window.innerWidth < bp;
+      setIsMobile(mobile);
+      setIsOpen(mobile ? false : !sidebarCollapsed);
+    };
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, [bp, sidebarCollapsed, setIsOpen]);
+
+  React.useEffect(() => {
+    onSidebarToggle?.(isOpen);
+  }, [isOpen, onSidebarToggle]);
+
+  const toggleSidebar = React.useCallback((open?: boolean) => {
+    const next = open !== undefined ? open : !isOpen;
+    setIsOpen(next);
+  }, [isOpen, setIsOpen]);
+
+  // gesture support for mobile overlay sidebar
+  const handleDragEnd = (_: Event, info: PanInfo) => {
+    if (!enableGestures || !isMobile) return;
+    const threshold = 60;
+    const vx = info.velocity.x;
+    const dx = info.offset.x;
+    const shouldClose = dx > threshold || vx > 300;
+    const shouldOpen = dx < -threshold || vx < -300;
+    if (isOpen && shouldClose) toggleSidebar(false);
+    else if (!isOpen && shouldOpen) toggleSidebar(true);
+  };
+
+  const sidebarOnLeft = sidebarPosition === "left";
+  const sidebarOnRight = sidebarPosition === "right";
+
+  // CSS vars for consistent offsets
+  const rootStyle: React.CSSProperties = {
+    ["--header-h" as unknown as string]: `${headerHeight}px`,
+    ["--sidebar-w" as unknown as string]: `${sidebarWidth}px`,
+    ["--sidebar-w-collapsed" as unknown as string]: `${sidebarCollapsedWidth}px`,
+  };
+
+  return (
+    <div
+      className={cn(FullHeightSidebarLayoutVariants({ variant, sidebarPosition }), className)}
+      style={rootStyle}
+    >
+      {/* Fixed header with reserved space via padding on the main shell */}
+      {header && (
+        <motion.header
+          className="fixed inset-x-0 top-0"
+          style={{
+            height: headerHeight,
+            zIndex: zIndex.header
+          }}
+        >
+          {header}
+        </motion.header>
+      )}
+
+      <div
+        className={cn(
+          // Desktop grid: sidebar + content
+          "md:grid md:max-h-screen",
+          sidebar && !sidebarCollapsed
+          ? sidebarOnLeft
+              ? "md:grid-cols-[auto_1fr]"
+              : "md:grid-cols-[1fr_auto]"
+          : "md:grid-cols-1"
+        )}
+      >
+        {/* Desktop sidebar (sticky under header) */}
+        {sidebar && !isMobile && (
+          <motion.aside
+            className={cn(
+              "hidden md:block",
+              sidebarOnLeft && "order-1",
+              sidebarOnRight && "order-2",
+              "sticky",
+            )}
+            style={{
+              top: headerHeight,
+              height: `calc(100dvh - ${headerHeight}px)`,
+              zIndex: zIndex.sidebar,
+              width: !sidebarCollapsed && isOpen ? sidebarWidth : 0,
+
+              // Apply margin-right ONLY for left sidebar
+              marginRight: sidebarOnLeft
+                ? (!sidebarCollapsed && isOpen ? 0 : 70)
+                : undefined,
+
+              // Apply margin-left ONLY for right sidebar
+              marginLeft: sidebarOnRight
+                ? (!sidebarCollapsed && isOpen ? 0 : 70)
+                : undefined
+            }}
+            initial={false}
+            animate={{
+              width: !sidebarCollapsed && isOpen ? sidebarWidth : 0,
+            }}
+            transition={{ duration: transitionDuration }}
+          >
+            {sidebar}
+          </motion.aside>
+        )}
+
+        {/* Main content area */}
+        <main
+          ref={mainRef}
+          className={cn(
+            "h-[calc(100dvh-var(--header-h))] overflow-y-auto",
+            sidebarOnLeft && "md:order-2",
+            sidebarOnRight && "md:order-1"
+          )}
+        >
+            {children}
+        </main>
+      </div>
+
+      {/* Mobile off-canvas sidebar + overlay */}
+      {sidebar && isMobile && (
+        <>
+          <AnimatePresence>
+            {overlay && (
+              <motion.div
+                className="fixed inset-0 bg-black/50"
+                style={{ zIndex: zIndex.overlay, pointerEvents: isOpen ? 'auto' : 'none' }}
+                initial={{ opacity: 0, pointerEvents: 'none' }}
+                animate={{ 
+                  opacity: isOpen ? 1 : 0,
+                  pointerEvents: isOpen ? 'auto' : 'none'
+                }}
+                exit={{ opacity: 0, pointerEvents: 'none' }}
+                transition={{ duration: transitionDuration }}
+                onClick={() => toggleSidebar(false)}
+              />
+            )}
+          </AnimatePresence>
+
+          <motion.aside
+            className={cn(
+              "fixed inset-y-0 w-[var(--sidebar-w)]",
+              sidebarOnLeft && "left-0" ,
+              sidebarOnRight && "right-0"
+            )}
+            style={{
+              zIndex: (zIndex.sidebar ?? 90) + 10,
+            }}
+            initial={{
+              x: sidebarOnLeft ? -sidebarWidth : sidebarWidth
+            }}
+            animate={{
+              x: isOpen ? 0 : (sidebarOnLeft ? -sidebarWidth : sidebarWidth),
+            }}
+            exit={{
+              x: sidebarOnLeft ? -sidebarWidth : sidebarWidth
+            }}
+            transition={{ duration: transitionDuration, ease: "easeInOut" }}
+            drag={enableGestures ? "x" : false}
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.2}
+            onDragEnd={handleDragEnd}
+          >
+            {sidebar}
+          </motion.aside>
+
+          {/* Mobile toggle button */}
+          <button
+            className={cn(
+              "fixed z-[999] p-2 rounded-lg bg-background shadow-lg top-4",
+              sidebarOnLeft && "left-4",
+              sidebarOnRight && "right-4"
+            )}
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label={isOpen ? "Close sidebar" : "Open sidebar"}
+          >
+            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </>
+      )}
+    </div>
+  );
+};
+
+export const FullHeightSidebarLayout: React.FC<FullHeightSidebarLayoutProps> = (props) => {
+  return (
+    <SidebarProvider initialOpen={!props.sidebarCollapsed}>
+      <FullHeightSidebarLayoutContent {...props} />
+    </SidebarProvider>
+  );
+};
+
+FullHeightSidebarLayout.displayName = "FullHeightSidebarLayout";

@@ -9,7 +9,6 @@ import prompts from 'prompts';
 import { ThemeService } from '../services/ThemeService';
 
 const DEFAULT_CONFIG_PATH = 'ignix.config.js';
-const TAILWIND_CONFIG_PATH = 'tailwind.config.js';
 
 export const initCommand = new Command()
   .name('init')
@@ -157,58 +156,53 @@ async function createConfigFiles() {
   await createUtilsFile();
   await createLlmsTxtFile();
   await createIgnixConfigFIle();
-  await createTailwindConfigFile();
 }
 
-async function setupIgnixUIAlias() {
+async function setupIgnixUIAlias(): Promise<void> {
   const root = process.cwd();
-  const rootTsconfigPath = path.resolve(root, 'tsconfig.json');
-  let rootTsconfig: any = {};
+  const templatesDir = path.resolve(__dirname, './templates');
 
-  if (await fs.pathExists(rootTsconfigPath)) {
-    try {
-      rootTsconfig = await fs.readJSON(rootTsconfigPath);
-    } catch {
-      rootTsconfig = {};
-    }
-  }
+  // 1️⃣ Copy tsconfig.app.json template
+  const tsconfigTemplatePath = path.join(templatesDir, 'tsconfig.app.json');
+  const tsconfigPath = path.resolve(root, 'tsconfig.app.json');
 
-  rootTsconfig.compilerOptions = {
-    ...(rootTsconfig.compilerOptions || {}),
-    baseUrl: rootTsconfig.compilerOptions?.baseUrl || '.',
-    paths: {
-      ...(rootTsconfig.compilerOptions?.paths || {}),
-      '@ignix-ui/*': ['./src/components/ui/*'],
-    },
-  };
+  await fs.copy(tsconfigTemplatePath, tsconfigPath);
+  logger.success('✔ Created tsconfig.app.json with @ignix-ui alias');
 
-  await fs.writeJSON(rootTsconfigPath, rootTsconfig, { spaces: 2 });
-  logger.success('Root tsconfig.json updated with @ignix-ui alias');
+  // 2️⃣ Copy vite.config.ts template
+  const viteConfigTemplatePath = path.join(templatesDir, 'vite.config.ts');
+  const viteConfigPath = path.resolve(root, 'vite.config.ts');
 
-  // Create webpack alias plugin if using webpack
+  await fs.copy(viteConfigTemplatePath, viteConfigPath);
+  logger.success('✔ Created vite.config.ts with @ignix-ui alias and TailwindCSS plugin');
+
+  // 3) Create plugins/webpack-alias.ts
   const pluginsDir = path.resolve(root, 'plugins');
+  await fs.ensureDir(pluginsDir);
   const webpackAliasFile = path.join(pluginsDir, 'webpack-alias.ts');
 
   if (!(await fs.pathExists(webpackAliasFile))) {
-    await fs.ensureDir(pluginsDir);
     const pluginCode = `import path from 'path';
-  
-  export default function webpackAliasPlugin() {
-    return {
-      name: 'webpack-alias-plugin',
-      configureWebpack() {
+
+      export default function webpackAliasPlugin() {
         return {
-          resolve: {
-            alias: {
-              '@ignix-ui': path.resolve(process.cwd(), 'src/components/ui'),
-            },
+          name: 'webpack-alias-plugin',
+          configureWebpack() {
+            return {
+              resolve: {
+                alias: {
+                  '@ignix-ui': path.resolve(process.cwd(), 'node_modules/@mindfiredigital/ignix-ui/components'),
+                },
+              },
+            };
           },
         };
-      },
-    };
-  }`;
+      }
+      `;
     await fs.writeFile(webpackAliasFile, pluginCode, 'utf8');
-    logger.success('Created plugins/webpack-alias.ts');
+    logger.success('✔ Created plugins/webpack-alias.ts');
+  } else {
+    logger.info('plugins/webpack-alias.ts already exists — skipping');
   }
 }
 
@@ -257,15 +251,5 @@ async function createIgnixConfigFIle() {
   } else {
     await fs.copy(configTemplatePath, DEFAULT_CONFIG_PATH);
     logger.success('Created `ignix.config.js`.');
-  }
-}
-
-async function createTailwindConfigFile() {
-  const tailwindTemplatePath = path.resolve(__dirname, './templates/tailwind.config.js');
-  if (await fs.pathExists(TAILWIND_CONFIG_PATH)) {
-    logger.info('`tailwind.config.js` already exists. Please merge configurations manually.');
-  } else {
-    await fs.copy(tailwindTemplatePath, TAILWIND_CONFIG_PATH);
-    logger.success('Created `tailwind.config.js`.');
   }
 }
