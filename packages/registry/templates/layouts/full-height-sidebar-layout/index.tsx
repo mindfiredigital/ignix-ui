@@ -1,9 +1,9 @@
 import * as React from "react";
 import { motion, AnimatePresence, type PanInfo } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from '../../../../utils/cn';
+import { cn } from '../../../utils/cn';
 import { Menu, X } from "lucide-react";
-import { SidebarProvider, useSidebar } from "../../../components/sidebar";
+import { SidebarProvider, useSidebar } from "@ignix-ui/sidebar";
 
 export interface FullHeightSidebarLayoutProps {
   // React Nodes
@@ -138,7 +138,7 @@ const FullHeightSidebarLayoutContent: React.FC<FullHeightSidebarLayoutProps> = (
       {/* Fixed header with reserved space via padding on the main shell */}
       {header && (
         <motion.header
-          className="fixed inset-x-0 top-0"
+          className="relative inset-x-0 top-0"
           style={{
             height: headerHeight,
             zIndex: zIndex.header

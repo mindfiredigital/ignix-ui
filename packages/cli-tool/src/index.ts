@@ -57,7 +57,6 @@ async function startInteractiveCLI(): Promise<void> {
           { title: chalk.hex('#FF6B35')('📋 List components'), value: 'list' },
           { title: chalk.hex('#FF7F50')('🎨 Manage themes'), value: 'themes' },
           { title: chalk.hex('#33A06F')('📦 Starters Template'), value: 'starters' },
-          { title: chalk.hex('#FF6B35')('🚀 Manage Template'), value: 'templates' },
           { title: chalk.red('❌ Exit'), value: 'exit' },
         ],
         initial: 0,
@@ -92,7 +91,8 @@ async function startInteractiveCLI(): Promise<void> {
             message: 'Select components to add:',
             choices: availableComponents.map((c: any) => ({
               title: c.name,
-              value: c.name,
+              value: c.name.toLowerCase(),
+              type: c.files.main.type,
               description: c.description || ' ',
             })),
             instructions: false,
