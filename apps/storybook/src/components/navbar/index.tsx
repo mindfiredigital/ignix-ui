@@ -8,14 +8,14 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 
 export interface NavbarProps
   extends Omit<HTMLMotionProps<"nav">, "ref">,
-    VariantProps<typeof navbarVariants> {
+  VariantProps<typeof navbarVariants> {
   animationType?:
-    | "slide"
-    | "glow"
-    | "basic"
-    | "spotlight"
-    | "hoverSubmenu"
-    | "clickSubmenu";
+  | "slide"
+  | "glow"
+  | "basic"
+  | "spotlight"
+  | "hoverSubmenu"
+  | "clickSubmenu";
   direction?: "horizontal" | "vertical";
   children?: React.ReactNode;
   submenuContent?: React.ReactNode;
@@ -185,11 +185,11 @@ const Navbar: React.FC<NavbarProps> = ({
                 whileHover={
                   animationType === "spotlight"
                     ? {
-                        scale: 1.1,
-                        background:
-                          "radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0) 80%)",
-                        transition: { duration: 0.3 },
-                      }
+                      scale: 1.1,
+                      background:
+                        "radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0) 80%)",
+                      transition: { duration: 0.3 },
+                    }
                     : { scale: 1.05, transition: { duration: 0.3 } }
                 }
                 className={
@@ -206,43 +206,43 @@ const Navbar: React.FC<NavbarProps> = ({
         })}
       {(animationType === "hoverSubmenu" ||
         animationType === "clickSubmenu") && (
-        <>
-          <div className="flex justify-between w-full space-x-2">
-            <span className="text-lg font-bold float-left navbar-header cursor-pointer">{header}</span>
-            {showSubmenu ? (
-              <span className="float-right navbar-chevron cursor-pointer">
-                <ChevronUp size={20} />
-              </span>
-            ) : (
-              <span className="float-right navbar-chevron cursor-pointer">
-                <ChevronDown size={20} />
-              </span>
-            )}
-          </div>
-          <AnimatePresence>
-            {showSubmenu && (
-              <motion.div
-                key="hoverMenu"
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                variants={submenuVariants}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className={cn(
-                  "absolute left-0 right-0 bg-background w-full px-6 py-4 border-t shadow-lg z-50",
-                  direction === "horizontal" ? "top-full" : "top-0 mt-12",
-                  variant === "dark" ? "bg-card text-card-foreground" : "",
-                  variant === "primary"
-                    ? "bg-primary text-primary-foreground"
-                    : ""
-                )}
-              >
-                {submenuContent}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </>
-      )}
+          <>
+            <div className="flex justify-between w-full space-x-2">
+              <span className="text-lg font-bold float-left navbar-header cursor-pointer">{header}</span>
+              {showSubmenu ? (
+                <span className="float-right navbar-chevron cursor-pointer">
+                  <ChevronUp size={20} />
+                </span>
+              ) : (
+                <span className="float-right navbar-chevron cursor-pointer">
+                  <ChevronDown size={20} />
+                </span>
+              )}
+            </div>
+            <AnimatePresence>
+              {showSubmenu && (
+                <motion.div
+                  key="hoverMenu"
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  variants={submenuVariants}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className={cn(
+                    "absolute left-0 right-0 bg-background w-full px-6 py-4 border-t shadow-lg z-50",
+                    direction === "horizontal" ? "top-full" : "top-0 mt-12",
+                    variant === "dark" ? "bg-card text-card-foreground" : "",
+                    variant === "primary"
+                      ? "bg-primary text-primary-foreground"
+                      : ""
+                  )}
+                >
+                  {submenuContent}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </>
+        )}
       {!["hoverSubmenu", "clickSubmenu", "spotlight", "basic"].includes(
         animationType
       ) && children}
