@@ -470,6 +470,21 @@
         }
       }
     },
+    "checkbox": {
+      "name":"Checkbox",
+      "description":"An animated checkbox component with different variants and animation options",
+      "dependencies":[
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "files":{
+        "main":{
+          "path":"components/checkbox/index.tsx",
+          "type":"component"
+        }
+      }
+    },
     "container": {
       "name": "Container",
       "description": "A flexible container component for constraining content width with responsive padding and centering options.",

@@ -512,9 +512,9 @@ const getAnimationProps = (type: SliderAnimationType, duration = 0.3): MotionPro
     case 'slide':
       return {
         animate: { y: [0, -4, 4, 0] },
-        transition: { 
-          repeat: Infinity, 
-          duration: duration * 3, 
+        transition: {
+          repeat: Infinity,
+          duration: duration * 3,
           ease: [0.4, 0, 0.6, 1],
           repeatType: "loop"
         },
@@ -522,8 +522,8 @@ const getAnimationProps = (type: SliderAnimationType, duration = 0.3): MotionPro
     case 'fade':
       return {
         animate: { opacity: [1, 0.6, 1] },
-        transition: { 
-          repeat: Infinity, 
+        transition: {
+          repeat: Infinity,
           duration: duration * 4,
           ease: "easeInOut",
           repeatType: "loop"
@@ -532,12 +532,12 @@ const getAnimationProps = (type: SliderAnimationType, duration = 0.3): MotionPro
     case 'zoom':
       return {
         initial: { scale: 0.8, opacity: 0 },
-        animate: { 
-          scale: [0.8, 1.1, 1], 
-          opacity: [0, 1, 1] 
+        animate: {
+          scale: [0.8, 1.1, 1],
+          opacity: [0, 1, 1]
         },
-        transition: { 
-          repeat: Infinity, 
+        transition: {
+          repeat: Infinity,
           duration: duration * 3,
           ease: [0.68, -0.55, 0.265, 1.55],
           repeatType: "loop",
@@ -574,9 +574,9 @@ const getAnimationProps = (type: SliderAnimationType, duration = 0.3): MotionPro
       return {
         initial: { x: -12, opacity: 0.7 },
         animate: { x: 0, opacity: 1 },
-        transition: { 
-          duration: duration * 2, 
-          delay: duration * 0.1, 
+        transition: {
+          duration: duration * 2,
+          delay: duration * 0.1,
           repeat: Infinity,
           repeatType: "reverse",
           ease: [0.4, 0, 0.2, 1]
@@ -586,8 +586,8 @@ const getAnimationProps = (type: SliderAnimationType, duration = 0.3): MotionPro
       return {
         initial: { rotateY: 90, opacity: 0 },
         animate: { rotateY: 0, opacity: 1 },
-        transition: { 
-          duration: duration * 2, 
+        transition: {
+          duration: duration * 2,
           repeat: Infinity,
           repeatType: "reverse",
           repeatDelay: 1,
@@ -598,8 +598,8 @@ const getAnimationProps = (type: SliderAnimationType, duration = 0.3): MotionPro
       return {
         initial: { borderRadius: '20%', opacity: 0.8 },
         animate: { borderRadius: '50%', opacity: 1 },
-        transition: { 
-          duration: duration * 2, 
+        transition: {
+          duration: duration * 2,
           repeat: Infinity,
           repeatType: "reverse",
           ease: "easeInOut"
@@ -607,11 +607,11 @@ const getAnimationProps = (type: SliderAnimationType, duration = 0.3): MotionPro
       };
     case 'hover':
       return {
-        whileHover: { 
+        whileHover: {
           scale: 1.15,
           transition: { type: "spring", stiffness: 400, damping: 15 }
         },
-        whileTap: { 
+        whileTap: {
           scale: 0.9,
           transition: { type: "spring", stiffness: 600, damping: 20 }
         },
@@ -664,7 +664,7 @@ const getAnimationProps = (type: SliderAnimationType, duration = 0.3): MotionPro
         animate: {
           background: [
             'linear-gradient(0deg, #ff0000, #ff0000)',
-            'linear-gradient(60deg, #ff8c00, #ff8c00)', 
+            'linear-gradient(60deg, #ff8c00, #ff8c00)',
             'linear-gradient(120deg, #ffff00, #ffff00)',
             'linear-gradient(180deg, #00ff00, #00ff00)',
             'linear-gradient(240deg, #0000ff, #0000ff)',
@@ -747,7 +747,7 @@ const Slider = React.forwardRef<React.ComponentRef<typeof SliderPrimitive.Root>,
     };
 
     return (
-      <div 
+      <div
         className={cn("w-full space-y-3", sizeConfig[size].root)}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -760,29 +760,29 @@ const Slider = React.forwardRef<React.ComponentRef<typeof SliderPrimitive.Root>,
         >
           <MotionTrack
             className={cn(styles.track, trackClassName)}
-            style={{ 
+            style={{
               transform: `scale(${sizeConfig[size].multiplier})`,
               transformOrigin: 'center'
             }}
             animate={
               animationType === 'breathe'
                 ? {
-                    boxShadow: [
-                      'inset 0 0 0 rgba(0,0,0,0.2)',
-                      'inset 0 0 12px rgba(0,0,0,0.4)',
-                      'inset 0 0 0 rgba(0,0,0,0.2)',
-                    ],
-                  }
+                  boxShadow: [
+                    'inset 0 0 0 rgba(0,0,0,0.2)',
+                    'inset 0 0 12px rgba(0,0,0,0.4)',
+                    'inset 0 0 0 rgba(0,0,0,0.2)',
+                  ],
+                }
                 : undefined
             }
             transition={
               animationType === 'breathe'
                 ? {
-                    repeat: Infinity,
-                    duration: 4,
-                    ease: "easeInOut",
-                    repeatType: "loop",
-                  }
+                  repeat: Infinity,
+                  duration: 4,
+                  ease: "easeInOut",
+                  repeatType: "loop",
+                }
                 : undefined
             }
             whileHover={{
@@ -805,7 +805,7 @@ const Slider = React.forwardRef<React.ComponentRef<typeof SliderPrimitive.Root>,
             <MotionThumb
               key={index}
               className={cn(styles.thumb, thumbClassName)}
-              style={{ 
+              style={{
                 transform: `scale(${sizeConfig[size].multiplier})`,
                 transformOrigin: 'center'
               }}
@@ -837,7 +837,7 @@ const Slider = React.forwardRef<React.ComponentRef<typeof SliderPrimitive.Root>,
         </SliderPrimitive.Root>
 
         {showValue && (
-          <motion.div 
+          <motion.div
             className={cn('text-center text-sm font-medium', styles.value, valueClassName)}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
