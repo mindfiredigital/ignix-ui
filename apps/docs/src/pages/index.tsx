@@ -32,12 +32,12 @@ export default function Home(): ReactElement {
       "
 
           >
-          <FeaturedComponents />
-          <WhyIgnixSection />
-          <CTASection />
-          <Footer />
+            <FeaturedComponents />
+            <WhyIgnixSection />
+            <CTASection />
+            <Footer />
           </section>
-          </div>
+        </div>
       </ToastProvider>
     </Layout>
   );

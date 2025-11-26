@@ -80,6 +80,7 @@ async function showThemeMenu(): Promise<void> {
       }
     } catch (error) {
       spinner.fail('An error occurred');
+
       if (error instanceof Error) logger.error(error.message);
     }
 

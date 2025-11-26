@@ -12,6 +12,8 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "framer-motion": "^12.23.24",
+    "motion-dom": "^12.23.23",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "framer-motion": "^12.23.24",
