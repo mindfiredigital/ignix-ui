@@ -658,7 +658,8 @@
           "path": "templates/pages/sign-in/index.tsx",
           "type": "template"
         }
-      },
+      }
+    },
     "signup": {
       "name": "SignUp",
       "description": "A sign-up page template with responsive design and form validation.",
@@ -677,7 +678,6 @@
           "type": "template"
         }
       }
-    }
     },
     "otpVerification": {
       "name": "otpVerification",
@@ -692,7 +692,7 @@
       ],
       "files": {
         "main": {
-          "path": "templates/pages/otp-verification/index.tsx",
+          "path": "templates/pages/otp-verification/index.tsx"
         }
       }
     },
