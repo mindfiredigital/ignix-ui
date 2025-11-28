@@ -9,7 +9,7 @@ const date = new Date()
 const year = date.getFullYear()
 
 const meta: Meta<typeof SideBarLeftLayout> = {
-  title: "Layouts/SideBarLeft",
+  title: "Templates/Layouts/SideBarLeft",
   component: SideBarLeftLayout,
   parameters: {
     layout: "fullscreen",
@@ -60,7 +60,7 @@ const navItems = [
   { label: "Settings", href: "#", icon: Settings},
 ];
 
-// Basic HeaderLayout Story
+// Basic HeaderLayout Story 
 export const Basic: Story = {
   args: {
     header: (
