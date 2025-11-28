@@ -86,7 +86,8 @@
         "components/table",
         "components/textarea",
         "components/toast",
-        "components/tooltip"
+        "components/tooltip",
+        "components/typography"
       ]
     },
     {
