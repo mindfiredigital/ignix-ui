@@ -485,6 +485,20 @@
         }
       }
     },
+    "typography": {
+      "name":"Typography",
+      "description":"A Typography component for consistent text styling with various variants, sizes, weights, and colors.",
+      "dependencies":[
+        "@radix-ui/react-slot",
+        "class-variance-authority"
+      ],
+      "files":{
+        "main":{
+          "path":"components/typography/index.tsx",
+          "type":"component"
+        }
+      }
+    },
     "container": {
       "name": "Container",
       "description": "A flexible container component for constraining content width with responsive padding and centering options.",
