@@ -8,8 +8,8 @@
 /* Custom styles for the Docusaurus theme */
 
 :root {
-   --color-gradient-from-dropdown:#a855f7 ; 
-  --color-gradient-to-dropdown:#ec4899; 
+  --color-gradient-from-dropdown: #a855f7;
+  --color-gradient-to-dropdown: #ec4899;
   --ifm-color-primary: #ff0000;
   --ifm-color-primary-dark: #cc0511;
   --ifm-color-primary-darker: #b70510;
@@ -228,9 +228,11 @@
     0% {
       background-position: 0% 50%;
     }
+
     50% {
       background-position: 100% 50%;
     }
+
     100% {
       background-position: 0% 50%;
     }
@@ -266,18 +268,22 @@
       background-position: 0% 50%;
       transform: rotate(-5deg) scale(0.9);
     }
+
     25% {
       background-position: 50% 100%;
       transform: rotate(5deg) scale(1.1);
     }
+
     50% {
       background-position: 100% 50%;
       transform: rotate(-3deg) scale(0.95);
     }
+
     75% {
       background-position: 50% 0%;
       transform: rotate(3deg) scale(1.05);
     }
+
     100% {
       background-position: 0% 50%;
       transform: rotate(-5deg) scale(0.9);
@@ -294,14 +300,14 @@
   align-items: center;
   margin: 0 auto;
   backdrop-filter: blur(10px);
-  
+
   @media (min-width: 1024px) {
     padding: 2rem 2rem;
   }
 }
 
-.navbar-sidebar--show{
-backdrop-filter: none;
+.navbar-sidebar--show {
+  backdrop-filter: none;
 }
 
 .footer {
@@ -336,8 +342,7 @@ backdrop-filter: none;
   content: '';
   height: 100%;
   display: block;
-  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12'/%3E%3C/svg%3E")
-    no-repeat;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12'/%3E%3C/svg%3E") no-repeat;
 }
 
 .header--github-link:hover {
@@ -347,8 +352,7 @@ backdrop-filter: none;
 }
 
 html[data-theme='dark'] .header--github-link:before {
-  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='white' d='M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12'/%3E%3C/svg%3E")
-    no-repeat;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='white' d='M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12'/%3E%3C/svg%3E") no-repeat;
 }
 
 .clean-btn:hover {
@@ -362,7 +366,7 @@ h1 {
 }
 
 
-.text-amber-800{
+.text-amber-800 {
   color: rgb(230, 112, 9) !important;
   font-weight: 600 !important;
 }
@@ -377,27 +381,45 @@ h1 {
 }
 
 /* emphasis / animated gradient on rotating word */
-.gradient-anim, .emphasis {
+.gradient-anim,
+.emphasis {
   background: linear-gradient(90deg, #ff6b6b 0%, #ff2b2b 40%, #ff8a00 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-size: 200% 100%;
   animation: gradientShift 6s linear infinite;
-  -webkit-text-stroke: 0.3px rgba(255,255,255,0.03); /* subtle edge */
+  -webkit-text-stroke: 0.3px rgba(255, 255, 255, 0.03);
+  /* subtle edge */
   font-weight: 800;
-  text-shadow: 0  0 rgba(255, 77, 77, 0.2);
+  text-shadow: 0 0 rgba(255, 77, 77, 0.2);
 }
 
 @keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 @keyframes gradientShift {
-  0% { background-position: 0% 50% }
-  50% { background-position: 100% 50% }
-  100% { background-position: 0% 50% }
+  0% {
+    background-position: 0% 50%
+  }
+
+  50% {
+    background-position: 100% 50%
+  }
+
+  100% {
+    background-position: 0% 50%
+  }
 }
 
 .hero-noise {
@@ -412,22 +434,26 @@ h1 {
 .btn-primary {
   background: linear-gradient(90deg, var(--primary), color-mix(in oklab, var(--primary) 70%, #000 20%));
   color: white;
-  box-shadow: 0 10px 30px rgba(255,60,60,0.12), inset 0 -3px 8px rgba(0,0,0,0.5);
+  box-shadow: 0 10px 30px rgba(255, 60, 60, 0.12), inset 0 -3px 8px rgba(0, 0, 0, 0.5);
   transition: transform .18s ease, box-shadow .18s ease;
 }
-.btn-primary:hover { transform: translateY(-3px); box-shadow: 0 18px 48px rgba(255,60,60,0.18); }
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 48px rgba(255, 60, 60, 0.18);
+}
 
 /* glass-like outline button */
 .btn-glass {
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  border: 1px solid rgba(255,255,255,0.06);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+  border: 1px solid rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(6px);
 }
 
 /* code pill */
 .code-pill {
   background: color-mix(in oklab, var(--background) 75%, transparent);
-  border: 1px solid rgba(255,255,255,0.04);
+  border: 1px solid rgba(255, 255, 255, 0.04);
   color: var(--muted-foreground);
 }
 
@@ -442,18 +468,38 @@ h1 {
   border: 1px solid color-mix(in oklab, var(--primary) 20%, transparent);
   transition: transform .12s ease, background .12s ease;
 }
-.copy-btn:hover { transform: translateY(-2px); background: color-mix(in oklab, var(--primary) 14%, transparent); }
-.copy-btn.copied { background: color-mix(in oklab, var(--primary) 28%, transparent); box-shadow: 0 6px 18px rgba(0,0,0,0.25); }
+
+.copy-btn:hover {
+  transform: translateY(-2px);
+  background: color-mix(in oklab, var(--primary) 14%, transparent);
+}
+
+.copy-btn.copied {
+  background: color-mix(in oklab, var(--primary) 28%, transparent);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
 
 /* monospace for install text */
-.text-mono, .text-mono * { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace; }
+.text-mono,
+.text-mono * {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace;
+}
 
 /* focus rings for accessibility */
-:focus-visible { outline: none; box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 14%, transparent); border-radius: 8px; }
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 14%, transparent);
+  border-radius: 8px;
+}
 
 /* respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .gradient-anim, .hero-spotlight { animation: none !important; transition: none !important; }
+
+  .gradient-anim,
+  .hero-spotlight {
+    animation: none !important;
+    transition: none !important;
+  }
 }
 
 
@@ -463,6 +509,7 @@ h1 {
     opacity: 0;
     transform: translateY(16px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -470,9 +517,12 @@ h1 {
 }
 
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-8px);
   }
@@ -483,8 +533,10 @@ h1 {
 
 .glass-card {
   position: relative;
-  width: 96px; /* w-24 */
-  height: 96px; /* h-24 */
+  width: 96px;
+  /* w-24 */
+  height: 96px;
+  /* h-24 */
   margin: auto;
 }
 
@@ -497,7 +549,8 @@ h1 {
 }
 
 .glass-card-logo {
-  width: 32px; /* w-8 */
+  width: 32px;
+  /* w-8 */
   height: 100%;
 }
 
@@ -511,12 +564,13 @@ h1 {
   inset: 0;
 }
 
-.table-of-contents > li > ul {
+.table-of-contents>li>ul {
   padding: 0px;
-  list-style-type: none; /* disables disc bullets */
+  list-style-type: none;
+  /* disables disc bullets */
 }
 
-.table-of-contents > li > ul > li {
+.table-of-contents>li>ul>li {
   margin-left: 0px;
 }
 
@@ -526,6 +580,8 @@ h1 {
 }
 
 .scrollbar-hidden {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
