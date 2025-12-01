@@ -1,4 +1,4 @@
-import { cva, type VariantProps } from "class-variance-authority"
+import { cva, type VariantProps } from "class-variance-authority";
 import React, {
   createContext,
   useContext,
@@ -6,30 +6,26 @@ import React, {
   useCallback,
   useMemo,
   type ReactNode,
-} from "react"
+} from "react";
 import { motion } from "framer-motion";
-import {
-  Menu,
-  X,
-} from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { cn } from "../../../utils/cn";
-import { Button } from "../button";
 
-export type SidebarPosition = "left" | "right" | "bottomLeft" | "bottomRight"
+export type SidebarPosition = "left" | "right" | "bottomLeft" | "bottomRight";
 
 interface SidebarContextType {
-  sidebars: Record<SidebarPosition, boolean>
-  setSidebar: (position: SidebarPosition, open: boolean) => void
-  toggle: (position: SidebarPosition) => void
-  onOpen: (position: SidebarPosition) => void
-  onClose: (position: SidebarPosition) => void
+  sidebars: Record<SidebarPosition, boolean>;
+  setSidebar: (position: SidebarPosition, open: boolean) => void;
+  toggle: (position: SidebarPosition) => void;
+  onOpen: (position: SidebarPosition) => void;
+  onClose: (position: SidebarPosition) => void;
 }
 
-const SidebarContext = createContext<SidebarContextType | undefined>(undefined)
+const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
 
 interface SidebarProviderProps {
-  children: ReactNode
-  initialState?: Partial<Record<SidebarPosition, boolean>>
+  children: ReactNode;
+  initialState?: Partial<Record<SidebarPosition, boolean>>;
 }
 
 export const SidebarProvider: React.FC<SidebarProviderProps> = ({
@@ -41,39 +37,36 @@ export const SidebarProvider: React.FC<SidebarProviderProps> = ({
     right: initialState.right ?? true,
     bottomLeft: initialState.bottomLeft ?? false,
     bottomRight: initialState.bottomRight ?? false,
-  })
+  });
 
   // ✅ loop-proof setter
-  const setSidebar = useCallback(
-    (position: SidebarPosition, open: boolean) => {
-      setSidebars((prev) => {
-        if (prev[position] === open) return prev   // ✨ PREVENTS INFINITE LOOP
-        return { ...prev, [position]: open }
-      })
-    },
-    []
-  )
+  const setSidebar = useCallback((position: SidebarPosition, open: boolean) => {
+    setSidebars((prev) => {
+      if (prev[position] === open) return prev; // ✨ PREVENTS INFINITE LOOP
+      return { ...prev, [position]: open };
+    });
+  }, []);
 
   const toggle = useCallback((position: SidebarPosition) => {
     setSidebars((prev) => ({
       ...prev,
       [position]: !prev[position],
-    }))
-  }, [])
+    }));
+  }, []);
 
   const onOpen = useCallback(
     (position: SidebarPosition) => {
-      setSidebar(position, true)
+      setSidebar(position, true);
     },
     [setSidebar]
-  )
+  );
 
   const onClose = useCallback(
     (position: SidebarPosition) => {
-      setSidebar(position, false)
+      setSidebar(position, false);
     },
     [setSidebar]
-  )
+  );
 
   const value = useMemo(
     () => ({
@@ -84,24 +77,22 @@ export const SidebarProvider: React.FC<SidebarProviderProps> = ({
       onClose,
     }),
     [sidebars, setSidebar, toggle, onOpen, onClose]
-  )
+  );
 
   return (
-    <SidebarContext.Provider value={value}>
-      {children}
-    </SidebarContext.Provider>
-  )
-}
+    <SidebarContext.Provider value={value}>{children}</SidebarContext.Provider>
+  );
+};
 
 // ✅ SINGLE HOOK FOR ALL SIDEBARS
 export const useSidebar = (position: SidebarPosition = "left") => {
-  const context = useContext(SidebarContext)
+  const context = useContext(SidebarContext);
 
   if (!context) {
-    throw new Error("useSidebar must be used inside SidebarProvider")
+    throw new Error("useSidebar must be used inside SidebarProvider");
   }
 
-  const { sidebars, setSidebar, toggle, onOpen, onClose } = context
+  const { sidebars, setSidebar, toggle, onOpen, onClose } = context;
 
   return {
     isOpen: sidebars[position],
@@ -109,8 +100,8 @@ export const useSidebar = (position: SidebarPosition = "left") => {
     toggle: () => toggle(position),
     onOpen: () => onOpen(position),
     onClose: () => onClose(position),
-  }
-}
+  };
+};
 
 interface LinkItem {
   label: string;
@@ -124,7 +115,7 @@ interface ThreeColumnSidebarProps
   links: LinkItem[];
   brandName?: string;
   position?: "left" | "right" | "bottomLeft" | "bottomRight";
-  sidebarLayoutMode?: "OVERLAY_ONLY" | "BOTTOM_DOCKED" | "OVERLAY_WITH_PANE"
+  sidebarLayoutMode?: "OVERLAY_ONLY" | "BOTTOM_DOCKED" | "OVERLAY_WITH_PANE";
 }
 
 const sidebarVariants = cva("relative overflow-hidden transition-all", {
@@ -166,7 +157,7 @@ const sidebarVariants = cva("relative overflow-hidden transition-all", {
     isOpen: true,
     direction: "vertical",
   },
-})
+});
 
 const ThreeColumnSidebar: React.FC<ThreeColumnSidebarProps> = ({
   links,
@@ -175,25 +166,24 @@ const ThreeColumnSidebar: React.FC<ThreeColumnSidebarProps> = ({
   className,
   direction,
   style,
-  sidebarLayoutMode = "OVERLAY_ONLY"
+  sidebarLayoutMode = "OVERLAY_ONLY",
 }) => {
-  const { isOpen, onClose, onOpen } = useSidebar(position)
-  const [isMobile, setIsMobile] = React.useState(false)
-  const isBottom = position === "bottomLeft" || position === "bottomRight"
-  const bp = 768
-  const [showAll, setShowAll] = React.useState(false)
-  console.log(isBottom,185)
+  const { isOpen, onClose, onOpen } = useSidebar(position);
+  const [isMobile, setIsMobile] = React.useState(false);
+  const isBottom = position === "bottomLeft" || position === "bottomRight";
+  const bp = 768;
+  const [showAll, setShowAll] = React.useState(false);
 
   React.useEffect(() => {
     const check = () => {
-      const mobile = window.innerWidth < bp
-      setIsMobile((prev) => (prev !== mobile ? mobile : prev))
-    }
+      const mobile = window.innerWidth < bp;
+      setIsMobile((prev) => (prev !== mobile ? mobile : prev));
+    };
 
-    check()
-    window.addEventListener("resize", check)
-    return () => window.removeEventListener("resize", check)
-  }, [])
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   return (
     <motion.div
@@ -231,13 +221,12 @@ const ThreeColumnSidebar: React.FC<ThreeColumnSidebarProps> = ({
       <div className="flex flex-col items-center justify-end w-full">
         {/* MIDDLE BUTTON */}
         {isMobile && isBottom && (
-          <Button
-            variant="primary"
-            onClick={() => setShowAll(prev => !prev)}
+          <button
+            onClick={() => setShowAll((prev) => !prev)}
             className="my-2 flex items-center justify-center min-w-[100px]"
           >
             {showAll ? "Hide" : "..."}
-          </Button>
+          </button>
         )}
         {/* NAV ITEMS (ALL BELOW BUTTON) */}
         <motion.nav
@@ -246,7 +235,6 @@ const ThreeColumnSidebar: React.FC<ThreeColumnSidebarProps> = ({
             direction === "horizontal" ? "flex-row flex-wrap" : "flex-col"
           )}
         >
-
           {/* ✅ Always visible items */}
           {links.slice(0, 3).map((link, index) => (
             <a
@@ -277,9 +265,8 @@ const ThreeColumnSidebar: React.FC<ThreeColumnSidebarProps> = ({
             ))}
         </motion.nav>
       </div>
-
     </motion.div>
-  )
-}
+  );
+};
 
 export default ThreeColumnSidebar;

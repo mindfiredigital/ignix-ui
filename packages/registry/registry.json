@@ -643,7 +643,7 @@
         }
       }
     },
-    "threecolumnsidebar": {
+    "threeColumnSidebar": {
       "name": "ThreeColumnSidebar",
       "description": "A flexible layout component with header, sidebar that supports app dashboard with responsive design.",
       "dependencies": [
@@ -653,7 +653,7 @@
       ],
       "files": {
         "main": {
-          "path": "templates/layouts/three-column-sidebar-layout/index.tsx",
+          "path": "components/threeColumnSidebar/index.tsx",
           "type": "template"
         }
       }
@@ -667,7 +667,7 @@
         "class-variance-authority"
       ],
       "componentDependencies": [
-        "threecolumnsidebar"
+        "threeColumnSidebar"
       ],
       "files": {
         "main": {
