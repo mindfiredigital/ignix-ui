@@ -77,6 +77,7 @@
         "components/breadcrumbs",
         "components/button",
         "components/card",
+        "components/checkbox",
         "components/dialog-box",
         "components/drawer",
         "components/dropdown",
