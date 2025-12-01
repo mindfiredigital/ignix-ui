@@ -148,12 +148,12 @@ const sidebarVariants = cva("relative overflow-hidden transition-all", {
     {
       position: ["left", "right"],
       isOpen: true,
-      className: "w-64",
+      className: "w-50",
     },
     {
       position: ["left", "right"],
       isOpen: false,
-      className: "w-20",
+      className: "w-15",
     },
     {
       position: ["bottomLeft", "bottomRight"],
@@ -182,6 +182,7 @@ const ThreeColumnSidebar: React.FC<ThreeColumnSidebarProps> = ({
   const isBottom = position === "bottomLeft" || position === "bottomRight"
   const bp = 768
   const [showAll, setShowAll] = React.useState(false)
+  const visibleLinks = !isMobile ? links : links.slice(0, 3)
 
   React.useEffect(() => {
     const check = () => {
@@ -229,7 +230,7 @@ const ThreeColumnSidebar: React.FC<ThreeColumnSidebarProps> = ({
 
       <div className="flex flex-col items-center justify-end w-full">
         {/* MIDDLE BUTTON */}
-        {isMobile && isBottom && (
+        {isBottom && (
           <Button
             variant="primary"
             onClick={() => setShowAll(prev => !prev)}
@@ -247,7 +248,7 @@ const ThreeColumnSidebar: React.FC<ThreeColumnSidebarProps> = ({
         >
 
           {/* ✅ Always visible items */}
-          {links.map((link, index) => (
+          {visibleLinks.map((link, index) => (
             <a
               key={index}
               href={link.href}
@@ -270,7 +271,7 @@ const ThreeColumnSidebar: React.FC<ThreeColumnSidebarProps> = ({
               >
                 <link.icon size={24} />
                 {isOpen && sidebarLayoutMode !== "BOTTOM_DOCKED" && (
-                  <span className="text-xs">{link.label}</span>
+                  <span className="text-xl">{link.label}</span>
                 )}
               </a>
             ))}
