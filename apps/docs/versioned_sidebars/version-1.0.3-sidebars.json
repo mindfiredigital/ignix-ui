@@ -113,7 +113,8 @@
           "items": [
             "templates/layouts/sidebar-left-layout",
             "templates/layouts/sidebar-right-layout",
-            "templates/layouts/full-height-sidebar-layout"
+            "templates/layouts/full-height-sidebar-layout",
+            "templates/layouts/responsive-grid-layout"
           ]
         }
       ]
