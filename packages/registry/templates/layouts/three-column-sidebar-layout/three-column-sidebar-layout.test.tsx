@@ -69,7 +69,7 @@ describe("ThreeColumnSidebarLayout Component", () => {
 
   it("renders header & sidebar when passed as prop", () => {
     render(
-      <ThreeColumnSidebarLayout header={<div>Header</div>} sidebar={<div>Sidebar</div>}>
+      <ThreeColumnSidebarLayout header={<div>Header</div>} sidebar={()=><div>Sidebar</div>}>
         <div>Main</div>
       </ThreeColumnSidebarLayout>
     );
@@ -87,7 +87,7 @@ describe("ThreeColumnSidebarLayout Component", () => {
 
     render(
       <ThreeColumnSidebarLayout
-        sidebar={<div>Sidebar</div>}
+        sidebar={()=><div>Sidebar</div>}
         footer={<div>Footer</div>}
       >
         <div>Content</div>

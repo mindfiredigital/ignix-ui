@@ -2,7 +2,7 @@ import * as React from "react";
 import { AnimatePresence, motion, type PanInfo } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../utils/cn";
-import { SidebarProvider, useSidebar } from "@ignix-ui/threeColumnSidebar";
+import { SidebarProvider, useSidebar } from "@ignix-ui/threecolumnsidebar";
 import { Menu, X } from "lucide-react";
 
 type SidebarFactory = (
