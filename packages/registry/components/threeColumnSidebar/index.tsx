@@ -7,7 +7,7 @@ import React, {
   useMemo,
   type ReactNode,
 } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { cn } from "../../../utils/cn";
 
@@ -39,10 +39,9 @@ export const SidebarProvider: React.FC<SidebarProviderProps> = ({
     bottomRight: initialState.bottomRight ?? false,
   });
 
-  // ✅ loop-proof setter
   const setSidebar = useCallback((position: SidebarPosition, open: boolean) => {
     setSidebars((prev) => {
-      if (prev[position] === open) return prev; // ✨ PREVENTS INFINITE LOOP
+      if (prev[position] === open) return prev;
       return { ...prev, [position]: open };
     });
   }, []);
@@ -55,27 +54,17 @@ export const SidebarProvider: React.FC<SidebarProviderProps> = ({
   }, []);
 
   const onOpen = useCallback(
-    (position: SidebarPosition) => {
-      setSidebar(position, true);
-    },
+    (position: SidebarPosition) => setSidebar(position, true),
     [setSidebar]
   );
 
   const onClose = useCallback(
-    (position: SidebarPosition) => {
-      setSidebar(position, false);
-    },
+    (position: SidebarPosition) => setSidebar(position, false),
     [setSidebar]
   );
 
   const value = useMemo(
-    () => ({
-      sidebars,
-      setSidebar,
-      toggle,
-      onOpen,
-      onClose,
-    }),
+    () => ({ sidebars, setSidebar, toggle, onOpen, onClose }),
     [sidebars, setSidebar, toggle, onOpen, onClose]
   );
 
@@ -84,7 +73,6 @@ export const SidebarProvider: React.FC<SidebarProviderProps> = ({
   );
 };
 
-// ✅ SINGLE HOOK FOR ALL SIDEBARS
 export const useSidebar = (position: SidebarPosition = "left") => {
   const context = useContext(SidebarContext);
 
@@ -114,11 +102,11 @@ interface ThreeColumnSidebarProps
     VariantProps<typeof sidebarVariants> {
   links: LinkItem[];
   brandName?: string;
-  position?: "left" | "right" | "bottomLeft" | "bottomRight";
+  position?: SidebarPosition;
   sidebarLayoutMode?: "OVERLAY_ONLY" | "BOTTOM_DOCKED" | "OVERLAY_WITH_PANE";
 }
 
-const sidebarVariants = cva("relative overflow-hidden transition-all", {
+const sidebarVariants = cva("relative transition-all", {
   variants: {
     position: {
       left: "top-0 left-0 h-full",
@@ -174,6 +162,9 @@ const ThreeColumnSidebar: React.FC<ThreeColumnSidebarProps> = ({
   const bp = 768;
   const [showAll, setShowAll] = React.useState(false);
 
+  const visibleLinks =
+    sidebarLayoutMode === "OVERLAY_ONLY" ? links : links.slice(0, 0);
+
   React.useEffect(() => {
     const check = () => {
       const mobile = window.innerWidth < bp;
@@ -186,86 +177,130 @@ const ThreeColumnSidebar: React.FC<ThreeColumnSidebarProps> = ({
   }, []);
 
   return (
-    <motion.div
-      initial={{ x: 0 }}
-      animate={{ x: 0 }}
-      transition={{ duration: 0.4 }}
-      className={cn(
-        sidebarVariants({
-          position,
-          isOpen,
-          direction,
-        }),
-        isMobile && !isOpen && "w-0",
-        className
-      )}
-      style={isOpen && !isMobile ? style : undefined}
-    >
-      {/* Header */}
-      {!isBottom && (
-        <div className="p-4 flex items-center justify-between gap-4">
-          {isOpen && <h1 className="text-xl font-bold">{brandName}</h1>}
+    <>
+      {/* iOS Backdrop */}
+      <AnimatePresence>
+        {isMobile && isBottom && showAll && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.4 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowAll(false)}
+            className="fixed inset-0 bg-black z-998"
+          />
+        )}
+      </AnimatePresence>
 
-          {isOpen ? (
-            <button onClick={onClose}>
-              <X size={24} />
-            </button>
-          ) : (
-            <button onClick={onOpen}>
-              <Menu size={24} />
-            </button>
+      <motion.div
+        initial={false}
+        animate={{
+          x: isMobile
+            ? 0
+            : isOpen
+            ? 0
+            : position === "left" || position === "right"
+            ? ""
+            : "100%",
+          width: isOpen ? (isBottom ? "100%" : "256px") : "80px",
+        }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        className={cn(
+          sidebarVariants({ position, isOpen, direction }),
+          className
+        )}
+        style={isOpen && !isMobile ? style : undefined}
+      >
+        {/* Header */}
+        {!isBottom && (
+          <div className="p-4 flex items-center justify-between gap-4">
+            {isOpen && <h1 className="text-xl font-bold">{brandName}</h1>}
+
+            {isOpen ? (
+              <button onClick={onClose}>
+                <X size={24} />
+              </button>
+            ) : (
+              <button onClick={onOpen}>
+                <Menu size={24} />
+              </button>
+            )}
+          </div>
+        )}
+
+        <div className="flex flex-col items-center justify-end w-full">
+          {/* BOTTOM DRAWER BUTTON */}
+          {isMobile && isBottom && (
+            <span
+              onClick={() => setShowAll((prev) => !prev)}
+              className="my-2 flex items-center justify-center min-w-[100px]"
+            >
+              ...
+            </span>
+          )}
+
+          {/* DESKTOP NAV (if drawer closed) */}
+          {!showAll && (
+            <motion.nav
+              className={cn(
+                "flex w-full justify-center gap-2",
+                direction === "horizontal" ? "flex-row flex-wrap" : "flex-col"
+              )}
+            >
+              {visibleLinks.map((link, index) => (
+                <a
+                  key={index}
+                  href={link.href}
+                  className="flex flex-row items-center gap-1 p-2"
+                >
+                  <link.icon size={24} />
+                  {isOpen && sidebarLayoutMode === "OVERLAY_ONLY" && (
+                    <span className="text-xl">{link.label}</span>
+                  )}
+                </a>
+              ))}
+            </motion.nav>
           )}
         </div>
-      )}
+      </motion.div>
 
-      <div className="flex flex-col items-center justify-end w-full">
-        {/* MIDDLE BUTTON */}
-        {isMobile && isBottom && (
-          <button
-            onClick={() => setShowAll((prev) => !prev)}
-            className="my-2 flex items-center justify-center min-w-[100px]"
+      {/* iOS BOTTOM SHEET */}
+      <AnimatePresence>
+        {isMobile && isBottom && showAll && (
+          <motion.div
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ duration: 0.35, ease: "easeInOut" }}
+            drag="y"
+            dragConstraints={{ top: 0, bottom: 0 }}
+            onDragEnd={(_, info) => {
+              if (info.offset.y > 50) setShowAll(false);
+            }}
+            className="fixed left-0 bottom-0 w-full rounded-t-2xl shadow-xl bg-black max-h-[90vh] overflow-y-auto z-999"
           >
-            {showAll ? "Hide" : "..."}
-          </button>
-        )}
-        {/* NAV ITEMS (ALL BELOW BUTTON) */}
-        <motion.nav
-          className={cn(
-            "flex w-full justify-center gap-2",
-            direction === "horizontal" ? "flex-row flex-wrap" : "flex-col"
-          )}
-        >
-          {/* ✅ Always visible items */}
-          {links.slice(0, 3).map((link, index) => (
-            <a
-              key={index}
-              href={link.href}
-              className="flex flex-row items-center gap-1 p-2"
-            >
-              <link.icon size={24} />
-              {isOpen && sidebarLayoutMode !== "BOTTOM_DOCKED" && (
-                <span className="text-xl">{link.label}</span>
-              )}
-            </a>
-          ))}
+            <div className="p-4 flex justify-center">
+              <div
+                className="w-12 h-1.5 bg-gray-400 rounded-full"
+                onClick={() => setShowAll((prev) => !prev)}
+              />
+            </div>
 
-          {/* ✅ ONLY visible after button click */}
-          {showAll &&
-            links.slice(3).map((link, index) => (
-              <a
-                key={`extra-${index}`}
-                href={link.href}
-                className="flex flex-col items-center gap-1 p-2"
-              >
-                <link.icon size={24} />
-                {isOpen && sidebarLayoutMode !== "BOTTOM_DOCKED" && (
-                  <span className="text-xs">{link.label}</span>
-                )}
-              </a>
-            ))}
-        </motion.nav>
-      </div>
-    </motion.div>
+            <nav className="flex flex-col w-full justify-center gap-3 px-4 pb-6">
+              {links.map((link, index) => (
+                <a
+                  key={index}
+                  href={link.href}
+                  className="flex flex-row items-center gap-2 p-2"
+                >
+                  <link.icon size={24} />
+                  {isOpen && <span className="text-xl">{link.label}</span>}
+                </a>
+              ))}
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 

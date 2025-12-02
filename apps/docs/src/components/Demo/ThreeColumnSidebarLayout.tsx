@@ -80,7 +80,7 @@ const ThreeColumnSidebarLayoutDemo = () => {
 
   const codeString = `
    <ThreeColumnSidebarLayout
-      theme="${themeVariant}"
+      theme="${theme}"
       mobileBreakpoint="${mobileBreakpoint}"
       sidebarLayoutMode="${layoutMode}"
       header={

@@ -9,6 +9,7 @@ type SidebarFactory = (
   props?: Partial<{
     position?: "left" | "right" | "bottomLeft" | "bottomRight";
     direction?: "horizontal" | "vertical";
+    sidebarLayoutMode?: "OVERLAY_ONLY" | "BOTTOM_DOCKED" | "OVERLAY_WITH_PANE";
   }>
 ) => React.ReactNode;
 
@@ -231,14 +232,15 @@ const ThreeColumnLayoutContent: React.FC<ThreeColumnLayoutProps> = ({
           >
             <div
               className={cn("h-full", {
-                "bg-gray-200 text-gray-800": theme === "light",
-                "bg-gray-300 text-gray-700": theme === "corporate",
-                "bg-gray-700 text-gray-200": theme === "dark",
-                "bg-white/60 text-gray-700": theme === "glass",
-                "bg-gray-700/80 text-gray-200": theme === "modern",
-                "bg-teal-600/80 text-gray-200": theme === "ocean",
-                "bg-green-700/80 text-gray-200": theme === "forest",
-                "bg-[#e0dab5] text-gray-700": theme === "solarized",
+                "bg-background text-card-foreground": theme === "none",
+                "bg-gray-200 text-gray-800!": theme === "light",
+                "bg-gray-300 text-gray-700!": theme === "corporate",
+                "bg-gray-700 text-gray-200!": theme === "dark",
+                "bg-white/60 text-gray-700!": theme === "glass",
+                "bg-gray-700/80 text-gray-200!": theme === "modern",
+                "bg-teal-600/80 text-gray-200!": theme === "ocean",
+                "bg-green-700/80 text-gray-200!": theme === "forest",
+                "bg-[#e0dab5] text-gray-700!": theme === "solarized",
               })}
             >
               {sidebar?.({ position: "left", direction: "vertical" })}
@@ -259,7 +261,7 @@ const ThreeColumnLayoutContent: React.FC<ThreeColumnLayoutProps> = ({
         {/* RIGHT SIDEBAR */}
         {rightSidebar && !isMobile && (
           <motion.aside
-            className="sticky top-(--header-h) overflow-y-auto"
+            className="sticky top-(--header-h) overflow-y-auto overflow-x-hidden"
             style={{
               height: `calc(100dvh - ${headerHeight}px - ${footerHeight}px)`,
               zIndex: zIndex.sidebar,
@@ -274,15 +276,16 @@ const ThreeColumnLayoutContent: React.FC<ThreeColumnLayoutProps> = ({
             transition={{ duration: 0.25, ease: "easeInOut" }}
           >
             <div
-              className={cn("h-full", {
-                "bg-gray-200 text-gray-800": theme === "light",
-                "bg-gray-300 text-gray-700": theme === "corporate",
-                "bg-gray-700 text-gray-200": theme === "dark",
-                "bg-white/60 text-gray-700": theme === "glass",
-                "bg-gray-700/80 text-gray-200": theme === "modern",
-                "bg-teal-600/80 text-gray-200": theme === "ocean",
-                "bg-green-700/80 text-gray-200": theme === "forest",
-                "bg-[#e0dab5] text-gray-700": theme === "solarized",
+              className={cn("h-full min-h-full", {
+                "bg-background text-card-foreground": theme === "none",
+                "bg-gray-200 text-gray-800!": theme === "light",
+                "bg-gray-300 text-gray-700!": theme === "corporate",
+                "bg-gray-700 text-gray-200!": theme === "dark",
+                "bg-white/60 text-gray-700!": theme === "glass",
+                "bg-gray-700/10 text-gray-200!": theme === "modern",
+                "bg-teal-600/80 text-gray-200!": theme === "ocean",
+                "bg-green-700/80 text-gray-200!": theme === "forest",
+                "bg-[#e0dab5] text-gray-700!": theme === "solarized",
               })}
             >
               {rightSidebar?.({ position: "right", direction: "vertical" })}
@@ -293,17 +296,26 @@ const ThreeColumnLayoutContent: React.FC<ThreeColumnLayoutProps> = ({
 
       {/* SIDE BAR IN MOBILE */}
       {isMobile && sidebarLayoutMode !== "OVERLAY_ONLY" && (
-        <div className="sticky left-0 w-full bottom-0">
-          {sidebarLayoutMode === "BOTTOM_DOCKED"
-            ? sidebar?.({
-                position: "bottomLeft",
-                direction: "horizontal",
-              })
-            : rightSidebar?.({
-                position: "bottomLeft",
-                direction: "horizontal",
-              })}
-        </div>
+        <>
+          <div
+            className="sticky left-0 w-full bottom-0"
+            style={{
+              height: footerHeight,
+            }}
+          >
+            {sidebarLayoutMode === "BOTTOM_DOCKED"
+              ? sidebar?.({
+                  position: "bottomLeft",
+                  direction: "horizontal",
+                  sidebarLayoutMode,
+                })
+              : rightSidebar?.({
+                  position: "bottomLeft",
+                  direction: "horizontal",
+                  sidebarLayoutMode,
+                })}
+          </div>
+        </>
       )}
 
       {/* Mobile off-canvas sidebar + overlay */}
