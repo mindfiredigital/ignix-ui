@@ -39,6 +39,7 @@ export interface ResponsiveGridLayoutProps {
   stickyHeader?: boolean;
   stickyFooter?: boolean;
   enableHover?: boolean;
+  // variant?:VariantProps<typeof responsiveGridVariants>["variant"];
 }
 
 const paddingMap: Record<
