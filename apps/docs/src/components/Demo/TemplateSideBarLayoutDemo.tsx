@@ -43,15 +43,15 @@ const TemplateSideBarLayoutDemo = (props: Props) => {
     wide: "320px",
     expanded: "380px",
   };
-
+  const OptimisedTemplate = props.layout.charAt(0).toUpperCase() + props.layout.slice(1) 
   const codeString = `
-<SideBarLeftLayout
+<SideBar${OptimisedTemplate}Layout
   variant="${variant}"
   sidebarWidth="${width}"
   mobileBreakpoint="${mobileBreakpoint}"
   sidebarPosition="${props?.layout}"
 header={
-  <Navbar variant={variant as any} size="md">
+  <Navbar variant="${variant}" size="md">
     <div className="flex items-center justify-between w-full">
       <div className="flex items-center gap-2">
         <img
@@ -87,8 +87,7 @@ footer={
 </footer>
 }
 {mainContent}
->
-</SideBarLeftLayout>`;
+</SideBar${OptimisedTemplate}Layout>`;
 const [hasOpenButton, setHasOpenButton] = React.useState(false);
 
 React.useEffect(() => {
