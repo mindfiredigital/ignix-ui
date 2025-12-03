@@ -1,13 +1,24 @@
 {
   "extends": "../tsconfig/base.json",
-  "include": ["src/**/*.ts"],
-  "exclude": ["dist", "node_modules"],
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
+  ],
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
     "declaration": true,
     "paths": {
-      "@/*": ["./src/*"]
-    }
+      "@/*": [
+        "./src/*"
+      ],
+      "@ignix-ui/*": [
+        "./src/components/ui/*"
+      ]
+    },
+    "baseUrl": "."
   }
 }

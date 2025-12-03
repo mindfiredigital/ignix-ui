@@ -3,10 +3,7 @@
     {
       "type": "category",
       "label": "Getting Started",
-      "items": [
-        "introduction",
-        "installation"
-      ]
+      "items": ["introduction", "installation"]
     },
     {
       "type": "category",
@@ -29,10 +26,7 @@
         {
           "type": "category",
           "label": "API Reference",
-          "items": [
-            "theming/api-reference/components",
-            "theming/api-reference/hooks"
-          ]
+          "items": ["theming/api-reference/components", "theming/api-reference/hooks"]
         },
         {
           "type": "doc",
@@ -111,6 +105,8 @@
           "type": "category",
           "label": "Layouts",
           "items": [
+            "templates/layouts/single-column-layout", 
+            "templates/pages/sign-up",
             "templates/layouts/sidebar-left-layout",
             "templates/layouts/sidebar-right-layout",
             "templates/layouts/full-height-sidebar-layout"
@@ -121,10 +117,7 @@
     {
       "type": "category",
       "label": "Contribution Guide",
-      "items": [
-        "contribution-guide/how-to-contribute",
-        "contribution-guide/code-of-conduct"
-      ]
+      "items": ["contribution-guide/how-to-contribute", "contribution-guide/code-of-conduct"]
     }
   ]
 }
