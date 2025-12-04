@@ -13,4 +13,9 @@ export const logger = {
   error(message: string): void {
     console.error(chalk.red(`[ERROR] ${message}`));
   },
+  debug(message: string): void {
+    if (process.env.DEBUG) {
+      console.log(chalk.gray(`[DEBUG] ${message}`));
+    }
+  },
 };
