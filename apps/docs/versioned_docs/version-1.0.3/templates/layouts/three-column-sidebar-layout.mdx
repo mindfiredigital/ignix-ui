@@ -1,0 +1,519 @@
+---
+sidebar_position: 1
+title: ThreeColumnLayout
+description: A flexible layout component with header, right sidebar, and footer that supports responsive design and various configuration options.
+---
+
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import ThreeColumnSidebarLayoutDemo from '@site/src/components/Demo/ThreeColumnSidebarLayout';
+
+## Overview
+
+The **Three Column SideBar Layout** component provides a complete layout solution with a header, left sidebar, scrollable main content, scrollable right content. It's designed to be highly configurable with support for responsive design, animations, and various layout variants. This component is perfect for building social sites.
+
+## Preview
+
+<ThreeColumnSidebarLayoutDemo/>
+
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component threecolumnsidebarlayout
+    ```
+  </TabItem>
+  <TabItem value="manual" label="manual" className="max-h-[500px] overflow-y-auto">
+  ```tsx
+  import * as React from "react";
+  import { AnimatePresence, motion, type PanInfo } from "framer-motion";
+  import { cva, type VariantProps } from "class-variance-authority";
+  import { cn } from "../../../utils/cn";
+  import { SidebarProvider, useSidebar } from "@ignix-ui/threecolumnsidebar";
+  import { Menu, X } from "lucide-react";
+
+  type SidebarFactory = (
+    props?: Partial<{
+      position?: "left" | "right" | "bottomLeft" | "bottomRight";
+      direction?: "horizontal" | "vertical";
+      sidebarLayoutMode?: "OVERLAY_ONLY" | "BOTTOM_DOCKED" | "OVERLAY_WITH_PANE";
+    }>
+  ) => React.ReactNode;
+
+  export interface ThreeColumnLayoutProps {
+    header?: React.ReactNode;
+    sidebar?: SidebarFactory;
+    rightSidebar?: SidebarFactory;
+    children: React.ReactNode;
+    footer?: React.ReactNode;
+    sidebarLeftPosition?: "left";
+    sidebarRightPosition?: "right";
+    sidebarWidth?: number;
+    sidebarCollapsedWidth?: number;
+
+    stickyHeader?: boolean;
+    stickyFooter?: boolean;
+
+    variant?: VariantProps<typeof ThreeColumnLayoutVariants>["variant"];
+    mobileBreakpoint?: "sm" | "md" | "lg";
+
+    sidebarCollapsed?: boolean;
+    rightSidebarCollapsed?: boolean;
+    overlay?: boolean;
+    enableGestures?: boolean;
+
+    transitionDuration?: number;
+    headerHeight?: number;
+    footerHeight?: number;
+
+    zIndex?: {
+      header?: number;
+      sidebar?: number;
+      footer?: number;
+      overlay?: number;
+    };
+
+    className?: string;
+    theme?:
+      | "none"
+      | "light"
+      | "dark"
+      | "corporate"
+      | "custom"
+      | "glass"
+      | "modern"
+      | "ocean"
+      | "forest"
+      | "solarized";
+
+    sidebarLayoutMode?: "OVERLAY_ONLY" | "BOTTOM_DOCKED" | "OVERLAY_WITH_PANE";
+  }
+
+  const ThreeColumnLayoutVariants = cva("w-full", {
+    variants: {
+      variant: {
+        default: "bg-background text-foreground",
+        dark: "bg-card text-card-foreground",
+        light: "bg-white text-gray-900",
+        glass: "bg-white/10 backdrop-blur-lg",
+        gradient: "bg-gradient-to-br from-purple-500 to-purple-400 text-white",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  });
+
+  const ThreeColumnLayoutContent: React.FC<ThreeColumnLayoutProps> = ({
+    header,
+    sidebar,
+    rightSidebar,
+    children,
+    footer,
+
+    sidebarWidth = 260,
+    sidebarCollapsedWidth = 64,
+    sidebarLayoutMode = "BOTTOM_DOCKED",
+
+    stickyFooter = false,
+    stickyHeader = false,
+
+    variant = "default",
+    mobileBreakpoint = "md",
+    enableGestures = true,
+    overlay = true,
+    transitionDuration = 0.3,
+
+    sidebarCollapsed = false,
+    rightSidebarCollapsed = false,
+
+    headerHeight = 64,
+    footerHeight = 64,
+
+    zIndex = { header: 50, sidebar: 40, footer: 30, overlay: 80 },
+    className,
+    theme = "none",
+  }) => {
+    const { isOpen: leftOpen, setOpen: setLeftOpen } = useSidebar("left");
+    const { isOpen: rightOpen, setOpen: setIsRightOpen } = useSidebar("right");
+
+    const [isMobile, setIsMobile] = React.useState(false);
+
+    const bp =
+      mobileBreakpoint === "sm" ? 640 : mobileBreakpoint === "md" ? 768 : 1024;
+
+    React.useEffect(() => {
+      const check = () => {
+        const mobile = window.innerWidth < bp;
+        setIsMobile(mobile);
+
+        if (!mobile) {
+          setLeftOpen(!sidebarCollapsed);
+          setIsRightOpen(!rightSidebarCollapsed);
+        } else {
+          setLeftOpen(false);
+        }
+      };
+
+      check();
+      window.addEventListener("resize", check);
+      return () => window.removeEventListener("resize", check);
+    }, [bp, sidebarCollapsed, rightSidebarCollapsed]);
+
+    const layoutStyle: React.CSSProperties = {
+      ["--header-h" as any]: `${headerHeight}px`,
+      ["--footer-h" as any]: `${footerHeight}px`,
+      ["--sidebar-w" as any]: `${sidebarWidth}px`,
+      ["--sidebar-collapsed-w" as any]: `${sidebarCollapsedWidth}px`,
+    };
+
+    const gridCols = (() => {
+      // MOBILE
+      if (isMobile) {
+        return "grid-cols-1";
+      }
+
+      // DESKTOP
+      if (sidebar && rightSidebar) return "grid-cols-[auto_1fr_auto]";
+      if (sidebar) return "grid-cols-[auto_1fr]";
+      if (rightSidebar) return "grid-cols-[1fr_auto]";
+      return "grid-cols-1";
+    })();
+
+    const toggleSidebar = React.useCallback(
+      (open?: boolean) => {
+        const next = open !== undefined ? open : !leftOpen;
+        setLeftOpen(next);
+      },
+      [leftOpen, setLeftOpen]
+    );
+
+    // gesture support for mobile overlay sidebar
+    const handleDragEnd = (_: Event, info: PanInfo) => {
+      if (!enableGestures || !isMobile) return;
+      const threshold = 60;
+      const vx = info.velocity.x;
+      const dx = info.offset.x;
+      const shouldClose = dx > threshold || vx > 300;
+      const shouldOpen = dx < -threshold || vx < -300;
+      if (leftOpen && shouldClose) toggleSidebar(false);
+      else if (!leftOpen && shouldOpen) toggleSidebar(true);
+    };
+
+    return (
+      <div
+        className={cn(
+          ThreeColumnLayoutVariants({ variant }),
+          "overflow-x-hidden",
+          className,
+          {
+            "bg-background text-card-foreground": theme === "none",
+            "bg-gray-200 text-gray-800!": theme === "light",
+            "bg-gray-300 text-gray-700!": theme === "corporate",
+            "bg-gray-700 text-gray-200!": theme === "dark",
+            "bg-white/60 text-gray-700!": theme === "glass",
+            "bg-gray-700/80 text-gray-200!": theme === "modern",
+            "bg-teal-600/80 text-gray-200!": theme === "ocean",
+            "bg-green-700/80 text-gray-200!": theme === "forest",
+            "bg-[#e0dab5] text-gray-700!": theme === "solarized",
+          }
+        )}
+        style={layoutStyle}
+      >
+        {/* HEADER */}
+        {header && (
+          <header
+            className={cn(
+              "w-full top-0 inset-0",
+              stickyHeader ? "sticky" : "relative"
+            )}
+            style={{ height: headerHeight, zIndex: zIndex.header }}
+          >
+            {header}
+          </header>
+        )}
+
+        {/* BODY GRID */}
+        <div
+          className={cn("grid w-full", gridCols)}
+          style={{
+            minHeight: `calc(100dvh - ${headerHeight}px - ${footerHeight}px)`,
+          }}
+        >
+          {/* LEFT SIDEBAR */}
+          {sidebar && !isMobile && (
+            <motion.aside
+              className={cn("sticky top-(--header-h) overflow-hidden")}
+              style={{
+                height: `calc(100dvh - ${headerHeight}px - ${footerHeight}px)`,
+                zIndex: zIndex.sidebar,
+              }}
+              initial={false}
+              animate={{
+                width:
+                  leftOpen && !sidebarCollapsed
+                    ? sidebarWidth
+                    : sidebarCollapsedWidth,
+              }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
+            >
+              <div
+                className={cn("h-full", {
+                  "bg-background text-card-foreground": theme === "none",
+                  "bg-gray-200 text-gray-800!": theme === "light",
+                  "bg-gray-300 text-gray-700!": theme === "corporate",
+                  "bg-gray-700 text-gray-200!": theme === "dark",
+                  "bg-white/60 text-gray-700!": theme === "glass",
+                  "bg-gray-700/80 text-gray-200!": theme === "modern",
+                  "bg-teal-600/80 text-gray-200!": theme === "ocean",
+                  "bg-green-700/80 text-gray-200!": theme === "forest",
+                  "bg-[#e0dab5] text-gray-700!": theme === "solarized",
+                })}
+              >
+                {sidebar?.({ position: "left", direction: "vertical" })}
+              </div>
+            </motion.aside>
+          )}
+
+          {/** MAIN SECTION */}
+          <main
+            className="scrollbar-thin overflow-y-auto"
+            style={{
+              height: `calc(100dvh - ${headerHeight}px - ${footerHeight}px)`,
+            }}
+          >
+            {children}
+          </main>
+
+          {/* RIGHT SIDEBAR */}
+          {rightSidebar && !isMobile && (
+            <motion.aside
+              className="sticky top-(--header-h) overflow-y-auto overflow-x-hidden"
+              style={{
+                height: `calc(100dvh - ${headerHeight}px - ${footerHeight}px)`,
+                zIndex: zIndex.sidebar,
+              }}
+              initial={false}
+              animate={{
+                width:
+                  rightOpen && !rightSidebarCollapsed
+                    ? sidebarWidth
+                    : sidebarCollapsedWidth,
+              }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
+            >
+              <div
+                className={cn("h-full min-h-full", {
+                  "bg-background text-card-foreground": theme === "none",
+                  "bg-gray-200 text-gray-800!": theme === "light",
+                  "bg-gray-300 text-gray-700!": theme === "corporate",
+                  "bg-gray-700 text-gray-200!": theme === "dark",
+                  "bg-white/60 text-gray-700!": theme === "glass",
+                  "bg-gray-700/10 text-gray-200!": theme === "modern",
+                  "bg-teal-600/80 text-gray-200!": theme === "ocean",
+                  "bg-green-700/80 text-gray-200!": theme === "forest",
+                  "bg-[#e0dab5] text-gray-700!": theme === "solarized",
+                })}
+              >
+                {rightSidebar?.({ position: "right", direction: "vertical" })}
+              </div>
+            </motion.aside>
+          )}
+        </div>
+
+        {/* SIDE BAR IN MOBILE */}
+        {isMobile && sidebarLayoutMode !== "OVERLAY_ONLY" && (
+          <>
+            <div
+              className="sticky left-0 w-full bottom-0"
+              style={{
+                height: footerHeight,
+              }}
+            >
+              {sidebarLayoutMode === "BOTTOM_DOCKED"
+                ? sidebar?.({
+                    position: "bottomLeft",
+                    direction: "horizontal",
+                    sidebarLayoutMode,
+                  })
+                : rightSidebar?.({
+                    position: "bottomLeft",
+                    direction: "horizontal",
+                    sidebarLayoutMode,
+                  })}
+            </div>
+          </>
+        )}
+
+        {/* Mobile off-canvas sidebar + overlay */}
+        {sidebar &&
+          isMobile &&
+          (sidebarLayoutMode === "OVERLAY_ONLY" ||
+            sidebarLayoutMode === "OVERLAY_WITH_PANE") && (
+            <>
+              <AnimatePresence>
+                {overlay && (
+                  <motion.div
+                    className="fixed inset-0 bg-black/50"
+                    style={{
+                      zIndex: zIndex.overlay,
+                      pointerEvents: leftOpen ? "auto" : "none",
+                    }}
+                    initial={{ opacity: 0, pointerEvents: "none" }}
+                    animate={{
+                      opacity: leftOpen ? 1 : 0,
+                      pointerEvents: leftOpen ? "auto" : "none",
+                    }}
+                    exit={{ opacity: 0, pointerEvents: "none" }}
+                    transition={{ duration: transitionDuration }}
+                    onClick={() => toggleSidebar(false)}
+                  />
+                )}
+              </AnimatePresence>
+
+              <motion.aside
+                className={cn(
+                  "fixed inset-y-0 w-(--sidebar-w)",
+                  sidebar?.() && "left-0",
+                  {
+                    "bg-gray-200 text-gray-800": theme === "light",
+                    "bg-gray-300 text-gray-700": theme === "corporate",
+                    "bg-gray-700 text-gray-200": theme === "dark",
+                    "bg-white/60 text-gray-700": theme === "glass",
+                    "bg-gray-700/80 text-gray-200": theme === "modern",
+                    "bg-teal-600/80 text-gray-200": theme === "ocean",
+                    "bg-green-700/80 text-gray-200": theme === "forest",
+                    "bg-[#e0dab5] text-gray-700": theme === "solarized",
+                  }
+                )}
+                style={{
+                  zIndex: (zIndex.sidebar ?? 90) + 10,
+                }}
+                initial={{
+                  x: sidebar?.() ? -sidebarWidth : sidebarWidth,
+                }}
+                animate={{
+                  x: leftOpen ? 0 : sidebar?.() ? -sidebarWidth : sidebarWidth,
+                }}
+                exit={{
+                  x: sidebar?.() ? -sidebarWidth : sidebarWidth,
+                }}
+                transition={{ duration: transitionDuration, ease: "easeInOut" }}
+                drag={enableGestures ? "x" : false}
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.2}
+                onDragEnd={handleDragEnd}
+              >
+                {sidebar?.()}
+              </motion.aside>
+
+              {/* Mobile toggle button */}
+              <button
+                className={cn(
+                  "fixed z-999 p-2 rounded-lg bg-background shadow-lg top-4",
+                  sidebar?.() && "left-4"
+                )}
+                onClick={() => setLeftOpen(!leftOpen)}
+                aria-label={leftOpen ? "Close sidebar" : "Open sidebar"}
+              >
+                {leftOpen ? (
+                  <X className="w-6 h-6" />
+                ) : (
+                  <Menu className="w-6 h-6" />
+                )}
+              </button>
+            </>
+          )}
+
+        {/* FOOTER */}
+        {footer && (sidebarLayoutMode === "OVERLAY_ONLY" || !isMobile) && (
+          <footer
+            className={cn(
+              stickyFooter ? "sticky bottom-0" : "relative",
+              "w-full"
+            )}
+            style={{
+              height: footerHeight,
+              zIndex: zIndex.footer,
+            }}
+          >
+            {footer}
+          </footer>
+        )}
+      </div>
+    );
+  };
+
+  export const ThreeColumnSidebarLayout: React.FC<ThreeColumnLayoutProps> = (
+    props
+  ) => {
+    return (
+      <SidebarProvider
+        initialState={{
+          left: !props.sidebarCollapsed,
+          right: !props.rightSidebarCollapsed,
+          bottomLeft: true,
+          bottomRight: false,
+        }}
+      >
+        <ThreeColumnLayoutContent {...props} />
+      </SidebarProvider>
+    );
+  };
+
+  ThreeColumnSidebarLayout.displayName = "ThreeColumnSidebarLayout";
+
+  ```
+  </TabItem>
+</Tabs>
+
+
+## Usage
+
+```tsx
+  import { ThreeColumnSidebarLayout } from "@src/components/templates/threecolumnsidebarlayout";
+
+    function ThreeColumnSidebarLayout() {
+      return (
+        <ThreeColumnSidebarLayout
+          theme="modern"
+          mobileBreakpoint="md"
+          sidebarLayoutMode="OVERLAY_ONLY"
+          header={<div>Header Content</div>}
+          sidebar={<div>Sidebar Content</div>}
+          rightSidebar={<div>Right Content</div>}
+        >
+          <div>Main Content</div>
+        </ThreeColumnSidebarLayout>
+      );
+    }
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `header` | `React.ReactNode` | `undefined` | Content for the header section |
+| `sidebar` | `React.ReactNode` | `undefined` | Content for the sidebar section |
+| `rightSidebar` | `React.ReactNode` | `undefined` | Content for the sidebar section |
+| `children` | `React.ReactNode` | `undefined` | Main content area |
+| `variant` | `"light" \| "dark" \| "corporate" \| "custom" \| "glass"` | `"modern"` | `"ocean"` | `"forest"` |`" solarized"` |Visual theme variant |
+| `mobileBreakpoint` | `"sm" \| "md" \| "lg"` | `"md"` | Breakpoint for mobile behavior |
+| `sidebarLayoutMode` | `"OVERLAY_ONLY"\| "BOTTOM_DOCKED"\| "OVERLAY_WITH_PANE"` | `"OVERLAY_ONLY"` | Sidebar Layout for mobile device |
+| `stickyHeader` | `boolean` | `true` | Whether header should be sticky |
+| `overlay` | `boolean` | `true` | Whether to show overlay on mobile |
+| `enableGestures` | `bool
+| `stickyHeader` | `boolean` | `true` | Whether header should be sticky |
+| `overlay` | `boolean` | `true` | Whether to show overlay on mobile |
+| `enableGestures` | `boolean` | `true` | Whether to enable touch gestures |
+| `sidebarCollapsedWidth` | `number` | `80` | Collapsed width in pixels |
+| `headerHeight` | `number` | `64` | Header height in pixels |
+| `footerHeight` | `number` | `64` | Footer height in pixels |
+| `transitionDuration` | `number` | `0.3` | Animation duration in seconds |
+| `sidebarCollapsed` | `boolean` | `false` | Whether sidebar is initially collapsed |
+| `onSidebarToggle` | `(isOpen: boolean) => void` | `undefined` | Callback for sidebar toggle |
+| `zIndex` | `object` | `{ header: 10, sidebar: 90, footer: 50, overlay: 80 }` | Z-index values for each layer |
+| `className` | `string` | `undefined` | Additional CSS classes |

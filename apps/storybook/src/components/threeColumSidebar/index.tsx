@@ -1,0 +1,284 @@
+import { cva, type VariantProps } from "class-variance-authority"
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useMemo,
+  type ReactNode,
+} from "react"
+import { motion } from "framer-motion";
+import {
+  Menu,
+  X,
+} from "lucide-react";
+import { cn } from "../../../utils/cn";
+import { Button } from "../button";
+
+export type SidebarPosition = "left" | "right" | "bottomLeft" | "bottomRight"
+
+interface SidebarContextType {
+  sidebars: Record<SidebarPosition, boolean>
+  setSidebar: (position: SidebarPosition, open: boolean) => void
+  toggle: (position: SidebarPosition) => void
+  onOpen: (position: SidebarPosition) => void
+  onClose: (position: SidebarPosition) => void
+}
+
+const SidebarContext = createContext<SidebarContextType | undefined>(undefined)
+
+interface SidebarProviderProps {
+  children: ReactNode
+  initialState?: Partial<Record<SidebarPosition, boolean>>
+}
+
+export const SidebarProvider: React.FC<SidebarProviderProps> = ({
+  children,
+  initialState = {},
+}) => {
+  const [sidebars, setSidebars] = useState<Record<SidebarPosition, boolean>>({
+    left: initialState.left ?? true,
+    right: initialState.right ?? true,
+    bottomLeft: initialState.bottomLeft ?? false,
+    bottomRight: initialState.bottomRight ?? false,
+  })
+
+  // ✅ loop-proof setter
+  const setSidebar = useCallback(
+    (position: SidebarPosition, open: boolean) => {
+      setSidebars((prev) => {
+        if (prev[position] === open) return prev   // ✨ PREVENTS INFINITE LOOP
+        return { ...prev, [position]: open }
+      })
+    },
+    []
+  )
+
+  const toggle = useCallback((position: SidebarPosition) => {
+    setSidebars((prev) => ({
+      ...prev,
+      [position]: !prev[position],
+    }))
+  }, [])
+
+  const onOpen = useCallback(
+    (position: SidebarPosition) => {
+      setSidebar(position, true)
+    },
+    [setSidebar]
+  )
+
+  const onClose = useCallback(
+    (position: SidebarPosition) => {
+      setSidebar(position, false)
+    },
+    [setSidebar]
+  )
+
+  const value = useMemo(
+    () => ({
+      sidebars,
+      setSidebar,
+      toggle,
+      onOpen,
+      onClose,
+    }),
+    [sidebars, setSidebar, toggle, onOpen, onClose]
+  )
+
+  return (
+    <SidebarContext.Provider value={value}>
+      {children}
+    </SidebarContext.Provider>
+  )
+}
+
+// ✅ SINGLE HOOK FOR ALL SIDEBARS
+export const useSidebar = (position: SidebarPosition = "left") => {
+  const context = useContext(SidebarContext)
+
+  if (!context) {
+    throw new Error("useSidebar must be used inside SidebarProvider")
+  }
+
+  const { sidebars, setSidebar, toggle, onOpen, onClose } = context
+
+  return {
+    isOpen: sidebars[position],
+    setOpen: (open: boolean) => setSidebar(position, open),
+    toggle: () => toggle(position),
+    onOpen: () => onOpen(position),
+    onClose: () => onClose(position),
+  }
+}
+
+interface LinkItem {
+  label: string;
+  href: string;
+  icon: React.ElementType;
+}
+
+interface ThreeColumnSidebarProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof sidebarVariants> {
+  links: LinkItem[];
+  brandName?: string;
+  position?: "left" | "right" | "bottomLeft" | "bottomRight";
+  sidebarLayoutMode?: "OVERLAY_ONLY" | "BOTTOM_DOCKED" | "OVERLAY_WITH_PANE"
+}
+
+const sidebarVariants = cva("relative overflow-hidden transition-all", {
+  variants: {
+    position: {
+      left: "top-0 left-0 h-full",
+      right: "top-0 right-0 h-full",
+      bottomLeft: "bottom-0 left-0 w-full h-auto",
+      bottomRight: "bottom-0 right-0 w-full h-auto",
+    },
+    isOpen: {
+      true: "",
+      false: "",
+    },
+    direction: {
+      horizontal: "flex-row",
+      vertical: "flex-col items-start",
+    },
+  },
+  compoundVariants: [
+    {
+      position: ["left", "right"],
+      isOpen: true,
+      className: "w-64",
+    },
+    {
+      position: ["left", "right"],
+      isOpen: false,
+      className: "w-20",
+    },
+    {
+      position: ["bottomLeft", "bottomRight"],
+      isOpen: true,
+      className: "h-auto",
+    },
+  ],
+  defaultVariants: {
+    position: "left",
+    isOpen: true,
+    direction: "vertical",
+  },
+})
+
+const ThreeColumnSidebar: React.FC<ThreeColumnSidebarProps> = ({
+  links,
+  brandName = "Brand",
+  position = "left",
+  className,
+  direction,
+  style,
+  sidebarLayoutMode = "OVERLAY_ONLY"
+}) => {
+  const { isOpen, onClose, onOpen } = useSidebar(position)
+  const [isMobile, setIsMobile] = React.useState(false)
+  const isBottom = position === "bottomLeft" || position === "bottomRight"
+  const bp = 768
+  const [showAll, setShowAll] = React.useState(false)
+
+  React.useEffect(() => {
+    const check = () => {
+      const mobile = window.innerWidth < bp
+      setIsMobile((prev) => (prev !== mobile ? mobile : prev))
+    }
+
+    check()
+    window.addEventListener("resize", check)
+    return () => window.removeEventListener("resize", check)
+  }, [])
+
+  return (
+    <motion.div
+      initial={{ x: 0 }}
+      animate={{ x: 0 }}
+      transition={{ duration: 0.4 }}
+      className={cn(
+        sidebarVariants({
+          position,
+          isOpen,
+          direction,
+        }),
+        isMobile && !isOpen && "w-0",
+        className
+      )}
+      style={isOpen && !isMobile ? style : undefined}
+    >
+      {/* Header */}
+      {!isBottom && (
+        <div className="p-4 flex items-center justify-between gap-4">
+          {isOpen && <h1 className="text-xl font-bold">{brandName}</h1>}
+
+          {isOpen ? (
+            <button onClick={onClose}>
+              <X size={24} />
+            </button>
+          ) : (
+            <button onClick={onOpen}>
+              <Menu size={24} />
+            </button>
+          )}
+        </div>
+      )}
+
+      <div className="flex flex-col items-center justify-end w-full">
+        {/* MIDDLE BUTTON */}
+        {isMobile && isBottom && (
+          <Button
+            variant="primary"
+            onClick={() => setShowAll(prev => !prev)}
+            className="my-2 flex items-center justify-center min-w-[100px]"
+          >
+            {showAll ? "Hide" : "..."}
+          </Button>
+        )}
+        {/* NAV ITEMS (ALL BELOW BUTTON) */}
+        <motion.nav
+          className={cn(
+            "flex w-full justify-center gap-2",
+            direction === "horizontal" ? "flex-row flex-wrap" : "flex-col"
+          )}
+        >
+
+          {/* ✅ Always visible items */}
+          {links.map((link, index) => (
+            <a
+              key={index}
+              href={link.href}
+              className="flex flex-row items-center gap-1 p-2"
+            >
+              <link.icon size={24} />
+              {isOpen && sidebarLayoutMode !== "BOTTOM_DOCKED" && (
+                <span className="text-xl">{link.label}</span>
+              )}
+            </a>
+          ))}
+
+          {/* ✅ ONLY visible after button click */}
+          {showAll &&
+            links.slice(3).map((link, index) => (
+              <a
+                key={`extra-${index}`}
+                href={link.href}
+                className="flex flex-col items-center gap-1 p-2"
+              >
+                <link.icon size={24} />
+                {isOpen && sidebarLayoutMode !== "BOTTOM_DOCKED" && (
+                  <span className="text-xs">{link.label}</span>
+                )}
+              </a>
+            ))}
+        </motion.nav>
+      </div>
+
+    </motion.div>
+  )
+}
+
+export default ThreeColumnSidebar;
