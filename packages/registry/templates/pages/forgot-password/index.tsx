@@ -95,7 +95,7 @@ export interface ForgotPasswordProps {
   errorMessage?: string;
   successMessage?: string;
   navigateToLabel?: string;
-
+  submitbuttonLabel?: string;
   // Layout
   formType?: "center" | "split";
 
@@ -190,9 +190,17 @@ export const FormHeader = ({
 };
 
 /** Back To Login Link */
-export const LinkButton = ({ label = "Back to Login", onBack, textColor }: LinkButtonProps) => {
+export const LinkButton = ({
+  label = "Back to Login",
+  onBack,
+  textColor,
+}: LinkButtonProps) => {
   return (
-    <Button variant="link" className={cn("hover:cursor-pointer",textColor)} onClick={onBack}>
+    <Button
+      variant="link"
+      className={cn("hover:cursor-pointer", textColor)}
+      onClick={onBack}
+    >
       {label}
     </Button>
   );
@@ -215,9 +223,12 @@ const ForgotPasswordContent: React.FC<ForgotPasswordProps> = ({
   onSubmit,
   onNavigateTo,
   navigateToLabel = "Back To Login",
+  submitbuttonLabel = "Send Reset Link",
 }) => {
   const [email, setEmail] = React.useState("");
-  const [status, setStatus] = React.useState<"idle" | "success" | "error">("idle");
+  const [status, setStatus] = React.useState<"idle" | "success" | "error">(
+    "idle"
+  );
   const [errorMessage, setErrorMessage] = React.useState("");
   const [isMobile, setIsMobile] = React.useState(false);
 
@@ -302,12 +313,16 @@ const ForgotPasswordContent: React.FC<ForgotPasswordProps> = ({
         />
 
         <Button
-          variant="default"
           animationVariant={animationVariant}
-          className="w-full h-12 rounded-xl text-base"
+          className={cn(
+            "w-full h-12 rounded-xl text-base",
+            (variant === "dark" && formType === "center") || isMobile
+              ? ForgotPasswordCardVariants({ variant })
+              : ForgotPasswordVariants({ variant })
+          )}
           onClick={handleSubmit}
         >
-          Send Reset Link
+          {submitbuttonLabel}
         </Button>
 
         {status === "error" && (
@@ -315,11 +330,19 @@ const ForgotPasswordContent: React.FC<ForgotPasswordProps> = ({
         )}
 
         {/* If consumer passed a `loginLink` node use it; otherwise render default LinkButton */}
-        <LinkButton label={navigateToLabel} onBack={handleNavigateTo} textColor={variant === 'dark' && formType === 'center' ? 'text-white' : ''}/>
+        <LinkButton
+          label={navigateToLabel}
+          onBack={handleNavigateTo}
+          textColor={
+            variant === "dark" && formType === "center" ? "text-white" : ""
+          }
+        />
 
         {status === "success" && (
           <>
-            <p className="text-green-500 font-medium text-center">{successMessage}</p>
+            <p className="text-green-500 font-medium text-center">
+              {successMessage}
+            </p>
           </>
         )}
       </div>
