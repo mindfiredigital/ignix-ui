@@ -138,7 +138,7 @@ const footerVariants = cva("w-full border-t transition-colors duration-300", {
 ────────────────────────────────────────────────────────────── */
 const SingleColumnLayout: React.FC<SingleColumnLayoutProps> = ({
   header,
-  footer,
+  // footer,
   children,
   stickyHeader = true,
   stickyFooter = false,

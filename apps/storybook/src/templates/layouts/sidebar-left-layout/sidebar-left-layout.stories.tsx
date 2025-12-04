@@ -61,7 +61,7 @@ const navItems = [
   { label: "Settings", href: "#", icon: Settings},
 ];
 
-// Basic HeaderLayout Story
+// Basic HeaderLayout Story 
 export const Basic: Story = {
   args: {
     header: (
