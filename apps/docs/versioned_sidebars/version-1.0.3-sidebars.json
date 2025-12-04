@@ -116,6 +116,17 @@
             "templates/layouts/full-height-sidebar-layout",
             "templates/layouts/three-column-sidebar-layout"
           ]
+        },
+        {
+          "type": "category",
+          "label": "Pages",
+          "items": [{
+                "type": "category",
+                "label": "Authentication",
+                "items": [
+                  "templates/pages/authentication/forgot-password"
+                ]
+          }]
         }
       ]
     },
