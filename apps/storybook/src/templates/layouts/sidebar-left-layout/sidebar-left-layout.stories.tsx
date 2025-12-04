@@ -10,6 +10,7 @@ const year = date.getFullYear()
 
 const meta: Meta<typeof SideBarLeftLayout> = {
   title: "Templates/Layouts/SideBarLeft",
+  tags: ['autodocs'],
   component: SideBarLeftLayout,
   parameters: {
     layout: "fullscreen",

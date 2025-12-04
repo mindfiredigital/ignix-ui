@@ -28,12 +28,10 @@ export class TemplateService {
 
     try {
       const config = await this.config;
-      const templateConfig = await this.registryService.getTemplateConfig(name);
-
+      const templateConfig = await this.registryService.getComponentConfig(name);
       if (!templateConfig) {
         throw new Error(`Template '${name}' not found.`);
       }
-
       // 1. Install package dependencies
       if (templateConfig.dependencies && templateConfig.dependencies?.length > 0) {
         spinner.text = `Installing dependencies for ${name}...`;
@@ -58,10 +56,7 @@ export class TemplateService {
       const templateDir = path.resolve(config.templateLayoutDir, name.toLowerCase());
       await fs.ensureDir(templateDir);
 
-      const baseUrl = config.templateLayoutUrl.substring(
-        0,
-        config.templateLayoutUrl.lastIndexOf('/')
-      );
+      const baseUrl = config.registryUrl.substring(0, config.registryUrl.lastIndexOf('/'));
 
       for (const fileKey in templateConfig.files) {
         const fileInfo = templateConfig.files[fileKey];
