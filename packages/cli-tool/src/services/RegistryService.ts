@@ -104,9 +104,4 @@ export class RegistryService {
     const registry = await this.fetchRegistry();
     return Object.values(registry.components);
   }
-
-  public async getAvailableTemplates(): Promise<ComponentConfig[]> {
-    const registry = await this.fetchAvailableTemplate();
-    return Object.values(registry.components);
-  }
 }
