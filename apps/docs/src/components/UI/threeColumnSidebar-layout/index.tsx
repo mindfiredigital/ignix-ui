@@ -73,7 +73,7 @@ const ThreeColumnSidebarLayoutContent: React.FC<ThreeColumnSidebarLayoutProps> =
   children,
   footer,
 
-  sidebarWidth = 200,
+  sidebarWidth = 260,
   sidebarCollapsedWidth = 60,
 
   stickyFooter = false,
@@ -222,7 +222,7 @@ const ThreeColumnSidebarLayoutContent: React.FC<ThreeColumnSidebarLayoutProps> =
                   "bg-gray-300 text-gray-700": theme === "corporate",
                   "bg-gray-700 text-gray-200": theme === "dark",
                   "bg-white/60 text-gray-700": theme === "glass",
-                  "bg-gray-700/80 text-gray-200": theme === "modern",
+                  "bg-gray-700/10 text-gray-200": theme === "modern",
                   "bg-teal-600/80 text-gray-200": theme === "ocean",
                   "bg-green-700/80 text-gray-200": theme === "forest",
                   "bg-[#e0dab5] text-gray-700": theme === "solarized",
@@ -247,7 +247,7 @@ const ThreeColumnSidebarLayoutContent: React.FC<ThreeColumnSidebarLayoutProps> =
         {/* RIGHT SIDEBAR */}
         {rightSidebar && !isMobile && bp !== 640 && (
           <motion.aside
-            className="sticky top-[var(--header-h)] overflow-y-auto"
+            className="sticky top-[var(--header-h)] overflow-y-auto overflow-x-hidden"
             style={{
               height: `calc(100dvh - ${headerHeight}px - ${footerHeight}px)`,
               zIndex: zIndex.sidebar,
@@ -267,7 +267,7 @@ const ThreeColumnSidebarLayoutContent: React.FC<ThreeColumnSidebarLayoutProps> =
                 "bg-gray-300 text-gray-700": theme === "corporate",
                 "bg-gray-700 text-gray-200": theme === "dark",
                 "bg-white/60 text-gray-700": theme === "glass",
-                "bg-gray-700/80 text-gray-200": theme === "modern",
+                "bg-gray-700/10 text-gray-200": theme === "modern",
                 "bg-teal-600/80 text-gray-200": theme === "ocean",
                 "bg-green-700/80 text-gray-200": theme === "forest",
                 "bg-[#e0dab5] text-gray-700": theme === "solarized",
