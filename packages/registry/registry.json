@@ -581,6 +581,25 @@
           "type": "template"
         }
       }
+    },
+    "forgotPassword": {
+      "name": "forgotPassword",
+      "description": "A fully responsive and customizable Forgot Password component with an input field and submit button, built to support secure in-app password reset processes.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "input",
+        "button"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/forgot-password/index.tsx",
+          "type": "template"
+        }
+      }
     }
   }
 }

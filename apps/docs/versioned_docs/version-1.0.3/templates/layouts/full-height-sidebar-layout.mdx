@@ -24,7 +24,7 @@ The **Full Height SideBar** component provides a complete layout solution with a
 <Tabs>
   <TabItem value="cli" label="CLI" default>
     ```bash
-    ignix add component fullheightsidebarlayout
+    ignix add component FullHeightSidebarLayout
     ```
   </TabItem>
   <TabItem value="manual" label="manual" className="max-h-[500px] overflow-y-auto">
@@ -32,9 +32,9 @@ The **Full Height SideBar** component provides a complete layout solution with a
   import * as React from "react";
   import { motion, AnimatePresence, type PanInfo } from "framer-motion";
   import { cva, type VariantProps } from "class-variance-authority";
-  import { cn } from '../../../../utils/cn';
+  import { cn } from '../../../utils/cn';
   import { Menu, X } from "lucide-react";
-  import { SidebarProvider, useSidebar } from "../../../components/sidebar";
+  import { SidebarProvider, useSidebar } from "@ignix-ui/sidebar";
 
   export interface FullHeightSidebarLayoutProps {
     // React Nodes
@@ -54,6 +54,7 @@ The **Full Height SideBar** component provides a complete layout solution with a
     transitionDuration?: number;
     sidebarCollapsed?: boolean;
     onSidebarToggle?: (isOpen: boolean) => void;
+    animation?: 'none' | 'slide' | 'fade' | 'scale' | 'bounce'
 
     // sizing via CSS vars (pixels)
     headerHeight?: number;
@@ -319,9 +320,9 @@ The **Full Height SideBar** component provides a complete layout solution with a
 ## Usage
 
 ```tsx
-  import { FullHeightSidebarLayout } from "./components/templates";
+  import { FullHeightSidebarLayout } from "@src/components/templates/fullheightsidebarlayout";
 
-    function FullHeightSidebarLayout() {
+    function App() {
       return (
         <FullHeightSidebarLayout
           variant="default"
