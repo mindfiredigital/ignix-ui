@@ -8,7 +8,7 @@ import { cn } from '../../../utils/cn';
 
 export interface ButtonProps
   extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onDrag'>,
-    VariantProps<typeof buttonVariants> {
+  VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   animationVariant?: string;
   children?: React.ReactNode;

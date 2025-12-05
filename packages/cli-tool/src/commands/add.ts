@@ -19,9 +19,16 @@ export const addCommand = new Command()
       case 'component':
       case 'components': {
         const componentService = new ComponentService();
+        const templateService = new TemplateService();
         logger.info('Adding components...');
         const availableComponents = await registryService.getAvailableComponents();
-        const componentNames = availableComponents.map((c) => c.name.toLowerCase());
+
+        type SelectedComponent = {
+          name: string;
+          type: string;
+        };
+
+        let selectedItems: SelectedComponent[] = [];
 
         if (identifiers.length === 0) {
           const installResponse = await prompts({
@@ -30,25 +37,47 @@ export const addCommand = new Command()
             message: chalk.green('Select a component to add:'),
             choices: availableComponents.map((c) => ({
               title: c.name,
-              value: c.name.toLowerCase(),
+              value: {
+                name: c.name.toLowerCase(),
+                type: c.files.main.type,
+              },
             })),
           });
-          // Convert the single selected component to an array
-          identifiers = installResponse.component ? [installResponse.component] : [];
-        }
 
-        if (!identifiers || identifiers.length === 0) {
+          if (installResponse.component) {
+            selectedItems = [installResponse.component];
+          }
+        } else {
+          // If identifiers were passed directly from CLI args
+          const normalized = identifiers.map((i: string) => i.toLowerCase());
+          selectedItems = availableComponents
+            .filter((c) => {
+              const name = c.name?.toLowerCase();
+              const id = c.id?.toLowerCase();
+              return normalized.includes(name) || normalized.includes(id);
+            })
+            .map((c) => ({
+              name: (c.id || c.name).toLowerCase(),
+              type: c.files.main.type,
+            }));
+        }
+        if (!selectedItems || selectedItems.length === 0) {
           logger.warn('No component selected. Exiting.');
           return;
         }
 
-        for (const id of identifiers) {
-          if (componentNames.includes(id.toLowerCase())) {
-            await componentService.install(id.toLowerCase());
+        for (const item of selectedItems) {
+          console.log('Installing:', item.name, 'Type:', item.type);
+
+          if (item.type === 'component') {
+            await componentService.install(item.name);
+          } else if (item.type === 'template') {
+            await templateService.install(item.name);
           } else {
-            logger.error(`Component '${id}' not found in the registry.`);
+            logger.error(`Unknown type '${item.type}' for '${item.name}'`);
           }
         }
+
         break;
       }
 

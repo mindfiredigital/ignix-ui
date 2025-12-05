@@ -24,7 +24,7 @@ The **Sidebar-right** component provides a complete layout solution with a heade
 <Tabs>
   <TabItem value="cli" label="CLI" default>
     ```bash
-    ignix add template sidebar-right-layout
+    ignix add component SidebarRightLayout
     ```
   </TabItem>
   <TabItem value="manual" label="manual" className="max-h-[500px] overflow-y-auto">
@@ -33,9 +33,9 @@ import * as React from "react";
 import { motion, AnimatePresence, type PanInfo } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Menu, X } from "lucide-react";
-import { cn } from "../../../../utils/cn";
-import { SidebarProvider, useSidebar } from "../../../components/sidebar";
-
+import { cn } from "../../../utils/cn";
+import { SidebarProvider, useSidebar } from "@ignix-ui/sidebar";
+ 
 export interface SideBarLeftLayoutProps {
   header?: React.ReactNode;
   sidebar?: React.ReactNode;
@@ -93,7 +93,8 @@ const LayoutVariants = cva("", {
 });
  
 const SideBarLeftLayoutContent: React.FC<SideBarLeftLayoutProps> = ({
-  header,
+  header
+  },
   sidebar,
   footer,
   children,
@@ -337,9 +338,9 @@ SideBarRightLayout.displayName = "SideBarRightLayout";
 ## Usage
 
 ```tsx
-  import { SideBarLeftLayout } from "@site/src/components/UI/sidebarleft-layout";
+  import { SideBarRightLayout } from "@site/src/components/templates/sidebarrightlayout";
 
-    function TemplateSideBarLayoutDemo() {
+    function App() {
       return (
         <SideBarRightLayout
           variant="default"
@@ -356,7 +357,7 @@ SideBarRightLayout.displayName = "SideBarRightLayout";
           children={<div>Main Content</div>}
         >
           <div>Main Content</div>
-        </SidebarLeftLayout>
+        </SideBarRightLayout>
       );
     }
 ```
