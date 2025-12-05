@@ -239,7 +239,7 @@ const ForgotPasswordContent: React.FC<ForgotPasswordProps> = ({
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const result = emailSchema.safeParse(email);
 
     if (!result.success) {
@@ -248,15 +248,16 @@ const ForgotPasswordContent: React.FC<ForgotPasswordProps> = ({
       return;
     }
 
-    // fire consumer handler (apps handle the actual API call)
     try {
-      onSubmit?.(email);
+      // WAIT for the developer's async API call
+      await onSubmit?.(email);
+
       setStatus("success");
       setErrorMessage(successMessage);
     } catch (err: any) {
-      // if consumer throws synchronously
+      // If developer throws/custom error → show it
       setStatus("error");
-      setErrorMessage(err?.message ?? "Failed to submit");
+      setErrorMessage(err?.message ?? "Something went wrong");
     }
   };
 

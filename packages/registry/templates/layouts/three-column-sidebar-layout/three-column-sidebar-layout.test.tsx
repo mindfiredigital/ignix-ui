@@ -38,12 +38,12 @@ vi.mock("framer-motion", () => {
    IMPORTANT: ensure this path matches the component's import path.
    In your component file it is: import { SidebarProvider, useSidebar } from "../../../components/sidebar";
    So we mock "../../../components/sidebar" relative to the test file location. */
-vi.mock("../../../components/sidebar", () => {
+vi.mock("@ignix-ui/threeColumnSidebar", () => {
   return {
     SidebarProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
     useSidebar: () => ({
       isOpen: true,
-      setIsOpen: vi.fn(),
+      setOpen: vi.fn(), // must match actual component usage
     }),
   };
 });
@@ -69,7 +69,7 @@ describe("ThreeColumnSidebarLayout Component", () => {
 
   it("renders header & sidebar when passed as prop", () => {
     render(
-      <ThreeColumnSidebarLayout header={<div>Header</div>} sidebar={<div>Sidebar</div>}>
+      <ThreeColumnSidebarLayout header={<div>Header</div>} sidebar={() => <div>Sidebar</div>}>
         <div>Main</div>
       </ThreeColumnSidebarLayout>
     );
@@ -87,7 +87,7 @@ describe("ThreeColumnSidebarLayout Component", () => {
 
     render(
       <ThreeColumnSidebarLayout
-        sidebar={<div>Sidebar</div>}
+        sidebar={()=><div>Sidebar</div>}
         footer={<div>Footer</div>}
       >
         <div>Content</div>

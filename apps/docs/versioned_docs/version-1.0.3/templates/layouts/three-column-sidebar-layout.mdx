@@ -7,7 +7,7 @@ description: A flexible layout component with header, right sidebar, and footer 
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import ThreeColumnSidebarLayoutDemo from '@site/src/components/Demo/ThreeColumnSidebarLayout';
+import ThreeColumnSidebarLayoutDemo from '@site/src/components/Demo/ThreeColumnSidebarLayoutDemo';
 
 ## Overview
 
@@ -23,7 +23,7 @@ The **Three Column SideBar Layout** component provides a complete layout solutio
 <Tabs>
   <TabItem value="cli" label="CLI" default>
     ```bash
-    ignix add component threecolumnsidebarlayout
+    ignix add component ThreeColumnSidebarLayout
     ```
   </TabItem>
   <TabItem value="manual" label="manual" className="max-h-[500px] overflow-y-auto">
@@ -464,7 +464,7 @@ The **Three Column SideBar Layout** component provides a complete layout solutio
 ```tsx
   import { ThreeColumnSidebarLayout } from "@src/components/templates/threecolumnsidebarlayout";
 
-    function ThreeColumnSidebarLayout() {
+    function App() {
       return (
         <ThreeColumnSidebarLayout
           mobileBreakpoint="md"

@@ -75,6 +75,7 @@
     "@radix-ui/react-tooltip": "^1.2.7",
     "framer-motion": "^12.4.10",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "zod": "^4.1.13"
   }
 }

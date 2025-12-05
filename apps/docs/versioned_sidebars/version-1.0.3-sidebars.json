@@ -124,7 +124,7 @@
                 "type": "category",
                 "label": "Authentication",
                 "items": [
-                  "templates/pages/authentication/forgot-password"
+                  "templates/pages/authentication/forgot-password-page"
                 ]
           }]
         }
