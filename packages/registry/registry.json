@@ -629,6 +629,23 @@
           "type": "template"
         }
       }
-    }
+    },
+    "signin": {
+      "name": "SignIn",
+      "description": "A sign-in page template with responsive design and form validation.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "button","input"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/sign-in/index.tsx",
+          "type": "template"
+        }
+      }
   }
 }
