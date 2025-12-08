@@ -29,6 +29,9 @@ importers:
       react-dom:
         specifier: ^19.1.1
         version: 19.1.1(react@19.1.1)
+      react-icons:
+        specifier: ^5.5.0
+        version: 5.5.0(react@19.1.1)
       zod:
         specifier: ^4.1.13
         version: 4.1.13
@@ -314,6 +317,9 @@ importers:
       react-icons:
         specifier: ^5.5.0
         version: 5.5.0(react@19.1.1)
+      zod:
+        specifier: ^4.1.13
+        version: 4.1.13
     devDependencies:
       '@chromatic-com/storybook':
         specifier: ^4.1.1
