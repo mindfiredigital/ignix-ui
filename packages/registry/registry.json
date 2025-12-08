@@ -658,6 +658,24 @@
           "path": "templates/pages/sign-in/index.tsx",
           "type": "template"
         }
+      },
+    "signup": {
+      "name": "SignUp",
+      "description": "A sign-up page template with responsive design and form validation.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority",
+        "react-icons"
+      ],
+      "componentDependencies": [
+        "button","input"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/sign-up/index.tsx",
+          "type": "template"
+        }
       }
     },
     "signup": {
