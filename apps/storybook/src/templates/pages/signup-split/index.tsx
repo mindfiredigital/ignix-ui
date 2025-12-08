@@ -7,8 +7,8 @@ import * as React from "react";
 import { motion } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../../utils/cn";
-import { Button } from "../../button";
-import { AnimatedInput } from "../../input";
+import { Button } from "../../../components/button";
+import { AnimatedInput } from "../../../components/input";
 // import { Label } from "../../label";
 // import { Checkbox } from "../../checkbox";
 import {

@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { AnimatedInput } from "../../../components/input";
 import { Button } from "../../../components/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/card";
-import { Lock, Key, CheckCircle2, AlertCircle, Shield, XCircle } from "lucide-react";
+import { Lock, Key, CheckCircle2, Shield, XCircle } from "lucide-react";
 import { cn } from "../../../../utils/cn";
 
 interface PasswordStrength {
@@ -201,9 +201,9 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({
                     icon={Key}
                     error={tokenError}
                     size="md"
-                    labelClassName="ms-5"
+                    labelClassName={cn("ms-5",tokenError?"top-1/4":"top-1/2")}
                   />
-                  {tokenError && (
+                  {/* {tokenError && (
                     <motion.p
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -212,7 +212,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({
                       <AlertCircle className="h-4 w-4" />
                       {tokenError}
                     </motion.p>
-                  )}
+                  )} */}
                   <p className="text-xs text-muted-foreground mt-2">
                     💡 Hint: Check your email for the reset token. Token validation checks format and length.
                   </p>
@@ -229,13 +229,15 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({
                     icon={Lock}
                     showPasswordToggle
                     size="md"
-                    labelClassName="ms-5"
+                    labelClassName={cn("ms-5", 
+                      (password.length > 0 && passwordStrength.score < 2)||(password.length > 0 && passwordStrength.score == 4) ?"top-1/4":"top-1/2")
+                    }
                     error={
                       password.length > 0 && passwordStrength.score < 2
                         ? "Password is too weak"
                         : undefined
                     }
-                    success={password.length > 0 && passwordStrength.score >= 3}
+                    success={password.length > 0 && passwordStrength.score == 4}
                   />
 
                   {/* Password Strength Indicator */}
@@ -263,12 +265,12 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({
                             key={index}
                             className={cn(
                               "flex-1 rounded-full transition-colors",
-                              index < passwordStrength.score
+                              index <= passwordStrength.score
                                 ? passwordStrength.color
                                 : "bg-muted"
                             )}
                             initial={{ scaleX: 0 }}
-                            animate={{ scaleX: index < passwordStrength.score ? 1 : 0.3 }}
+                            animate={{ scaleX: index <= passwordStrength.score ? 1 : 0.3 }}
                             transition={{ delay: index * 0.1 }}
                           />
                         ))}
@@ -314,13 +316,17 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({
                     icon={Lock}
                     showPasswordToggle
                     size="md"
-                    labelClassName="ms-5"
+                    labelClassName={cn(
+                      "ms-5",
+                      (confirmPassword.length > 0 && !passwordsMatch)||(confirmPassword.length > 0 && passwordsMatch && password.length > 0) ? "top-1/4" : "top-1/2"
+                      )}
                     error={
                       confirmPassword.length > 0 && !passwordsMatch
                         ? "Passwords do not match"
                         : undefined
                     }
                     success={confirmPassword.length > 0 && passwordsMatch && password.length > 0}
+                    successMessage="Passwords match successfully"
                   />
                 </div>
 
@@ -329,7 +335,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({
                   type="submit"
                   variant="default"
                   size="lg"
-                  className="w-full"
+                  className={cn("w-full", className === "dark" ? "text-black" : "")}
                   disabled={!canSubmit}
                   animationVariant={canSubmit ? "press3D" : undefined}
                 >

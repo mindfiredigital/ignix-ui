@@ -2,7 +2,7 @@ import { ResetPasswordPage } from "./index";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof ResetPasswordPage> = {
-  title: "Templates/Pages/Reset Password",
+  title: "Templates/Pages/Authentication/Reset Password",
   component: ResetPasswordPage,
   parameters: {
     layout: "fullscreen",
@@ -95,31 +95,31 @@ export const Default: Story = {
 };
 
 // With Pre-filled Token
-// export const WithToken: Story = {
-//   args: {
-//     token: "ABC123XYZ",
-//     inputVariant: "clean",
-//     onSubmit: (password: string, token: string) => {
-//       // eslint-disable-next-line no-console
-//       console.log("password-reset-submitted", { password, token });
-//     },
-//   },
-// };
+export const WithToken: Story = {
+  args: {
+    token: "ABC123XYZ",
+    inputVariant: "clean",
+    onSubmit: (password: string, token: string) => {
+      // eslint-disable-next-line no-console
+      console.log("password-reset-submitted", { password, token });
+    },
+  },
+};
 
 // Custom Token Validation
-// export const CustomTokenValidation: Story = {
-//   args: {
-//     inputVariant: "clean",
-//     onTokenValidate: (token: string) => {
-//       // Custom validation: token must start with "RESET" and be 10 characters
-//       return token.startsWith("RESET") && token.length === 10;
-//     },
-//     onSubmit: (password: string, token: string) => {
-//       // eslint-disable-next-line no-console
-//       console.log("password-reset-submitted", { password, token });
-//     },
-//   },
-// };
+export const CustomTokenValidation: Story = {
+  args: {
+    inputVariant: "clean",
+    onTokenValidate: (token: string) => {
+      // Custom validation: token must start with "RESET" and be 10 characters
+      return token.startsWith("RESET") && token.length === 10;
+    },
+    onSubmit: (password: string, token: string) => {
+      // eslint-disable-next-line no-console
+      console.log("password-reset-submitted", { password, token });
+    },
+  },
+};
 
 // Different Input Variants
 export const FloatingInput: Story = {

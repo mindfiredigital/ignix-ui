@@ -9,7 +9,7 @@ const handleSubmit = (data: any) => {
 };
 
 const meta: Meta<typeof SplitSignupForm> = {
-    title: "Forms/SplitSignupForm",
+    title: "Templates/Pages/Forms/SplitSignupForm",
     component: SplitSignupForm,
     parameters: {
         layout: "fullscreen",

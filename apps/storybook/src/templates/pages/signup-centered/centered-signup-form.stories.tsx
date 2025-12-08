@@ -9,7 +9,7 @@ import { useState } from "react";
 // };
 
 const meta: Meta<typeof CenteredSignupForm> = {
-    title: "Forms/CenteredSignupForm",
+    title: "Templates/Pages/Forms/CenteredSignupForm",
     component: CenteredSignupForm,
     parameters: {
         layout: "fullscreen",
