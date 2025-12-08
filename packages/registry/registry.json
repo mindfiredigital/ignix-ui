@@ -385,6 +385,35 @@
         }
       }
     },
+    "checkbox": {
+      "name":"Checkbox",
+      "description":"An animated checkbox component with different variants and animation options",
+      "dependencies":[
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "files":{
+        "main":{
+          "path":"components/checkbox/index.tsx",
+          "type":"component"
+        }
+      }
+    },
+    "typography": {
+      "name":"Typography",
+      "description":"A Typography component for consistent text styling with various variants, sizes, weights, and colors.",
+      "dependencies":[
+        "@radix-ui/react-slot",
+        "class-variance-authority"
+      ],
+      "files":{
+        "main":{
+          "path":"components/typography/index.tsx",
+          "type":"component"
+        }
+      }
+    },
     "container": {
       "name": "Container",
       "description": "A flexible container component for constraining content width with responsive padding and centering options.",
@@ -600,6 +629,23 @@
           "type": "template"
         }
       }
-    }
+    },
+    "signin": {
+      "name": "SignIn",
+      "description": "A sign-in page template with responsive design and form validation.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "button","input"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/sign-in/index.tsx",
+          "type": "template"
+        }
+      }
   }
 }

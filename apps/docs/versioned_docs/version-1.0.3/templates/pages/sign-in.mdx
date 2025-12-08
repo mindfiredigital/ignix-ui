@@ -1,0 +1,1255 @@
+---
+sidebar_position: 10
+title: SignIn
+description: A highly customizable sign-in component with multiple layouts, themes, social login options, and extensive content customization.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SignIn } from '@site/src/components/UI/sign-in';
+import { CenteredDarkDemo, SplitDarkDemo, FullyCustomizableDemo } from '@site/src/components/Demo/SignInDemo';
+
+## Overview
+
+The SignIn component provides a complete, production-ready authentication form with support for multiple layouts, themes, social login options, and extensive customization capabilities. It's designed to be flexible, accessible, and easy to integrate into any React application.
+
+### Key Features
+
+- **Multiple Layouts**: Centered and split layout options
+- **Visual Themes**: Default, modern, glass, and dark variants
+- **Social Login**: Google, GitHub, and Microsoft integration
+- **Customizable Content**: Complete control over left panel content in split layout
+- **Accessibility**: Built with ARIA labels and keyboard navigation
+- **Responsive**: Works on all screen sizes
+- **Animations**: Smooth transitions with Framer Motion
+- **Validation**: Built-in form validation
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component signin
+    ```
+  </TabItem>
+  <TabItem value="manual" label="Manual">
+    ```tsx
+    // sign-in/index.tsx
+    'use client';
+
+    import * as React from "react";
+    import { motion, AnimatePresence } from "framer-motion";
+    import { cva, type VariantProps } from "class-variance-authority";
+    import { cn } from "../../../../utils/cn";
+    import { Button } from "../../../components/button";
+    import { AnimatedInput } from "../../../components/input";
+    import {
+        Eye,
+        EyeOff,
+        AlertCircle,
+        Mail,
+        Lock,
+        Shield,
+        LogIn,
+        Loader2,
+    } from "lucide-react";
+
+    // Social Icons
+    import { FcGoogle } from "react-icons/fc";
+    import { FaGithub, FaMicrosoft } from "react-icons/fa";
+
+    // Types
+    export interface SignInProps {
+        /** Layout type */
+        type?: "centered" | "split";
+
+        /** Form variant */
+        variant?: VariantProps<typeof containerVariants>["variant"];
+
+        /** Company/brand name */
+        companyName?: string;
+
+        /** Custom logo component */
+        logo?: React.ReactNode;
+
+        /** Form submission handler */
+        onSubmit?: (data: SignInFormData) => void;
+
+        /** Sign Up click handler */
+        onSignUp?: () => void;
+
+        /** Callback for Google sign-in */
+        onGoogleSignIn?: () => void;
+
+        /** Callback for GitHub sign-in */
+        onGitHubSignIn?: () => void;
+
+        /** Callback for Microsoft sign-in */
+        onMicrosoftSignIn?: () => void;
+
+        /** Loading state */
+        loading?: boolean;
+
+        /** Error message */
+        error?: string;
+
+        /** Show social login buttons */
+        showSocialLogin?: boolean;
+
+        /** Show forgot password link */
+        showForgotPassword?: boolean;
+
+        /** Show sign up link */
+        showSignUpLink?: boolean;
+
+        /** Additional className */
+        className?: string;
+
+        /** Split Layout Background Customization */
+        splitBackground?: {
+            /** Background gradient classes for left panel */
+            gradient?: string;
+            /** Text color for left panel */
+            textColor?: string;
+            /** Override company name color */
+            companyNameColor?: string;
+            /** Override description color */
+            descriptionColor?: string;
+            /** Custom left panel className */
+            leftPanelClassName?: string;
+            /** Background image URL */
+            backgroundImage?: string;
+            /** Overlay color for background image */
+            overlayColor?: string;
+            /** Custom right panel className */
+            rightPanelClassName?: string;
+        };
+
+        /** Button Customization */
+        buttonStyle?: {
+            /** Background gradient classes for sign in button */
+            gradient?: string;
+            /** Hover gradient classes for sign in button */
+            hoverGradient?: string;
+            /** Text color for sign in button */
+            textColor?: string;
+            /** Button shadow classes */
+            shadow?: string;
+            /** Hover shadow classes */
+            hoverShadow?: string;
+            /** Custom button className */
+            className?: string;
+        };
+    }
+
+    export interface SignInFormData {
+        email: string;
+        password: string;
+        rememberMe: boolean;
+    }
+
+    // Social Provider Type
+    export type SocialProvider = 'google' | 'github' | 'microsoft';
+
+    // Layout Variants
+    const containerVariants = cva("", {
+        variants: {
+            variant: {
+                default: "",
+                modern: "",
+                glass: "",
+                dark: "",
+            },
+            type: {
+                centered: "min-h-screen flex items-center justify-center p-4",
+                split: "min-h-screen flex",
+            },
+        },
+        compoundVariants: [
+            {
+                type: "centered",
+                variant: "default",
+                className: "bg-gradient-to-br from-blue-50 to-cyan-50",
+            },
+            {
+                type: "centered",
+                variant: "modern",
+                className: "bg-gradient-to-br from-slate-50 to-slate-100",
+            },
+            {
+                type: "centered",
+                variant: "glass",
+                className: "bg-gradient-to-br from-primary/10 to-secondary/10",
+            },
+            {
+                type: "centered",
+                variant: "dark",
+                className: "bg-gradient-to-br from-gray-900 to-gray-800",
+            },
+            {
+                type: "split",
+                variant: "default",
+                className: "bg-background",
+            },
+            {
+                type: "split",
+                variant: "modern",
+                className: "bg-slate-50 dark:bg-slate-900",
+            },
+            {
+                type: "split",
+                variant: "glass",
+                className: "bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800",
+            },
+            {
+                type: "split",
+                variant: "dark",
+                className: "bg-gray-900",
+            },
+        ],
+        defaultVariants: {
+            type: "centered",
+            variant: "default",
+        },
+    });
+
+    // Card Variants
+    const cardVariants = cva("rounded-2xl shadow-2xl p-8 transition-all duration-300", {
+        variants: {
+            variant: {
+                default: "bg-white",
+                modern: "bg-white/95 backdrop-blur-sm border border-slate-200",
+                glass: "bg-white/10 backdrop-blur-lg border border-white/20",
+                dark: "bg-gray-800",
+            },
+            type: {
+                centered: "w-full max-w-md",
+                split: "w-full max-w-md bg-card rounded-xl",
+            },
+        },
+        compoundVariants: [
+            {
+                type: "split",
+                variant: "default",
+                className: "bg-white",
+            },
+            {
+                type: "split",
+                variant: "modern",
+                className: "bg-white/95 backdrop-blur-sm dark:bg-slate-900/95",
+            },
+            {
+                type: "split",
+                variant: "dark",
+                className: "bg-gray-900",
+            },
+        ],
+        defaultVariants: {
+            type: "centered",
+            variant: "default",
+        },
+    });
+
+    /* ──────────────────────────────────────────────────────────────
+       Main Component
+    ─────────────────────────────────────────────────────────────── */
+    const SignIn: React.FC<SignInProps> = ({
+        type = "centered",
+        variant = "default",
+        companyName = "YourBrand",
+        logo,
+        onSubmit,
+        onSignUp,
+        onGoogleSignIn,
+        onGitHubSignIn,
+        onMicrosoftSignIn,
+        loading = false,
+        error = "",
+        showSocialLogin = true,
+        showForgotPassword = true,
+        showSignUpLink = true,
+        className,
+        splitBackground,
+        buttonStyle,
+    }) => {
+        const [formData, setFormData] = React.useState<SignInFormData>({
+            email: '',
+            password: '',
+            rememberMe: false,
+        });
+
+        const [showPassword, setShowPassword] = React.useState(false);
+        const [errors, setErrors] = React.useState<Record<string, string>>({});
+        const [socialLoading, setSocialLoading] = React.useState<SocialProvider | null>(null);
+
+        const validateForm = (): boolean => {
+            const newErrors: Record<string, string> = {};
+
+            if (!formData.email.trim()) {
+                newErrors.email = 'Email is required';
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+                newErrors.email = 'Please enter a valid email';
+            }
+
+            if (!formData.password) {
+                newErrors.password = 'Password is required';
+            } else if (formData.password.length < 6) {
+                newErrors.password = 'Password must be at least 6 characters';
+            }
+
+            setErrors(newErrors);
+            return Object.keys(newErrors).length === 0;
+        };
+
+        const handleSubmit = (e: React.FormEvent) => {
+            e.preventDefault();
+
+            if (!validateForm()) return;
+
+            if (onSubmit) {
+                onSubmit(formData);
+            }
+        };
+
+        const handleSignUpClick = () => {
+            if (onSignUp) {
+                onSignUp();
+            } else {
+                console.warn('SignUp callback not provided. Implement navigation to sign-up page.');
+            }
+        };
+
+        const handleSocialSignIn = async (provider: SocialProvider) => {
+            setSocialLoading(provider);
+
+            try {
+                switch (provider) {
+                    case 'google':
+                        if (onGoogleSignIn) {
+                            await onGoogleSignIn();
+                        } else {
+                            console.warn(`onGoogleSignIn callback not implemented.`);
+                        }
+                        break;
+                    case 'github':
+                        if (onGitHubSignIn) {
+                            await onGitHubSignIn();
+                        } else {
+                            console.warn(`onGitHubSignIn callback not implemented.`);
+                        }
+                        break;
+                    case 'microsoft':
+                        if (onMicrosoftSignIn) {
+                            await onMicrosoftSignIn();
+                        } else {
+                            console.warn(`onMicrosoftSignIn callback not implemented.`);
+                        }
+                        break;
+                    default:
+                        console.warn(`Unsupported social provider: ${provider}`);
+                }
+            } catch (error) {
+                console.error(`Social sign-in failed for ${provider}:`, error);
+            } finally {
+                setTimeout(() => setSocialLoading(null), 500);
+            }
+        };
+
+        const handleInputChange = (field: keyof SignInFormData, value: string | boolean) => {
+            setFormData(prev => ({ ...prev, [field]: value }));
+            if (errors[field]) {
+                setErrors(prev => {
+                    const newErrors = { ...prev };
+                    delete newErrors[field];
+                    return newErrors;
+                });
+            }
+        };
+
+        const getInputClasses = (hasError: boolean) => {
+            const baseStyles = "w-full px-4 py-3 rounded-lg border transition-all duration-300 placeholder-gray-400 focus:ring-2 focus:border-transparent";
+
+            const variantStyles = {
+                default: cn(
+                    "bg-white text-gray-900 border-gray-300 focus:ring-blue-500",
+                    hasError && "border-red-500"
+                ),
+                modern: cn(
+                    "bg-white/80 backdrop-blur-sm text-gray-900 border-slate-200 focus:ring-blue-500",
+                    hasError && "border-red-500"
+                ),
+                glass: cn(
+                    "bg-white/5 backdrop-blur-md text-white border-white/10 focus:ring-blue-400",
+                    hasError && "border-red-400"
+                ),
+                dark: cn(
+                    "bg-gray-700 text-white border-gray-600 focus:ring-blue-500",
+                    hasError && "border-red-500"
+                )
+            };
+
+            return cn(baseStyles, variantStyles[variant as keyof typeof variantStyles] || variantStyles.default);
+        };
+
+        const isDarkVariant = variant === "dark";
+
+        // Default button styles
+        const getButtonStyles = () => {
+            const defaultStyles = {
+                gradient: "bg-gradient-to-r from-blue-600 to-blue-700",
+                hoverGradient: "hover:from-blue-700 hover:to-blue-800",
+                textColor: "text-white",
+                shadow: "shadow-lg",
+                hoverShadow: "hover:shadow-xl",
+                className: ""
+            };
+
+            return {
+                gradient: buttonStyle?.gradient || defaultStyles.gradient,
+                hoverGradient: buttonStyle?.hoverGradient || defaultStyles.hoverGradient,
+                textColor: buttonStyle?.textColor || defaultStyles.textColor,
+                shadow: buttonStyle?.shadow || defaultStyles.shadow,
+                hoverShadow: buttonStyle?.hoverShadow || defaultStyles.hoverShadow,
+                className: buttonStyle?.className || defaultStyles.className
+            };
+        };
+
+        // Default logo if not provided
+        const defaultLogo = (
+            <div className={cn(
+                "w-12 h-12 rounded-xl flex items-center justify-center",
+                isDarkVariant
+                    ? "bg-blue-900/20"
+                    : "bg-blue-100"
+            )}>
+                <Shield className={cn(
+                    "w-7 h-7",
+                    isDarkVariant ? "text-blue-400" : "text-blue-600"
+                )} />
+            </div>
+        );
+
+        // Social login buttons configuration
+        const socialButtons = [
+            {
+                id: 'google',
+                provider: 'google' as SocialProvider,
+                icon: <FcGoogle className="w-5 h-5" />,
+                label: 'Google',
+                onClick: () => handleSocialSignIn('google'),
+                loading: socialLoading === 'google',
+            },
+            {
+                id: 'github',
+                provider: 'github' as SocialProvider,
+                icon: <FaGithub className="w-5 h-5" />,
+                label: 'GitHub',
+                onClick: () => handleSocialSignIn('github'),
+                loading: socialLoading === 'github',
+            },
+            {
+                id: 'microsoft',
+                provider: 'microsoft' as SocialProvider,
+                icon: <FaMicrosoft className="w-5 h-5 text-[#00A4EF]" />,
+                label: 'Microsoft',
+                onClick: () => handleSocialSignIn('microsoft'),
+                loading: socialLoading === 'microsoft',
+            },
+        ];
+
+        // Get split layout styles
+        const getSplitLayoutStyles = () => {
+            const defaultGradient = isDarkVariant
+                ? "bg-gradient-to-br from-gray-800 to-gray-900"
+                : "bg-gradient-to-br from-blue-600 to-blue-800";
+
+            const defaultTextColor = "text-white";
+            const defaultCompanyNameColor = "text-white";
+            const defaultDescriptionColor = "text-white/90";
+
+            // Custom gradient or background image
+            const backgroundStyle = splitBackground?.backgroundImage
+                ? {
+                    backgroundImage: `url(${splitBackground.backgroundImage})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                }
+                : {};
+
+            // Overlay for background image
+            const overlayStyle = splitBackground?.backgroundImage && splitBackground?.overlayColor
+                ? {
+                    backgroundColor: splitBackground.overlayColor,
+                }
+                : {};
+
+            return {
+                leftPanelClasses: cn(
+                    "flex-1 flex flex-col p-12 hidden lg:flex relative",
+                    splitBackground?.gradient || defaultGradient,
+                    splitBackground?.leftPanelClassName
+                ),
+                textColor: splitBackground?.textColor || defaultTextColor,
+                companyNameColor: splitBackground?.companyNameColor || defaultCompanyNameColor,
+                descriptionColor: splitBackground?.descriptionColor || defaultDescriptionColor,
+                backgroundStyle,
+                overlayStyle,
+                rightPanelClasses: cn(
+                    "flex-1 flex items-center justify-center md:p-12",
+                    splitBackground?.rightPanelClassName
+                ),
+            };
+        };
+
+        // Render Form Content
+        const renderFormContent = () => {
+            const buttonStyles = getButtonStyles();
+
+            return (
+                <motion.div
+                    className={cn(cardVariants({ variant, type }))}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    {/* Logo */}
+                    <div className="flex justify-center mb-6">
+                        {logo || defaultLogo}
+                    </div>
+
+                    {/* Title */}
+                    <div className="text-center mb-8">
+                        <h1 className={cn(
+                            "text-2xl font-bold mb-2",
+                            isDarkVariant ? "text-white" : "text-gray-900"
+                        )}>
+                            Sign In to Your Account
+                        </h1>
+                        <p className={cn(
+                            "text-sm",
+                            isDarkVariant ? "text-gray-400" : "text-gray-600"
+                        )}>
+                            Welcome back! Please enter your details
+                        </p>
+                    </div>
+
+                    {/* Error Message */}
+                    <AnimatePresence>
+                        {error && (
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: "auto" }}
+                                exit={{ opacity: 0, height: 0 }}
+                                className={cn(
+                                    "mb-6 p-4 rounded-lg border flex items-start",
+                                    isDarkVariant
+                                        ? "bg-red-900/20 border-red-800"
+                                        : "bg-red-50 border-red-200"
+                                )}
+                            >
+                                <AlertCircle className={cn(
+                                    "w-5 h-5 mr-2 mt-0.5 flex-shrink-0",
+                                    isDarkVariant ? "text-red-400" : "text-red-600"
+                                )} />
+                                <span className={cn(
+                                    "text-sm",
+                                    isDarkVariant ? "text-red-300" : "text-red-700"
+                                )}>
+                                    {error}
+                                </span>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    {/* Form */}
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        {/* Email Field */}
+                        <div className="space-y-2">
+                            <label htmlFor="email" className={cn(
+                                "block text-sm font-medium",
+                                isDarkVariant ? "text-gray-300" : "text-gray-700"
+                            )}>
+                                Email Address
+                            </label>
+                            <div className="relative">
+                                <div className="absolute left-3 top-1/2 -translate-y-1/2">
+                                    <Mail className={cn(
+                                        "w-5 h-5",
+                                        isDarkVariant ? "text-gray-500" : "text-gray-400"
+                                    )} />
+                                </div>
+                                <AnimatedInput
+                                    variant="clean"
+                                    type="email"
+                                    value={formData.email}
+                                    onChange={(value: string) => handleInputChange('email', value)}
+                                    placeholder="you@example.com"
+                                    inputClassName={cn(getInputClasses(!!errors.email), "pl-10")}
+                                    aria-label="Email address"
+                                    aria-invalid={!!errors.email}
+                                    aria-describedby={errors.email ? "email-error" : undefined}
+                                />
+                            </div>
+                            {errors.email && (
+                                <p id="email-error" className="mt-1 text-xs text-red-500">
+                                    {errors.email}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Password Field */}
+                        <div className="space-y-2">
+                            <div className="flex justify-between items-center">
+                                <label htmlFor="password" className={cn(
+                                    "block text-sm font-medium",
+                                    isDarkVariant ? "text-gray-300" : "text-gray-700"
+                                )}>
+                                    Password
+                                </label>
+                                {showForgotPassword && (
+                                    <button
+                                        type="button"
+                                        className={cn(
+                                            "text-sm font-medium transition-colors cursor-pointer",
+                                            isDarkVariant
+                                                ? "text-blue-400 hover:text-blue-300"
+                                                : "text-blue-600 hover:text-blue-700"
+                                        )}
+                                        aria-label="Reset your password"
+                                    >
+                                        Forgot Password?
+                                    </button>
+                                )}
+                            </div>
+                            <div className="relative">
+                                <div className="absolute left-3 top-1/2 -translate-y-1/2">
+                                    <Lock className={cn(
+                                        "w-5 h-5",
+                                        isDarkVariant ? "text-gray-500" : "text-gray-400"
+                                    )} />
+                                </div>
+                                <AnimatedInput
+                                    variant="clean"
+                                    type={showPassword ? "text" : "password"}
+                                    value={formData.password}
+                                    onChange={(value: string) => handleInputChange('password', value)}
+                                    placeholder="Enter your password"
+                                    inputClassName={cn(getInputClasses(!!errors.password), "pl-10 pr-10")}
+                                    aria-label="Password"
+                                    aria-invalid={!!errors.password}
+                                    aria-describedby={errors.password ? "password-error" : undefined}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className={cn(
+                                        "absolute right-3 top-1/2 -translate-y-1/2 transition-colors",
+                                        "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 rounded p-1",
+                                        isDarkVariant
+                                            ? "text-gray-400 hover:text-gray-200"
+                                            : "text-gray-500 hover:text-gray-700"
+                                    )}
+                                    aria-label={showPassword ? "Hide password" : "Show password"}
+                                    aria-controls="password"
+                                >
+                                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                </button>
+                            </div>
+                            {errors.password && (
+                                <p id="password-error" className="mt-1 text-xs text-red-500">
+                                    {errors.password}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Remember Me & Forgot Password Row */}
+                        <div className="flex items-center justify-between">
+                            <label className="flex items-center cursor-pointer group">
+                                <input
+                                    type="checkbox"
+                                    id="rememberMe"
+                                    checked={formData.rememberMe}
+                                    onChange={(e) => handleInputChange('rememberMe', e.target.checked)}
+                                    className={cn(
+                                        "w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 transition-all duration-300",
+                                        isDarkVariant && "border-gray-600 bg-gray-700 focus:ring-blue-400"
+                                    )}
+                                    aria-label="Remember me for 30 days"
+                                />
+                                <span className={cn(
+                                    "ml-2 text-sm",
+                                    isDarkVariant
+                                        ? "text-gray-400 group-hover:text-gray-200"
+                                        : "text-gray-600 group-hover:text-gray-900"
+                                )}>
+                                    Remember me
+                                </span>
+                            </label>
+                        </div>
+
+                        {/* Sign In Button - Now customizable */}
+                        <Button
+                            type="submit"
+                            className={cn(
+                                "w-full py-3 font-medium rounded-lg transform hover:scale-[1.02] active:scale-[0.98]",
+                                "transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none cursor-pointer",
+                                buttonStyles.gradient,
+                                buttonStyles.hoverGradient,
+                                buttonStyles.shadow,
+                                buttonStyles.hoverShadow,
+                                buttonStyles.textColor,
+                                buttonStyles.className
+                            )}
+                            disabled={loading}
+                            aria-label="Sign in to your account"
+                        >
+                            {loading ? (
+                                <span className="flex items-center justify-center">
+                                    <Loader2 className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
+                                    Signing in...
+                                </span>
+                            ) : (
+                                <span className="flex items-center justify-center gap-2">
+                                    <LogIn className="w-5 h-5" />
+                                    Sign In
+                                </span>
+                            )}
+                        </Button>
+
+                        {/* Social Login Section */}
+                        {showSocialLogin && (
+                            <div className="space-y-4">
+                                <div className="relative">
+                                    <div className="absolute inset-0 flex items-center">
+                                        <div className={cn(
+                                            "w-full border-t",
+                                            isDarkVariant ? "border-gray-700" : "border-gray-300"
+                                        )}></div>
+                                    </div>
+                                    <div className="relative flex justify-center text-sm">
+                                        <span className={cn(
+                                            "px-2",
+                                            isDarkVariant
+                                                ? "bg-gray-800 text-gray-400"
+                                                : "bg-white text-gray-500"
+                                        )}>
+                                            OR
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-3 gap-3">
+                                    {socialButtons.map((social) => (
+                                        <button
+                                            key={social.id}
+                                            type="button"
+                                            className={cn(
+                                                "w-full inline-flex justify-center items-center py-2.5 px-4 border rounded-lg text-sm font-medium transition-all duration-300",
+                                                "hover:shadow-md active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50",
+                                                "bg-white border-gray-300 hover:bg-gray-50 cursor-pointer",
+                                                social.loading && "opacity-50 cursor-wait"
+                                            )}
+                                            onClick={social.onClick}
+                                            disabled={social.loading}
+                                            aria-label={`Sign in with ${social.label}`}
+                                        >
+                                            {social.loading ? (
+                                                <Loader2 className="animate-spin w-5 h-5" />
+                                            ) : (
+                                                social.icon
+                                            )}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Sign Up Link */}
+                        {showSignUpLink && (
+                            <div className="text-center pt-4 border-t border-gray-200 dark:border-gray-700">
+                                <p className={cn(
+                                    "text-sm",
+                                    isDarkVariant ? "text-gray-400" : "text-gray-600"
+                                )}>
+                                    Don't have an account?{" "}
+                                    <button
+                                        type="button"
+                                        onClick={handleSignUpClick}
+                                        className={cn(
+                                            "font-medium transition-colors cursor-pointer",
+                                            isDarkVariant
+                                                ? "text-blue-400 hover:text-blue-300"
+                                                : "text-blue-600 hover:text-blue-700"
+                                        )}
+                                        aria-label="Create a new account"
+                                    >
+                                        Sign Up
+                                    </button>
+                                </p>
+                            </div>
+                        )}
+                    </form>
+                </motion.div>
+            );
+        };
+
+        // For split layout, we need to handle the info panel
+        if (type === "split") {
+            const splitStyles = getSplitLayoutStyles();
+
+            return (
+                <div className={cn(containerVariants({ variant, type }), className)}>
+                    {/* Left Panel - Info */}
+                    <div
+                        className={splitStyles.leftPanelClasses}
+                        style={splitStyles.backgroundStyle}
+                    >
+                        {/* Overlay for background image */}
+                        {splitStyles.backgroundStyle.backgroundImage && (
+                            <div
+                                className="absolute inset-0"
+                                style={splitStyles.overlayStyle}
+                            />
+                        )}
+
+                        <div className="w-full h-full flex items-center justify-center relative z-10">
+                            <motion.div
+                                className="relative z-10 flex flex-col items-center justify-between w-full"
+                                initial="hidden"
+                                animate="visible"
+                            >
+                                {/* Header */}
+                                <motion.div
+                                    initial={{ x: -50, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    transition={{ duration: 0.6 }}
+                                >
+                                    <div className="flex items-center gap-3 mb-8">
+                                        {logo || defaultLogo}
+                                        <span className={cn(
+                                            "text-2xl font-bold",
+                                            splitStyles.companyNameColor
+                                        )}>
+                                            {companyName}
+                                        </span>
+                                    </div>
+                                </motion.div>
+
+                                {/* Content */}
+                                <div className="space-y-8">
+                                    <div className="space-y-6">
+                                        <motion.h1
+                                            className={cn(
+                                                "text-5xl text-center font-bold leading-tight my-10",
+                                                splitStyles.textColor
+                                            )}
+                                            initial={{ y: 20, opacity: 0 }}
+                                            animate={{ y: 0, opacity: 1 }}
+                                            transition={{ delay: 0.2 }}
+                                        >
+                                            Welcome Back<br />
+                                            to {companyName}
+                                        </motion.h1>
+                                        <motion.p
+                                            className={cn(
+                                                "text-lg text-center max-w-md my-10",
+                                                splitStyles.descriptionColor
+                                            )}
+                                            initial={{ y: 20, opacity: 0 }}
+                                            animate={{ y: 0, opacity: 1 }}
+                                            transition={{ delay: 0.3 }}
+                                        >
+                                            Sign in to access your personalized dashboard and continue where you left off.
+                                        </motion.p>
+                                    </div>
+                                </div>
+
+                                {/* Footer */}
+                                <motion.div
+                                    className={cn(
+                                        "text-sm mt-10",
+                                        splitStyles.descriptionColor
+                                    )}
+                                    initial={{ y: 20, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    transition={{ delay: 0.4 }}
+                                >
+                                    © 2024 {companyName}. All rights reserved.
+                                </motion.div>
+                            </motion.div>
+                        </div>
+                    </div>
+
+                    {/* Right Panel - Form */}
+                    <div className={splitStyles.rightPanelClasses}>
+                        {renderFormContent()}
+                    </div>
+                </div>
+            );
+        }
+
+        // Centered layout
+        return (
+            <div className={cn(containerVariants({ variant, type }), className)}>
+                {renderFormContent()}
+            </div>
+        );
+    };
+
+    SignIn.displayName = "SignIn";
+
+    export { SignIn };
+    ```
+  </TabItem>
+</Tabs>
+
+## Previews
+
+### 1. Centered Dark Layout
+Elegant dark theme with centered form layout, perfect for minimalist designs and dark mode applications.
+
+<CenteredDarkDemo/>
+
+### 2. Split Dark Layout
+Professional split layout with extensive left panel customization, ideal for enterprise applications and security-focused platforms.
+
+<SplitDarkDemo/>
+
+{/* ### 3. Fully Customizable Layout
+Complete control over every aspect with interactive controls, perfect for marketing websites and product demos.
+
+<FullyCustomizableDemo/> */}
+
+
+
+## Quick Start
+
+Import the component and start using it:
+
+```tsx
+
+import { SignIn } from '@site/src/components/UI/sign-in';
+
+function LoginPage() {
+  const handleSubmit = async (data) => {
+    console.log('User data:', data);
+    // Your authentication logic here
+  };
+
+  return (
+    <SignIn 
+      type="centered"
+      variant="dark"
+      companyName="MyApp"
+      onSubmit={handleSubmit}
+      showSocialLogin={true}
+    />
+  );
+}
+```
+
+## Usage Examples
+
+### Form Handling with Validation
+<div className="w-full h-[500px] overflow-y-scroll">
+    ```tsx
+import React, { useState } from 'react';
+import { SignIn } from '@site/src/components/UI/sign-in';
+
+function ControlledSignIn() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  
+  const handleSubmit = async (data) => {
+    setLoading(true);
+    setError('');
+    
+    try {
+      // Your API call here
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
+      
+      // Handle successful login
+      console.log('Login successful:', data);
+    } catch (error) {
+      setError('Invalid credentials. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <SignIn 
+      onSubmit={handleSubmit}
+      loading={loading}
+      error={error}
+      type="centered"
+      variant="default"
+      companyName="MyApp"
+    />
+  );
+}
+```
+    </div>
+
+
+
+### Social Login Integration
+<div className="w-full h-[500px] overflow-y-scroll">
+```tsx
+import React from 'react';
+import { SignIn } from '@site/src/components/UI/sign-in';
+
+function SocialSignIn() {
+  const handleGoogleSignIn = async () => {
+    // Implement Google OAuth
+    window.location.href = '/api/auth/google';
+  };
+
+  const handleGitHubSignIn = async () => {
+    // Implement GitHub OAuth
+    window.location.href = '/api/auth/github';
+  };
+
+  return (
+    <SignIn 
+      type="centered"
+      variant="modern"
+      companyName="SocialApp"
+      showSocialLogin={true}
+      onGoogleSignIn={handleGoogleSignIn}
+      onGitHubSignIn={handleGitHubSignIn}
+      onMicrosoftSignIn={() => console.log('Microsoft sign-in')}
+    />
+  );
+}
+```
+</div>
+
+## Advanced Customization
+
+### Left Panel Content Customization (Split Layout Only)
+The SignIn component allows extensive customization of the left panel content in split layout:
+<div className="w-full h-[500px] overflow-y-scroll">
+```tsx
+<SignIn
+  type="split"
+  variant="modern"
+  companyName="CustomApp"
+  leftPanelContent={{
+    // Custom title (can be string or React node)
+    title: (
+      <div className="space-y-2">
+        <div className="text-4xl font-bold">Welcome Back</div>
+        <div className="text-3xl font-bold text-blue-400">to CustomApp</div>
+      </div>
+    ),
+    
+    // Custom description
+    description: "Experience the future of productivity with AI-powered tools and seamless collaboration.",
+    
+    // Custom subtitle
+    subtitle: "Join 10,000+ innovative teams",
+    
+    // Custom features list
+    features: [
+      {
+        text: "AI-powered insights & automation",
+        icon: <Zap className="w-5 h-5" />,
+        iconColor: "text-yellow-400",
+        textClassName: "font-bold text-white",
+      },
+      {
+        text: "Real-time team collaboration",
+        icon: <Users className="w-5 h-5" />,
+        iconColor: "text-green-400",
+        textClassName: "font-bold text-white",
+      },
+      {
+        text: "Enterprise-grade security",
+        icon: <Shield className="w-5 h-5" />,
+        iconColor: "text-blue-400",
+        textClassName: "font-bold text-white",
+      },
+    ],
+    
+    // Statistics display
+    statistics: [
+      {
+        value: "10K+",
+        label: "Teams",
+        subtext: "Worldwide",
+      },
+      {
+        value: "40%",
+        label: "Faster",
+        subtext: "Productivity gain",
+      },
+      {
+        value: "99.9%",
+        label: "Uptime",
+        subtext: "Guaranteed SLA",
+      },
+    ],
+    
+    // Customer testimonials
+    testimonials: [
+      {
+        quote: "This platform transformed how our team works. We're shipping features 2x faster!",
+        author: "Alex Chen",
+        role: "CTO, TechStartup",
+      },
+      {
+        quote: "The AI insights have helped us identify bottlenecks we never knew existed.",
+        author: "Maria Rodriguez",
+        role: "Product Lead, GrowthLabs",
+      },
+    ],
+    
+    // Custom footer text
+    footerText: (
+      <div className="text-sm">
+        <span className="font-bold">© 2024 CustomApp</span>
+        <span className="opacity-70 ml-2">• All rights reserved • ISO 27001 Certified</span>
+      </div>
+    ),
+    
+    // Layout options
+    layout: {
+      align: "left", // "left" | "center" | "right"
+      maxWidth: "max-w-lg",
+      animate: true,
+    },
+    
+    // Animation configuration
+    animationConfig: {
+      titleDelay: 0.2,
+      descriptionDelay: 0.3,
+      featuresDelay: 0.4,
+      staggerChildren: 0.1,
+    },
+  }}
+  splitBackground={{
+    gradient: "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900",
+    textColor: "text-white",
+  }}
+  onSubmit={handleSubmit}
+/>
+```
+</div>
+### Complete Custom Content Example
+<div className="w-full h-[500px] overflow-y-scroll">
+```tsx
+<SignIn
+  type="split"
+  variant="dark"
+  companyName="InnovateCorp"
+  leftPanelContent={{
+    hideBranding: false,
+    customContent: (
+      <div className="w-full h-full flex flex-col items-center justify-center p-12">
+        <div className="text-center space-y-8">
+          <div className="space-y-4">
+            <div className="text-6xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text 
+                text-transparent">
+              Welcome Back
+            </div>
+            <div className="text-2xl text-gray-300">
+              To the Future of Work
+            </div>
+          </div>
+          
+          <div className="max-w-lg mx-auto space-y-6">
+            <div className="text-lg text-gray-400">
+              Experience the next generation of team collaboration. 
+              Powered by AI and designed for humans.
+            </div>
+            
+            <div className="grid grid-cols-2 gap-6 pt-8">
+              <div className="bg-white/5 p-4 rounded-lg backdrop-blur-sm">
+                <div className="text-3xl font-bold text-cyan-400">10x</div>
+                <div className="text-sm text-gray-400">Faster Onboarding</div>
+              </div>
+              <div className="bg-white/5 p-4 rounded-lg backdrop-blur-sm">
+                <div className="text-3xl font-bold text-blue-400">24/7</div>
+                <div className="text-sm text-gray-400">AI Assistance</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    ),
+  }}
+  splitBackground={{
+    gradient: "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900",
+  }}
+  onSubmit={handleSubmit}
+/>
+```
+</div>
+
+
+## Props
+### Basic Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `type` | `'centered' \| 'split'` | `'centered'` | Layout type - centered or split layout |
+| `variant` | `'default' \| 'modern' \| 'glass' \| 'dark'` | `'default'` | Visual theme variant for the form |
+| `companyName` | `string` | `'YourBrand'` | Company/brand name displayed in split layout |
+| `logo` | `React.ReactNode` | `-` | Custom logo component |
+| `loading` | `boolean` | `false` | Loading state for form submission |
+| `error` | `string` | `''` | Error message to display above the form |
+| `showSocialLogin` | `boolean` | `true` | Show/hide social login buttons |
+| `showForgotPassword` | `boolean` | `true` | Show/hide forgot password link |
+| `showSignUpLink` | `boolean` | `true` | Show/hide sign up link |
+| `onSubmit` | `(data: SignInFormData) => void` | `-` | Callback function when form is submitted |
+| `onSignUp` | `() => void` | `-` | Callback function when user clicks sign-up link |
+| `onGoogleSignIn` | `() => void` | `-` | Callback function for Google sign-in |
+| `onGitHubSignIn` | `() => void` | `-` | Callback function for GitHub sign-in |
+| `onMicrosoftSignIn` | `() => void` | `-` | Callback function for Microsoft sign-in |
+| `className` | `string` | `-` | Additional className for the component |
+
+### Split Background Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `splitBackground.gradient` | `string` | `-` | Background gradient classes for left panel |
+| `splitBackground.textColor` | `string` | `-` | Text color for left panel |
+| `splitBackground.companyNameColor` | `string` | `-` | Override company name color |
+| `splitBackground.descriptionColor` | `string` | `-` | Override description color |
+| `splitBackground.leftPanelClassName` | `string` | `-` | Custom left panel className |
+| `splitBackground.backgroundImage` | `string` | `-` | Background image URL |
+| `splitBackground.overlayColor` | `string` | `-` | Overlay color for background image |
+| `splitBackground.rightPanelClassName` | `string` | `-` | Custom right panel className |
+
+### Button Style Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `buttonStyle.gradient` | `string` | `-` | Background gradient classes for sign in button |
+| `buttonStyle.hoverGradient` | `string` | `-` | Hover gradient classes for sign in button |
+| `buttonStyle.textColor` | `string` | `-` | Text color for sign in button |
+| `buttonStyle.shadow` | `string` | `-` | Button shadow classes |
+| `buttonStyle.hoverShadow` | `string` | `-` | Hover shadow classes |
+| `buttonStyle.className` | `string` | `-` | Custom button className |
+
+### Left Panel Content Props (Split Layout Only)
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `leftPanelContent.title` | `string \| React.ReactNode` | `-` | Custom title text or component |
+| `leftPanelContent.description` | `string \| React.ReactNode` | `-` | Custom description text or component |
+| `leftPanelContent.subtitle` | `string \| React.ReactNode` | `-` | Custom subtitle text or component |
+| `leftPanelContent.features` | `Array<Feature>` | `-` | Features/benefits list with icons and colors |
+| `leftPanelContent.testimonials` | `Array<Testimonial>` | `-` | Customer testimonials/quotes |
+| `leftPanelContent.statistics` | `Array<Statistic>` | `-` | Statistics to display with values and labels |
+| `leftPanelContent.customContent` | `React.ReactNode` | `-` | Complete custom content (overrides all other content) |
+| `leftPanelContent.footerText` | `string \| React.ReactNode` | `-` | Custom footer text or component |
+| `leftPanelContent.hideBranding` | `boolean` | `-` | Hide default logo and company name |
+| `leftPanelContent.contentClassName` | `string` | `-` | Additional className for content container |
+| `leftPanelContent.layout` | `Object` | `-` | Layout options (align, maxWidth, animate) |
+| `leftPanelContent.animationConfig` | `Object` | `-` | Animation timing configuration |

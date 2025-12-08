@@ -71,6 +71,7 @@
         "components/breadcrumbs",
         "components/button",
         "components/card",
+        "components/checkbox",
         "components/dialog-box",
         "components/drawer",
         "components/dropdown",
@@ -85,7 +86,8 @@
         "components/table",
         "components/textarea",
         "components/toast",
-        "components/tooltip"
+        "components/tooltip",
+        "components/typography"
       ]
     },
     {
@@ -120,7 +122,8 @@
                 "type": "category",
                 "label": "Authentication",
                 "items": [
-                  "templates/pages/authentication/forgot-password-page"
+                  "templates/pages/authentication/forgot-password-page",
+                  "templates/pages/sign-in"
                 ]
           }]
         }

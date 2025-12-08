@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
 
 // Mock onSubmit handler
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const handleSubmit = (data: any) => {
     console.log("Form submitted:", data);
     return new Promise((resolve) => setTimeout(resolve, 2000));

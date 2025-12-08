@@ -40,11 +40,20 @@ const VariantSelector: React.FC<VariantSelectorProps> = ({
 
 // Main Demo Component
 const formVariants = ['default', 'modern', 'glass', 'dark'];
+<<<<<<< HEAD
 const formStates = ['default', 'loading', 'success', 'with-errors'];
 
 const CenteredSignupFormDemo = () => {
     const [variant, setVariant] = useState('default');
     const [formState, setFormState] = useState('default');
+=======
+
+const CenteredSignupFormDemo = () => {
+    const [variant, setVariant] = useState('default');
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [formState, setFormState] = useState('default');
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+>>>>>>> df41387 (feat(docs): complete sign-in implementation across storybook, docs, registry and UI components)
     const [showThemeToggle, setShowThemeToggle] = useState(false);
 
     // Mock form submission handler
