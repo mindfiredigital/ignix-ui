@@ -108,7 +108,6 @@
           "label": "Layouts",
           "items": [
             "templates/layouts/single-column-layout", 
-            "templates/pages/sign-up",
             "templates/layouts/sidebar-left-layout",
             "templates/layouts/sidebar-right-layout",
             "templates/layouts/full-height-sidebar-layout",
@@ -124,7 +123,8 @@
                 "items": [
                   "templates/pages/authentication/forgot-password-page",
                   "templates/pages/sign-in",
-                  "templates/pages/authentication/reset-password-page"
+                  "templates/pages/authentication/reset-password-page",
+                  "templates/pages/authentication/sign-up"
                 ]
           }]
         }
