@@ -1,7 +1,6 @@
 // TypographyDemo.tsx
 import React, { useState } from 'react';
 import { Typography } from '@site/src/components/UI/typography';
-import VariantSelector from './VariantSelector';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import CodeBlock from '@theme/CodeBlock';

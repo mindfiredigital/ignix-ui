@@ -1,6 +1,6 @@
 
 import { SingleColumnLayout } from "./index";
-import { Card } from "../../card";
+import { Card } from "../../../components/card";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 // Reusable content component for consistency across all stories
@@ -28,7 +28,7 @@ const DemoContent = () => (
 );
 
 const meta: Meta<typeof SingleColumnLayout> = {
-    title: "Layouts/SingleColumnLayout",
+    title: "Templates/Layouts/SingleColumnLayout",
     component: SingleColumnLayout,
     parameters: {
         layout: "fullscreen",
