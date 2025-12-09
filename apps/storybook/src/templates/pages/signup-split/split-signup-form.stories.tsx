@@ -3,10 +3,10 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
 
 // Mock onSubmit handler
-const handleSubmit = (data: any) => {
-    console.log("Form submitted:", data);
-    return new Promise((resolve) => setTimeout(resolve, 2000));
-};
+// const handleSubmit = (data: any) => {
+//     console.log("Form submitted:", data);
+//     return new Promise((resolve) => setTimeout(resolve, 2000));
+// };
 
 const meta: Meta<typeof SplitSignupForm> = {
     title: "Templates/Pages/Forms/SplitSignupForm",

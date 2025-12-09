@@ -2,11 +2,11 @@
 
 import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { AnimatedInput } from "../../../components/input";
-import { Button } from "../../../components/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/card";
+import { AnimatedInput } from "../input";
+import { Button } from "../button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../card";
 import { Lock, Key, CheckCircle2, Shield, XCircle } from "lucide-react";
-import { cn } from "../../../../utils/cn";
+import { cn } from "../../../utils/cn";
 
 interface PasswordStrength {
   score: number; // 0-4
@@ -96,6 +96,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({
     return token.length >= 6 && token.length <= 32;
   };
 
+  // Handle input changes
   const handleTokenChange = (value: string) => {
     setResetToken(value);
     if (value && !validateToken(value)) {
@@ -105,6 +106,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({
     }
   };
 
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -136,6 +138,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({
     }, 1500);
   };
 
+  // Determine if form can be submitted
   const passwordsMatch = password === confirmPassword || confirmPassword.length === 0;
   const canSubmit = 
     resetToken && 
@@ -238,6 +241,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({
                         : undefined
                     }
                     success={password.length > 0 && passwordStrength.score == 4}
+                    successMessage="Strong password achieved"
                   />
 
                   {/* Password Strength Indicator */}
