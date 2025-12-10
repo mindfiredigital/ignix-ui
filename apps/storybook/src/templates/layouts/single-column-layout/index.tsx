@@ -9,7 +9,7 @@ import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../../utils/cn";
-import { Button } from "../../button";
+import { Button } from "../../../components/button";
 import { ChevronRight, Home, Menu, X } from "lucide-react";
 
 // Types
