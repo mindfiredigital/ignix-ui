@@ -1,6 +1,6 @@
 
-import { SingleColumnLayout } from "./index";
 import { Card } from "../../../components/card";
+import { SingleColumnLayout } from "./index";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 // Reusable content component for consistency across all stories

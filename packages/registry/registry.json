@@ -666,6 +666,24 @@
         }
       }
     }
+    },
+    "otpVerification": {
+      "name": "otpVerification",
+      "description": "A fully responsive OTP (One-Time Password) verification component that provides configurable input length, animations, themes, auto-focus behavior, and paste-to-autofill support.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "button"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/otp-verification/index.tsx",
+          "type": "template"
+        }
+      }
     }
   }
 }

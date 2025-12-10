@@ -123,7 +123,8 @@
                 "items": [
                   "templates/pages/authentication/forgot-password-page",
                   "templates/pages/sign-in",
-                  "templates/pages/authentication/sign-up"
+                  "templates/pages/authentication/sign-up",
+                  "templates/pages/authentication/otp-verification-page"
                 ]
           }]
         }
