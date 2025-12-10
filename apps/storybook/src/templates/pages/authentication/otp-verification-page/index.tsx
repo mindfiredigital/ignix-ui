@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button } from "@ignix-ui/button";
+import { Button } from "../../../../components/button";
+import { cn } from "../../../../../utils/cn";
 import { cva, type VariantProps } from "class-variance-authority";
 import { motion } from "framer-motion";
 import { Pencil } from "lucide-react";
 import { z } from "zod";
-import { cn } from "../../../utils/cn";
 
 type animationKeys = keyof typeof animationVariant;
 
@@ -13,9 +13,9 @@ export interface OTPVerificationProps {
   navigateToLabel?: string;
   submitButtonLabel?: string;
   title?: string;
+  statement?: string;
   contactType?: "email" | "phone";
   contactDetail?: string;
-  resendCooldown?: number,
   length?: number
   onNavigateTo?: () => void; // open-source-friendly navigation callback
   onVerifyOtp?: (code: string) => Promise<{ success: boolean; message?: string }>
@@ -112,7 +112,6 @@ const OTPVerificationPageContent: React.FC<OTPVerificationProps> = ({
   onResendOtp,
   length = 6,
   variant = "dark",
-  resendCooldown = 30,
   animation = "fadeUp"
 }) => {
   const [cooldown, setCooldown] = useState(0);
@@ -122,8 +121,6 @@ const OTPVerificationPageContent: React.FC<OTPVerificationProps> = ({
   const [contact, setContact] = useState(contactDetail);
   const handleNavigateTo = () => onNavigateTo?.();
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-  const [codeSuccess, setCodeSuccess] = useState<string | null>(null);
   const [codeError, setCodeError] = useState<string | null>(null);
   const [editValue, setEditValue] = useState(contactDetail);
 
@@ -138,30 +135,17 @@ const OTPVerificationPageContent: React.FC<OTPVerificationProps> = ({
     inputsRef.current[0]?.focus();
   }, []);
 
-  useEffect(() => {
-    setContact(contactDetail);
-    setEditValue(contactDetail);
-  }, [contactDetail]);
-
-  useEffect(() => {
-    if (cooldown === 0) {
-      setSuccess(null);
-      setCodeSuccess(null);
-      setCodeError(null);
-    }
-  }, [cooldown]);
-
   const handleResend = async () => {
     if (!onResendOtp) {
       // Fallback for open-source usage
-      setCooldown(resendCooldown);
+      setCooldown(30);
       return;
     }
+
     const result = await onResendOtp(contact, contactType);
 
     if (result.success) {
-      setCooldown(resendCooldown);  // start cooldown only on success
-      setSuccess(result.message || "OTP send Successfully!");
+      setCooldown(30);  // start cooldown only on success
     } else {
       setCodeError(result.message || "Failed to resend code");
     }
@@ -251,56 +235,35 @@ const OTPVerificationPageContent: React.FC<OTPVerificationProps> = ({
   };
 
   // called when finalizing edit (on blur or Enter)
-  const finalizeEdit = (contactType: 'email' | 'phone', value: string) => {
+  const finalizeEdit = (contactType: 'email'| 'phone', value: string ) => {
     const val = value.trim();
-
     if (!val) {
       setError("Value cannot be empty");
       return;
     }
-
     const res = validateContact(contactType, val);
-
     if (res.ok) {
-      if (contactType === "phone") {
-        // Format phone
-        const formatted = formatPhone(val);
-        setContact(formatted);
-        setEditValue(formatted);
-      } else {
-        setContact(val);
-      }
-
+      const newContact = (res.type === "phone" && (res as any).normalized) ? (res as any).normalized : val;
+      setContact(newContact);
       setError(null);
       setIsEditing(false);
     } else {
       setError(res.error ?? "Invalid contact");
-      setContact(val);
+      setContact(val)
     }
   };
 
-  // Format phone to 999 999 9999
-  const formatPhone = (value: string) => {
-    const digits = value.replace(/\D/g, ""); // remove everything except digits
-
-    if (digits.length <= 3) return digits;
-    if (digits.length <= 6) return `${digits.slice(0, 3)} ${digits.slice(3)}`;
-    return `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6, 10)}`;
-  };
-
-  // -------------- Verify Handler ------------------
   const handleVerify = async () => {
-    const code = values.current.join("");
+    const code = values.current.join(""); // collect all digits
 
-    setCodeError(null);
-    setCodeSuccess(null);
+    setCodeError(null)
 
     if (code.length !== length) {
       setCodeError("Please enter the full code");
       return;
     }
-
-    if (!onVerifyOtp) return;
+    
+    if (!onVerifyOtp) return; // open source safe default
 
     const result = await onVerifyOtp(code);
 
@@ -309,7 +272,8 @@ const OTPVerificationPageContent: React.FC<OTPVerificationProps> = ({
       return;
     }
 
-    setCodeSuccess(result.message || "OTP verified successfully");
+    // Clear errors & continue
+    setCodeError(null);
   };
 
   // Dynamic card width
@@ -342,10 +306,9 @@ const OTPVerificationPageContent: React.FC<OTPVerificationProps> = ({
             We sent a code to your {contactType}
 
           {!isEditing ? (
-            <span className="flex items-center gap-2" aria-label="contact">
+            <span className="flex items-center gap-2">
               {contact}
               <Pencil
-                aria-label="pencil"
                 size={16}
                 className="ml-1 cursor-pointer text-gray-400 hover:text-gray-200 transition"
                 onClick={() => {
@@ -357,7 +320,6 @@ const OTPVerificationPageContent: React.FC<OTPVerificationProps> = ({
             </span>
           ) : (
             <input
-              aria-label="editValue"
               value={editValue}
               onChange={(e) => {
                 setEditValue(e.target.value);
@@ -380,8 +342,7 @@ const OTPVerificationPageContent: React.FC<OTPVerificationProps> = ({
               )}
             />
           )}
-          {error && <span className="text-red-500 text-sm mt-1" aria-label="error">{error}</span>}
-          {success && <span className="text-green-500 text-sm mt-1" aria-label="success">{success}</span>}
+          {error && <span className="text-red-500 text-sm mt-1">{error}</span>}
           </p>
         </div>
 
@@ -395,11 +356,10 @@ const OTPVerificationPageContent: React.FC<OTPVerificationProps> = ({
           initial={animationVariant[animation].initial}
           animate={animationVariant[animation].animate}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          className="flex flex-wrap gap-2 sm:gap-3 justify-center">
+          className="flex gap-2 sm:gap-3 justify-center">
           {Array.from({ length }).map((_, i) => (
             <input
               key={i}
-              aria-label="otp-input"
               type="text"
               maxLength={1}
               ref={(el) => {(inputsRef.current[i] = el)}}
@@ -412,7 +372,7 @@ const OTPVerificationPageContent: React.FC<OTPVerificationProps> = ({
         </motion.div>
 
         {codeError && <span className="text-red-500 text-sm mt-1">{codeError}</span>}
-        {codeSuccess && <span className="text-green-500 text-sm mt-1">{codeSuccess}</span>}
+
         {/* Submit */}
         <div className="flex justify-center mt-5">
           <Button

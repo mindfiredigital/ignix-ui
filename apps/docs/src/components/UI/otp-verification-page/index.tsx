@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button } from "@ignix-ui/button";
+import { Button } from "../../../components/UI/button";
 import { cva, type VariantProps } from "class-variance-authority";
 import { motion } from "framer-motion";
 import { Pencil } from "lucide-react";
 import { z } from "zod";
-import { cn } from "../../../utils/cn";
+import { cn } from "@site/src/utils/cn";
 
 type animationKeys = keyof typeof animationVariant;
 
@@ -161,7 +161,7 @@ const OTPVerificationPageContent: React.FC<OTPVerificationProps> = ({
 
     if (result.success) {
       setCooldown(resendCooldown);  // start cooldown only on success
-      setSuccess(result.message || "OTP send Successfully!");
+      setSuccess(result.message);
     } else {
       setCodeError(result.message || "Failed to resend code");
     }
@@ -342,10 +342,9 @@ const OTPVerificationPageContent: React.FC<OTPVerificationProps> = ({
             We sent a code to your {contactType}
 
           {!isEditing ? (
-            <span className="flex items-center gap-2" aria-label="contact">
+            <span className="flex items-center gap-2">
               {contact}
               <Pencil
-                aria-label="pencil"
                 size={16}
                 className="ml-1 cursor-pointer text-gray-400 hover:text-gray-200 transition"
                 onClick={() => {
@@ -357,7 +356,6 @@ const OTPVerificationPageContent: React.FC<OTPVerificationProps> = ({
             </span>
           ) : (
             <input
-              aria-label="editValue"
               value={editValue}
               onChange={(e) => {
                 setEditValue(e.target.value);
@@ -380,8 +378,8 @@ const OTPVerificationPageContent: React.FC<OTPVerificationProps> = ({
               )}
             />
           )}
-          {error && <span className="text-red-500 text-sm mt-1" aria-label="error">{error}</span>}
-          {success && <span className="text-green-500 text-sm mt-1" aria-label="success">{success}</span>}
+          {error && <span className="text-red-500 text-sm mt-1">{error}</span>}
+          {success && <span className="text-green-500 text-sm mt-1">{success}</span>}
           </p>
         </div>
 
@@ -399,7 +397,6 @@ const OTPVerificationPageContent: React.FC<OTPVerificationProps> = ({
           {Array.from({ length }).map((_, i) => (
             <input
               key={i}
-              aria-label="otp-input"
               type="text"
               maxLength={1}
               ref={(el) => {(inputsRef.current[i] = el)}}
@@ -449,7 +446,6 @@ const OTPVerificationPageContent: React.FC<OTPVerificationProps> = ({
             variant === "default" ? "text-black" : "text-white"
           }/>
         </div>
-        
       </div>
     </div>
   );
