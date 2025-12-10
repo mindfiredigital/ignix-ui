@@ -666,6 +666,25 @@
         }
       }
     }
+    },
+    "resetPassword": {
+      "name": "ResetPassword",
+      "description": "A reset password page template with responsive design and form validation.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react"
+      ],
+      "componentDependencies": [
+        "button",
+        "input",
+        "card"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/reset-password/index.tsx",
+          "type": "template"
+        }
+      }
     }
   }
 }
