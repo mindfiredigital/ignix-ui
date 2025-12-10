@@ -151,6 +151,7 @@ export const addCommand = new Command()
         }
         break;
       }
+
       default:
         logger.error(`Unknown namespace: '${namespace}'. Please use 'component' or 'theme'.`);
         process.exit(1);

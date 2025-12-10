@@ -24,17 +24,17 @@ The **Sidebar-Left** component provides a complete layout solution with a header
 <Tabs>
   <TabItem value="cli" label="CLI" default>
     ```bash
-    ignix add template sidebarleftlayout
+    ignix add component SidebarLeftLayout
     ```
   </TabItem>
   <TabItem value="manual" label="manual" className="max-h-[500px] overflow-y-auto">
   ```tsx
-  import * as React from "react";
+import * as React from "react";
 import { motion, AnimatePresence, type PanInfo } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
-import { SidebarProvider, useSidebar } from "../sidebar";
 import { Menu, X } from "lucide-react";
-import { cn } from "@site/src/utils/cn";
+import { cn } from "../../../utils/cn";
+import { SidebarProvider, useSidebar } from "@ignix-ui/sidebar";
  
 export interface SideBarLeftLayoutProps {
   header?: React.ReactNode;
@@ -116,7 +116,6 @@ const SideBarLeftLayoutContent: React.FC<SideBarLeftLayoutProps> = ({
 }) => {
   const { isOpen, setIsOpen } = useSidebar();
   const [isMobile, setIsMobile] = React.useState(false);
-  const { onClose } = useSidebar()
   
   // Map user-friendly widths to pixel values
   const sidebarWidths: Record<string, number> = {
@@ -335,13 +334,12 @@ SideBarLeftLayout.displayName = "SideBarLeftLayout";
   </TabItem>
 </Tabs>
 
-
 ## Usage
 
 ```tsx
-  import { SideBarLeftLayout } from "./templates/layouts/sidebar-left-layout";
+  import { SideBarLeftLayout } from "@src/components/templates/layouts/sidebarleftlayout";
 
-    function TemplateSideBarLayoutDemo() {
+    function App() {
       return (
         <SideBarLeftLayout
           variant="default"
@@ -357,7 +355,7 @@ SideBarLeftLayout.displayName = "SideBarLeftLayout";
           footer={<div>Footer Content</div>}
           children={<div>Main Content</div>}
         >
-        </SidebarLeftLayout>
+        </SideBarLeftLayout>
       );
     }
 ```

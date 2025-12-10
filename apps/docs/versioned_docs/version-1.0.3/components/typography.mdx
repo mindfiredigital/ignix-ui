@@ -1,0 +1,253 @@
+---
+sidebar_position: 7
+title: Typography
+description: A simple yet powerful typography component with multiple variants and styling options.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { Typography } from '@site/src/components/UI/typography';
+import { TypographyDemo, HeadingHierarchyDemo, TextCombinationDemo, InteractiveFeaturesDemo } from '@site/src/components/Demo/TypographyDemo';
+
+## Overview
+
+A single `Typography` component that handles all your text needs with consistent sizing, weights, colors, and spacing through simple props.
+
+## Installation
+
+```bash
+ignix add component typography
+```
+
+## Preview
+
+<Tabs defaultValue="preview">
+  <TabItem value="preview" label="Preview" default>
+    <div className="p-4 border rounded-lg">
+      <div className="space-y-4">
+        <Typography variant="h1">Heading 1 - Page Title</Typography>
+        <Typography variant="h2">Heading 2 - Section</Typography>
+        <Typography variant="h3">Heading 3 - Subsection</Typography>
+        <Typography variant="h4">Heading 4 - Minor Heading</Typography>
+        <Typography variant="h5">Heading 5 - Small Heading</Typography>
+        <Typography variant="h6">Heading 6 - Smallest Heading</Typography>
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    import { Typography } from './components/ui';
+
+    function MyComponent() {
+      return (
+            <div>
+                <Typography variant="h1">Heading 1 - Page Title</Typography>
+                <Typography variant="h2">Heading 2 - Section</Typography>
+                <Typography variant="h3">Heading 3 - Subsection</Typography>
+                <Typography variant="h4">Heading 4 - Minor Heading</Typography>
+                <Typography variant="h5">Heading 5 - Small Heading</Typography>
+                <Typography variant="h6">Heading 6 - Smallest Heading</Typography>
+            </div>
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+
+
+## Usage
+
+### Basic Usage
+<Tabs defaultValue="preview">
+  <TabItem value="preview" label="Preview" default>
+    <div className="p-4 border rounded-lg">
+        <div className="space-y-4">
+        <Typography variant="h1">Main Title</Typography>
+        <Typography variant="h2">Section Heading</Typography>
+        <Typography variant="body-large">
+            Large body text perfect for introductory paragraphs or lead content.
+        </Typography>
+        <Typography variant="body">
+            This is the main content of your page. It provides detailed 
+            information and supports the main points.
+        </Typography>
+        <Typography variant="body-small">
+            Small body text for secondary information, notes, or less important content.
+        </Typography>
+        <Typography variant="label">Additional information label</Typography>
+        </div>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    import { Typography } from '@mindfiredigital/ignix-ui';
+
+    function BasicTypography() {
+    return (
+        <div>
+            <Typography variant="h1">Main Title</Typography>
+            <Typography variant="h2">Section Heading</Typography>
+            <Typography variant="body-large">
+                Large body text perfect for introductory paragraphs or lead content.
+            </Typography>
+            <Typography variant="body">
+                This is the main content of your page. It provides detailed 
+                information and supports the main points.
+            </Typography>
+            <Typography variant="body-small">
+                Small body text for secondary information, notes, or less important content.
+            </Typography>
+            <Typography variant="label">Additional information label</Typography>
+        </div>
+    );
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+### Colors
+<Tabs defaultValue="preview"> 
+<TabItem value="preview" label="Preview" default> 
+<div className="p-4 border rounded-lg"> 
+<div className="space-y-4"> {/* Colors */} 
+<Typography color="success">Success message</Typography> 
+<Typography color="error">Error message</Typography> 
+<Typography color="warning">Warning message</Typography> 
+</div> 
+
+</div> 
+</TabItem> 
+<TabItem value="code" label="Code"> 
+```tsx 
+<div> 
+    <Typography color="success">Success message</Typography> 
+    <Typography color="error">Error message</Typography> 
+    <Typography color="warning">Warning message</Typography> 
+</div> 
+``` 
+</TabItem> 
+</Tabs>
+
+### Font Weights
+<Tabs defaultValue="preview"> 
+<TabItem value="preview" label="Preview" default> 
+<div className="p-4 border rounded-lg"> 
+<div className="space-y-4"> 
+{/* Weights */} 
+<Typography weight="light">Light weight</Typography> 
+<Typography weight="normal">Normal weight</Typography> 
+<Typography weight="bold">Bold weight</Typography> 
+</div> 
+</div> 
+</TabItem> 
+<TabItem value="code" label="Code"> 
+```tsx 
+<div> 
+    <Typography weight="light">Light weight</Typography> 
+    <Typography weight="normal">Normal weight</Typography> 
+    <Typography weight="bold">Bold weight</Typography> 
+</div> 
+``` 
+</TabItem> 
+</Tabs>
+
+### Text Alignment
+<Tabs defaultValue="preview"> 
+<TabItem value="preview" label="Preview" default> 
+<div className="p-4 border rounded-lg"> 
+<div className="space-y-4"> 
+{/* Alignment */} 
+<Typography align="left">Left aligned text</Typography> 
+<Typography align="center">Centered text</Typography> <Typography align="right">Right aligned text</Typography> 
+</div> 
+</div> 
+</TabItem> 
+<TabItem value="code" label="Code"> 
+```tsx 
+<div> 
+    <Typography align="left">Left aligned text</Typography> 
+    <Typography align="center">Centered text</Typography> 
+    <Typography align="right">Right aligned text</Typography> 
+</div> 
+```
+</TabItem> 
+</Tabs>
+
+### Text Decorations
+<Tabs defaultValue="preview"> 
+<TabItem value="preview" label="Preview" default> 
+<div className="p-4 border rounded-lg"> 
+<div className="space-y-4"> 
+{/* Decorations */} 
+<Typography decoration="overline">Overlined text</Typography> 
+<Typography decoration="underline">Underlined text</Typography> 
+<Typography decoration="line-through">Strikethrough text</Typography> 
+</div> 
+</div> 
+</TabItem> 
+<TabItem value="code" label="Code"> 
+```tsx 
+<div> 
+    <Typography decoration="overline">Overlined text</Typography>
+    <Typography decoration="underline">Underlined text</Typography> 
+    <Typography decoration="line-through">Strikethrough text</Typography> 
+</div> 
+``` 
+</TabItem> 
+</Tabs>
+
+### Text Transforms
+<Tabs defaultValue="preview"> 
+<TabItem value="preview" label="Preview" default> 
+<div className="p-4 border rounded-lg"> 
+<div className="space-y-4"> 
+{/* Transforms */} 
+<Typography transform="uppercase">Uppercase text</Typography> 
+<Typography transform="lowercase">Lowercase text</Typography> 
+<Typography transform="capitalize">Capitalized text</Typography> 
+</div> 
+</div> 
+</TabItem> 
+<TabItem value="code" label="Code"> 
+```tsx 
+<div> 
+    <Typography transform="uppercase">Uppercase text</Typography> 
+    <Typography transform="lowercase">Lowercase text</Typography> 
+    <Typography transform="capitalize">Capitalized text</Typography> 
+</div> 
+``` 
+</TabItem> 
+</Tabs>
+
+
+{/* ## Examples */}
+{/* Interactive Demo */}
+{/* <TypographyDemo /> */}
+
+{/* Heading Hierarchy */}
+{/* <HeadingHierarchyDemo /> */}
+
+{/* Text Combination */}
+{/* <TextCombinationDemo /> */}
+
+## Interactive Features
+
+<InteractiveFeaturesDemo />
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `'h1' \| 'h2' \| 'h3' \| 'h4' \| 'h5' \| 'h6' \| 'body-large' \| 'body' \| 'body-small' \| 'lead' \| 'large' \| 'small' \| 'label' \| 'caption' \| 'muted' \| 'link' \| 'code' \| 'blockquote' \| 'list'` |	'body' |	The typography variant/style |
+| `color` | `'default' \| 'primary' \| 'secondary' \| 'muted' \| 'error' \| 'success' \| 'warning' \| 'inherit'` | `'default'` | Text color variant |
+| `weight` | `'light' \| 'normal' \| 'medium' \| 'semibold' \| 'bold'` | `'normal'` | Font weight |
+| `align` | `'left' \| 'center' \| 'right' \| 'justify'` | `'left'` | Text alignment |
+| `decoration` | `'none' \| 'underline' \| 'line-through' \| 'overline'` | `'none'` | Text decoration |
+| `transform` | `'normal' \| 'uppercase' \| 'lowercase' \| 'capitalize'` | `'normal'` | Text transformation |
+| `hover` | `'none' \| 'underline' \| 'color' \| 'scale'` | `'none'` | Hover effect style |
+| `mark` | `boolean` | `false` | Whether to highlight text with mark tag |
+| `truncate` | `boolean` | `false` | Whether to truncate text with ellipsis |
+| `asChild` | `boolean` | `false` | Merge props onto child element |
+| `as` | `React.ElementType` | - | Custom HTML element to render |
+| `className` | `string` | - | Additional CSS classes to apply

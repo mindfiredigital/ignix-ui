@@ -71,6 +71,7 @@
         "components/breadcrumbs",
         "components/button",
         "components/card",
+        "components/checkbox",
         "components/dialog-box",
         "components/drawer",
         "components/dropdown",
@@ -85,7 +86,8 @@
         "components/table",
         "components/textarea",
         "components/toast",
-        "components/tooltip"
+        "components/tooltip",
+        "components/typography"
       ]
     },
     {
@@ -106,12 +108,26 @@
           "label": "Layouts",
           "items": [
             "templates/layouts/single-column-layout", 
-            "templates/pages/sign-up",
             "templates/layouts/sidebar-left-layout",
             "templates/layouts/sidebar-right-layout",
             "templates/layouts/full-height-sidebar-layout",
-            "templates/layouts/responsive-grid-layout"
+            "templates/layouts/responsive-grid-layout",
+            "templates/layouts/three-column-sidebar-layout"
           ]
+        },
+        {
+          "type": "category",
+          "label": "Pages",
+          "items": [{
+                "type": "category",
+                "label": "Authentication",
+                "items": [
+                  "templates/pages/authentication/forgot-password-page",
+                  "templates/pages/sign-in",
+                  "templates/pages/authentication/reset-password-page",
+                  "templates/pages/authentication/sign-up"
+                ]
+          }]
         }
       ]
     },

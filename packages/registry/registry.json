@@ -385,6 +385,35 @@
         }
       }
     },
+    "checkbox": {
+      "name":"Checkbox",
+      "description":"An animated checkbox component with different variants and animation options",
+      "dependencies":[
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "files":{
+        "main":{
+          "path":"components/checkbox/index.tsx",
+          "type":"component"
+        }
+      }
+    },
+    "typography": {
+      "name":"Typography",
+      "description":"A Typography component for consistent text styling with various variants, sizes, weights, and colors.",
+      "dependencies":[
+        "@radix-ui/react-slot",
+        "class-variance-authority"
+      ],
+      "files":{
+        "main":{
+          "path":"components/typography/index.tsx",
+          "type":"component"
+        }
+      }
+    },
     "container": {
       "name": "Container",
       "description": "A flexible container component for constraining content width with responsive padding and centering options.",
@@ -557,6 +586,114 @@
       "files": {
         "main": {
           "path": "templates/layouts/responsive-grid-layout/index.tsx",
+          "type": "template"
+        }
+      }
+    },
+    "threeColumnSidebar": {
+      "name": "ThreeColumnSidebar",
+      "description": "A flexible layout component with header, sidebar that supports app dashboard with responsive design.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "files": {
+        "main": {
+          "path": "components/threeColumnSidebar/index.tsx",
+          "type": "template"
+        }
+      }
+    },
+    "threecolumnsidebarlayout": {
+      "name": "ThreeColumnSidebarLayout",
+      "description": "A flexible layout component with header, sidebar that supports app dashboard with responsive design.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "threeColumnSidebar"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/layouts/three-column-sidebar-layout/index.tsx",
+          "type": "template"
+        }
+      }
+    },
+    "forgotPassword": {
+      "name": "forgotPassword",
+      "description": "A fully responsive and customizable Forgot Password component with an input field and submit button, built to support secure in-app password reset processes.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "input",
+        "button"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/forgot-password/index.tsx",
+          "type": "template"
+        }
+      }
+    },
+    "signin": {
+      "name": "SignIn",
+      "description": "A sign-in page template with responsive design and form validation.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "button","input"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/sign-in/index.tsx",
+          "type": "template"
+        }
+      },
+    "signup": {
+      "name": "SignUp",
+      "description": "A sign-up page template with responsive design and form validation.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority",
+        "react-icons"
+      ],
+      "componentDependencies": [
+        "button","input"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/sign-up/index.tsx",
+          "type": "template"
+        }
+      }
+    }
+    },
+    "resetPassword": {
+      "name": "ResetPassword",
+      "description": "A reset password page template with responsive design and form validation.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react"
+      ],
+      "componentDependencies": [
+        "button",
+        "input",
+        "card"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/reset-password/index.tsx",
           "type": "template"
         }
       }

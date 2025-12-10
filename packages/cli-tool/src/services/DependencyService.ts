@@ -1,6 +1,10 @@
-// import { execa } from 'execa';
 import { getPackageManager } from '../utils/getPackageManager';
 import { logger } from '../utils/logger';
+
+const execa = async (...args: any[]): Promise<any> => {
+  const { execa: execaImport } = await import('execa');
+  return (execaImport as any)(...args);
+};
 
 export class DependencyService {
   public async install(packages: string[], isDev: boolean): Promise<void> {
@@ -8,18 +12,27 @@ export class DependencyService {
 
     const packageManager = await getPackageManager();
 
-    const args: string[] = ['add'];
-    if (isDev) {
-      args.push(packageManager === 'npm' ? '--save-dev' : '-D');
+    const args: string[] = [];
+
+    // npm uses 'install', while yarn and pnpm use 'add'
+    if (packageManager === 'npm') {
+      args.push('install');
+      if (isDev) {
+        args.push('--save-dev');
+      }
+    } else {
+      args.push('add');
+      if (isDev) {
+        args.push('-D');
+      }
     }
 
     args.push(...packages);
 
     try {
-      logger.info(
-        `Installing dependencies: ${packageManager} ${args.join(' ')} { stdio: 'inherit' }`
-      );
-      // await execa(packageManager, args, { stdio: 'inherit' });
+      logger.info(`Installing dependencies: ${packageManager} ${args.join(' ')}`);
+      await execa(packageManager, args, { stdio: 'inherit', cwd: process.cwd() });
+      logger.success(`Successfully installed: ${packages.join(', ')}`);
     } catch (error) {
       logger.error(error as string);
       throw new Error(`Failed to install dependencies: ${packages.join(', ')}`);

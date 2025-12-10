@@ -2,7 +2,8 @@
 
 import type React from "react";
 import { useState, useEffect, useRef } from "react";
-import { motion, Variants, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import type { Variants } from "framer-motion";
 import { Eye, EyeOff, Check, AlertCircle } from "lucide-react";
 import { cn } from "../../../utils/cn";
 
@@ -19,6 +20,7 @@ interface AnimatedInputProps {
   disabled?: boolean;
   error?: string;
   success?: boolean;
+  successMessage?: string;
   icon?: React.ElementType;
   showPasswordToggle?: boolean;
   size?: "sm" | "md" | "lg";
@@ -100,6 +102,7 @@ export const AnimatedInput: React.FC<AnimatedInputProps> = ({
   disabled = false,
   error,
   success,
+  successMessage,
   icon: Icon,
   showPasswordToggle = false,
   size = "md",
@@ -394,7 +397,7 @@ export const AnimatedInput: React.FC<AnimatedInputProps> = ({
           transition={{ duration: 0.3 }}
         >
           {error ? <AlertCircle className="h-4 w-4" /> : <Check className="h-4 w-4" />}
-          {error || "Input validated successfully"}
+          {error ? error : successMessage ? successMessage : "Input validated successfully"}
         </motion.div>
       )}
     </motion.div>

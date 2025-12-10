@@ -585,3 +585,20 @@ h1 {
   scrollbar-width: none;
   /* Firefox */
 }
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+}
+
+/* Firefox */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
