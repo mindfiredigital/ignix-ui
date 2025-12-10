@@ -578,6 +578,18 @@
         }
       }
     },
+    "responsivegridlayout": {
+      "name": "ResponsiveGridLayout",
+      "description": "A responsive grid layout template for CLI dashboards, combining a header, footer, and auto-flowing cards that adapt across breakpoints.",
+      "dependencies": [],
+      "componentDependencies": [],
+      "files": {
+        "main": {
+          "path": "templates/layouts/responsive-grid-layout/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "threeColumnSidebar": {
       "name": "ThreeColumnSidebar",
       "description": "A flexible layout component with header, sidebar that supports app dashboard with responsive design.",
