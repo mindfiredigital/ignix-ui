@@ -20,6 +20,7 @@ interface AnimatedInputProps {
   disabled?: boolean;
   error?: string;
   success?: boolean;
+  successMessage?: string;
   icon?: React.ElementType;
   showPasswordToggle?: boolean;
   size?: "sm" | "md" | "lg";
@@ -101,6 +102,7 @@ export const AnimatedInput: React.FC<AnimatedInputProps> = ({
   disabled = false,
   error,
   success,
+  successMessage,
   icon: Icon,
   showPasswordToggle = false,
   size = "md",
@@ -395,7 +397,7 @@ export const AnimatedInput: React.FC<AnimatedInputProps> = ({
           transition={{ duration: 0.3 }}
         >
           {error ? <AlertCircle className="h-4 w-4" /> : <Check className="h-4 w-4" />}
-          {error || "Input validated successfully"}
+          {error ? error : successMessage ? successMessage : "Input validated successfully"}
         </motion.div>
       )}
     </motion.div>

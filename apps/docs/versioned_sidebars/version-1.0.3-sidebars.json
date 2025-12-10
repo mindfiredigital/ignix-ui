@@ -111,6 +111,7 @@
             "templates/layouts/sidebar-left-layout",
             "templates/layouts/sidebar-right-layout",
             "templates/layouts/full-height-sidebar-layout",
+            "templates/layouts/responsive-grid-layout",
             "templates/layouts/three-column-sidebar-layout"
           ]
         },
@@ -121,10 +122,11 @@
                 "type": "category",
                 "label": "Authentication",
                 "items": [
-                  "templates/pages/authentication/forgot-password-page",
                   "templates/pages/sign-in",
                   "templates/pages/authentication/sign-up",
-                  "templates/pages/authentication/otp-verification-page"
+                  "templates/pages/authentication/forgot-password-page",
+                  "templates/pages/authentication/otp-verification-page",
+                  "templates/pages/authentication/reset-password-page"
                 ]
           }]
         }
