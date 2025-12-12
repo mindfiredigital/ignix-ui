@@ -659,7 +659,8 @@
           "path": "templates/pages/sign-in/index.tsx",
           "type": "template"
         }
-      },
+      }
+    },
     "signup": {
       "name": "SignUp",
       "description": "A sign-up page template with responsive design and form validation.",
@@ -678,7 +679,20 @@
           "type": "template"
         }
       }
-    }
+    },
+    "avatar": {
+      "name": "Avatar",
+      "description": "An avatar component with image, icon, letters, and status indicator support, along with fallback handling and customizable sizes and shapes.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react"
+      ],
+      "files": {
+        "main": {
+          "path": "components/avatar/index.tsx",
+          "type": "component"
+        }
+      }
     },
     "otpVerification": {
       "name": "otpVerification",
@@ -693,7 +707,7 @@
       ],
       "files": {
         "main": {
-          "path": "templates/pages/otp-verification/index.tsx",
+          "path": "templates/pages/otp-verification/index.tsx"
         }
       }
     },
