@@ -29,15 +29,24 @@
     --error-foreground: #ffffff;
     --primary-light: #1e293b;
     --primary-dark: #0f172a;
-    --destructive-light: #ef4444; /* red-400 */
-    --destructive-dark: #b91c1c; /* red-700 */
-    --success-light: #34d399; /* emerald-400 */
-    --success-dark: #047857; /* emerald-700 */
-    --warning-light: #fbbf24; /* yellow-300 */
-    --warning-dark: #b45309; /* yellow-500 */
-    --info: #06b6d4; /* cyan-500 */
-    --info-light: #22d3ee; /* cyan-400 */
-    --info-dark: #0e7490; /* cyan-600 */
+    --destructive-light: #ef4444;
+    /* red-400 */
+    --destructive-dark: #b91c1c;
+    /* red-700 */
+    --success-light: #34d399;
+    /* emerald-400 */
+    --success-dark: #047857;
+    /* emerald-700 */
+    --warning-light: #fbbf24;
+    /* yellow-300 */
+    --warning-dark: #b45309;
+    /* yellow-500 */
+    --info: #06b6d4;
+    /* cyan-500 */
+    --info-light: #22d3ee;
+    /* cyan-400 */
+    --info-dark: #0e7490;
+    /* cyan-600 */
     --info-foreground: #ffffff;
 
   }
@@ -70,20 +79,29 @@
     --error-foreground: #ffffff;
     --primary-light: #1e293b;
     --primary-dark: #0f172a;
-    --destructive-light: #ef4444; /* red-400 */
-    --destructive-dark: #b91c1c; /* red-700 */
-    --success-light: #34d399; /* emerald-400 */
-    --success-dark: #047857; /* emerald-700 */
-    --warning-light: #fbbf24; /* yellow-300 */
-    --warning-dark: #b45309; /* yellow-500 */
-    --info: #06b6d4; /* cyan-500 */
-    --info-light: #22d3ee; /* cyan-400 */
-    --info-dark: #0e7490; /* cyan-600 */
+    --destructive-light: #ef4444;
+    /* red-400 */
+    --destructive-dark: #b91c1c;
+    /* red-700 */
+    --success-light: #34d399;
+    /* emerald-400 */
+    --success-dark: #047857;
+    /* emerald-700 */
+    --warning-light: #fbbf24;
+    /* yellow-300 */
+    --warning-dark: #b45309;
+    /* yellow-500 */
+    --info: #06b6d4;
+    /* cyan-500 */
+    --info-light: #22d3ee;
+    /* cyan-400 */
+    --info-dark: #0e7490;
+    /* cyan-600 */
     --info-foreground: #ffffff;
   }
 }
 
-@theme inline{
+@theme inline {
   --color-primary: var(--primary);
   --color-background: var(--background);
   --color-card: var(--card);
@@ -92,7 +110,7 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);  
+  --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
