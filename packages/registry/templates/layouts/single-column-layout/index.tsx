@@ -1,22 +1,19 @@
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SingleColumnLayout Component
-// Unified single-column layout for all variants (light/dark/gradient)
-// Responsive header (logo left, nav & auth right with mobile menu)
+// Highly customizable single-column layout with slot-based customization
 // ─────────────────────────────────────────────────────────────────────────────
 
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
-// import { cn } from "../../../../utils/cn";
 import { cn } from "../../../utils/cn";
-
-import { Button } from "../../button";
-import { ChevronRight, Home, Menu, X } from "lucide-react";
+import { Button } from "../../../components/button";
+import { ChevronRight, Menu, X } from "lucide-react";
 
 // Types
 export interface SingleColumnLayoutProps {
-    /** Optional header or footer overrides */
+    /** Slot-based customization */
     header?: React.ReactNode;
     footer?: React.ReactNode;
     children: React.ReactNode;
@@ -44,15 +41,54 @@ export interface SingleColumnLayoutProps {
         mobileMenu?: number;
     };
 
-    /** Header configuration */
+    /** Header configuration - Can use either slot or config */
     logo?: React.ReactNode;
-    navLinks?: { label: string; href: string }[];
+    navLinks?: { label: string; href: string; icon?: React.ReactNode }[];
     showAuthControls?: boolean;
+    authComponents?: {
+        signIn?: React.ReactNode;
+        signUp?: React.ReactNode;
+    };
+
+    /** Footer configuration */
+    footerContent?: React.ReactNode;
+    showFooter?: boolean;
 
     /** Active navigation link */
     activeNavLink?: string;
 
-    className?: string;
+    /** Custom classes for each section */
+    className?: {
+        root?: string;
+        header?: string;
+        main?: string;
+        footer?: string;
+        content?: string;
+    };
+
+    /** Custom header/footer render functions */
+    renderHeader?: (props: {
+        logo: React.ReactNode;
+        navLinks: React.ReactNode;
+        authControls: React.ReactNode;
+        mobileMenuButton: React.ReactNode;
+        variant: string;
+        isMobileMenuOpen: boolean;
+        toggleMobileMenu: () => void;
+    }) => React.ReactNode;
+
+    renderFooter?: (props: {
+        variant: string;
+        content: React.ReactNode;
+    }) => React.ReactNode;
+
+    /** Callback events */
+    onNavLinkClick?: (href: string, label: string) => void;
+    onSignInClick?: () => void;
+    onSignUpClick?: () => void;
+
+    /** Content wrapper */
+    contentWrapper?: (children: React.ReactNode) => React.ReactNode;
 }
 
 /* ──────────────────────────────────────────────────────────────
@@ -68,7 +104,6 @@ const singleColumnVariants = cva("min-h-screen flex flex-col", {
             gradient: "bg-gradient-to-br from-primary/10 to-secondary/10 text-foreground",
             transparent: "bg-gradient-to-br from-blue-50 to-indigo-100 text-gray-800",
             solid: "bg-gradient-to-br from-slate-50 to-gray-100 text-gray-800",
-            // New Modern Variant
             modern: "bg-gradient-to-br from-slate-50 to-slate-100 text-slate-800",
         },
     },
@@ -88,7 +123,6 @@ const headerVariants = cva("w-full transition-colors duration-300", {
             gradient: "bg-background/10 backdrop-blur-md border-border border-b",
             transparent: "bg-transparent border-transparent",
             solid: "bg-blue-600 border-blue-700 border-b text-white",
-            // New Modern Variant
             modern: "bg-white/95 backdrop-blur-sm border-b border-slate-200 shadow-sm",
         },
     },
@@ -108,7 +142,6 @@ const mobileMenuVariants = cva("md:hidden absolute top-full left-0 w-full border
             gradient: "bg-background/95 backdrop-blur-md text-foreground border-border",
             transparent: "bg-white/95 backdrop-blur-md text-gray-800 border-blue-200",
             solid: "bg-blue-600 text-white border-blue-700",
-            // New Modern Variant
             modern: "bg-white border-slate-200",
         },
     },
@@ -128,7 +161,6 @@ const footerVariants = cva("w-full border-t transition-colors duration-300", {
             gradient: "bg-background/10 backdrop-blur-md border-border",
             transparent: "bg-blue-500 border-blue-500 text-white",
             solid: "bg-blue-600 border-blue-700 text-white",
-            // New Modern Variant
             modern: "bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700 text-white",
         },
     },
@@ -139,9 +171,12 @@ const footerVariants = cva("w-full border-t transition-colors duration-300", {
    Component
 ────────────────────────────────────────────────────────────── */
 const SingleColumnLayout: React.FC<SingleColumnLayoutProps> = ({
+    // Slot-based customization
     header,
     footer,
     children,
+
+    // Configuration
     stickyHeader = true,
     stickyFooter = false,
     variant = "default",
@@ -151,7 +186,8 @@ const SingleColumnLayout: React.FC<SingleColumnLayoutProps> = ({
     headerHeight = 64,
     footerHeight = 64,
     zIndex = { header: 100, footer: 50, mobileMenu: 95 },
-    className,
+
+    // Header config
     logo,
     navLinks = [
         { label: "Home", href: "#" },
@@ -160,7 +196,29 @@ const SingleColumnLayout: React.FC<SingleColumnLayoutProps> = ({
         { label: "Contact", href: "#" },
     ],
     showAuthControls = true,
+    authComponents,
+
+    // Footer config
+    footerContent,
+    showFooter = true,
+
+    // Active state
     activeNavLink,
+
+    // Custom classes
+    className,
+
+    // Custom render functions
+    renderHeader,
+    renderFooter,
+
+    // Callbacks
+    onNavLinkClick,
+    onSignInClick,
+    onSignUpClick,
+
+    // Content wrapper
+    contentWrapper,
 }) => {
     const [menuOpen, setMenuOpen] = React.useState(false);
 
@@ -192,7 +250,7 @@ const SingleColumnLayout: React.FC<SingleColumnLayoutProps> = ({
             if (variant === "solid") {
                 return cn(
                     baseClasses,
-                    "py-2 px-3",
+                    "py-2 px-3 flex items-center justify-between group",
                     isActive
                         ? "bg-blue-500 text-white"
                         : "text-white/90 hover:bg-blue-500/50 hover:text-white"
@@ -200,7 +258,7 @@ const SingleColumnLayout: React.FC<SingleColumnLayoutProps> = ({
             }
             return cn(
                 baseClasses,
-                "py-2 px-3",
+                "py-2 px-3 flex items-center justify-between group",
                 isActive
                     ? "bg-blue-100 text-blue-700"
                     : "hover:bg-gray-100 hover:text-gray-900"
@@ -228,14 +286,13 @@ const SingleColumnLayout: React.FC<SingleColumnLayoutProps> = ({
             );
         }
 
-        // Inside getNavLinkClass function, add modern variant styles:
         if (variant === "modern") {
             return cn(
                 baseClasses,
-                "px-4 py-2 relative group",
+                "px-4 py-2 relative group flex items-center space-x-2",
                 isActive
-                    ? "text-blue-600 font-semibold"
-                    : "text-slate-700 hover:text-blue-600 hover:bg-blue-50"
+                    ? "text-blue-600 font-semibold bg-blue-50 rounded-lg"
+                    : "text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-300"
             );
         }
 
@@ -248,102 +305,149 @@ const SingleColumnLayout: React.FC<SingleColumnLayoutProps> = ({
         );
     };
 
+    // Handle navigation link click
+    const handleNavLinkClick = (href: string, label: string) => {
+        if (onNavLinkClick) {
+            onNavLinkClick(href, label);
+        }
+        setMenuOpen(false);
+    };
 
-    /* ─────────────── Default Header (shared across variants) ─────────────── */
-    const DefaultHeader = (
-        <div className="flex items-center justify-between w-full h-full px-4 sm:px-6 lg:px-8">
-            {/* Left: Logo */}
-            <div className="flex items-center space-x-2 group cursor-pointer">
-                {logo || (
-                    <div className="flex items-center space-x-2">
-                        <div className={cn(
-                            "w-10 h-10 rounded-lg flex items-center justify-center shadow-md transition-all duration-300",
-                            variant === "modern"
-                                ? "bg-gradient-to-br from-blue-500 to-blue-600 group-hover:shadow-lg group-hover:scale-105 text-white"
-                                : "bg-muted"
-                        )}>
-                            {variant === "modern" ? (
-                                <Home className="w-5 h-5" />
-                            ) : (
-                                <span className="text-lg font-semibold">L</span>
-                            )}
-                        </div>
-                        <span className={cn(
-                            "text-xl font-bold tracking-tight",
-                            variant === "modern" && "bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent"
-                        )}>
-                            {variant === "modern" ? "YourBrand" : "Logo"}
-                        </span>
+    // Default logo component
+    const DefaultLogo = (
+        <div className="flex items-center space-x-2 group cursor-pointer">
+            {logo || (
+                <div className="flex items-center space-x-2">
+                    <div className={cn(
+                        "w-10 h-10 rounded-lg flex items-center justify-center shadow-md transition-all duration-300",
+                        variant === "modern"
+                            ? "bg-gradient-to-br from-blue-500 to-blue-600 group-hover:shadow-lg group-hover:scale-105 text-white"
+                            : "bg-muted"
+                    )}>
+                        {/* {variant === "modern" ? (
+              <Home className="w-5 h-5" />
+            ) : (
+              <span className="text-lg font-semibold">L</span>
+            )} */}
                     </div>
-                )}
-            </div>
-
-            {/* Right: Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-1">
-                {navLinks.map((link) => {
-                    const isActive = activeNavLink === link.href;
-                    return (
-                        <a
-                            key={link.label}
-                            href={link.href}
-                            className={getNavLinkClass(link.href)}
-                        >
-                            {link.label}
-                            {/* Modern variant underline animation */}
-                            {variant === "modern" && (
-                                <span className={cn(
-                                    "absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300",
-                                    isActive ? "w-full" : "group-hover:w-full"
-                                )} />
-                            )}
-                        </a>
-                    );
-                })}
-                {showAuthControls && (
-                    <div className="flex items-center space-x-3 ml-4">
-                        <Button
-                            variant={getButtonVariant("ghost")}
-                            size="sm"
-                            className={cn(
-                                variant === "modern" && "text-slate-700 hover:text-blue-600 hover:bg-blue-50",
-                                variant === "solid" && "text-white hover:bg-white/20"
-                            )}
-                        >
-                            Sign In
-                        </Button>
-                        <Button
-                            variant={getButtonVariant("primary")}
-                            size="sm"
-                            className={cn(
-                                variant === "modern" && "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transform hover:scale-105 shadow-md hover:shadow-lg",
-                                variant === "solid" && "bg-white text-blue-600 hover:bg-white/90"
-                            )}
-                        >
-                            Sign Up
-                        </Button>
-                    </div>
-                )}
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-                className={cn(
-                    "md:hidden p-2 rounded-lg transition-colors duration-200",
-                    variant === "solid"
-                        ? "text-white hover:bg-white/20"
-                        : variant === "modern"
-                            ? "text-slate-700 hover:bg-slate-100"
-                            : "hover:bg-muted/50"
-                )}
-                onClick={() => setMenuOpen(!menuOpen)}
-                aria-label="Toggle Menu"
-            >
-                {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+                    <span className={cn(
+                        "text-xl font-bold tracking-tight",
+                        variant === "modern" && "bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent"
+                    )}>
+                        {variant === "modern" ? "YourBrand" : "Logo"}
+                    </span>
+                </div>
+            )}
         </div>
     );
-    /* ─────────────── Mobile Dropdown Menu (shared across variants) ─────────────── */
-    /* ─────────────── Mobile Dropdown Menu ─────────────── */
+
+    // Desktop navigation component
+    // Update the DesktopNav rendering for modern variant:
+    const DesktopNav = (
+        <div className="hidden md:flex items-center space-x-1">
+            {navLinks.map((link) => {
+                const isActive = activeNavLink === link.href;
+                return (
+                    <a
+                        key={link.label}
+                        href={link.href}
+                        className={cn(
+                            "text-sm font-medium transition-all duration-300 rounded-lg px-4 py-2 relative",
+                            isActive
+                                ? "text-blue-600 font-semibold bg-blue-50"
+                                : "text-slate-700 hover:text-blue-600 hover:bg-blue-50"
+                        )}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            handleNavLinkClick(link.href, link.label);
+                        }}
+                    >
+                        <span className="flex items-center space-x-2">
+                            {link.icon && <span>{link.icon}</span>}
+                            <span>{link.label}</span>
+                        </span>
+                        {/* Remove this underline element if not needed */}
+                        {/* <span className={cn(
+            "absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300",
+            isActive ? "w-full" : "group-hover:w-full"
+          )} /> */}
+                    </a>
+                );
+            })}
+        </div>
+    );
+
+    // Auth controls component
+    const AuthControls = showAuthControls && (
+        <div className="flex items-center space-x-3 ml-4">
+            {authComponents?.signIn || (
+                <Button
+                    variant={getButtonVariant("ghost")}
+                    size="sm"
+                    className={cn(
+                        variant === "modern" && "text-slate-700 hover:text-blue-600 hover:bg-blue-50",
+                        variant === "solid" && "text-white hover:bg-white/20"
+                    )}
+                    onClick={onSignInClick}
+                >
+                    Sign In
+                </Button>
+            )}
+            {authComponents?.signUp || (
+                <Button
+                    variant={getButtonVariant("primary")}
+                    size="sm"
+                    className={cn(
+                        variant === "modern" && "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transform hover:scale-105 shadow-md hover:shadow-lg",
+                        variant === "solid" && "bg-white text-blue-600 hover:bg-white/90"
+                    )}
+                    onClick={onSignUpClick}
+                >
+                    Sign Up
+                </Button>
+            )}
+        </div>
+    );
+
+    // Mobile menu button
+    const MobileMenuButton = (
+        <button
+            className={cn(
+                "md:hidden p-2 rounded-lg transition-colors duration-200",
+                variant === "solid"
+                    ? "text-white hover:bg-white/20"
+                    : variant === "modern"
+                        ? "text-slate-700 hover:bg-slate-100"
+                        : "hover:bg-muted/50"
+            )}
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle Menu"
+        >
+            {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
+    );
+
+    /* ─────────────── Default Header ─────────────── */
+    const DefaultHeader = renderHeader ? renderHeader({
+        logo: DefaultLogo,
+        navLinks: DesktopNav,
+        authControls: AuthControls,
+        mobileMenuButton: MobileMenuButton,
+        variant,
+        isMobileMenuOpen: menuOpen,
+        toggleMobileMenu: () => setMenuOpen(!menuOpen),
+    }) : (
+        <div className="flex items-center justify-between w-full h-full px-4 sm:px-6 lg:px-8">
+            {DefaultLogo}
+            <div className="hidden md:flex items-center">
+                {DesktopNav}
+                {AuthControls}
+            </div>
+            {MobileMenuButton}
+        </div>
+    );
+
+    /* ─────────────── Mobile Menu ─────────────── */
     const MobileMenu = (
         <AnimatePresence>
             {menuOpen && (
@@ -362,9 +466,15 @@ const SingleColumnLayout: React.FC<SingleColumnLayoutProps> = ({
                                 key={link.label}
                                 href={link.href}
                                 className={getNavLinkClass(link.href, true)}
-                                onClick={() => setMenuOpen(false)}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleNavLinkClick(link.href, link.label);
+                                }}
                             >
-                                <span>{link.label}</span>
+                                <span className="flex items-center space-x-2">
+                                    {link.icon && <span>{link.icon}</span>}
+                                    <span>{link.label}</span>
+                                </span>
                                 {variant === "modern" && (
                                     <ChevronRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
                                 )}
@@ -376,28 +486,38 @@ const SingleColumnLayout: React.FC<SingleColumnLayoutProps> = ({
                                 "flex flex-col space-y-2 pt-4",
                                 variant !== "modern" && "border-t border-border"
                             )}>
-                                <Button
-                                    variant={getButtonVariant("ghost")}
-                                    size="sm"
-                                    onClick={() => setMenuOpen(false)}
-                                    className={cn(
-                                        "justify-start",
-                                        variant === "modern" && "text-slate-700 hover:text-blue-600 hover:bg-blue-50"
-                                    )}
-                                >
-                                    Sign In
-                                </Button>
-                                <Button
-                                    variant={getButtonVariant("primary")}
-                                    size="sm"
-                                    onClick={() => setMenuOpen(false)}
-                                    className={cn(
-                                        "justify-start",
-                                        variant === "modern" && "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
-                                    )}
-                                >
-                                    Sign Up
-                                </Button>
+                                {authComponents?.signIn || (
+                                    <Button
+                                        variant={getButtonVariant("ghost")}
+                                        size="sm"
+                                        onClick={() => {
+                                            setMenuOpen(false);
+                                            onSignInClick?.();
+                                        }}
+                                        className={cn(
+                                            "justify-start",
+                                            variant === "modern" && "text-slate-700 hover:text-blue-600 hover:bg-blue-50"
+                                        )}
+                                    >
+                                        Sign In
+                                    </Button>
+                                )}
+                                {authComponents?.signUp || (
+                                    <Button
+                                        variant={getButtonVariant("primary")}
+                                        size="sm"
+                                        onClick={() => {
+                                            setMenuOpen(false);
+                                            onSignUpClick?.();
+                                        }}
+                                        className={cn(
+                                            "justify-start",
+                                            variant === "modern" && "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
+                                        )}
+                                    >
+                                        Sign Up
+                                    </Button>
+                                )}
                             </div>
                         )}
                     </div>
@@ -407,21 +527,37 @@ const SingleColumnLayout: React.FC<SingleColumnLayoutProps> = ({
     );
 
     /* ─────────────── Default Footer ─────────────── */
-    const DefaultFooter = (
-        <div className="flex items-center justify-center w-full h-full">
-            <div className={cn(
-                "text-center text-sm",
-                (variant === "solid" || variant === "transparent") && "text-white"
-            )}>
+    const DefaultFooter = renderFooter ? renderFooter({
+        variant,
+        content: footerContent || (
+            <div className="text-center text-sm">
                 © 2025 My Application. All rights reserved.
             </div>
+        ),
+    }) : (
+        <div className="flex items-center justify-center w-full h-full px-4">
+            {footerContent || (
+                <div className={cn(
+                    "text-center text-sm",
+                    (variant === "solid" || variant === "transparent") && "text-white"
+                )}>
+                    © 2025 My Application. All rights reserved.
+                </div>
+            )}
         </div>
     );
+
+    // Wrap content if contentWrapper provided
+    const wrappedChildren = contentWrapper ? contentWrapper(children) : children;
 
     /* ─────────────── Render Layout ─────────────── */
     return (
         <div
-            className={cn(singleColumnVariants({ variant }), className, "relative")}
+            className={cn(
+                singleColumnVariants({ variant }),
+                typeof className === 'string' ? className : className?.root,
+                "relative"
+            )}
             style={{
                 ["--header-h" as string]: `${headerHeight}px`,
                 ["--footer-h" as string]: `${footerHeight}px`,
@@ -431,7 +567,8 @@ const SingleColumnLayout: React.FC<SingleColumnLayoutProps> = ({
             <header
                 className={cn(
                     headerVariants({ variant }),
-                    stickyHeader && "sticky top-0 backdrop-blur-md"
+                    stickyHeader && "sticky top-0",
+                    typeof className === 'object' && className.header
                 )}
                 style={{ height: headerHeight, zIndex: zIndex.header }}
             >
@@ -445,7 +582,8 @@ const SingleColumnLayout: React.FC<SingleColumnLayoutProps> = ({
                     "flex-1 w-full mx-auto",
                     contentPadding,
                     maxWidth,
-                    stickyFooter && "pb-[var(--footer-h)]"
+                    stickyFooter && "pb-[var(--footer-h)]",
+                    typeof className === 'object' && className.main
                 )}
                 role="main"
             >
@@ -455,23 +593,26 @@ const SingleColumnLayout: React.FC<SingleColumnLayoutProps> = ({
                         initial={motionVariants.initial}
                         animate={motionVariants.animate}
                         transition={{ duration: 0.3, ease: "easeInOut" }}
-                        className="w-full"
+                        className={cn("w-full", typeof className === 'object' && className.content)}
                     >
-                        {children}
+                        {wrappedChildren}
                     </motion.div>
                 </AnimatePresence>
             </main>
 
             {/* Footer */}
-            <footer
-                className={cn(
-                    footerVariants({ variant }),
-                    stickyFooter && "fixed inset-x-0 bottom-0"
-                )}
-                style={{ height: footerHeight, zIndex: zIndex.footer }}
-            >
-                {footer || DefaultFooter}
-            </footer>
+            {showFooter && footer !== null && (
+                <footer
+                    className={cn(
+                        footerVariants({ variant }),
+                        stickyFooter && "fixed inset-x-0 bottom-0",
+                        typeof className === 'object' && className.footer
+                    )}
+                    style={{ height: footerHeight, zIndex: zIndex.footer }}
+                >
+                    {footer || DefaultFooter}
+                </footer>
+            )}
         </div>
     );
 };
