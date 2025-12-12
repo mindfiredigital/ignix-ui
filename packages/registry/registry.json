@@ -693,6 +693,7 @@
       "files": {
         "main": {
           "path": "templates/pages/otp-verification/index.tsx",
+          "type":"template"
         }
       }
     },
