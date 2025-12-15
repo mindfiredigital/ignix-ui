@@ -692,7 +692,7 @@
       ],
       "files": {
         "main": {
-          "path": "templates/pages/otp-verification/index.tsx",
+          "path": "templates/pages/otp-verification/index.tsx"
         }
       }
     },
@@ -711,6 +711,24 @@
       "files": {
         "main": {
           "path": "templates/pages/reset-password/index.tsx",
+          "type": "template"
+        }
+      }
+    },
+    "twoFactorAuthSetup": {
+      "name": "TwoFactorAuthSetup",
+      "description": "A two-factor authentication setup page with QR code, manual entry, backup codes, and verification step.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react"
+      ],
+      "componentDependencies": [
+        "button",
+        "card"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/two-factor-auth-setup/index.tsx",
           "type": "template"
         }
       }
