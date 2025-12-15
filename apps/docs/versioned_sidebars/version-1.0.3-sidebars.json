@@ -126,7 +126,8 @@
                   "templates/pages/authentication/sign-up",
                   "templates/pages/authentication/forgot-password-page",
                   "templates/pages/authentication/otp-verification-page",
-                  "templates/pages/authentication/reset-password-page"
+                  "templates/pages/authentication/reset-password-page",
+                  "templates/pages/authentication/two-factor-auth-setup-page"
                 ]
           }]
         }

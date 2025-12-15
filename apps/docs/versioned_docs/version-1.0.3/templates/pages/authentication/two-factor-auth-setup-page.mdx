@@ -1,0 +1,277 @@
+---
+sidebar_position: 5
+title: Two Factor Authentication Setup
+description: A comprehensive two-factor authentication (2FA) setup page with QR code display, manual code entry, backup codes management, and verification step.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import TwoFactorAuthSetupPageDemo from '@site/src/components/Demo/TwoFactorAuthSetupPageDemo'
+
+## Overview
+
+The **Two-Factor Authentication Setup Page** provides a complete 2FA setup flow for users, enabling secure account protection through authenticator apps. It includes QR code display for easy setup with popular authenticator apps (Google Authenticator, Authy, Microsoft Authenticator, etc.), manual code entry as a backup option, backup codes management with copy and download functionality, and a verification step to confirm the authenticator app is working correctly. The component features a multi-step wizard interface with visual progress indicators, making it ideal for secure authentication flows that require two-factor authentication setup.
+
+## Preview
+
+<TwoFactorAuthSetupPageDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component TwoFactorAuthSetup
+    ```
+  </TabItem>
+  <TabItem value="manual" label="Manual">
+    ```bash
+      "use client";
+
+      import React, { useState, useRef, useEffect } from "react";
+      import { motion } from "framer-motion";
+      import { Shield, Copy, Download, CheckCircle2, XCircle, Key } from "lucide-react";
+      import { Button } from "@ignix-ui/button";
+      import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@ignix-ui/card";
+      import { cn } from "../../../utils/cn";
+
+      interface TwoFactorAuthSetupProps {
+        secretKey?: string;
+        accountName?: string;
+        issuer?: string;
+        backupCodes?: string[];
+        onVerify?: (code: string) => Promise<{ success: boolean; message?: string }>;
+        onSaveBackupCodes?: (codes: string[]) => void;
+        variant?: "default" | "dark" | "gradient";
+        className?: string;
+      }
+
+      export const TwoFactorAuthSetupPage: React.FC<TwoFactorAuthSetupProps> = ({
+        secretKey = "JBSWY3DPEHPK3PXP",
+        accountName = "user@example.com",
+        issuer = "Your App",
+        backupCodes: initialBackupCodes,
+        onVerify,
+        onSaveBackupCodes,
+        variant = "default",
+        className,
+      }) => {
+        // Component implementation...
+      };
+    ```
+  </TabItem>
+</Tabs>
+
+## Features
+
+### 1. QR Code Display
+- Generates QR code using standard `otpauth://totp/` protocol
+- Compatible with all major authenticator apps
+- Displays issuer and account name for easy identification
+
+### 2. Manual Code Entry
+- Alternative to QR code scanning
+- Formatted secret key for easy reading
+- Copy-to-clipboard functionality
+
+### 3. Backup Codes Management
+- Displays 8 one-time backup codes
+- Individual code copying
+- Copy all codes at once
+- Download codes as text file
+
+### 4. Verification Step
+- 6-digit code input with auto-advance
+- Paste support for easy entry
+- Keyboard navigation (arrow keys, backspace)
+- Real-time validation feedback
+
+### 5. Multi-Step Flow
+- Visual progress indicator
+- Smooth transitions between steps
+- Back navigation support
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `secretKey` | `string` | `"JBSWY3DPEHPK3PXP"` | Base32-encoded secret key for authenticator app |
+| `accountName` | `string` | `"user@example.com"` | Account identifier (email or username) |
+| `issuer` | `string` | `"Your App"` | Issuer name (your app/service name) |
+| `backupCodes` | `string[]` | `[...]` | Array of backup codes (defaults to demo codes) |
+| `onVerify` | `(code: string) => Promise<{success: boolean, message?: string}>` | `undefined` | Callback when verification code is submitted |
+| `onSaveBackupCodes` | `(codes: string[]) => void` | `undefined` | Callback when backup codes are saved |
+| `variant` | `"default" \| "dark" \| "gradient"` | `"default"` | Visual theme variant |
+| `className` | `string` | `undefined` | Additional CSS classes |
+
+## Usage Examples
+
+### Basic Usage
+
+```tsx
+import { TwoFactorAuthSetupPage } from "@ignix-ui/two-factor-auth-setup";
+
+function MyComponent() {
+  return (
+    <TwoFactorAuthSetupPage
+      secretKey="JBSWY3DPEHPK3PXP"
+      accountName="user@example.com"
+      issuer="My App"
+      onVerify={async (code) => {
+        // Validate with your backend
+        const response = await fetch('/api/verify-2fa', {
+          method: 'POST',
+          body: JSON.stringify({ code }),
+        });
+        const data = await response.json();
+        return { success: data.valid, message: data.message };
+      }}
+      onSaveBackupCodes={(codes) => {
+        console.log("Backup codes saved:", codes);
+      }}
+    />
+  );
+}
+```
+
+### With Custom Backup Codes
+
+```tsx
+<TwoFactorAuthSetupPage
+  secretKey="MFRGG43FMZQXIZLT"
+  accountName="john.doe@company.com"
+  issuer="Company Portal"
+  backupCodes={[
+    "ABCD-1234",
+    "EFGH-5678",
+    "IJKL-9012",
+    "MNOP-3456",
+    "QRST-7890",
+    "UVWX-1357",
+    "YZAB-2468",
+    "CDEF-3691",
+  ]}
+  onVerify={async (code) => {
+    // Your verification logic
+    return { success: true };
+  }}
+/>
+```
+
+### Dark Theme
+
+```tsx
+<TwoFactorAuthSetupPage
+  variant="dark"
+  secretKey="JBSWY3DPEHPK3PXP"
+  accountName="user@example.com"
+  issuer="Your App"
+  onVerify={async (code) => {
+    return { success: true };
+  }}
+/>
+```
+
+### Gradient Theme
+
+```tsx
+<TwoFactorAuthSetupPage
+  variant="gradient"
+  secretKey="JBSWY3DPEHPK3PXP"
+  accountName="user@example.com"
+  issuer="Your App"
+  onVerify={async (code) => {
+    return { success: true };
+  }}
+/>
+```
+
+## Setup Flow
+
+The component follows a 3-step flow:
+
+1. **Setup** - User scans QR code or enters code manually
+2. **Backup Codes** - User saves backup codes
+3. **Verify** - User enters 6-digit code to confirm setup
+
+## QR Code Format
+
+The component generates QR codes using the standard `otpauth://totp/` protocol:
+
+```
+otpauth://totp/{Issuer}:{AccountName}?secret={SecretKey}&issuer={Issuer}
+```
+
+This format is recognized by:
+- Google Authenticator
+- Authy
+- Microsoft Authenticator
+- 1Password
+- LastPass Authenticator
+- And many more
+
+## Verification
+
+The `onVerify` callback receives the 6-digit code entered by the user. You should validate this code with your backend using the same secret key that was used to generate the QR code.
+
+```tsx
+onVerify={async (code: string) => {
+  const response = await fetch('/api/verify-2fa', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 
+      code,
+      secretKey: 'JBSWY3DPEHPK3PXP' // Use the same secret from props
+    }),
+  });
+  
+  const data = await response.json();
+  return { 
+    success: data.valid, 
+    message: data.message || "Verification successful" 
+  };
+}}
+```
+
+## Backup Codes
+
+Backup codes are one-time use codes that allow users to access their account if they lose access to their authenticator app. The component provides:
+
+- **Individual Copy**: Click the copy icon next to each code
+- **Copy All**: Copy all codes at once
+- **Download**: Download codes as a text file
+
+The `onSaveBackupCodes` callback is triggered when the user successfully completes verification, allowing you to track that the user has saved their codes.
+
+## Styling
+
+The component supports three visual variants:
+
+- **default**: Light theme with subtle gradient background
+- **dark**: Dark theme with gray tones
+- **gradient**: Vibrant gradient background
+
+You can also add custom classes via the `className` prop.
+
+## Accessibility
+
+- Keyboard navigation support for verification inputs
+- Paste support for 6-digit codes
+- Clear error messages
+- Visual progress indicators
+- ARIA labels and semantic HTML
+
+## Best Practices
+
+1. **Secret Key**: Always generate secret keys server-side and never expose them in client-side code
+2. **Backup Codes**: Generate backup codes server-side and store them securely
+3. **Verification**: Always validate codes server-side using TOTP algorithms
+4. **Error Handling**: Provide clear error messages for invalid codes
+5. **User Guidance**: Guide users through each step of the setup process
+
+## Notes
+
+- The component accepts any 6-digit code in demo mode (when `onVerify` is not provided)
+- In production, always provide the `onVerify` callback to validate codes with your backend
+- Backup codes should be generated server-side and passed via the `backupCodes` prop
+- The secret key should be base32-encoded for compatibility with authenticator apps
