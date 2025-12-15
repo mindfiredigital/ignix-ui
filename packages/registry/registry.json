@@ -491,17 +491,6 @@
         }
       }
     },
-    "single-column-layout": {
-      "name": "SingleColumnLayout",
-      "description": "A clean, responsive single-column layout with header, constrained content area, and footer. Supports multiple theme variants and animations.",
-      "dependencies": ["framer-motion", "lucide-react", "class-variance-authority"],
-      "files": {
-        "main": {
-          "path": "components/layouts/single-column-layout/index.tsx",
-          "type": "component"
-        }
-      }
-    },
     "drawer": {
       "name": "Drawer",
       "description": "A drawer component with animation and different variants",
@@ -521,6 +510,18 @@
         "main": {
           "path": "components/layouts/lazyload/index.tsx",
           "type": "component"
+        }
+      }
+    },
+     "singlecolumnlayout": {
+      "name": "SingleColumnLayout",
+      "description": "A clean, responsive single-column layout with header, constrained content area, and footer. Supports multiple theme variants and animations.",
+      "dependencies": ["framer-motion", "lucide-react", "class-variance-authority"],
+      "componentDependencies": ["button"],
+      "files": {
+        "main": {
+          "path": "templates/layouts/single-column-layout/index.tsx",
+          "type": "template"
         }
       }
     },
@@ -658,7 +659,8 @@
           "path": "templates/pages/sign-in/index.tsx",
           "type": "template"
         }
-      },
+      }
+    },
     "signup": {
       "name": "SignUp",
       "description": "A sign-up page template with responsive design and form validation.",
@@ -677,7 +679,20 @@
           "type": "template"
         }
       }
-    }
+    },
+    "avatar": {
+      "name": "Avatar",
+      "description": "An avatar component with image, icon, letters, and status indicator support, along with fallback handling and customizable sizes and shapes.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react"
+      ],
+      "files": {
+        "main": {
+          "path": "components/avatar/index.tsx",
+          "type": "component"
+        }
+      }
     },
     "otpVerification": {
       "name": "otpVerification",

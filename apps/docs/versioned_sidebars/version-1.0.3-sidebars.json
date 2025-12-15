@@ -67,6 +67,7 @@
       "label": "Components",
       "items": [
         "components/accordion",
+        "components/avatar",
         "components/badge",
         "components/breadcrumbs",
         "components/button",
