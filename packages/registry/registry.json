@@ -400,6 +400,21 @@
         }
       }
     },
+    "radio": {
+      "name":"Radio",
+      "description":"An animated radio component with different variants and animation options",
+      "dependencies":[
+        "framer-motion",
+        "class-variance-authority",
+        "@radix-ui/react-radio-group"
+      ],
+      "files":{
+        "main":{
+          "path":"components/radio/index.tsx",
+          "type":"component"
+        }
+      }
+    },
     "typography": {
       "name":"Typography",
       "description":"A Typography component for consistent text styling with various variants, sizes, weights, and colors.",

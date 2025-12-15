@@ -1,0 +1,89 @@
+---
+sidebar_position: 7
+title: Radio
+description: A customizable radio component with multiple variants, sizes, and animations.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import RadioGroup from '@site/src/components/UI/radio';
+import { RadioGroupDemo, RadioGroupGroupDemo, RadioGroupAnimationDemo }  from '@site/src/components/Demo/RadioDemo';
+
+## Overiew
+
+A customizable radio component with multiple variants, sizes, and animations
+
+## Preview
+
+<RadioGroupDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component radio
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+Import the component:
+
+```tsx
+import { RadioGroup } from '@src/components/ui/radio';
+```
+
+### RadioGroup
+```tsx
+import { RadioGroup } from "./components/ui/radio";
+
+function App() {
+  const [value, setValue] = useState("one");
+  const options = [
+    { value: "one", label: "Option One" },
+    { value: "two", label: "Option Two" },
+  ];
+  const handleChange = (value: string) => {
+    setValue(value);
+  };
+  const [disabled, setDisabled] = React.useState(false);
+
+  return (
+    <>
+      <RadioGroup
+        options={options}
+        value={value}
+        onChange={handleChange}
+        labelPosition="right"
+        size="md"
+        checkedVariant="surface"
+        variant="default"
+        animationVariant="bounce"
+        disabled={disabled}
+      />
+    </>
+  );
+}
+
+export default App;
+```
+
+## Examples
+<RadioGroupGroupDemo />
+<RadioGroupAnimationDemo />
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `'default' \| 'primary' \| 'success' \| 'warning' \| 'danger' \| 'outline' \| 'subtle' \| 'glass' \| 'neon'` | `'default'` | The visual style of the checkbox |
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | The size of the checkbox |
+| `options` | `array` | - | Options for Radio |
+| `labelPosition` | `'left' \| 'right'` | `'right'` | Position of the label relative to the checkbox |
+| `disabled` | `boolean` | `false` | Whether the checkbox is disabled |
+| `animationVariant` | `'bounce' \| 'scale' \| 'pulse' \| 'glow' \| 'shake' \| 'flip' \| 'nina'` | `'bounce'` | Animation style for interactions |
+| `checkedVariant` | `'classic' \| 'default' \| 'surface'` | `'surface'` | Default checked state for uncontrolled usage |
+| `defaultChecked` | `boolean` | - | Default checked state for uncontrolled usage |
+| `onChange` | `(value: string) => void` | - | Callback when checked state changes |
