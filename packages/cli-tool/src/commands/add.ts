@@ -152,41 +152,6 @@ export const addCommand = new Command()
         break;
       }
 
-      case 'template':
-      case 'templates': {
-        const templateService = new TemplateService();
-        const availableTemplates = await templateService.getAvailableTemplates();
-        const templateIds = availableTemplates.map((t) => t.id.toLowerCase());
-
-        if (identifiers.length === 0) {
-          const response = await prompts({
-            type: 'multiselect',
-            name: 'templates',
-            message: chalk.green('Select templates to install:'),
-            choices: availableTemplates.map((t) => ({
-              title: `${t.name} - ${t.description}`,
-              value: t.id.toLowerCase(),
-              description: t.category ? `Category: ${t.category}` : undefined,
-            })),
-          });
-          identifiers = response.templates || [];
-        }
-
-        if (!identifiers || identifiers.length === 0) {
-          logger.warn('No templates selected. Exiting.');
-          return;
-        }
-
-        for (const id of identifiers) {
-          if (templateIds.includes(id.toLowerCase())) {
-            await templateService.install(id.toLowerCase());
-          } else {
-            logger.error(`Template '${id}' not found in the registry.`);
-          }
-        }
-        break;
-      }
-
       default:
         logger.error(`Unknown namespace: '${namespace}'. Please use 'component' or 'theme'.`);
         process.exit(1);
