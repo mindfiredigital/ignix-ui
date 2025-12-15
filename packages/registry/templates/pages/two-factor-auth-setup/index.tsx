@@ -289,7 +289,7 @@ const TwoFactorAuthSetupPage: React.FC<TwoFactorAuthSetupProps> = ({
 
                 <div className="flex gap-3 justify-center">
                   <Button
-                    variant="outline"
+                    variant="default"
                     onClick={() => {
                       setCurrentStep("manual");
                       setShowManualCode(true);
@@ -328,7 +328,7 @@ const TwoFactorAuthSetupPage: React.FC<TwoFactorAuthSetupProps> = ({
                   <div className="flex items-center justify-between">
                     <code className="text-lg font-mono tracking-wider">{manualCode}</code>
                     <Button
-                      variant="ghost"
+                      variant="default"
                       size="icon"
                       onClick={() => {
                         navigator.clipboard.writeText(secretKey);
@@ -346,7 +346,7 @@ const TwoFactorAuthSetupPage: React.FC<TwoFactorAuthSetupProps> = ({
                 </div>
 
                 <div className="flex gap-3 justify-center">
-                  <Button variant="outline" onClick={() => setCurrentStep("qr")}>
+                  <Button variant="default" onClick={() => setCurrentStep("qr")}>
                     Back
                   </Button>
                   <Button variant="default" onClick={() => setCurrentStep("backup")}>
@@ -379,7 +379,7 @@ const TwoFactorAuthSetupPage: React.FC<TwoFactorAuthSetupProps> = ({
                       >
                         <code className="text-sm font-mono">{code}</code>
                         <Button
-                          variant="ghost"
+                          variant="default"
                           size="icon"
                           className="h-6 w-6"
                           onClick={() => handleCopyCode(code)}
@@ -396,7 +396,7 @@ const TwoFactorAuthSetupPage: React.FC<TwoFactorAuthSetupProps> = ({
 
                   <div className="flex gap-2 justify-center flex-wrap">
                     <Button
-                      variant="outline"
+                      variant="default"
                       size="sm"
                       onClick={handleCopyAllBackupCodes}
                     >
@@ -404,7 +404,7 @@ const TwoFactorAuthSetupPage: React.FC<TwoFactorAuthSetupProps> = ({
                       {copiedCode === "all" ? "Copied!" : "Copy All"}
                     </Button>
                     <Button
-                      variant="outline"
+                      variant="default"
                       size="sm"
                       onClick={handleDownloadBackupCodes}
                     >
@@ -416,7 +416,7 @@ const TwoFactorAuthSetupPage: React.FC<TwoFactorAuthSetupProps> = ({
 
                 <div className="flex gap-3 justify-center">
                   <Button
-                    variant="outline"
+                    variant="default"
                     onClick={() => {
                       setCurrentStep(showManualCode ? "manual" : "qr");
                     }}
@@ -480,7 +480,7 @@ const TwoFactorAuthSetupPage: React.FC<TwoFactorAuthSetupProps> = ({
                 )}
 
                 <div className="flex gap-3 justify-center">
-                  <Button variant="outline" onClick={() => setCurrentStep("backup")}>
+                  <Button variant="default" onClick={() => setCurrentStep("backup")}>
                     Back
                   </Button>
                   <Button
