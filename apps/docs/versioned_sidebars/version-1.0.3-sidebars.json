@@ -73,6 +73,7 @@
         "components/button",
         "components/card",
         "components/checkbox",
+        "components/radio",
         "components/dialog-box",
         "components/drawer",
         "components/dropdown",
