@@ -125,7 +125,7 @@ const OtpVerificationDemo = () => {
         <VariantSelector
           variants={types}
           selectedVariant={type}
-          onSelectVariant={setTypes}
+          onSelectVariant={(val) => setTypes(val as "email" | "phone")}
           type="Select Verification Types"
         />
         <VariantSelector
