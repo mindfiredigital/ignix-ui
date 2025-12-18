@@ -120,7 +120,8 @@
         {
           "type": "category",
           "label": "Pages",
-          "items": [{
+          "items": [
+            {
                 "type": "category",
                 "label": "Authentication",
                 "items": [
@@ -131,7 +132,15 @@
                   "templates/pages/authentication/reset-password-page",
                   "templates/pages/authentication/two-factor-auth-setup-page"
                 ]
-          }]
+            },
+            {
+                "type": "category",
+                "label": "Account Management",
+                "items": [
+                  "templates/pages/account-management/security-page"
+                ]
+            }
+          ]
         }
       ]
     },
