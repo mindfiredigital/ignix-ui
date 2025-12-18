@@ -74,8 +74,10 @@
     "@radix-ui/react-switch": "^1.2.5",
     "@radix-ui/react-tooltip": "^1.2.7",
     "framer-motion": "^12.4.10",
+    "i18next": "^25.7.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-i18next": "^16.5.0",
     "react-icons": "^5.5.0",
     "zod": "^4.1.13"
   }

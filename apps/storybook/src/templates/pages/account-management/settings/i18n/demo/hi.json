@@ -1,0 +1,14 @@
+{
+  "settings": "सेटिंग्स",
+  "description": "अपने खाते को प्रबंधित करें और अपने अनुभव को व्यक्तिगत बनाएं",
+  "languagePreference": "भाषा वरीयता",
+  "themePreference": "थीम वरीयता",
+  "timezone": "समय क्षेत्र",
+  "notificationPreferences": "सूचना वरीयताएँ",
+  "privacySettings": "गोपनीयता सेटिंग्स",
+  "dataExport": "डेटा निर्यात",
+  "exportData": "डेटा निर्यात करें",
+  "emailNotification": "ईमेल सूचना",
+  "selectedTimezone": "चयनित समय क्षेत्र",
+  "changeTimezone": "समय क्षेत्र बदलें"
+}
