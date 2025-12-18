@@ -166,7 +166,7 @@
       }
     },
     "dialogBox": {
-      "name": "Dialog",
+      "name": "DialogBox",
       "description": "A dialog-box component with animation and different variants",
       "dependencies": ["framer-motion"],
       "files": {
@@ -760,7 +760,7 @@
         "radio",
         "typography",
         "switch",
-        "dialog"
+        "dialogBox"
       ],
       "files": {
         "main": {
