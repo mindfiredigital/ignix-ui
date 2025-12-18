@@ -1,0 +1,14 @@
+{
+  "settings": "設定",
+  "description": "アカウントを管理し、体験をカスタマイズします",
+  "languagePreference": "言語設定",
+  "themePreference": "テーマ",
+  "timezone": "タイムゾーン",
+  "notificationPreferences": "通知設定",
+  "privacySettings": "プライバシー設定",
+  "dataExport": "データエクスポート",
+  "exportData": "データを書き出す",
+  "emailNotification": "メール通知",
+  "selectedTimezone": "選択されたタイムゾーン",
+  "changeTimezone": "タイムゾーンを変更"
+}

@@ -20,14 +20,14 @@ export interface RadioGroupProps
       "size" | "onChange" | "defaultValue"
     >,
     VariantProps<typeof radioItemVariants> {
-  name: string;
+  name?: string;
   options: RadioOption[];
   value?: string;                // 👈 optional now
   defaultValue?: string;         // 👈 NEW (Radix-style)
   onChange?: (value: string) => void;
   disabled?: boolean;
   labelPosition?: "left" | "right";
-  checkedVariant?: "classic" | "surface";
+  checkedVariant?: "default" | "classic" | "surface";
   animationVariant?: "bounce" | "scale" | "pulse" | "glow" | "shake" | "flip" | "nina";
 }
 
@@ -40,7 +40,7 @@ const radioItemVariants = cva(
     variants: {
       variant: {
         default:
-          "border-blue-400 data-[state=checked]:bg-blue-400 data-[state=checked]:border-blue-400",
+          "border-blue-500 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500",
         primary:
           "border-blue-800 data-[state=checked]:bg-blue-800 data-[state=checked]:border-blue-800",
         success:
@@ -55,6 +55,49 @@ const radioItemVariants = cva(
           "border-muted data-[state=checked]:bg-accent data-[state=checked]:border-accent",
         neon:
           "border-pink-500 data-[state=checked]:bg-pink-500 data-[state=checked]:border-pink-500 shadow shadow-pink-500/40",
+      },
+      disabled: {
+        true:
+          "cursor-not-allowed border-gray-500 data-[state=checked]:bg-gray-500 data-[state=checked]:border-gray-500 opacity-50",
+        false: "",
+      },
+      size: {
+        xs: "h-3 w-3",
+        sm: "h-4 w-4",
+        md: "h-5 w-5",
+        lg: "h-6 w-6",
+        xl: "h-7 w-7",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "md",
+      disabled: false,
+    },
+  }
+);
+
+const radioOppositeItemVariants = cva(
+  "relative inline-flex items-center justify-center rounded-full border-2 bg-background transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+  {
+    variants: {
+      variant: {
+        default:
+          "border-blue-500",
+        primary:
+          "border-blue-800",
+        success:
+          "border-success",
+        warning:
+          "border-warning",
+        danger:
+          "border-destructive",
+        outline:
+          "border-input",
+        subtle:
+          "border-muted",
+        neon:
+          "border-pink-500",
       },
       disabled: {
         true:
@@ -93,6 +136,43 @@ const radioIndicatorVariants = cva(
       },
     },
     defaultVariants: {
+      size: "md",
+    },
+  }
+);
+
+const radioIndicatorDefaultVariants = cva(
+  "rounded-full transition-transform duration-200 scale-0 data-[state=checked]:scale-100",
+  {
+    variants: {
+      variant: {
+        default:
+          "border-blue-500 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500",
+        primary:
+          "border-blue-800 data-[state=checked]:bg-blue-800 data-[state=checked]:border-blue-800",
+        success:
+          "border-success data-[state=checked]:bg-success data-[state=checked]:border-success",
+        warning:
+          "border-warning data-[state=checked]:bg-warning data-[state=checked]:border-warning",
+        danger:
+          "border-destructive data-[state=checked]:bg-destructive data-[state=checked]:border-destructive",
+        outline:
+          "border-input data-[state=checked]:bg-primary data-[state=checked]:border-primary",
+        subtle:
+          "border-muted data-[state=checked]:bg-accent data-[state=checked]:border-accent",
+        neon:
+          "border-pink-500 data-[state=checked]:bg-pink-500 data-[state=checked]:border-pink-500 shadow shadow-pink-500/40",
+      },
+      size: {
+        xs: "h-1 w-1",
+        sm: "h-1.5 w-1.5",
+        md: "h-2 w-2",
+        lg: "h-2.5 w-2.5",
+        xl: "h-3 w-3",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
       size: "md",
     },
   }
@@ -226,7 +306,12 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
               value={opt.value}
               disabled={disabled || opt.disabled}
               className={cn(
+                checkedVariant !== "default" ?
                 radioItemVariants({
+                  variant,
+                  size,
+                  disabled: disabled || opt.disabled,
+                }) : radioOppositeItemVariants({
                   variant,
                   size,
                   disabled: disabled || opt.disabled,
@@ -239,6 +324,16 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
                   className={cn(
                     "flex items-center justify-center",
                     radioIndicatorVariants({ size })
+                  )}
+                />
+              )}
+
+              {checkedVariant === "default" && (
+                <RadixRadio.Indicator
+                  forceMount
+                  className={cn(
+                    "flex items-center justify-center",
+                    radioIndicatorDefaultVariants({ variant, size })
                   )}
                 />
               )}

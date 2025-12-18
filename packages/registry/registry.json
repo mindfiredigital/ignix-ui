@@ -751,7 +751,7 @@
       ],
       "files": {
         "main": {
-          "path": "templates/pages/reset-password/index.tsx",
+          "path": "templates/pages/setting-page/index.tsx",
           "type": "template"
         },
         "hook": {
