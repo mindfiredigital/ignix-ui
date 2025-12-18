@@ -760,7 +760,7 @@
         "radio",
         "typography",
         "switch",
-        "dialog"
+        "dialogBox"
       ],
       "files": {
         "main": {
