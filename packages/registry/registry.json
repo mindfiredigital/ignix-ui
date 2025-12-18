@@ -171,11 +171,11 @@
       "dependencies": ["framer-motion"],
       "files": {
         "main": {
-          "path": "components/dialog-box/index.tsx",
+          "path": "components/dialogbox/index.tsx",
           "type": "component"
         },
         "hook": {
-          "path": "components/dialog-box/use-dialog.ts",
+          "path": "components/dialogbox/use-dialog.ts",
           "type": "hook"
         }
       }
