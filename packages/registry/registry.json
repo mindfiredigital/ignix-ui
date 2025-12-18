@@ -165,7 +165,7 @@
         }
       }
     },
-    "dialog": {
+    "dialogBox": {
       "name": "Dialog",
       "description": "A dialog-box component with animation and different variants",
       "dependencies": ["framer-motion"],
@@ -755,7 +755,7 @@
           "type": "template"
         },
         "hook": {
-          "path": "components/pages/i18n.tsx",
+          "path": "templates/pages/setting-page/i18n.tsx",
           "type": "hook"
         }
       }

@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { cva } from "class-variance-authority";
 import { motion } from "framer-motion";
-import { useDialog } from "@ignix-ui/dialogbox/use-dialog";
-import { Dropdown, DropdownItem } from "@ignix-ui/dropdown";
-import { Button } from "@ignix-ui/button";
-import { RadioGroup } from "@ignix-ui/radio";
-import { Typography } from "@ignix-ui/typography";
-import { Switch } from "@ignix-ui/switch";
-import { DialogProvider } from "@ignix-ui/dialogbox";
+import { useDialog } from "../dialog-box/use-dialog";
+import { cn } from "@site/src/utils/cn";
+import { Dropdown, DropdownItem } from "../dropdown";
+import { Button } from "../button";
+import { RadioGroup } from "../radio";
+import { Typography } from "../typography";
+import { Switch } from "../switch";
+import { DialogProvider } from "../dialog-box";
 import { I18nProvider, useI18n } from "./i18n";
-import { cn } from "../../../utils/cn";
+import { loadDevLanguage } from "./i18n/loadDevLanguage";
 
 type SettingsAnimationVariant =
   | "none"
@@ -591,10 +592,15 @@ const SettingsContent: React.FC<SettingPageProps> = ({
 
 export const SettingsPage = (props: SettingPageProps) => {
   const defaultLanguage = props.languages?.[0]?.code ?? "en";
-
   const [language, setLanguage] = useState(defaultLanguage);
+  const [messages, setMessages] = useState<Record<string, string>>({});
 
-  const t = (key: string) =>  key;
+  const t = (key: string) => messages[key] ?? key;
+
+  const loadLanguage = async (lang: string) => {
+    const dict = await loadDevLanguage(lang);
+    setMessages(dict);
+  };
 
   return (
     <I18nProvider
@@ -602,7 +608,7 @@ export const SettingsPage = (props: SettingPageProps) => {
         language,
         setLanguage,
         t,
-        // 👇 Library does NOTHING here
+        onLanguageChange: loadLanguage, // 🔥 DEV ONLY
       }}
     >
       <DialogProvider>
@@ -611,6 +617,4 @@ export const SettingsPage = (props: SettingPageProps) => {
     </I18nProvider>
   );
 };
-
-
 

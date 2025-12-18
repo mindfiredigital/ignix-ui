@@ -1,0 +1,14 @@
+{
+  "settings": "Settings",
+  "description": "Manage your account & personalize your experience",
+  "languagePreference": "Language Preference",
+  "themePreference": "Theme Preference",
+  "timezone": "Timezone",
+  "notificationPreferences": "Notification Preferences",
+  "privacySettings": "Privacy Settings",
+  "dataExport": "Data Export",
+  "exportData": "Export Data",
+  "emailNotification": "Email Notification",
+  "selectedTimezone": "Selected Timezone",
+  "changeTimezone": "Change Timezone"
+}

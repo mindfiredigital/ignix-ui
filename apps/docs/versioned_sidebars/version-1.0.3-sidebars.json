@@ -120,16 +120,20 @@
           "type": "category",
           "label": "Pages",
           "items": [{
-                "type": "category",
-                "label": "Authentication",
-                "items": [
-                  "templates/pages/sign-in",
-                  "templates/pages/authentication/sign-up",
-                  "templates/pages/authentication/forgot-password-page",
-                  "templates/pages/authentication/otp-verification-page",
-                  "templates/pages/authentication/reset-password-page"
-                ]
-          }]
+            "type": "category",
+            "label": "Authentication",
+            "items": [
+              "templates/pages/sign-in",
+              "templates/pages/authentication/sign-up",
+              "templates/pages/authentication/forgot-password-page",
+              "templates/pages/authentication/otp-verification-page",
+              "templates/pages/authentication/reset-password-page"
+            ]},
+            {
+              "type": "category",
+              "label": "Account Management",
+              "items": ["templates/pages/account-management/setting-page"]
+            }]
         }
       ]
     },

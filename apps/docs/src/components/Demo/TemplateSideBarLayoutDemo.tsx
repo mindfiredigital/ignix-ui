@@ -85,7 +85,7 @@ footer={
 <footer className="py-4 text-center text-muted-foreground">
 © 2025 My Application. All rights reserved.
 </footer>
-}
+}>
 {mainContent}
 </SideBar${OptimisedTemplate}Layout>`;
 const [hasOpenButton, setHasOpenButton] = React.useState(false);

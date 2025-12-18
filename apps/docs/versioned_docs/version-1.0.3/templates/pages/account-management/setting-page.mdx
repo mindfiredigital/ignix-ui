@@ -1,0 +1,201 @@
+---
+sidebar_position: 1
+title: Settings
+description: A flexible and animated settings page component for modern web apps.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SettingsPageBasicDemo, SettingsPageDemo, SettingsPageDemoWithLayout } from '@site/src/components/Demo/SettingPageDemo';
+
+## Overview
+
+**Settings Page** is a highly customizable, animation-rich component designed for modern applications.
+
+It supports:
+- Theme switching (light / dark / auto)
+- Language selection (UI-agnostic, consumer-controlled)
+- Timezone management with live time preview
+- Notification & privacy toggles
+- Action confirmations (e.g. data export)
+- Smooth, configurable animations
+
+The component is **UI-only and framework-agnostic in behavior**.  
+It exposes **callback hooks instead of business logic**, allowing consumers to integrate APIs, persistence layers, analytics, or i18n solutions of their choice.
+
+Fully responsive and accessibility-friendly by default.
+
+---
+
+## Preview
+
+### Basic
+
+<SettingsPageBasicDemo />
+
+---
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component radio
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Examples
+### Variants
+
+<SettingsPageDemo />
+
+---
+
+### Integrated with Layout
+
+<SettingsPageDemoWithLayout />
+
+---
+
+### Dynamic translation loading
+
+`SettingsPage` does not bundle translations.
+
+To support language switching, provide an `onLanguageChange`
+handler via `I18nProvider`.
+
+```ts
+const loadLanguage = async (lang: string) => {
+  const messages = await fetch(`/i18n/${lang}.json`).then(r => r.json());
+  setMessages(messages);
+};
+
+<I18nProvider
+  value={{
+    language,
+    setLanguage,
+    t,
+    onLanguageChange: loadLanguage,
+  }}
+>
+  <SettingsPage />
+</I18nProvider>
+```
+
+## Usage 
+
+Import the component:
+
+```tsx
+export const SettingsPageDemo = (props: SettingPageProps) => {
+  const defaultLanguage = props.languages?.[0]?.code ?? "en";
+
+  const [language, setLanguage] = useState(defaultLanguage);
+  const [messages, setMessages] = useState<Record<string, string>>({});
+
+  const t = (key: string) => messages[key] ?? key;
+
+  const loadLanguage = async (lang: string) => {
+    const dict = await loadDevLanguage(lang);
+    setMessages(dict);
+  };
+
+  useEffect(() => {
+    loadLanguage(language);
+  }, []);
+
+  return (
+    <I18nProvider
+      value={{
+        language,
+        setLanguage,
+        t,
+        onLanguageChange: loadLanguage, // 🔥 demo-only
+      }}
+    >
+      <DialogProvider>
+        <SettingsContent {...props} />
+      </DialogProvider>
+    </I18nProvider>
+  );
+};
+```
+
+### RadioGroup
+```tsx
+```
+
+## Props
+
+### Core Configuration
+
+| Prop | Type | Default | Description |
+|-----|------|---------|-------------|
+| `languages` | `LanguageOption[]` | `[{ code: "en", name: "English", native: "English" }]` | Language options shown in the language selector. Translation logic is owned by the consumer. |
+| `theme` | `"auto" \| "light" \| "dark"` | `"light"` | Visual theme mode. `auto` follows system preferences. |
+| `animationVariant` | `"none" \| "fade" \| "slide" \| "scale" \| "spring" \| "stagger"` | `"slide"` | Controls page-level and card-level animations. |
+
+---
+
+### Animation Controls
+
+| Prop | Type | Default | Description |
+|-----|------|---------|-------------|
+| `dropDownAnimation` | `"default" \| "fade" \| "scale" \| "slide" \| "flip"` | `"default"` | Animation style for dropdown menus. |
+| `dialogAnimation` | `"popIn" \| "springPop" \| "backdropZoom" \| "flip3D" \| "skewSlide" \| "glassBlur" \| "skyDrop"` | `"popIn"` | Animation used by confirmation dialogs. |
+| `switchAnimation` | `"default" \| "bounce" \| "scale" \| "rotate" \| "fade" \| "elastic" \| "pulse" \| "shake" \| "flip" \| "jelly" \| "glow"` | `"bounce"` | Animation style for toggle switches. |
+
+---
+
+### Notifications & Privacy
+
+| Prop | Type | Default | Description |
+|-----|------|---------|-------------|
+| `notificationOptions` | `NotificationOption[]` | `[{ id: "email", label: "Email Notification", defaultChecked: true }]` | Notification toggle configuration. |
+| `privacyOptions` | `PrivacyOption[]` | `[{ id: "everybody", label: "Everybody", defaultChecked: true }]` | Privacy preference toggles. |
+| `onNotificationChange` | `(id, checked, all) => void` | — | Fired when a single notification toggle changes. |
+| `onNotificationsChange` | `(all) => void` | — | Fired when notification state updates. |
+| `onPrivacyChange` | `(id, checked, all) => void` | — | Fired when a single privacy toggle changes. |
+| `onPrivacysChange` | `(all) => void` | — | Fired when privacy state updates. |
+
+---
+
+### Actions
+
+| Prop | Type | Default | Description |
+|-----|------|---------|-------------|
+| `onExportData` | `() => void \| Promise<void>` | — | Called after export confirmation dialog is accepted. |
+
+---
+
+## Design Principles
+
+- **UI-only**: No API calls, no persistence
+- **Open-source friendly**: No forced i18n, state, or backend assumptions
+- **Composable**: Works standalone or inside complex layouts
+- **Accessible**: Keyboard and screen-reader friendly
+- **Animation-first**: Motion enhances UX without locking behavior
+
+---
+
+## When to Use
+
+✔ Dashboards  
+✔ Admin panels  
+✔ SaaS settings screens  
+✔ Design systems  
+✔ White-label products  
+
+---
+
+## When Not to Use
+
+✖ If you need opinionated backend logic  
+✖ If you want bundled translations  
+✖ If you don’t need animation or configurability  
+
+---
+
