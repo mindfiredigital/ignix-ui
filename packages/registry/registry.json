@@ -369,7 +369,7 @@
       "dependencies": ["@radix-ui/themes", "@radix-ui/react-icons", "react-responsive"],
       "files": {
         "main": {
-          "path": "components/table/pagination/index.tsx",
+          "path": "components/pagination/index.tsx",
           "type": "component"
         }
       }
@@ -778,7 +778,8 @@
         "switch",
         "table",
         "accordion",
-        "card"
+        "card",
+        "pagination"
       ],
       "files": {
         "main": {
