@@ -674,7 +674,8 @@
           "path": "templates/pages/sign-in/index.tsx",
           "type": "template"
         }
-      },
+      }
+    },
     "signup": {
       "name": "SignUp",
       "description": "A sign-up page template with responsive design and form validation.",
@@ -693,7 +694,20 @@
           "type": "template"
         }
       }
-    }
+    },
+    "avatar": {
+      "name": "Avatar",
+      "description": "An avatar component with image, icon, letters, and status indicator support, along with fallback handling and customizable sizes and shapes.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react"
+      ],
+      "files": {
+        "main": {
+          "path": "components/avatar/index.tsx",
+          "type": "component"
+        }
+      }
     },
     "otpVerification": {
       "name": "otpVerification",
@@ -756,6 +770,43 @@
         "hook": {
           "path": "templates/pages/setting-page/i18n.tsx",
           "type": "hook"
+        }
+      }
+    },
+    "twoFactorAuthSetup": {
+      "name": "TwoFactorAuthSetup",
+      "description": "A two-factor authentication setup page with QR code, manual entry, backup codes, and verification step.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react"
+      ],
+      "componentDependencies": [
+        "button",
+        "card"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/two-factor-auth-setup/index.tsx",
+          "type": "template"
+        }
+      }
+    },
+    "profile":{
+      "name": "Profile",
+      "description": "A profile page template with responsive design and form validation.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react", "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "button","avatar",
+        "input",
+        "typography"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/profile/index.tsx",
+          "type": "template"
         }
       }
     }

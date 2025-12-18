@@ -1,0 +1,983 @@
+---
+sidebar_position: 7
+title: Avatar
+description: A versatile avatar component supporting images, letters, icons, and various shapes with status indicators and upload functionality.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { Avatar, AvatarGroup } from '@site/src/components/UI/avatar';
+import { AvatarDemo, AvatarGroupDemo, AvatarUploadDemo, AvatarAdvancedDemo } from '@site/src/components/Demo/AvatarDemo';
+import { User, Mail, Star, Camera, Settings, Users, Bell } from 'lucide-react';
+
+
+## Overview
+
+The avatar component displays user profile pictures, initials, or icons with support for various shapes, sizes, and status indicators.
+
+## Preview
+<Tabs defaultValue="preview">
+  <TabItem value="preview" label="Preview" default>
+    <div className="p-4 border rounded-lg">
+      <div className="flex flex-wrap gap-6 items-center justify-center">
+        <Avatar 
+          src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop" 
+          alt="User avatar" 
+          size='2xl'
+        />
+      </div>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    import { Avatar } from './components/ui';
+    import { User } from 'lucide-react';
+
+    function MyComponent() {
+      return (
+        <div className="flex gap-6 items-center">
+          <Avatar 
+            src="https://example.com/avatar.jpg" 
+            alt="User avatar" 
+            size='2xl'
+          />
+        </div>
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+## Installation
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component avatar
+    ```
+  </TabItem>
+  <TabItem value="manual" label="Manual">
+    ```tsx
+    'use client';
+
+import { motion } from 'framer-motion';
+import React, { useState, useRef, forwardRef, useEffect } from 'react';
+import { cva } from 'class-variance-authority';
+import { cn } from '../../../utils/cn';
+import { User } from 'lucide-react';
+
+// Define all available shapes
+export type AvatarShape =
+    | 'circle' | 'square' | 'rounded' | 'decagon'
+    | 'hexagon' | 'pentagon' | 'star' | 'diamond'
+    | 'triangle' | 'triangle-down' | 'parallelogram' | 'rhombus'
+    | 'cross' | 'octagon' | 'ellipse' | 'egg' |
+    'trapezoid';
+
+// Shape styles using clip-path
+const shapeStyles: Record<AvatarShape, React.CSSProperties> = {
+    // Basic shapes
+    circle: {},
+    square: {},
+    rounded: {},
+
+    // Polygon shapes
+    hexagon: {
+        clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)'
+    },
+    pentagon: {
+        clipPath: 'polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)'
+    },
+    octagon: {
+        clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)'
+    },
+    decagon: {
+        clipPath: 'polygon(50% 0%, 80% 10%, 100% 35%, 100% 70%, 80% 90%, 50% 100%, 20% 90%, 0% 70%, 0% 35%, 20% 10%)'
+    },
+
+    // Star shapes
+    star: {
+        clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)'
+    },
+
+    // Diamond/Rhombus variations
+    diamond: {
+        clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)'
+    },
+    rhombus: {
+        clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)'
+    },
+
+    // Triangle variations
+    triangle: {
+        clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)',
+    },
+    'triangle-down': {
+        clipPath: 'polygon(0% 0%, 100% 0%, 50% 100%)'
+    },
+
+    // Other geometric shapes
+    parallelogram: {
+        clipPath: 'polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%)'
+    },
+    trapezoid: {
+        clipPath: 'polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%)'
+    },
+    ellipse: {
+        clipPath: 'ellipse(50% 50% at 50% 50%)'
+    },
+    egg: {
+        clipPath: 'ellipse(40% 50% at 50% 50%)'
+    },
+    // Symbol shapes
+    cross: {
+        clipPath: 'polygon(20% 0%, 80% 0%, 80% 20%, 100% 20%, 100% 80%, 80% 80%, 80% 100%, 20% 100%, 20% 80%, 0% 80%, 0% 20%, 20% 20%)'
+    },
+};
+
+// Updated avatar variants with new shapes
+const avatarVariants = cva(
+    'relative inline-flex items-center justify-center overflow-hidden font-semibold text-foreground select-none',
+    {
+        variants: {
+            size: {
+                xs: 'h-6 w-6 text-xs',
+                sm: 'h-8 w-8 text-sm',
+                md: 'h-10 w-10 text-base',
+                lg: 'h-12 w-12 text-lg',
+                xl: 'h-14 w-14 text-xl',
+                '2xl': 'h-16 w-16 text-2xl',
+                '3xl': 'h-20 w-20 text-2xl',
+                '4xl': 'h-24 w-24 text-3xl',
+                '5xl': 'h-28 w-28 text-4xl',
+                '6xl': 'h-32 w-32 text-5xl',
+                '7xl': 'h-36 w-36 text-6xl',
+                '8xl': 'h-40 w-40 text-7xl',
+                '9xl': 'h-44 w-44 text-8xl',
+            },
+            shape: {
+                // Basic shapes (use border-radius)
+                circle: 'rounded-full',
+                square: 'rounded-none',
+                rounded: 'rounded-md',
+
+                // Custom shapes (will use clip-path)
+                hexagon: '',
+                pentagon: '',
+                star: '',
+                diamond: '',
+                triangle: '',
+                'triangle-down': '',
+                parallelogram: '',
+                rhombus: '',
+                cross: '',
+                octagon: '',
+                decagon: '',
+                ellipse: '',
+                egg: '',
+                trapezoid: '',
+            },
+            bordered: {
+                true: 'border-2 border-background',
+                false: 'border-0',
+            },
+            clickable: {
+                true: 'cursor-pointer transition-transform hover:scale-105 active:scale-95',
+                false: 'cursor-default',
+            },
+            hasBackground: {
+                true: 'bg-slate-100 dark:bg-slate-300',
+                false: 'bg-transparent',
+            },
+        },
+        defaultVariants: {
+            size: 'md',
+            shape: 'circle',
+            bordered: false,
+            clickable: false,
+            hasBackground: false, // Default to having background
+        },
+    }
+);
+
+const statusVariants = cva('absolute rounded-full border-2 border-background z-10', {
+    variants: {
+        size: {
+            xs: 'h-2 w-2 bottom-0 right-0',
+            sm: 'h-2.5 w-2.5 bottom-0 right-0',
+            md: 'h-3 w-3 bottom-0 right-0',
+            lg: 'h-3.5 w-3.5 bottom-0 right-0',
+            xl: 'h-4 w-4 bottom-0 right-0',
+            '2xl': 'h-5 w-5 bottom-1 right-1',
+            '3xl': 'h-6 w-6 bottom-1 right-1',
+            '4xl': 'h-7 w-7 bottom-1 right-1',
+            '5xl': 'h-8 w-8 bottom-2 right-2',
+            '6xl': 'h-9 w-9 bottom-2 right-2',
+            '7xl': 'h-10 w-10 bottom-2 right-2',
+            '8xl': 'h-11 w-11 bottom-3 right-3',
+            '9xl': 'h-12 w-12 bottom-3 right-3',
+        },
+        status: {
+            online: 'bg-green-500',
+            offline: 'bg-gray-400',
+            away: 'bg-yellow-500',
+            busy: 'bg-red-500',
+        },
+    },
+    defaultVariants: {
+        size: 'md',
+        status: 'online',
+    },
+});
+
+export interface AvatarProps
+    extends Omit<React.HTMLAttributes<HTMLDivElement>, 'size'> {
+    src?: string;
+    alt?: string;
+    fallback?: React.ReactNode;
+    fallbackDelay?: number;
+    shape?: AvatarShape;
+    icon?: React.ReactNode;
+    letters?: string;
+    showUploadButton?: boolean;
+    onUpload?: (file: File) => void;
+    onRemove?: () => void;
+    status?: 'online' | 'offline' | 'away' | 'busy';
+    bordered?: boolean;
+    clickable?: boolean;
+    size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | '8xl' | '9xl';
+    backgroundColor?: string; // Optional custom background color
+}
+
+const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
+    (
+        {
+            className,
+            size,
+            shape = 'circle',
+            src,
+            alt = 'Avatar',
+            fallback,
+            // fallbackDelay = 600,
+            icon,
+            letters,
+            status,
+            bordered = false,
+            clickable = false,
+            backgroundColor,
+            ...props
+        },
+        ref
+    ) => {
+        const [imageError, setImageError] = useState(false);
+        const [imageLoading, setImageLoading] = useState(!!src);
+        const fallbackTimerRef = useRef<NodeJS.Timeout>();
+
+        useEffect(() => {
+            if (!src) {
+                setImageError(false);
+                setImageLoading(false);
+                return;
+            }
+
+            setImageError(false);
+            setImageLoading(true);
+        }, [src]);
+
+        const handleImageError = () => {
+            if (fallbackTimerRef.current) {
+                clearTimeout(fallbackTimerRef.current);
+            }
+            setImageError(true);
+            setImageLoading(false);
+        };
+
+        const handleImageLoad = () => {
+            if (fallbackTimerRef.current) {
+                clearTimeout(fallbackTimerRef.current);
+            }
+            setImageLoading(false);
+        };
+
+        const getLetters = () => {
+            if (!letters) return '';
+            const words = letters.trim().split(/\s+/);
+            if (words.length >= 2) {
+                return `${words[0][0]}${words[1][0]}`.toUpperCase();
+            }
+            return letters.slice(0, 2).toUpperCase();
+        };
+
+        const getShapeStyle = () => {
+            // Only apply clip-path for custom shapes (not circle, square, rounded)
+            if (shape && ['circle', 'square', 'rounded'].includes(shape)) {
+                return undefined;
+            }
+            return shapeStyles[shape as AvatarShape];
+        };
+
+        const getContainerStyle = () => {
+            const style: React.CSSProperties = {};
+
+            // Apply custom background color if provided
+            if (backgroundColor) {
+                style.backgroundColor = backgroundColor;
+            }
+
+            // Apply clip-path to container for custom shapes
+            if (shape && !['circle', 'square', 'rounded'].includes(shape)) {
+                const shapeStyle = shapeStyles[shape as AvatarShape];
+                if (shapeStyle.clipPath) {
+                    style.clipPath = shapeStyle.clipPath;
+                }
+            }
+
+            return style;
+        };
+
+        const renderContent = () => {
+            const customShapeStyle = getShapeStyle();
+
+            if (src && !imageError) {
+                return (
+                    <img
+                        src={src}
+                        alt={alt}
+                        className="h-full w-full object-cover"
+                        style={customShapeStyle}
+                        onError={handleImageError}
+                        onLoad={handleImageLoad}
+                        loading="lazy"
+                        decoding="async"
+                        aria-label={alt}
+                    />
+                );
+            }
+
+            // Show loading state if image is still loading
+            if (imageLoading) {
+                return (
+                    <div
+                        className="h-full w-full flex items-center justify-center"
+                        style={customShapeStyle}
+                    >
+                        <div className="animate-pulse bg-muted-foreground/20 rounded-full h-1/2 w-1/2" />
+                    </div>
+                );
+            }
+
+            // Fallback content when image fails or no src
+            const content = fallback ? (
+                <div className="h-full w-full flex items-center justify-center">{fallback}</div>
+            ) : icon ? (
+                <div className="h-full w-full flex items-center justify-center">{icon}</div>
+            ) : letters ? (
+                <span className="font-bold">{getLetters()}</span>
+            ) : (
+                <User className="h-1/2 w-1/2 text-gray-500 dark:text-gray-400" aria-hidden="true" />
+            );
+
+            return (
+                <div
+                    className="h-full w-full flex items-center justify-center"
+                    style={customShapeStyle}
+                >
+                    {content}
+                </div>
+            );
+        };
+
+        return (
+            <div className="relative inline-block">
+                <motion.div
+                    ref={ref}
+                    className={cn(
+                        avatarVariants({
+                            size,
+                            shape,
+                            bordered,
+                            clickable,
+                            hasBackground: !backgroundColor // Only use default background if no custom color
+                        }),
+                        className,
+                        'group'
+                    )}
+                    style={getContainerStyle()}
+                    whileHover={clickable ? { scale: 1.05 } : undefined}
+                    whileTap={clickable ? { scale: 0.95 } : undefined}
+                    {...props}
+                >
+                    {renderContent()}
+                </motion.div>
+
+                {/* Status indicator positioned outside */}
+                {status && (
+                    <div
+                        className={cn(statusVariants({ size, status }))}
+                        aria-label={`Status: ${status}`}
+                        role="status"
+                    />
+                )}
+            </div>
+        );
+    }
+);
+
+Avatar.displayName = 'Avatar';
+
+export interface AvatarGroupProps extends React.HTMLAttributes<HTMLDivElement> {
+    children: React.ReactNode;
+    max?: number;
+    spacing?: number;
+    size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | '8xl' | '9xl';
+}
+
+const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
+    ({ children, max, spacing = -4, size = 'md', className, ...props }, ref) => {
+        const childrenArray = React.Children.toArray(children);
+        const totalChildren = childrenArray.length;
+        const displayChildren = max ? childrenArray.slice(0, max) : childrenArray;
+        const extraCount = max && totalChildren > max ? totalChildren - max : 0;
+
+        return (
+            <div
+                ref={ref}
+                className={cn('flex items-center', className)}
+                style={{ marginLeft: `${Math.abs(spacing)}px` }}
+                role="group"
+                aria-label="Avatar group"
+                {...props}
+            >
+                {displayChildren.map((child, index) => (
+                    <div
+                        key={index}
+                        className="relative"
+                        style={{ marginLeft: `${spacing}px` }}
+                    >
+                        {React.isValidElement<AvatarProps>(child)
+                            ? React.cloneElement(child, {
+                                bordered: true,
+                                size: child.props.size || size,
+                            })
+                            : child}
+                    </div>
+                ))}
+                {extraCount > 0 && (
+                    <div className="relative" style={{ marginLeft: `${spacing}px` }}>
+                        {/* Create a motion.div that matches the Avatar structure exactly */}
+                        <motion.div
+                            className={cn(
+                                avatarVariants({
+                                    size,
+                                    shape: 'circle',
+                                    bordered: true,
+                                    clickable: false,
+                                    hasBackground: true,
+                                }),
+                                'bg-gray-200 dark:bg-gray-700 flex items-center justify-center'
+                            )}
+                            aria-label={`${extraCount} more avatars`}
+                            role="status"
+                        >
+                            <span className="font-bold">+{extraCount}</span>
+                        </motion.div>
+                    </div>
+                )}
+            </div>
+        );
+    }
+);
+
+
+AvatarGroup.displayName = 'AvatarGroup';
+
+export { Avatar, AvatarGroup };
+ 
+    ```
+</TabItem>
+</Tabs>
+
+## Usage
+
+Import the component:
+
+```tsx
+import { Avatar, AvatarGroup } from '@mindfiredigital/ignix-ui';
+```
+
+### Avatar with Status Indicator
+<Tabs>
+    <TabItem value="preview" label="Preview" default>
+    <div className="p-4 border rounded-lg">
+        <div className="flex flex-wrap gap-6 items-center justify-center">
+            <div className="flex flex-col items-center gap-2">
+                <Avatar 
+                    src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop"
+                    status="online" 
+                    alt="Online user" 
+                    size='2xl'
+                />
+                <p>Online</p>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+                <Avatar 
+                    src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop"
+                    status="away" 
+                    alt="Away user" 
+                    size='2xl'
+                />
+                <p>Away</p>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+                <Avatar 
+                    src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop"
+                    status="busy" 
+                    alt="Busy user" 
+                    size='2xl'
+            />
+            <p>Busy</p>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+                <Avatar 
+                    src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop"
+                    status="offline" 
+                    alt="Offline user" 
+                size='2xl'
+            />
+            <p>Offline</p>
+            </div>
+        </div>
+      </div>
+    </TabItem>
+    <TabItem value="code" label="Code">
+        ```tsx
+        function AvatarWithStatus() {
+            return (
+                <div className="flex flex-wrap gap-6 items-center justify-center">
+                        <div className="flex flex-col items-center gap-2">
+                            <Avatar 
+                                src="https://example.com/avatar.jpg"
+                                status="online" 
+                                alt="Online user" 
+                                size='2xl'
+                            />
+                            <p>Online</p>
+                        </div>
+                        <div className="flex flex-col items-center gap-2">
+                            <Avatar 
+                                src="https://example.com/avatar.jpg"
+                                status="away" 
+                                alt="Away user" 
+                                size='2xl'
+                            />
+                            <p>Away</p>
+                        </div>
+                        <div className="flex flex-col items-center gap-2">
+                            <Avatar 
+                                src="https://example.com/avatar.jpg"
+                                status="busy" 
+                                alt="Busy user" 
+                                size='2xl'
+                        />
+                        <p>Busy</p>
+                        </div>
+                        <div className="flex flex-col items-center gap-2">
+                            <Avatar 
+                                src="https://example.com/avatar.jpg"
+                                status="offline" 
+                                alt="Offline user" 
+                            size='2xl'
+                        />
+                        <p>Offline</p>
+                        </div>
+                    </div>
+            );
+}
+        ```
+    </TabItem>
+</Tabs>
+
+### Different Shapes
+<Tabs>
+    <TabItem value="preview" label="Preview" default>
+        <div className="p-4 border rounded-lg">
+            <div className="flex flex-wrap gap-6 items-center justify-center">
+            <div className="flex flex-col items-center gap-2">
+                    <Avatar 
+                        src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop"
+                        shape="square" 
+                        alt="Square" 
+                        size='2xl'
+                    />
+                    <p>Square</p>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                    <Avatar 
+                        src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop"
+                        shape="circle" 
+                        alt="Circle" 
+                        size='2xl'
+                    />
+                    <p>Circle</p>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                    <Avatar 
+                        src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop"
+                        shape="rounded" 
+                        alt="Rounded" 
+                        size='2xl'
+                    />
+                    <p>Rounded</p>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                    <Avatar 
+                        src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop"
+                        shape="hexagon"
+                        alt="Hexagon" 
+                        size='2xl'
+                    />
+                    <p>Hexagon</p>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                    <Avatar 
+                        src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop"
+                        shape="pentagon"
+                        alt='Pentagon'
+                        size='2xl'
+                    />
+                    <p>Pentagon</p>
+                </div>
+                 <div className="flex flex-col items-center gap-2">
+                    <Avatar 
+                        src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop"
+                        shape="octagon"
+                        alt='Octagon'
+                        size='2xl'
+                    />
+                    <p>Octagon</p>
+                </div>
+                 <div className="flex flex-col items-center gap-2">
+                    <Avatar 
+                        src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop"
+                        shape="rhombus"
+                        alt='Rhombus'
+                        size='2xl'
+                    />
+                    <p>Rhombus</p>
+                </div>
+            </div>
+        </div>
+    </TabItem>
+    <TabItem value="code" label="Code">
+        ```tsx
+       function AvatarShapes() {
+            return (
+                <div className="p-4 border rounded-lg">
+                        <div className="flex flex-wrap gap-6 items-center justify-center">
+                        <div className="flex flex-col items-center gap-2">
+                                <Avatar 
+                                    src="https://example.com/avatar.jpg"
+                                    shape="square" 
+                                    alt="Square" 
+                                    size='2xl'
+                                />
+                                <p>Square</p>
+                            </div>
+                            <div className="flex flex-col items-center gap-2">
+                                <Avatar 
+                                    src="https://example.com/avatar.jpg"
+                                    shape="circle" 
+                                    alt="Circle" 
+                                    size='2xl'
+                                />
+                                <p>Circle</p>
+                            </div>
+                            <div className="flex flex-col items-center gap-2">
+                                <Avatar 
+                                    src="https://example.com/avatar.jpg"
+                                    shape="rounded" 
+                                    alt="Rounded" 
+                                    size='2xl'
+                                />
+                                <p>Rounded</p>
+                            </div>
+                            <div className="flex flex-col items-center gap-2">
+                                <Avatar 
+                                    src="https://example.com/avatar.jpg"
+                                    shape="hexagon"
+                                    alt="Hexagon" 
+                                    size='2xl'
+                                />
+                                <p>Hexagon</p>
+                            </div>
+                            <div className="flex flex-col items-center gap-2">
+                                <Avatar 
+                                    src="https://example.com/avatar.jpg"
+                                    shape="pentagon"
+                                    alt='Pentagon'
+                                    size='2xl'
+                                />
+                                <p>Pentagon</p>
+                            </div>
+                            <div className="flex flex-col items-center gap-2">
+                                <Avatar 
+                                    src="https://example.com/avatar.jpg"
+                                    shape="octagon"
+                                    alt='Octagon'
+                                    size='2xl'
+                                />
+                                <p>Octagon</p>
+                            </div>
+                            <div className="flex flex-col items-center gap-2">
+                                <Avatar 
+                                    src="https://example.com/avatar.jpg"
+                                    shape="rhombus"
+                                    alt='Rhombus'
+                                    size='2xl'
+                                />
+                                <p>Rhombus</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+}
+        ```
+    </TabItem>
+</Tabs>
+
+### Different Sizes
+<Tabs>
+    <TabItem value="preview" label="Preview" default>
+    <div className="p-4 border rounded-lg">
+      <div className="flex flex-wrap gap-6 items-center justify-center">
+        <Avatar shape='circle' src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop" alt="Extra Small" size='xs' />
+        <Avatar shape='circle' src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop" alt="Small" size='sm' />
+        <Avatar shape='circle' src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop" alt="Medium" size='md' />
+        <Avatar shape='circle' src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop" alt="Large" size='lg' />
+        <Avatar shape='circle' src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop" alt="Extra Large" size='xl' />
+        <Avatar shape='circle' src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop" alt="2XL" size='2xl' />
+        <Avatar shape='circle' src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop" alt="3XL" size='3xl' />
+        <Avatar shape='circle' src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop" alt="4XL" size='4xl' />
+        <Avatar shape='circle' src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop" alt="5XL" size='5xl' />
+      </div>
+      </div>
+    </TabItem>
+    <TabItem value="code" label="Code">
+        ```tsx
+        function AvatarSizes() {
+            return (
+                <div className="flex flex-wrap gap-6 items-center">
+                    <Avatar shape='circle' src="https://example.com/avatar.jpg" alt="Extra Small" size='xs' />
+                    <Avatar shape='circle' src="https://example.com/avatar.jpg" alt="Small" size='sm' />
+                    <Avatar shape='circle' src="https://example.com/avatar.jpg" alt="Medium" size='md' />
+                    <Avatar shape='circle' src="https://example.com/avatar.jpg" alt="Large" size='lg' />
+                    <Avatar shape='circle' src="https://example.com/avatar.jpg" alt="Extra Large" size='xl' />
+                    <Avatar shape='circle' src="https://example.com/avatar.jpg" alt="2XL" size='2xl' />
+                    <Avatar shape='circle' src="https://example.com/avatar.jpg" alt="3XL" size='3xl' />
+                    <Avatar shape='circle' src="https://example.com/avatar.jpg" alt="4XL" size='4xl' />
+                    <Avatar shape='circle' src="https://example.com/avatar.jpg" alt="5XL" size='5xl' />
+                </div>
+            );
+        }
+        ```
+    </TabItem>
+</Tabs>
+
+### Avatar with Initial Letters
+<Tabs>
+    <TabItem value="preview" label="Preview" default>
+        <div className="p-4 border rounded-lg">
+            <div className="flex flex-wrap gap-6 items-center justify-center">
+                <Avatar backgroundColor='#ef4444' shape='circle' letters="John Doe" alt="Initials avatar" size='2xl' />
+                <Avatar backgroundColor='#ef4444' shape='circle' letters="Alice Smith" alt="Initials avatar" size='2xl' />
+                <Avatar backgroundColor='#ef4444' shape='circle' letters="Baby Johnson" alt="Initials avatar" size='2xl' />
+                <Avatar backgroundColor='#ef4444' shape='circle' letters="Emily Davis" alt="Initials avatar" size='2xl' />
+            </div>
+      </div>
+    </TabItem>
+    <TabItem value="code" label="Code">
+        ```tsx
+        function InitialsAvatar() {
+            return (
+                <div className="flex flex-wrap gap-6 items-center justify-center">
+                    <Avatar backgroundColor='#ef4444' shape="circle" letters="John Doe" alt="Initials avatar" size="2xl" />
+                    <Avatar backgroundColor='#ef4444' shape="square" letters="Alice Smith" alt="Initials avatar" size="2xl" />
+                    <Avatar backgroundColor='#ef4444' shape="circle" letters="Baby Johnson" alt="Initials avatar" size="2xl" />
+                    <Avatar backgroundColor='#ef4444' shape="square" letters="Emily Davis" alt="Initials avatar" size="2xl" />
+                </div>
+            );
+        }
+        ```
+    </TabItem>
+</Tabs>
+
+### Avatar with Icon
+<Tabs>
+    <TabItem value="preview" label="Preview" default>
+        <div className="p-4 border rounded-lg">
+            <div className="flex flex-wrap gap-6 items-center justify-center">
+                <Avatar icon={<User className="h-1/2 w-1/2 text-white" aria-hidden="true" />} alt='Icon avatar' size='2xl' backgroundColor='#ef4444'/>
+                <Avatar icon={<Mail className="h-1/2 w-1/2 text-white" aria-hidden="true" />} alt="Icon avatar" size='2xl' backgroundColor='#ef4444' />
+                <Avatar icon={<Star className="h-1/2 w-1/2 text-white" aria-hidden="true" />} alt="Icon avatar" size='2xl' backgroundColor='#ef4444' />
+                <Avatar icon={<Settings className="h-1/2 w-1/2 text-white" aria-hidden="true" />} alt="Icon avatar" size='2xl' backgroundColor='#ef4444' />
+                <Avatar icon={<Bell className="h-1/2 w-1/2 text-white" aria-hidden="true" />} alt="Icon avatar" size='2xl' backgroundColor='#ef4444' />
+            </div>
+        </div>
+    </TabItem>
+    <TabItem value="code" label="Code">
+        ```tsx
+        import { Avatar } from '@site/src/components/UI/avatar';
+        import { User, Mail, Star, Camera, Settings, Users, Bell } from 'lucide-react';
+
+        function IconAvatar() {
+            return (
+                <div className="flex flex-wrap gap-6 items-center justify-center">
+                    <Avatar 
+                        icon={<User className="h-1/2 w-1/2 text-white" aria-hidden="true" />} 
+                        alt='Icon avatar' 
+                        size='2xl' 
+                        backgroundColor='#ef4444' 
+                    />
+                    <Avatar 
+                        icon={<Mail className="h-1/2 w-1/2 text-white" aria-hidden="true" />} 
+                        alt="Icon avatar" 
+                        size='2xl' 
+                        backgroundColor='#ef4444' 
+                    />
+                    <Avatar 
+                        icon={<Star className="h-1/2 w-1/2 text-white" aria-hidden="true" />} 
+                        alt="Icon avatar" 
+                        size='2xl' 
+                        backgroundColor='#ef4444' 
+                    />
+                    <Avatar 
+                        icon={<Settings className="h-1/2 w-1/2 text-white" aria-hidden="true" />} 
+                        alt="Icon avatar" 
+                        size='2xl' 
+                        backgroundColor='#ef4444' 
+                    />
+                    <Avatar 
+                        icon={<Bell className="h-1/2 w-1/2 text-white" aria-hidden="true" />} 
+                        alt="Icon avatar" 
+                        size='2xl' 
+                        backgroundColor='#ef4444' 
+                    />
+                </div>
+            );
+}
+        ```
+    </TabItem>
+</Tabs>
+
+### Avatar Group
+<Tabs>
+    <TabItem value="preview" label="Preview" default>
+        <div className="p-4 border rounded-lg">
+            <div className="flex flex-wrap gap-6 items-center justify-center">
+                <AvatarGroup size='lg' max={4} spacing={-15}>
+                    <Avatar src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop" alt="User 1" />
+                    <Avatar src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop" alt="User 2" />
+                    <Avatar src="https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?w=400&h=400&fit=crop" alt="User 3" />
+                    <Avatar src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop" alt="User 4" />
+                    <Avatar src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop" alt="User 1" />
+                    <Avatar src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop" alt="User 2" />
+                    <Avatar src="https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?w=400&h=400&fit=crop" alt="User 3" />
+                    <Avatar src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop" alt="User 4" />
+                </AvatarGroup>
+            </div>
+            <div className="flex flex-wrap gap-6 items-center justify-center">
+                <AvatarGroup size='2xl' max={6} spacing={-10}>
+                    <Avatar src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop" alt="User 1" />
+                    <Avatar src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop" alt="User 2" />
+                    <Avatar src="https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?w=400&h=400&fit=crop" alt="User 3" />
+                    <Avatar src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop" alt="User 4" />
+                    <Avatar src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop" alt="User 1" />
+                    <Avatar src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop" alt="User 2" />
+                    <Avatar src="https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?w=400&h=400&fit=crop" alt="User 3" />
+                    <Avatar src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop" alt="User 4" />
+                </AvatarGroup>
+            </div>
+            <div className="flex flex-wrap gap-6 items-center justify-center">
+                <AvatarGroup size='3xl' max={3} spacing={-30}>
+                    <Avatar src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop" alt="User 1" />
+                    <Avatar src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop" alt="User 2" />
+                    <Avatar src="https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?w=400&h=400&fit=crop" alt="User 3" />
+                    <Avatar src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop" alt="User 4" />
+                    <Avatar src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop" alt="User 1" />
+                    <Avatar src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop" alt="User 2" />
+                    <Avatar src="https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?w=400&h=400&fit=crop" alt="User 3" />
+                    <Avatar src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop" alt="User 4" />
+                </AvatarGroup>
+            </div>
+        </div>
+    </TabItem>
+    <TabItem value="code" label="Code">
+        ```tsx
+        function GroupedAvatars() {
+            return (
+                <AvatarGroup size='lg' max={4} spacing={-15}>
+                    <Avatar src="https://example.com/avatar1.jpg" alt="User 1" />
+                    <Avatar src="https://example.com/avatar2.jpg" alt="User 2" />
+                    <Avatar src="https://example.com/avatar3.jpg" alt="User 3" />
+                    <Avatar src="https://example.com/avatar4.jpg" alt="User 4" />
+                    <Avatar src="https://example.com/avatar5.jpg" alt="User 5" />
+                    <Avatar src="https://example.com/avatar6.jpg" alt="User 6" />
+                    <Avatar src="https://example.com/avatar7.jpg" alt="User 7" />
+                    <Avatar src="https://example.com/avatar8.jpg" alt="User 8" />
+                </AvatarGroup>
+                <AvatarGroup size='2xl' max={6} spacing={-10}>
+                    <Avatar src="https://example.com/avatar1.jpg" alt="User 1" />
+                    <Avatar src="https://example.com/avatar2.jpg" alt="User 2" />
+                    <Avatar src="https://example.com/avatar3.jpg" alt="User 3" />
+                    <Avatar src="https://example.com/avatar4.jpg" alt="User 4" />
+                    <Avatar src="https://example.com/avatar5.jpg" alt="User 5" />
+                    <Avatar src="https://example.com/avatar6.jpg" alt="User 6" />
+                    <Avatar src="https://example.com/avatar7.jpg" alt="User 7" />
+                    <Avatar src="https://example.com/avatar8.jpg" alt="User 8" />
+                </AvatarGroup>
+                <AvatarGroup size='3xl' max={3} spacing={-30}>
+                    <Avatar src="https://example.com/avatar1.jpg" alt="User 1" />
+                    <Avatar src="https://example.com/avatar2.jpg" alt="User 2" />
+                    <Avatar src="https://example.com/avatar3.jpg" alt="User 3" />
+                    <Avatar src="https://example.com/avatar4.jpg" alt="User 4" />
+                    <Avatar src="https://example.com/avatar5.jpg" alt="User 5" />
+                    <Avatar src="https://example.com/avatar6.jpg" alt="User 6" />
+                    <Avatar src="https://example.com/avatar7.jpg" alt="User 7" />
+                    <Avatar src="https://example.com/avatar8.jpg" alt="User 8" />
+                </AvatarGroup>
+            );
+        }
+        ```
+    </TabItem>
+</Tabs>
+
+
+## Props
+### Avatar
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `src` | `string` | - | Image source URL |
+| `alt` | `string` | `'Avatar'` | Alternative text for screen readers |
+| `fallback` | `React.ReactNode` | - | Custom fallback content when image fails to load |
+| `fallbackDelay` | `number` | `600` | Delay in ms before showing fallback |
+| `shape` | `'circle' \| 'square' \| 'rounded' \| 'decagon' \| 'hexagon' \| 'pentagon' \| 'star' \| 'diamond' \| 'triangle' \| 'triangle-down' \| 'parallelogram' \| 'rhombus' \| 'cross' \| 'octagon' \| 'ellipse' \| 'egg' \| 'trapezoid'` | `'circle'` | Shape of the avatar |
+| `icon` | `React.ReactNode` | - | Icon component to display |
+| `letters` | `string` | - | Text to display as initials (e.g., "John Doe") |
+| `status` | `'online' \| 'offline' \| 'away' \| 'busy'` | - | Status indicator |
+| `bordered` | `boolean` | `false` | Add border around avatar |
+| `clickable` | `boolean` | `false` | Make avatar clickable with hover effects |
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl' \| '3xl' \| '4xl' \| '5xl' \| '6xl' \| '7xl' \| '8xl' \| '9xl'` | `'md'` | Size of the avatar |
+| `backgroundColor` | `string` | - | Optional custom background color |
+| `onClick` | `React.MouseEventHandler<HTMLDivElement>` | - | Click handler for the avatar |
+| `className` | `string` | - | Additional CSS classes |
+| `ref` | `React.Ref<HTMLDivElement>` | - | Ref to the avatar element | 
+
+### AvatarGroup
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | - | Avatar components to group |
+| `max` | `number` | - | Maximum number of avatars to show before displaying "+X" |
+| `spacing` | `number` | `-4` | Spacing between avatars (negative for overlap) |
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl' \| '3xl' \| '4xl' \| '5xl' \| '6xl' \| '7xl' \| '8xl' \| '9xl'` | `'md'` | Size for all avatars in the group (can be overridden by individual avatars) |
+| `className` | `string` | - | Additional CSS classes |
+| `ref` | `React.Ref<HTMLDivElement>` | - | Ref to the avatar group element |

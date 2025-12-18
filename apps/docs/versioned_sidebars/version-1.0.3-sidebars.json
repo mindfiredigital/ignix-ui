@@ -67,6 +67,7 @@
       "label": "Components",
       "items": [
         "components/accordion",
+        "components/avatar",
         "components/badge",
         "components/breadcrumbs",
         "components/button",
@@ -127,12 +128,15 @@
               "templates/pages/authentication/sign-up",
               "templates/pages/authentication/forgot-password-page",
               "templates/pages/authentication/otp-verification-page",
-              "templates/pages/authentication/reset-password-page"
+              "templates/pages/authentication/reset-password-page",
+              "templates/pages/authentication/two-factor-auth-setup-page"
             ]},
             {
               "type": "category",
               "label": "Account Management",
-              "items": ["templates/pages/account-management/setting-page"]
+              "items": [
+                "templates/pages/account-management/profile",
+                "templates/pages/account-management/setting-page"]
             }]
         }
       ]
