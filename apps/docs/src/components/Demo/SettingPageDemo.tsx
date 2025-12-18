@@ -20,7 +20,16 @@ const animationVariants = ["none", "fade", "slide", "scale", "spring", "stagger"
 const SettingsPageBasicDemo = () => {
 
   const codeString = `
-  <SettingsPage />
+  <I18nProvider
+    value={{
+      language,
+      setLanguage,
+      t,
+      onLanguageChange: loadLanguage,
+    }}
+  >
+    <SettingsPage/>
+  </I18nProvider>
 `;
  
   return (
@@ -220,7 +229,16 @@ const SettingsPageDemoWithLayout = () => {
     © 2025 My Application. All rights reserved.
     </footer>
   }>
-  <SettingsPage/>
+  <I18nProvider
+    value={{
+      language,
+      setLanguage,
+      t,
+      onLanguageChange: loadLanguage,
+    }}
+  >
+    <SettingsPage/>
+  </I18nProvider>
   </SideBarLeftLayout>
 `;
  

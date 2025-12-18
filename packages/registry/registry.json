@@ -736,9 +736,8 @@
       "name": "SettingsPage",
       "description": "A settings page template with responsive design and animation.",
       "dependencies": [
-        "class-variance-authority",
         "framer-motion",
-        "i18next",
+        "i18n",
         "react-i18next"
       ],
       "componentDependencies": [
