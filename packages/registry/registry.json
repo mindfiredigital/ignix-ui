@@ -731,6 +731,34 @@
           "type": "template"
         }
       }
+    },
+    "settingPage": {
+      "name": "SettingsPage",
+      "description": "A settings page template with responsive design and animation.",
+      "dependencies": [
+        "class-variance-authority",
+        "framer-motion",
+        "i18next",
+        "react-i18next"
+      ],
+      "componentDependencies": [
+        "dropdown",
+        "button",
+        "radio",
+        "typography",
+        "switch",
+        "dialog"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/reset-password/index.tsx",
+          "type": "template"
+        },
+        "hook": {
+          "path": "components/pages/i18n.tsx",
+          "type": "hook"
+        }
+      }
     }
-  }
+  } 
 }
