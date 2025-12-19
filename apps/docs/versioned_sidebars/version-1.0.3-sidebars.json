@@ -120,27 +120,26 @@
         {
           "type": "category",
           "label": "Pages",
-          "items": [
+          "items": [{
+            "type": "category",
+            "label": "Authentication",
+            "items": [
+              "templates/pages/sign-in",
+              "templates/pages/authentication/sign-up",
+              "templates/pages/authentication/forgot-password-page",
+              "templates/pages/authentication/otp-verification-page",
+              "templates/pages/authentication/reset-password-page",
+              "templates/pages/authentication/two-factor-auth-setup-page"
+            ]},
             {
-                "type": "category",
-                "label": "Authentication",
-                "items": [
-                  "templates/pages/sign-in",
-                  "templates/pages/authentication/sign-up",
-                  "templates/pages/authentication/forgot-password-page",
-                  "templates/pages/authentication/otp-verification-page",
-                  "templates/pages/authentication/reset-password-page",
-                  "templates/pages/authentication/two-factor-auth-setup-page"
-                ]
-            },
-            {
-                "type": "category",
-                "label": "Account Management",
-                "items": [
-                  "templates/pages/account-management/security-page"
-                ]
-            }
-          ]
+              "type": "category",
+              "label": "Account Management",
+              "items": [
+                "templates/pages/account-management/profile",
+                "templates/pages/account-management/setting-page",
+                "templates/pages/account-management/security-page"
+              ]
+            }]
         }
       ]
     },

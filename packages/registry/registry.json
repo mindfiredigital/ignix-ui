@@ -165,17 +165,17 @@
         }
       }
     },
-    "dialog": {
-      "name": "Dialog",
+    "dialogBox": {
+      "name": "DialogBox",
       "description": "A dialog-box component with animation and different variants",
       "dependencies": ["framer-motion"],
       "files": {
         "main": {
-          "path": "components/dialog-box/index.tsx",
+          "path": "components/dialogbox/index.tsx",
           "type": "component"
         },
         "hook": {
-          "path": "components/dialog-box/use-dialog.ts",
+          "path": "components/dialogbox/use-dialog.ts",
           "type": "hook"
         }
       }
@@ -746,6 +746,33 @@
         }
       }
     },
+    "settingPage": {
+      "name": "SettingsPage",
+      "description": "A settings page template with responsive design and animation.",
+      "dependencies": [
+        "framer-motion",
+        "i18n",
+        "react-i18next"
+      ],
+      "componentDependencies": [
+        "dropdown",
+        "button",
+        "radio",
+        "typography",
+        "switch",
+        "dialogBox"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/setting-page/index.tsx",
+          "type": "template"
+        },
+        "hook": {
+          "path": "templates/pages/setting-page/i18n.tsx",
+          "type": "hook"
+        }
+      }
+    },
     "twoFactorAuthSetup": {
       "name": "TwoFactorAuthSetup",
       "description": "A two-factor authentication setup page with QR code, manual entry, backup codes, and verification step.",
@@ -760,6 +787,25 @@
       "files": {
         "main": {
           "path": "templates/pages/two-factor-auth-setup/index.tsx",
+          "type": "template"
+        }
+      }
+    },
+    "profile":{
+      "name": "Profile",
+      "description": "A profile page template with responsive design and form validation.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react", "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "button","avatar",
+        "input",
+        "typography"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/profile/index.tsx",
           "type": "template"
         }
       }
@@ -788,5 +834,5 @@
         }
       }
     }
-  }
+  } 
 }

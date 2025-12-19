@@ -1,250 +1,554 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../../../../components/button";
 import { Dropdown, DropdownItem } from "../../../../components/dropdown";
 import { Switch } from "../../../../components/switch"; // Assuming you have a Switch component
 import { cva } from "class-variance-authority";
 import { cn } from "../../../../../utils/cn";
+import { Typography } from "../../../../components/typography";
+import { RadioGroup } from "../../../../components/radio";
+import { useDialog } from "../../../../components/dialog-box/use-dialog";
+import { DialogProvider } from "../../../../components/dialog-box";
+import { motion } from "framer-motion";
+import { I18nProvider, useI18n } from "../../../../i18n/I18nProvider";
+import en from "./i18n/demo/en.json";
+import de from "./i18n/demo/de.json";
+import ja from "./i18n/demo/ja.json";
 
-// type animationKeys = keyof typeof animationVariant;
+const DEMO_TRANSLATIONS: Record<string, Record<string, string>> = {
+  English: en,
+  German: de,
+  Japanese: ja,
+};
+
+type SettingsAnimationVariant =
+  | "none"
+  | "fade"
+  | "slide"
+  | "scale"
+  | "spring"
+  | "stagger";
+
+interface NotificationOption {
+  id: string;
+  label: string;
+  defaultChecked?: boolean;
+  disabled?: boolean;
+}
+
+type PrivacyOption = NotificationOption
 
 interface SettingPageProps {
   title?: string;
   description?: string;
-  variant?: "light"| "dark"| "auto";
+  theme?: "auto" | "light" | "dark";
+  dialogAnimation?: "popIn"| "springPop"| "backdropZoom"| "flip3D"| "skewSlide"| "glassBlur"| "skyDrop";
+  dropDownAnimation?: "default"| "fade"| "scale"| "slide"| "flip";
+  switchAnimation?: "default"| "bounce"| "scale"| "rotate"| "fade"| "elastic"| "pulse"| "shake"| "flip"| "jelly"| "glow"
+  animationVariant?: SettingsAnimationVariant;
+  notificationTitle?: string;
+  notificationOptions?: NotificationOption[];
+  privacyOptions?: PrivacyOption[];
+  onNotificationChange?: (
+    id: string,
+    checked: boolean,
+    allNotifications: Record<string, boolean>
+  ) => void;
+  onPrivacyChange?: (
+    id: string,
+    checked: boolean,
+    allNotifications: Record<string, boolean>
+  ) => void;
+
+  onNotificationsChange?: (notifications: Record<string, boolean>) => void;
+  onPrivacysChange?: (privacy: Record<string, boolean>) => void;
+  onExportData?: () => Promise<void> | void;
 }
+
+/* =======================
+   SETTINGS PAGE ANIMATIONS
+======================= */
+
+const SETTINGS_ANIMATIONS = {
+  none: {
+    page: {},
+    card: {},
+  },
+
+  fade: {
+    page: {
+      hidden: { opacity: 0 },
+      visible: { opacity: 1, transition: { duration: 0.3 } },
+    },
+    card: {
+      hidden: { opacity: 0 },
+      visible: { opacity: 1, transition: { duration: 0.25 } },
+    },
+  },
+
+  slide: {
+    page: {
+      hidden: { opacity: 0, y: 20 },
+      visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+    },
+    card: {
+      hidden: { opacity: 0, y: 12 },
+      visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+    },
+  },
+
+  scale: {
+    page: {
+      hidden: { opacity: 0, scale: 0.97 },
+      visible: { opacity: 1, scale: 1, transition: { duration: 0.35 } },
+    },
+    card: {
+      hidden: { opacity: 0, scale: 0.96 },
+      visible: { opacity: 1, scale: 1, transition: { duration: 0.25 } },
+    },
+  },
+
+  spring: {
+    page: {
+      hidden: { opacity: 0, y: 24 },
+      visible: {
+        opacity: 1,
+        y: 0,
+        transition: { type: "spring", stiffness: 120, damping: 18 },
+      },
+    },
+    card: {
+      hidden: { opacity: 0, y: 16 },
+      visible: {
+        opacity: 1,
+        y: 0,
+        transition: { type: "spring", stiffness: 140 },
+      },
+    },
+  },
+
+  stagger: {
+    page: {
+      hidden: { opacity: 0 },
+      visible: {
+        opacity: 1,
+        transition: { staggerChildren: 0.08 },
+      },
+    },
+    card: {
+      hidden: { opacity: 0, y: 10 },
+      visible: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.25 },
+      },
+    },
+  },
+} as const;
+
 
 const SettingsPageVariants = cva("", {
   variants: {
-    variant: {
+    theme: {
       auto: "bg-white text-black",
       light: "bg-white text-black",
       dark: "bg-black text-white",
     },
   },
   defaultVariants: {
-    variant: "light",
+    theme: "light",
   },
 });
 
+/* =======================
+  NEW CODE – THEME TYPES
+======================= */
+const THEMES = ["auto", "light", "dark"] as const;
+type Theme = typeof THEMES[number];
+
+const isTheme = (value: string | null): value is Theme => {
+  return value !== null && THEMES.includes(value as Theme);
+};
+
+const getInitialTheme = (): Theme => {
+  if (typeof window === "undefined") return "light";
+  const stored = localStorage.getItem("theme");
+  if (isTheme(stored)) return stored;
+  return "light";
+};
+
 // ---------- LANGUAGE LIST ----------
 const languages = [
-  { "code": "Albanian", "name": "Albanian", "native": "shqiptar" },
-  { "code": "Arabic", "name": "Arabic", "native": "العربى" },
-  { "code": "Assamese", "name": "Assamese", "native": "Assamese" },
-  { "code": "Azerbaijani", "name": "Azerbaijani", "native": "Azərbaycan" },
-  { "code": "Bahasa Indonesia", "name": "Indonesian", "native": "Bahasa Indonesia" },
-  { "code": "Basque", "name": "Basque", "native": "Euskal" },
-  { "code": "Bengali (India)", "name": "Bengali (India)", "native": "বাঙালি" },
-  { "code": "Bodo", "name": "Bodo", "native": "बड़ो" },
-  { "code": "Bulgarian", "name": "Bulgarian", "native": "български" },
-  { "code": "Burmese", "name": "Burmese", "native": "ဗမာ" },
-  { "code": "Catalan", "name": "Catalan", "native": "Català" },
-  { "code": "Chinese - Simplified", "name": "Chinese (Simplified)", "native": "中文 - 简体" },
-  { "code": "Chinese - Traditional", "name": "Chinese (Traditional)", "native": "中文 - 繁體" },
-  { "code": "Croatian", "name": "Croatian", "native": "Hrvatski" },
-  { "code": "Czech", "name": "Czech", "native": "český" },
-  { "code": "Danish", "name": "Danish", "native": "Dansk" },
-  { "code": "Dogri", "name": "Dogri", "native": "डोगरी" },
-  { "code": "Dutch", "name": "Dutch", "native": "Nederlands" },
   { "code": "English", "name": "English", "native": "English" },
-  { "code": "Estonian", "name": "Estonian", "native": "Eestlane" },
-  { "code": "Farsi", "name": "Farsi", "native": "فارسی" },
-  { "code": "Filipino", "name": "Filipino", "native": "Pilipino" },
-  { "code": "Finnish", "name": "Finnish", "native": "Suomalainen" },
-  { "code": "French", "name": "French", "native": "Le français" },
-  { "code": "Galician", "name": "Galician", "native": "galego" },
   { "code": "German", "name": "German", "native": "Deutsch" },
-  { "code": "Greek", "name": "Greek", "native": "Ελληνικά" },
-  { "code": "Gujarati", "name": "Gujarati", "native": "ગુજરાતી" },
-  { "code": "Hebrew", "name": "Hebrew", "native": "עברית" },
-  { "code": "Hindi", "name": "Hindi", "native": "हिन्दी" },
-  { "code": "Hungarian", "name": "Hungarian", "native": "Magyar" },
-  { "code": "Italian", "name": "Italian", "native": "Italiano" },
   { "code": "Japanese", "name": "Japanese", "native": "日本語" },
-  { "code": "Javanese", "name": "Javanese", "native": "Basa Jawa" },
-  { "code": "Kannada", "name": "Kannada", "native": "ಕನ್ನಡ" },
-  { "code": "Kashmiri", "name": "Kashmiri", "native": "کٲشُر" },
-  { "code": "Khmer", "name": "Khmer", "native": "ខ្មែរ" },
-  { "code": "Konkani", "name": "Konkani", "native": "कोंकणी" },
-  { "code": "Korean", "name": "Korean", "native": "한국어" },
-  { "code": "Lao", "name": "Lao", "native": "ລາວ" },
-  { "code": "Latvian", "name": "Latvian", "native": "Latvietis" },
-  { "code": "Lithuanian", "name": "Lithuanian", "native": "Lietuvių" },
-  { "code": "Macedonian", "name": "Macedonian", "native": "Македонски" },
-  { "code": "Maithili", "name": "Maithili", "native": "मैथिली" },
-  { "code": "Malay", "name": "Malay", "native": "Melayu" },
-  { "code": "Malayalam", "name": "Malayalam", "native": "മലയാളം" },
-  { "code": "Manipuri", "name": "Manipuri", "native": "ꯃꯅꯤꯄꯨꯔꯤꯗꯥ ꯂꯩꯕꯥ꯫" },
-  { "code": "Marathi", "name": "Marathi", "native": "मराठी" },
-  { "code": "Nepali", "name": "Nepali", "native": "नेपाली" },
-  { "code": "Norwegian", "name": "Norwegian", "native": "Norsk" },
-  { "code": "Oriya", "name": "Odia", "native": "ଓଡିଆ" },
-  { "code": "Polish", "name": "Polish", "native": "Polski" },
-  { "code": "Portuguese - Brazilian", "name": "Portuguese (Brazil)", "native": "Português - Brazilian" },
-  { "code": "Portuguese - Portugal", "name": "Portuguese (Portugal)", "native": "Português - Portugal" },
-  { "code": "Punjabi", "name": "Punjabi", "native": "ਪੰਜਾਬੀ" },
-  { "code": "Romanian", "name": "Romanian", "native": "Română" },
-  { "code": "Russian", "name": "Russian", "native": "русский" },
-  { "code": "Sanskrit", "name": "Sanskrit", "native": "संस्कृत" },
-  { "code": "Santhali", "name": "Santhali", "native": "संताली" },
-  { "code": "Serbian", "name": "Serbian", "native": "Српски" },
-  { "code": "Sindhi", "name": "Sindhi", "native": "سِنڌِي" },
-  { "code": "Sinhala", "name": "Sinhala", "native": "සිංහල" },
-  { "code": "Slovenian", "name": "Slovenian", "native": "Slovenščina" },
-  { "code": "Spanish", "name": "Spanish", "native": "Español" },
-  { "code": "Swedish", "name": "Swedish", "native": "Svenska" },
-  { "code": "Tamil", "name": "Tamil", "native": "தமிழ்" },
-  { "code": "Telugu", "name": "Telugu", "native": "తెలుగు" },
-  { "code": "Thai", "name": "Thai", "native": "ไทย" },
-  { "code": "Turkish", "name": "Turkish", "native": "Türkçe" },
-  { "code": "Ukrainian", "name": "Ukrainian", "native": "український" },
-  { "code": "Urdu", "name": "Urdu", "native": "اردو" },
-  { "code": "Vietnamese", "name": "Vietnamese", "native": "Tiếng Việt" },
-  { "code": "Welsh", "name": "Welsh", "native": "Cymraeg" }
 ];
+
+const getCurrentDateTimeForTimezone = (timezone: string) => {
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: timezone,
+    dateStyle: "full",
+    timeStyle: "medium",
+  }).format(new Date());
+};
 
 // ---------- TIMEZONE LIST ----------
 const timezones = Intl.supportedValuesOf("timeZone");
 
 const SettingsContent: React.FC<SettingPageProps> = ({
-  title= "Settings",
-  description= "Manage your account & personalize your experience",
-  variant
+  dialogAnimation = "popIn",
+  dropDownAnimation = "default",
+  switchAnimation = "bounce",
+  animationVariant = "slide",
+  notificationOptions,
+  onNotificationChange,
+  onNotificationsChange,
+  privacyOptions,
+  onPrivacyChange,
+  onPrivacysChange,
+  onExportData
 }) => {
-  const [language, setLanguage] = useState("en");
-  const [theme, setTheme] = useState("auto");
-  const [timezone, setTimezone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
-  const [emailNotif, setEmailNotif] = useState(true);
-  const [pushNotif, setPushNotif] = useState(false);
-  const [marketingNotif, setMarketingNotif] = useState(false);
-  const [onlineStatus, setOnlineStatus] = useState(true);
-  const [profileDiscovery, setProfileDiscovery] = useState(true);
+  const animation = SETTINGS_ANIMATIONS[animationVariant];
+  const [currentDateTime, setCurrentDateTime] = useState("");
+  const i18n = useI18n();
+  const t = i18n.t;
+  /* =======================
+     LANGUAGE (NEW FEATURE)
+  ======================= */
+  const [language, setLanguage] = useState(
+    () => localStorage.getItem("language") || i18n.language
+  );
 
-  const handleDataExport = () => {
-    const confirmExport = window.confirm("Are you sure you want to export your data?");
-    if (confirmExport) alert("Data exported (placeholder)");
+  useEffect(() => {
+    localStorage.setItem("language", language);
+    i18n.setLanguage?.(language);
+    i18n.onLanguageChange?.(language); // 🔥 EXTENSION POINT
+  }, [language]);
+  // ----------------------------
+  // Timezone
+  // ----------------------------
+  const [timezone, setTimezone] = useState(
+    () => localStorage.getItem("timezone") || Intl.DateTimeFormat().resolvedOptions().timeZone
+  );
+
+  useEffect(() => localStorage.setItem("timezone", timezone), [timezone]);
+  useEffect(() => {
+    const updateTime = () => {
+      setCurrentDateTime(getCurrentDateTimeForTimezone(timezone));
+    };
+
+    updateTime(); // run immediately
+    const interval = setInterval(updateTime, 1000);
+
+    return () => clearInterval(interval);
+  }, [timezone]);
+
+    const { openDialog } = useDialog();
+
+  const DEFAULT_NOTIFICATION_OPTIONS: NotificationOption[] = [
+    { id: "email", label: "Email Notification", defaultChecked: true },
+  ];
+
+  const DEFAULT_PRIVACY_OPTIONS: NotificationOption[] = [
+    { id: "everybody", label: "Everybody", defaultChecked: true },
+  ];
+
+  const [notifications, setNotifications] = useState<Record<string, boolean>>(
+  () =>
+    (notificationOptions ?? DEFAULT_NOTIFICATION_OPTIONS).reduce(
+      (acc, option) => {
+        acc[option.id] = option.defaultChecked ?? false;
+        return acc;
+      },
+      {} as Record<string, boolean>
+    )
+);
+
+  /* =======================
+    UPDATED – typed theme
+  ======================= */
+  const [theme, setTheme] = useState<Theme>(getInitialTheme);
+  /* ======================= */
+
+  const options = [
+    { value: "dark", label: "Dark" },
+    { value: "light", label: "Light" },
+    { value: "auto", label: "Auto" },
+  ];
+
+  /* =======================
+     UPDATED – persistence
+  ======================= */
+  useEffect(() => {
+    localStorage.setItem("theme", theme);
+
+    const root = document.documentElement;
+
+    if (theme === "auto") {
+      const isDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      root.classList.toggle("dark", isDark);
+    } else {
+      root.classList.toggle("dark", theme === "dark");
+    }
+  }, [theme]);
+  /* ======================= */
+
+  /* =======================
+     NEW – auto theme sync
+  ======================= */
+  useEffect(() => {
+    if (theme !== "auto") return;
+
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const listener = (e: MediaQueryListEvent) => {
+      document.documentElement.classList.toggle("dark", e.matches);
+    };
+
+    media.addEventListener("change", listener);
+    return () => media.removeEventListener("change", listener);
+  }, [theme]);
+  /* ======================= */
+
+  /* =======================
+     UPDATED – safe narrowing
+  ======================= */
+  const handleChange = (value: string) => {
+    if (isTheme(value)) {
+      setTheme(value);
+    }
   };
 
+  const handleNotificationChange = (id: string, checked: boolean) => {
+    setNotifications((prev) => {
+      const next = {
+        ...prev,
+        [id]: checked,
+      };
+
+      onNotificationChange?.(id, checked, next);
+      onNotificationsChange?.(next);
+
+      return next;
+    });
+  };
+
+  const handlePrivacyChange = (id: string, checked: boolean) => {
+    setNotifications((prev) => {
+      const next = {
+        ...prev,
+        [id]: checked,
+      };
+
+      onPrivacyChange?.(id, checked, next);
+      onPrivacysChange?.(next);
+
+      return next;
+    });
+  };
+
+  // const handleSwitchChange = () => {
+  //   console.log(155)
+  // }
+  /* ======================= */
+
   return (
-    <div className={cn("min-h-screen p-6 md:p-10",SettingsPageVariants({variant}))}>
+    <motion.div
+  variants={animation.page}
+  initial="hidden"
+  animate="visible"
+  className={cn(
+    "min-h-screen p-6 md:p-10",
+    SettingsPageVariants({ theme })
+  )}
+>
       {/* Header */}
       <div className="mb-12">
-        <h1 className="text-5xl font-extrabold tracking-tight">{title}</h1>
-        <p className="mt-2 text-lg">
-          {description}
-        </p>
+        <h1 className="text-5xl font-extrabold tracking-tight">{t("settings")}</h1>
+        <p className="mt-2 text-lg">{t("description")}</p>
       </div>
 
       <div className="grid gap-8 max-w-3xl">
-
         {/* CARD WRAPPER COMPONENT */}
-        {/** Instead of repeating — we wrap all sections in a modern styled card */}
         {[
           {
-            title: "Language Preference",
+            title: t("languagePreference"),
             content: (
               <Dropdown
+                animation= {dropDownAnimation}
                 trigger={
                   <Button variant="outline">
-                    {languages.find(l => l.code === language)?.native || "Select Language"}
+                    {languages.find((l) => l.code === language)?.native ||
+                      "Select Language"}
                   </Button>
                 }
               >
+                <div className="max-h-80 w-full overflow-y-auto bg-white dark:bg-black">
                 {languages.map((lang) => (
-                  <DropdownItem key={lang.code} onClick={() => setLanguage(lang.code)}>
+                  <DropdownItem
+                    key={lang.code}
+                    onClick={() => setLanguage(lang.code)}
+                  >
                     {lang.native} — <span>{lang.name}</span>
                   </DropdownItem>
                 ))}
+                </div>
               </Dropdown>
-            )
+            ),
           },
 
           {
-            title: "Theme Preference",
+            title: t("themePreference"),
             content: (
-              <Dropdown trigger={<Button variant="outline">{theme.toUpperCase()}</Button>}>
-                <DropdownItem onClick={() => setTheme("light")}>Light</DropdownItem>
-                <DropdownItem onClick={() => setTheme("dark")}>Dark</DropdownItem>
-                <DropdownItem onClick={() => setTheme("auto")}>Auto</DropdownItem>
-              </Dropdown>
-            )
+              <RadioGroup
+                name="theme-switch"
+                options={options}
+                value={theme}
+                onChange={handleChange}
+              />
+            ),
           },
 
           {
-            title: "Timezone",
+            title: t("timezone"),
             content: (
-              <Dropdown trigger={<Button variant="outline">{timezone}</Button>}>
-                {timezones.map((tz) => (
-                  <DropdownItem key={tz} onClick={() => setTimezone(tz)}>
-                    {tz}
-                  </DropdownItem>
+              <div className="flex flex-col md:flex-row justify-between">
+                <div className="flex flex-col justify-between">
+                  <Typography variant="h6">{t("selectedTimezone")}: {timezone}</Typography>
+                  <p className="text-md text-muted-foreground">
+                    {currentDateTime}
+                  </p>
+                </div>
+                <div className="flex items-center justify-between gap-2">
+                  <Dropdown animation= {dropDownAnimation} trigger={<Button variant="outline">{t("changeTimezone")}</Button>}>
+                    <div className="max-h-64 w-full overflow-y-auto bg-white dark:bg-black">
+                      {timezones.map((tz) => (
+                        <DropdownItem key={tz} onClick={() => setTimezone(tz)}>
+                          {tz}
+                        </DropdownItem>
+                      ))}
+                    </div>
+                  </Dropdown>
+                </div>
+              </div>
+            ),
+          },
+
+          {
+            title: t("notificationPreferences"),
+            content: (
+              <div className="flex flex-col gap-4">
+                {(notificationOptions ?? DEFAULT_NOTIFICATION_OPTIONS).map((option) => (
+                  <div
+                    key={option.id}
+                    className="flex flex-row items-end justify-between"
+                  >
+                    <Typography variant="h6">{option.label}</Typography>
+                    <Switch
+                      animation= {switchAnimation}
+                      checked={notifications[option.id]}
+                      disabled={option.disabled}
+                      onCheckedChange={(checked) =>
+                        handleNotificationChange(option.id, checked)
+                      }
+                    />
+                  </div>
                 ))}
-              </Dropdown>
-            )
+              </div>
+            ),
           },
 
           {
-            title: "Notification Preferences",
+            title: t("privacySettings"),
             content: (
               <div className="flex flex-col gap-4">
-                <SettingToggle label="Email Notifications" value={emailNotif} onChange={setEmailNotif} />
-                <SettingToggle label="Push Notifications" value={pushNotif} onChange={setPushNotif} />
-                <SettingToggle label="Marketing Messages" value={marketingNotif} onChange={setMarketingNotif} />
+                {(privacyOptions ?? DEFAULT_PRIVACY_OPTIONS).map((option) => (
+                  <div
+                    key={option.id}
+                    className="flex flex-row items-end justify-between"
+                  >
+                    <Typography variant="h6">{option.label}</Typography>
+                    <Switch
+                      animation= {switchAnimation}
+                      checked={notifications[option.id]}
+                      disabled={option.disabled}
+                      onCheckedChange={(checked) =>
+                        handlePrivacyChange(option.id, checked)
+                      }
+                    />
+                  </div>
+                ))}
               </div>
-            )
+            ),
           },
 
           {
-            title: "Privacy Settings",
+            title: t("dataExport"),
             content: (
-              <div className="flex flex-col gap-4">
-                <SettingToggle label="Show Online Status" value={onlineStatus} onChange={setOnlineStatus} />
-                <SettingToggle label="Allow Profile Discovery" value={profileDiscovery} onChange={setProfileDiscovery} />
-              </div>
-            )
+              <Button
+                variant="outline"
+                onClick={() =>
+                  openDialog({
+                    title: 'Alert',
+                    content: 'Do you really want to export data?',
+                    dialogType: 'confirm',
+                    animationKey: dialogAnimation,
+
+                    confirmationCallBack: async (confirmed) => {
+                      if (!confirmed) return;
+
+                      try {
+                        await onExportData?.();
+                      } catch (err) {
+                        console.error('Export failed', err);
+                      }
+                    },
+                  })
+                }
+              >
+                {t('exportData')}
+              </Button>
+
+            ),
           },
-
-          {
-            title: "Data Export",
-            content: (
-              <>
-                <p className="text-sm mb-4 leading-relaxed">
-                  Download all your account data in a secure portable format.
-                </p>
-                <Button onClick={handleDataExport} className="mt-1">Export Data</Button>
-              </>
-            )
-          }
-
         ].map((section, index) => (
-          <div
+         <motion.div
             key={index}
-            className="p-6 rounded-2xl bg-zinc-800/40 backdrop-blur-xl border border-zinc-700/40 shadow-lg hover:shadow-2xl transition-all duration-300"
-          >
+            variants={animation.card}
+            whileHover={{ scale: 1.01 }}
+            className={cn(
+              "p-6 rounded-2xl backdrop-blur-xl border shadow-lg hover:shadow-2xl transition-all duration-300",
+              theme === "auto"
+                ? SettingsPageVariants({ theme: "dark" })
+                : SettingsPageVariants({ theme })
+            )}>
             <h2 className="text-2xl font-semibold mb-4">{section.title}</h2>
             {section.content}
-          </div>
+          </motion.div>
         ))}
-
       </div>
-    </div>
+    </motion.div>
   );
 };
 
-interface SettingToggleProps {
-  label?: string;
-  value?: boolean;
-  onChange?: (checked: boolean) => void;
+export const SettingsPage = (props: SettingPageProps) => {
+  const [language, setLanguage] = useState("English");
+  const t = (key: string) =>
+    DEMO_TRANSLATIONS[language]?.[key] ?? key;
+
+  return (
+     <I18nProvider
+      value={{
+        language,
+        setLanguage,
+        t,
+        onLanguageChange: (lang) =>
+          console.log("[Storybook] language changed:", lang),
+      }}
+    >
+      <DialogProvider>
+        <SettingsContent {...props} />
+      </DialogProvider>
+    </I18nProvider>
+  )
 }
-
-const SettingToggle: React.FC<SettingToggleProps> = ({ label, value = false, onChange }) => (
-  <label className="flex items-center justify-between text-lg">
-    <span>{label}</span>
-    <Switch checked={value} onCheckedChange={onChange} />
-  </label>
-);
-
-
-export const SettingsPage = (props: SettingPageProps) => (
-  <SettingsContent {...props} />
-);
