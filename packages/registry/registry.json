@@ -369,7 +369,7 @@
       "dependencies": ["@radix-ui/themes", "@radix-ui/react-icons", "react-responsive"],
       "files": {
         "main": {
-          "path": "components/table/pagination/index.tsx",
+          "path": "components/pagination/index.tsx",
           "type": "component"
         }
       }
@@ -806,6 +806,30 @@
       "files": {
         "main": {
           "path": "templates/pages/profile/index.tsx",
+          "type": "template"
+        }
+      }
+    },
+    "securityPage": {
+      "name": "SecurityPage",
+      "description": "A comprehensive account security page with password change, active sessions, logout-all, two-factor authentication toggle with recovery codes, and login activity, available in both grid and collapsible list layouts.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "button",
+        "input",
+        "switch",
+        "table",
+        "accordion",
+        "card",
+        "pagination"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/security/index.tsx",
           "type": "template"
         }
       }
