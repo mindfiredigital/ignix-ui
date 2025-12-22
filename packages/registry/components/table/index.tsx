@@ -5,7 +5,7 @@ import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import { TriangleDownIcon, TriangleUpIcon } from "@radix-ui/react-icons";
 import { Flex, Table as RadixTable, Theme } from "@radix-ui/themes";
 import { cn } from "../../../utils/cn";
-import { Pagination, type PaginationProps } from "./pagination";
+import { Pagination, type PaginationProps } from "../pagination";
 
 export type TableSortBy = "asc" | "desc";
 

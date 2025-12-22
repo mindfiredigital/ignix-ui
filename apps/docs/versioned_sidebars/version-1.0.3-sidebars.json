@@ -136,7 +136,9 @@
               "label": "Account Management",
               "items": [
                 "templates/pages/account-management/profile",
-                "templates/pages/account-management/setting-page"]
+                "templates/pages/account-management/setting-page",
+                "templates/pages/account-management/security-page"
+              ]
             }]
         }
       ]
