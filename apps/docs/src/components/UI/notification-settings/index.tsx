@@ -14,33 +14,33 @@ import {
   Activity,
 } from "lucide-react";
 
-import { cn } from "../../../../../utils/cn";
-import { Button } from "../../../../components/button";
-import { Switch } from "../../../../components/switch";
-import { RadioGroup } from "../../../../components/radio";
+import { cn } from "../../../utils/cn";
+import { Button } from "../button";
+import { Switch } from "../switch";
+import { RadioGroup } from "../radio";
 import {
   Accordion,
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
-} from "../../../../components/accordion";
+} from "../accordion";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../../../components/card";
+} from "../card";
 
 /**
- * Props interface for the NotificationPage component
+ * Props interface for the NotificationSettingsPage component
  * 
  * @property title - Optional page title (default: "Notifications")
  * @property description - Optional page description text
  * @property variant - Background theme variant: "light", "dark", or "auto" (default: "dark")
  * @property layout - Layout style: "grid" (two-column) or "list" (accordion) (default: "grid")
  */
-interface NotificationPageProps {
+interface NotificationSettingsPageProps {
   title?: string;
   description?: string;
   /** Background theme */
@@ -92,7 +92,7 @@ interface NotificationPreferences {
 }
 
 /**
- * NotificationPage Component
+ * NotificationSettingsPage Component
  * 
  * A comprehensive notification preferences management page that allows users to:
  * - Toggle notification channels (Email, Push, SMS)
@@ -112,7 +112,7 @@ interface NotificationPreferences {
  * @param props - NotificationPageProps object containing component configuration
  * @returns JSX element representing the complete notification preferences page
  */
-const NotificationPage: React.FC<NotificationPageProps> = ({
+const NotificationSettingsPage: React.FC<NotificationSettingsPageProps> = ({
   title = "Notifications",
   description = "Manage your notification preferences and stay informed about what matters to you.",
   variant,
@@ -626,11 +626,11 @@ const NotificationPage: React.FC<NotificationPageProps> = ({
           </div>
         </div>
       </CardHeader>
-      <CardContent className="p-4 sm:p-6">
+      <CardContent className="p-4 sm:p-6 m-2">
         {showUnsubscribeConfirm ? (
           <div className="space-y-4">
             <div className="p-3 sm:p-4 rounded-lg border border-red-500/40 bg-red-500/10">
-              <p className="text-xs sm:text-sm text-red-400 break-words leading-relaxed">
+              <p className="text-sm sm:text-sm text-red-400 break-words">
                 Are you sure you want to unsubscribe from all notifications?
                 This will disable all notification channels and types.
               </p>
@@ -644,7 +644,7 @@ const NotificationPage: React.FC<NotificationPageProps> = ({
                 animationVariant="press3D"
               >
                 <X className="mr-2 h-4 w-4 flex-shrink-0" />
-                <span className="truncate">Confirm unsubscribe</span>
+                <span className="truncate">Confirm</span>
               </Button>
               <Button
                 variant="outline"
@@ -666,8 +666,7 @@ const NotificationPage: React.FC<NotificationPageProps> = ({
             animationVariant="press3DSoft"
           >
             <X className="mr-2 h-4 w-4 flex-shrink-0" />
-            <span className="hidden sm:inline">Unsubscribe from all notifications</span>
-            <span className="sm:hidden">Unsubscribe all</span>
+            Unsubscribe all
           </Button>
         )}
       </CardContent>
@@ -675,7 +674,7 @@ const NotificationPage: React.FC<NotificationPageProps> = ({
   );
 
   /**
-   * Main render function for the NotificationPage component
+   * Main render function for the NotificationSettingsPage component
    * 
    * Renders the complete notification preferences page with:
    * 1. Header section with title, description, status badge, and save button
@@ -828,6 +827,5 @@ const NotificationPage: React.FC<NotificationPageProps> = ({
   );
 };
 
-export { NotificationPage };
-export default NotificationPage;
-
+export { NotificationSettingsPage };
+export default NotificationSettingsPage;
