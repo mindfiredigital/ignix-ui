@@ -810,6 +810,28 @@
         }
       }
     },
+    "notificationSettings": {
+      "name": "NotificationSettingsPage",
+      "description": "A notification settings page with email, SMS, and push notification preferences, featuring toggles and category grouping.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "button",
+        "switch",
+        "radio",
+        "accordion",
+        "card"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/notification-settings-page/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "securityPage": {
       "name": "SecurityPage",
       "description": "A comprehensive account security page with password change, active sessions, logout-all, two-factor authentication toggle with recovery codes, and login activity, available in both grid and collapsible list layouts.",
