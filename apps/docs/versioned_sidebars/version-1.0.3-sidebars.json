@@ -141,6 +141,13 @@
                 "templates/pages/account-management/security-page"
               ]
             }]
+        },
+        {
+          "type": "category",
+          "label": "Sections",
+          "items": [
+            "templates/sections/content/pricing-grid"
+          ]
         }
       ]
     },

@@ -810,6 +810,26 @@
         }
       }
     },
+    "pricingGrid":{
+      "name": "PricingGrid",
+      "description": "A pricing grid template with responsive design.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "button",
+        "switch",
+        "card"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/sections/pricing-grid/index.tsx",
+          "type" : "template"
+        }
+      }
+    },
     "securityPage": {
       "name": "SecurityPage",
       "description": "A comprehensive account security page with password change, active sessions, logout-all, two-factor authentication toggle with recovery codes, and login activity, available in both grid and collapsible list layouts.",
@@ -819,7 +839,6 @@
         "class-variance-authority"
       ],
       "componentDependencies": [
-        "button",
         "input",
         "switch",
         "table",
