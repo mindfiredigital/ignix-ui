@@ -75,3 +75,6 @@ const TwoFactorAuthSetupPageDemo = () => {
 }
 
 export default TwoFactorAuthSetupPageDemo;
+
+
+

@@ -369,7 +369,7 @@
       "dependencies": ["@radix-ui/themes", "@radix-ui/react-icons", "react-responsive"],
       "files": {
         "main": {
-          "path": "components/table/pagination/index.tsx",
+          "path": "components/pagination/index.tsx",
           "type": "component"
         }
       }
@@ -826,6 +826,48 @@
       "files": {
         "main": {
           "path": "templates/sections/pricing-grid/index.tsx",
+          "type" : "template"
+        }
+      }
+    },
+    "securityPage": {
+      "name": "SecurityPage",
+      "description": "A comprehensive account security page with password change, active sessions, logout-all, two-factor authentication toggle with recovery codes, and login activity, available in both grid and collapsible list layouts.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "input",
+        "switch",
+        "table",
+        "accordion",
+        "card",
+        "pagination"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/security/index.tsx",
+          "type": "template"
+        }
+      }
+    },
+    "api-keys":{
+      "name": "api-keys",
+      "description": "A page for managing API keys with responsive design and form validation.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react", "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "button",
+        "input",
+        "typography", "checkbox"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/api-keys/index.tsx",
           "type": "template"
         }
       }
