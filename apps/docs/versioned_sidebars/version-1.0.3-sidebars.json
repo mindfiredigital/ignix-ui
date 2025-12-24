@@ -138,6 +138,13 @@
                 "templates/pages/account-management/profile",
                 "templates/pages/account-management/setting-page"]
             }]
+        },
+        {
+          "type": "category",
+          "label": "Sections",
+          "items": [
+            "templates/sections/content/pricing-grid"
+          ]
         }
       ]
     },
