@@ -892,6 +892,7 @@ export default function PricingPage() {
 | `onValueChange` | `(value: string) => void` | — | Callback fired when the toggle value changes. |
 | `className` | `string` | — | Custom class names for the outer grid container. |
 | `currentPlan` | `number` | `1` | Marks the plan as the currently active plan. |
+| `onCtaClick` | `(plan: PlanProps) => void` | — | Callback fired when the CTA button is clicked. |
 ---
 
 ### PlanProps
@@ -907,8 +908,6 @@ export default function PricingPage() {
 | `gradient` | `string` | — | Optional gradient background for the plan card. |
 | `buttonColor` | `string` | — | Optional button or card color. |
 | `ctaLabel` | `string` | `"Get Started"` | Label text for the CTA button. |
-| `onCtaClick` | `(plan: PlanProps) => void` | — | Callback fired when the CTA button is clicked. |
-
 ---
 
 ### Feature

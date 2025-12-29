@@ -181,7 +181,7 @@ export const DifferentCardColor: Story = {
       },
     ];
 
-    return <ComparisonTable featureGradient="bg-yellow-300 text-white" features={features} plans={plans} variant="light"/>;
+    return <ComparisonTable featureGradient="bg-yellow-300 text-white" features={features} plans={plans} variant="light" onCtaClick={(plans) => console.log(`/checkout/${plans.id}`)}/>;
   },
 };
 

@@ -6,19 +6,15 @@ import {
   Star,
   type LucideIcon,
 } from "lucide-react"
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@ignix-ui/card"
-import { Typography } from "@ignix-ui/typography"
-import { cn } from "../../../utils/cn"
 import { cva, type VariantProps } from "class-variance-authority"
-import { z } from "zod"
+import { cn } from "@site/src/utils/cn"
+import { Typography } from "../typography"
+import { Card, CardContent, CardFooter, CardHeader } from "../card"
+
 /* -------------------------------------------------------------------------- */
 /*                                   TYPES                                    */
 /* -------------------------------------------------------------------------- */
+
 /**
  * Represents a value in the comparison table.
  * - boolean → check / cross
@@ -38,7 +34,6 @@ export interface Feature {
 export interface VariantsProps {
   variant?: VariantProps<typeof ComparisonTableVariant>["variant"]
   recommendationGradient?: string
-  onCtaClick?: (plan: Plan) => void
 }
 
 export interface CardContentActionProps extends VariantsProps {
@@ -50,7 +45,7 @@ export interface CardContentActionProps extends VariantsProps {
 export interface Plan {
   id: number
   name: string
-  price: string
+  price?: string
   ctaLabel?: string
   recommended?: boolean
   icon?: LucideIcon
@@ -76,7 +71,6 @@ export interface PlanCardProps extends VariantsProps, AnimationProps {
 }
 
 export interface CardFooterActionProps extends VariantsProps{
-  plan: Plan
   price?: string
   recommended?: boolean
   ctaLabel?: string
@@ -94,56 +88,9 @@ export interface ComparisonTableData extends VariantsProps, AnimationProps {
 }
 
 /* -------------------------------------------------------------------------- */
-/* PLAN                                                                         */
-/* -------------------------------------------------------------------------- */
-
-/* Feature Schema */
-export const FeatureSchema = z.object({
-  id: z.number(),
-  label: z.string().min(1, "Feature label is required"),
-})
-
-/* Plan Schema */
-export const PlanSchema = z.object({
-  id: z.number(),
-  name: z.string().min(1, "Plan name is required"),
-  price: z.string().min(1, "Price is missing"),
-  ctaLabel: z.string().min(1, "CTA Label is empty").optional(),
-  recommended: z.boolean().optional(),
-  gradient: z.string().optional(),
-  icon: z.any().optional(),
-})
-
-/* Root Table Schema */
-export const ComparisonTableSchema = z.object({
-  features: z.array(FeatureSchema).min(1, "At least one feature is required"),
-  plans: z.array(PlanSchema).min(1, "At least one plan is required"),
-})
-/* -------------------------------------------------------------------------- */
-/*                              VALIDATION                                     */
-/* -------------------------------------------------------------------------- */
-type ValidationError = {
-  title: string
-  messages: string[]
-}
-
-const validateComparisonTable = (data: unknown): ValidationError | null => {
-  const result = ComparisonTableSchema.safeParse(data)
-
-  if (!result.success) {
-    return {
-      title: "Invalid configuration",
-      messages: result.error.issues.map(err => err.message), // Only the message
-    }
-  }
-
-  return null
-}
-
-
-/* -------------------------------------------------------------------------- */
 /*                              VARIANTS                                      */
 /* -------------------------------------------------------------------------- */
+
 const ComparisonTableVariant = cva("", {
   variants: {
     variant: {
@@ -186,17 +133,20 @@ const ComparisonTableIconVariant = cva("", {
 /* -------------------------------------------------------------------------- */
 /*                              CONSTANTS                                     */
 /* -------------------------------------------------------------------------- */
+
 const ROW_HEIGHT = "h-14"
 
 /* -------------------------------------------------------------------------- */
 /*                              VALUE RENDERER                                */
 /* -------------------------------------------------------------------------- */
+
 /**
  * Renders a feature value based on its type.
  *
  * @param value - Feature value (boolean, string, number, null)
  * @param variant - Visual theme variant
  */
+
 const renderFeatureValue = (
   value: FeatureValue,
   variant?: VariantProps<typeof ComparisonTableVariant>["variant"],
@@ -301,22 +251,14 @@ const CardFooterAction: React.FC<CardFooterActionProps> = React.memo(({
   recommended,
   ctaLabel= "Get Started",
   variant,
-  plan,
-  recommendationGradient,
-  onCtaClick
+  recommendationGradient
 }) => {
-
-  const handleClick = () => {
-    onCtaClick?.(plan)
-  }
-
   return (
     <CardFooter className="flex flex-col items-center justify-center gap-3 border-t border-white/10 py-6">
       {price && <span className={cn("text-lg font-semibold", ComparisonTableTextVariant({variant}))}>{price}</span>}
       <button
         type="button"
         aria-label={`${ctaLabel}`}
-        onClick={handleClick}
         className={cn(
           "w-full rounded-lg py-2 text-sm font-semibold transition",
           recommended
@@ -336,7 +278,6 @@ const CardFooterAction: React.FC<CardFooterActionProps> = React.memo(({
 /* -------------------------------------------------------------------------- */
 /*                              PLAN CARD                                     */
 /* -------------------------------------------------------------------------- */
-
 /**
  * Individual pricing plan card.
  */
@@ -347,8 +288,7 @@ const PlanCard: React.FC<PlanCardProps> = React.memo(({
   layout,
   recommendationGradient,
   animation,
-  interactive,
-  onCtaClick
+  interactive
 }) => {
   const isMobile = layout === "mobile"
 
@@ -373,7 +313,7 @@ const PlanCard: React.FC<PlanCardProps> = React.memo(({
     >
     {plan.recommended && (
         <span
-          className={`absolute -top-2 left-1/2 -translate-x-1/2 rounded-full px-4 py-1 text-sm font-semibold text-white ${
+          className={`absolute -top-6 left-1/2 -translate-x-1/2 rounded-full px-4 py-1 text-xs font-semibold text-white ${
             recommendationGradient ? "bg-red-500" : "bg-indigo-500"
           }`}
         >
@@ -414,13 +354,11 @@ const PlanCard: React.FC<PlanCardProps> = React.memo(({
       )}
 
       <CardFooterAction
-        plan={plan}
         price={plan.price}
         recommended={plan.recommended}
         ctaLabel={plan.ctaLabel}
         variant={variant}
         recommendationGradient={recommendationGradient}
-        onCtaClick={onCtaClick}
       />
     </Card>
   )
@@ -429,7 +367,6 @@ const PlanCard: React.FC<PlanCardProps> = React.memo(({
 /* -------------------------------------------------------------------------- */
 /*                              MAIN COMPONENT                                 */
 /* -------------------------------------------------------------------------- */
-
 /**
  * Responsive pricing comparison table.
  */
@@ -445,19 +382,11 @@ export const ComparisonTableContent: React.FC<ComparisonTableData> = ({
   recommendationGradient,
   animation = "slideUp",
   interactive = "press",
-  featureGradient,
-  onCtaClick
+  featureGradient
 }) => {
-  const [isMobile, setIsMobile] = React.useState<boolean>(false)
-  const bp = (mobileBreakpoint === "sm" ? 640 : mobileBreakpoint === "md" ? 768 : 1024)
- 
- const [validationError, setValidationError] =
-  React.useState<ValidationError | null>(null)
+  const [isMobile, setIsMobile] = React.useState(false)
 
-  React.useEffect(() => {
-    const error = validateComparisonTable({ features, plans })
-    setValidationError(error)
-  }, [features, plans])
+  const bp = (mobileBreakpoint === "sm" ? 640 : mobileBreakpoint === "md" ? 768 : 1024)
 
   React.useEffect(() => {
     const checkViewport = () => {
@@ -467,24 +396,6 @@ export const ComparisonTableContent: React.FC<ComparisonTableData> = ({
     window.addEventListener("resize", checkViewport)
     return () => window.removeEventListener("resize", checkViewport)
   }, [bp])
-  
-  if (validationError) {
-    return (
-      <section className={cn("w-full py-20 px-6", ComparisonTableVariant({ variant }))}>
-        <div className="mx-auto max-w-3xl rounded-xl border border-red-500/50 bg-red-900/20 p-6">
-          <h2 className="text-lg font-semibold mb-3">{validationError.title}</h2>
-          <ul className="list-disc pl-5 space-y-2 text-sm">
-            {validationError.messages.map((msg, i) => (
-              <li key={i}>{msg}</li>
-            ))}
-          </ul>
-          <p className="mt-4 text-xs opacity-80">
-            Please fix the configuration and reload.
-          </p>
-        </div>
-      </section>
-    )
-  }
 
   return (
     <section className={cn("w-full py-20 px-6", ComparisonTableVariant({ variant }))}>
@@ -496,13 +407,13 @@ export const ComparisonTableContent: React.FC<ComparisonTableData> = ({
           <Typography variant="h2" className={cn("text-center", ComparisonTableTextVariant({ variant }))}>
             {title}
           </Typography>
-          <p className={cn("mt-3 text-sm max-w-xl mx-auto", ComparisonTableTextVariant({ variant }))}>
+          <p className={cn("mt-3 text-sm max-w-xl mx-auto text-right", ComparisonTableTextVariant({ variant }))}>
             {description}
           </p>
         </div>
 
-        {isMobile ? (
-          <div className="grid gap-6 md:hidden">
+        {isMobile || mobileBreakpoint === 'sm' ? (
+          <div className="grid gap-6">
             {plans.map(plan => (
               <PlanCard
                 key={plan.id}
@@ -513,15 +424,12 @@ export const ComparisonTableContent: React.FC<ComparisonTableData> = ({
                 recommendationGradient={recommendationGradient}
                 animation={animation}
                 interactive={interactive}
-                onCtaClick={onCtaClick}
               />
             ))}
           </div>
         ) : (
           <div className="hidden md:block">
-            <CardContent
-              className="grid grid-cols-[260px_repeat(auto-fit,minmax(220px,1fr))] gap-6"
-            >
+            <CardContent className="grid grid-cols-4 gap-4">
               <Card
                 className={`rounded-2xl bg-white/5 border ${
                   variant === "light" ? "border-black/10" : "border-white/10"
@@ -549,7 +457,6 @@ export const ComparisonTableContent: React.FC<ComparisonTableData> = ({
                   recommendationGradient={recommendationGradient}
                   animation={animation}
                   interactive={interactive}
-                  onCtaClick={onCtaClick}
                 />
               ))}
             </CardContent>

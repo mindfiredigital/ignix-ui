@@ -38,6 +38,7 @@ export interface Feature {
 export interface VariantsProps {
   variant?: VariantProps<typeof ComparisonTableVariant>["variant"]
   recommendationGradient?: string
+  onCtaClick?: (plan: Plan) => void
 }
 
 export interface CardContentActionProps extends VariantsProps {
@@ -75,6 +76,7 @@ export interface PlanCardProps extends VariantsProps, AnimationProps {
 }
 
 export interface CardFooterActionProps extends VariantsProps{
+  plan: Plan
   price?: string
   recommended?: boolean
   ctaLabel?: string
@@ -94,11 +96,18 @@ export interface ComparisonTableData extends VariantsProps, AnimationProps {
 /* -------------------------------------------------------------------------- */
 /* PLAN                                                                         */
 /* -------------------------------------------------------------------------- */
+
+/* Feature Schema */
+export const FeatureSchema = z.object({
+  id: z.number(),
+  label: z.string().min(1, "Feature label is required"),
+})
+
 /* Plan Schema */
 export const PlanSchema = z.object({
   id: z.number(),
   name: z.string().min(1, "Plan name is required"),
-  price: z.string().min(1, "Price is missing"), // optional but shows message if empty string
+  price: z.string().min(1, "Price is missing"),
   ctaLabel: z.string().min(1, "CTA Label is empty").optional(),
   recommended: z.boolean().optional(),
   gradient: z.string().optional(),
@@ -107,9 +116,9 @@ export const PlanSchema = z.object({
 
 /* Root Table Schema */
 export const ComparisonTableSchema = z.object({
+  features: z.array(FeatureSchema).min(1, "At least one feature is required"),
   plans: z.array(PlanSchema).min(1, "At least one plan is required"),
 })
-
 /* -------------------------------------------------------------------------- */
 /*                              VALIDATION                                     */
 /* -------------------------------------------------------------------------- */
@@ -123,7 +132,7 @@ const validateComparisonTable = (data: unknown): ValidationError | null => {
 
   if (!result.success) {
     return {
-      title: "Invalid pricing configuration",
+      title: "Invalid configuration",
       messages: result.error.issues.map(err => err.message), // Only the message
     }
   }
@@ -292,14 +301,22 @@ const CardFooterAction: React.FC<CardFooterActionProps> = React.memo(({
   recommended,
   ctaLabel= "Get Started",
   variant,
-  recommendationGradient
+  plan,
+  recommendationGradient,
+  onCtaClick
 }) => {
+
+  const handleClick = () => {
+    onCtaClick?.(plan)
+  }
+
   return (
     <CardFooter className="flex flex-col items-center justify-center gap-3 border-t border-white/10 py-6">
       {price && <span className={cn("text-lg font-semibold", ComparisonTableTextVariant({variant}))}>{price}</span>}
       <button
         type="button"
         aria-label={`${ctaLabel}`}
+        onClick={handleClick}
         className={cn(
           "w-full rounded-lg py-2 text-sm font-semibold transition",
           recommended
@@ -330,7 +347,8 @@ const PlanCard: React.FC<PlanCardProps> = React.memo(({
   layout,
   recommendationGradient,
   animation,
-  interactive
+  interactive,
+  onCtaClick
 }) => {
   const isMobile = layout === "mobile"
 
@@ -396,11 +414,13 @@ const PlanCard: React.FC<PlanCardProps> = React.memo(({
       )}
 
       <CardFooterAction
+        plan={plan}
         price={plan.price}
         recommended={plan.recommended}
         ctaLabel={plan.ctaLabel}
         variant={variant}
         recommendationGradient={recommendationGradient}
+        onCtaClick={onCtaClick}
       />
     </Card>
   )
@@ -425,7 +445,8 @@ export const ComparisonTableContent: React.FC<ComparisonTableData> = ({
   recommendationGradient,
   animation = "slideUp",
   interactive = "press",
-  featureGradient
+  featureGradient,
+  onCtaClick
 }) => {
   const [isMobile, setIsMobile] = React.useState<boolean>(false)
   const bp = (mobileBreakpoint === "sm" ? 640 : mobileBreakpoint === "md" ? 768 : 1024)
@@ -492,6 +513,7 @@ export const ComparisonTableContent: React.FC<ComparisonTableData> = ({
                 recommendationGradient={recommendationGradient}
                 animation={animation}
                 interactive={interactive}
+                onCtaClick={onCtaClick}
               />
             ))}
           </div>
@@ -527,6 +549,7 @@ export const ComparisonTableContent: React.FC<ComparisonTableData> = ({
                   recommendationGradient={recommendationGradient}
                   animation={animation}
                   interactive={interactive}
+                  onCtaClick={onCtaClick}
                 />
               ))}
             </CardContent>

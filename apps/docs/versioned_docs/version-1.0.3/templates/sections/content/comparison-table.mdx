@@ -1,3 +1,52 @@
+---
+sidebar_position: 2
+title: Comparison Table
+description: A flexible and animated comparison table component for modern web apps.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { ComparisonTableDemo ,ComparisonTableRecommendedGradientDemo, ComparisonTableGradientDemo} from '@site/src/components/Demo/ComparisonTableDemo';
+
+## Overview
+
+**Comparison Table** is a fully customizable and visually engaging component for presenting comparison features tiers in modern applications.
+
+It supports:
+- 2–3 pricing tiers per section
+- Displaying **price**, **feature list**, and **CTA button** for each tier
+- Highlighting a **recommended tier**
+- **free/paid toggle**
+- Smooth animations for interactions and hover states
+- Fully responsive layout for desktop and mobile.
+
+---
+
+## Preview
+
+### Basic
+
+<ComparisonTableDemo />
+
+### Advance
+
+#### Pass recommended Card Color Gradient 
+
+<ComparisonTableRecommendedGradientDemo />
+
+#### The Card component consumes the gradient value defined in each plan, enabling consistent and scalable visual differentiation across pricing tiers.
+
+<ComparisonTableGradientDemo />
+
+### Installation
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component comparisonTable
+    ```
+  </TabItem>
+  <TabItem value="manual" label="Manual">
+```bash
 import React from "react"
 import {
   Check,
@@ -567,3 +616,173 @@ export const ComparisonTableContent: React.FC<ComparisonTableData> = ({
 export const ComparisonTable: React.FC<ComparisonTableData> = props => {
   return <ComparisonTableContent {...props} />
 }
+
+```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+### Basic Pricing Grid
+
+```tsx
+import { PricingGrid } from "@/components/ui/pricinggrid"
+import { Check } from "lucide-react"
+
+const plans = [
+  {
+    id: 1,
+    name: "Starter",
+    price: "$0/month",
+    ctaLabel: "Get Started",
+    features: [
+      { label: "1 Project", available: true },
+      { label: "Community Support", available: true },
+      { label: "Analytics", available: false },
+    ],
+  },
+  {
+    id:2,
+    name: "Pro",
+    price: "$29/month",
+    highlighted: true,
+    currentPlan: true,
+    ctaLabel: "Upgrade",
+    features: [
+      { label: "Unlimited Projects", available: true },
+      { label: "Priority Support", available: true },
+      { label: "Advanced Analytics", available: true },
+    ],
+  },
+  {
+    id:3,
+    name: "Enterprise",
+    price: "$99/month",
+    ctaLabel: "Contact Sales",
+    features: [
+      { label: "Custom Integrations", available: true },
+      { label: "Dedicated Manager", available: true },
+      { label: "SLA Guarantee", available: true },
+    ],
+  },
+]
+
+import React from "react"
+import { ComparisonTable } from "@/components/ui/comparisonTable"
+
+export default function ComparisonTable() {
+   const features = [
+    { id: 1, label: "Components" },
+    { id: 2, label: "Theme" },
+    { id: 3, label: "Support" },
+    { id: 4, label: "API Access" },
+    { id: 5, label: "Customisation" },
+    { id: 6, label: "SLA" },
+  ]
+  const plans = [
+    {
+      id: 1,
+      icon: Gem,
+      name: "Basic",
+      price: "$199",
+      featureMap: {
+        1: true,
+        2: false,
+        3: "Email",
+        4: false,
+        5: "Limited",
+        6: null,
+      },
+    },
+    {
+      id: 2,
+      name: "Standard",
+      icon: Crown,
+      price: "$399",
+      featureMap: {
+        1: true,
+        2: true,
+        3: "Chat",
+        4: true,
+        5: "Full",
+        6: "24h",
+      },
+    },
+    {
+      id: 3,
+      name: "Premium",
+      price: "$899",
+      recommended: true,
+      featureMap: {
+        1: true,
+        2: true,
+        3: "24/7 Priority",
+        4: true,
+        5: "Unlimited",
+        6: "4h",
+      },
+    },
+  ];
+
+  const handleClick = (plan) => {
+    console.log(plan.id)
+    // your plan action goes here 
+  }
+
+  // 🔁 Fetch whenever billing changes
+  React.useEffect(() => {
+    fetchPlans(billing)
+  }, [billing])
+
+  return (
+    <ComparisonTable
+      plans={plans}
+      features={features}
+      onCtaClick={(plans) => handleClick(plans)}
+    />
+  )
+}
+```
+
+## Props
+
+### ComparisonTableProps
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `title` | `string` | `"Pricing Plans"` | Title for the comparison table section. |
+| `description` | `string` | `"Choose the plan that fits your needs"` | Description for the comparison table section. |
+| `head` | `string` | `"Features"` | Header label for the features column. |
+| `icon` | `React.ElementType` | `Crown` | Icon displayed at the top of the table. |
+| `features` | `Feature[]` | — | List of features to display. Each feature has `id` and `label`. |
+| `plans` | `Plan[]` | — | List of plan objects to display. |
+| `mobileBreakpoint` | `"sm" | "md" | "lg"` | `"md"` | Breakpoint for switching between mobile and desktop layouts. |
+| `variant` | `"default" | "dark" | "light"` | `"default"` | Styling variant for the table. |
+| `recommendationGradient` | `string` | — | Gradient color applied to recommended plan cards. |
+| `featureGradient` | `string` | — | Optional gradient for the feature column. |
+| `animation` | `"none" | "fadeIn" | "slideUp" | "scaleIn" | "flipIn" | "bounceIn" | "floatIn"` | `"slideUp"` | Animation applied to plan cards. |
+| `interactive` | `"none" | "hover" | "press" | "lift" | "tilt" | "glow"` | `"press"` | Interaction type for plan cards. |
+| `onCtaClick` | `(plan: PlanProps) => void` | — | Callback fired when the CTA button is clicked. |
+---
+
+### PlanProps
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `id` | `number` | — | Unique identifier for the plan. |
+| `name` | `string` | — | Plan name displayed on the card. |
+| `price` | `string` | — | Price string (e.g., `"$29/month"`). |
+| `featureMap` | `Record<number, FeatureValue>` | — | Map of feature IDs to values (`boolean | string | number | null`). |
+| `ctaLabel` | `string` | `"Get Started"` | Label text for the CTA button. |
+| `recommended` | `boolean` | `false` | Visually emphasizes the plan as recommended. |
+| `icon` | `React.ElementType` | — | Optional icon for the plan. |
+| `gradient` | `string` | — | Optional gradient background for the plan card. |
+
+---
+
+### Feature
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `id` | `number` | — | Unique identifier for the feature. |
+| `label` | `string` | — | Name or description of the feature. |
