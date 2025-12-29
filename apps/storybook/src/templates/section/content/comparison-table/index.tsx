@@ -502,7 +502,7 @@ export const ComparisonTableContent: React.FC<ComparisonTableData> = ({
         </div>
 
         {isMobile ? (
-          <div className="grid gap-6 md:hidden">
+          <div data-testid="mobile-view" className="grid gap-6 md:hidden">
             {plans.map(plan => (
               <PlanCard
                 key={plan.id}
@@ -518,7 +518,7 @@ export const ComparisonTableContent: React.FC<ComparisonTableData> = ({
             ))}
           </div>
         ) : (
-          <div className="hidden md:block">
+          <div data-testid="desktop-view" className="hidden md:block">
             <CardContent
               className="grid grid-cols-[260px_repeat(auto-fit,minmax(220px,1fr))] gap-6"
             >
