@@ -260,7 +260,7 @@ const CardFooterAction: React.FC<CardFooterActionProps> = React.memo(({
         type="button"
         aria-label={`${ctaLabel}`}
         className={cn(
-          "w-full rounded-lg py-2 text-sm font-semibold transition",
+          "w-full rounded-lg py-2 text-sm font-semibold transition hover:cursor-pointer",
           recommended
             ? "bg-indigo-500 text-white hover:bg-indigo-400"
             : variant === "light" 
