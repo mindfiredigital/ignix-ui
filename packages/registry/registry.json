@@ -872,6 +872,25 @@
           "type": "template"
         }
       }
+    },
+    "comparisonTable": {
+      "name": "ComparisonTable",
+      "description": "The Comparison Table provides a clear, scalable way to evaluate features, plans, or capabilities side-by-side. It adapts seamlessly between desktop grid and mobile-friendly layouts, ensuring consistent readability, accessibility, and decision-making across devices.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "typography",
+        "card"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/sections/comparison-table/index.tsx",
+          "type": "template"
+        }
+      }
     }
   } 
 }

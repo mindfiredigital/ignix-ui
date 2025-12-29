@@ -11,11 +11,12 @@ import {
   CardContent,
   CardFooter,
   CardHeader,
-} from "../../../../components/card"
-import { Typography } from "../../../../components/typography"
-import { cn } from "../../../../../utils/cn"
+} from "@ignix-ui/card"
+import { Typography } from "@ignix-ui/typography"
+import { cn } from "../../../utils/cn"
 import { cva, type VariantProps } from "class-variance-authority"
 import { z } from "zod"
+
 /* -------------------------------------------------------------------------- */
 /*                                   TYPES                                    */
 /* -------------------------------------------------------------------------- */
