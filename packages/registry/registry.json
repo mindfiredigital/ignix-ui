@@ -821,7 +821,8 @@
       "componentDependencies": [
         "button",
         "switch",
-        "card"
+        "card",
+        "typography"
       ],
       "files": {
         "main": {

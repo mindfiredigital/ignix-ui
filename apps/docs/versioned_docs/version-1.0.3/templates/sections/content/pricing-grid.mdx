@@ -41,25 +41,71 @@ It supports:
     ```
   </TabItem>
   <TabItem value="manual" label="Manual">
-  ```bash
-import { Check, X } from "lucide-react"
+```bash
+import { Check, Star, X } from "lucide-react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { motion } from "framer-motion"
 import { Button } from "@ignix-ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@ignix-ui/card"
+import { Typography } from "@ignix-ui/typography"
 import { cn } from "../../../utils/cn"
-import { useState } from "react"
 import { Switch } from "@ignix-ui/switch"
+import React, { useMemo, useState } from "react"
+import z from "zod"
 
-/* -------------------- Shared / Base -------------------- */
+/* -------------------------------------------------------------------------- */
+/*                                ZOD SCHEMAS                                 */
+/* -------------------------------------------------------------------------- */
+const FeatureSchema = z.object({
+  label: z
+    .string()
+    .min(1, "Feature label is required"),
 
-interface PricingVisualProps {
+  available: z.boolean().default(true),
+
+  icon: z.custom<React.ElementType>().optional(),
+})
+
+const PlanSchema = z.object({
+  name: z
+    .string()
+    .min(1, { message: "Plan name is required" }),
+
+  price: z
+    .string()
+    .min(1, { message: "Plan price is required" }),
+
+  highlighted: z.boolean().optional(),
+
+  gradient: z.string().optional(),
+
+  features: z
+    .array(FeatureSchema)
+    .min(1, { message: "At least one feature is required" }),
+
+  ctaLabel: z.string().optional(),
+
+})
+
+const PricingGridSchema = z.object({
+  plans: z
+    .array(PlanSchema)
+    .min(1, "At least one pricing plan is required"),
+})
+
+/* -------------------------------------------------------------------------- */
+/*                                INTERFACES                                  */
+/* -------------------------------------------------------------------------- */
+
+/** -------------------- Shared / Base -------------------- */
+
+export interface PricingVisualProps {
   variant?: VariantProps<typeof PricingGridVariant>["variant"]
   isHighlighted?: boolean
-  modernUI?: "basic" | "vector" | "advance"
+  modernUI?: "vector" | "basic" | "advance"
 }
 
-/* -------------------- Domain Models -------------------- */
+/** -------------------- Domain Models -------------------- */
 
 export interface Feature {
   label: string
@@ -68,36 +114,72 @@ export interface Feature {
 }
 
 export interface PlanProps {
-  id?: string
+  id?: number
   name: string
   icon?: React.ElementType
   price: string
   features: Feature[]
   gradient?: string
-  buttonColor?: string
   highlighted?: boolean
   ctaLabel?: string
-  onCtaClick?: (plan: PlanProps) => void
 }
 
-/* -------------------- Card Sub-Components -------------------- */
+/** -------------------- Card Sub-Components -------------------- */
 
-export interface CardContentActionProps  extends PricingVisualProps{
+export interface CardPlansProps {
+  allowDifferentCardColors?: boolean
+  currentPlan?: number
+}
+
+export interface CardContentActionProps  extends PricingVisualProps, iPlanProps, CardPlansProps{
   features: Feature[]
   table?: boolean
 }
+
 export interface iPlanProps {
   plan: PlanProps
 }
 
-export interface CardFooterActionProps extends PricingVisualProps, iPlanProps {}
-
-export interface CardHeaderActionProps extends PricingVisualProps, iPlanProps {
-  pricingBadgePosition?: "none" | "top" | "middle"
-  allowDifferentCardColors?: boolean
-  modernVariant?: "default" | "dark"
+export interface CardFooterActionProps extends PricingVisualProps, iPlanProps {
+  modernVariant?: "default" | "dark" | "light"
+  onCtaClick?: (plan: PlanProps) => void
 }
 
+export interface CardHeaderActionProps extends PricingVisualProps, iPlanProps, CardPlansProps {
+  pricingBadgePosition?: "none" | "top" | "middle"
+}
+
+/** -------------------- Grid -------------------- */
+export interface PricingGridProps  extends PricingVisualProps, CardPlansProps{
+  title?: string
+  description?: string
+  plans: PlanProps[]
+  variant?: VariantProps<typeof PricingGridVariant>["variant"]
+  pricingBadgePosition?: "none" | "top" | "middle"
+  className?: string
+  animation?: "none"| "fadeIn"| "slideUp"| "scaleIn"| "flipIn"| "bounceIn"| "floatIn"
+  interactive?: "none"| "hover"| "press"| "lift"| "tilt"| "glow"
+  modernVariant?: "default" | "dark"
+  table?: boolean
+  toggleOptions?: ToggleOption[];
+  value?: string;
+  onValueChange?: (value: string) => void;
+  onCtaClick?: (plan: PlanProps) => void
+}
+
+export interface ToggleOption<T extends string = string> {
+  label: React.ReactNode;
+  value: T;
+}
+
+
+export interface PriceProps {
+  price: string;
+} 
+
+/* -------------------------------------------------------------------------- */
+/*                              ANIMATION                                */
+/* -------------------------------------------------------------------------- */
 const cardAnimations = {
   none: {},
   fadeIn: {
@@ -137,22 +219,9 @@ const cardAnimations = {
   }
 };
 
-/* -------------------- Grid -------------------- */
-
-export interface PricingGridProps  extends PricingVisualProps{
-  title?: string
-  description?: string
-  plans: PlanProps[]
-  variant?: VariantProps<typeof PricingGridVariant>["variant"]
-  allowDifferentCardColors?: boolean
-  pricingBadgePosition?: "none" | "top" | "middle"
-  className?: string
-  animation?: "none"| "fadeIn"| "slideUp"| "scaleIn"| "flipIn"| "bounceIn"| "floatIn"
-  interactive?: "none"| "hover"| "press"| "lift"| "tilt"| "glow"
-  modernVariant?: "default" | "dark"
-  table?: boolean
-}
-
+/* -------------------------------------------------------------------------- */
+/*                              VARIANT STYLES                                */
+/* -------------------------------------------------------------------------- */
 const PricingGridVariant = cva("", {
   variants: {
     variant: {
@@ -161,8 +230,7 @@ const PricingGridVariant = cva("", {
       dark:
         "bg-gradient-to-br from-blue-950 via-slate-900 to-black text-white",
       gradient:
-        "bg-gradient-to-r from-gray-800 via-slate-600 to-slate-950 text-primary-foreground",
-      light: "bg-white",
+        "border border-teal-500 bg-gradient-to-br from-teal-500 to-emerald-500 text-white",
     },
   },
   defaultVariants: {
@@ -177,7 +245,6 @@ const PricingGridPriceVariant = cva("", {
       dark: "bg-white text-slate-900",
       gradient:
         "bg-white text-gray-900",
-      light: "bg-black",
     },
     interactive: {
       none: "",
@@ -197,10 +264,9 @@ const PricingGridPriceVariant = cva("", {
 const ModernPricingGridVariant = cva("", {
   variants: {
     variant: {
-      default:
-        "bg-gradient-to-br from-slate-800 via-slate-400 to-slate-500 text-white",
-      dark:
-        "bg-gradient-to-br from-blue-950 via-slate-900 to-black text-white",
+      dark: "bg-black text-white",
+      default: "bg-gradient-to-br from-blue-950 via-slate-900 to-black text-white",
+      light: "border bg-white text-black"
     },
   },
   defaultVariants: {
@@ -208,18 +274,33 @@ const ModernPricingGridVariant = cva("", {
   },
 });
 
+const ModernPricingGridGlowVariant = cva("before:absolute before:inset-[-4px] before:rounded-[inherit]", {
+  variants: {
+    variant: {
+      dark: "border border-white/30 before:bg-emerald-400/40 before:blur-2xl before:opacity-70 before:-z-10 before:animate-pulse",
+      default: "before:bg-gradient-to-r before:from-purple-500 before:via-indigo-500 before:to-blue-500 opacity:50 before:blur-2xl before:opacity-75 before:-z-10 before:animate-pulse",
+      light: "border border-emerald-300"
+    },
+  },
+  defaultVariants: {
+    variant: "default",
+  },
+});
 
 const defaultTrioColors = [
-  "border border-green-500/30 bg-green-500/10 p-8 text-white",
-  "border border-purple-500 bg-purple-500/20 p-8 text-white",
-  "border border-emerald-500/30 bg-emerald-500/10 p-8 text-white",
+  "border border-green-500/50 bg-green-500 p-8 text-white",
+  "border border-purple-500/50 bg-purple-500 p-8 text-white",
+  "border border-emerald-500/50 bg-emerald-500 p-8 text-white",
 ]
 
-interface PriceProps {
-  price: string;
-} 
+/* -------------------------------------------------------------------------- */
+/*                                UTILITIES                                   */
+/* -------------------------------------------------------------------------- */
 
-export const SplitPrice = ({ price }: PriceProps) => {
+/**
+ * Splits a price string like "49/month" into amount and period.
+ */
+export const SplitPrice:React.FC<PriceProps> = React.memo(({ price }) => {
   if (!price) {
     return (
       <div className="text-center leading-tight">
@@ -237,58 +318,66 @@ export const SplitPrice = ({ price }: PriceProps) => {
       <span className="block text-sm">/ {period}</span>
     </div>
   );
-};
+});
 
-export const CardFooterAction = ({
-  variant,
-  isHighlighted,
-  modernUI,
-  plan
-}: CardFooterActionProps) => {
+/* -------------------------------------------------------------------------- */
+/*                            CARD SUB-COMPONENTS                             */
+/* -------------------------------------------------------------------------- */
 
+/**
+ * Card footer with CTA button
+ */
+export const CardFooterAction: React.FC<CardFooterActionProps> = React.memo(
+  ({ variant, isHighlighted, modernUI, modernVariant, plan, onCtaClick }) => {
+  
+  const handleClick = () => {
+    onCtaClick?.(plan)
+  }
+  
   return (
     <CardFooter className="px-8 pb-10 flex justify-center">
       {modernUI === "advance" ? (
-        <div
-          className="w-full max-w-[220px] overflow-hidden rounded-bl-5xl rounded-tr-3xl"
-          style={{
-            clipPath: "inset(0 0 0 0 round 0 24px 0 24px)",
-          }}
+        <Button
+          size="wide"
+          aria-label={`${plan?.name} plan action`}
+          animationVariant="fadeInOut"
+          className={`${plan?.gradient}`}
+          onClick={handleClick}
         >
-          <Button
-            size="wide"
-            animationVariant="fadeInOut"
-            className={cn(
-              "w-full rounded-none font-semibold transition bg-gray-400 text-white",
-            )}
-            onClick={() => plan.onCtaClick?.(plan)}
-          >
-            {plan.ctaLabel}
-          </Button>
-        </div>
+          {plan.ctaLabel}
+        </Button>
       ) : (
         <Button
-          size="wide"         
+          size="wide"  
+          aria-label={`${plan?.name} plan action`}       
           animationVariant="fadeInOut"
           className={cn(
-            "w-full max-w-[220px] rounded-full font-semibold transition",
-            !isHighlighted
-              ? PricingGridVariant({ variant })
-              : PricingGridPriceVariant({ variant })
+            "w-full max-w-[220px] font-semibold transition",
+            modernUI === "vector"
+              ? isHighlighted
+                ? PricingGridPriceVariant({ variant })
+                : PricingGridVariant({ variant })
+              : modernVariant === "light"
+              ? "bg-black text-white"
+              : "bg-white text-black"
           )}
-          onClick={() => plan.onCtaClick?.(plan)}
+          onClick={handleClick}
         >
           {plan.ctaLabel}
         </Button>
       )}
     </CardFooter>
   )
-}
+})
 
-export const CardContentAction = ({features , modernUI, table}:CardContentActionProps) => {
-  return (
-    <CardContent className="px-8 pb-8" style={modernUI === "advance" ? { paddingTop: "50px" } : {}}>
-      {table ? (<table className="w-full text-left text-md border-collapse">
+/**
+ * Card content showing feature list
+ */
+export const CardContentAction: React.FC<CardContentActionProps> = React.memo(
+  ({ features, modernUI, table, plan }) => {
+return (
+    <CardContent className="px-6 pb-3">
+      {table  || modernUI === "basic" ? (<table className="w-full text-left text-md border-collapse">
         <thead>
           <tr>
             <th className="py-2 px-4">Feature</th>
@@ -298,14 +387,16 @@ export const CardContentAction = ({features , modernUI, table}:CardContentAction
         <tbody>
           {features.map((feature, i) => {
             const Icon =
-              feature.icon ??
+              feature?.icon ??
               (feature.available === false ? X : Check);
 
             return (
               <tr key={i} className="border-t">
                 <td className="py-2 px-4 flex items-center gap-3">
-                  <Icon className="h-5 w-5" />
-                  {feature.label}
+                  {plan?.gradient && modernUI ==="advance" ? (
+                  <Icon className={`w-5 h-5 text-white ${plan?.gradient}`} aria-hidden="true"/>
+                  ): <Icon className="h-5 w-5 mt-0.5" aria-hidden="true"/>}
+                  {feature?.label}
                 </td>
                 <td className="py-2 px-4">
                   {feature.available === false ? "No" : "Yes"}
@@ -318,13 +409,15 @@ export const CardContentAction = ({features , modernUI, table}:CardContentAction
         <ul className="space-y-3 text-md">
           {features.map((feature, i) => {
             const Icon =
-              feature.icon ??
+              feature?.icon ??
               (feature.available === false ? X : Check)
 
             return (
               <li key={i} className="flex items-start gap-3">
-                <Icon className="h-5 w-5 mt-0.5" />
-                <span>{feature.label}</span>
+                {plan?.gradient && modernUI === "advance" ? (
+                  <Icon className={`w-5 h-5 text-white ${plan?.gradient}`} aria-hidden="true"/>
+                ): <Icon className="h-5 w-5 mt-0.5" aria-hidden="true"/>}
+                <span>{feature?.label}</span>
               </li>
             )
           })}
@@ -333,20 +426,23 @@ export const CardContentAction = ({features , modernUI, table}:CardContentAction
 
     </CardContent>
   )
-}
+})
 
-export const CardHeaderAction = ({
+/**
+ * Card header with plan name and badge
+ */
+export const CardHeaderAction: React.FC<CardHeaderActionProps>  = React.memo(({
   pricingBadgePosition,
   isHighlighted,
   allowDifferentCardColors,
   plan,
   variant,
   modernUI,
-  modernVariant
-}: CardHeaderActionProps) => {
+  currentPlan
+}) => {
   return (
     <>
-      {modernUI === "basic" ? (
+      {modernUI === "vector" ? (
         /* ---------------- BASIC ---------------- */
         <CardHeader className="text-center pt-10 pb-6">
           <h3
@@ -358,7 +454,7 @@ export const CardHeaderAction = ({
                 : "text-muted-foreground"
             )}
           >
-            {plan.name}
+            {plan?.name}
           </h3>
 
           {pricingBadgePosition === "middle" && (
@@ -387,11 +483,11 @@ export const CardHeaderAction = ({
 
           {pricingBadgePosition === "top" && (
             <motion.div
-              className="absolute -top-12 left-1/2 -translate-x-1/2 z-20"
+              className="absolute -top-14 left-1/2 -translate-x-1/2 z-20"
               animate={{ y: [0, -6, 0] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
             >
-              <div className="w-40 h-20 rounded-full p-[3px]">
+              <div className="w-30 h-30 rounded-full p-[3px]">
                 <div
                   className={cn(
                     "w-full h-full rounded-full bg-primary/30 backdrop-blur-sm flex items-center justify-center",
@@ -408,90 +504,80 @@ export const CardHeaderAction = ({
             </motion.div>
           )}
         </CardHeader>
-      ) : modernUI === "vector" ? (
-        /* ---------------- VECTOR ---------------- */
+      ) : modernUI === "basic" ? (
+        /* ---------------- BASIC ---------------- */
         <>
-          <div
-            className="absolute inset-0 bg-gray-50 opacity-70"
-            style={{
-              clipPath:
-                "polygon(91% 0%, 91% 12%, 51% 19%, 10% 12%, 10% 0%)",
-            }}
-          />
-
-          <h3 className="text-center text-white font-bold text-2xl tracking-wider uppercase mb-4 mt-3">
-            {plan.name}
-          </h3>
-
-          {plan.icon && (
-            <div className="flex justify-center mb-5">
-              <div
-                className="w-14 h-14 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white"
-                style={{
-                  clipPath:
-                    "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
-                }}
-              >
-                <plan.icon className="w-7 h-7 text-white" />
-              </div>
+          <div className="flex items-center justify-between m-5">
+            <div className="flex items-center justify-start gap-2">
+              {plan.icon && (
+                <div className="flex items-center justify-center w-15 h-15 rounded-full border border-white/30">
+                  <plan.icon className={`w-8 h-10 text-white font-small`} />
+                </div>
+              )}
+              <Typography variant="h4" className="font-bold">
+                {plan?.name}
+              </Typography>
             </div>
-          )}
+
+           {plan.highlighted && plan.id !== currentPlan && 
+              <Star className="w-8 h-8 fill-emerald-500 stroke-emerald-500" />
+            }
+            { plan.id === currentPlan ? (
+              <Button variant="success" size="sm">
+                Current Plan
+              </Button>
+            ) : null}
+          </div>
         </>
       ) : (
         /* ---------------- ADVANCE / FALLBACK ---------------- */
         <>
-          <div
-            className="absolute inset-0 bg-white opacity-70"
-            style={{
-              clipPath: 
-                "inset(0 0 65% 0 round 5% 5% 0 10%)",
-            }}
-          />
-          {/* Content */}
-          <div className="relative overflow-visible z-10 flex flex-row items-center text-center px-6 top-3 gap-3">
-              {/* Icon hexagon */}
-            {plan.icon && (
-              <div className="mb-4 mt-3">
-                {/* OUTER HEX (BORDER) */}
-                <div
-                  className="w-20 h-20 bg-white flex items-center justify-center"
-                  style={{
-                    clipPath:
-                      "polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%)",
-                  }}
-                >
-                  {/* INNER HEX (FILL) */}
-                  <div
-                    className={cn("w-20 h-20 flex items-center justify-center",ModernPricingGridVariant({variant:modernVariant}))}
-                    style={{
-                      clipPath:
-                        "polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%)",
-                    }}
-                  >
-                    <plan.icon className="w-7 h-7" />
-                  </div>
-                </div>
-              </div>
-            )}
-            {/* Price */}
-            <div className={cn("flex items-center justify-center rounded-xl",ModernPricingGridVariant({variant:modernVariant}))} style={{ width: "200px", height: "65px"}}>
-              <SplitPrice price={plan.price} />
+          <div className={`relative z-10 flex flex-col items-center pt-8 pb-4 gap-3`}>
+          {plan.icon && (
+            <div className={`flex items-center justify-center w-20 h-20 rounded-full border border-white/30 ${plan?.gradient}`}>
+              <plan.icon className={`w-10 h-15 text-white font-small`} />
             </div>
-          </div>
-          {/* Plan Name */}
-          <h3 className="text-white text-center font-bold text-3xl uppercase tracking-wide">
-            {plan.name}
+          )}
+
+          <h3 className={`text-2xl font-bold tracking-wide ${plan?.gradient} bg-clip-text`}>
+            {plan?.name}
           </h3>
-          <p className="text-md text-center text-wrap">Lorem ipsum dolor sit amet.</p>
-          </>
+          <p className="text-sm text-zinc-800">
+            Lorem ipsum dolor sit amet
+          </p>
+        </div>
+        </>
         )}
     </>
   )
-}
+})
 
-const PricingGridContent = ({
+const ValidationError: React.FC<{ error: string }> = React.memo(({ error }) => {
+  return (
+    <div
+      role="alert"
+      aria-live="assertive"
+      className="mb-6 rounded-lg border border-red-500 bg-red-50 px-4 py-3 text-red-700"
+    >
+      <strong className="block font-semibold">Configuration Error</strong>
+      <span>{error}</span>
+    </div>
+  )
+})
+
+/* -------------------------------------------------------------------------- */
+/*                               MAIN GRID                                    */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * PricingGrid
+ *
+ * Renders a pricing table with animations, feature comparison,
+ * billing toggle, and accessible CTA actions.
+ */
+const PricingGridContent: React.FC<PricingGridProps> = ({
   title = "Our Pricing Table",
-  description = "Choose the plan that fits your needs and plans",
+  description = "Choose the plan that fits your needs",
   plans,
   className,
   variant = "dark",
@@ -501,54 +587,126 @@ const PricingGridContent = ({
   animation = "slideUp",
   interactive = "press",
   modernVariant = "dark",
-  table
-}: PricingGridProps) => {
-  const [isFree, setIsFree] = useState(true)
+  table,
+  toggleOptions = [
+    { label: "Monthly", value: "monthly" },
+    { label: "Yearly", value: "yearly" },
+  ],
+  onValueChange,
+  value,
+  currentPlan = 1,
+  onCtaClick
+}) => {
+
+  const validationResult = PricingGridSchema.safeParse({ plans })
+
+  if (!validationResult.success) {
+    const issue = validationResult.error.issues[0]
+    const path =
+      issue.path.length > 0
+        ? issue.path.join(" → ")
+        : "Pricing configuration"
+
+    const errorMessage = `${path}: ${issue.message}`
+
+    return <ValidationError error={errorMessage} />
+  }
+
+  const [internalValue, setInternalValue] = useState<string | undefined>(
+    toggleOptions?.[0]?.value
+  );
+
+  const currentValue = value ?? internalValue;
+
+  /**
+ * Handles the billing period toggle (e.g. Monthly ↔ Yearly).
+ *
+ * - Determines the next toggle value based on the current selection
+ * - Updates internal state when the component is uncontrolled
+ * - Notifies the parent via `onValueChange` when provided
+ *
+ * Memoized with `useCallback` to avoid unnecessary re-creations
+ * when passed to child components.
+ */
+  const handleToggle = React.useCallback(() => {
+    if (!toggleOptions) return;
+
+    const [left, right] = toggleOptions;
+    const next = currentValue === left.value ? right.value : left.value;
+
+    setInternalValue(next);
+    onValueChange?.(next);
+  }, [currentValue, toggleOptions, onValueChange]);
+
+  /**
+ * Computes the background / gradient class for each pricing card.
+ *
+ * Behavior:
+ * - Applies only when `modernUI === "vector"`
+ * - If `allowDifferentCardColors` is enabled:
+ *   - Uses `plan.gradient` when available
+ *   - Falls back to a rotating palette from `defaultTrioColors`
+ * - If disabled:
+ *   - Applies the default highlighted variant to highlighted plans only
+ *
+ * Memoized with `useMemo` to ensure stable class values
+ * and prevent recalculation on every render.
+ */
+  const colorCard = useMemo(() => {
+    return plans.map((plan, index) => {
+      if (modernUI !== "vector") return "";
+      
+      if (allowDifferentCardColors) {
+        // Use plan.gradient if defined, else fallback to defaultTrioColors
+        return plan.gradient || defaultTrioColors[index % defaultTrioColors.length];
+      }
+
+      return plan.highlighted ? PricingGridVariant({ variant }) : "";
+    });
+  }, [plans, modernUI, allowDifferentCardColors, variant]);
 
   return (
     <div className="w-full px-4 py-10">
       <Card 
         className={cn(
           "mx-auto max-w-7xl rounded-3xl bg-background shadow-lg",
-          variant === "dark" && "bg-slate-800",
           className
         )}
       >
         <CardHeader
           className={cn(
             "text-center py-12",
-            allowDifferentCardColors && "text-white"
           )}
         >
           <h2 className="text-4xl font-bold mb-3">{title}</h2>
-          <p className="text-white text-center max-w-2xl text-lg mx-auto">
+          <p className="text-muted-foreground max-w-2xl text-md mx-auto">
             {description}
           </p>
           {/* Toggle */}
-          <div className="mb-6 flex items-center justify-center gap-3 text-md font-medium text-white">
-            <span>Paid</span>
-            <Switch 
-              checked={isFree}
-              onCheckedChange={setIsFree} />
-            <span>Free</span>
-          </div>
+          {toggleOptions && (
+            <div className="mb-6 flex items-center justify-center gap-3 text-sm font-medium text-gray-800">
+              <span>{toggleOptions[0].label}</span>
+
+              <Switch
+                variant="default"
+                checked={currentValue === toggleOptions[1].value}
+                onCheckedChange={handleToggle}
+              />
+
+              <span>{toggleOptions[1].label}</span>
+            </div>
+          )}
         </CardHeader>
 
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-visible">
+            
             {plans.map((plan, index) => {
               const isHighlighted = plan.highlighted
-
-              const cardColorClass = allowDifferentCardColors
-                ? plan.buttonColor ||
-                  defaultTrioColors[index % defaultTrioColors.length]
-                : isHighlighted
-                ? PricingGridVariant({ variant })
-                : ""
-
+              const cardColorClass = colorCard[index];
               return (
               <motion.div
-                key={plan.name}
+                key={plan?.name}
                 {...(animation !== "none" ? cardAnimations[animation] : {})}
                 whileHover={
                   interactive === "lift"
@@ -567,24 +725,51 @@ const PricingGridContent = ({
                   PricingGridPriceVariant({ interactive }),
                   pricingBadgePosition === "top" ? "pt-8" : "p-0",
                   !allowDifferentCardColors && "border-0",
-                  isHighlighted && "scale-105 z-40",
-                  cardColorClass,
-                  (modernUI === "vector" || modernUI === "advance") &&
+                  isHighlighted && [
+                    "scale-105",
+                    modernUI ==="basic" ? ModernPricingGridGlowVariant({variant:modernVariant}) :
+                    ""],
+                  modernUI==="vector" ? cardColorClass : 'border',
+                  modernUI === "basic" &&
                     ModernPricingGridVariant({variant:modernVariant})
                 )}
               >
-                <CardHeaderAction variant={variant} isHighlighted={isHighlighted} plan={plan}  pricingBadgePosition={pricingBadgePosition} allowDifferentCardColors={allowDifferentCardColors} modernUI={modernUI} modernVariant={modernVariant}/>
+                <CardHeaderAction variant={variant} isHighlighted={isHighlighted} plan={plan}  pricingBadgePosition={pricingBadgePosition} allowDifferentCardColors={allowDifferentCardColors} modernUI={modernUI} currentPlan={currentPlan}/>
 
-                <CardContentAction features={plan.features}  modernUI={modernUI} table={table}/>
+                {modernUI === "advance" && (
+                  <div className="rounded-xl mt-2 mb-2">
+                    <Typography
+                      variant="h4"
+                      className={cn(
+                        plan?.gradient,
+                        "bg-clip-text text-transparent text-center font-bold"
+                      )}
+                    >
+                      {plan.price}
+                    </Typography>
+                  </div>
+                )}
 
-                {modernUI === "vector" && (
-                  <div className="text-center mb-4">
-                    <SplitPrice price={plan.price} />
+                <CardContentAction features={plan.features}  modernUI={modernUI} table={table} plan={plan} allowDifferentCardColors={allowDifferentCardColors}/>
+
+                {modernUI === "basic" && (
+                  <div className="mx-8 my-2">
+                    <Typography variant="h6" className="text-center">From</Typography>
+                    <Typography variant="h5" className="text-center">{plan?.price}</Typography>
                  </div>
                 )}
 
-                <CardFooterAction variant={variant} isHighlighted={isHighlighted} modernUI={modernUI} plan={plan}/>
-                
+                {!(modernUI === "basic" && currentPlan === plan.id) && (
+                  <CardFooterAction
+                    variant={variant}
+                    isHighlighted={isHighlighted}
+                    modernUI={modernUI}
+                    plan={plan}
+                    modernVariant={modernVariant}
+                    onCtaClick={onCtaClick}
+                  />
+                )}
+                                
               </motion.div>
               )
             })}
@@ -595,11 +780,14 @@ const PricingGridContent = ({
   )
 }
 
-export const PricingGrid = (props: any) => {
+/**
+ * PricingGrid
+ */
+export const PricingGrid: React.FC<PricingGridProps> = (props) => {
   return <PricingGridContent {...props} />
 }
-  ```
-</TabItem>
+```
+  </TabItem>
 </Tabs>
 
 ## Usage
@@ -612,6 +800,7 @@ import { Check } from "lucide-react"
 
 const plans = [
   {
+    id: 1,
     name: "Starter",
     price: "$0/month",
     ctaLabel: "Get Started",
@@ -620,25 +809,22 @@ const plans = [
       { label: "Community Support", available: true },
       { label: "Analytics", available: false },
     ],
-    onCtaClick: (plan) => {
-      console.log("Clicked plan:", plan.name)
-    },
   },
   {
+    id:2,
     name: "Pro",
     price: "$29/month",
     highlighted: true,
+    currentPlan: true,
     ctaLabel: "Upgrade",
     features: [
       { label: "Unlimited Projects", available: true },
       { label: "Priority Support", available: true },
       { label: "Advanced Analytics", available: true },
     ],
-    onCtaClick: (plan) => {
-        console.log("Clicked plan:", plan.name)
-    },
   },
   {
+    id:3,
     name: "Enterprise",
     price: "$99/month",
     ctaLabel: "Contact Sales",
@@ -647,48 +833,71 @@ const plans = [
       { label: "Dedicated Manager", available: true },
       { label: "SLA Guarantee", available: true },
     ],
-    onCtaClick: (plan) => {
-        console.log("Clicked plan:", plan.name)
-    },
   },
 ]
 
-export default function Example() {
+import React from "react"
+import { PricingGrid } from "@/components/ui/pricinggrid"
+
+export default function PricingPage() {
+  const [billing, setBilling] = React.useState<"monthly" | "yearly">("monthly")
+  const [plans, setPlans] = React.useState<any[]>([])
+
+  const fetchPlans = async (billingType: "monthly" | "yearly") => {
+    console.log("Billing Type:" , billingType)
+    // your fetching plans goes here 
+  }
+
+  const handleClick = (plan) => {
+    console.log(plan.id)
+    // your plan action goes here 
+  }
+
+  // 🔁 Fetch whenever billing changes
+  React.useEffect(() => {
+    fetchPlans(billing)
+  }, [billing])
+
   return (
     <PricingGrid
-      title="Simple Pricing"
-      description="Choose the plan that works best for you"
       plans={plans}
+      value={billing}
+      onValueChange={(v) => setBilling(v as "monthly" | "yearly")}
+      onCtaClick={(plans) => handleClick(plans)}
     />
   )
 }
-```
 
+```
 
 ## Props
 
 ### PricingGrid
 
 | Prop | Type | Default | Description |
-|-----|------|---------|-------------|
+|------|------|---------|-------------|
 | `title` | `string` | `"Our Pricing Table"` | Heading text displayed above the pricing grid. |
-| `description` | `string` | `"Choose the plan that fits your needs and plans"` | Supporting description text below the title. |
+| `description` | `string` | `"Choose the plan that fits your needs"` | Supporting description text below the title. |
 | `plans` | `PlanProps[]` | — | List of pricing plans to render. |
-| `variant` | `"default" \| "dark"` | `"dark"` | Visual theme variant for the grid and cards. |
-| `modernUI` | `"basic" \| "vector" \| "advance"` | `"basic"` | Controls the overall card layout and visual style. |
-| `pricingBadgePosition` | `"none" \| "top" \| "middle"` | `"middle"` | Position of the price badge inside each card. |
-| `allowDifferentCardColors` | `boolean` | `false` | Allows each card to have a different background/color style. |
-| `animation` | `"none" \| "fadeIn" \| "slideUp" \| "scaleIn" \| "flipIn" \| "bounceIn" \| "floatIn"` | `"slideUp"` | Entry animation applied to pricing cards. |
-| `interactive` | `"none" \| "hover" \| "press" \| "lift" \| "tilt" \| "glow"` | `"press"` | Hover/interaction effect for cards. |
-| `table` | `boolean` | `false` | Displays features in a comparison table instead of a list. |
+| `variant` | `"default" \| "dark" \| "gradient"` | `"dark"` | Visual theme variant applied to cards and pricing badge. |
+| `modernUI` | `"basic" \| "vector" \| "advance"` | `"basic"` | Controls overall card layout and visual style. |
+| `pricingBadgePosition` | `"none" \| "top" \| "middle"` | `"middle"` | Controls the position of the price badge (vector UI only). |
+| `allowDifferentCardColors` | `boolean` | `false` | Enables per-plan gradients/colors (applies mainly to `vector` UI). |
+| `animation` | `"none" \| "fadeIn" \| "slideUp" \| "scaleIn" \| "flipIn" \| "bounceIn" \| "floatIn"` | `"slideUp"` | Entry animation applied to each pricing card. |
+| `interactive` | `"none" \| "hover" \| "press" \| "lift" \| "tilt" \| "glow"` | `"press"` | Hover and interaction effects for cards. |
+| `modernVariant` | `"default" \| "dark" \| "light"` | `"dark"` | Color theme variant for `basic` and `advance` layouts. |
+| `table` | `boolean` | `false` | Displays features as a table instead of a list. |
+| `toggleOptions` | `[ToggleOption, ToggleOption]` | `[{ label: "Monthly", value: "monthly" }, { label: "Yearly", value: "yearly" }]` | Toggle switch options for pricing cycles. |
+| `value` | `string` | — | Controlled value for the pricing toggle. |
+| `onValueChange` | `(value: string) => void` | — | Callback fired when the toggle value changes. |
 | `className` | `string` | — | Custom class names for the outer grid container. |
-
+| `currentPlan` | `number` | `1` | Marks the plan as the currently active plan. |
 ---
 
 ### PlanProps
 
 | Prop | Type | Default | Description |
-|-----|------|---------|-------------|
+|------|------|---------|-------------|
 | `id` | `string` | — | Optional unique identifier for the plan. |
 | `name` | `string` | — | Plan name displayed on the card. |
 | `price` | `string` | — | Price string (e.g. `"$29/month"`). |
@@ -696,7 +905,7 @@ export default function Example() {
 | `icon` | `React.ElementType` | — | Optional icon shown in modern layouts. |
 | `highlighted` | `boolean` | `false` | Visually emphasizes the plan as recommended. |
 | `gradient` | `string` | — | Optional gradient background for the plan card. |
-| `buttonColor` | `string` | — | Custom button or card color class. |
+| `buttonColor` | `string` | — | Optional button or card color. |
 | `ctaLabel` | `string` | `"Get Started"` | Label text for the CTA button. |
 | `onCtaClick` | `(plan: PlanProps) => void` | — | Callback fired when the CTA button is clicked. |
 
@@ -705,10 +914,16 @@ export default function Example() {
 ### Feature
 
 | Prop | Type | Default | Description |
-|-----|------|---------|-------------|
+|------|------|---------|-------------|
 | `label` | `string` | — | Feature label text. |
 | `available` | `boolean` | `true` | Indicates whether the feature is available. |
-| `icon` | `React.ElementType` | — | Optional icon to override the default check/cross icon. |
+| `icon` | `React.ElementType` | — | Optional icon to override the default check/cross icon (`Check`/`X`). |
 
 ---
 
+### ToggleOption
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `label` | `React.ReactNode` | Label displayed next to the toggle option. |
+| `value` | `string` | Value associated with the toggle option. |
