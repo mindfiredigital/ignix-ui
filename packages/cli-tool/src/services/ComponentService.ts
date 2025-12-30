@@ -30,6 +30,18 @@ export class ComponentService {
         await this.dependencyService.install(componentConfig.dependencies, false);
       }
 
+      // 1.a To Install internal component dependencies
+      if (
+        componentConfig.componentDependencies &&
+        componentConfig.componentDependencies?.length > 0
+      ) {
+        spinner.text = `Installing internal component dependencies...`;
+
+        for (const dep of componentConfig.componentDependencies) {
+          await this.install(dep);
+        }
+      }
+
       // 2. Fetch and write files
       spinner.text = `Getting component files for ${name}...`;
       const registryBaseUrl = config.registryUrl.substring(0, config.registryUrl.lastIndexOf('/'));
