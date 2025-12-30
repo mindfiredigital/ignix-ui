@@ -55,6 +55,18 @@
         }
       }
     },
+    "button-with-icon": {
+      "name": "ButtonWithIcon",
+      "description": "An enhanced button component with icon support, multiple icon positions, and loading states",
+      "dependencies": ["@radix-ui/react-slot", "class-variance-authority", "framer-motion"],
+      "componentDependencies": ["button", "spinner"],
+      "files": {
+        "main": {
+          "path": "components/button-with-icon/index.tsx",
+          "type": "component"
+        }
+      }
+    },
     "center": {
       "name": "Center",
       "description": "A layout utility component for centering content",
