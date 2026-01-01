@@ -1,13 +1,13 @@
 import { Check, Star, X } from "lucide-react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { motion } from "framer-motion"
-import { Button } from "../../../../components/button"
-import { Card, CardContent, CardFooter, CardHeader } from "../../../../components/card"
-import { Typography } from "../../../../components/typography"
-import { cn } from "../../../../../utils/cn"
 import React, { useMemo, useState } from "react"
-import { Switch } from "../../../../components/switch"
 import z from "zod"
+import { Card, CardContent, CardFooter, CardHeader } from "../../../../components/card"
+import { Button } from "../../../../components/button"
+import { cn } from "../../../../../utils/cn"
+import { Typography } from "../../../../components/typography"
+import { Switch } from "../../../../components/switch"
 
 /* -------------------------------------------------------------------------- */
 /*                                ZOD SCHEMAS                                 */
@@ -115,7 +115,7 @@ export interface PricingGridProps  extends PricingVisualProps, CardPlansProps{
   className?: string
   animation?: "none"| "fadeIn"| "slideUp"| "scaleIn"| "flipIn"| "bounceIn"| "floatIn"
   interactive?: "none"| "hover"| "press"| "lift"| "tilt"| "glow"
-  modernVariant?: "default" | "dark"
+  modernVariant?: "default" | "dark" | "light"
   table?: boolean
   toggleOptions?: [ToggleOption, ToggleOption];
   value?: string;
@@ -297,7 +297,7 @@ export const CardFooterAction: React.FC<CardFooterActionProps> = React.memo(
           size="wide"
           aria-label={`${plan?.name} plan action`}
           animationVariant="fadeInOut"
-          className={`${plan?.gradient}`}
+          className={`${plan?.gradient} hover:cursor-pointer`}
           onClick={handleClick}
         >
           {plan.ctaLabel}
@@ -308,7 +308,7 @@ export const CardFooterAction: React.FC<CardFooterActionProps> = React.memo(
           aria-label={`${plan?.name} plan action`}       
           animationVariant="fadeInOut"
           className={cn(
-            "w-full max-w-[220px] font-semibold transition",
+            "w-full max-w-[220px] font-semibold transition hover:cursor-pointer",
             modernUI === "vector"
               ? isHighlighted
                 ? PricingGridPriceVariant({ variant })
@@ -622,7 +622,7 @@ const PricingGridContent: React.FC<PricingGridProps> = ({
   }, [plans, modernUI, allowDifferentCardColors, variant]);
 
   return (
-    <div className="w-full px-4 py-10">
+    <div className="w-full px-0 md:px-4 py-10">
       <Card 
         className={cn(
           "mx-auto max-w-7xl rounded-3xl bg-background shadow-lg",
