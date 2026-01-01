@@ -71,6 +71,10 @@ const ComparisonTableDemo = () => {
   const [interactive, setInteractive] = useState<string>("press");
   const [variant, setVariant] = useState<string>("default");
   const [mobileBreakpoint, setMobileBreakpoint] = useState<string>("md");
+  const handleClick = (plans) => {
+    console.log(plans.name);
+    // your plan action goes here
+  };
 
   const codeString = `
     const features = [
@@ -81,6 +85,7 @@ const ComparisonTableDemo = () => {
     { id: 5, label: "Customisation" },
     { id: 6, label: "SLA" },
   ]
+    
   const plans = [
     {
       id: 1,
@@ -125,9 +130,15 @@ const ComparisonTableDemo = () => {
       },
     },
   ];
+
+  const handleClick = (plans) => {
+    console.log(plans.name);
+    // your plan action goes here
+  };
   <ComparisonTable 
     features={features}
     plans={plans} 
+    onCtaClick={(plans) => handleClick(plans)}
     variant="${variant}"
     animation="${animation}"
     interactive="${interactive}"
@@ -183,6 +194,7 @@ const ComparisonTableDemo = () => {
               key={`${animation}-${interactive}-${variant}`}
               features={features}
               plans={plans} 
+              onCtaClick={(plans) => handleClick(plans)}
               variant={variant as any}
               animation={animation as any}
               interactive={interactive as any}

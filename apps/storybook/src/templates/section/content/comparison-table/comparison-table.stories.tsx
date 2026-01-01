@@ -197,3 +197,10 @@ export const MobileOptimized: Story = {
   },
 };
 
+export const HighLightCurrentPlanId: Story = {
+  args: {
+    currentPlanId: 1,
+  }  
+};
+
+

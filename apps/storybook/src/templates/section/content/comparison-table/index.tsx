@@ -5,6 +5,7 @@ import {
   Crown,
   Star,
   type LucideIcon,
+  Trophy,
 } from "lucide-react"
 import {
   Card,
@@ -38,7 +39,7 @@ export interface Feature {
 export interface VariantsProps {
   variant?: VariantProps<typeof ComparisonTableVariant>["variant"]
   recommendationGradient?: string
-  onCtaClick?: (plan: Plan) => void
+  onCtaClick?: (plan: PlanProps) => void
 }
 
 export interface CardContentActionProps extends VariantsProps {
@@ -47,7 +48,7 @@ export interface CardContentActionProps extends VariantsProps {
   featureMap?: Record<number, FeatureValue>
 }
 
-export interface Plan {
+export interface PlanProps {
   id: number
   name: string
   price: string
@@ -69,28 +70,34 @@ export interface AnimationProps {
   animation?: "none"| "fadeIn"| "slideUp"| "scaleIn"| "flipIn"| "bounceIn"| "floatIn"
 }
 
-export interface PlanCardProps extends VariantsProps, AnimationProps {
-  plan: Plan
+export interface CurrentPlanProps {
+  id?: number
+  currentPlanId?: number
+}
+
+export interface PlanCardProps extends VariantsProps, AnimationProps, CurrentPlanProps {
+  plan: PlanProps
   features: Feature[]
   layout: "mobile" | "desktop"
 }
 
-export interface CardFooterActionProps extends VariantsProps{
-  plan: Plan
+export interface CardFooterActionProps extends VariantsProps, CurrentPlanProps{
+  plan: PlanProps
   price?: string
   recommended?: boolean
   ctaLabel?: string
 }
 
-export interface ComparisonTableData extends VariantsProps, AnimationProps {
+export interface ComparisonTableData extends VariantsProps, AnimationProps, CurrentPlanProps {
   title?: string
   description?: string
   head?: string
   icon?: LucideIcon
   features: Feature[]
-  plans: Plan[]
+  plans: PlanProps[]
   mobileBreakpoint?: "sm" | "md" | "lg"
   featureGradient?: string
+  className?: string
 }
 
 /* -------------------------------------------------------------------------- */
@@ -303,7 +310,8 @@ const CardFooterAction: React.FC<CardFooterActionProps> = React.memo(({
   variant,
   plan,
   recommendationGradient,
-  onCtaClick
+  onCtaClick,
+  currentPlanId
 }) => {
 
   const handleClick = () => {
@@ -317,6 +325,7 @@ const CardFooterAction: React.FC<CardFooterActionProps> = React.memo(({
         type="button"
         aria-label={`${ctaLabel}`}
         onClick={handleClick}
+        disabled={currentPlanId === plan.id}
         className={cn(
           "w-full rounded-lg py-2 text-sm font-semibold transition hover:cursor-pointer",
           recommended
@@ -324,7 +333,8 @@ const CardFooterAction: React.FC<CardFooterActionProps> = React.memo(({
             : variant === "light" 
             ? "bg-zinc-800 text-white hover:bg-zinc-700"
             : "bg-white/10 text-white hover:bg-white/20",
-          recommendationGradient && variant === "light" ? `${recommendationGradient}` : ""
+          recommendationGradient && variant === "light" ? `${recommendationGradient}` : "",
+          currentPlanId === plan.id && "opacity-50 cursor-not-allowed"
         )}
       >
         {ctaLabel}
@@ -348,11 +358,12 @@ const PlanCard: React.FC<PlanCardProps> = React.memo(({
   recommendationGradient,
   animation,
   interactive,
-  onCtaClick
+  onCtaClick,
+  currentPlanId
 }) => {
   const isMobile = layout === "mobile"
 
-  return (
+  return  (
     <Card
       className={cn(
         "relative rounded-2xl border backdrop-blur transition-all overflow-visible",
@@ -371,13 +382,25 @@ const PlanCard: React.FC<PlanCardProps> = React.memo(({
       animation={animation}
       interactive={interactive}
     >
-    {plan.recommended && (
+      {plan.recommended && (
         <span
-          className={`absolute -top-2 left-1/2 -translate-x-1/2 rounded-full px-4 py-1 text-sm font-semibold text-white ${
+          className={`absolute -top-2 left-1/2 -translate-x-1/2 flex items-center gap-1 rounded-full px-3 py-1 text-sm font-semibold text-white ${
             recommendationGradient ? "bg-red-500" : "bg-indigo-500"
           }`}
         >
+        <Trophy className="h-4 w-4" />
         Most Popular
+        </span>
+      )}
+      {currentPlanId === plan.id && (
+        <span
+          className={cn(
+            "absolute -top-2 left-1/2 -translate-x-1/2 flex items-center gap-1 rounded-full px-3 py-1 text-sm font-semibold",
+            "bg-emerald-500 text-white border border-emerald-500/30"
+          )}
+        >
+          <Star className="h-4 w-4 fill-emerald-400" />
+          Current Plan
         </span>
       )}
 
@@ -421,6 +444,7 @@ const PlanCard: React.FC<PlanCardProps> = React.memo(({
         variant={variant}
         recommendationGradient={recommendationGradient}
         onCtaClick={onCtaClick}
+        currentPlanId={currentPlanId}
       />
     </Card>
   )
@@ -446,7 +470,9 @@ export const ComparisonTableContent: React.FC<ComparisonTableData> = ({
   animation = "slideUp",
   interactive = "press",
   featureGradient,
-  onCtaClick
+  currentPlanId = 0,
+  onCtaClick,
+  className
 }) => {
   const [isMobile, setIsMobile] = React.useState<boolean>(false)
   const bp = (mobileBreakpoint === "sm" ? 640 : mobileBreakpoint === "md" ? 768 : 1024)
@@ -487,7 +513,7 @@ export const ComparisonTableContent: React.FC<ComparisonTableData> = ({
   }
 
   return (
-    <section className={cn("w-full py-20 px-6", ComparisonTableVariant({ variant }))}>
+    <section className={cn("w-full py-20 px-6", ComparisonTableVariant({ variant }), className)}>
       <div className="mx-auto max-w-7xl">
         <div className="text-center mb-14">
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-white/10">
@@ -506,6 +532,7 @@ export const ComparisonTableContent: React.FC<ComparisonTableData> = ({
             {plans.map(plan => (
               <PlanCard
                 key={plan.id}
+                id={plan.id}
                 plan={plan}
                 features={features}
                 variant={variant}
@@ -514,6 +541,7 @@ export const ComparisonTableContent: React.FC<ComparisonTableData> = ({
                 animation={animation}
                 interactive={interactive}
                 onCtaClick={onCtaClick}
+                currentPlanId={currentPlanId}
               />
             ))}
           </div>
@@ -550,6 +578,7 @@ export const ComparisonTableContent: React.FC<ComparisonTableData> = ({
                   animation={animation}
                   interactive={interactive}
                   onCtaClick={onCtaClick}
+                  currentPlanId={currentPlanId}
                 />
               ))}
             </CardContent>

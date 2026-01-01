@@ -7,12 +7,16 @@ import {
   type LucideIcon,
   Trophy,
 } from "lucide-react"
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@ignix-ui/card"
+import { Typography } from "@ignix-ui/typography"
+import { cn } from "../../../utils/cn"
 import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "@site/src/utils/cn"
-import { Typography } from "../typography"
-import { Card, CardContent, CardFooter, CardHeader } from "../card"
-import z from "zod"
-
+import { z } from "zod"
 /* -------------------------------------------------------------------------- */
 /*                                   TYPES                                    */
 /* -------------------------------------------------------------------------- */
@@ -77,7 +81,7 @@ export interface PlanCardProps extends VariantsProps, AnimationProps, CurrentPla
   layout: "mobile" | "desktop"
 }
 
-export interface CardFooterActionProps extends VariantsProps{
+export interface CardFooterActionProps extends VariantsProps, CurrentPlanProps{
   plan: PlanProps
   price?: string
   recommended?: boolean
@@ -306,7 +310,8 @@ const CardFooterAction: React.FC<CardFooterActionProps> = React.memo(({
   variant,
   plan,
   recommendationGradient,
-  onCtaClick
+  onCtaClick,
+  currentPlanId
 }) => {
 
   const handleClick = () => {
@@ -320,6 +325,7 @@ const CardFooterAction: React.FC<CardFooterActionProps> = React.memo(({
         type="button"
         aria-label={`${ctaLabel}`}
         onClick={handleClick}
+        disabled={currentPlanId === plan.id}
         className={cn(
           "w-full rounded-lg py-2 text-sm font-semibold transition hover:cursor-pointer",
           recommended
@@ -327,7 +333,8 @@ const CardFooterAction: React.FC<CardFooterActionProps> = React.memo(({
             : variant === "light" 
             ? "bg-zinc-800 text-white hover:bg-zinc-700"
             : "bg-white/10 text-white hover:bg-white/20",
-          recommendationGradient && variant === "light" ? `${recommendationGradient}` : ""
+          recommendationGradient && variant === "light" ? `${recommendationGradient}` : "",
+          currentPlanId === plan.id && "opacity-50 cursor-not-allowed"
         )}
       >
         {ctaLabel}
@@ -339,6 +346,7 @@ const CardFooterAction: React.FC<CardFooterActionProps> = React.memo(({
 /* -------------------------------------------------------------------------- */
 /*                              PLAN CARD                                     */
 /* -------------------------------------------------------------------------- */
+
 /**
  * Individual pricing plan card.
  */
@@ -436,6 +444,7 @@ const PlanCard: React.FC<PlanCardProps> = React.memo(({
         variant={variant}
         recommendationGradient={recommendationGradient}
         onCtaClick={onCtaClick}
+        currentPlanId={currentPlanId}
       />
     </Card>
   )
@@ -444,6 +453,7 @@ const PlanCard: React.FC<PlanCardProps> = React.memo(({
 /* -------------------------------------------------------------------------- */
 /*                              MAIN COMPONENT                                 */
 /* -------------------------------------------------------------------------- */
+
 /**
  * Responsive pricing comparison table.
  */
@@ -512,7 +522,7 @@ export const ComparisonTableContent: React.FC<ComparisonTableData> = ({
           <Typography variant="h2" className={cn("text-center", ComparisonTableTextVariant({ variant }))}>
             {title}
           </Typography>
-          <p className={cn("mt-3 text-sm max-w-xl mx-auto text-right", ComparisonTableTextVariant({ variant }))}>
+          <p className={cn("mt-3 text-sm max-w-xl mx-auto", ComparisonTableTextVariant({ variant }))}>
             {description}
           </p>
         </div>
@@ -538,7 +548,7 @@ export const ComparisonTableContent: React.FC<ComparisonTableData> = ({
         ) : (
           <div data-testid="desktop-view" className="hidden md:block">
             <CardContent
-              className="grid grid-cols-4 gap-6"
+              className="grid grid-cols-[260px_repeat(auto-fit,minmax(220px,1fr))] gap-6"
             >
               <Card
                 className={`rounded-2xl bg-white/5 border ${
