@@ -826,8 +826,8 @@
       ],
       "files": {
         "main": {
-          "path": "templates/sections/pricing-grid/index.tsx",
-          "type" : "template"
+          "path": "components//pricing-grid/index.tsx",
+          "type" : "component"
         }
       }
     },
@@ -887,7 +887,32 @@
       ],
       "files": {
         "main": {
-          "path": "templates/sections/comparison-table/index.tsx",
+          "path": "components/comparison-table/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "billingPage": {
+      "name": "BillingPage",
+      "description": "",
+      "dependencies": [
+        "framer-motion",
+        "react-icons",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "avatar",
+        "button",
+        "breadcrumbs",
+        "typography",
+        "card",
+        "comparisonTable",
+        "dialogBox"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/billing-page/index.tsx",
           "type": "template"
         }
       }
