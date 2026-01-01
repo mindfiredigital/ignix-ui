@@ -136,9 +136,10 @@
               "label": "Account Management",
               "items": [
                 "templates/pages/account-management/profile",
-                  "templates/pages/account-management/api-keys",
+                "templates/pages/account-management/api-keys",
                 "templates/pages/account-management/setting-page",
-                "templates/pages/account-management/security-page"
+                "templates/pages/account-management/security-page",
+                "templates/pages/account-management/billing-page"
               ]
             }]
         },
@@ -146,7 +147,8 @@
           "type": "category",
           "label": "Sections",
           "items": [
-            "templates/sections/content/pricing-grid"
+            "templates/sections/content/pricing-grid",
+            "templates/sections/content/comparison-table"
           ]
         }
       ]
