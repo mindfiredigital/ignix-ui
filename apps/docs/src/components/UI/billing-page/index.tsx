@@ -17,15 +17,15 @@ import {
   Users,
 } from "lucide-react"
 import { cva, type VariantProps } from "class-variance-authority"
-import { Avatar } from "@ignix-ui/avatar"
-import { Breadcrumbs } from "@ignix-ui/breadcrumbs"
-import { Button } from "@ignix-ui/button"
-import { Card } from "@ignix-ui/card"
-import { Typography } from "@ignix-ui/typography"
-import { cn } from "../../../utils/cn"
-import { useDialog } from "@ignix-ui/dialogbox/use-dialog"
-import { DialogProvider } from "@ignix-ui/dialogbox"
-import { ComparisonTable } from "@ignix-ui/comparison-table"
+import { Avatar } from "../avatar"
+import { Breadcrumbs } from "../breadcrumbs"
+import { Button } from "../button"
+import { Card } from "../card"
+import { Typography } from "../typography"
+import { useDialog } from "../dialog-box/use-dialog"
+import { DialogProvider } from "../dialog-box"
+import { ComparisonTable } from "../comparison-table"
+import { cn } from "@site/src/utils/cn"
 
 /** -------------------------------- Variants -------------------------------- */
 const ModernPricingGridVariant = cva("", {
@@ -217,7 +217,7 @@ export const CurrentPlanCard: React.FC<ActivePlanProps> = React.memo(
     return (
       <GlassCard variant={variant} animation={animation} interactive={interactive}>
         {/* Header */}
-        <div aria-label="current-plan" className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mt-3">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mt-3">
           <div className="flex items-center gap-3">
             <div
               className={cn(
@@ -272,8 +272,6 @@ export const CurrentPlanCard: React.FC<ActivePlanProps> = React.memo(
         {/* Actions */}
         <div className="mt-6 flex flex-col lg:flex-row gap-2 md:gap-2 lg:gap-3">
           <Button
-            role="button"
-            aria-label="upgrade-plan"
             variant="success"
             size="wide"
             className="w-full sm:w-auto hover:cursor-pointer" 
@@ -282,7 +280,6 @@ export const CurrentPlanCard: React.FC<ActivePlanProps> = React.memo(
             Upgrade 
           </Button>
           <Button
-            aria-label="downgrade-plan"
             variant="outline"
             size="wide"
             className="w-full sm:w-auto hover:cursor-pointer"
@@ -344,7 +341,7 @@ export const UsageOverviewCard: React.FC<UsageOverviewProps> = React.memo(
 
         {/* API Usage */}
         {apiUsage && (
-          <div className="mt-6" aria-label="api-usage">
+          <div className="mt-6">
             <div className="flex justify-between text-sm mb-1">
               <span className="text-zinc-400 font-semibold">
                 {apiUsage.label}
@@ -365,7 +362,7 @@ export const UsageOverviewCard: React.FC<UsageOverviewProps> = React.memo(
 
         {/* Storage Usage */}
         {storageUsage && (
-          <div className="flex items-center justify-between mt-6" aria-label="storage-usage">
+          <div className="flex items-center justify-between mt-6">
             <div>
               <p className="text-sm text-zinc-400 font-semibold">
                 {storageUsage.label}
@@ -416,7 +413,7 @@ export const UsageOverviewCard: React.FC<UsageOverviewProps> = React.memo(
 
         {/* Seats Usage */}
         {seatsUsage && (
-          <div className="mt-6 mb-4 flex justify-between text-sm" aria-label="seats-usage">
+          <div className="mt-6 mb-4 flex justify-between text-sm">
             <div className="flex flex-row gap-2">
               <Users className="h-4 w-4 text-zinc-400" />
               <span className="text-zinc-400 font-bold">
@@ -561,13 +558,13 @@ export const BillingTable: React.FC<BillingTableProps> = React.memo(({
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-end gap-2 mt-4">
-          <Button size="sm" variant="outline" className="hover:cursor-pointer" disabled={currentPage === 1} onClick={handlePrev} aria-label="move-left">
+          <Button size="sm" variant="outline" className="hover:cursor-pointer" disabled={currentPage === 1} onClick={handlePrev}>
             <MoveLeft />
           </Button>
           <Typography className="flex items-center gap-1 text-sm">
             Page {currentPage} of {totalPages}
           </Typography>
-          <Button size="sm" variant="outline" className="hover:cursor-pointer" disabled={currentPage === totalPages} onClick={handleNext} aria-label="move-right">
+          <Button size="sm" variant="outline" className="hover:cursor-pointer" disabled={currentPage === totalPages} onClick={handleNext}>
             <MoveRight />
           </Button>
         </div>
@@ -598,10 +595,10 @@ export const PaymentMethodCard: React.FC<PaymentMethodProps> = React.memo(({
         <div className={cn("flex items-center justify-center w-10 h-10 rounded-full",BillingIconVariant({variant}))}> 
           <Banknote className="w-6 h-6" /> 
         </div> 
-        <Typography variant="h3" className="mb-4 font-semibold" aria-label="payment-head"> Payment Method </Typography> 
+        <Typography variant="h3" className="mb-4 font-semibold"> Payment Method </Typography> 
       </div>
       <div className="flex items-center gap-3 mb-4">
-        <BrandIcon aria-label="brand-icon" className={cn("w-9 h-9 p-1", BillingIconVariant({variant}))} />
+        <BrandIcon className={cn("w-9 h-9 p-1", BillingIconVariant({variant}))} />
         <div>
           <p className="text-md text-zinc-600">
             •••• •••• •••• {last4}
@@ -615,7 +612,6 @@ export const PaymentMethodCard: React.FC<PaymentMethodProps> = React.memo(({
       </div>
 
       <Button
-        aria-label="update-payment"
         variant="success"
         size="md"
         className="hover:cursor-pointer"
@@ -730,7 +726,6 @@ export const BillingContent:React.FC<BillingPageProps> = ({
 
       <main className="max-w-7xl mx-auto p-1 space-y-4 ">
         <Breadcrumbs
-          aria-label="breadcrumbs"
           items={[
             { label: "Settings", href: "#" },
             { label: "Billing", href: "#" },
@@ -740,13 +735,15 @@ export const BillingContent:React.FC<BillingPageProps> = ({
 
         <div className={cn("flex gap-3 p-4 rounded bg-primary/5 border", ModernPricingGridVariant({variant}))}>
           <Shield className="w-5 h-5" />
-          <Typography variant="body-small" className="text-md" role="link">
+          <Typography variant="body-small" className="text-md">
             Billing information is securely managed.
           </Typography>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-[auto_1fr] gap-4">
-          {showcurrentPlanId && activePlan && renewalDate && <CurrentPlanCard plan={activePlan} features={activePlanFeatures} renewalDate={renewalDate} variant={variant} onUpgrade={handleUpgrade} animation={animation} interactive={interactive}/>}
+          {showcurrentPlanId && activePlan && renewalDate && 
+            <CurrentPlanCard plan={activePlan} features={activePlanFeatures} renewalDate={renewalDate} variant={variant} onUpgrade={handleUpgrade} animation={animation} interactive={interactive}/>
+          }
           {showUsageOverview && (
             <UsageOverviewCard
               variant={variant}

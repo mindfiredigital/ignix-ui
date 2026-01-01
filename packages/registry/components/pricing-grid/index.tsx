@@ -419,6 +419,7 @@ export const CardHeaderAction: React.FC<CardHeaderActionProps>  = React.memo(({
               <motion.div
                 animate={{ y: [0, -6, 0] }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                aria-label={`pricing-middle-${plan.name}`}
               >
                 <div className="w-28 h-28 rounded-full p-[3px]">
                   <div
@@ -443,6 +444,7 @@ export const CardHeaderAction: React.FC<CardHeaderActionProps>  = React.memo(({
               className="absolute -top-14 left-1/2 -translate-x-1/2 z-20"
               animate={{ y: [0, -6, 0] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              aria-label={`pricing-top-${plan.name}`}
             >
               <div className="w-30 h-30 rounded-full p-[3px]">
                 <div
@@ -645,6 +647,7 @@ const PricingGridContent: React.FC<PricingGridProps> = ({
               <span>{toggleOptions[0].label}</span>
 
               <Switch
+                aria-label="toggle"
                 variant="default"
                 checked={currentValue === toggleOptions[1].value}
                 onCheckedChange={handleToggle}

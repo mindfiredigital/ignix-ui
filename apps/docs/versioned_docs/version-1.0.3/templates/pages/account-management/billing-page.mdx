@@ -1,3 +1,31 @@
+---
+sidebar_position: 3
+title: Billing Page
+description: A comprehensive Billing management page that allows users to view and manage their subscription, payment methods, and billing history. It includes current plan details with renewal information, usage overview metrics, and a full invoice history with actions for viewing, downloading, or deleting invoices
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import BillingPageDemo from '@site/src/components/Demo/BillingPageDemo';
+
+## Overview
+
+A comprehensive **Billing management page** that allows users to view and manage their subscription, payment methods, and billing history. It includes current plan details with renewal information, usage overview metrics, and a full invoice history with actions for viewing, downloading, or deleting invoices. Users can securely update their payment method, cancel subscriptions with confirmation, and upgrade or change plans via an integrated pricing grid. The layout is fully responsive, optimized for mobile, tablet, and desktop experiences, and supports multiple visual themes, animations, and interaction styles. An extensible modal system enables custom payment update flows while maintaining secure, user-controlled interactions.
+
+## Preview
+
+<BillingPageDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component billingPage
+    ```
+  </TabItem>
+   <TabItem value="manual" label="MANUAL" default>
+    ```bash
 import React, { useState } from "react"
 import type { LucideIcon } from "lucide-react"
 import {
@@ -820,3 +848,292 @@ export const BillingPage:React.FC<BillingPageProps> = (props) => {
   </DialogProvider>
   )
 }
+
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+```tsx
+import { useState, useCallback } from "react"
+import {
+  FaCcVisa,
+  FaCcMastercard,
+  FaCcAmex,
+  FaCcPaypal,
+} from "react-icons/fa"
+import { Home, Settings2, Proportions, X } from "lucide-react"
+import { BillingPage } from "@src/components/templates/billingpage"
+import { Button } from "@src/components/button"
+import { Card } from "@src/components/card"
+import { Typography } from "@src/components/typography"
+
+/* ----------------------------------
+ * Static Data
+ * ---------------------------------- */
+
+const AVAILABLE_PAYMENT_METHODS = [
+  { id: "visa", label: "Visa", icon: FaCcVisa },
+  { id: "mastercard", label: "Mastercard", icon: FaCcMastercard },
+  { id: "amex", label: "American Express", icon: FaCcAmex },
+  { id: "paypal", label: "PayPal", icon: FaCcPaypal },
+]
+
+const PLANS = [
+  {
+    id: 1,
+    name: "Starter",
+    price: "$0/month",
+    icon: Home,
+    ctaLabel: "Get Started",
+    features: [
+      { label: "1 Project", available: true },
+      { label: "Community Support", available: true },
+    ],
+  },
+  {
+    id: 2,
+    name: "Pro",
+    price: "$29/month",
+    icon: Settings2,
+    highlighted: true,
+    ctaLabel: "Upgrade",
+    features: [
+      { label: "Unlimited Projects", available: true },
+      { label: "Priority Support", available: true },
+    ],
+  },
+  {
+    id: 3,
+    name: "Enterprise",
+    price: "$99/month",
+    icon: Proportions,
+    highlighted: true,
+    ctaLabel: "Contact Sales",
+    features: [{ label: "Custom Integrations", available: true }],
+  },
+]
+
+const INVOICES = [
+  { id: "1", plan: "Pro Annual", date: "Jan 21, 2025", amount: "$21", status: "Pending" },
+  { id: "2", plan: "Pro Annual", date: "Dec 21, 2024", amount: "$22", status: "Paid" },
+  { id: "3", plan: "Pro Annual", date: "Dec 21, 2024", amount: "$23", status: "Failed" },
+]
+
+/* ----------------------------------
+ * Component
+ * ---------------------------------- */
+
+export default function BillingDemo() {
+  const [isPaymentModalOpen, setPaymentModalOpen] = useState(false)
+
+  /* ----------------------------------
+   * Handlers (defined as const)
+   * ---------------------------------- */
+
+  const handleInvoiceView = useCallback((invoice) => {
+    //write your logic here
+    console.log("View invoice:", invoice.id)
+  }, [])
+
+  const handleInvoiceDownload = useCallback((invoice) => {
+    //write your logic here
+    console.log("Download invoice:", invoice.id)
+  }, [])
+
+  const handleInvoiceDelete = useCallback((invoice) => {
+    //write your logic here
+    console.log("Delete invoice:", invoice.id)
+  }, [])
+
+  const handleCancelSubscription = useCallback(() => {
+    //write your logic here
+    console.log("Cancel subscription")
+  }, [])
+
+  const handleUpdatePaymentMethod = useCallback(() => {
+    setPaymentModalOpen(true)
+  }, [])
+
+  const handleSelectPaymentMethod = useCallback((methodId: string) => {
+    console.log("Selected payment method:", methodId)
+    //write your logic here
+  }, [])
+
+  /* ----------------------------------
+   * Render
+   * ---------------------------------- */
+
+  return (
+    <BillingPage
+      /* ---- Plan & Billing ---- */
+      variant="dark"
+      animation="fadeIn"
+      renewalDate={new Date("2025-03-21")}
+      plans={PLANS}
+      invoices={INVOICES}
+
+      /* ---- Usage Meters ---- */
+      apiUsage={{ label: "API Calls", used: 41000, total: 50000 }}
+      storageUsage={{ label: "Storage", used: 45, total: 100, unit: "GB" }}
+      seatsUsage={{ label: "Active Seats", used: 8, total: 10 }}
+
+      /* ---- Invoice Actions ---- */
+      onInvoiceView={handleInvoiceView}
+      onInvoiceDownload={handleInvoiceDownload}
+      onInvoiceDelete={handleInvoiceDelete}
+
+      /* ---- Subscription ---- */
+      onCancelSubscription={handleCancelSubscription}
+
+      /* ---- Payment Card ---- */
+      card={{
+        brand: FaCcVisa,
+        cardNumber: "4242424242424242",
+        expiryMonth: "12",
+        expiryYear: "26",
+        cardHolderName: "John Doe",
+      }}
+      onUpdatePaymentMethod={handleUpdatePaymentMethod}
+
+      /* ---- Custom Payment Method Modal ---- */
+      renderUpdatePaymentMethod={() =>
+        isPaymentModalOpen ? (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+            onClick={() => setPaymentModalOpen(false)}
+          >
+            <Card
+              className="w-full max-w-md p-6"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <Typography variant="h6">Select Payment Method</Typography>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => setPaymentModalOpen(false)}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+
+              <div className="space-y-3">
+                {AVAILABLE_PAYMENT_METHODS.map((method) => {
+                  const Icon = method.icon
+                  return (
+                    <button
+                      key={method.id}
+                      className="w-full flex items-center gap-4 rounded-lg border p-3 hover:bg-muted transition"
+                      onClick={() => handleSelectPaymentMethod(method.id)}
+                    >
+                      <Icon className="w-8 h-8" />
+                      <span className="font-medium">{method.label}</span>
+                    </button>
+                  )
+                })}
+              </div>
+
+              <Typography variant="body-small" className="mt-4 text-zinc-500">
+                Demo selector only. No real payment data is collected.
+              </Typography>
+            </Card>
+          </div>
+        ) : null
+      }
+    />
+  )
+}
+```
+
+## props
+
+### Core Configuration
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `headerTitle` | `string` | `"OpenSrc"` | Title displayed in the billing page header. |
+| `headerIcon` | `LucideIcon` | `Building2` | Icon shown next to the header title. |
+| `variant` | `"dark" \| "default" \| "light"` | `"dark"` | Visual theme variant applied across all billing components. |
+
+---
+
+### Plans & Pricing
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `plans` | `PlanProps[]` | `[]` | Available subscription plans displayed in the pricing grid. |
+| `currentPlan` | `number` | `1` | ID of the currently active plan. |
+| `renewalDate` | `Date` | — | Next billing or renewal date for the active plan. |
+| `showCurrentPlan` | `boolean` | `true` | Toggles visibility of the active plan card. |
+| `showPricing` | `boolean` | `false` | Forces the pricing grid to be visible. |
+| `pricingTitle` | `string` | `"Simple Pricing"` | Title displayed above the pricing grid. |
+| `pricingDescription` | `string` | `"Choose the plan that works best for you"` | Description shown under the pricing title. |
+
+---
+
+### Usage Overview
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `showUsageOverview` | `boolean` | `true` | Controls visibility of the usage overview card. |
+| `apiUsage` | `UsageMetric` | — | API usage metric with used and total values. |
+| `storageUsage` | `UsageMetric` | — | Storage consumption metric with circular progress indicator. |
+| `seatsUsage` | `UsageMetric` | — | Seat allocation and usage metric. |
+
+---
+
+### Payment Method
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `card` | `CardDetails` | — | Active payment card details (brand, masked number, expiry). |
+| `onUpdatePaymentMethod` | `() => void` | — | Triggered when the user clicks **Update Payment Method**. |
+| `onCancelSubscription` | `() => void` | — | Fired after confirming subscription cancellation. |
+| `renderUpdatePaymentMethod` | `() => ReactNode` | — | Optional render slot for a custom payment update modal or flow. |
+
+---
+
+### Billing History
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `showBillingTable` | `boolean` | `true` | Toggles the billing history table. |
+| `invoices` | `Invoice[]` | `[]` | List of billing invoices displayed in the table. |
+| `onInvoiceView` | `(invoice: Invoice) => void` | — | Called when an invoice is viewed. |
+| `onInvoiceDownload` | `(invoice: Invoice) => void` | — | Called when an invoice is downloaded. |
+| `onInvoiceDelete` | `(invoice: Invoice) => void` | — | Called when an invoice is deleted. |
+
+---
+
+### Animation
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `animation` | `"none" \| "fadeIn" \| "slideUp" \| "scaleIn" \| "flipIn" \| "bounceIn" \| "floatIn"` | `"slideUp"` | Page-wide and card-level animation style. |
+
+---
+
+### PlanProps
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `id` | `number` | Unique identifier for the plan. |
+| `name` | `string` | Plan display name. |
+| `icon` | `React.ElementType` | Optional icon shown with the plan. |
+| `price` | `string` | Price label displayed to the user. |
+| `features` | `Feature[]` | List of plan features and availability. |
+| `ctaLabel` | `string` | Custom label for the call-to-action button. |
+| `onCtaClick` | `(plan: PlanProps) => void` | Triggered when the plan CTA is clicked. |
+
+---
+
+### UsageMetric
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `label` | `string` | Metric label (e.g., API Requests). |
+| `used` | `number` | Amount used in the current cycle. |
+| `total` | `number` | Total available quota. |
+| `unit` | `string` | Unit label (e.g., GB, requests). |

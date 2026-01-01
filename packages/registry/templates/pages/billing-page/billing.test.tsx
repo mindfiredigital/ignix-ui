@@ -150,6 +150,47 @@ describe("BillingPage", () => {
     ).toBeInTheDocument()
   })
 
+  it("Render default header Title when no headerTitle given", () => {
+    render(
+      <BillingPage
+        plans={plans}
+        features={features}
+        card={card}
+      />
+    )
+
+    expect(screen.getByText("OpenSrc")).toBeInTheDocument()
+  })
+
+  it("renders breadcrumbs", () => {
+    render(<BillingPage plans={plans} features={features} card={card} />)
+
+    // Use getByRole or getByText with regex to avoid exact text issues
+    expect(screen.getByLabelText("breadcrumbs")).toBeInTheDocument()
+  })
+
+  it("renders secure billing notice", () => {
+    render(<BillingPage plans={plans} features={features} card={card} />)
+    expect(
+      screen.getByText(/billing information is securely managed/i)
+    ).toBeInTheDocument()
+  })
+
+  it("renders payment method section", () => {
+    render(<BillingPage plans={plans} features={features} card={card} />)
+    expect(screen.getByLabelText("payment-head")).toBeInTheDocument()
+  })
+
+  it("renders masked card number", () => {
+    render(<BillingPage plans={plans} features={features} card={card} />)
+    expect(screen.getByText(/1111$/)).toBeInTheDocument()
+  })
+
+  it("renders expiry date", () => {
+    render(<BillingPage plans={plans} features={features} card={card} />)
+    expect(screen.getByText(/expire/i)).toBeInTheDocument()
+  })
+
   it("renders current plan with filtered features", () => {
     render(
       <BillingPage
@@ -184,7 +225,7 @@ describe("BillingPage", () => {
     expect(screen.getByText(/500 \/ 1,000/)).toBeInTheDocument()
   })
 
-  it("renders billing table with invoices", () => {
+  it("renders billing table", () => {
     render(
       <BillingPage
         plans={plans}
@@ -193,10 +234,7 @@ describe("BillingPage", () => {
         card={card}
       />
     )
-
-    expect(screen.getByText("Billing History")).toBeInTheDocument()
-    expect(screen.getByText("Paid")).toBeInTheDocument()
-    expect(screen.getByText("Pending")).toBeInTheDocument()
+    expect(screen.queryByText("Billing History")).toBeInTheDocument()
   })
 
   it("fires invoice action callbacks", async () => {
@@ -254,7 +292,7 @@ describe("BillingPage", () => {
     )
 
     await user.click(
-      screen.getByRole("button", { name: /update payment method/i })
+      screen.getByLabelText("update-payment")
     )
 
     expect(onUpdate).toHaveBeenCalledOnce()
@@ -324,7 +362,7 @@ describe("BillingPage", () => {
     )
 
     expect(
-      screen.queryByRole("button", { name: /upgrade/i })
+      screen.queryByRole("button", { name: /upgrade-plan/i })
     ).not.toBeInTheDocument()
   })
 
@@ -371,6 +409,399 @@ describe("BillingPage", () => {
     })
 
     expect(starterButton).toBeDisabled()
+  })
+
+  it("renders without crashing when no optional props are passed", () => {
+    render(
+      <BillingPage
+        plans={plans}
+        features={features}
+        card={card}
+      />
+    )
+
+    expect(screen.getByText("Payment Method")).toBeInTheDocument()
+  })
+
+  it("does not render usage overview when apiUsage is undefined", () => {
+    render(
+      <BillingPage
+        plans={plans}
+        features={features}
+        card={card}
+      />
+    )
+
+    expect(screen.queryByLabelText("api-usage")).not.toBeInTheDocument()
+  })
+
+  it("does not render usage overview when storageUsage is undefined", () => {
+    render(
+      <BillingPage
+        plans={plans}
+        features={features}
+        card={card}
+      />
+    )
+
+    expect(screen.queryByLabelText("storage-usage")).not.toBeInTheDocument()
+  })
+
+  it("does not render usage overview when seats Usage is undefined", () => {
+    render(
+      <BillingPage
+        plans={plans}
+        features={features}
+        card={card}
+      />
+    )
+
+    expect(screen.queryByLabelText("seats-usage")).not.toBeInTheDocument()
+  })
+
+  it("renders zero usage correctly", () => {
+    render(
+      <BillingPage
+        plans={plans}
+        features={features}
+        card={card}
+        apiUsage={{ label: "API Calls", used: 200, total: 1000 }}
+      />
+    )
+    expect(screen.getByText(/200 \/ 1,000/i)).toBeInTheDocument()
+    expect(screen.getByText(/20%/i)).toBeInTheDocument()
+    expect(screen.getByText(/calls/i)).toBeInTheDocument()
+  })
+
+  it("renders full usage correctly", () => {
+    render(
+      <BillingPage
+        plans={plans}
+        features={features}
+        card={card}
+        apiUsage={{ label: "API Calls", used: 1000, total: 1000 }}
+      />
+    )
+    
+    expect(screen.getByText(/1,000 \/ 1,000/i)).toBeInTheDocument()
+    expect(screen.getByText(/100%/i)).toBeInTheDocument()
+    expect(screen.getByText(/calls/i)).toBeInTheDocument()
+  })
+
+  it("renders multiple invoices correctly", () => {
+    render(
+      <BillingPage
+        plans={plans}
+        features={features}
+        invoices={invoices}
+        card={card}
+      />
+    )
+
+    expect(screen.getAllByText("Starter").length).toBeGreaterThan(0)
+  })
+
+  it("does not call invoice callbacks if not provided", async () => {
+    const user = userEvent.setup()
+
+    render(
+      <BillingPage
+        plans={plans}
+        features={features}
+        invoices={invoices}
+        card={card}
+      />
+    )
+
+    await user.click(screen.getAllByLabelText("view-invoice")[0])
+  })
+
+  it("renders correct card brand icon", () => {
+    render(
+      <BillingPage
+        plans={plans}
+        features={features}
+        card={card}
+      />
+    )
+
+    expect(
+      screen.getByLabelText("brand-icon")
+    ).toBeInTheDocument()
+  })
+
+  it("renders masked card number even for different card number", () => {
+    render(
+      <BillingPage
+        plans={plans}
+        features={features}
+        card={{
+          ...card,
+          cardNumber: "5555555555554444",
+        }}
+      />
+    )
+
+    expect(
+      screen.getByText(/•••• •••• •••• 4444/)
+    ).toBeInTheDocument()
+  })
+
+  it("renders upgrade button when currentPlanId is valid", () => {
+    render(
+      <BillingPage
+        plans={plans}
+        features={features}
+        currentPlanId={1}
+        card={card}
+        renewalDate={new Date()} 
+        showcurrentPlanId
+      />
+    )
+
+    expect(
+      screen.getByRole("button", { name: /upgrade-plan/i })
+    ).toBeInTheDocument()
+  })
+
+  it("does not render comparison table initially when showPricing=false", () => {
+    render(
+      <BillingPage
+        plans={plans}
+        features={features}
+        card={card}
+        showPricing={false}
+      />
+    )
+
+    expect(
+      screen.queryByText("Simple Pricing")
+    ).not.toBeInTheDocument()
+  })
+
+  it("renders comparison table when showPricing=true by default", () => {
+    render(
+      <BillingPage
+        plans={plans}
+        features={features}
+        card={card}
+        showPricing
+      />
+    )
+
+    expect(screen.getByText("Simple Pricing")).toBeInTheDocument()
+  })
+
+  it("renders all plans in comparison table", () => {
+    render(
+      <BillingPage
+        plans={plans}
+        features={features}
+        card={card}
+        showPricing
+      />
+    )
+
+    expect(screen.getByText("Starter")).toBeInTheDocument()
+    expect(screen.getByText("Pro")).toBeInTheDocument()
+  })
+
+  it("renders recommended badge only once", () => {
+    render(
+      <BillingPage
+        plans={plans}
+        features={features}
+        card={card}
+        showPricing
+      />
+    )
+
+    expect(
+      screen.getAllByText("Most Popular").length
+    ).toBe(1)
+  })
+
+  it("disables active plan button in comparison table", () => {
+    render(
+      <BillingPage
+        plans={plans}
+        features={features}
+        currentPlanId={1}
+        card={card}
+        showPricing
+      />
+    )
+
+    expect(
+      screen.getByRole("button", { name: "Starter" })
+    ).toBeDisabled()
+  })
+
+  it("keeps non-active plan button enabled", () => {
+    render(
+      <BillingPage
+        plans={plans}
+        features={features}
+        currentPlanId={1}
+        card={card}
+        showPricing
+      />
+    )
+
+    expect(
+      screen.getByRole("button", { name: "Pro" })
+    ).not.toBeDisabled()
+  })
+
+  it("renders Billing Table correctly on mobile view", () => {
+    render(
+      <BillingPage
+        plans={plans}
+        features={features}
+        currentPlanId={1}
+        card={card}
+        showPricing
+        invoices={invoices}
+      />
+    )
+
+    const planHeader = screen.getByText("Plan")
+    expect(planHeader).toBeInTheDocument()
+
+    const amountHeader = screen.getByText("Amount")
+    expect(amountHeader).toBeInTheDocument()
+
+    const statusHeader = screen.getByText("Status")
+    expect(statusHeader).toHaveClass("hidden", "sm:table-cell")
+  })
+
+  it("paginates invoices correctly", async () => {
+    const manyInvoices = Array.from({ length: 7 }, (_, i) => ({
+      id: `inv-${i}`,
+      plan: `Plan ${i}`,
+      date: "2025-01-01",
+      amount: `$${i * 10}`,
+      status: "Paid" as const,
+    }))
+
+    const user = userEvent.setup()
+
+    render(
+      <BillingPage
+        plans={plans}
+        features={features}
+        currentPlanId={1}
+        card={card}
+        invoices={manyInvoices}
+      />
+    )
+
+    // Default shows first 3 items
+    expect(screen.getByText("Plan 0")).toBeInTheDocument()
+    expect(screen.getByText("Plan 2")).toBeInTheDocument()
+
+    // Click next page
+    const nextBtn = screen.getByRole("button", { name: /move-right/i })
+    await user.click(nextBtn)
+
+    // Now next 3 items appear
+    expect(screen.getByText("Plan 3")).toBeInTheDocument()
+    expect(screen.queryByText("Plan 0")).not.toBeInTheDocument()
+  })
+
+  it("fires onView, onDownload, onDelete for invoice actions", async () => {
+    const user = userEvent.setup()
+    const onView = vi.fn()
+    const onDownload = vi.fn()
+    const onDelete = vi.fn()
+
+    render(
+      <BillingPage
+        card={card}
+        invoices={invoices}
+        onInvoiceView={onView}
+        onInvoiceDownload={onDownload}
+        onInvoiceDelete={onDelete}
+      />
+    )
+
+    await user.click(screen.getAllByLabelText("view-invoice")[0])
+    await user.click(screen.getAllByLabelText("download-invoice")[0])
+    await user.click(screen.getAllByLabelText("delete-invoice")[0])
+
+    expect(onView).toHaveBeenCalledOnce()
+    expect(onDownload).toHaveBeenCalledOnce()
+    expect(onDelete).toHaveBeenCalledOnce()
+  })
+
+  it("renders empty billing table message when no invoices", () => {
+    render(<BillingPage plans={plans}
+        features={features}
+        currentPlanId={1}
+        card={card} invoices={[]} />)
+    expect(screen.getByText("No billing history available")).toBeVisible()
+  })
+
+  it("renders Billing Table correctly on tablet view", () => {
+    window.innerWidth = 768 // Tailwind md breakpoint
+    window.dispatchEvent(new Event("resize"))
+
+    render(<BillingPage plans={plans}
+        features={features}
+        currentPlanId={1}
+        card={card} invoices={invoices} />)
+
+    // Date and Status should now be visible
+    expect(screen.getByText("Date")).toBeVisible()
+    expect(screen.getByText("Status")).toBeVisible()
+  })
+
+   it("renders CurrentPlanCard when active plan and renewal date exist", () => {
+    render(<BillingPage plans={plans} features={features} currentPlanId={1} renewalDate={new Date()} card={card} />)
+    expect(screen.getByLabelText("current-plan")).toBeInTheDocument()
+  })
+
+  it("fires invoice actions callbacks", async () => {
+    const user = userEvent.setup()
+    const onView = vi.fn()
+    const onDownload = vi.fn()
+    const onDelete = vi.fn()
+
+    render(
+      <BillingPage
+        invoices={invoices}
+        onInvoiceView={onView}
+        onInvoiceDownload={onDownload}
+        onInvoiceDelete={onDelete}
+        card={card}
+      />
+    )
+
+    const viewButtons = screen.getAllByRole("button", { name: /view-invoice/i })
+    const downloadButtons = screen.getAllByRole("button", { name: /download-invoice/i })
+    const deleteButtons = screen.getAllByRole("button", { name: /delete-invoice/i })
+
+    await user.click(viewButtons[0])
+    await user.click(downloadButtons[0])
+    await user.click(deleteButtons[0])
+  })
+
+  it("applies correct text color class for each status", () => {
+    render(<BillingPage card={card} invoices={invoices} />)
+
+    // Paid → text-green-500
+    const paidCell = screen.getByText("Paid")
+    expect(paidCell).toHaveClass("text-green-500")
+
+    // Pending → text-yellow-500
+    const pendingCell = screen.getByText("Pending")
+    expect(pendingCell).toHaveClass("text-yellow-500")
+
+  })
+
+  it("shows 'No billing history available' when invoices is empty", () => {
+    render(<BillingPage invoices={[]} card={card} />)
+    expect(screen.getByText(/No billing history available/i)).toBeInTheDocument()
   })
 
 })
