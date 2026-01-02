@@ -15,6 +15,20 @@ const isIconElement = (node: React.ReactNode): node is React.ReactElement<IconPr
 };
 
 
+/**
+ * RangeInputField component for date range selection
+ * Displays two input fields for start and end dates with separator
+ * 
+ * @component
+ * @example
+ * <RangeInputField
+ *   startValue="2024-01-01"
+ *   endValue="2024-01-31"
+ *   onStartChange={handleStartChange}
+ *   onEndChange={handleEndChange}
+ *   placeholder={['Check-in', 'Check-out']}
+ * />
+ */
 const RangeInputField: React.FC<RangeInputFieldProps> = ({
     startRef,
     endRef,
@@ -33,18 +47,22 @@ const RangeInputField: React.FC<RangeInputFieldProps> = ({
 
     const themeStyles = getThemeStyles(themeMode);
     const themedIcon = React.useMemo(() => {
+        // 🔹 Handle icon theming: custom icon or default Calendar
         if (!showIcon) return null;
 
         if (isIconElement(icon)) {
+            // 🔹 Clone custom icon with theme-aware styling
             return React.cloneElement(icon, {
                 ...icon.props,
                 className: cn(
                     icon.props.className,
+                    // 🔹 Apply consistent text color based on theme
                     themeMode === 'dark' ? 'text-gray-400' : 'text-gray-400'
                 )
             });
         }
 
+        // 🔹 Default Calendar icon with theme-aware styling
         return <Calendar className={cn("w-4 h-4", themeMode === 'dark' ? 'text-gray-400' : 'text-gray-400')} />;
     }, [showIcon, icon, themeMode]);
 

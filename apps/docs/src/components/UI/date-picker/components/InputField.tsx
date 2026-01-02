@@ -13,8 +13,21 @@ const isReactElementWithProps = (
     return React.isValidElement(element);
 };
 
+/**
+ * InputField component for single date selection
+ * Handles date input with themable icon and proper accessibility
+ * 
+ * @component
+ * @example
+ * <InputField
+ *   value="2024-01-01"
+ *   onChange={handleChange}
+ *   placeholder="Select date"
+ *   themeMode="light"
+ * />
+ */
 const InputField: React.FC<InputFieldProps> = ({
-    ref,
+    ref, // 🔹 Forwarded ref from parent for input focus management
     value,
     onChange,
     placeholder,

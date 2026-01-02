@@ -11,7 +11,21 @@ import { getDaysInMonth, isSameDay, isDateInRange, isDateDisabled, getThemeStyle
 import { MONTH_NAMES, DAY_NAMES } from '../constants';
 
 
-
+/**
+ * CalendarView component - The main calendar grid UI
+ * Displays month view with selection, range highlighting, and navigation
+ * 
+ * @component
+ * @example
+ * <CalendarView
+ *   currentMonth={currentMonth}
+ *   onMonthChange={setCurrentMonth}
+ *   selectedDate={selectedDate}
+ *   onDateSelect={handleDateSelect}
+ *   themeMode="light"
+ *   colorScheme="blue"
+ * />
+ */
 const CalendarView: React.FC<CalendarViewProps> = ({
     currentMonth,
     onMonthChange,
@@ -147,7 +161,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                                 disabled={isDisabled}
                                 className={cn(
                                     "h-11 w-11 rounded-xl text-sm font-medium transition-all duration-300 relative cursor-pointer",
-                                    !isCurrent && "opacity-40",
+                                    !isCurrent && "opacity-40",  // 🔹 Gray out dates from other months
                                     isDisabled && cn("cursor-not-allowed opacity-20", themeStyles.text.disabled),
 
                                     // Range styling
