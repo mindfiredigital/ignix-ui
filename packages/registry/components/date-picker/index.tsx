@@ -13,6 +13,15 @@ import { getThemeStyles, getColorStyles, getPopupPositionClasses, formatDate, pa
 import { inputVariants } from './variants';
 import { MONTH_NAMES, DAY_NAMES } from './constants';
 
+/**
+ * A versatile DatePicker component supporting single dates and date ranges
+ * @example
+ * // Single date picker
+ * <DatePicker value={date} onChange={setDate} />
+ * 
+ * // Date range picker
+ * <DatePicker variant="range" value={range} onChange={setRange} />
+ */
 const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
     (
         {
