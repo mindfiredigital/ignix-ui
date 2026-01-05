@@ -55,6 +55,18 @@
         }
       }
     },
+    "button-with-spinner": {
+      "name": "ButtonWithSpinner",
+      "description": "A button component with integrated loading spinner that displays during async operations. Automatically adjusts spinner colors based on button variant for optimal visibility.",
+      "dependencies": ["@radix-ui/react-slot", "class-variance-authority", "framer-motion"],
+      "componentDependencies": ["button", "spinner"],
+      "files": {
+        "main": {
+          "path": "components/button-with-spinner/index.tsx",
+          "type": "component"
+        }
+      }
+    },
     "center": {
       "name": "Center",
       "description": "A layout utility component for centering content",
