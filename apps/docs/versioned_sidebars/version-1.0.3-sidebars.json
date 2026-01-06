@@ -72,6 +72,7 @@
         "components/breadcrumbs",
         "components/button",
         "components/button-with-icon",
+        "components/button-with-spinner",
         "components/card",
         "components/checkbox",
         "components/radio",
