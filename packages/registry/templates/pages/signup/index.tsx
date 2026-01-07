@@ -1,6 +1,6 @@
 // SignUp.tsx
 import * as React from "react";
-import { cn } from "../../../../../utils/cn";
+import { cn } from "../../../utils/cn";
 import { type SignUpProps } from "./types";
 import { containerVariants } from "./variants";
 import { useSignUpForm } from "./hooks/useSignUpForm";
