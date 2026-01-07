@@ -865,6 +865,28 @@
         }
       }
     },
+    "notificationSettings": {
+      "name": "NotificationSettingsPage",
+      "description": "A notification settings page with email, SMS, and push notification preferences, featuring toggles and category grouping.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "button",
+        "switch",
+        "radio",
+        "accordion",
+        "card"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/notification-settings-page/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "api-keys":{
       "name": "api-keys",
       "description": "A page for managing API keys with responsive design and form validation.",

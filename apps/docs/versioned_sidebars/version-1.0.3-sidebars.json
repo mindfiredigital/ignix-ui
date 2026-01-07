@@ -141,6 +141,7 @@
                 "templates/pages/account-management/profile",
                   "templates/pages/account-management/api-keys",
                 "templates/pages/account-management/setting-page",
+                "templates/pages/account-management/notification-settings-page",
                 "templates/pages/account-management/security-page"
               ]
             }]
