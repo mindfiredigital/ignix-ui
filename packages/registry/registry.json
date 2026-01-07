@@ -22,13 +22,13 @@
         }
       }
     },
-    "aspectratio": {
+    "aspectRatio": {
       "name": "AspectRatio",
       "description": "A responsive container that maintains a consistent aspect ratio for its content",
       "dependencies": [],
       "files": {
         "main": {
-          "path": "components/layouts/aspect-ratio/index.tsx",
+          "path": "components/aspectratio/index.tsx",
           "type": "component"
         }
       }
@@ -517,13 +517,13 @@
         }
       }
     },
-    "lazyload": {
+    "lazyLoad": {
       "name": "Lazyload",
       "description": "A layout component for lazy loading...",
       "dependencies": [],
       "files": {
         "main": {
-          "path": "components/layouts/lazyload/index.tsx",
+          "path": "components/lazyload/index.tsx",
           "type": "component"
         }
       }
@@ -914,6 +914,22 @@
         "main": {
           "path": "templates/pages/billing-page/index.tsx",
           "type": "template"
+        }
+      }
+    },
+    "imageCard": {
+      "name": "ImageCard",
+      "description": "An image card component with different variants",
+      "dependencies": ["lucide-react", "class-variance-authority"],
+      "componentDependencies": [
+        "typography",
+        "lazyLoad",
+        "aspectRatio"
+      ],
+      "files": {
+        "main": {
+          "path": "components/image-card/index.tsx",
+          "type": "component"
         }
       }
     }
