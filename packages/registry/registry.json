@@ -55,6 +55,18 @@
         }
       }
     },
+    "button-with-spinner": {
+      "name": "ButtonWithSpinner",
+      "description": "A button component with integrated loading spinner that displays during async operations. Automatically adjusts spinner colors based on button variant for optimal visibility.",
+      "dependencies": ["@radix-ui/react-slot", "class-variance-authority", "framer-motion"],
+      "componentDependencies": ["button", "spinner"],
+      "files": {
+        "main": {
+          "path": "components/button-with-spinner/index.tsx",
+          "type": "component"
+        }
+      }
+    },
     "center": {
       "name": "Center",
       "description": "A layout utility component for centering content",
@@ -810,6 +822,49 @@
         }
       }
     },
+    "pricingGrid":{
+      "name": "PricingGrid",
+      "description": "A pricing grid template with responsive design.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "button",
+        "switch",
+        "card"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/sections/pricing-grid/index.tsx",
+          "type" : "template"
+        }
+      }
+    },
+    "securityPage": {
+      "name": "SecurityPage",
+      "description": "A comprehensive account security page with password change, active sessions, logout-all, two-factor authentication toggle with recovery codes, and login activity, available in both grid and collapsible list layouts.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "input",
+        "switch",
+        "table",
+        "accordion",
+        "card",
+        "pagination"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/security/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "notificationSettings": {
       "name": "NotificationSettingsPage",
       "description": "A notification settings page with email, SMS, and push notification preferences, featuring toggles and category grouping.",
@@ -832,30 +887,6 @@
         }
       }
     },
-    "securityPage": {
-      "name": "SecurityPage",
-      "description": "A comprehensive account security page with password change, active sessions, logout-all, two-factor authentication toggle with recovery codes, and login activity, available in both grid and collapsible list layouts.",
-      "dependencies": [
-        "framer-motion",
-        "lucide-react",
-        "class-variance-authority"
-      ],
-      "componentDependencies": [
-        "button",
-        "input",
-        "switch",
-        "table",
-        "accordion",
-        "card",
-        "pagination"
-      ],
-      "files": {
-        "main": {
-          "path": "templates/pages/security/index.tsx",
-          "type": "template"
-        }
-      }
-    },
     "api-keys":{
       "name": "api-keys",
       "description": "A page for managing API keys with responsive design and form validation.",
@@ -872,6 +903,43 @@
         "main": {
           "path": "templates/pages/api-keys/index.tsx",
           "type": "template"
+        }
+      }
+    },
+    "fileUpload":{
+      "name": "fileUpload",
+      "description": "A file uploader component with responsive design and form validation.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react", "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "button",
+        "avatar",
+        "typography"
+      ],
+      "files": {
+        "main": {
+          "path": "components/file-upload/index.tsx",
+          "type": "component"
+        }
+      }
+    }, 
+    "datePicker":{
+      "name": "datePicker",
+      "description": "A date picker component with responsive design and form validation.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react", "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "button",
+        "typography"
+      ],
+      "files": {
+        "main": {
+          "path": "components/date-picker/index.tsx",
+          "type": "component"
         }
       }
     }
