@@ -1,0 +1,146 @@
+---
+sidebar_position: 7
+title: Date Picker
+description: A customizable date picker component with single/range selection, multiple themes, color schemes, and advanced features.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import DatePicker from '@site/src/components/UI/date-picker';
+import {
+  BasicDatePickerDemo,
+  RangeDatePickerDemo,
+  SizeVariantsDemo,
+  ColorSchemesDemo,
+  PopupPositionsDemo,
+  HotelBookingDemo,
+  EventRegistrationDemo,
+  ValidationExamplesDemo,
+  DatePickerPlayground, SimpleControlledDemo, ControlledDatePickerDemo
+} from '@site/src/components/Demo/DatePickerDemo';
+import { Calender } from 'lucide-react';
+
+## Overview
+
+The DatePicker component is a flexible and feature-rich date selection component that supports both single date selection and date range selection. It includes multiple themes, color schemes, animations, and extensive customization options.
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component date-picker
+    ```
+  </TabItem>
+</Tabs>
+
+
+## Previews
+
+### Basic Date Picker
+<BasicDatePickerDemo />
+
+### Range Date Picker
+<RangeDatePickerDemo />
+
+### Size Variants
+<SizeVariantsDemo />
+
+### Color Schemes
+<ColorSchemesDemo />
+
+### Popup Positions
+<PopupPositionsDemo />
+
+### Controlled & Uncontrolled
+The DatePicker can be used in both controlled and uncontrolled modes:
+
+### Hotel Booking Example
+<HotelBookingDemo />
+
+### Validation Examples
+<ValidationExamplesDemo />
+
+### Date Picker Playground
+<DatePickerPlayground />
+
+### Controlled Usage
+<ControlledDatePickerDemo />
+
+
+## Props
+### Core Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `'single' \| 'range'` | `'single'` | Date selection mode
+| `value` | `Date \| DateRange` | `-` | Selected date(s)
+| `onChange`	| `(date: Date | DateRange) => void`	| `-`	| Callback when date changes
+| `onError`	| `(error: string | null) => void`	| `-`	| Error callback
+
+### Configuration
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+|`placeholder`	| `string '\| [string, string]`|	`'Select date'`|	Input placeholder text
+|`format`	| `DateFormat`	| `'MM/DD/YYYY'`|	Date display format
+|`size`	| `'sm' \| 'md' \| 'lg' \| 'xl'`	| `'md'`	| Component size
+|`disabled`	| `boolean`	| `false` |	Disable the date picker
+|`readOnly`	| `boolean`	| `false` |	Make the input read-only
+|`required`	| `boolean`	| `false` |	Make selection required
+|`minDate`	| `Date`	| `-` |	Minimum selectable date
+|`maxDate`	| `Date`	| `-` |	Maximum selectable date
+|`disabledDates`|	`Date[]`|	`-` |	Array of disabled dates
+|`highlightDates`|	`Date[]`|	`-` |	Array of highlighted dates
+|`allowEmpty`	| `boolean`	| `false` |	Allow clearing selected date
+|`todayButton`	| `boolean`	| `true`|	Show "Today" button in calendar
+|`clearButton`	| `boolean`	| `true`	| Show "Clear" button in calendar
+|`autoClose`	| `boolean`	| `false` |	Auto-close calendar after selection
+|`validateOnChange`	| `boolean`	| `true`|	Validate on date change
+
+### Styling & UI
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+|`themeMode`	|`'light' \| 'dark'`	|`'light'`|	Theme mode
+|`colorScheme`	|`'blue' \| 'green' \| 'purple' \| 'orange' \| 'rose' `	|`'blue'`	|Color scheme
+|`popupPosition`|	`PopupPosition`|	`'bottom-left'`|	Calendar popup position
+|`showIcon`	|`boolean`	|`true`	|Show calendar icon
+|`icon`|	`React.ReactNode`	|`<Calendar />`|	Custom icon component
+|`className`	| `string`	|`-`|	Container CSS classes
+|`inputClassName`	| `string`	|`-`|	Input CSS classes
+|`calendarClassName`	| `string`	|`-`|	Calendar CSS classes
+|`label`	| `string`	|`-`|	Input label
+|`helperText`	| `string`	|`-`|	Helper text below input
+
+### Validation & Error
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+|`error`	|`boolean`	|`false`	| Error state
+|`errorMessage`	|`string`	|`-`|	Error message to display
+
+### Internationalization
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+|`weekStart`	|`0 \| 1`	| `0` |	Week start day (0=Sunday, 1=Monday)
+|`monthNames`	|`string[]`|	`MONTH_NAMES`	|Custom month names
+|`dayNames`	|`string[]`|	`DAY_NAMES`	|Custom day names
+|`todayText`	|`string`	|'`Today'`	|Today button text
+|`clearText`	|`string`	|`'Clear'`	|Clear button text
+
+### Date Formats
+|Format	| Example | Description
+|------|------|---------|
+|`MM/DD/YYYY`	|`12/25/2024`	|Month/Day/Year
+|`DD/MM/YYYY`|	`25/12/2024`|	Day/Month/Year
+|`YYYY-MM-DD`|	`2024-12-25`|	ISO format
+|`MMM DD, YYYY`|	`Dec 25, 2024`	|Short month name
+|`DD MMM YYYY`	|`25 Dec 2024`|	Day with short month
+|`YYYY/MM/DD`|	`2024/12/25`	|Year/Month/Day
+
+### Popup Positions
+|Position | Description
+|------|------|
+|`bottom-left`|	Below the input, aligned left
+|`bottom-right`|	Below the input, aligned right
+|`top-left`|	Above the input, aligned left
+|`top-right`	Above the input, aligned right
+|`left`|	To the left of the input
+|`right`|	To the right of the input

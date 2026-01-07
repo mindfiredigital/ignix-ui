@@ -1,0 +1,323 @@
+---
+sidebar_position: 5
+title: Button With Spinner
+description: A button component with integrated loading spinner that displays during async operations.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { ButtonWithSpinner } from '@site/src/components/UI/button-with-spinner';
+import ButtonWithSpinnerDemo, {
+  ButtonWithSpinnerVariantsDemo,
+  ButtonWithSpinnerSpinnerVariantsDemo,
+  ButtonWithSpinnerSizesDemo,
+  ButtonWithSpinnerLoadingTextDemo,
+} from '@site/src/components/Demo/ButtonWithSpinnerDemo';
+
+## Overview
+
+The ButtonWithSpinner component is a specialized button that displays a loading spinner and changes its text during loading states. It automatically disables the button during loading and intelligently adjusts spinner colors based on the button variant for optimal visibility.
+
+## Preview
+
+<ButtonWithSpinnerDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component button-with-spinner
+    ```
+  </TabItem>
+  <TabItem value="manual" label="MANUAL" className="max-h-[500px] overflow-y-auto">
+
+    ```tsx
+'use client';
+
+import * as React from 'react';
+import { Button, type ButtonProps } from '../button';
+import { Spinner } from '../spinner';
+import { cn } from '../../../utils/cn';
+
+export interface ButtonWithSpinnerProps extends Omit<ButtonProps, 'disabled'> {
+  isLoading?: boolean;
+  loadingText?: string;
+  spinnerSize?: number;
+  spinnerVariant?: 'default' | 'bars' | 'dots-bounce';
+  spinnerColor?: string;
+  children: React.ReactNode;
+}
+
+export const ButtonWithSpinner = React.forwardRef<
+  HTMLButtonElement,
+  ButtonWithSpinnerProps
+>(
+  (
+    {
+      isLoading = false,
+      loadingText = 'Loading...',
+      spinnerSize = 16,
+      spinnerVariant = 'default',
+      spinnerColor,
+      children,
+      className,
+      variant,
+      ...props
+    },
+    ref
+  ) => {
+    const getSpinnerColor = (): string => {
+      if (spinnerColor) return spinnerColor;
+      
+      const darkBackgroundVariants = ['default', 'primary', 'secondary', 'success', 'warning', 'danger', 'pill', 'neon'];
+      const lightBackgroundVariants = ['outline', 'ghost', 'subtle', 'elevated', 'glass'];
+      
+      if (variant && darkBackgroundVariants.includes(variant)) {
+        if (spinnerVariant === 'bars' || spinnerVariant === 'dots-bounce') {
+          return 'bg-white';
+        }
+        return 'border-white';
+      } else if (variant && lightBackgroundVariants.includes(variant)) {
+        if (spinnerVariant === 'bars' || spinnerVariant === 'dots-bounce') {
+          return 'bg-primary';
+        }
+        return 'border-primary';
+      }
+      
+      if (spinnerVariant === 'bars' || spinnerVariant === 'dots-bounce') {
+        return 'bg-white';
+      }
+      return 'border-white';
+    };
+
+    return (
+      <Button
+        ref={ref}
+        disabled={isLoading}
+        className={cn('relative', className)}
+        variant={variant}
+        {...props}
+      >
+        {isLoading && (
+          <Spinner
+            size={spinnerSize}
+            variant={spinnerVariant}
+            color={getSpinnerColor()}
+            className="mr-2"
+          />
+        )}
+        <span>{isLoading ? loadingText : children}</span>
+      </Button>
+    );
+  }
+);
+
+ButtonWithSpinner.displayName = 'ButtonWithSpinner';
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+Import the component:
+
+```tsx
+import { ButtonWithSpinner } from '@site/src/components/UI/button-with-spinner';
+```
+
+### Basic Usage
+
+```tsx
+function BasicButtonWithSpinner() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleClick = async () => {
+    setIsLoading(true);
+    try {
+      await someAsyncOperation();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <ButtonWithSpinner
+      isLoading={isLoading}
+      loadingText="Loading..."
+      onClick={handleClick}
+    >
+      Submit
+    </ButtonWithSpinner>
+  );
+}
+```
+
+### With Custom Loading Text
+
+```tsx
+function SaveButton() {
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await saveData();
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  return (
+    <ButtonWithSpinner
+      isLoading={isSaving}
+      loadingText="Saving..."
+      onClick={handleSave}
+    >
+      Save Changes
+    </ButtonWithSpinner>
+  );
+}
+```
+
+### With Different Spinner Variants
+
+```tsx
+function CustomSpinnerButton() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  return (
+    <div className="flex gap-4">
+      <ButtonWithSpinner
+        isLoading={isLoading}
+        spinnerVariant="default"
+        onClick={() => setIsLoading(!isLoading)}
+      >
+        Default Spinner
+      </ButtonWithSpinner>
+      <ButtonWithSpinner
+        isLoading={isLoading}
+        spinnerVariant="bars"
+        onClick={() => setIsLoading(!isLoading)}
+      >
+        Bars Spinner
+      </ButtonWithSpinner>
+      <ButtonWithSpinner
+        isLoading={isLoading}
+        spinnerVariant="dots-bounce"
+        onClick={() => setIsLoading(!isLoading)}
+      >
+        Dots Bounce
+      </ButtonWithSpinner>
+    </div>
+  );
+}
+```
+
+## Examples
+
+<ButtonWithSpinnerDemo />
+
+<ButtonWithSpinnerVariantsDemo />
+
+<ButtonWithSpinnerSpinnerVariantsDemo />
+
+<ButtonWithSpinnerSizesDemo />
+
+<ButtonWithSpinnerLoadingTextDemo />
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `isLoading` | `boolean` | `false` | Whether the button is in a loading state. When true, the button is disabled and shows a spinner. |
+| `loadingText` | `string` | `'Loading...'` | Text to display when the button is in loading state. |
+| `spinnerSize` | `number` | `16` | Size of the spinner in pixels. Should be adjusted based on button size. |
+| `spinnerVariant` | `'default' \| 'bars' \| 'dots-bounce'` | `'default'` | Variant of the spinner animation. |
+| `spinnerColor` | `string` | - | Tailwind CSS class for spinner color (e.g., "bg-white", "border-white"). Auto-determined based on button variant if not provided. |
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'success' \| 'warning' \| 'danger' \| 'outline' \| 'ghost' \| 'subtle' \| 'elevated' \| 'glass' \| 'neon' \| 'pill'` | `'default'` | The visual style of the button. |
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | The size of the button. |
+| `children` | `React.ReactNode` | - | The button text/content to display when not loading. |
+
+## Features
+
+- **Automatic Color Adjustment**: Spinner colors are automatically adjusted based on button variant for optimal visibility
+- **Smooth Animations**: Three spinner animation variants (default, bars, dots-bounce) with smooth transitions
+- **Disabled State**: Button is automatically disabled during loading to prevent multiple submissions
+- **Customizable Loading Text**: Change the loading message to match your use case (e.g., "Loading...", "Saving...", "Processing...")
+- **Flexible Sizing**: Supports all button sizes with proportional spinner sizing
+- **TypeScript Support**: Fully typed with comprehensive TypeScript definitions
+
+## Best Practices
+
+1. **Loading State Management**: Always use state management to control the `isLoading` prop based on your async operations
+2. **Error Handling**: Make sure to set `isLoading` to `false` in both success and error cases
+3. **Spinner Size**: Adjust `spinnerSize` proportionally to button size for better visual balance
+4. **Loading Text**: Use contextually appropriate loading text (e.g., "Saving..." for save buttons, "Submitting..." for forms)
+5. **Accessibility**: The button is automatically disabled during loading, which helps prevent accidental multiple submissions
+
+## Examples in Action
+
+### Form Submission
+
+```tsx
+function FormExample() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      await submitForm();
+      // Show success message
+    } catch (error) {
+      // Handle error
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      {/* form fields */}
+      <ButtonWithSpinner
+        type="submit"
+        isLoading={isSubmitting}
+        loadingText="Submitting..."
+      >
+        Submit Form
+      </ButtonWithSpinner>
+    </form>
+  );
+}
+```
+
+### API Call
+
+```tsx
+function ApiCallExample() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleApiCall = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/data');
+      const data = await response.json();
+      // Handle data
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <ButtonWithSpinner
+      isLoading={isLoading}
+      loadingText="Loading data..."
+      onClick={handleApiCall}
+    >
+      Load Data
+    </ButtonWithSpinner>
+  );
+}
+```
+
