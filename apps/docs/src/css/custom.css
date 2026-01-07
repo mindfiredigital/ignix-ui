@@ -602,3 +602,11 @@ h1 {
 .scrollbar-thin {
   scrollbar-width: thin;
 }
+
+.change-color {
+  color: inherit;
+}
+
+.change-color:hover {
+  text-decoration: none;
+}
