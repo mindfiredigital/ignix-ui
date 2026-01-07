@@ -3,7 +3,7 @@ import { render, screen, cleanup } from '@testing-library/react';
 // import userEvent from '@testing-library/user-event';
 import { describe, it, expect, afterEach } from 'vitest';
 import '@testing-library/jest-dom';
-import { Typography } from '.';
+import { Typography } from './';
 
 describe('Typography', () => {
     const defaultProps = {

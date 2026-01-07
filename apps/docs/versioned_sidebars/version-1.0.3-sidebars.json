@@ -76,12 +76,14 @@
         "components/button-group",
         "components/card",
         "components/checkbox",
-        "components/radio",
+        "components/date-picker",
         "components/dialog-box",
         "components/drawer",
         "components/dropdown",
+        "components/file-upload",
         "components/input",
         "components/navbar",
+        "components/radio",
         "components/sidebar",
         "components/slider",
         "components/spinner",
@@ -144,6 +146,13 @@
                 "templates/pages/account-management/security-page"
               ]
             }]
+        },
+        {
+          "type": "category",
+          "label": "Sections",
+          "items": [
+            "templates/sections/content/pricing-grid"
+          ]
         }
       ]
     },

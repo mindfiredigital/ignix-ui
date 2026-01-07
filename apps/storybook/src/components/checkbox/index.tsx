@@ -6,17 +6,6 @@ import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../../utils/cn';
 
-export interface CheckboxProps
-    extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'onChange'>,
-    VariantProps<typeof checkboxVariants> {
-    label?: string;
-    labelPosition?: 'left' | 'right';
-    error?: string;
-    asChild?: boolean;
-    animationVariant?: string;
-    onChange?: (checked: boolean) => void;
-}
-
 const checkboxVariants = cva(
     'peer inline-flex items-center justify-center rounded border-2 border-border bg-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
     {
@@ -46,6 +35,17 @@ const checkboxVariants = cva(
         },
     }
 );
+
+export interface CheckboxProps
+    extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'onChange'>,
+    VariantProps<typeof checkboxVariants> {
+    label?: string;
+    labelPosition?: 'left' | 'right';
+    error?: string;
+    asChild?: boolean;
+    animationVariant?: string;
+    onChange?: (checked: boolean) => void;
+}
 
 const labelVariants = cva('transition-colors duration-200', {
     variants: {
@@ -182,10 +182,14 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
                     labelVariants({ size, disabled }),
                     'select-none'
                 )}
-                onClick={(e) => {
+                onClick={(e: React.MouseEvent<HTMLLabelElement>) => {
                     e.preventDefault();
                     if (!disabled) {
-                        handleChange({ target: { checked: !internalChecked } } as any);
+                        const newChecked = !internalChecked;
+                        if (checked === undefined) {
+                            setIsChecked(newChecked);
+                        }
+                        onChange?.(newChecked);
                     }
                 }}
             >
@@ -255,7 +259,7 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
             return (
                 <Slot
                     className={cn('inline-flex items-center gap-2', className)}
-                    ref={ref as any}
+                    ref={ref as React.Ref<HTMLInputElement>}
                 >
                     <div className={cn(
                         'inline-flex items-center gap-2',
@@ -312,4 +316,4 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
 
 Checkbox.displayName = 'Checkbox';
 
-export { Checkbox, checkboxVariants };
+export { Checkbox };

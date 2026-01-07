@@ -43,16 +43,17 @@ const sampleProfileData = {
 
 const ProfilePageDemo = () => {
 
-    // const [isDarkMode, setIsDarkMode] = useState(false);
-
-    const handleSave = async (data: any) => {
-        console.log('Saving profile:', data);
+    const handleSave = async (data: ProfileData, avatarFile?: File): Promise<void> => {
+        if (avatarFile) {
+            // Handle avatar file upload
+        }
         // Simulate API call
-        return new Promise(resolve => setTimeout(resolve, 1500));
+        await new Promise<void>(resolve => setTimeout(resolve, 1500));
     };
 
+
     const handleCancel = () => {
-        console.log('Cancelled editing');
+        // Handle cancel action 
     };
 
     const codeString = `
