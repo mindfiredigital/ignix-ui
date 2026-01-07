@@ -3,11 +3,11 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { motion } from "framer-motion"
 import React, { useMemo, useState } from "react"
 import z from "zod"
-import { Card, CardContent, CardFooter, CardHeader } from "../card"
-import { Button } from "../button"
-import { cn } from "@site/src/utils/cn"
-import { Typography } from "../typography"
-import { Switch } from "../switch"
+import { Card, CardContent, CardFooter, CardHeader } from "@ignix-ui/card"
+import { Button } from "@ignix-ui/button"
+import { cn } from "../../../utils/cn"
+import { Typography } from "@ignix-ui/typography"
+import { Switch } from "@ignix-ui/switch"
 
 
 /* -------------------------------------------------------------------------- */
@@ -334,7 +334,7 @@ export const CardContentAction: React.FC<CardContentActionProps> = React.memo(
   ({ features, modernUI, table, plan }) => {
 return (
     <CardContent className="px-6 pb-3">
-      {table  || modernUI === "basic" ? (<table className="w-full text-left text-sm border-collapse">
+      {table  || modernUI === "basic" ? (<table className="w-full text-left text-md border-collapse">
         <thead>
           <tr>
             <th className="py-2 px-4">Feature</th>
@@ -419,6 +419,7 @@ export const CardHeaderAction: React.FC<CardHeaderActionProps>  = React.memo(({
               <motion.div
                 animate={{ y: [0, -6, 0] }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                aria-label={`pricing-middle-${plan.name}`}
               >
                 <div className="w-28 h-28 rounded-full p-[3px]">
                   <div
@@ -443,6 +444,7 @@ export const CardHeaderAction: React.FC<CardHeaderActionProps>  = React.memo(({
               className="absolute -top-14 left-1/2 -translate-x-1/2 z-20"
               animate={{ y: [0, -6, 0] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              aria-label={`pricing-top-${plan.name}`}
             >
               <div className="w-30 h-30 rounded-full p-[3px]">
                 <div
@@ -645,6 +647,7 @@ const PricingGridContent: React.FC<PricingGridProps> = ({
               <span>{toggleOptions[0].label}</span>
 
               <Switch
+                aria-label="toggle"
                 variant="default"
                 checked={currentValue === toggleOptions[1].value}
                 onCheckedChange={handleToggle}
