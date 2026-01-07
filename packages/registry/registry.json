@@ -890,6 +890,24 @@
           "type": "component"
         }
       }
+    }, 
+    "datePicker":{
+      "name": "datePicker",
+      "description": "A date picker component with responsive design and form validation.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react", "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "button",
+        "typography"
+      ],
+      "files": {
+        "main": {
+          "path": "components/date-picker/index.tsx",
+          "type": "component"
+        }
+      }
     }
   } 
 }
