@@ -73,6 +73,7 @@
         "components/button",
         "components/button-with-icon",
         "components/button-with-spinner",
+        "components/button-group",
         "components/card",
         "components/checkbox",
         "components/radio",
