@@ -171,7 +171,7 @@ const statusVariants = cva('absolute rounded-full border-2 border-background z-1
 });
 
 export interface AvatarProps
-    extends Omit<React.HTMLAttributes<HTMLDivElement>, 'size'> {
+    extends Omit<React.ComponentPropsWithoutRef<typeof motion.div>, 'size'> {
     src?: string;
     alt?: string;
     fallback?: React.ReactNode;
@@ -211,7 +211,7 @@ const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
     ) => {
         const [imageError, setImageError] = useState(false);
         const [imageLoading, setImageLoading] = useState(!!src);
-        const fallbackTimerRef = useRef<NodeJS.Timeout>();
+        const fallbackTimerRef = useRef<NodeJS.Timeout | null>(null);
 
         useEffect(() => {
             if (!src) {
