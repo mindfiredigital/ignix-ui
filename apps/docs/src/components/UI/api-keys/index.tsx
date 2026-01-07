@@ -11,15 +11,15 @@ import {
     Download,
     Ban,
 } from 'lucide-react';
-import { cn } from '../../../utils/cn';
-import { Button } from '../button';
-import { Typography } from '../typography';
-import { Checkbox } from '../checkbox';
+import { cn } from '@site/src/utils/cn';
+import { Checkbox } from '@site/src/components/UI/checkbox';
+import { Button } from '@site/src/components/UI/button';
+import { Typography } from '@site/src/components/UI/typography';
 import type {
     ApiKey, ApiKeyScope, ApiKeysPageProps, FilterOptions, NotificationType, StatsData
 } from './types';
 import { animationVariants, CardVariants, PageVariants, TableVariants } from './utils';
-import { generateMockApiKeys } from './constants';
+import { generateMockApiKeys } from './mock';
 import { Notification as NotificationComponent } from './components/Notification';
 import { StatsOverview } from './components/StatsOverview';
 import { SearchFilter } from './components/SearchFilter';
@@ -65,14 +65,12 @@ export const ApiKeysPage: React.FC<ApiKeysPageProps> = ({
     showSearch = true,
     showExport = true,
     showStats = true,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    requireConfirmation = true,
+    // allowRegeneration = true,
+    // requireConfirmation = true,
     showNotifications = true,
     notificationDuration = 3000,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    requirePasswordToReveal = false,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    autoHideRevealedKey = true,
+    // requirePasswordToReveal = false,
+    // autoHideRevealedKey = true,
     autoHideDelay = 30,
     darkMode = false
 }) => {
@@ -369,7 +367,7 @@ export const ApiKeysPage: React.FC<ApiKeysPageProps> = ({
                             )}
                             <Button
                                 onClick={() => setIsGenerateModalOpen(true)}
-                                variant={buttonVariant as any}
+                                variant={buttonVariant}
                                 className="cursor-pointer"
                                 animationVariant={buttonAnimationVariant}
                             >

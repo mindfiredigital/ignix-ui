@@ -237,7 +237,7 @@ export const ViewKeyModal = ({
                                 <Button
                                     onClick={handleReveal}
                                     disabled={isLoading || !password}
-                                    variant={buttonVariant as any}
+                                    variant={buttonVariant}
                                     animationVariant={buttonAnimationVariant}
                                     className="cursor-pointer"
                                 >

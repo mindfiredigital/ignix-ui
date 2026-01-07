@@ -4,9 +4,10 @@ import {
     AlertTriangle,
     Loader2,
 } from 'lucide-react';
-import { Button } from '../../button';
-import { AnimatedInput } from '../../input';
-import { Typography } from '../../typography';
+import { Button } from '@site/src/components/UI/button';
+import { AnimatedInput } from '@site/src/components/UI/input';
+import { Typography } from '@site/src/components/UI/typography';
+
 import type { DeleteKeyModalProps } from '../types';
 import { useState } from 'react';
 import { StatusBadge } from '../components/StatusBadge';
@@ -18,7 +19,7 @@ export const DeleteKeyModal = ({
     apiKey,
     isLoading = false,
     inputVariant = "clean",
-    buttonVariant = "destructive",
+    buttonVariant = "danger",
     buttonAnimationVariant
 }: DeleteKeyModalProps) => {
     const [confirmationText, setConfirmationText] = useState('');
@@ -142,7 +143,7 @@ export const DeleteKeyModal = ({
                         <Button
                             onClick={handleDelete}
                             disabled={isLoading || confirmationText !== apiKey.name}
-                            variant={buttonVariant as any}
+                            variant={buttonVariant}
                             animationVariant={buttonAnimationVariant}
                             className="cursor-pointer"
                         >

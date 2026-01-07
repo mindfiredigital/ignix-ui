@@ -9,9 +9,9 @@ import { cn } from '../../../../utils/cn';
 import { useEffect, useRef, useState } from "react";
 import { SCOPES, STATUS_BADGE_TYPES, STATUS_LABELS } from "../constants";
 import { NewBadge } from "./NewBadge";
-import { Button } from '../../../../components/button';
-import { AnimatedInput } from '../../../../components/input';
-import { Typography } from '../../../../components/typography';
+import { Button } from '@ignix-ui/button';
+import { AnimatedInput } from '@ignix-ui/input';
+import { Typography } from '@ignix-ui/typography';
 
 export const SearchFilter = ({
     searchQuery,
@@ -75,11 +75,6 @@ export const SearchFilter = ({
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-
-    console.log(searchQuery);
-    console.log(searchPlaceholder);
-    console.log(inputVariant);
-
     return (
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-6">
             {/* Search Input */}
@@ -110,7 +105,7 @@ export const SearchFilter = ({
             {showFilters && (
                 <div className="relative" ref={filterRef}>
                     <Button
-                        variant={hasActiveFilters() ? "default" : buttonVariant as any}
+                        variant={hasActiveFilters() ? "default" : buttonVariant}
                         size="sm"
                         onClick={() => setIsFilterOpen(!isFilterOpen)}
                         className={cn(

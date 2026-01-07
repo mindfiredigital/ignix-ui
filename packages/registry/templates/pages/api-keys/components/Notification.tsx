@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '../../../../utils/cn';
-import { Typography } from "../../../../components/typography";
+import { Typography } from "@ignix-ui/typography";
 import { useEffect } from "react";
 import { NotificationVariants } from "../utils";
 

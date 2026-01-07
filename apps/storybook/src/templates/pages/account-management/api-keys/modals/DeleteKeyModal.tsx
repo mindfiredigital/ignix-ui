@@ -18,7 +18,7 @@ export const DeleteKeyModal = ({
     apiKey,
     isLoading = false,
     inputVariant = "clean",
-    buttonVariant = "destructive",
+    buttonVariant = "danger",
     buttonAnimationVariant
 }: DeleteKeyModalProps) => {
     const [confirmationText, setConfirmationText] = useState('');
@@ -142,7 +142,7 @@ export const DeleteKeyModal = ({
                         <Button
                             onClick={handleDelete}
                             disabled={isLoading || confirmationText !== apiKey.name}
-                            variant={buttonVariant as any}
+                            variant={buttonVariant}
                             animationVariant={buttonAnimationVariant}
                             className="cursor-pointer"
                         >

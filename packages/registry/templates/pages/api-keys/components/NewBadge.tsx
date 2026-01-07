@@ -6,8 +6,7 @@ export const NewBadge = ({
     type = 'default',
     variant,
     className,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    showIcon = false,
+    // showIcon = false,
     icon: Icon
 }: NewBadgeProps) => {
     const typeStyles = {

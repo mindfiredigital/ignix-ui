@@ -12,14 +12,14 @@ import {
     Ban,
 } from 'lucide-react';
 import { cn } from '../../../utils/cn';
-import { Button } from '../../../components/button';
-import { Typography } from '../../../components/typography';
-import { Checkbox } from '../../../components/checkbox';
+import { Checkbox } from '@ignix-ui/checkbox';
+import { Button } from '@ignix-ui/button';
+import { Typography } from '@ignix-ui/typography';
 import type {
     ApiKey, ApiKeyScope, ApiKeysPageProps, FilterOptions, NotificationType, StatsData
 } from './types';
 import { animationVariants, CardVariants, PageVariants, TableVariants } from './utils';
-import { generateMockApiKeys } from './constants';
+import { generateMockApiKeys } from './mock';
 import { Notification as NotificationComponent } from './components/Notification';
 import { StatsOverview } from './components/StatsOverview';
 import { SearchFilter } from './components/SearchFilter';
@@ -66,14 +66,11 @@ export const ApiKeysPage: React.FC<ApiKeysPageProps> = ({
     showExport = true,
     showStats = true,
     // allowRegeneration = true,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    requireConfirmation = true,
+    // requireConfirmation = true,
     showNotifications = true,
     notificationDuration = 3000,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    requirePasswordToReveal = false,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    autoHideRevealedKey = true,
+    // requirePasswordToReveal = false,
+    // autoHideRevealedKey = true,
     autoHideDelay = 30,
     darkMode = false
 }) => {
@@ -247,7 +244,6 @@ export const ApiKeysPage: React.FC<ApiKeysPageProps> = ({
         }
     };
 
-
     const handleCopyKey = (key: ApiKey) => {
         const maskedKey = `${key.keyPrefix}••••••••${key.keySuffix}`;
         navigator.clipboard.writeText(maskedKey);
@@ -371,7 +367,7 @@ export const ApiKeysPage: React.FC<ApiKeysPageProps> = ({
                             )}
                             <Button
                                 onClick={() => setIsGenerateModalOpen(true)}
-                                variant={buttonVariant as any}
+                                variant={buttonVariant}
                                 className="cursor-pointer"
                                 animationVariant={buttonAnimationVariant}
                             >
