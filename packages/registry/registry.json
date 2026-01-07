@@ -871,6 +871,25 @@
           "type": "template"
         }
       }
+    },
+    "fileUpload":{
+      "name": "fileUpload",
+      "description": "A file uploader component with responsive design and form validation.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react", "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "button",
+        "avatar",
+        "typography"
+      ],
+      "files": {
+        "main": {
+          "path": "components/file-upload/index.tsx",
+          "type": "component"
+        }
+      }
     }
   } 
 }
