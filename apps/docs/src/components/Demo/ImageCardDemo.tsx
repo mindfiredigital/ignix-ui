@@ -206,7 +206,7 @@ const ImageCardBelowDemo = () => {
 };
 
 const ImageCardMediaDemo = () => {
-  const [position, setPosition] = useState<ImageCardPosition>("left");
+  const [position, setPosition] = useState<ImageCardPosition>("top");
   const [size, setSize] = useState<ImageCardSizes>("lg");
 
   const codeString = `
@@ -272,6 +272,7 @@ const ImageCardMediaDemo = () => {
               description="Mac Miller"
               mediaPosition={position}
               size={size}
+              variant="red"
               button={[
                 {
                   icon: SkipBack,

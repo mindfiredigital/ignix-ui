@@ -1,7 +1,6 @@
-import { describe, it, expect, vi } from "vitest"
+import { describe, it, expect, vi, beforeAll, afterAll } from "vitest"
 import { render, screen, fireEvent } from "@testing-library/react"
 import "@testing-library/jest-dom"
-
 import { ImageCard } from "."
 import { Play } from "lucide-react"
 
@@ -19,8 +18,8 @@ const baseProps = {
 }
 
 vi.mock("@ignix-ui/aspect-ratio", () => ({
-  AspectRatio: ({ children, ...props }: any) => (
-    <div {...props}>{children}</div>
+  AspectRatio: ({ children }: any) => (
+    <>{children}</>
   ),
 }))
 
@@ -31,6 +30,15 @@ vi.mock("@ignix-ui/lazyload", () => ({
 /* -------------------------------------------------------------------------- */
 /*                              BASIC RENDERING                               */
 /* -------------------------------------------------------------------------- */
+beforeAll(() => {
+  vi.stubGlobal("CSS", {
+    supports: () => true,
+  })
+})
+
+afterAll(() => {
+  vi.unstubAllGlobals()
+})
 
 describe("ImageCard – basic rendering", () => {
   it("renders title and description", () => {

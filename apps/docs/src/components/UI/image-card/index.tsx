@@ -175,6 +175,20 @@ const ImageCardIconSizeVariant = cva("", {
   },
 })
 
+const ImageCardMediaIconSizeVariant = cva("", {
+  variants: {
+    size: {
+      sm: "w-5 h-5",
+      md: "w-6 h-6",
+      lg: "w-7 h-7",
+      xl: "w-8 h-8",
+    },
+  },
+  defaultVariants: {
+    size: "md",
+  },
+})
+
 // Mapping variant to title hover color
 const getTitleHoverColor = cva("", {
   variants: {
@@ -246,6 +260,31 @@ const getIconHoverColor = cva("", {
       forest: "group-hover/link:stroke-green-500 group-hover/link:fill-green-500",
       minimal: "group-hover/link:stroke-slate-700 group-hover/link:fill-slate-700",
       royal: "group-hover/link:stroke-indigo-500 group-hover/link:fill-indigo-500",
+    }
+  },
+  defaultVariants: {
+    variant: "default",
+  }
+})
+
+const getMediaIconHoverColor = cva("", {
+  variants: {
+    variant: {
+      dark: "group-hover:stroke-zinc-300 group-hover:fill-zinc-300",
+      default: "group-hover:stroke-blue-500 group-hover:fill-blue-500",
+      light: "group-hover:stroke-black group-hover:fill-black",
+      green: "group-hover:stroke-emerald-500 group-hover:fill-emerald-500",
+      purple: "group-hover:stroke-purple-500 group-hover:fill-purple-500",
+      pink: "group-hover:stroke-pink-500 group-hover:fill-pink-500",
+      red: "group-hover:stroke-rose-500 group-hover:fill-rose-500",
+      orange: "group-hover:stroke-orange-500 group-hover:fill-orange-500",
+      elegant: "group-hover:stroke-slate-400 group-hover:fill-slate-400",
+      vibrant: "group-hover:stroke-purple-500 group-hover:fill-purple-500",
+      ocean: "group-hover:stroke-cyan-500 group-hover:fill-cyan-500",
+      sunset: "group-hover:stroke-pink-500 group-hover:fill-pink-500",
+      forest: "group-hover:stroke-green-500 group-hover:fill-green-500",
+      minimal: "group-hover:stroke-slate-700 group-hover:fill-slate-700",
+      royal: "group-hover:stroke-indigo-500 group-hover:fill-indigo-500",
     }
   },
   defaultVariants: {
@@ -337,7 +376,7 @@ export const CardContentAction: React.FC<ImageCardProps> = React.memo(({
       {description}
     </Typography>
     {links.length > 0 && (
-      <div className={cn("image-card flex items-center gap-4", mediaPosition !== "top" ? "min-h-[80px] mt-auto": "min-h-[60px] mt-auto")}>
+      <div className={cn("flex items-center gap-4", mediaPosition !== "top" ? "min-h-[80px] mt-auto": "min-h-[60px] mt-auto")}>
         {links.map((link, idx) => {
           const isIconOnly = !link.label && link.icon
           return (
@@ -348,7 +387,7 @@ export const CardContentAction: React.FC<ImageCardProps> = React.memo(({
               aria-label={link.ariaLabel || link.label}
               role="button"
               className={cn(
-                "inline-flex items-center gap-2 font-semibold cursor-pointer group/link change-color",
+                "change-color inline-flex items-center gap-2 font-semibold cursor-pointer group/link",
                 "transition-all duration-300",
                 isOverlay
                   ? error
@@ -513,7 +552,7 @@ const ImageCardContent: React.FC<ImageCardProps> = ({
             <img
               src={image}
               alt={title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover hover:scale-110"
             />
           ) : (
             <div className="flex items-center justify-center bg-slate-100">
@@ -551,11 +590,25 @@ const ImageCardContent: React.FC<ImageCardProps> = ({
                   aria-label={link.ariaLabel}
                   role="button"
                   className={cn(
-                    "p-2 rounded-full transition",
+                    "group p-2 rounded-full transition",
                     "hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   )}
                 >
-                  {Icon && <Icon className="w-6 h-6" />}
+                  {Icon && (
+                  <Icon
+                    className={cn(
+                      ImageCardMediaIconSizeVariant({ size }),
+                      // default (not hovered)
+                      "stroke-current fill-none",
+                      // hover = selected variant
+                      "group-hover:fill-current group-hover:stroke-none",
+                      // smooth animation
+                      "transition-all duration-200",
+                      // variant color on hover
+                      getMediaIconHoverColor({ variant })
+                    )}
+                  />
+                  )}
                 </Element>
               )
             })}
