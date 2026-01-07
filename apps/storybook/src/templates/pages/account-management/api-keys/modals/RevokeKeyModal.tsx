@@ -151,7 +151,7 @@ export const RevokeKeyModal = ({
                         <Button
                             onClick={handleRevoke}
                             disabled={isLoading || !password}
-                            variant={buttonVariant as any}
+                            variant={buttonVariant}
                             animationVariant={buttonAnimationVariant}
                             className="cursor-pointer"
                         >
