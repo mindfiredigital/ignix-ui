@@ -293,7 +293,7 @@ export const ButtonGroup = React.forwardRef<HTMLDivElement, ButtonGroupProps>(
           const buttonVariant: ButtonProps['variant'] =
             isActive && activeVariant
               ? activeVariant
-              : variant ?? 'default';
+              : variant ?? 'outline';
 
           return (
             <Button
