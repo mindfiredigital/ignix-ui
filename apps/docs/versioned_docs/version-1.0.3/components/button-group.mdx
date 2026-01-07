@@ -1,0 +1,509 @@
+---
+sidebar_position: 6
+title: Button Group
+description: A component that groups multiple buttons together with consistent spacing, active state highlighting, and responsive wrapping capabilities.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import ButtonGroupDemo from '@site/src/components/Demo/ButtonGroupDemo';
+import { ButtonGroup } from '@site/src/components/UI/button-group';
+
+## Overview
+
+The **ButtonGroup** component groups multiple buttons together with consistent spacing, active state highlighting, and responsive wrapping capabilities. It's perfect for creating filter buttons, toggle groups, size selectors, and other scenarios where you need related buttons grouped together.
+
+## Preview
+
+<ButtonGroupDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component button-group
+    ```
+  </TabItem>
+  <TabItem value="manual" label="manual" className="max-h-[500px] overflow-y-auto">
+    ```tsx
+/**
+ * ButtonGroup Component
+ * 
+ * A component that groups multiple buttons together with consistent spacing,
+ * active state highlighting, and responsive wrapping capabilities.
+ */
+
+'use client';
+
+import * as React from 'react';
+import { Button, type ButtonProps } from '../button';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '../../../utils/cn';
+
+const buttonGroupVariants = cva(
+  'inline-flex items-center',
+  {
+    variants: {
+      orientation: {
+        horizontal: 'flex-row',
+        vertical: 'flex-col',
+      },
+      wrap: {
+        true: 'flex-wrap',
+        false: 'flex-nowrap',
+      },
+    },
+    defaultVariants: {
+      orientation: 'horizontal',
+      wrap: true,
+    },
+  }
+);
+
+export interface ButtonGroupItem extends Omit<ButtonProps, 'onClick'> {
+  value: string;
+  onClick?: (value: string, event: React.MouseEvent<HTMLButtonElement>) => void;
+}
+
+export interface ButtonGroupProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'>,
+    VariantProps<typeof buttonGroupVariants> {
+  items: ButtonGroupItem[];
+  activeValue?: string;
+  defaultValue?: string;
+  onChange?: (value: string) => void;
+  spacing?: string;
+  activeVariant?: ButtonProps['variant'];
+  multiple?: boolean;
+  activeValues?: string[];
+}
+
+export const ButtonGroup = React.forwardRef<HTMLDivElement, ButtonGroupProps>(
+  (
+    {
+      items,
+      activeValue: controlledActiveValue,
+      defaultValue,
+      onChange,
+      wrap = true,
+      spacing = 'gap-2',
+      activeVariant,
+      multiple = false,
+      activeValues: controlledActiveValues,
+      orientation = 'horizontal',
+      className,
+      ...props
+    },
+    ref
+  ) => {
+    const [internalActiveValue, setInternalActiveValue] = React.useState<string | undefined>(
+      defaultValue
+    );
+    const [internalActiveValues, setInternalActiveValues] = React.useState<string[]>(
+      controlledActiveValues || (defaultValue ? [defaultValue] : [])
+    );
+
+    const isControlled = controlledActiveValue !== undefined || controlledActiveValues !== undefined;
+    const activeValue = isControlled && !multiple ? controlledActiveValue : internalActiveValue;
+    const activeValues = isControlled && multiple 
+      ? controlledActiveValues || [] 
+      : internalActiveValues;
+
+    const handleButtonClick = (
+      itemValue: string,
+      itemOnClick?: (value: string, event: React.MouseEvent<HTMLButtonElement>) => void
+    ) => {
+      return (event: React.MouseEvent<HTMLButtonElement>) => {
+        itemOnClick?.(itemValue, event);
+
+        if (multiple) {
+          const newActiveValues = activeValues.includes(itemValue)
+            ? activeValues.filter(v => v !== itemValue)
+            : [...activeValues, itemValue];
+          
+          if (!isControlled) {
+            setInternalActiveValues(newActiveValues);
+          }
+          
+          onChange?.(itemValue);
+        } else {
+          if (!isControlled) {
+            setInternalActiveValue(itemValue);
+          }
+          
+          onChange?.(itemValue);
+        }
+      };
+    };
+
+    const isButtonActive = (itemValue: string): boolean => {
+      if (multiple) {
+        return activeValues.includes(itemValue);
+      }
+      return activeValue === itemValue;
+    };
+
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          buttonGroupVariants({ orientation, wrap }),
+          spacing,
+          className
+        )}
+        role="group"
+        aria-label="Button group"
+        {...props}
+      >
+        {items.map((item) => {
+          const { value, onClick: itemOnClick, variant, className: itemClassName, ...itemProps } = item;
+          const isActive = isButtonActive(value);
+          const buttonVariant = isActive && activeVariant 
+            ? activeVariant 
+            : variant || 'default';
+
+          return (
+            <Button
+              key={value}
+              variant={buttonVariant}
+              className={cn(
+                isActive && !activeVariant && 'ring-2 ring-offset-2 ring-primary',
+                itemClassName
+              )}
+              onClick={handleButtonClick(value, itemOnClick)}
+              aria-pressed={isActive}
+              {...itemProps}
+            >
+              {item.children}
+            </Button>
+          );
+        })}
+      </div>
+    );
+  }
+);
+
+ButtonGroup.displayName = 'ButtonGroup';
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+Import the component:
+
+```tsx
+import { ButtonGroup } from './components/ui';
+```
+
+### Basic Usage
+
+```tsx
+import { ButtonGroup } from './components/ui';
+import { useState } from 'react';
+
+function BasicButtonGroup() {
+  const [activeValue, setActiveValue] = useState('save');
+
+  return (
+    <ButtonGroup
+      items={[
+        { value: 'save', children: 'Save' },
+        { value: 'cancel', children: 'Cancel' },
+        { value: 'delete', children: 'Delete' }
+      ]}
+      activeValue={activeValue}
+      onChange={(value) => setActiveValue(value)}
+    />
+  );
+}
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `ButtonGroupItem[]` | **required** | Array of button items to display in the group |
+| `activeValue` | `string` | `undefined` | Currently active button value (controlled mode) |
+| `defaultValue` | `string` | `undefined` | Default active button value (uncontrolled mode) |
+| `onChange` | `(value: string) => void` | `undefined` | Callback fired when a button is clicked |
+| `wrap` | `boolean` | `true` | Whether buttons should wrap to multiple lines |
+| `spacing` | `string` | `'gap-2'` | Spacing between buttons (Tailwind spacing class) |
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Orientation of the button group |
+| `activeVariant` | `ButtonProps['variant']` | `undefined` | Variant to apply to active buttons |
+| `multiple` | `boolean` | `false` | Allow multiple buttons to be active simultaneously |
+| `activeValues` | `string[]` | `undefined` | Array of active values when multiple selection is enabled |
+
+### ButtonGroupItem
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `value` | `string` | **required** - Unique identifier for the button |
+| `children` | `React.ReactNode` | Button text content |
+| `variant` | `string` | Visual variant of the button |
+| `size` | `string` | Size of the button |
+| `onClick` | `(value: string, event: MouseEvent) => void` | Click handler for the button |
+| All other `ButtonProps` | - | All other props from the base Button component |
+
+## Examples
+
+### Controlled Mode
+
+Use `activeValue` and `onChange` to control the active state from a parent component.
+
+```tsx
+import { useState } from 'react';
+import { ButtonGroup } from './components/ui';
+
+function ControlledButtonGroup() {
+  const [activeValue, setActiveValue] = useState('all');
+
+  return (
+    <ButtonGroup
+      items={[
+        { value: 'all', children: 'All' },
+        { value: 'active', children: 'Active' },
+        { value: 'inactive', children: 'Inactive' }
+      ]}
+      activeValue={activeValue}
+      onChange={(value) => {
+        setActiveValue(value);
+        console.log(`Filter changed to: ${value}`);
+      }}
+    />
+  );
+}
+```
+
+### Uncontrolled Mode
+
+Use `defaultValue` to set an initial active value without controlling it.
+
+```tsx
+import { ButtonGroup } from './components/ui';
+
+function UncontrolledButtonGroup() {
+  return (
+    <ButtonGroup
+      items={[
+        { value: 'option1', children: 'Option 1' },
+        { value: 'option2', children: 'Option 2' },
+        { value: 'option3', children: 'Option 3' }
+      ]}
+      defaultValue="option1"
+    />
+  );
+}
+```
+
+### Multiple Selection
+
+Enable multiple selection by setting `multiple={true}` and using `activeValues`.
+
+```tsx
+import { useState } from 'react';
+import { ButtonGroup } from './components/ui';
+
+function MultipleSelectionButtonGroup() {
+  const [activeValues, setActiveValues] = useState<string[]>(['bold']);
+
+  return (
+    <ButtonGroup
+      items={[
+        { value: 'bold', children: 'Bold' },
+        { value: 'italic', children: 'Italic' },
+        { value: 'underline', children: 'Underline' }
+      ]}
+      multiple
+      activeValues={activeValues}
+      onChange={(value) => {
+        setActiveValues(prev =>
+          prev.includes(value)
+            ? prev.filter(v => v !== value)
+            : [...prev, value]
+        );
+      }}
+    />
+  );
+}
+```
+
+### Filter Buttons
+
+Perfect for filtering content by status or category.
+
+```tsx
+import { useState } from 'react';
+import { ButtonGroup } from './components/ui';
+
+function FilterButtons() {
+  const [filter, setFilter] = useState('all');
+
+  return (
+    <div>
+      <p className="text-sm font-medium mb-2">Filter by status:</p>
+      <ButtonGroup
+        items={[
+          { value: 'all', children: 'All Items' },
+          { value: 'published', children: 'Published' },
+          { value: 'draft', children: 'Draft' },
+          { value: 'archived', children: 'Archived' }
+        ]}
+        activeValue={filter}
+        onChange={(value) => setFilter(value)}
+      />
+    </div>
+  );
+}
+```
+
+### Size Selector
+
+Use ButtonGroup for selecting sizes or other options.
+
+```tsx
+import { useState } from 'react';
+import { ButtonGroup } from './components/ui';
+
+function SizeSelector() {
+  const [size, setSize] = useState('md');
+
+  return (
+    <div>
+      <p className="text-sm font-medium mb-2">Select size:</p>
+      <ButtonGroup
+        items={[
+          { value: 'xs', children: 'XS' },
+          { value: 'sm', children: 'SM' },
+          { value: 'md', children: 'MD' },
+          { value: 'lg', children: 'LG' },
+          { value: 'xl', children: 'XL' }
+        ]}
+        activeValue={size}
+        onChange={(value) => setSize(value)}
+      />
+    </div>
+  );
+}
+```
+
+### Vertical Orientation
+
+Display buttons vertically instead of horizontally.
+
+```tsx
+import { ButtonGroup } from './components/ui';
+
+function VerticalButtonGroup() {
+  return (
+    <ButtonGroup
+      items={[
+        { value: 'top', children: 'Top' },
+        { value: 'middle', children: 'Middle' },
+        { value: 'bottom', children: 'Bottom' }
+      ]}
+      orientation="vertical"
+      defaultValue="middle"
+    />
+  );
+}
+```
+
+### Custom Spacing
+
+Adjust spacing between buttons using Tailwind spacing classes.
+
+```tsx
+import { ButtonGroup } from './components/ui';
+
+function CustomSpacingButtonGroup() {
+  return (
+    <>
+      <ButtonGroup
+        items={[
+          { value: '1', children: 'Tight' },
+          { value: '2', children: 'Spacing' }
+        ]}
+        spacing="gap-1"
+      />
+      
+      <ButtonGroup
+        items={[
+          { value: '1', children: 'Wide' },
+          { value: '2', children: 'Spacing' }
+        ]}
+        spacing="gap-4"
+      />
+    </>
+  );
+}
+```
+
+### Custom Active Variant
+
+Apply a specific variant to active buttons.
+
+```tsx
+import { useState } from 'react';
+import { ButtonGroup } from './components/ui';
+
+function CustomActiveVariantButtonGroup() {
+  const [activeValue, setActiveValue] = useState('option1');
+
+  return (
+    <ButtonGroup
+      items={[
+        { value: 'option1', children: 'Option 1', variant: 'outline' },
+        { value: 'option2', children: 'Option 2', variant: 'outline' },
+        { value: 'option3', children: 'Option 3', variant: 'outline' }
+      ]}
+      activeValue={activeValue}
+      onChange={setActiveValue}
+      activeVariant="success"
+    />
+  );
+}
+```
+
+### Responsive Wrapping
+
+Buttons automatically wrap to multiple lines on smaller screens when `wrap={true}`.
+
+```tsx
+import { ButtonGroup } from './components/ui';
+
+function ResponsiveButtonGroup() {
+  return (
+    <ButtonGroup
+      items={[
+        { value: '1', children: 'Button 1' },
+        { value: '2', children: 'Button 2' },
+        { value: '3', children: 'Button 3' },
+        { value: '4', children: 'Button 4' },
+        { value: '5', children: 'Button 5' },
+        { value: '6', children: 'Button 6' }
+      ]}
+      wrap={true}
+      spacing="gap-2"
+    />
+  );
+}
+```
+
+## Accessibility
+
+The ButtonGroup component includes proper ARIA attributes:
+
+- `role="group"` - Identifies the container as a group
+- `aria-label="Button group"` - Provides a label for screen readers
+- `aria-pressed` - Indicates the active state of each button
+
+## Best Practices
+
+1. **Use consistent spacing**: Use the `spacing` prop to maintain consistent gaps between buttons
+2. **Clear active states**: Ensure active buttons are visually distinct from inactive ones
+3. **Responsive design**: Enable wrapping for button groups that may overflow on smaller screens
+4. **Accessible labels**: Provide clear labels for button groups using `aria-label` if needed
+5. **Controlled vs Uncontrolled**: Use controlled mode when you need to sync state with external data, uncontrolled for simple internal state
+

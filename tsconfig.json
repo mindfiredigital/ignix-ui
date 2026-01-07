@@ -15,7 +15,6 @@
     "composite": true,
     "baseUrl": ".",
     "paths": {
-      "@animation-ui/*": ["packages/*/src"],
       "@ignix-ui/*": ["packages/registry/components/*"]
     },
     "jsx": "react-jsx"
