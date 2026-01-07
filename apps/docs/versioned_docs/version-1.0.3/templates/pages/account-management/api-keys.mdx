@@ -1,0 +1,537 @@
+---
+sidebar_position: 9
+title: API Keys Page
+description: A secure and fully-featured API keys management component with encryption, permissions, and audit logging capabilities.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import ApiKeysPageDemo from '@site/src/components/Demo/ApiKeysDemo';
+
+## Overview
+
+A comprehensive API keys management system with enterprise-grade security features. Includes key generation, encryption, permissions management, usage analytics, and audit logging. Perfect for developer portals, admin panels, and any application requiring secure API access management.
+
+## Features
+
+- **Secure Key Generation:** Cryptographically secure API key generation
+- **Encryption:** Client-side encryption for sensitive key data
+- **Permissions:** Granular permission scopes and access controls
+- **Usage Analytics:** Track API usage with detailed metrics
+- **Audit Logging:** Comprehensive audit trail for all key operations
+- **Expiration:** Automatic key expiration and renewal
+- **Masking:** Secure key masking for display purposes
+- **Multiple Environments:** Support for development, staging, production
+- **Rate Limiting:** Built-in rate limiting configuration
+- **Revocation:** Instant key revocation capabilities
+
+## Installation
+
+<Tabs>
+    <TabItem value="cli" label="CLI" default>
+        ```bash
+        ignix add component api-keys
+        ```
+    </TabItem>
+</Tabs>
+
+## Usage
+
+### Basic Usage
+<ApiKeysPageDemo />
+
+## Api Keys operations
+### Generate New Key
+Handle key generation by implementing the **onGenerateKey** callback:
+```tsx
+import { ApiKeysPage } from '@ignix/ui';
+
+function ApiKeysDashboard() {
+  const [keys, setKeys] = useState([]);
+  
+  const handleGenerateKey = async (name, scopes, expiresAt, description) => {
+    // Call YOUR backend API
+    const response = await fetch('/api/keys', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, scopes, expiresAt, description })
+    });
+    
+    const newKey = await response.json();
+    
+    // Transform the response to component format
+    const transformedKey = {
+      id: newKey.id,
+      name: newKey.name,
+      keyPrefix: newKey.prefix || 'sk_',
+      keySuffix: newKey.secret.slice(-4),
+      scopes: newKey.scopes,
+      createdAt: new Date(newKey.created_at),
+      lastUsed: null,
+      usageCount: 0,
+      usageHistory: Array.from({ length: 7 }, () => ({ date: '', count: 0 })),
+      status: 'active',
+      expiresAt: newKey.expires_at ? new Date(newKey.expires_at) : undefined,
+      description: newKey.description
+    };
+    
+    // Update your state
+    setKeys(prev => [transformedKey, ...prev]);
+    
+    // Return the key for the component to use
+    return transformedKey;
+  };
+  
+  return (
+    <ApiKeysPage
+      initialApiKeys={keys}
+      onGenerateKey={handleGenerateKey}
+      generateButtonLabel="Create API Key"
+      // ... other props
+    />
+  );
+} 
+```
+### Delete Key
+Handle key deletion with the **onDeleteKey** callback:
+```tsx
+import { ApiKeysPage } from '@ignix/ui';
+
+function ApiKeysDashboard() {
+  const [keys, setKeys] = useState([]);
+  
+  const handleDeleteKey = async (keyId) => {
+    // Confirm deletion (component handles this)
+    if (!window.confirm('Are you sure you want to delete this key?')) {
+      return;
+    }
+    
+    try {
+      // Call YOUR delete API
+      await fetch(`/api/keys/${keyId}`, {
+        method: 'DELETE'
+      });
+      
+      // Update your local state
+      setKeys(prev => prev.filter(key => key.id !== keyId));
+      
+      // Show success message
+      alert('API key deleted successfully');
+    } catch (error) {
+      console.error('Failed to delete key:', error);
+      alert('Failed to delete API key');
+    }
+  };
+  
+  return (
+    <ApiKeysPage
+      initialApiKeys={keys}
+      onDeleteKey={handleDeleteKey}
+      requireConfirmation={true} // Shows modal confirmation
+      // ... other props
+    />
+  );
+}
+```
+### Reveal Key
+Handle key revealing with the **onRevealKey** callback:
+```tsx
+import { ApiKeysPage } from '@ignix/ui';
+
+function ApiKeysDashboard() {
+  const [keys, setKeys] = useState([]);
+  
+  const handleRevealKey = async (keyId) => {
+    try {
+      // Call YOUR backend to get the full key (requires authentication)
+      const response = await fetch(`/api/keys/${keyId}/reveal`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${userToken}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to reveal key');
+      }
+      
+      const data = await response.json();
+      
+      // Return the full key to the component
+      return data.fullKey;
+    } catch (error) {
+      console.error('Failed to reveal key:', error);
+      throw error; // Component will show error notification
+    }
+  };
+  
+  return (
+    <ApiKeysPage
+      initialApiKeys={keys}
+      onRevealKey={handleRevealKey}
+      requirePasswordToReveal={true} // Enable security
+      autoHideRevealedKey={true}    // Auto-hide after 30 seconds
+      autoHideDelay={30}            // Hide delay in seconds
+      // ... other props
+    />
+  );
+} 
+```
+### Revoke Key
+Handle key revocation with the **onRevokeKey** callback:
+```tsx
+import { ApiKeysPage } from '@ignix/ui';
+
+function ApiKeysDashboard() {
+  const [keys, setKeys] = useState([]);
+  
+  const handleRevokeKey = async (keyId) => {
+    try {
+      // Call YOUR revocation API
+      const response = await fetch(`/api/keys/${keyId}/revoke`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to revoke key');
+      }
+      
+      // Update local state - mark as revoked
+      setKeys(prev => prev.map(key => 
+        key.id === keyId 
+          ? { ...key, status: 'revoked' }
+          : key
+      ));
+      
+      return true; // Success
+    } catch (error) {
+      console.error('Failed to revoke key:', error);
+      throw error; // Component will show error notification
+    }
+  };
+  
+  return (
+    <ApiKeysPage
+      initialApiKeys={keys}
+      onRevokeKey={handleRevokeKey}
+      // ... other props
+    />
+  );
+} 
+```
+### Export Keys
+Handle key exporting with the **onExportKeys** callback:
+```tsx
+import { ApiKeysPage } from '@ignix/ui';
+
+function ApiKeysDashboard() {
+  const [keys, setKeys] = useState([]);
+  
+  const handleExportKeys = async (format) => {
+    try {
+      // Call YOUR export API or handle locally
+      if (format === 'json') {
+        // Export as JSON
+        const dataStr = JSON.stringify(keys, null, 2);
+        const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+        
+        const exportFileDefaultName = `api-keys-${new Date().toISOString().split('T')[0]}.json`;
+        
+        const linkElement = document.createElement('a');
+        linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('download', exportFileDefaultName);
+        linkElement.click();
+      } else if (format === 'csv') {
+        // Export as CSV
+        const headers = ['Name', 'ID', 'Status', 'Scopes', 'Created', 'Last Used', 'Usage Count'];
+        const csvData = keys.map(key => [
+          key.name,
+          key.id,
+          key.status,
+          key.scopes.join(', '),
+          key.createdAt.toISOString(),
+          key.lastUsed?.toISOString() || '',
+          key.usageCount.toString()
+        ]);
+        
+        const csvContent = [
+          headers.join(','),
+          ...csvData.map(row => row.join(','))
+        ].join('\n');
+        
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', `api-keys-${new Date().toISOString().split('T')[0]}.csv`);
+        link.click();
+      }
+    } catch (error) {
+      console.error('Export failed:', error);
+      alert('Failed to export keys');
+    }
+  };
+  
+  return (
+    <ApiKeysPage
+      initialApiKeys={keys}
+      onExportKeys={handleExportKeys}
+      showExport={true}
+      // ... other props
+    />
+  );
+} 
+```
+
+## Stats
+### Default Stats Calculation
+```tsx
+import { ApiKeysPage } from '@ignix/ui';
+
+function YourComponent() {
+  const [apiKeys, setApiKeys] = useState([]);
+  
+  // Component automatically calculates:
+  // - totalKeys: length of apiKeys array
+  // - activeKeys: keys with status 'active'
+  // - totalCalls: sum of all usageCount
+  // - callsToday: sum of latest usageHistory counts
+  // - revokedKeys: keys with status 'revoked'
+  
+  return (
+    <ApiKeysPage
+      initialApiKeys={apiKeys}
+      showStats={true} // Enable stats section
+    />
+  );
+}
+```
+### Custom Stats Data
+Provide your own stats data (e.g., from your backend analytics):
+```tsx
+import { ApiKeysPage } from '@ignix/ui';
+
+function YourComponent() {
+  const [apiKeys, setApiKeys] = useState([]);
+  const [stats, setStats] = useState(null);
+  
+  useEffect(() => {
+    // Fetch stats from your analytics API
+    fetch('/api/analytics/stats')
+      .then(res => res.json())
+      .then(data => {
+        setStats({
+          totalKeys: data.total_keys,
+          activeKeys: data.active_keys,
+          totalCalls: data.total_api_calls,
+          callsToday: data.calls_today,
+          revokedKeys: data.revoked_keys,
+          // Add custom stats if needed
+          peakUsage: data.peak_usage,
+          averageLatency: data.avg_latency
+        });
+      });
+  }, []);
+  
+  return (
+    <ApiKeysPage
+      initialApiKeys={apiKeys}
+      statsData={stats} // Override auto-calculated stats
+      showStats={true}
+    />
+  );
+}
+```
+### Custom Stats Section
+Completely replace the stats section with your own design:
+```tsx
+import { ApiKeysPage } from '@ignix/ui';
+import { BarChart3, Activity, Zap, Shield, Users } from 'lucide-react';
+
+function YourComponent() {
+  const [apiKeys, setApiKeys] = useState([]);
+  
+  const customStatsSection = (
+    <div className="mb-8">
+      <h3 className="text-lg font-semibold mb-4">Advanced Analytics Dashboard</h3>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-gradient-to-br from-blue-500/10 to-blue-600/10 p-4 rounded-xl border border-blue-200/30">
+          <div className="flex items-center gap-2 mb-2">
+            <Activity className="w-5 h-5 text-blue-600" />
+            <span className="text-sm font-medium">API Health</span>
+          </div>
+          <p className="text-2xl font-bold">99.9%</p>
+          <p className="text-xs text-muted-foreground">Uptime</p>
+        </div>
+        
+        <div className="bg-gradient-to-br from-green-500/10 to-green-600/10 p-4 rounded-xl border border-green-200/30">
+          <div className="flex items-center gap-2 mb-2">
+            <Zap className="w-5 h-5 text-green-600" />
+            <span className="text-sm font-medium">Response Time</span>
+          </div>
+          <p className="text-2xl font-bold">42ms</p>
+          <p className="text-xs text-muted-foreground">Average</p>
+        </div>
+        
+        <div className="bg-gradient-to-br from-purple-500/10 to-purple-600/10 p-4 rounded-xl border border-purple-200/30">
+          <div className="flex items-center gap-2 mb-2">
+            <BarChart3 className="w-5 h-5 text-purple-600" />
+            <span className="text-sm font-medium">Data Points</span>
+          </div>
+          <p className="text-2xl font-bold">1.2M</p>
+          <p className="text-xs text-muted-foreground">Today</p>
+        </div>
+        
+        <div className="bg-gradient-to-br from-orange-500/10 to-orange-600/10 p-4 rounded-xl border border-orange-200/30">
+          <div className="flex items-center gap-2 mb-2">
+            <Users className="w-5 h-5 text-orange-600" />
+            <span className="text-sm font-medium">Active Users</span>
+          </div>
+          <p className="text-2xl font-bold">8.5K</p>
+          <p className="text-xs text-muted-foreground">Last 24h</p>
+        </div>
+      </div>
+    </div>
+  );
+  
+  return (
+    <ApiKeysPage
+      initialApiKeys={apiKeys}
+      customStatsSection={customStatsSection}
+      showStats={false} // Set to false when using customStatsSection
+    />
+  );
+}
+```
+
+
+## Features
+**1. Comprehensive Key Management**
+- Generate new API keys with customizable permissions
+- View, edit, and delete existing keys
+- Copy key references to clipboard
+- Regenerate keys with invalidation of old keys
+
+**2. Security Features**
+- Password-protected key revelation
+- Auto-hide revealed keys after configurable delay
+- Confirmation dialogs for destructive actions
+- Security notifications and warnings
+
+**3. Filtering & Search**
+- Search by key name, description, or suffix
+- Filter by status (active, inactive, expired, revoked)
+- Filter by permissions (scopes)
+- Date range filtering
+- Combined grid and list view modes
+
+**4. Statistics & Monitoring**
+- Total keys count
+- Active keys percentage
+- API call counts (total and today)
+- Revoked keys count
+- Usage history tracking
+
+**5. Export & Integration**
+- Export keys as JSON or CSV
+- Custom callback hooks for integration
+- Responsive design for all screen sizes
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `headerTitle` | `string` | `"API Keys Management"` | Page header title |
+| `headerIcon` | `React.ReactNode` | `<Key className="w-4 h-4" />` | Header icon component |
+| `headerDescription` | `string` | `"Manage your API access keys and permissions"` | Header description |
+| `initialApiKeys` | `ApiKey[]` | `[]` | Initial API keys data (will use mock data if empty) |
+| `statsData` | `Partial<StatsData>` | `undefined` | Custom stats data to override auto-calculated stats |
+| `onGenerateKey` | `(name: string, scopes: ApiKeyScope[], expiresAt?: Date, description?: string) => Promise<ApiKey>` | `undefined` | Async callback for generating new API keys |
+| `onDeleteKey` | `(id: string) => Promise<void>` | `undefined` | Async callback for deleting API keys |
+| `onRevealKey` | `(id: string) => Promise<string>` | `undefined` | Async callback for revealing full API key |
+| `onRevokeKey` | `(id: string) => Promise<void>` | `undefined` | Async callback for revoking API keys |
+| `onRegenerateKey` | `(id: string) => Promise<ApiKey>` | `undefined` | Async callback for regenerating API keys |
+| `onCopyKey` | `(key: string) => void` | `undefined` | Callback when masked key is copied to clipboard |
+| `onExportKeys` | `(format: 'json' \| 'csv') => void` | `undefined` | Callback for exporting keys in specified format |
+| `variant` | `'default' \| 'gradient' \| 'card' \| 'glass' \| 'dark'` | `"default"` | Page background variant |
+| `animationVariant` | `'fadeUp' \| 'scaleIn' \| 'slideUp' \| 'slideLeft' \| 'slideRight'` | `"fadeUp"` | Initial page animation |
+| `cardVariant` | `'default' \| 'glass' \| 'border' \| 'elevated'` | `"default"` | Card styling variant |
+| `inputVariant` | `string` | `"clean"` | Input field variant (from Input component) |
+| `buttonVariant` | `string` | `"default"` | Button variant (from Button component) |
+| `buttonAnimationVariant` | `string` | `undefined` | Button animation variant (from Button component) |
+| `badgeVariant` | `'pulse' \| 'bounce' \| 'tinypop'` | `"tinypop"` | Animation variant for badges |
+| `generateButtonLabel` | `string` | `"Generate Key"` | Label for the generate button |
+| `searchPlaceholder` | `string` | `"Search API keys..."` | Search input placeholder text |
+| `isLoading` | `boolean` | `false` | Main page loading state |
+| `isGenerating` | `boolean` | `false` | Key generation loading state (affects modal) |
+| `showFilters` | `boolean` | `true` | Show filter controls panel |
+| `showSearch` | `boolean` | `true` | Show search input field |
+| `showExport` | `boolean` | `true` | Show export button in header |
+| `showStats` | `boolean` | `true` | Show statistics overview section |
+| `allowRegeneration` | `boolean` | `true` | Allow regeneration of API keys |
+| `requireConfirmation` | `boolean` | `true` | Require confirmation for destructive actions |
+| `showNotifications` | `boolean` | `true` | Show toast notifications for actions |
+| `notificationDuration` | `number` | `3000` | Notification display duration in milliseconds |
+| `requirePasswordToReveal` | `boolean` | `false` | Require password authentication to reveal full key |
+| `autoHideRevealedKey` | `boolean` | `true` | Auto-hide revealed key after delay |
+| `autoHideDelay` | `number` | `30` | Auto-hide delay in seconds |
+| `darkMode` | `boolean` | `false` | Enable dark mode theme |
+| `customHeader` | `React.ReactNode` | `undefined` | Custom header component to replace default |
+| `customStatsSection` | `React.ReactNode` | `undefined` | Custom stats section component |
+| `customEmptyState` | `React.ReactNode` | `undefined` | Custom empty state component |
+
+## Additional Types
+
+### ApiKey Interface
+```typescript
+interface ApiKey {
+  id: string;
+  name: string;
+  keyPrefix: string;
+  keySuffix: string;
+  fullKey?: string;
+  scopes: ApiKeyScope[];
+  createdAt: Date;
+  lastUsed: Date | null;
+  usageCount: number;
+  usageHistory: { date: string; count: number }[];
+  status: 'active' | 'inactive' | 'expired' | 'revoked';
+  expiresAt?: Date;
+  description?: string;
+}
+
+type ApiKeyScope = 
+  | 'read:users'
+  | 'write:users'
+  | 'read:data'
+  | 'write:data'
+  | 'read:analytics'
+  | 'admin';
+
+interface StatsData {
+  totalKeys: number;
+  activeKeys: number;
+  totalCalls: number;
+  callsToday: number;
+  revokedKeys: number;
+}
+
+interface ScopeInfo {
+  id: ApiKeyScope;
+  name: string;
+  description: string;
+  risk: 'low' | 'medium' | 'high';
+  icon: React.ElementType;
+}
+
+interface FilterOptions {
+  status: ('active' | 'inactive' | 'expired' | 'revoked')[];
+  scopes: ApiKeyScope[];
+  dateRange: {
+    start: Date | null;
+    end: Date | null;
+  };
+}
+```

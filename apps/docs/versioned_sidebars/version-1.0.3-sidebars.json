@@ -72,14 +72,17 @@
         "components/breadcrumbs",
         "components/button",
         "components/button-with-icon",
+        "components/button-with-spinner",
         "components/card",
         "components/checkbox",
-        "components/radio",
+        "components/date-picker",
         "components/dialog-box",
         "components/drawer",
         "components/dropdown",
+        "components/file-upload",
         "components/input",
         "components/navbar",
+        "components/radio",
         "components/sidebar",
         "components/slider",
         "components/spinner",
@@ -137,10 +140,18 @@
               "label": "Account Management",
               "items": [
                 "templates/pages/account-management/profile",
+                  "templates/pages/account-management/api-keys",
                 "templates/pages/account-management/setting-page",
                 "templates/pages/account-management/security-page"
               ]
             }]
+        },
+        {
+          "type": "category",
+          "label": "Sections",
+          "items": [
+            "templates/sections/content/pricing-grid"
+          ]
         }
       ]
     },
