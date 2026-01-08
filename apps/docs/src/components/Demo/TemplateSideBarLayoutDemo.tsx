@@ -36,55 +36,51 @@ const TemplateSideBarLayoutDemo = (props: Props) => {
     { label: "Settings", href: "#", icon: Settings},
   ];
 
-  const widthValues: Record<string, string> = {
-    compact: "250px",
-    default: "270px",
-    wide: "320px",
-    expanded: "380px",
-  };
-
   const OptimisedTemplate = props.layout.charAt(0).toUpperCase() + props.layout.slice(1) 
+  
   const codeString = `
 <Sidebar${OptimisedTemplate}Layout
   variant="${variant}"
   sidebarWidth="${width}"
   mobileBreakpoint="${mobileBreakpoint}"
   sidebarPosition="${props?.layout}"
-header={
-  <Navbar variant="${variant}" size="md">
-    <div className="flex items-center justify-between w-full">
-      <div className="flex items-center gap-2">
-        <img
-          src="/ignix-ui/img/logo.png" // use your logo path
-          alt="Brand Logo"
-          className="w-6 h-6"
-        />
-        <h1 className="text-lg font-bold tracking-tight">Ignix</h1>
-        <nav className="flex space-x-4">
-        <a href="#" className="hover:text-primary">Home</a>
-        <a href="#" className="hover:text-primary">About</a>
-        <a href="#" className="hover:text-primary">Contact</a>
-        </nav>
-      </div>
+  header={
+    <div className="space-y-4">
+      <Navbar variant="primary" size="md" className="rounded-2xl px-6">
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center gap-3">
+            <Sparkles className="h-5 w-5" />
+            <span className="text-lg font-semibold tracking-tight">
+              Ignix CLI
+            </span>
+          </div>
+          <div className="flex flex-wrap gap-4 text-sm">
+            <a className="font-semibold text-primary-foreground/80" href="#">
+              Docs
+            </a>
+            <a className="font-semibold text-primary-foreground/80" href="#">
+              Templates
+            </a>
+            <a className="font-semibold text-primary-foreground/80" href="#">
+              Deploy
+            </a>
+          </div>
+        </div>
+      </Navbar>
     </div>
-  </Navbar>
-}
-sidebar={
+  }
+  sidebar={
     <Sidebar
       links={navItems}
       brandName="SIDEBAR"
       position="${props?.layout}"
       variant="${variant}"
-      style={{
-        height: "calc(100dvh - var(--header-h) - var(--footer-h))",
-        width: "${widthValues[width]}",
-      }}
     />
-}
-footer={
-<footer className="py-4 text-center text-muted-foreground">
-© 2025 My Application. All rights reserved.
-</footer>
+  }
+  footer={
+  <footer className="py-4 text-center text-muted-foreground">
+  © 2025 My Application. All rights reserved.
+  </footer>
 }>
 {mainContent}
 </Sidebar${OptimisedTemplate}Layout>`;
