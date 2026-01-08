@@ -1,27 +1,31 @@
-import React, { useState } from 'react';
-import VariantSelector from './VariantSelector';
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-import CodeBlock from '@theme/CodeBlock';
-import { Navbar } from '@site/src/components/UI/navbar';
-import { Sidebar } from '@site/src/components/UI/sidebar';
-import { Card } from '../UI/card';
-import { Home, Settings, BookOpen, Palette, Layout } from 'lucide-react';
-import { SideBarLeftLayout } from '../UI/sidebarleft-layout';
-import { cn } from '@site/src/utils/cn';
+import React, { useState } from "react";
+import VariantSelector from "./VariantSelector";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import CodeBlock from "@theme/CodeBlock";
+import { Navbar } from "@site/src/components/UI/navbar";
+import { Card } from "@site/src/components/UI/card";
+import { Home, Settings, BookOpen, Palette, Layout, Sparkles } from "lucide-react";
+import { SideBarLeftLayout } from "@site/src/components/UI/sidebarleft-layout";
+import { cn } from "@site/src/utils/cn";
+import { Sidebar } from "@site/src/components/UI/sidebar";
 
 interface Props {
-  layout: 'left' | 'right'
+  layout: "left" | "right"
 }
 
-const layoutVariants = ['default', 'dark', 'light', 'glass', 'gradient'];
-const sidebarWidth = ['default', 'compact','wide','expanded'];
-const mobileBreakpoints = ['sm', 'md', 'lg'];
+type LayoutBreakpoints = typeof mobileBreakpoints[number];
+type LayoutVariants = typeof variants[number];
+type LayoutWidth = typeof sidebarWidth[number];
+
+const variants = ["default", "dark", "light", "glass"] as const;
+const sidebarWidth = ["default", "compact","wide","expanded"] as const;
+const mobileBreakpoints = ["sm", "md", "lg"] as const;
 
 const TemplateSideBarLayoutDemo = (props: Props) => {
-  const [variant, setVariant] = useState('default');
-  const [width, setWidth] = useState('default');
-  const [mobileBreakpoint, setMobileBreakpoint] = useState('md');
+  const [variant, setVariant] = useState<LayoutVariants>("default");
+  const [width, setWidth] = useState<LayoutWidth>("default");
+  const [mobileBreakpoint, setMobileBreakpoint] = useState<LayoutBreakpoints>("md");
 
  // Sample navigation items for sidebar
   const navItems = [
@@ -31,11 +35,6 @@ const TemplateSideBarLayoutDemo = (props: Props) => {
     { label: "Themes", href: "#", icon:Palette },
     { label: "Settings", href: "#", icon: Settings},
   ];
-  const breakpointValues = {
-    sm: 640,
-    md: 768,
-    lg: 1024,
-  };
 
   const widthValues: Record<string, string> = {
     compact: "250px",
@@ -43,9 +42,10 @@ const TemplateSideBarLayoutDemo = (props: Props) => {
     wide: "320px",
     expanded: "380px",
   };
+
   const OptimisedTemplate = props.layout.charAt(0).toUpperCase() + props.layout.slice(1) 
   const codeString = `
-<SideBar${OptimisedTemplate}Layout
+<Sidebar${OptimisedTemplate}Layout
   variant="${variant}"
   sidebarWidth="${width}"
   mobileBreakpoint="${mobileBreakpoint}"
@@ -87,31 +87,32 @@ footer={
 </footer>
 }>
 {mainContent}
-</SideBar${OptimisedTemplate}Layout>`;
-const [hasOpenButton, setHasOpenButton] = React.useState(false);
+</Sidebar${OptimisedTemplate}Layout>`;
 
-React.useEffect(() => {
-  // small delay ensures the DOM is ready
-  const check = () => {
-    const btn = document.querySelector('span[title="Open"]');
-    setHasOpenButton(!!btn);
-  };
+  const [hasOpenButton, setHasOpenButton] = React.useState(false);
 
-  check();
+  React.useEffect(() => {
+    // small delay ensures the DOM is ready
+    const check = () => {
+      const btn = document.querySelector("span[title='Open']");
+      setHasOpenButton(!!btn);
+    };
 
-  // Optional: re-check if DOM might update
-  const observer = new MutationObserver(check);
-  observer.observe(document.body, { childList: true, subtree: true });
+    check();
 
-  return () => observer.disconnect();
-}, []);
+    // Optional: re-check if DOM might update
+    const observer = new MutationObserver(check);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => observer.disconnect();
+  }, []);
 
   const mainContent = (
     <>
     {/* Main content wrapper (scrollable area) */}      
     <div
       className={cn(
-        "flex flex-col gap-1 p-10 max-h-[calc(100dvh-var(--header-h)-var(--footer-h))]",
+        "flex flex-col gap-1 p-0 mt-4 max-h-[calc(100dvh-var(--header-h)-var(--footer-h))] scrollbar-hidden ",
         mobileBreakpoint === "sm" && hasOpenButton
           ? "overflow-y-auto"
           : mobileBreakpoint === "sm"
@@ -234,59 +235,60 @@ React.useEffect(() => {
     <div className="space-y-6 mb-8">
       <div className="flex flex-wrap gap-4 justify-start sm:justify-end">
         <VariantSelector
-          variants={layoutVariants}
+          variants={[...variants]}
           selectedVariant={variant}
-          onSelectVariant={setVariant}
+          onSelectVariant={(v) => setVariant(v as "default"| "dark"| "light"| "glass")}
           type="Variant"
         />
         <VariantSelector
-          variants={sidebarWidth}
+          variants={[...sidebarWidth]}
           selectedVariant={width}
-          onSelectVariant={setWidth}
+          onSelectVariant={(v) => setWidth(v as "default"| "compact"|"wide"|"expanded")}
           type="SideBar Width"
         />
         <VariantSelector
-          variants={mobileBreakpoints}
+          variants={[...mobileBreakpoints]}
           selectedVariant={mobileBreakpoint}
-          onSelectVariant={setMobileBreakpoint}
+          onSelectVariant={(v) => setMobileBreakpoint(v as "sm"| "md"| "lg")}
           type="Mobile Breakpoint"
         />
       </div>
       <Tabs>
         <TabItem value="preview" label="Preview">
-          <div className="border rounded-lg overflow-hidden">
+          <div className="border border-gray-300 rounded-lg overflow-hidden p-3">
             <SideBarLeftLayout
               header={
-                <Navbar variant={variant as any} size="md">
-                <div className="flex items-center justify-between w-full">
-                  <div className="flex items-center gap-2">
-                    <img
-                      src="/ignix-ui/img/logo.png" // use your logo path
-                      alt="Brand Logo"
-                      className="w-6 h-6"
-                    />
-                    <h1 className="text-lg font-bold tracking-tight">Ignix</h1>
-                    <nav className="flex space-x-4">
-                    <a href="#" className="hover:text-primary">Home</a>
-                    <a href="#" className="hover:text-primary">About</a>
-                    <a href="#" className="hover:text-primary">Contact</a>
-                    </nav>
-                  </div>
+                <div className="space-y-4">
+                  <Navbar variant="primary" size="md" className="rounded-2xl px-6">
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex items-center gap-3">
+                        <Sparkles className="h-5 w-5" />
+                        <span className="text-lg font-semibold tracking-tight">
+                          Ignix CLI
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-4 text-sm">
+                        <a className="font-semibold text-primary-foreground/80" href="#">
+                          Docs
+                        </a>
+                        <a className="font-semibold text-primary-foreground/80" href="#">
+                          Templates
+                        </a>
+                        <a className="font-semibold text-primary-foreground/80" href="#">
+                          Deploy
+                        </a>
+                      </div>
+                    </div>
+                  </Navbar>
                 </div>
-              </Navbar>
               }
               sidebar={
                 <Sidebar
                   links={navItems}
                   brandName="Sidebar"
                   position={props?.layout}
-                  variant={variant as any}
+                  variant={variant}
                   className="overflow-auto"
-                  style={{
-                    top:"2px",
-                    height: breakpointValues[mobileBreakpoint] >= 768 ? `calc(100dvh - var(--header-h) - var(--footer-h))` : `full`,
-                    width: widthValues[width]
-                  }}
                 />
               }
               footer={
@@ -294,15 +296,15 @@ React.useEffect(() => {
                   © 2025 My Application. All rights reserved.
                 </footer>
               }
-              sidebarWidth={width as any}
-              variant={variant as any}
-              mobileBreakpoint={mobileBreakpoint as any}
+              sidebarWidth={width}
+              variant={variant}
+              mobileBreakpoint={mobileBreakpoint}
               sidebarPosition={props.layout}
             >
             {/* {mainContent} */}
               <div className="relative">
                
-                {mobileBreakpoint==='sm' && (
+                {mobileBreakpoint==="sm" && (
                   <div
                     aria-hidden="true"
                     className="absolute inset-0 z-0 bg-black/50 sidebar-sm-ignis"
