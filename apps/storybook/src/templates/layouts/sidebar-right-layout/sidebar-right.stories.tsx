@@ -1,4 +1,4 @@
-import { SideBarRightLayout } from "./index";
+import { SidebarRightLayout } from "./index";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Home, Settings, BookOpen, Palette, Layout } from 'lucide-react';
 import { Navbar } from "../../../components/navbar";
@@ -8,10 +8,10 @@ import { Card } from "../../../components/card";
 const date = new Date()
 const year = date.getFullYear()
 
-const meta: Meta<typeof SideBarRightLayout> = {
+const meta: Meta<typeof SidebarRightLayout> = {
   title: "Templates/Layouts/SideBarRight",
   tags: ['autodocs'],
-  component: SideBarRightLayout,
+  component: SidebarRightLayout,
   parameters: {
     layout: "fullscreen",
     docs: {
@@ -50,7 +50,7 @@ const meta: Meta<typeof SideBarRightLayout> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof SideBarRightLayout>;
+type Story = StoryObj<typeof SidebarRightLayout>;
 
 // Sample navigation items for sidebar
 const navItems = [
@@ -90,10 +90,6 @@ export const Basic: Story = {
         position="right"
         variant="default"
         className="overflow-auto"
-        style={{
-          height: `calc(100dvh - var(--header-h) - var(--footer-h))`,
-          width: `var(--sidebar-w)`
-        }}
       />
     ),
     footer: (
@@ -270,10 +266,23 @@ export const DarkTheme: Story = {
         brandName="SIDEBAR"
         position="right"
         variant="dark"
-        style={{
-          height: `calc(100dvh - var(--header-h) - var(--footer-h))`,
-          width: `var(--sidebar-w)`
-        }}
+      />
+    ),
+  },
+};
+
+// Expanded Sidebar Width Story
+export const ExpandedSidebar: Story = {
+  args: {
+    ...Basic.args,
+    variant: "dark",
+    sidebarWidth: "expanded",
+    sidebar: (
+      <Sidebar
+        links={navItems}
+        brandName="SIDEBAR"
+        position="right"
+        variant="dark"
       />
     ),
   },
@@ -292,10 +301,6 @@ export const MobileOptimized: Story = {
         brandName="SIDEBAR"
         position="right"
         variant="light"
-        style={{
-          height: `calc(100dvh - var(--header-h) - var(--footer-h))`,
-          width:`var(--sidebar-w)`
-        }}
       />
     ),
   },

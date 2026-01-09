@@ -58,7 +58,7 @@ const navItems = [
   { label: "Pages", href: "#", icon: BookOpen},
   { label: "Component", href: "#", icon: Layout },
   { label: "Themes", href: "#", icon:Palette },
-  { label: "Settings", href: "#", icon: Settings},
+  { label: "Settings", href: "#", icon: Settings}
 ];
 
 // Basic HeaderLayout Story 
@@ -87,12 +87,7 @@ export const Basic: Story = {
       <Sidebar
         links={navItems}
         brandName="SIDEBAR"
-        position="left"
         variant="default"
-        style={{
-          height: `calc(100dvh - var(--header-h) - var(--footer-h))`,
-          width: `var(--sidebar-w)`
-        }}
       />
     ),
     footer: (
@@ -103,7 +98,7 @@ export const Basic: Story = {
     children: (
       <>
       {/* Main content wrapper (scrollable area) */}
-        <div className="flex flex-col gap-6 overflow-y-auto pl-14 lg:pl-0 p-8 max-h-[calc(100dvh-var(--header-h)-var(--footer-h))]">
+        <div className="flex flex-col gap-6 overflow-y-auto p-0 mt-4">
           
           {/* Overview */}
           <section className="space-y-2">
@@ -212,13 +207,6 @@ export const Basic: Story = {
             </Card>
           </section>
 
-          {/* Footer Note */}
-          <footer className="pt-4 text-sm text-center text-muted-foreground border-t border-border">
-            <p>
-              Built with ❤️ using <strong>React</strong>, <strong>TypeScript</strong>, and <strong>Tailwind CSS</strong>.  
-              Contributions welcome on GitHub!
-            </p>
-          </footer>
         </div>
       </>
     ),
@@ -226,7 +214,7 @@ export const Basic: Story = {
 };
 
 // Dark Theme Story
-export const DarkTheme: Story = {
+export const SidebarDarkTheme: Story = {
   args: {
     ...Basic.args,
     variant: "dark",
@@ -253,12 +241,21 @@ export const DarkTheme: Story = {
       <Sidebar
         links={navItems}
         brandName="SIDEBAR"
-        position="left"
         variant="dark"
-        style={{
-          height: `calc(100dvh - var(--header-h) - var(--footer-h))`,
-          width: `var(--sidebar-w)`
-        }}
+      />
+    ),
+  },
+};
+
+//WidthConfigurable
+export const SidebarBarConfigure: Story = {
+  args: {
+    ...Basic.args,
+    sidebarWidth: "expanded",
+    sidebar: (
+      <Sidebar
+        links={navItems}
+        brandName="SIDEBAR"
       />
     ),
   },
@@ -277,10 +274,6 @@ export const MobileOptimized: Story = {
         brandName="SIDEBAR"
         position="left"
         variant="light"
-        style={{
-          height: `calc(100dvh - var(--header-h) - var(--footer-h))`,
-          width:`var(--sidebar-w)`
-        }}
       />
     ),
   },
