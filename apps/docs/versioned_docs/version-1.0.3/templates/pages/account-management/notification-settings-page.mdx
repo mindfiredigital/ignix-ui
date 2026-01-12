@@ -1,0 +1,324 @@
+---
+sidebar_position: 12
+title: Notification Settings Page
+description: A comprehensive notification preferences page with email, push, and SMS toggles, frequency selection (real-time, daily, weekly), notification type preferences (marketing, updates, alerts), and unsubscribe all option, available in both grid and collapsible list layouts.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import NotificationPageDemo from '@site/src/components/Demo/NotificationSettingsPageDemo';
+
+## Overview
+
+The **Notification Page** provides centralized control over notification preferences: toggle email, push, and SMS notifications; set notification frequency (real-time, daily digest, or weekly summary); control notification types (marketing, updates, alerts); and unsubscribe from all notifications with a single action. It supports both a grid layout and a collapsible list (accordion) layout for compact displays, plus light/dark/auto theme variants.
+
+## Preview
+
+<NotificationPageDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add template notification-page
+    ```
+  </TabItem>
+  <TabItem value="manual" label="Manual">
+    ```tsx
+    import React, { useState } from "react";
+    import { cva } from "class-variance-authority";
+    import { motion } from "framer-motion";
+    import {
+      Bell,
+      Mail,
+      Smartphone,
+      MessageSquare,
+      Settings,
+      CheckCircle2,
+      AlertTriangle,
+      Save,
+      X,
+      Activity,
+    } from "lucide-react";
+    import { cn } from "../../../utils/cn";
+    import { Button } from "@ignix-ui/button";
+    import { Switch } from "@ignix-ui/switch";
+    import { RadioGroup } from "@ignix-ui/radio";
+    import {
+      Accordion,
+      AccordionItem,
+      AccordionTrigger,
+      AccordionContent,
+    } from "@ignix-ui/accordion";
+    import {
+      Card,
+      CardContent,
+      CardDescription,
+      CardHeader,
+      CardTitle,
+    } from "@ignix-ui/card";
+
+    interface NotificationPageProps {
+      title?: string;
+      description?: string;
+      /** Background theme */
+      variant?: "light" | "dark" | "auto";
+      /** Layout style for the main content */
+      layout?: "grid" | "list";
+    }
+
+    const NotificationPageVariants = cva("", {
+      variants: {
+        variant: {
+          auto: "bg-gradient-to-br from-background to-muted/30 text-foreground",
+          light: "bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900",
+          dark: "bg-gradient-to-br from-[#020617] via-slate-900 to-slate-950 text-foreground",
+        },
+      },
+      defaultVariants: {
+        variant: "dark",
+      },
+    });
+
+    type NotificationFrequency = "realtime" | "daily" | "weekly";
+
+    interface NotificationPreferences {
+      email: boolean;
+      push: boolean;
+      sms: boolean;
+      frequency: NotificationFrequency;
+      marketing: boolean;
+      updates: boolean;
+      alerts: boolean;
+    }
+
+    const NotificationSettingsPage: React.FC<NotificationSettingsPageProps> = ({
+      title = "Notifications",
+      description = "Manage your notification preferences and stay informed about what matters to you.",
+      variant,
+      layout = "grid",
+    }) => {
+      const [preferences, setPreferences] = useState<NotificationPreferences>({
+        email: true,
+        push: true,
+        sms: false,
+        frequency: "realtime",
+        marketing: true,
+        updates: true,
+        alerts: true,
+      });
+
+      const [isSaving, setIsSaving] = useState(false);
+      const [saved, setSaved] = useState(false);
+      const [showUnsubscribeConfirm, setShowUnsubscribeConfirm] = useState(false);
+
+      const handleChannelToggle = (channel: "email" | "push" | "sms") => {
+        setPreferences(prev => ({
+          ...prev,
+          [channel]: !prev[channel],
+        }));
+        setSaved(false);
+      };
+
+      const handleFrequencyChange = (frequency: string) => {
+        setPreferences(prev => ({
+          ...prev,
+          frequency: frequency as NotificationFrequency,
+        }));
+        setSaved(false);
+      };
+
+      const handleTypeToggle = (type: "marketing" | "updates" | "alerts") => {
+        setPreferences(prev => ({
+          ...prev,
+          [type]: !prev[type],
+        }));
+        setSaved(false);
+      };
+
+      const handleSavePreferences = () => {
+        setIsSaving(true);
+        setSaved(false);
+
+        // Simulate API call
+        setTimeout(() => {
+          setIsSaving(false);
+          setSaved(true);
+          setTimeout(() => setSaved(false), 3000);
+        }, 1200);
+      };
+
+      const handleUnsubscribeAll = () => {
+        setPreferences({
+          email: false,
+          push: false,
+          sms: false,
+          frequency: "weekly",
+          marketing: false,
+          updates: false,
+          alerts: false,
+        });
+        setShowUnsubscribeConfirm(false);
+        setSaved(false);
+      };
+
+      const hasAnyNotificationsEnabled =
+        preferences.email || preferences.push || preferences.sms;
+
+      const frequencyOptions = [
+        { value: "realtime", label: "Real-time" },
+        { value: "daily", label: "Daily digest" },
+        { value: "weekly", label: "Weekly summary" },
+      ];
+
+      // Render helper functions for each section
+      // (renderNotificationChannelsSection, renderFrequencySection, 
+      //  renderTypePreferencesSection, renderUnsubscribeSection)
+
+      return (
+        <div
+          className={cn(
+            "min-h-screen p-4 sm:p-6 md:p-10",
+            NotificationPageVariants({ variant }),
+          )}
+        >
+          {/* Header with title, description, status badge, and save button */}
+          <div className="mb-6 sm:mb-8 md:mb-10 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div className="flex-1">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                <span className={variant == "dark" ? "text-white" : ""}>
+                  {title}
+                </span>
+                <span className="inline-flex items-center justify-center rounded-full bg-blue-500/10 px-2.5 sm:px-3 py-1 text-xs font-medium text-blue-400 border border-blue-500/40 w-fit">
+                  <Bell className="mr-1 h-3 w-3" />
+                  {hasAnyNotificationsEnabled ? "Active" : "Inactive"}
+                </span>
+              </h1>
+              <p className="mt-2 max-w-2xl text-sm sm:text-base md:text-lg text-muted-foreground">
+                {description}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+              <Button
+                onClick={handleSavePreferences}
+                disabled={isSaving || saved}
+                size="md"
+                className="w-full sm:w-auto"
+                animationVariant={!isSaving && !saved ? "press3D" : undefined}
+              >
+                {isSaving ? (
+                  <>
+                    <motion.div
+                      className="mr-2 h-4 w-4 rounded-full border-2 border-white border-t-transparent"
+                      animate={{ rotate: 360 }}
+                      transition={{
+                        repeat: Infinity,
+                        duration: 0.8,
+                        ease: "linear",
+                      }}
+                    />
+                    Saving…
+                  </>
+                ) : saved ? (
+                  <>
+                    <CheckCircle2 className="mr-2 h-4 w-4" />
+                    Saved
+                  </>
+                ) : (
+                  <>
+                    <Save className="mr-2 h-4 w-4" />
+                    Save preferences
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+
+          {/* Content sections - grid or list layout */}
+          {layout === "list" ? (
+            <div className={`w-full max-w-4xl mx-auto ${variant == "dark" ? "text-white" : ""}`}>
+              <Accordion type="single" collapsible defaultValue="channels">
+                {/* Accordion items for each section */}
+              </Accordion>
+            </div>
+          ) : (
+            <div className="grid gap-4 sm:gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1.4fr)]">
+              {/* Grid layout with sections */}
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    export { NotificationSettingsPage };
+    export default NotificationSettingsPage;
+    ```
+  </TabItem>
+</Tabs>
+
+## Features
+
+- **Notification channels** with toggles for Email, Push, and SMS notifications  
+- **Notification frequency** selection (Real-time, Daily digest, Weekly summary)  
+- **Notification types** control (Marketing, Updates, Alerts) with individual toggles  
+- **Unsubscribe from all** with confirmation dialog  
+- **Save preferences** button with loading and success states  
+- **Status badge** showing "Active" or "Inactive" based on enabled channels  
+- **Layouts**: grid (two-column cards) or list (accordion/fold/unfold)  
+- **Themes**: light, dark, auto; responsive with mobile-friendly design  
+
+## Props
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `title` | `string` | `"Notifications"` | Page heading text |
+| `description` | `string` | Description under the heading | Subheading / helper copy |
+| `variant` | `"light" \| "dark" \| "auto"` | `"dark"` | Background/theme variant |
+| `layout` | `"grid" \| "list"` | `"grid"` | Grid cards or accordion list layout |
+
+## Usage Examples
+
+### Grid layout (dark)
+
+```tsx
+<NotificationSettingsPage
+  variant="dark"
+  layout="grid"
+  title="Notifications"
+  description="Manage your notification preferences and stay informed about what matters to you."
+/>;
+```
+
+### List layout (accordion)
+
+```tsx
+<NotificationSettingsPage
+  variant="light"
+  layout="list"
+  title="Notifications"
+  description="Compact accordion layout for mobile and dense pages."
+/>;
+```
+
+### Auto theme
+
+```tsx
+<NotificationSettingsPage
+  variant="auto"
+  layout="grid"
+  title="Notifications"
+  description="Adapts to your app or system theme."
+/>;
+```
+
+## Notes
+
+- Each notification channel (Email, Push, SMS) can be toggled independently.
+- Frequency selection affects how notifications are delivered across all enabled channels.
+- Notification types (Marketing, Updates, Alerts) provide granular control over content categories.
+- The "Unsubscribe from all" action disables all channels and types but requires saving to persist.
+- The save button shows loading state during API calls and success state after saving.
+- Status badge dynamically updates based on whether any notification channel is enabled.
+

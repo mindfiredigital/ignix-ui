@@ -1,0 +1,290 @@
+---
+sidebar_position: 5
+title: Button With Icon
+description: An enhanced button component with icon support, multiple icon positions, and loading states.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import ButtonWithIconDemo from '@site/src/components/Demo/ButtonWithIconDemo';
+
+## Overview
+
+The **ButtonWithIcon** component extends the base Button component with comprehensive icon support. It allows you to position icons on the left or right of text, create icon-only buttons, and display loading spinners. This component is perfect for creating intuitive and visually appealing user interfaces.
+
+## Preview
+
+<ButtonWithIconDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component button-with-icon
+    ```
+  </TabItem>
+  <TabItem value="manual" label="manual" className="max-h-[500px] overflow-y-auto">
+    ```tsx
+/**
+ * ButtonWithIcon Component
+ * 
+ * An enhanced button component that extends the base Button with icon support.
+ * Supports multiple icon positions, icon-only buttons, and loading states.
+ */
+
+'use client';
+
+import * as React from 'react';
+import { Button, type ButtonProps } from '../button';
+import { Spinner } from '../spinner';
+import { cn } from '../../../utils/cn';
+
+export interface ButtonWithIconProps extends ButtonProps {
+  /**
+   * Icon component to display. Can be from lucide-react or any React component.
+   */
+  icon?: React.ReactNode;
+  
+  /**
+   * Position of the icon relative to the text.
+   * - 'left': Icon appears before the text (default)
+   * - 'right': Icon appears after the text
+   * - 'only': Only the icon is displayed (no text)
+   */
+  iconPosition?: 'left' | 'right' | 'only';
+  
+  /**
+   * Show loading spinner instead of icon or text.
+   * When true, the button is automatically disabled.
+   */
+  loading?: boolean;
+  
+  /**
+   * Size of the icon in pixels. Defaults to 16.
+   */
+  iconSize?: number;
+}
+
+export const ButtonWithIcon = React.forwardRef<HTMLButtonElement, ButtonWithIconProps>(
+  (
+    {
+      icon,
+      iconPosition = 'left',
+      loading = false,
+      iconSize = 16,
+      children,
+      className,
+      disabled,
+      size = 'md',
+      ...props
+    },
+    ref
+  ) => {
+    const isIconOnly = iconPosition === 'only' || (!children && icon);
+    const isDisabled = disabled || loading;
+
+    // Loading state rendering
+    if (loading) {
+      const spinnerSize = size === 'xs' ? 12 : size === 'sm' ? 14 : size === 'lg' ? 18 : size === 'xl' ? 20 : 16;
+      
+      if (isIconOnly) {
+        return (
+          <Button
+            ref={ref}
+            size={size}
+            disabled={isDisabled}
+            className={cn('p-0', className)}
+            {...props}
+          >
+            <Spinner size={spinnerSize} variant="default" />
+          </Button>
+        );
+      }
+
+      return (
+        <Button
+          ref={ref}
+          size={size}
+          disabled={isDisabled}
+          className={className}
+          {...props}
+        >
+          <Spinner size={spinnerSize} variant="default" />
+          {children && <span className="ml-2">{children}</span>}
+        </Button>
+      );
+    }
+
+    // Icon-only button rendering
+    if (isIconOnly && icon) {
+      const iconButtonSize = size === 'icon' || iconPosition === 'only' ? 'icon' : size;
+      
+      return (
+        <Button
+          ref={ref}
+          size={iconButtonSize}
+          disabled={isDisabled}
+          className={className}
+          {...props}
+        >
+          <span
+            style={{
+              width: iconSize,
+              height: iconSize,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            {icon}
+          </span>
+        </Button>
+      );
+    }
+
+    // Button with icon and text rendering
+    const iconElement = icon && (
+      <span
+        style={{
+          width: iconSize,
+          height: iconSize,
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+        className="flex-shrink-0"
+      >
+        {icon}
+      </span>
+    );
+
+    return (
+      <Button
+        ref={ref}
+        size={size}
+        disabled={isDisabled}
+        className={className}
+        {...props}
+      >
+        {iconPosition === 'left' && iconElement}
+        {children && <span>{children}</span>}
+        {iconPosition === 'right' && iconElement}
+      </Button>
+    );
+  }
+);
+
+ButtonWithIcon.displayName = 'ButtonWithIcon';
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+Import the component:
+
+```tsx
+import { ButtonWithIcon } from './components/ui';
+```
+
+### Basic Usage
+
+```tsx
+import { ButtonWithIcon } from './components/ui';
+import { Download } from 'lucide-react';
+
+function BasicButtonWithIcon() {
+  return (
+    <ButtonWithIcon icon={<Download />}>
+      Download
+    </ButtonWithIcon>
+  );
+}
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `icon` | `React.ReactNode` | `undefined` | Icon component to display (from lucide-react or any React component) |
+| `iconPosition` | `'left' \| 'right' \| 'only'` | `'left'` | Position of the icon relative to text |
+| `loading` | `boolean` | `false` | Show loading spinner and disable button |
+| `iconSize` | `number` | `16` | Size of the icon in pixels |
+| `variant` | `string` | `'default'` | Visual variant of the button (inherited from Button) |
+| `size` | `string` | `'md'` | Size of the button (inherited from Button) |
+| `disabled` | `boolean` | `false` | Disable the button |
+| `children` | `React.ReactNode` | `undefined` | Button text content |
+
+All other props from the base `Button` component are also supported.
+
+## Examples
+
+### Icon Left (Default)
+
+The icon appears before the text. This is the most common pattern for buttons with icons.
+
+```tsx
+<ButtonWithIcon icon={<Download />} iconPosition="left">
+  Download
+</ButtonWithIcon>
+```
+
+### Icon Right
+
+The icon appears after the text. Useful for actions like "Next" or "Continue" where the icon indicates direction.
+
+```tsx
+<ButtonWithIcon icon={<Send />} iconPosition="right">
+  Send
+</ButtonWithIcon>
+```
+
+### Icon Only
+
+Icon-only buttons are compact and space-efficient. Perfect for toolbars, action menus, or when space is limited.
+
+```tsx
+<ButtonWithIcon icon={<Settings />} iconPosition="only" />
+```
+
+### Loading State
+
+The loading state automatically disables the button and shows a spinner. Useful for async operations like form submissions or API calls.
+
+```tsx
+<ButtonWithIcon loading={true}>
+  Processing
+</ButtonWithIcon>
+```
+
+### Form Submission with Loading
+
+```tsx
+import { useState } from 'react';
+import { ButtonWithIcon } from './components/ui';
+import { Save } from 'lucide-react';
+
+function FormExample() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    setIsSubmitting(false);
+  };
+
+  return (
+    <ButtonWithIcon
+      icon={<Save />}
+      loading={isSubmitting}
+      onClick={handleSubmit}
+      variant="primary"
+    >
+      Save Changes
+    </ButtonWithIcon>
+  );
+}
+```
+

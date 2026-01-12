@@ -1,20 +1,17 @@
 import { useState, useRef } from 'react';
 
 import {
-
     Eye,
     Trash2,
     Copy,
     Check,
-
     MoreVertical,
-
     Ban,
 
 } from 'lucide-react';
-import { cn } from '../../../../utils/cn';
-import { Button } from '../../button';
-import { Typography } from '../../typography';
+import { cn } from '@site/src/utils/cn';
+import { Button } from '@site/src/components/UI/button';
+import { Typography } from '@site/src/components/UI/typography';
 import type {
     ApiKeyCardProps,
 } from '../types';
@@ -31,8 +28,7 @@ export const ApiKeyCard = ({
     onCopy,
     onRevoke,
     // onRegenerate,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    showActions = true,
+    // showActions = true,
     variant = 'default',
     badgeVariant = "tinypop",
     buttonVariant = "ghost",
@@ -64,11 +60,6 @@ export const ApiKeyCard = ({
         setIsMenuOpen(false);
         onRevoke?.(apiKey);
     };
-
-    // const handleRegenerate = () => {
-    //     setIsMenuOpen(false);
-    //     onRegenerate?.(apiKey);
-    // };
 
     const formatDate = (date: Date | null) => {
         if (!date) return 'Never';
@@ -134,7 +125,7 @@ export const ApiKeyCard = ({
 
                     <div className="relative" onClick={(e) => e.stopPropagation()}>
                         <Button
-                            variant={buttonVariant as any}
+                            variant={buttonVariant}
                             size="icon"
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
                             className="cursor-pointer"
@@ -165,15 +156,6 @@ export const ApiKeyCard = ({
                                     </button>
                                     {apiKey.status === 'active' && (
                                         <>
-                                            {/* {onRegenerate && (
-                                                <button
-                                                    onClick={handleRegenerate}
-                                                    className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-secondary transition-colors cursor-pointer"
-                                                >
-                                                    <RefreshCw className="w-4 h-4" />
-                                                    Regenerate
-                                                </button>
-                                            )} */}
                                             <button
                                                 onClick={handleRevoke}
                                                 className="flex items-center gap-2 w-full px-3 py-2 text-sm text-warning hover:bg-warning/10 transition-colors cursor-pointer"
@@ -206,7 +188,7 @@ export const ApiKeyCard = ({
                             {apiKey.keyPrefix}••••••••{apiKey.keySuffix}
                         </code>
                         <Button
-                            variant={buttonVariant as any}
+                            variant={buttonVariant}
                             size="sm"
                             onClick={(e) => {
                                 e.stopPropagation();

@@ -240,7 +240,7 @@ export const GenerateKeyModal = ({
                                         <Button
                                             onClick={handleGenerate}
                                             disabled={isLoading || !formData.name.trim()}
-                                            variant={buttonVariant as any}
+                                            variant={buttonVariant}
                                             animationVariant={buttonAnimationVariant}
                                             className="cursor-pointer"
                                         >
