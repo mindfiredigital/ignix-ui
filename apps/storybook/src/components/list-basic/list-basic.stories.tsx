@@ -121,10 +121,10 @@ export const Default: Story = {
 export const Ordered: Story = {
     args: {
         items: [
-            "First step",
-            "Second step",
-            "Third step",
-            "Fourth step",
+            "First step testing",
+            "Second step testing",
+            "Third step testing",
+            "Fourth step testing",
         ],
         type: "ordered",
         spacing: "md",
