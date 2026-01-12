@@ -86,6 +86,18 @@
         }
       }
     },
+    "button-group": {
+      "name": "ButtonGroup",
+      "description": "A component that groups multiple buttons together with consistent spacing, clear active states, and responsive wrapping. Supports both single and multiple selection modes.",
+      "dependencies": ["class-variance-authority"],
+      "componentDependencies": ["button"],
+      "files": {
+        "main": {
+          "path": "components/button-group/index.tsx",
+          "type": "component"
+        }
+      }
+    },
     "center": {
       "name": "Center",
       "description": "A layout utility component for centering content",
