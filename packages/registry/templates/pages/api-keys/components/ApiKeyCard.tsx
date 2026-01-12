@@ -1,19 +1,17 @@
 import { useState, useRef } from 'react';
 
 import {
-
     Eye,
     Trash2,
     Copy,
     Check,
-
     MoreVertical,
     Ban,
 
 } from 'lucide-react';
 import { cn } from '../../../../utils/cn';
-import { Button } from '../../../../components/button';
-import { Typography } from '../../../../components/typography';
+import { Button } from '@ignix-ui/button';
+import { Typography } from '@ignix-ui/typography';
 import type {
     ApiKeyCardProps,
 } from '../types';
@@ -30,8 +28,7 @@ export const ApiKeyCard = ({
     onCopy,
     onRevoke,
     // onRegenerate,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    showActions = true,
+    // showActions = true,
     variant = 'default',
     badgeVariant = "tinypop",
     buttonVariant = "ghost",
@@ -128,7 +125,7 @@ export const ApiKeyCard = ({
 
                     <div className="relative" onClick={(e) => e.stopPropagation()}>
                         <Button
-                            variant={buttonVariant as any}
+                            variant={buttonVariant}
                             size="icon"
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
                             className="cursor-pointer"
@@ -191,7 +188,7 @@ export const ApiKeyCard = ({
                             {apiKey.keyPrefix}••••••••{apiKey.keySuffix}
                         </code>
                         <Button
-                            variant={buttonVariant as any}
+                            variant={buttonVariant}
                             size="sm"
                             onClick={(e) => {
                                 e.stopPropagation();

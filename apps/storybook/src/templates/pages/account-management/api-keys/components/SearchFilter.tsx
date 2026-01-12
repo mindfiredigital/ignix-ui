@@ -75,11 +75,6 @@ export const SearchFilter = ({
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-
-    console.log(searchQuery);
-    console.log(searchPlaceholder);
-    console.log(inputVariant);
-
     return (
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-6">
             {/* Search Input */}
@@ -110,7 +105,7 @@ export const SearchFilter = ({
             {showFilters && (
                 <div className="relative" ref={filterRef}>
                     <Button
-                        variant={hasActiveFilters() ? "default" : buttonVariant as any}
+                        variant={hasActiveFilters() ? "default" : buttonVariant}
                         size="sm"
                         onClick={() => setIsFilterOpen(!isFilterOpen)}
                         className={cn(
