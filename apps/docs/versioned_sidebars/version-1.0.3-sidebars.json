@@ -71,7 +71,9 @@
         "components/badge",
         "components/breadcrumbs",
         "components/button",
+        "components/button-with-icon",
         "components/button-with-spinner",
+        "components/button-group",
         "components/card",
         "components/checkbox",
         "components/date-picker",
@@ -80,6 +82,7 @@
         "components/dropdown",
         "components/file-upload",
         "components/input",
+        "components/list-basic",
         "components/navbar",
         "components/radio",
         "components/sidebar",
@@ -141,6 +144,7 @@
                 "templates/pages/account-management/profile",
                   "templates/pages/account-management/api-keys",
                 "templates/pages/account-management/setting-page",
+                "templates/pages/account-management/notification-settings-page",
                 "templates/pages/account-management/security-page"
               ]
             }]

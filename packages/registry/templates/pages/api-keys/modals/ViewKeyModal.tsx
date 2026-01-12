@@ -6,9 +6,10 @@ import {
     Loader2,
     CheckCircle,
 } from 'lucide-react';
-import { Button } from '../../../../components/button';
-import { AnimatedInput } from '../../../../components/input';
-import { Typography } from '../../../../components/typography';
+import { AnimatedInput } from '@ignix-ui/input';
+import { Button } from '@ignix-ui/button';
+import { Typography } from '@ignix-ui/typography';
+
 import type { ViewKeyModalProps } from '../types';
 import { useEffect, useState } from 'react';
 import { StatusBadge } from '../components/StatusBadge';
@@ -237,7 +238,7 @@ export const ViewKeyModal = ({
                                 <Button
                                     onClick={handleReveal}
                                     disabled={isLoading || !password}
-                                    variant={buttonVariant as any}
+                                    variant={buttonVariant}
                                     animationVariant={buttonAnimationVariant}
                                     className="cursor-pointer"
                                 >
