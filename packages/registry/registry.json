@@ -308,6 +308,17 @@
         }
       }
     },
+    "list-basic": {
+      "name": "ListBasic",
+      "description": "A flexible list component that supports both unordered (bullet points) and ordered (numbered) lists with consistent spacing between items. Optimized with React.memo, useMemo, and useCallback for performance.",
+      "dependencies": [],
+      "files": {
+        "main": {
+          "path": "components/list-basic/index.tsx",
+          "type": "component"
+        }
+      }
+    },
     "textarea": {
       "name": "Textarea",
       "description": "An animated textarea component with different variants",

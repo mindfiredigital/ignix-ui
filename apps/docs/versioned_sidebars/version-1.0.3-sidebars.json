@@ -82,6 +82,7 @@
         "components/dropdown",
         "components/file-upload",
         "components/input",
+        "components/list-basic",
         "components/navbar",
         "components/radio",
         "components/sidebar",
