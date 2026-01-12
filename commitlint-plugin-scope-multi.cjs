@@ -1,6 +1,6 @@
 module.exports = {
   rules: {
-    'scope-multi-enum': (parsed, when = 'always', value) => {
+    'scope-multi-enum': (parsed, _when, value) => {
       if (!parsed.scope) {
         return [true]; // scope-empty will handle empty scope
       }
