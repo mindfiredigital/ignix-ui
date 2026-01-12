@@ -1,7 +1,8 @@
 
 // constants.test.ts
 import { describe, it, expect } from "vitest";
-import { SCOPES, STATUS_BADGE_TYPES, STATUS_LABELS, SCOPE_RISK_BADGE_TYPES, generateMockApiKeys } from "../constants";
+import { SCOPES, STATUS_BADGE_TYPES, STATUS_LABELS, SCOPE_RISK_BADGE_TYPES } from "../constants";
+import { generateMockApiKeys } from "../mock";
 
 describe("Constants", () => {
   describe("SCOPES", () => {

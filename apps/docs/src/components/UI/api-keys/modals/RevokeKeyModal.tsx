@@ -4,9 +4,9 @@ import {
     Loader2,
     Ban,
 } from 'lucide-react';
-import { Button } from '../../button';
-import { AnimatedInput } from '../../input';
-import { Typography } from '../../typography';
+import { Button } from '@site/src/components/UI/button';
+import { AnimatedInput } from '@site/src/components/UI/input';
+import { Typography } from '@site/src/components/UI/typography';
 import type { RevokeKeyModalProps } from '../types';
 import { useState } from 'react';
 
@@ -151,7 +151,7 @@ export const RevokeKeyModal = ({
                         <Button
                             onClick={handleRevoke}
                             disabled={isLoading || !password}
-                            variant={buttonVariant as any}
+                            variant={buttonVariant}
                             animationVariant={buttonAnimationVariant}
                             className="cursor-pointer"
                         >
