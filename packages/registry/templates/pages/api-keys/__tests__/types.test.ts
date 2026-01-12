@@ -7,7 +7,7 @@ import type {
   StatsData,
   ApiKeysPageProps,
   NotificationType,
-} from "./types";
+} from "../types";
 
 describe("Type Definitions", () => {
   it("defines valid ApiKeyScope types", () => {
