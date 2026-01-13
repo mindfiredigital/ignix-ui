@@ -2,6 +2,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ApiKeysPage } from ".";
 import { Key, Zap, Lock, Users, Server, Database, Globe } from "lucide-react";
+import type { ApiKey, ApiKeyScope } from "./types";
 
 const meta: Meta<typeof ApiKeysPage> = {
     title: "Templates/Pages/Account Management/API Keys",
@@ -201,7 +202,7 @@ const sampleApiKeys = [
         name: 'Production API',
         keyPrefix: 'sk_live_',
         keySuffix: 'x7Kp',
-        scopes: ['read:users', 'write:users', 'read:data', 'write:data'],
+        scopes: ['read:users', 'write:users', 'read:data', 'write:data'] as ApiKeyScope[],
         createdAt: new Date('2024-01-15'),
         lastUsed: new Date(),
         usageCount: 15420,
@@ -218,7 +219,7 @@ const sampleApiKeys = [
         name: 'Analytics Dashboard',
         keyPrefix: 'sk_live_',
         keySuffix: 'm2Qr',
-        scopes: ['read:analytics', 'read:data'],
+        scopes: ['read:analytics', 'read:data'] as ApiKeyScope[],
         createdAt: new Date('2024-03-22'),
         lastUsed: new Date(Date.now() - 86400000),
         usageCount: 8934,
@@ -235,7 +236,7 @@ const sampleApiKeys = [
         name: 'Mobile App',
         keyPrefix: 'sk_live_',
         keySuffix: 'n9Ts',
-        scopes: ['read:users', 'read:data'],
+        scopes: ['read:users', 'read:data'] as ApiKeyScope[],
         createdAt: new Date('2024-06-10'),
         lastUsed: new Date(Date.now() - 172800000),
         usageCount: 42156,
@@ -252,7 +253,7 @@ const sampleApiKeys = [
         name: 'Webhook Service',
         keyPrefix: 'sk_test_',
         keySuffix: 'p5Lm',
-        scopes: ['write:data'],
+        scopes: ['write:data'] as ApiKeyScope[],
         createdAt: new Date('2023-11-05'),
         lastUsed: new Date('2024-10-01'),
         usageCount: 3250,
@@ -269,7 +270,7 @@ const sampleApiKeys = [
         name: 'Legacy System',
         keyPrefix: 'sk_live_',
         keySuffix: 'r1Wv',
-        scopes: ['admin', 'read:data', 'write:data'],
+        scopes: ['admin', 'read:data', 'write:data'] as ApiKeyScope[],
         createdAt: new Date('2023-08-20'),
         lastUsed: null,
         usageCount: 0,
@@ -286,7 +287,7 @@ const minimalApiKeys = [
         name: 'Test API',
         keyPrefix: 'sk_test_',
         keySuffix: 'a1b2',
-        scopes: ['read:data'],
+        scopes: ['read:data'] as ApiKeyScope[],
         createdAt: new Date('2024-01-01'),
         lastUsed: new Date(),
         usageCount: 1234,
@@ -307,7 +308,7 @@ const enterpriseApiKeys = [
         name: 'Admin Portal',
         keyPrefix: 'sk_live_',
         keySuffix: 'a9Bc',
-        scopes: ['admin', 'read:users', 'write:users', 'read:data', 'write:data', 'read:analytics'],
+        scopes: ['admin', 'read:users', 'write:users', 'read:data', 'write:data', 'read:analytics'] as ApiKeyScope[],
         createdAt: new Date('2023-12-01'),
         lastUsed: new Date(),
         usageCount: 89234,
@@ -324,7 +325,7 @@ const enterpriseApiKeys = [
         name: 'CI/CD Pipeline',
         keyPrefix: 'sk_live_',
         keySuffix: 'd3Fg',
-        scopes: ['read:data', 'write:data'],
+        scopes: ['read:data', 'write:data'] as ApiKeyScope[],
         createdAt: new Date('2024-02-15'),
         lastUsed: new Date(Date.now() - 86400000),
         usageCount: 56789,
@@ -341,7 +342,7 @@ const enterpriseApiKeys = [
         name: 'Data Warehouse',
         keyPrefix: 'sk_live_',
         keySuffix: 'h5Ij',
-        scopes: ['read:data', 'read:analytics'],
+        scopes: ['read:data', 'read:analytics'] as ApiKeyScope[],
         createdAt: new Date('2024-04-10'),
         lastUsed: new Date(Date.now() - 432000000),
         usageCount: 234567,
@@ -362,7 +363,7 @@ const transformedApiKeys = [
         name: 'External Integration',
         keyPrefix: 'sk_int_',
         keySuffix: 'z9Yx',
-        scopes: ['read:data', 'write:data'],
+        scopes: ['read:data', 'write:data'] as ApiKeyScope[],
         createdAt: new Date('2024-02-20'),
         lastUsed: new Date('2024-03-22'),
         usageCount: 7890,
@@ -388,7 +389,7 @@ const transformedApiKeys = [
         name: 'Partner API Access',
         keyPrefix: 'sk_part_',
         keySuffix: 'w8Vz',
-        scopes: ['read:users', 'read:analytics'],
+        scopes: ['read:users', 'read:analytics'] as ApiKeyScope[],
         createdAt: new Date('2024-01-05'),
         lastUsed: new Date('2024-03-25'),
         usageCount: 45600,
@@ -407,26 +408,6 @@ const transformedApiKeys = [
     }
 ];
 
-// Data with custom scopes (demonstrates type flexibility)
-// const customScopedApiKeys = [
-//     {
-//         id: 'cs_001',
-//         name: 'Custom Scope App',
-//         keyPrefix: 'sk_cust_',
-//         keySuffix: 'u7Tn',
-//         scopes: ['read:users', 'read:data', 'admin'] as const,
-//         createdAt: new Date('2024-03-01'),
-//         lastUsed: new Date('2024-03-28'),
-//         usageCount: 12000,
-//         usageHistory: Array.from({ length: 7 }, (_, i) => ({
-//             date: new Date(Date.now() - (6 - i) * 86400000).toLocaleDateString('en-US', { weekday: 'short' }),
-//             count: Math.floor(Math.random() * 400) + 100
-//         })),
-//         status: 'inactive' as const,
-//         description: 'Application with custom permission scope',
-//         tags: ['experimental', 'beta']
-//     }
-// ];
 
 // ============================================
 // STORY GROUPS
@@ -613,7 +594,6 @@ export const WithRealCallbacks: Story = {
         headerTitle: "Interactive Data Management",
         headerDescription: "Real callbacks with data manipulation",
         onGenerateKey: async (name, scopes, expiresAt, description) => {
-            console.log('Generating key with data:', { name, scopes, expiresAt, description });
             // Simulate API call
             await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -633,12 +613,13 @@ export const WithRealCallbacks: Story = {
                 description
             };
         },
+        // Keep keyId parameter for API consistency - in production, this would be used
+        // The callback signature must match what the component expects to pass
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         onDeleteKey: async (keyId) => {
-            console.log('Deleting key:', keyId);
             await new Promise(resolve => setTimeout(resolve, 500));
         },
         onExportKeys: (format) => {
-            console.log(`Exporting data as ${format} format`);
             alert(`Data would be exported as ${format} in a real application`);
         },
         showNotifications: true,
@@ -874,13 +855,13 @@ export const MobileDataView: Story = {
         layout: "fullscreen",
     },
     name: "Mobile Data Objects",
-    parameters: {
-        docs: {
-            description: {
-                story: "Shows data objects on mobile view. Data structure remains consistent across devices."
-            }
-        }
-    }
+    // parameters: {
+    //     docs: {
+    //         description: {
+    //             story: "Shows data objects on mobile view. Data structure remains consistent across devices."
+    //         }
+    //     }
+    // }
 };
 
 // Data Transformation Example
@@ -900,7 +881,7 @@ export const DataTransformationExample: Story = {
                 const todayUsage = k.usageHistory[k.usageHistory.length - 1]?.count || 0;
                 return sum + todayUsage;
             }, 0),
-            revokedKeys: transformedApiKeys.filter(k => k.status === 'revoked').length
+            revokedKeys: (transformedApiKeys as ApiKey[]).filter(k => k.status === 'revoked').length
         }
     },
     name: "Data Transformation",
