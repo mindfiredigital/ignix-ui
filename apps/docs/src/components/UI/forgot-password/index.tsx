@@ -350,7 +350,7 @@ const ForgotPasswordContent: React.FC<ForgotPasswordProps> = ({
         className
       ),
       background: cn(
-        "flex min-h-screen items-center justify-center px-4 py-10 relative overflow-hidden",
+        "flex max-h-screen items-center justify-center px-4 py-10 relative overflow-hidden",
         isDark
           ? "bg-gradient-to-br from-black via-neutral-900 to-neutral-800"
           : "bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-50",
