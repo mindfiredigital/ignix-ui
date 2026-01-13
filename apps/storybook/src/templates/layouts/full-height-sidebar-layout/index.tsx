@@ -5,6 +5,11 @@ import { cn } from '../../../../utils/cn';
 import { Menu, X } from "lucide-react";
 import { SidebarProvider, useSidebar } from "../../../components/sidebar";
 
+/**
+ * Props for the FullHeightSidebarLayout component.
+ * 
+ * @interface FullHeightSidebarLayoutProps
+ */
 export interface FullHeightSidebarLayoutProps {
   // React Nodes
   header?: React.ReactNode;
@@ -47,7 +52,6 @@ const FullHeightSidebarLayoutVariants = cva("min-h-screen", {
       dark: "bg-card text-card-foreground",
       light: "bg-white text-gray-900 border-r",
       glass: "bg-white/10 backdrop-blur-lg text-foreground",
-      gradient: "bg-gradient-to-br from-purple-500 to-purple-400 text-white",
     },
     sidebarPosition: {
       left: "",
@@ -137,11 +141,7 @@ const FullHeightSidebarLayoutContent: React.FC<FullHeightSidebarLayoutProps> = (
       {/* Fixed header with reserved space via padding on the main shell */}
       {header && (
         <motion.header
-          className="relative inset-x-0 top-0"
-          style={{
-            height: headerHeight,
-            zIndex: zIndex.header
-          }}
+          className={cn("relative inset-x-0 top-0", `z-[${zIndex.header}]`,`[h:var(--header-h)]`)}
         >
           {header}
         </motion.header>
@@ -162,30 +162,24 @@ const FullHeightSidebarLayoutContent: React.FC<FullHeightSidebarLayoutProps> = (
         {sidebar && !isMobile && (
           <motion.aside
             className={cn(
-              "hidden md:block",
+              "hidden md:block sticky",
+              "top-[var(--header-h)]",
+              "h-[calc(100dvh-var(--header-h))]",
+              "z-[var(--z-sidebar)]",
+
               sidebarOnLeft && "order-1",
               sidebarOnRight && "order-2",
-              "sticky",
+
+              sidebarOnLeft &&
+                (isOpen && !sidebarCollapsed ? "mr-0" : "mr-[70px]"),
+              sidebarOnRight &&
+                (isOpen && !sidebarCollapsed ? "ml-0" : "ml-[70px]")
             )}
-            style={{
-              top: headerHeight,
-              height: `calc(100dvh - ${headerHeight}px)`,
-              zIndex: zIndex.sidebar,
-              width: !sidebarCollapsed && isOpen ? sidebarWidth : 0,
-
-              // Apply margin-right ONLY for left sidebar
-              marginRight: sidebarOnLeft
-                ? (!sidebarCollapsed && isOpen ? 0 : 70)
-                : undefined,
-
-              // Apply margin-left ONLY for right sidebar
-              marginLeft: sidebarOnRight
-                ? (!sidebarCollapsed && isOpen ? 0 : 70)
-                : undefined
-            }}
             initial={false}
             animate={{
-              width: !sidebarCollapsed && isOpen ? sidebarWidth : 0,
+              width: isOpen && !sidebarCollapsed
+                ? "var(--sidebar-w)"
+                : "0px",
             }}
             transition={{ duration: transitionDuration }}
           >
@@ -212,8 +206,8 @@ const FullHeightSidebarLayoutContent: React.FC<FullHeightSidebarLayoutProps> = (
           <AnimatePresence>
             {overlay && (
               <motion.div
-                className="fixed inset-0 bg-black/50"
-                style={{ zIndex: zIndex.overlay, pointerEvents: isOpen ? 'auto' : 'none' }}
+                className={cn("fixed inset-0 bg-black/50",`z-[${zIndex.overlay}]`,
+                isOpen ? "pointer-events-auto" : "pointer-events-none",)}
                 initial={{ opacity: 0, pointerEvents: 'none' }}
                 animate={{ 
                   opacity: isOpen ? 1 : 0,
@@ -230,11 +224,9 @@ const FullHeightSidebarLayoutContent: React.FC<FullHeightSidebarLayoutProps> = (
             className={cn(
               "fixed inset-y-0 w-[var(--sidebar-w)]",
               sidebarOnLeft && "left-0" ,
-              sidebarOnRight && "right-0"
+              sidebarOnRight && "right-0",
+              `z-[${(zIndex.sidebar ?? 90) + 10}]`
             )}
-            style={{
-              zIndex: (zIndex.sidebar ?? 90) + 10,
-            }}
             initial={{
               x: sidebarOnLeft ? -sidebarWidth : sidebarWidth
             }}
@@ -258,6 +250,7 @@ const FullHeightSidebarLayoutContent: React.FC<FullHeightSidebarLayoutProps> = (
             className={cn(
               "fixed z-999 p-2 rounded-lg bg-background shadow-lg top-4",
               sidebarOnLeft && "left-4",
+              sidebarOnLeft && isOpen && "left-50",
               sidebarOnRight && "right-4"
             )}
             onClick={() => setIsOpen(!isOpen)}
@@ -271,6 +264,36 @@ const FullHeightSidebarLayoutContent: React.FC<FullHeightSidebarLayoutProps> = (
   );
 };
 
+/**
+ * FullHeightSidebarLayout Component
+ * 
+ * A responsive layout component that provides a full-height sidebar with header support.
+ * Features include:
+ * - Responsive design with mobile breakpoint support
+ * - Collapsible sidebar with smooth animations
+ * - Optional header section
+ * - Gesture support for mobile devices
+ * - Multiple visual variants (default, dark, light, glass)
+ * - Configurable sidebar position (left or right)
+ * - Customizable z-index layering
+ * 
+ * @component
+ * @param {FullHeightSidebarLayoutProps} props - The component props
+ * @returns {JSX.Element} The rendered layout component
+ * 
+ * @example
+ * ```tsx
+ * <FullHeightSidebarLayout
+ *   variant="default"
+ *   sidebarPosition="left"
+ *   mobileBreakpoint="md"
+ *   header={<Navbar />}
+ *   sidebar={<Sidebar links={navItems} />}
+ * >
+ *   <div>Main content</div>
+ * </FullHeightSidebarLayout>
+ * ```
+ */
 export const FullHeightSidebarLayout: React.FC<FullHeightSidebarLayoutProps> = (props) => {
   return (
     <SidebarProvider initialOpen={!props.sidebarCollapsed}>
