@@ -8,66 +8,33 @@ import { CardDescription, CardHeader, CardTitle } from "@ignix-ui/card";
 import { Button } from "@ignix-ui/button";
 import AnimatedInput from "@ignix-ui/input";
 
-/**
- * Type for header animation keys
- */
+/** Type for header animation keys */
 type HeaderAnimationKeys = keyof typeof headerAnimationVariant;
 
-/**
- * Simple header configuration interface
- * @interface SimpleHeader
- */
+/** Interfaces */
 interface SimpleHeader {
-  /** The main heading text */
   head: string;
-  /** The description/paragraph text */
   para: string;
 }
 
-/**
- * Props for the FormHeader component
- * @interface ForgotPasswordHeaderProps
- * @extends SimpleHeader
- */
 interface ForgotPasswordHeaderProps extends SimpleHeader {
-  /** Animation variant for the header */
   animationVariant?: HeaderAnimationKeys;
 }
 
-/**
- * Props for the LinkButton component
- * @interface LinkButtonProps
- */
 interface LinkButtonProps {
-  /** Label text for the button */
   label?: string;
-  /** Custom text color classes */
   textColor?: string;
-  /** Callback function when button is clicked */
   onBack?: () => void;
 }
 
-/**
- * Main props interface for ForgotPasswordPage component
- * @interface ForgotPasswordProps
- */
 export interface ForgotPasswordProps {
-  /** Simplified header API - provides head and para text */
   forgotPasswordHeader?: SimpleHeader;
-
-  /** Backward compatible - custom header React node */
   formCardHeader?: React.ReactNode;
-
-  /** Optional override for login link node */
   loginLink?: React.ReactNode;
-  /** Optional override for button node */
   button?: React.ReactNode;
-  /** Optional override for input node */
   input?: React.ReactNode;
-
-  /** Visual theme variant for the page */
   variant?: VariantProps<typeof ForgotPasswordVariants>["variant"];
-  /** Input field animation variant */
+
   inputVariant?:
     | "clean"
     | "underline"
@@ -90,63 +57,24 @@ export interface ForgotPasswordProps {
     | "ripple"
     | "particleField"
     | "tilt3D";
-  /** Button animation variant */
-  animationVariant?:
-    | "bounce"
-    | "bounceSlow"
-    | "bounceFast"
-    | "bounceSmooth"
-    | "bounceJelly"
-    | "rotateClockwiseSlow"
-    | "rotateClockwiseFast"
-    | "rotateAntiClockwiseSlow"
-    | "rotateAntiClockwiseFast"
-    | "rotatePingPong"
-    | "scaleUp"
-    | "scaleDown"
-    | "scaleHeartBeat"
-    | "flipX"
-    | "flipY"
-    | "flipCard"
-    | "fadeBlink"
-    | "fadeInOut"
-    | "press3D"
-    | "press3DSoft"
-    | "press3DHard"
-    | "press3DPop"
-    | "press3DDepth"
-    | "spinSlow";
-  /** Header animation variant */
-  headerAnimation?: HeaderAnimationKeys;
 
-  /** Current status of the form */
+  headerAnimation?: HeaderAnimationKeys;
   status?: "idle" | "loading" | "success" | "error";
-  /** Error message to display */
   errorMessage?: string;
-  /** Success message to display */
   successMessage?: string;
-  /** Label for the navigation/back button */
   navigateToLabel?: string;
-  /** Label for the submit button */
   submitbuttonLabel?: string;
 
-  /** Callback function when form is submitted with email */
   onSubmit?: (email: string) => void | Promise<void>;
-  /** Callback function when navigate/back button is clicked */
   onNavigateTo?: () => void;
-  /** Additional CSS classes */
+
   className?: string;
 
-  /** CAPTCHA component to display */
   captcha?: React.ReactNode;
-  /** Whether CAPTCHA is verified */
   captchaVerified?: boolean;
 }
 
-/**
- * CVA (Class Variance Authority) variants for the forgot password page
- * Defines different visual theme variants
- */
+/** CVA (Class Variance Authority) variants for the forgot password page */
 const ForgotPasswordVariants = cva("", {
   variants: {
     variant: {
@@ -159,10 +87,7 @@ const ForgotPasswordVariants = cva("", {
   },
 });
 
-/**
- * Header animation variants configuration
- * Defines different animation styles for the header component
- */
+/** Header animation variants configuration */
 const headerAnimationVariant = {
   fadeUp: {
     initial: { opacity: 0, y: 20 },
@@ -185,73 +110,6 @@ const headerAnimationVariant = {
     animate: { rotateX: 0, opacity: 1 },
   },
 };
-
-/**
- * Skeleton loader component for the forgot password form
- * Displays animated placeholder elements while content is loading
- * @component
- * @param {Object} props - Component props
- * @param {string} [props.variant] - Theme variant (e.g., "dark")
- * @returns {JSX.Element} Skeleton loader element
- */
-const FormSkeleton = React.memo(({ variant }: { variant?: string }) => {
-  const isDark = variant === "dark";
-  
-  return (
-    <div className={cn(
-      "w-full max-w-lg p-10 rounded-3xl shadow-2xl border backdrop-blur-sm animate-pulse",
-      isDark
-        ? "bg-gradient-to-br from-neutral-900/95 via-neutral-800/95 to-black/95 border-neutral-700/50"
-        : "bg-white/95 border-gray-200/50"
-    )}>
-      <div className="flex flex-col items-center gap-4 mb-6">
-        {/* Icon Skeleton */}
-        <div className={cn(
-          "w-16 h-16 rounded-full",
-          isDark ? "bg-neutral-700" : "bg-gray-200"
-        )} />
-        
-        {/* Title Skeleton */}
-        <div className={cn(
-          "w-48 h-8 rounded-lg mb-2",
-          isDark ? "bg-neutral-700" : "bg-gray-200"
-        )} />
-        
-        {/* Description Skeleton */}
-        <div className={cn(
-          "w-64 h-4 rounded-lg",
-          isDark ? "bg-neutral-700" : "bg-gray-200"
-        )} />
-        <div className={cn(
-          "w-56 h-4 rounded-lg",
-          isDark ? "bg-neutral-700" : "bg-gray-200"
-        )} />
-      </div>
-      
-      <div className="space-y-6">
-        {/* Input Skeleton */}
-        <div className={cn(
-          "w-full h-12 rounded-lg",
-          isDark ? "bg-neutral-700" : "bg-gray-200"
-        )} />
-        
-        {/* Button Skeleton */}
-        <div className={cn(
-          "w-full h-12 rounded-xl",
-          isDark ? "bg-neutral-700" : "bg-gray-200"
-        )} />
-        
-        {/* Link Button Skeleton */}
-        <div className={cn(
-          "w-full h-12 rounded-xl",
-          isDark ? "bg-neutral-700" : "bg-gray-200"
-        )} />
-      </div>
-    </div>
-  );
-});
-
-FormSkeleton.displayName = "FormSkeleton";
 
 /**
  * Form header component with animated title and description
@@ -288,8 +146,6 @@ export const FormHeader = React.memo(({
     </motion.div>
   );
 });
-
-FormHeader.displayName = "FormHeader";
 
 /**
  * Link button component for navigation (e.g., "Back to Login")
@@ -335,8 +191,6 @@ export const LinkButton = React.memo(({
     </motion.div>
   );
 });
-
-LinkButton.displayName = "LinkButton";
 
 /**
  * Email validation regex pattern
@@ -393,6 +247,16 @@ const getEmailErrorMessage = (email: string): string => {
 
   if (domain.startsWith(".") || domain.endsWith(".")) {
     return "Email domain cannot start or end with a dot";
+  }
+
+  // Check that TLD (top-level domain) ends with letters
+  const lastDotIndex = domain.lastIndexOf(".");
+  if (lastDotIndex !== -1) {
+    const tld = domain.substring(lastDotIndex + 1);
+    // TLD must contain at least one letter and end with a letter
+    if (!/[a-zA-Z]/.test(tld) || !/[a-zA-Z]$/.test(tld)) {
+      return "Email domain must end with letters (e.g., .com, .org)";
+    }
   }
 
   // Final regex validation
@@ -504,28 +368,28 @@ const ForgotPasswordContent: React.FC<ForgotPasswordProps> = ({
    * @async
    */
   const handleSubmit = React.useCallback(async () => {
-    const result = emailSchema.safeParse(email);
+    const parsed = emailSchema.safeParse(email);
 
-    if (!result.success) {
+    if (!parsed.success) {
       setStatus("error");
-      setErrorMessage(result.error.issues[0].message);
+      setErrorMessage(parsed.error.issues[0].message);
       return;
     }
 
-    // Set loading state
     setStatus("loading");
 
     try {
-      // If onSubmit returns a promise, wait for it
-      const result = onSubmit?.(email);
-      if (result && typeof result === "object" && "then" in result) {
-        await result;
-      }
+      await Promise.resolve(onSubmit?.(email));
       setStatus("success");
       setErrorMessage(successMessage);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setStatus("error");
-      setErrorMessage(err?.message ?? "Failed to submit");
+
+      if (err instanceof Error) {
+        setErrorMessage(err.message);
+      } else {
+        setErrorMessage("Failed to submit");
+      }
     }
   }, [email, onSubmit, successMessage]);
 
@@ -1024,12 +888,7 @@ const ForgotPasswordContent: React.FC<ForgotPasswordProps> = ({
   );
 };
 
-/**
- * Forgot Password Page Component
- * 
- * A comprehensive forgot password page with email validation, loading states,
- * and support for various themes and animations.
- */
+/** Forgot Password Page Component */
 export const ForgotPasswordPage: React.FC<ForgotPasswordProps> = (props) => {
   return <ForgotPasswordContent {...props} />;
 };
