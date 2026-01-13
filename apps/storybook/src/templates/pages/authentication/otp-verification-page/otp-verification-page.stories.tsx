@@ -6,7 +6,7 @@ const meta: Meta<typeof OTPVerificationPage> = {
     component: OTPVerificationPage,
     tags: ["autodocs"],
     parameters: {
-      layout: "fullscreen",
+      layout: "centered",
       docs: {
         description: {
           component:
@@ -17,7 +17,7 @@ const meta: Meta<typeof OTPVerificationPage> = {
   argTypes : {
     variant: {
       control: "select",
-      options: ["default", "dark", "gradientOceanNight"],
+      options: ["default", "dark"],
       description: "Visual theme for Forgot Password page",
     },
     animation: {
@@ -33,12 +33,14 @@ type Story = StoryObj<typeof OTPVerificationPage>;
 
 export const Basic: Story = {
   args : {
+    variant: "default",
     navigateToLabel: "Back To Login"
   }
 }
 
 export const EightDigitWithPhoneNumber: Story = { 
   args : {
+    variant: "default",
     length: 8,
     contactType: "phone",
     contactDetail: "777 333 6666"
