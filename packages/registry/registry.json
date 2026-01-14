@@ -319,6 +319,18 @@
         }
       }
     },
+    "list-with-actions": {
+      "name": "ListWithActions",
+      "description": "A list component that extends ListBasic functionality by adding contextual action buttons (like Edit, Delete, View) to each list item. Actions appear on hover/focus on desktop and remain always visible on mobile. Optimized with React.memo, useMemo, and useCallback for performance.",
+      "dependencies": [],
+      "componentDependencies": ["list-basic"],
+      "files": {
+        "main": {
+          "path": "components/list-with-actions/index.tsx",
+          "type": "component"
+        }
+      }
+    },
     "textarea": {
       "name": "Textarea",
       "description": "An animated textarea component with different variants",
