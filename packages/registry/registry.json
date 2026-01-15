@@ -982,6 +982,27 @@
           "type": "component"
         }
       }
+    },
+    "userCard":{
+      "name": "userCard",
+      "description": "An image card component with different variants.",
+      "dependencies": [
+        "lucide-react", 
+        "class-variance-authority",
+        "react-icons"
+      ],
+      "componentDependencies": [
+        "card",
+        "avatar",
+        "button",
+        "typography"
+      ],
+      "files": {
+        "main": {
+          "path": "components/user-card/index.tsx",
+          "type": "component"
+        }
+      }
     }
   } 
 }
