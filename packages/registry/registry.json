@@ -875,12 +875,13 @@
       "componentDependencies": [
         "button",
         "switch",
-        "card"
+        "card",
+        "typography"
       ],
       "files": {
         "main": {
-          "path": "templates/sections/pricing-grid/index.tsx",
-          "type" : "template"
+          "path": "components//pricing-grid/index.tsx",
+          "type" : "component"
         }
       }
     },
@@ -944,6 +945,50 @@
       "files": {
         "main": {
           "path": "templates/pages/api-keys/index.tsx",
+          "type": "template"
+        }
+      }
+    },
+    "comparisonTable": {
+      "name": "ComparisonTable",
+      "description": "The Comparison Table provides a clear, scalable way to evaluate features, plans, or capabilities side-by-side. It adapts seamlessly between desktop grid and mobile-friendly layouts, ensuring consistent readability, accessibility, and decision-making across devices.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "typography",
+        "card"
+      ],
+      "files": {
+        "main": {
+          "path": "components/comparison-table/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "billingPage": {
+      "name": "BillingPage",
+      "description": "",
+      "dependencies": [
+        "framer-motion",
+        "react-icons",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "avatar",
+        "button",
+        "breadcrumbs",
+        "typography",
+        "card",
+        "comparisonTable",
+        "dialogBox"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/billing-page/index.tsx",
           "type": "template"
         }
       }

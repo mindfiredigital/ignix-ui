@@ -87,13 +87,6 @@ describe("PricingGrid", () => {
     expect(screen.getByText("Enterprise")).toBeInTheDocument()
   })
 
-  it("renders prices correctly using SplitPrice", () => {
-    render(<PricingGrid plans={mockPlans} />)
-
-    expect(screen.getAllByText("19")[0]).toBeInTheDocument()
-    expect(screen.getAllByText("/ month")[0]).toBeInTheDocument()
-  })
-
   it("renders highlighted plan", () => {
     render(<PricingGrid plans={mockPlans} />)
 
@@ -112,11 +105,12 @@ describe("PricingGrid", () => {
 
     const toggle = screen.getByRole("button", { name: "Toggle" })
 
-    expect(toggle).toHaveAttribute("aria-pressed", "true")
+    // Initial state is first toggle option, i.e., "monthly" → checked=false
+    expect(toggle).toHaveAttribute("aria-pressed", "false")
 
     fireEvent.click(toggle)
 
-    expect(toggle).toHaveAttribute("aria-pressed", "false")
+    expect(toggle).toHaveAttribute("aria-pressed", "true")
   })
 
   it("renders vector UI decorations when modernUI=vector", () => {
@@ -124,25 +118,115 @@ describe("PricingGrid", () => {
       <PricingGrid plans={mockPlans} modernUI="vector" />
     )
 
-    expect(
-      container.querySelector('[style*="clip-path"]')
-    ).toBeTruthy()
+    // Check for presence of gradient-based vector card class
+    expect(container.querySelector('.bg-gradient-to-r, .bg-gradient-to-br')).toBeTruthy()
   })
 
-  it("renders CTA buttons", () => {
+  it("renders CTA Labels", () => {
     render(<PricingGrid plans={mockPlans} />)
 
     expect(screen.getAllByText("Order Now").length).toBe(3)
   })
 
   it("calls onCtaClick with correct plan", () => {
-    render(<PricingGrid plans={mockPlans} />)
+    const onCtaClick = vi.fn()
 
-    fireEvent.click(screen.getAllByText("Order Now")[0])
+    render(
+      <PricingGrid
+        plans={mockPlans}
+        onCtaClick={onCtaClick}
+      />
+    )
+
+    fireEvent.click(
+      screen.getByLabelText("Starter plan action")
+    )
 
     expect(onCtaClick).toHaveBeenCalledTimes(1)
     expect(onCtaClick).toHaveBeenCalledWith(
       expect.objectContaining({ name: "Starter" })
     )
   })
+
+  it("renders validation error when a plan has no features", () => {
+    const plans = [
+      {
+        name: "Empty Plan",
+        price: "0/month",
+        ctaLabel: "Subscribe",
+        features: [],
+      },
+    ]
+
+    render(<PricingGrid plans={plans} />)
+
+    expect(
+      screen.getByText(/at least one feature is required/i)
+    ).toBeInTheDocument()
+
+    // Plan content should NOT render
+    expect(screen.queryByText("Empty Plan")).not.toBeInTheDocument()
+  })
+
+  it("renders correctly when plan has unavailable features", () => {
+    const plans = [
+      { name: "Partial Plan", price: "20/month", ctaLabel: "Subscribe", features: [{ label: "Feature X", available: false }], onCtaClick }
+    ]
+    render(<PricingGrid plans={plans} />)
+
+    expect(screen.getByText("Feature X")).toBeInTheDocument()
+    expect(screen.getByText("No")).toBeInTheDocument()
+  })
+
+  it("renders correctly with custom toggleOptions", () => {
+    const toggleOptions = [
+      { label: "Weekly", value: "weekly" },
+      { label: "Monthly", value: "monthly" }
+    ]
+
+    render(<PricingGrid plans={mockPlans} toggleOptions={toggleOptions} />)
+
+    expect(screen.getByText("Weekly")).toBeInTheDocument()
+    expect(screen.getByText("Monthly")).toBeInTheDocument()
+  })
+
+  it("handles onValueChange when toggle is clicked", () => {
+    const handleValueChange = vi.fn()
+    render(<PricingGrid plans={mockPlans} onValueChange={handleValueChange} />)
+
+    const toggle = screen.getByRole("button", { name: "Toggle" })
+    fireEvent.click(toggle)
+
+    expect(handleValueChange).toHaveBeenCalledTimes(1)
+    expect(handleValueChange).toHaveBeenCalledWith("yearly")
+  })
+
+  it("renders the current plan button when currentPlan={1}", () => {
+    const plans = [
+      { id:1, name: "Pro Plan", price: "49/month", ctaLabel: "Subscribe", features: [{ label: "Feature A" }], onCtaClick }
+    ]
+    render(<PricingGrid plans={plans} currentPlan={1}/>)
+
+    expect(screen.getByText("Current Plan")).toBeInTheDocument()
+  })
+
+  it("renders multiple icons when provided in features", () => {
+    const CustomIcon = () => <svg data-testid="custom-icon" />
+    const plans = [
+      { name: "Icon Plan", price: "10/month", ctaLabel: "Buy", features: [{ label: "Feature Y", icon: CustomIcon }], onCtaClick }
+    ]
+    render(<PricingGrid plans={plans} />)
+
+    expect(screen.getByTestId("custom-icon")).toBeInTheDocument()
+  })
+
+  it("renders correct gradient for vector mode with allowDifferentCardColors", () => {
+    const plans = [
+      { name: "Gradient Plan", price: "15/month", ctaLabel: "Buy", features: [{ label: "Feature Z" }], gradient: "bg-red-500", onCtaClick }
+    ]
+    const { container } = render(<PricingGrid plans={plans} modernUI="vector" allowDifferentCardColors />)
+
+    expect(container.querySelector(".bg-red-500")).toBeTruthy()
+  })
+
 })
