@@ -84,6 +84,7 @@
         "components/file-upload",
         "components/input",
         "components/list-basic",
+        "components/list-with-actions",
         "components/navbar",
         "components/radio",
         "components/sidebar",
