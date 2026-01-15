@@ -309,7 +309,7 @@
       }
     },
     "list-basic": {
-      "name": "ListBasic",
+      "name": "list-basic",
       "description": "A flexible list component that supports both unordered (bullet points) and ordered (numbered) lists with consistent spacing between items. Optimized with React.memo, useMemo, and useCallback for performance.",
       "dependencies": [],
       "files": {
@@ -320,7 +320,7 @@
       }
     },
     "list-with-actions": {
-      "name": "ListWithActions",
+      "name": "List-With-Actions",
       "description": "A list component that extends ListBasic functionality by adding contextual action buttons (like Edit, Delete, View) to each list item. Actions appear on hover/focus on desktop and remain always visible on mobile. Optimized with React.memo, useMemo, and useCallback for performance.",
       "dependencies": [],
       "componentDependencies": ["list-basic"],
