@@ -217,7 +217,7 @@ export const CurrentPlanCard: React.FC<ActivePlanProps> = React.memo(
     return (
       <GlassCard variant={variant} animation={animation} interactive={interactive}>
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mt-3">
+        <div aria-label="current-plan" className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mt-3">
           <div className="flex items-center gap-3">
             <div
               className={cn(
@@ -260,10 +260,19 @@ export const CurrentPlanCard: React.FC<ActivePlanProps> = React.memo(
         <ul className="space-y-3 text-md md:text-lg mt-4">
           {features.map((feature, i) => {
             const Icon = feature.icon ?? Check
+            const value = plan.featureMap[feature.id]
+
             return (
-              <li key={i} className="flex gap-3">
-                <Icon className="h-4 w-4" />
-                {feature.label}
+              <li key={i} className="flex gap-3 items-start">
+                <Icon className="h-4 w-4 mt-1 shrink-0" />
+                <span>
+                  {feature.label}
+                  {typeof value === "string" || typeof value === "number" ? (
+                    <span className="text-zinc-200 ml-1 text-left">
+                      : {value}
+                    </span>
+                  ) : null}
+                </span>
               </li>
             )
           })}
@@ -344,7 +353,7 @@ export const UsageOverviewCard: React.FC<UsageOverviewProps> = React.memo(
 
         {/* API Usage */}
         {apiUsage && (
-          <div className="mt-6">
+          <div className="mt-6" aria-label="api-usage">
             <div className="flex justify-between text-sm mb-1">
               <span className="text-zinc-400 font-semibold">
                 {apiUsage.label}
@@ -365,7 +374,7 @@ export const UsageOverviewCard: React.FC<UsageOverviewProps> = React.memo(
 
         {/* Storage Usage */}
         {storageUsage && (
-          <div className="flex items-center justify-between mt-6">
+          <div className="flex items-center justify-between mt-6" aria-label="storage-usage">
             <div>
               <p className="text-sm text-zinc-400 font-semibold">
                 {storageUsage.label}
@@ -416,7 +425,7 @@ export const UsageOverviewCard: React.FC<UsageOverviewProps> = React.memo(
 
         {/* Seats Usage */}
         {seatsUsage && (
-          <div className="mt-6 mb-4 flex justify-between text-sm">
+          <div className="mt-6 mb-4 flex justify-between text-sm" aria-label="seats-usage">
             <div className="flex flex-row gap-2">
               <Users className="h-4 w-4 text-zinc-400" />
               <span className="text-zinc-400 font-bold">
@@ -561,13 +570,13 @@ export const BillingTable: React.FC<BillingTableProps> = React.memo(({
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-end gap-2 mt-4">
-          <Button size="sm" variant="outline" className="hover:cursor-pointer" disabled={currentPage === 1} onClick={handlePrev}>
+          <Button size="sm" variant="outline" className="hover:cursor-pointer" disabled={currentPage === 1} onClick={handlePrev} aria-label="move-left">
             <MoveLeft />
           </Button>
           <Typography className="flex items-center gap-1 text-sm">
             Page {currentPage} of {totalPages}
           </Typography>
-          <Button size="sm" variant="outline" className="hover:cursor-pointer" disabled={currentPage === totalPages} onClick={handleNext}>
+          <Button size="sm" variant="outline" className="hover:cursor-pointer" disabled={currentPage === totalPages} onClick={handleNext} aria-label="move-right">
             <MoveRight />
           </Button>
         </div>
@@ -598,10 +607,10 @@ export const PaymentMethodCard: React.FC<PaymentMethodProps> = React.memo(({
         <div className={cn("flex items-center justify-center w-10 h-10 rounded-full",BillingIconVariant({variant}))}> 
           <Banknote className="w-6 h-6" /> 
         </div> 
-        <Typography variant="h3" className="mb-4 font-semibold"> Payment Method </Typography> 
+        <Typography variant="h3" className="mb-4 font-semibold" aria-label="payment-head"> Payment Method </Typography> 
       </div>
       <div className="flex items-center gap-3 mb-4">
-        <BrandIcon className={cn("w-9 h-9 p-1", BillingIconVariant({variant}))} />
+        <BrandIcon aria-label="brand-icon" className={cn("w-9 h-9 p-1", BillingIconVariant({variant}))} />
         <div>
           <p className="text-md text-zinc-600">
             •••• •••• •••• {last4}
@@ -615,6 +624,7 @@ export const PaymentMethodCard: React.FC<PaymentMethodProps> = React.memo(({
       </div>
 
       <Button
+        aria-label="update-payment"
         variant="success"
         size="md"
         className="hover:cursor-pointer"
@@ -729,6 +739,7 @@ export const BillingContent:React.FC<BillingPageProps> = ({
 
       <main className="max-w-7xl mx-auto p-1 space-y-4 ">
         <Breadcrumbs
+          aria-label="breadcrumbs"
           items={[
             { label: "Settings", href: "#" },
             { label: "Billing", href: "#" },

@@ -1,3 +1,31 @@
+---
+sidebar_position: 3
+title: Billing Page
+description: A comprehensive Billing management page that allows users to view and manage their subscription, payment methods, and billing history. It includes current plan details with renewal information, usage overview metrics, and a full invoice history with actions for viewing, downloading, or deleting invoices
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import BillingPageDemo from '@site/src/components/Demo/BillingPageDemo';
+
+## Overview
+
+A comprehensive **Billing management page** that allows users to view and manage their subscription, payment methods, and billing history. It includes current plan details with renewal information, usage overview metrics, and a full invoice history with actions for viewing, downloading, or deleting invoices. Users can securely update their payment method, cancel subscriptions with confirmation, and upgrade or change plans via an integrated pricing grid. The layout is fully responsive, optimized for mobile, tablet, and desktop experiences, and supports multiple visual themes, animations, and interaction styles. An extensible modal system enables custom payment update flows while maintaining secure, user-controlled interactions.
+
+## Preview
+
+<BillingPageDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component billingPage
+    ```
+  </TabItem>
+   <TabItem value="manual" label="MANUAL" default>
+  ```bash
 import React, { useState } from "react"
 import type { LucideIcon } from "lucide-react"
 import {
@@ -17,15 +45,15 @@ import {
   Users,
 } from "lucide-react"
 import { cva, type VariantProps } from "class-variance-authority"
-import { Avatar } from "../../../../components/avatar"
-import { Breadcrumbs } from "../../../../components/breadcrumbs"
-import { Button } from "../../../../components/button"
-import { Card } from "../../../../components/card"
-import { Typography } from "../../../../components/typography"
-import { cn } from "../../../../../utils/cn"
-import { useDialog } from "../../../../components/dialog-box/use-dialog"
-import { DialogProvider } from "../../../../components/dialog-box"
-import { ComparisonTable } from "../../../section/content/comparison-table"
+import { Avatar } from "@ignix-ui/avatar"
+import { Breadcrumbs } from "@ignix-ui/breadcrumbs"
+import { Button } from "@ignix-ui/button"
+import { Card } from "@ignix-ui/card"
+import { Typography } from "@ignix-ui/typography"
+import { cn } from "../../../utils/cn"
+import { useDialog } from "@ignix-ui/dialogbox/use-dialog"
+import { DialogProvider } from "@ignix-ui/dialogbox"
+import { ComparisonTable } from "@ignix-ui/comparison-table"
 
 /** -------------------------------- Variants -------------------------------- */
 const ModernPricingGridVariant = cva("", {
@@ -212,12 +240,12 @@ export const GlassCard: React.FC<GlassCardProps> = React.memo(({ children, varia
 /** ---------------------------- Current Plan -------------------------------- */
 export const CurrentPlanCard: React.FC<ActivePlanProps> = React.memo(
   ({ plan, features, renewalDate, variant, onUpgrade, animation, interactive }: ActivePlanProps) => {
-    console.log(features)
+    
     if (!plan) return null
     return (
       <GlassCard variant={variant} animation={animation} interactive={interactive}>
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mt-3">
+        <div aria-label="current-plan" className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mt-3">
           <div className="flex items-center gap-3">
             <div
               className={cn(
@@ -281,6 +309,8 @@ export const CurrentPlanCard: React.FC<ActivePlanProps> = React.memo(
         {/* Actions */}
         <div className="mt-6 flex flex-col lg:flex-row gap-2 md:gap-2 lg:gap-3">
           <Button
+            role="button"
+            aria-label="upgrade-plan"
             variant="success"
             size="wide"
             className="w-full sm:w-auto hover:cursor-pointer" 
@@ -289,6 +319,7 @@ export const CurrentPlanCard: React.FC<ActivePlanProps> = React.memo(
             Upgrade 
           </Button>
           <Button
+            aria-label="downgrade-plan"
             variant="outline"
             size="wide"
             className="w-full sm:w-auto hover:cursor-pointer"
@@ -350,7 +381,7 @@ export const UsageOverviewCard: React.FC<UsageOverviewProps> = React.memo(
 
         {/* API Usage */}
         {apiUsage && (
-          <div className="mt-6">
+          <div className="mt-6" aria-label="api-usage">
             <div className="flex justify-between text-sm mb-1">
               <span className="text-zinc-400 font-semibold">
                 {apiUsage.label}
@@ -371,7 +402,7 @@ export const UsageOverviewCard: React.FC<UsageOverviewProps> = React.memo(
 
         {/* Storage Usage */}
         {storageUsage && (
-          <div className="flex items-center justify-between mt-6">
+          <div className="flex items-center justify-between mt-6" aria-label="storage-usage">
             <div>
               <p className="text-sm text-zinc-400 font-semibold">
                 {storageUsage.label}
@@ -422,7 +453,7 @@ export const UsageOverviewCard: React.FC<UsageOverviewProps> = React.memo(
 
         {/* Seats Usage */}
         {seatsUsage && (
-          <div className="mt-6 mb-4 flex justify-between text-sm">
+          <div className="mt-6 mb-4 flex justify-between text-sm" aria-label="seats-usage">
             <div className="flex flex-row gap-2">
               <Users className="h-4 w-4 text-zinc-400" />
               <span className="text-zinc-400 font-bold">
@@ -567,13 +598,13 @@ export const BillingTable: React.FC<BillingTableProps> = React.memo(({
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-end gap-2 mt-4">
-          <Button size="sm" variant="outline" className="hover:cursor-pointer" disabled={currentPage === 1} onClick={handlePrev}>
+          <Button size="sm" variant="outline" className="hover:cursor-pointer" disabled={currentPage === 1} onClick={handlePrev} aria-label="move-left">
             <MoveLeft />
           </Button>
           <Typography className="flex items-center gap-1 text-sm">
             Page {currentPage} of {totalPages}
           </Typography>
-          <Button size="sm" variant="outline" className="hover:cursor-pointer" disabled={currentPage === totalPages} onClick={handleNext}>
+          <Button size="sm" variant="outline" className="hover:cursor-pointer" disabled={currentPage === totalPages} onClick={handleNext} aria-label="move-right">
             <MoveRight />
           </Button>
         </div>
@@ -604,10 +635,10 @@ export const PaymentMethodCard: React.FC<PaymentMethodProps> = React.memo(({
         <div className={cn("flex items-center justify-center w-10 h-10 rounded-full",BillingIconVariant({variant}))}> 
           <Banknote className="w-6 h-6" /> 
         </div> 
-        <Typography variant="h3" className="mb-4 font-semibold"> Payment Method </Typography> 
+        <Typography variant="h3" className="mb-4 font-semibold" aria-label="payment-head"> Payment Method </Typography> 
       </div>
       <div className="flex items-center gap-3 mb-4">
-        <BrandIcon className={cn("w-9 h-9 p-1", BillingIconVariant({variant}))} />
+        <BrandIcon aria-label="brand-icon" className={cn("w-9 h-9 p-1", BillingIconVariant({variant}))} />
         <div>
           <p className="text-md text-zinc-600">
             •••• •••• •••• {last4}
@@ -621,6 +652,7 @@ export const PaymentMethodCard: React.FC<PaymentMethodProps> = React.memo(({
       </div>
 
       <Button
+        aria-label="update-payment"
         variant="success"
         size="md"
         className="hover:cursor-pointer"
@@ -672,12 +704,12 @@ export const BillingContent:React.FC<BillingPageProps> = ({
   features,
   showcurrentPlanId = true,
   showUsageOverview = true,
-  showPricing = true,
+  showPricing = false,
   showBillingTable = true,
   pricingTitle = "Simple Pricing",
   pricingDescription = "Choose the plan that works best for you",
   variant = "dark",
-  currentPlanId = 0,
+  currentPlanId = 1,
   renewalDate,
   invoices,
   onInvoiceView,
@@ -719,7 +751,6 @@ export const BillingContent:React.FC<BillingPageProps> = ({
 
     return features.filter((f) => {
       const value = activePlan.featureMap[f.id]
-      console.log(value,activePlan.featureMap[f.id])
       return (value)
     })
   }, [features, activePlan])
@@ -736,6 +767,7 @@ export const BillingContent:React.FC<BillingPageProps> = ({
 
       <main className="max-w-7xl mx-auto p-1 space-y-4 ">
         <Breadcrumbs
+          aria-label="breadcrumbs"
           items={[
             { label: "Settings", href: "#" },
             { label: "Billing", href: "#" },
@@ -745,15 +777,13 @@ export const BillingContent:React.FC<BillingPageProps> = ({
 
         <div className={cn("flex gap-3 p-4 rounded bg-primary/5 border", ModernPricingGridVariant({variant}))}>
           <Shield className="w-5 h-5" />
-          <Typography variant="body-small" className="text-md">
+          <Typography variant="body-small" className="text-md" role="link">
             Billing information is securely managed.
           </Typography>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-[auto_1fr] gap-4">
-          {showcurrentPlanId && activePlan && renewalDate && 
-            <CurrentPlanCard plan={activePlan} features={activePlanFeatures} renewalDate={renewalDate} variant={variant} onUpgrade={handleUpgrade} animation={animation} interactive={interactive}/>
-          }
+          {showcurrentPlanId && activePlan && renewalDate && <CurrentPlanCard plan={activePlan} features={activePlanFeatures} renewalDate={renewalDate} variant={variant} onUpgrade={handleUpgrade} animation={animation} interactive={interactive}/>}
           {showUsageOverview && (
             <UsageOverviewCard
               variant={variant}
@@ -827,3 +857,292 @@ export const BillingPage:React.FC<BillingPageProps> = (props) => {
   </DialogProvider>
   )
 }
+
+  ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+```tsx
+import { useState, useCallback } from "react"
+import {
+  FaCcVisa,
+  FaCcMastercard,
+  FaCcAmex,
+  FaCcPaypal,
+} from "react-icons/fa"
+import { Home, Settings2, Proportions, X } from "lucide-react"
+import { BillingPage } from "@src/components/templates/billingpage"
+import { Button } from "@src/components/button"
+import { Card } from "@src/components/card"
+import { Typography } from "@src/components/typography"
+
+/* ----------------------------------
+ * Static Data
+ * ---------------------------------- */
+
+const AVAILABLE_PAYMENT_METHODS = [
+  { id: "visa", label: "Visa", icon: FaCcVisa },
+  { id: "mastercard", label: "Mastercard", icon: FaCcMastercard },
+  { id: "amex", label: "American Express", icon: FaCcAmex },
+  { id: "paypal", label: "PayPal", icon: FaCcPaypal },
+]
+
+const PLANS = [
+  {
+    id: 1,
+    name: "Starter",
+    price: "$0/month",
+    icon: Home,
+    ctaLabel: "Get Started",
+    features: [
+      { label: "1 Project", available: true },
+      { label: "Community Support", available: true },
+    ],
+  },
+  {
+    id: 2,
+    name: "Pro",
+    price: "$29/month",
+    icon: Settings2,
+    highlighted: true,
+    ctaLabel: "Upgrade",
+    features: [
+      { label: "Unlimited Projects", available: true },
+      { label: "Priority Support", available: true },
+    ],
+  },
+  {
+    id: 3,
+    name: "Enterprise",
+    price: "$99/month",
+    icon: Proportions,
+    highlighted: true,
+    ctaLabel: "Contact Sales",
+    features: [{ label: "Custom Integrations", available: true }],
+  },
+]
+
+const INVOICES = [
+  { id: "1", plan: "Pro Annual", date: "Jan 21, 2025", amount: "$21", status: "Pending" },
+  { id: "2", plan: "Pro Annual", date: "Dec 21, 2024", amount: "$22", status: "Paid" },
+  { id: "3", plan: "Pro Annual", date: "Dec 21, 2024", amount: "$23", status: "Failed" },
+]
+
+/* ----------------------------------
+ * Component
+ * ---------------------------------- */
+
+export default function BillingDemo() {
+  const [isPaymentModalOpen, setPaymentModalOpen] = useState(false)
+
+  /* ----------------------------------
+   * Handlers (defined as const)
+   * ---------------------------------- */
+
+  const handleInvoiceView = useCallback((invoice) => {
+    //write your logic here
+    console.log("View invoice:", invoice.id)
+  }, [])
+
+  const handleInvoiceDownload = useCallback((invoice) => {
+    //write your logic here
+    console.log("Download invoice:", invoice.id)
+  }, [])
+
+  const handleInvoiceDelete = useCallback((invoice) => {
+    //write your logic here
+    console.log("Delete invoice:", invoice.id)
+  }, [])
+
+  const handleCancelSubscription = useCallback(() => {
+    //write your logic here
+    console.log("Cancel subscription")
+  }, [])
+
+  const handleUpdatePaymentMethod = useCallback(() => {
+    setPaymentModalOpen(true)
+  }, [])
+
+  const handleSelectPaymentMethod = useCallback((methodId: string) => {
+    console.log("Selected payment method:", methodId)
+    //write your logic here
+  }, [])
+
+  /* ----------------------------------
+   * Render
+   * ---------------------------------- */
+
+  return (
+    <BillingPage
+      /* ---- Plan & Billing ---- */
+      variant="dark"
+      animation="fadeIn"
+      renewalDate={new Date("2025-03-21")}
+      plans={PLANS}
+      invoices={INVOICES}
+
+      /* ---- Usage Meters ---- */
+      apiUsage={{ label: "API Calls", used: 41000, total: 50000 }}
+      storageUsage={{ label: "Storage", used: 45, total: 100, unit: "GB" }}
+      seatsUsage={{ label: "Active Seats", used: 8, total: 10 }}
+
+      /* ---- Invoice Actions ---- */
+      onInvoiceView={handleInvoiceView}
+      onInvoiceDownload={handleInvoiceDownload}
+      onInvoiceDelete={handleInvoiceDelete}
+
+      /* ---- Subscription ---- */
+      onCancelSubscription={handleCancelSubscription}
+
+      /* ---- Payment Card ---- */
+      card={{
+        brand: FaCcVisa,
+        cardNumber: "4242424242424242",
+        expiryMonth: "12",
+        expiryYear: "26",
+        cardHolderName: "John Doe",
+      }}
+      onUpdatePaymentMethod={handleUpdatePaymentMethod}
+
+      /* ---- Custom Payment Method Modal ---- */
+      renderUpdatePaymentMethod={() =>
+        isPaymentModalOpen ? (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+            onClick={() => setPaymentModalOpen(false)}
+          >
+            <Card
+              className="w-full max-w-md p-6"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <Typography variant="h6">Select Payment Method</Typography>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => setPaymentModalOpen(false)}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+
+              <div className="space-y-3">
+                {AVAILABLE_PAYMENT_METHODS.map((method) => {
+                  const Icon = method.icon
+                  return (
+                    <button
+                      key={method.id}
+                      className="w-full flex items-center gap-4 rounded-lg border p-3 hover:bg-muted transition"
+                      onClick={() => handleSelectPaymentMethod(method.id)}
+                    >
+                      <Icon className="w-8 h-8" />
+                      <span className="font-medium">{method.label}</span>
+                    </button>
+                  )
+                })}
+              </div>
+
+              <Typography variant="body-small" className="mt-4 text-zinc-500">
+                Demo selector only. No real payment data is collected.
+              </Typography>
+            </Card>
+          </div>
+        ) : null
+      }
+    />
+  )
+}
+```
+
+## props
+
+### Core Configuration
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `headerTitle` | `string` | `"OpenSrc"` | Title displayed in the billing page header. |
+| `headerIcon` | `LucideIcon` | `Building2` | Icon shown next to the header title. |
+| `variant` | `"dark" \| "default" \| "light"` | `"dark"` | Visual theme variant applied across all billing components. |
+
+---
+
+### Plans & Pricing
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `plans` | `PlanProps[]` | `[]` | Available subscription plans displayed in the pricing grid. |
+| `currentPlan` | `number` | `1` | ID of the currently active plan. |
+| `renewalDate` | `Date` | — | Next billing or renewal date for the active plan. |
+| `showCurrentPlan` | `boolean` | `true` | Toggles visibility of the active plan card. |
+| `showPricing` | `boolean` | `false` | Forces the pricing grid to be visible. |
+| `pricingTitle` | `string` | `"Simple Pricing"` | Title displayed above the pricing grid. |
+| `pricingDescription` | `string` | `"Choose the plan that works best for you"` | Description shown under the pricing title. |
+
+---
+
+### Usage Overview
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `showUsageOverview` | `boolean` | `true` | Controls visibility of the usage overview card. |
+| `apiUsage` | `UsageMetric` | — | API usage metric with used and total values. |
+| `storageUsage` | `UsageMetric` | — | Storage consumption metric with circular progress indicator. |
+| `seatsUsage` | `UsageMetric` | — | Seat allocation and usage metric. |
+
+---
+
+### Payment Method
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `card` | `CardDetails` | — | Active payment card details (brand, masked number, expiry). |
+| `onUpdatePaymentMethod` | `() => void` | — | Triggered when the user clicks **Update Payment Method**. |
+| `onCancelSubscription` | `() => void` | — | Fired after confirming subscription cancellation. |
+| `renderUpdatePaymentMethod` | `() => ReactNode` | — | Optional render slot for a custom payment update modal or flow. |
+
+---
+
+### Billing History
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `showBillingTable` | `boolean` | `true` | Toggles the billing history table. |
+| `invoices` | `Invoice[]` | `[]` | List of billing invoices displayed in the table. |
+| `onInvoiceView` | `(invoice: Invoice) => void` | — | Called when an invoice is viewed. |
+| `onInvoiceDownload` | `(invoice: Invoice) => void` | — | Called when an invoice is downloaded. |
+| `onInvoiceDelete` | `(invoice: Invoice) => void` | — | Called when an invoice is deleted. |
+
+---
+
+### Animation
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `animation` | `"none" \| "fadeIn" \| "slideUp" \| "scaleIn" \| "flipIn" \| "bounceIn" \| "floatIn"` | `"slideUp"` | Page-wide and card-level animation style. |
+
+---
+
+### PlanProps
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `id` | `number` | Unique identifier for the plan. |
+| `name` | `string` | Plan display name. |
+| `icon` | `React.ElementType` | Optional icon shown with the plan. |
+| `price` | `string` | Price label displayed to the user. |
+| `features` | `Feature[]` | List of plan features and availability. |
+| `ctaLabel` | `string` | Custom label for the call-to-action button. |
+| `onCtaClick` | `(plan: PlanProps) => void` | Triggered when the plan CTA is clicked. |
+
+---
+
+### UsageMetric
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `label` | `string` | Metric label (e.g., API Requests). |
+| `used` | `number` | Amount used in the current cycle. |
+| `total` | `number` | Total available quota. |
+| `unit` | `string` | Unit label (e.g., GB, requests). |

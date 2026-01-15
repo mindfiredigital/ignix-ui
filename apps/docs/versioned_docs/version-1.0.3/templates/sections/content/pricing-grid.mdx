@@ -45,13 +45,14 @@ It supports:
 import { Check, Star, X } from "lucide-react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { motion } from "framer-motion"
-import { Button } from "@ignix-ui/button"
-import { Card, CardContent, CardFooter, CardHeader } from "@ignix-ui/card"
-import { Typography } from "@ignix-ui/typography"
-import { cn } from "../../../utils/cn"
-import { Switch } from "@ignix-ui/switch"
 import React, { useMemo, useState } from "react"
 import z from "zod"
+import { Card, CardContent, CardFooter, CardHeader } from "@ignix-ui/card"
+import { Button } from "@ignix-ui/button"
+import { cn } from "../../../utils/cn"
+import { Typography } from "@ignix-ui/typography"
+import { Switch } from "@ignix-ui/switch"
+
 
 /* -------------------------------------------------------------------------- */
 /*                                ZOD SCHEMAS                                 */
@@ -159,9 +160,9 @@ export interface PricingGridProps  extends PricingVisualProps, CardPlansProps{
   className?: string
   animation?: "none"| "fadeIn"| "slideUp"| "scaleIn"| "flipIn"| "bounceIn"| "floatIn"
   interactive?: "none"| "hover"| "press"| "lift"| "tilt"| "glow"
-  modernVariant?: "default" | "dark"
+  modernVariant?: "default" | "dark" | "light"
   table?: boolean
-  toggleOptions?: ToggleOption[];
+  toggleOptions?: [ToggleOption, ToggleOption];
   value?: string;
   onValueChange?: (value: string) => void;
   onCtaClick?: (plan: PlanProps) => void
@@ -341,7 +342,7 @@ export const CardFooterAction: React.FC<CardFooterActionProps> = React.memo(
           size="wide"
           aria-label={`${plan?.name} plan action`}
           animationVariant="fadeInOut"
-          className={`${plan?.gradient}`}
+          className={`${plan?.gradient} hover:cursor-pointer`}
           onClick={handleClick}
         >
           {plan.ctaLabel}
@@ -352,7 +353,7 @@ export const CardFooterAction: React.FC<CardFooterActionProps> = React.memo(
           aria-label={`${plan?.name} plan action`}       
           animationVariant="fadeInOut"
           className={cn(
-            "w-full max-w-[220px] font-semibold transition",
+            "w-full max-w-[220px] font-semibold transition hover:cursor-pointer",
             modernUI === "vector"
               ? isHighlighted
                 ? PricingGridPriceVariant({ variant })
@@ -666,8 +667,8 @@ const PricingGridContent: React.FC<PricingGridProps> = ({
   }, [plans, modernUI, allowDifferentCardColors, variant]);
 
   return (
-    <div className="w-full px-4 py-10">
-      <Card 
+    <div className="w-full px-0 md:px-4 py-10">
+      <Card
         className={cn(
           "mx-auto max-w-7xl rounded-3xl bg-background shadow-lg",
           className
@@ -786,6 +787,7 @@ const PricingGridContent: React.FC<PricingGridProps> = ({
 export const PricingGrid: React.FC<PricingGridProps> = (props) => {
   return <PricingGridContent {...props} />
 }
+
 ```
   </TabItem>
 </Tabs>
@@ -798,7 +800,8 @@ export const PricingGrid: React.FC<PricingGridProps> = (props) => {
 import { PricingGrid } from "@/components/ui/pricinggrid"
 import { Check } from "lucide-react"
 
-const plans = [
+export default function PricingPage() {
+  const plans = [
   {
     id: 1,
     name: "Starter",
@@ -836,10 +839,6 @@ const plans = [
   },
 ]
 
-import React from "react"
-import { PricingGrid } from "@/components/ui/pricinggrid"
-
-export default function PricingPage() {
   const [billing, setBilling] = React.useState<"monthly" | "yearly">("monthly")
   const [plans, setPlans] = React.useState<any[]>([])
 
@@ -864,6 +863,94 @@ export default function PricingPage() {
       value={billing}
       onValueChange={(v) => setBilling(v as "monthly" | "yearly")}
       onCtaClick={(plans) => handleClick(plans)}
+    />
+  )
+}
+
+```
+
+### Advance Pricing Grid
+
+```tsx
+import { PricingGrid } from "@/components/ui/pricinggrid"
+import { Check } from "lucide-react"
+import React from "react"
+
+export default function PricingPage() {
+  const plans = [
+    {
+      name: "Starter",
+      price: "$FREE /month",
+      gradient: "bg-gradient-to-br from-yellow-900 to-orange-500",
+      icon: Lightbulb,
+      features: [
+        { label: "Disk Space 128 GB" },
+        { label: "Bandwidth 15 GB" },
+        { label: "Databases 1" },
+        { label: "License", available: false },
+        { label: "Email Accounts", available: false },
+        { label: "24 Hours Support", available: false },
+      ],
+      ctaLabel: "Sign Up"
+    },
+    {
+      name: "Standard",
+      price: "$ 19.99 /month",
+      highlighted: true,
+      icon: CreditCard,
+      gradient: "bg-gradient-to-br from-purple-500 to-fuchsia-500",
+      features: [
+        { label: "Storage 20GB", icon: HardDrive },
+        { label: "Databases 20", icon: Database },
+        { label: "License", icon: Settings2 },
+        { label: "Email Accounts", icon: Mail },
+        { label: "24/7 Support", icon: LifeBuoy },
+        { label: "Agent Support", icon: Users, available: false },
+      ],
+      ctaLabel: "Subscribe"
+    },
+    {
+      name: "Enterprise",
+      price: "$29.99 /month",
+      gradient: "bg-gradient-to-br from-teal-500 to-emerald-500",
+      icon: BarChart3,
+      features: [
+        { label: "Storage 50GB", icon: HardDrive },
+        { label: "Databases 50", icon: Database },
+        { label: "License", icon: Settings2 },
+        { label: "Email Accounts", icon: Mail },
+        { label: "24/7 Support", icon: LifeBuoy },
+        { label: "Agent Support", icon: Users },
+      ],
+      ctaLabel: "Check Now"
+    }
+  ];
+
+  const [billing, setBilling] = React.useState<"monthly" | "yearly">("monthly")
+  const [plans, setPlans] = React.useState<any[]>([])
+
+  const fetchPlans = async (billingType: "monthly" | "yearly") => {
+    console.log("Billing Type:" , billingType)
+    // your fetching plans goes here 
+  }
+
+  const handleClick = (plan) => {
+    console.log(plan.id)
+    // your plan action goes here 
+  }
+
+  // 🔁 Fetch whenever billing changes
+  React.useEffect(() => {
+    fetchPlans(billing)
+  }, [billing])
+
+  return (
+    <PricingGrid
+      plans={plans}
+      value={billing}
+      onValueChange={(v) => setBilling(v as "monthly" | "yearly")}
+      onCtaClick={(plans) => handleClick(plans)}
+      modernUI="advance"
     />
   )
 }

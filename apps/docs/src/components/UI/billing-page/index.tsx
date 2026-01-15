@@ -17,15 +17,15 @@ import {
   Users,
 } from "lucide-react"
 import { cva, type VariantProps } from "class-variance-authority"
-import { Avatar } from "../../../../components/avatar"
-import { Breadcrumbs } from "../../../../components/breadcrumbs"
-import { Button } from "../../../../components/button"
-import { Card } from "../../../../components/card"
-import { Typography } from "../../../../components/typography"
-import { cn } from "../../../../../utils/cn"
-import { useDialog } from "../../../../components/dialog-box/use-dialog"
-import { DialogProvider } from "../../../../components/dialog-box"
-import { ComparisonTable } from "../../../section/content/comparison-table"
+import { Avatar } from "../avatar"
+import { Breadcrumbs } from "../breadcrumbs"
+import { Button } from "../button"
+import { Card } from "../card"
+import { Typography } from "../typography"
+import { useDialog } from "../dialog-box/use-dialog"
+import { DialogProvider } from "../dialog-box"
+import { ComparisonTable } from "../comparison-table"
+import { cn } from "@site/src/utils/cn"
 
 /** -------------------------------- Variants -------------------------------- */
 const ModernPricingGridVariant = cva("", {
@@ -212,7 +212,7 @@ export const GlassCard: React.FC<GlassCardProps> = React.memo(({ children, varia
 /** ---------------------------- Current Plan -------------------------------- */
 export const CurrentPlanCard: React.FC<ActivePlanProps> = React.memo(
   ({ plan, features, renewalDate, variant, onUpgrade, animation, interactive }: ActivePlanProps) => {
-    console.log(features)
+    
     if (!plan) return null
     return (
       <GlassCard variant={variant} animation={animation} interactive={interactive}>
@@ -672,12 +672,12 @@ export const BillingContent:React.FC<BillingPageProps> = ({
   features,
   showcurrentPlanId = true,
   showUsageOverview = true,
-  showPricing = true,
+  showPricing = false,
   showBillingTable = true,
   pricingTitle = "Simple Pricing",
   pricingDescription = "Choose the plan that works best for you",
   variant = "dark",
-  currentPlanId = 0,
+  currentPlanId = 1,
   renewalDate,
   invoices,
   onInvoiceView,
@@ -719,7 +719,6 @@ export const BillingContent:React.FC<BillingPageProps> = ({
 
     return features.filter((f) => {
       const value = activePlan.featureMap[f.id]
-      console.log(value,activePlan.featureMap[f.id])
       return (value)
     })
   }, [features, activePlan])
