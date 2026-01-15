@@ -7,14 +7,14 @@ import {
     Loader2,
     CheckCircle,
 } from 'lucide-react';
-import { Button } from '../../button';
-import { AnimatedInput } from '../../input';
-import { Typography } from '../../typography';
+import { Button } from '@site/src/components/UI/button';
+import { AnimatedInput } from '@site/src/components/UI/input';
+import { Typography } from '@site/src/components/UI/typography';
 import type { ApiKey, ApiKeyScope, GenerateKeyModalProps } from '../types';
 import { useState } from 'react';
 import { StatusBadge } from '../components/StatusBadge';
 import { SCOPES } from '../constants';
-import { cn } from '../../../../utils/cn';
+import { cn } from '@site/src/utils/cn';
 import { ScopeBadge } from '../components/ScopeBadge';
 
 export const GenerateKeyModal = ({
@@ -240,7 +240,7 @@ export const GenerateKeyModal = ({
                                         <Button
                                             onClick={handleGenerate}
                                             disabled={isLoading || !formData.name.trim()}
-                                            variant={buttonVariant as any}
+                                            variant={buttonVariant}
                                             animationVariant={buttonAnimationVariant}
                                             className="cursor-pointer"
                                         >
