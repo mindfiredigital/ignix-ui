@@ -309,12 +309,24 @@
       }
     },
     "list-basic": {
-      "name": "ListBasic",
+      "name": "list-basic",
       "description": "A flexible list component that supports both unordered (bullet points) and ordered (numbered) lists with consistent spacing between items. Optimized with React.memo, useMemo, and useCallback for performance.",
       "dependencies": [],
       "files": {
         "main": {
           "path": "components/list-basic/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "list-with-actions": {
+      "name": "List-With-Actions",
+      "description": "A list component that extends ListBasic functionality by adding contextual action buttons (like Edit, Delete, View) to each list item. Actions appear on hover/focus on desktop and remain always visible on mobile. Optimized with React.memo, useMemo, and useCallback for performance.",
+      "dependencies": [],
+      "componentDependencies": ["list-basic"],
+      "files": {
+        "main": {
+          "path": "components/list-with-actions/index.tsx",
           "type": "component"
         }
       }
@@ -875,12 +887,13 @@
       "componentDependencies": [
         "button",
         "switch",
-        "card"
+        "card",
+        "typography"
       ],
       "files": {
         "main": {
-          "path": "templates/sections/pricing-grid/index.tsx",
-          "type" : "template"
+          "path": "components//pricing-grid/index.tsx",
+          "type" : "component"
         }
       }
     },
@@ -944,6 +957,50 @@
       "files": {
         "main": {
           "path": "templates/pages/api-keys/index.tsx",
+          "type": "template"
+        }
+      }
+    },
+    "comparisonTable": {
+      "name": "ComparisonTable",
+      "description": "The Comparison Table provides a clear, scalable way to evaluate features, plans, or capabilities side-by-side. It adapts seamlessly between desktop grid and mobile-friendly layouts, ensuring consistent readability, accessibility, and decision-making across devices.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "typography",
+        "card"
+      ],
+      "files": {
+        "main": {
+          "path": "components/comparison-table/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "billingPage": {
+      "name": "BillingPage",
+      "description": "",
+      "dependencies": [
+        "framer-motion",
+        "react-icons",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "avatar",
+        "button",
+        "breadcrumbs",
+        "typography",
+        "card",
+        "comparisonTable",
+        "dialogBox"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/billing-page/index.tsx",
           "type": "template"
         }
       }

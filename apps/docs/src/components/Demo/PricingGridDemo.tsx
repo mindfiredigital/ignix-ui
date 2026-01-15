@@ -17,7 +17,7 @@ import {
 } from "lucide-react"
 
 const pricingBadgePositions = [ "none", "top", "middle" ];
-const variants = [ "default", "dark" ];
+const variants = [ "default", "dark", "light" ];
 const animations = ["none", "fadeIn", "slideUp", "scaleIn", "flipIn", "bounceIn", "floatIn"];
 const interactives = ["none", "hover", "press", "lift", "tilt", "glow"];
 const modernUIs = ["vector", "", "advance"];
@@ -27,7 +27,7 @@ const PricingGridBasicDemo = () => {
     {
       name: "Starter",
       price: "$FREE /month",
-      gradient: "from-yellow-900 to-orange-500",
+      gradient: "bg-gradient-to-br from-yellow-900 to-orange-500",
       icon: Lightbulb,
       features: [
         { label: "Disk Space 128 GB" },
@@ -44,7 +44,7 @@ const PricingGridBasicDemo = () => {
       price: "$ 19.99 /month",
       highlighted: true,
       icon: CreditCard,
-      gradient: "from-purple-500 to-fuchsia-500",
+      gradient: "bg-gradient-to-br from-purple-500 to-fuchsia-500",
       features: [
         { label: "Storage 20GB", icon: HardDrive },
         { label: "Databases 20", icon: Database },
@@ -58,7 +58,7 @@ const PricingGridBasicDemo = () => {
     {
       name: "Enterprise",
       price: "$29.99 /month",
-      gradient: "from-teal-500 to-emerald-500",
+      gradient: "bg-gradient-to-br from-teal-500 to-emerald-500",
       icon: BarChart3,
       features: [
         { label: "Storage 50GB", icon: HardDrive },
@@ -72,18 +72,16 @@ const PricingGridBasicDemo = () => {
     }
   ];
 
-  const [pricingBadgePosition, setPricingBadgePosition] = useState("middle");
-  const [animation, setAnimation] = useState("fadeIn");
-  const [interactive, setInteractive] = useState("press");
-  const [variant, setVariant] = useState("dark");
-  const [differentColors, setDifferentColors] = useState(false); // ✅ new state
+  const [animation, setAnimation] = useState<string>("fadeIn");
+  const [interactive, setInteractive] = useState<string>("press");
+  const [variant, setVariant] = useState<string>("dark");
 
   const codeString = `
   const plans = [
     {
       name: "Starter",
       price: "$FREE /month",
-      gradient: "from-yellow-900 to-orange-500",
+      gradient: "bg-gradient-to-br from-yellow-900 to-orange-500",
       icon: Lightbulb,
       features: [
         { label: "Disk Space 128 GB" },
@@ -97,10 +95,11 @@ const PricingGridBasicDemo = () => {
     },
     {
       name: "Standard",
-      price: "$ 19.99 /month",
+      price: "$19.99 /month",
       highlighted: true,
       icon: CreditCard,
-      gradient: "from-purple-500 to-fuchsia-500",
+      currentPlan: true,
+      gradient: "bg-gradient-to-br from-purple-500 to-fuchsia-500",
       features: [
         { label: "Storage 20GB", icon: HardDrive },
         { label: "Databases 20", icon: Database },
@@ -114,7 +113,7 @@ const PricingGridBasicDemo = () => {
     {
       name: "Enterprise",
       price: "$29.99 /month",
-      gradient: "from-teal-500 to-emerald-500",
+      gradient: "bg-gradient-to-br from-teal-500 to-emerald-500",
       icon: BarChart3,
       features: [
         { label: "Storage 50GB", icon: HardDrive },
@@ -132,8 +131,6 @@ const PricingGridBasicDemo = () => {
     variant="${variant}"
     animation="${animation}"
     interactive="${interactive}"
-    pricingBadgePosition="${pricingBadgePosition}"
-    ${differentColors ? "allowDifferentCardColors" : ""}
   />
   `;
 
@@ -149,14 +146,6 @@ const PricingGridBasicDemo = () => {
           />
         </div>
 
-        <div className="space-y-2">
-          <VariantSelector
-            variants={pricingBadgePositions}
-            selectedVariant={pricingBadgePosition}
-            onSelectVariant={setPricingBadgePosition}
-            type="Pricing Badge Position"
-          />
-        </div>
 
         <div className="space-y-2">
           <VariantSelector
@@ -175,18 +164,7 @@ const PricingGridBasicDemo = () => {
             type="Interactive"
           />
         </div>
-
-        {/* ✅ Checkbox for Different Colors */}
-        <div className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            id="differentColors"
-            checked={differentColors}
-            onChange={() => setDifferentColors(!differentColors)}
-          />
-          <label htmlFor="differentColors">Allow Different Colors</label>
-        </div>
-      </div>
+    </div>
 
       {/* Demo */}
       <Tabs>
@@ -194,11 +172,10 @@ const PricingGridBasicDemo = () => {
           <div className="border rounded-lg overflow-hidden">
             <PricingGrid 
               plans={plans} 
-              variant={variant as any}
+              modernUI="basic"
+              modernVariant={variant as any}
               animation={animation as any}
               interactive={interactive as any}
-              pricingBadgePosition={pricingBadgePosition as any}
-              allowDifferentCardColors={differentColors} // ✅ pass prop
             />
           </div>
         </TabItem>
@@ -220,7 +197,7 @@ const PricingGridModernDemo = () => {
     {
       name: "Starter",
       price: "$FREE /month",
-      gradient: "from-yellow-900 to-orange-500",
+      gradient: "bg-gradient-to-br from-yellow-900 to-orange-500",
       icon: Lightbulb,
       features: [
         { label: "Disk Space 128 GB" },
@@ -237,7 +214,7 @@ const PricingGridModernDemo = () => {
       price: "$ 19.99 /month",
       highlighted: true,
       icon: CreditCard,
-      gradient: "from-purple-500 to-fuchsia-500",
+      gradient: "bg-gradient-to-br from-purple-500 to-fuchsia-500",
       features: [
         { label: "Storage 20GB", icon: HardDrive },
         { label: "Databases 20", icon: Database },
@@ -251,7 +228,7 @@ const PricingGridModernDemo = () => {
     {
       name: "Enterprise",
       price: "$29.99 /month",
-      gradient: "from-teal-500 to-emerald-500",
+      gradient: "bg-gradient-to-br from-teal-500 to-emerald-500",
       icon: BarChart3,
       features: [
         { label: "Storage 50GB", icon: HardDrive },
@@ -264,14 +241,31 @@ const PricingGridModernDemo = () => {
       ctaLabel: "Check Now"
     }
   ];
-  const [modernUI, setmodernUI] = useState("vector");
+  const [modernUI, setmodernUI] = useState<string>("advance");
+  const [pricingBadgePosition, setPricingBadgePosition] = useState<string>("middle");
+  const [differentColors, setDifferentColors] = useState<boolean>(false);
+  const [table, setTable] = useState<boolean>(false);
+
+  let vectorOnlyProps = "";
+
+  if (modernUI === "vector") {
+    vectorOnlyProps += `pricingBadgePosition="${pricingBadgePosition}" `;
+
+    if (differentColors) {
+      vectorOnlyProps += `allowDifferentCardColors `;
+    }
+
+    if(table) {
+      vectorOnlyProps += `table`;
+    }
+  }
 
   const codeString = `
   const plans = [
     {
       name: "Starter",
       price: "$FREE /month",
-      gradient: "from-yellow-900 to-orange-500",
+      gradient: "bg-gradient-to-br from-yellow-900 to-orange-500",
       icon: Lightbulb,
       features: [
         { label: "Disk Space 128 GB" },
@@ -288,11 +282,11 @@ const PricingGridModernDemo = () => {
       price: "$ 19.99 /month",
       highlighted: true,
       icon: CreditCard,
-      gradient: "from-purple-500 to-fuchsia-500",
+      gradient: "bg-gradient-to-br from-purple-500 to-fuchsia-500",
       features: [
         { label: "Storage 20GB", icon: HardDrive },
         { label: "Databases 20", icon: Database },
-        { label: "License", icon: Settings2  },
+        { label: "License", icon: Settings2 },
         { label: "Email Accounts", icon: Mail },
         { label: "24/7 Support", icon: LifeBuoy },
         { label: "Agent Support", icon: Users, available: false },
@@ -302,7 +296,7 @@ const PricingGridModernDemo = () => {
     {
       name: "Enterprise",
       price: "$29.99 /month",
-      gradient: "from-teal-500 to-emerald-500",
+      gradient: "bg-gradient-to-br from-teal-500 to-emerald-500",
       icon: BarChart3,
       features: [
         { label: "Storage 50GB", icon: HardDrive },
@@ -315,11 +309,14 @@ const PricingGridModernDemo = () => {
       ctaLabel: "Check Now"
     }
   ];
-  <PricingGrid 
-    plans={plans} 
+
+  <PricingGrid
+    plans={plans}
     modernUI="${modernUI}"
+    ${vectorOnlyProps}
   />
-`;
+  `;
+
  
   return (
     <div className="space-y-8 mb-8">
@@ -332,6 +329,39 @@ const PricingGridModernDemo = () => {
             type="Modern UI"
           />
         </div>
+
+        {/* ✅ Checkbox for Different Colors */}
+        {modernUI === "vector" && (
+        <>
+          <div className="space-y-2">
+            <VariantSelector
+              variants={pricingBadgePositions}
+              selectedVariant={pricingBadgePosition}
+              onSelectVariant={setPricingBadgePosition}
+              type="Pricing Badge Position"
+            />
+          </div>
+          <div className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id="differentColors"
+              checked={differentColors}
+              onChange={() => setDifferentColors(!differentColors)}
+            />
+            <label htmlFor="differentColors">Allow Different Colors</label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id="table"
+              checked={table}
+              onChange={() => setTable(!table)}
+            />
+            <label htmlFor="table">Feature in table</label>
+          </div>
+        </>
+      )}
+
       </div>
       <Tabs>
         <TabItem value="preview" label="Preview">
@@ -339,6 +369,9 @@ const PricingGridModernDemo = () => {
             <PricingGrid 
               plans={plans} 
               modernUI={modernUI as any} // ✅ pass prop
+              pricingBadgePosition={pricingBadgePosition as any}
+              allowDifferentCardColors={differentColors}
+              table={table}
             />
           </div>
         </TabItem>
