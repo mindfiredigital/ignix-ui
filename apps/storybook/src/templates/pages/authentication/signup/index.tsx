@@ -1,443 +1,77 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// SignUp Component - Unified Registration Form
-// Includes all required fields: First Name, Last Name, Email, Confirm Email,
-// Password, Confirm Password, Terms & Conditions, and optional CAPTCHA
-// ─────────────────────────────────────────────────────────────────────────────
-
+// SignUp.tsx
 import * as React from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../../../utils/cn";
-import { Button } from "../../../../components/button";
-import { AnimatedInput } from "../../../../components/input";
-import {
-    Eye,
-    EyeOff,
-    AlertCircle,
-    Mail,
-    Lock,
-    Shield,
-    User,
-    UserPlus,
-    Loader2,
-    Check,
-    Star,
-    Users,
-    Zap,
-    Globe,
-    ShieldCheck,
-    CheckCircle,
-    XCircle,
-} from "lucide-react";
+import { type SignUpProps } from "./types";
+import { containerVariants } from "./variants";
+import { useSignUpForm } from "./hooks/useSignUpForm";
+import { LeftPanel } from "./components/LeftPanel";
+import { FormContent } from "./components/FormContent";
 
-// Social Icons
-import { FcGoogle } from "react-icons/fc";
-import { FaGithub, FaMicrosoft } from "react-icons/fa";
-
-// Types
-export interface SignUpProps {
-    /** Layout type */
-    type?: "centered" | "split";
-
-    /** Form variant */
-    variant?: VariantProps<typeof containerVariants>["variant"];
-
-    /** Company/brand name */
-    companyName?: string;
-
-    /** Custom logo component */
-    logo?: React.ReactNode;
-
-    /** Whether to show confirm email field */
-    requireEmailConfirmation?: boolean;
-
-    /** Form submission handler */
-    onSubmit?: (data: SignUpFormData) => void;
-
-    /** Login click handler */
-    onLogin?: () => void;
-
-    /** Callback for Google sign-up */
-    onGoogleSignUp?: () => void;
-
-    /** Callback for GitHub sign-up */
-    onGitHubSignUp?: () => void;
-
-    /** Callback for Microsoft sign-up */
-    onMicrosoftSignUp?: () => void;
-
-    /** Login link text */
-    loginText?: string;
-
-    /** Loading state */
-    loading?: boolean;
-
-    /** Error message */
-    error?: string;
-
-    /** Show social sign-up buttons */
-    showSocialSignUp?: boolean;
-
-    /** Show login link */
-    showLoginLink?: boolean;
-
-    /** Additional className */
-    className?: string;
-
-    /** Terms & Conditions configuration */
-    termsConfig?: {
-        /** Terms & Conditions URL */
-        termsUrl?: string;
-        /** Privacy Policy URL */
-        privacyUrl?: string;
-        /** Custom terms text */
-        termsText?: string | React.ReactNode;
-        /** Custom privacy text */
-        privacyText?: string | React.ReactNode;
-        /** Callback when terms link is clicked */
-        onTermsClick?: () => void;
-        /** Callback when privacy link is clicked */
-        onPrivacyClick?: () => void;
-    };
-
-    /** Password strength configuration */
-    passwordStrength?: {
-        /** Minimum password length */
-        minLength?: number;
-        /** Require uppercase letters */
-        requireUppercase?: boolean;
-        /** Require lowercase letters */
-        requireLowercase?: boolean;
-        /** Require numbers */
-        requireNumbers?: boolean;
-        /** Require special characters */
-        requireSpecialChars?: boolean;
-        /** Show strength meter */
-        showStrengthMeter?: boolean;
-        /** Custom strength labels */
-        strengthLabels?: {
-            weak: string;
-            medium: string;
-            strong: string;
-        };
-    };
-
-    /** CAPTCHA configuration */
-    captchaConfig?: {
-        /** Whether CAPTCHA is enabled */
-        enabled?: boolean;
-        /** Site key for reCAPTCHA */
-        siteKey?: string;
-        /** CAPTCHA type */
-        type?: "checkbox" | "invisible" | "score";
-        /** CAPTCHA theme */
-        theme?: "light" | "dark";
-        /** CAPTCHA size */
-        size?: "normal" | "compact";
-        /** Callback when CAPTCHA is verified */
-        onVerify?: (token: string) => void;
-        /** Callback when CAPTCHA expires */
-        onExpire?: () => void;
-        /** Callback when CAPTCHA errors */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onError?: (error: any) => void;
-    };
-
-    /** Split Layout Background Customization */
-    splitBackground?: {
-        /** Background gradient classes for left panel */
-        gradient?: string;
-        /** Text color for left panel */
-        textColor?: string;
-        /** Override company name color */
-        companyNameColor?: string;
-        /** Override description color */
-        descriptionColor?: string;
-        /** Custom left panel className */
-        leftPanelClassName?: string;
-        /** Background image URL */
-        backgroundImage?: string;
-        /** Overlay color for background image */
-        overlayColor?: string;
-        /** Custom right panel className */
-        rightPanelClassName?: string;
-    };
-
-    /** Button Customization */
-    buttonStyle?: {
-        /** Background gradient classes for sign up button */
-        gradient?: string;
-        /** Hover gradient classes for sign up button */
-        hoverGradient?: string;
-        /** Text color for sign up button */
-        textColor?: string;
-        /** Button shadow classes */
-        shadow?: string;
-        /** Hover shadow classes */
-        hoverShadow?: string;
-        /** Custom button className */
-        className?: string;
-    };
-
-    /** Left Panel Content Customization (Split Layout Only) */
-    leftPanelContent?: {
-        /** Custom title text */
-        title?: string | React.ReactNode;
-        /** Custom description text */
-        description?: string | React.ReactNode;
-        /** Custom subtitle text */
-        subtitle?: string | React.ReactNode;
-        /** Features/benefits list */
-        features?: Array<{
-            text: string;
-            icon?: React.ReactNode;
-            iconColor?: string;
-            textClassName?: string;
-        }>;
-        /** Testimonials/customer quotes */
-        testimonials?: Array<{
-            quote: string;
-            author: string;
-            role?: string;
-        }>;
-        /** Statistics to display */
-        statistics?: Array<{
-            value: string;
-            label: string;
-            subtext?: string;
-        }>;
-        /** Custom content component (overrides all other content) */
-        customContent?: React.ReactNode;
-        /** Footer text */
-        footerText?: string | React.ReactNode;
-        /** Hide default logo and company name */
-        hideBranding?: boolean;
-        /** Additional className for content container */
-        contentClassName?: string;
-        /** Animation variants for content */
-        animationConfig?: {
-            titleDelay?: number;
-            descriptionDelay?: number;
-            featuresDelay?: number;
-            staggerChildren?: number;
-        };
-        /** Layout options */
-        layout?: {
-            /** Content alignment */
-            align?: "left" | "center" | "right";
-            /** Content max width */
-            maxWidth?: string;
-            /** Enable/disable animations */
-            animate?: boolean;
-        };
-    };
-}
-
-export interface SignUpFormData {
-    firstName: string;
-    lastName: string;
-    email: string;
-    confirmEmail: string;
-    password: string;
-    confirmPassword: string;
-    acceptTerms: boolean;
-    captchaToken?: string;
-}
-
-export type PasswordStrength = 'weak' | 'medium' | 'strong';
-
-export type SocialProvider = 'google' | 'github' | 'microsoft';
-
-// Layout Variants
-const containerVariants = cva("", {
-    variants: {
-        variant: {
-            default: "",
-            modern: "",
-            glass: "",
-            dark: "",
-        },
-        type: {
-            centered: "min-h-screen flex items-center justify-center p-4",
-            split: "min-h-screen flex",
-        },
-    },
-    compoundVariants: [
-        {
-            type: "centered",
-            variant: "default",
-            className: "bg-gradient-to-br from-blue-50 to-cyan-50",
-        },
-        {
-            type: "centered",
-            variant: "modern",
-            className: "bg-gradient-to-br from-slate-50 to-slate-100",
-        },
-        {
-            type: "centered",
-            variant: "glass",
-            className: "bg-gradient-to-br from-primary/10 to-secondary/10",
-        },
-        {
-            type: "centered",
-            variant: "dark",
-            className: "bg-gradient-to-br from-gray-900 to-gray-800",
-        },
-        {
-            type: "split",
-            variant: "default",
-            className: "bg-background",
-        },
-        {
-            type: "split",
-            variant: "modern",
-            className: "bg-slate-50 dark:bg-slate-900",
-        },
-        {
-            type: "split",
-            variant: "glass",
-            className: "bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800",
-        },
-        {
-            type: "split",
-            variant: "dark",
-            className: "bg-gray-900",
-        },
-    ],
-    defaultVariants: {
-        type: "centered",
-        variant: "default",
-    },
-});
-
-// Card Variants
-const cardVariants = cva("rounded-2xl shadow-2xl p-8 transition-all duration-300", {
-    variants: {
-        variant: {
-            default: "bg-white",
-            modern: "bg-white/95 backdrop-blur-sm border border-slate-200",
-            glass: "bg-white/10 backdrop-blur-lg border border-white/20",
-            dark: "bg-gray-800",
-        },
-        type: {
-            centered: "w-full max-w-md",
-            split: "w-full max-w-md bg-card rounded-xl",
-        },
-    },
-    compoundVariants: [
-        {
-            type: "split",
-            variant: "default",
-            className: "bg-white",
-        },
-        {
-            type: "split",
-            variant: "modern",
-            className: "bg-white/95 backdrop-blur-sm dark:bg-slate-900/95",
-        },
-        {
-            type: "split",
-            variant: "dark",
-            className: "bg-gray-900",
-        },
-    ],
-    defaultVariants: {
-        type: "centered",
-        variant: "default",
-    },
-});
-
-// Default features for left panel
-const DEFAULT_FEATURES = [
-    {
-        text: "Enterprise-grade security & encryption",
-        icon: <ShieldCheck className="w-5 h-5" />,
-        iconColor: "text-blue-400",
-        textClassName: "font-semibold text-white/95",
-    },
-    {
-        text: "Lightning-fast performance",
-        icon: <Zap className="w-5 h-5" />,
-        iconColor: "text-yellow-400",
-        textClassName: "font-semibold text-white/95",
-    },
-    {
-        text: "Seamless team collaboration",
-        icon: <Users className="w-5 h-5" />,
-        iconColor: "text-green-400",
-        textClassName: "font-semibold text-white/95",
-    },
-    {
-        text: "Global availability",
-        icon: <Globe className="w-5 h-5" />,
-        iconColor: "text-purple-400",
-        textClassName: "font-semibold text-white/95",
-    },
-];
-
-// Password strength checker
-const checkPasswordStrength = (
-    password: string,
-    config?: {
-        minLength?: number;
-        requireUppercase?: boolean;
-        requireLowercase?: boolean;
-        requireNumbers?: boolean;
-        requireSpecialChars?: boolean;
-    }
-): { strength: PasswordStrength; score: number; checks: Array<{ label: string; passed: boolean }> } => {
-    const minLength = config?.minLength || 8;
-    const checks: Array<{ label: string; passed: boolean; weight: number }> = [
-        { label: `At least ${minLength} characters`, passed: password.length >= minLength, weight: 1 },
-        { label: "Contains uppercase letter", passed: /[A-Z]/.test(password), weight: 0.5 },
-        { label: "Contains lowercase letter", passed: /[a-z]/.test(password), weight: 0.5 },
-        { label: "Contains number", passed: /\d/.test(password), weight: 0.5 },
-        { label: "Contains special character", passed: /[!@#$%^&*(),.?":{}|<>]/.test(password), weight: 0.5 },
-    ];
-
-    // Filter checks based on config
-    const filteredChecks = checks.filter((check, index) => {
-        if (index === 0) return true; // Always check length
-        if (index === 1 && config?.requireUppercase === false) return false;
-        if (index === 2 && config?.requireLowercase === false) return false;
-        if (index === 3 && config?.requireNumbers === false) return false;
-        if (index === 4 && config?.requireSpecialChars === false) return false;
-        return true;
-    });
-
-    const passedChecks = filteredChecks.filter(check => check.passed);
-    const totalWeight = filteredChecks.reduce((sum, check) => sum + check.weight, 0);
-    const passedWeight = passedChecks.reduce((sum, check) => sum + check.weight, 0);
-    const score = totalWeight > 0 ? (passedWeight / totalWeight) * 100 : 0;
-
-    let strength: PasswordStrength = 'weak';
-    if (score >= 80) strength = 'strong';
-    else if (score >= 50) strength = 'medium';
-
-    return {
-        strength,
-        score,
-        checks: filteredChecks.map(check => ({ label: check.label, passed: check.passed }))
-    };
-};
-
-// Default animation configuration
-const DEFAULT_ANIMATION_CONFIG = {
-    titleDelay: 0.2,
-    descriptionDelay: 0.3,
-    featuresDelay: 0.4,
-    staggerChildren: 0.1
-};
-
-/* ──────────────────────────────────────────────────────────────
-   Main Component
-────────────────────────────────────────────────────────────── */
+/**
+ * A comprehensive registration component with multiple layouts, themes, password
+ * strength validation, CAPTCHA integration, and extensive content customization.
+ * 
+ * @component SignUp
+ * @description Provides a complete, production-ready registration form with support
+ * for comprehensive user registration flows. Includes all essential fields, password
+ * strength validation, CAPTCHA integration, social sign-up options, and extensive
+ * customization capabilities.
+ * 
+ * @example
+ * // Basic usage
+ * <SignUp
+ *   type="centered"
+ *   variant="default"
+ *   companyName="MyApp"
+ *   onSubmit={(data) => console.log(data)}
+ * />
+ * 
+ * @example
+ * // Enterprise registration with all features
+ * <SignUp
+ *   type="split"
+ *   variant="dark"
+ *   companyName="Acme Corp"
+ *   passwordStrength={{
+ *     minLength: 12,
+ *     showStrengthMeter: true,
+ *   }}
+ *   captchaConfig={{ enabled: true }}
+ *   onSubmit={handleRegistration}
+ * />
+ * 
+ * @param {SignUpProps} props - Component properties
+ * @param {SignUpType} [props.type="centered"] - Layout type (centered or split)
+ * @param {SignUpVariant} [props.variant="default"] - Visual theme variant
+ * @param {string} [props.companyName="YourBrand"] - Company/brand name
+ * @param {React.ReactNode} [props.logo] - Custom logo component
+ * @param {boolean} [props.requireEmailConfirmation=true] - Show confirm email field
+ * @param {Function} [props.onSubmit] - Form submission handler
+ * @param {Function} [props.onLogin] - Login click handler
+ * @param {string} [props.loginText="Already have an account?"] - Login link text
+ * @param {Function} [props.onGoogleSignUp] - Google sign-up callback
+ * @param {Function} [props.onGitHubSignUp] - GitHub sign-up callback
+ * @param {Function} [props.onMicrosoftSignUp] - Microsoft sign-up callback
+ * @param {boolean} [props.loading=false] - Loading state for form submission
+ * @param {string} [props.error=""] - Error message to display
+ * @param {boolean} [props.showSocialSignUp=true] - Show social sign-up buttons
+ * @param {boolean} [props.showLoginLink=true] - Show login link
+ * @param {string} [props.className] - Additional CSS class name
+ * @param {Object} [props.termsConfig] - Terms & Conditions configuration
+ * @param {Object} [props.passwordStrength] - Password strength configuration
+ * @param {Object} [props.captchaConfig] - CAPTCHA configuration
+ * @param {Object} [props.splitBackground] - Split layout background customization
+ * @param {Object} [props.buttonStyle] - Button styling customization
+ * @param {Object} [props.leftPanelContent] - Left panel content customization (split layout only)
+ * 
+ * @returns {React.ReactElement} The SignUp component
+ */
 const SignUp: React.FC<SignUpProps> = ({
     type = "centered",
     variant = "default",
     companyName = "YourBrand",
     logo,
-    requireEmailConfirmation = true, // Default to true for backward compatibility
+    requireEmailConfirmation = true,
     onSubmit,
     onLogin,
     loginText = "Already have an account?",
@@ -456,1366 +90,107 @@ const SignUp: React.FC<SignUpProps> = ({
     buttonStyle,
     leftPanelContent,
 }) => {
-    const [formData, setFormData] = React.useState<SignUpFormData>({
-        firstName: '',
-        lastName: '',
-        email: '',
-        confirmEmail: '',
-        password: '',
-        confirmPassword: '',
-        acceptTerms: false,
-        captchaToken: '',
+    const [socialLoading, setSocialLoading] = React.useState<'google' | 'github' | 'microsoft' | null>(null);
+
+    const {
+        formData,
+        showPassword,
+        showConfirmPassword,
+        errors,
+        // touched,
+        captchaVerified,
+        setCaptchaVerified,
+        handleSubmit,
+        handleInputChange,
+        handleBlur,
+        togglePasswordVisibility,
+        toggleConfirmPasswordVisibility,
+        // validateForm,
+    } = useSignUpForm({
+        requireEmailConfirmation,
+        passwordStrength,
+        captchaConfig,
+        onSubmit,
     });
 
-    const [showPassword, setShowPassword] = React.useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
-    const [errors, setErrors] = React.useState<Record<string, string>>({});
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [touched, setTouched] = React.useState<Record<string, boolean>>({});
-    const [socialLoading, setSocialLoading] = React.useState<SocialProvider | null>(null);
-    const [captchaVerified, setCaptchaVerified] = React.useState(false);
-
-    // Password strength state
-    const passwordStrengthResult = React.useMemo(() =>
-        checkPasswordStrength(formData.password, passwordStrength),
-        [formData.password, passwordStrength]
-    );
-
-    const validateForm = (): boolean => {
-        const newErrors: Record<string, string> = {};
-
-        // First Name validation
-        if (!formData.firstName.trim()) {
-            newErrors.firstName = 'First name is required';
-        } else if (formData.firstName.length < 2) {
-            newErrors.firstName = 'First name must be at least 2 characters';
-        }
-
-        // Last Name validation
-        if (!formData.lastName.trim()) {
-            newErrors.lastName = 'Last name is required';
-        } else if (formData.lastName.length < 2) {
-            newErrors.lastName = 'Last name must be at least 2 characters';
-        }
-
-        // Email validation
-        if (!formData.email.trim()) {
-            newErrors.email = 'Email is required';
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-            newErrors.email = 'Please enter a valid email';
-        }
-
-        // Confirm Email validation (only if required)
-        if (requireEmailConfirmation && formData.email !== formData.confirmEmail) {
-            newErrors.confirmEmail = 'Emails do not match';
-        }
-
-        // Password validation
-        if (!formData.password) {
-            newErrors.password = 'Password is required';
-        } else if (formData.password.length < (passwordStrength?.minLength || 8)) {
-            newErrors.password = `Password must be at least ${passwordStrength?.minLength || 8} characters`;
-        } else if (passwordStrength?.requireUppercase && !/[A-Z]/.test(formData.password)) {
-            newErrors.password = 'Password must contain at least one uppercase letter';
-        } else if (passwordStrength?.requireLowercase && !/[a-z]/.test(formData.password)) {
-            newErrors.password = 'Password must contain at least one lowercase letter';
-        } else if (passwordStrength?.requireNumbers && !/\d/.test(formData.password)) {
-            newErrors.password = 'Password must contain at least one number';
-        } else if (passwordStrength?.requireSpecialChars && !/[!@#$%^&*(),.?":{}|<>]/.test(formData.password)) {
-            newErrors.password = 'Password must contain at least one special character';
-        }
-
-        // Confirm Password validation
-        if (formData.password !== formData.confirmPassword) {
-            newErrors.confirmPassword = 'Passwords do not match';
-        }
-
-        // Terms acceptance validation
-        if (!formData.acceptTerms) {
-            newErrors.acceptTerms = 'You must accept the terms and conditions';
-        }
-
-        // CAPTCHA validation if enabled
-        if (captchaConfig?.enabled && !captchaVerified) {
-            newErrors.captcha = 'Please complete the CAPTCHA verification';
-        }
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-
-        // Mark all fields as touched for validation
-        const allTouched: Record<string, boolean> = {};
-        Object.keys(formData).forEach(key => {
-            allTouched[key] = true;
-        });
-        setTouched(allTouched);
-
-        if (!validateForm()) return;
-
-        if (onSubmit) {
-            onSubmit(formData);
-        }
-    };
-
-    const handleLoginClick = () => {
-        if (onLogin) {
-            onLogin();
-        } else {
-            console.warn('Login callback not provided. Implement navigation to login page.');
-        }
-    };
-
-    const handleSocialSignUp = async (provider: SocialProvider) => {
+    const handleSocialSignUp = async (provider: 'google' | 'github' | 'microsoft') => {
         setSocialLoading(provider);
 
         try {
             switch (provider) {
                 case 'google':
-                    if (onGoogleSignUp) {
-                        await onGoogleSignUp();
-                    } else {
-                        console.warn(`onGoogleSignUp callback not implemented.`);
-                    }
+                    if (onGoogleSignUp) await onGoogleSignUp();
                     break;
                 case 'github':
-                    if (onGitHubSignUp) {
-                        await onGitHubSignUp();
-                    } else {
-                        console.warn(`onGitHubSignUp callback not implemented.`);
-                    }
+                    if (onGitHubSignUp) await onGitHubSignUp();
                     break;
                 case 'microsoft':
-                    if (onMicrosoftSignUp) {
-                        await onMicrosoftSignUp();
-                    } else {
-                        console.warn(`onMicrosoftSignUp callback not implemented.`);
-                    }
+                    if (onMicrosoftSignUp) await onMicrosoftSignUp();
                     break;
-                default:
-                    console.warn(`Unsupported social provider: ${provider}`);
             }
         } catch (error) {
-            console.error(`Social sign-up failed for ${provider}:`, error);
+            // Handle error appropriately
         } finally {
             setTimeout(() => setSocialLoading(null), 500);
         }
     };
 
-    const handleInputChange = (field: keyof SignUpFormData, value: string | boolean) => {
-        setFormData(prev => ({ ...prev, [field]: value }));
-
-        // Clear error when user starts typing
-        if (errors[field]) {
-            setErrors(prev => {
-                const newErrors = { ...prev };
-                delete newErrors[field];
-                return newErrors;
-            });
-        }
-    };
-
-    const handleBlur = (field: keyof SignUpFormData) => {
-        setTouched(prev => ({ ...prev, [field]: true }));
-
-        // Validate specific field on blur
-        const newErrors = { ...errors };
-
-        switch (field) {
-            case 'email':
-                if (!formData.email.trim()) {
-                    newErrors.email = 'Email is required';
-                } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-                    newErrors.email = 'Please enter a valid email';
-                } else {
-                    delete newErrors.email;
-                }
-                break;
-
-            case 'confirmEmail':
-                if (formData.email !== formData.confirmEmail) {
-                    newErrors.confirmEmail = 'Emails do not match';
-                } else {
-                    delete newErrors.confirmEmail;
-                }
-                break;
-
-            case 'password':
-                if (!formData.password) {
-                    newErrors.password = 'Password is required';
-                } else if (formData.password.length < (passwordStrength?.minLength || 8)) {
-                    newErrors.password = `Password must be at least ${passwordStrength?.minLength || 8} characters`;
-                } else {
-                    delete newErrors.password;
-                }
-                break;
-
-            case 'confirmPassword':
-                if (formData.password !== formData.confirmPassword) {
-                    newErrors.confirmPassword = 'Passwords do not match';
-                } else {
-                    delete newErrors.confirmPassword;
-                }
-                break;
-        }
-
-        setErrors(newErrors);
-    };
-
-    const getInputClasses = (hasError: boolean) => {
-        const baseStyles = "w-full px-4 py-3 rounded-lg border transition-all duration-300 placeholder-gray-400 focus:ring-2 focus:border-transparent";
-
-        const variantStyles = {
-            default: cn(
-                "bg-white text-gray-900 border-gray-300 focus:ring-blue-500",
-                hasError && "border-red-500"
-            ),
-            modern: cn(
-                "bg-white/80 backdrop-blur-sm text-gray-900 border-slate-200 focus:ring-blue-500",
-                hasError && "border-red-500"
-            ),
-            glass: cn(
-                "bg-white/5 backdrop-blur-md text-white border-white/10 focus:ring-blue-400",
-                hasError && "border-red-400"
-            ),
-            dark: cn(
-                "bg-gray-700 text-white border-gray-600 focus:ring-blue-500",
-                hasError && "border-red-500"
-            )
-        };
-
-        return cn(baseStyles, variantStyles[variant as keyof typeof variantStyles] || variantStyles.default);
+    const handleLoginClick = () => {
+        if (onLogin) onLogin();
     };
 
     const isDarkVariant = variant === "dark";
 
-    // Default button styles
-    const getButtonStyles = () => {
-        const defaultStyles = {
-            gradient: "bg-gradient-to-r from-green-600 to-emerald-600",
-            hoverGradient: "hover:from-green-700 hover:to-emerald-700",
-            textColor: "text-white",
-            shadow: "shadow-lg",
-            hoverShadow: "hover:shadow-xl",
-            className: ""
-        };
-
-        return {
-            gradient: buttonStyle?.gradient || defaultStyles.gradient,
-            hoverGradient: buttonStyle?.hoverGradient || defaultStyles.hoverGradient,
-            textColor: buttonStyle?.textColor || defaultStyles.textColor,
-            shadow: buttonStyle?.shadow || defaultStyles.shadow,
-            hoverShadow: buttonStyle?.hoverShadow || defaultStyles.hoverShadow,
-            className: buttonStyle?.className || defaultStyles.className
-        };
-    };
-
-    // Default logo if not provided
-    const defaultLogo = (
-        <div className={cn(
-            "w-14 h-14 rounded-xl flex items-center justify-center shadow-lg",
-            isDarkVariant
-                ? "bg-gradient-to-br from-green-900/30 to-emerald-800/20 border border-emerald-700/30"
-                : "bg-gradient-to-br from-green-100 to-emerald-50 border border-emerald-200"
-        )}>
-            <UserPlus className={cn(
-                "w-8 h-8",
-                isDarkVariant
-                    ? "text-emerald-400 drop-shadow"
-                    : "text-emerald-600"
-            )} />
-        </div>
-    );
-
-    // Social sign-up buttons configuration
-    const socialButtons = [
-        {
-            id: 'google',
-            provider: 'google' as SocialProvider,
-            icon: <FcGoogle className="w-5 h-5" />,
-            label: 'Google',
-            onClick: () => handleSocialSignUp('google'),
-            loading: socialLoading === 'google',
-        },
-        {
-            id: 'github',
-            provider: 'github' as SocialProvider,
-            icon: <FaGithub className="w-5 h-5" />,
-            label: 'GitHub',
-            onClick: () => handleSocialSignUp('github'),
-            loading: socialLoading === 'github',
-        },
-        {
-            id: 'microsoft',
-            provider: 'microsoft' as SocialProvider,
-            icon: <FaMicrosoft className="w-5 h-5 text-[#00A4EF]" />,
-            label: 'Microsoft',
-            onClick: () => handleSocialSignUp('microsoft'),
-            loading: socialLoading === 'microsoft',
-        },
-    ];
-
-    // Password strength indicator
-    const renderPasswordStrength = () => {
-        if (!passwordStrength?.showStrengthMeter || !formData.password) return null;
-
-        const { strength, score, checks } = passwordStrengthResult;
-
-        const strengthColors = {
-            weak: {
-                bg: "bg-red-500",
-                text: "text-red-500",
-                border: "border-red-500",
-            },
-            medium: {
-                bg: "bg-yellow-500",
-                text: "text-yellow-500",
-                border: "border-yellow-500",
-            },
-            strong: {
-                bg: "bg-green-500",
-                text: "text-green-500",
-                border: "border-green-500",
-            },
-        };
-
-        const strengthLabels = passwordStrength?.strengthLabels || {
-            weak: "Weak",
-            medium: "Medium",
-            strong: "Strong",
-        };
-
-        const currentStrength = strengthColors[strength];
-
-        return (
-            <div className="mt-2 space-y-2">
-                <div className="flex items-center justify-between">
-                    <span className={cn("text-sm font-medium", currentStrength.text)}>
-                        Password strength: {strengthLabels[strength]}
-                    </span>
-                    <span className="text-xs text-gray-500">{Math.round(score)}%</span>
-                </div>
-
-                {/* Strength bar */}
-                <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                    <div
-                        className={cn("h-full transition-all duration-300", currentStrength.bg)}
-                        style={{ width: `${score}%` }}
-                    />
-                </div>
-
-                {/* Password requirements */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-3">
-                    {checks.map((check, index) => (
-                        <div key={index} className="flex items-center gap-2">
-                            {check.passed ? (
-                                <CheckCircle className="w-4 h-4 text-green-500" />
-                            ) : (
-                                <XCircle className="w-4 h-4 text-gray-400" />
-                            )}
-                            <span className={cn(
-                                "text-xs",
-                                check.passed
-                                    ? "text-green-600 dark:text-green-400"
-                                    : "text-gray-500 dark:text-gray-400"
-                            )}>
-                                {check.label}
-                            </span>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        );
-    };
-
-    // Get left panel content configuration
-    const getLeftPanelContent = () => {
-        const {
-            title,
-            description,
-            subtitle,
-            features,
-            testimonials,
-            statistics,
-            customContent,
-            footerText,
-            hideBranding = false,
-            contentClassName,
-            layout = {
-                align: "center",
-                maxWidth: "max-w-2xl",
-                animate: true
-            },
-            animationConfig = DEFAULT_ANIMATION_CONFIG
-        } = leftPanelContent || {};
-
-        // Merge provided animation config with defaults
-        const mergedAnimationConfig = {
-            ...DEFAULT_ANIMATION_CONFIG,
-            ...animationConfig
-        };
-
-        const alignClass = {
-            left: "items-start text-left",
-            center: "items-center text-center",
-            right: "items-end text-right"
-        }[layout.align || "center"];
-
-        // Use provided content or defaults
-        const panelTitle = title || (
-            <div className="space-y-4">
-                <div className="text-5xl font-bold leading-tight tracking-tight">
-                    Join Our Community
-                </div>
-                <div className="text-4xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
-                    at {companyName}
-                </div>
-            </div>
-        );
-
-        const panelDescription = description || (
-            <p className="text-lg leading-relaxed">
-                Create your account to unlock exclusive features, personalized content,
-                and join thousands of satisfied users worldwide.
-            </p>
-        );
-
-        const panelFeatures = features || DEFAULT_FEATURES;
-
-        return {
-            panelTitle,
-            panelDescription,
-            subtitle,
-            panelFeatures,
-            testimonials,
-            statistics,
-            customContent,
-            footerText,
-            hideBranding,
-            contentClassName,
-            mergedAnimationConfig,
-            layout,
-            alignClass,
-            maxWidth: layout.maxWidth || "max-w-2xl",
-            shouldAnimate: layout.animate !== false,
-        };
-    };
-
-    // Get split layout styles
-    const getSplitLayoutStyles = () => {
-        const defaultGradient = isDarkVariant
-            ? "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"
-            : "bg-gradient-to-br from-emerald-600 via-green-600 to-teal-600";
-
-        const defaultTextColor = "text-white";
-        const defaultCompanyNameColor = "text-white";
-        const defaultDescriptionColor = "text-white/90";
-
-        // Custom gradient or background image
-        const backgroundStyle = splitBackground?.backgroundImage
-            ? {
-                backgroundImage: `url(${splitBackground.backgroundImage})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-            }
-            : {};
-
-        // Overlay for background image
-        const overlayStyle = splitBackground?.backgroundImage && splitBackground?.overlayColor
-            ? {
-                backgroundColor: splitBackground.overlayColor,
-            }
-            : {};
-
-        return {
-            leftPanelClasses: cn(
-                "flex-1 flex flex-col p-8 md:p-12 lg:p-16 hidden lg:flex relative",
-                splitBackground?.gradient || defaultGradient,
-                splitBackground?.leftPanelClassName
-            ),
-            textColor: splitBackground?.textColor || defaultTextColor,
-            companyNameColor: splitBackground?.companyNameColor || defaultCompanyNameColor,
-            descriptionColor: splitBackground?.descriptionColor || defaultDescriptionColor,
-            backgroundStyle,
-            overlayStyle,
-            rightPanelClasses: cn(
-                "flex-1 flex items-center justify-center p-6 md:p-8 lg:p-12",
-                splitBackground?.rightPanelClassName
-            ),
-        };
-    };
-
-    // Render Left Panel Content
-    const renderLeftPanelContent = () => {
-        const {
-            panelTitle,
-            panelDescription,
-            subtitle,
-            panelFeatures,
-            testimonials,
-            statistics,
-            customContent,
-            footerText,
-            hideBranding,
-            contentClassName,
-            mergedAnimationConfig,
-            layout,
-            alignClass,
-            maxWidth,
-            shouldAnimate,
-        } = getLeftPanelContent();
-
-        const splitStyles = getSplitLayoutStyles();
-
-        // If custom content is provided, render it
-        if (customContent) {
-            return customContent;
-        }
-
-        const MotionDiv = shouldAnimate ? motion.div : "div";
-
-        return (
-            <div className={cn("w-full h-full flex items-center justify-center relative z-10", contentClassName)}>
-                <div className={cn(
-                    "relative z-10 flex flex-col w-full",
-                    alignClass,
-                    maxWidth
-                )}>
-                    {/* Branding Section */}
-                    {!hideBranding && (
-                        <MotionDiv
-                            {...(shouldAnimate ? {
-                                initial: { x: -50, opacity: 0 },
-                                animate: { x: 0, opacity: 1 },
-                                transition: { duration: 0.6 }
-                            } : {})}
-                            className={cn(
-                                "flex items-center gap-4 mb-12",
-                                layout.align === "left" ? "justify-start" :
-                                    layout.align === "right" ? "justify-end" : "justify-center"
-                            )}
-                        >
-                            {logo || defaultLogo}
-                            <span className={cn(
-                                "text-2xl md:text-3xl font-bold tracking-tight",
-                                splitStyles.companyNameColor
-                            )}>
-                                {companyName}
-                            </span>
-                        </MotionDiv>
-                    )}
-
-                    {/* Main Content */}
-                    <div className="space-y-10">
-                        {/* Title Section */}
-                        <MotionDiv
-                            {...(shouldAnimate ? {
-                                initial: { y: 30, opacity: 0 },
-                                animate: { y: 0, opacity: 1 },
-                                transition: { delay: mergedAnimationConfig.titleDelay, duration: 0.6 }
-                            } : {})}
-                            className="space-y-6"
-                        >
-                            <div className={cn("space-y-4", splitStyles.textColor)}>
-                                {panelTitle}
-                            </div>
-
-                            {/* Subtitle */}
-                            {subtitle && (
-                                <div className={cn(
-                                    "text-xl md:text-2xl font-semibold leading-relaxed",
-                                    splitStyles.descriptionColor
-                                )}>
-                                    {subtitle}
-                                </div>
-                            )}
-
-                            {/* Description */}
-                            <div className={cn(
-                                "text-base md:text-lg leading-relaxed",
-                                splitStyles.descriptionColor
-                            )}>
-                                {panelDescription}
-                            </div>
-                        </MotionDiv>
-
-                        {/* Features List */}
-                        {panelFeatures.length > 0 && (
-                            <MotionDiv
-                                {...(shouldAnimate ? {
-                                    initial: { opacity: 0, y: 20 },
-                                    animate: { opacity: 1, y: 0 },
-                                    transition: { delay: mergedAnimationConfig.featuresDelay, duration: 0.5 }
-                                } : {})}
-                                className={cn(
-                                    "space-y-4",
-                                    layout.align === "center" && "mx-auto",
-                                    panelFeatures.length > 4 ? "grid grid-cols-1 md:grid-cols-2 gap-4" : ""
-                                )}
-                            >
-                                {panelFeatures.map((feature, index) => (
-                                    <MotionDiv
-                                        key={index}
-                                        {...(shouldAnimate ? {
-                                            initial: { x: -20, opacity: 0 },
-                                            animate: { x: 0, opacity: 1 },
-                                            transition: {
-                                                delay: mergedAnimationConfig.featuresDelay + (index * mergedAnimationConfig.staggerChildren),
-                                                duration: 0.4
-                                            }
-                                        } : {})}
-                                        className="flex items-start gap-3 group"
-                                    >
-                                        <div className={cn(
-                                            "w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5",
-                                            "transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3",
-                                            "shadow-md",
-                                            feature.iconColor || "bg-white/20"
-                                        )}>
-                                            {feature.icon || <Check className="w-5 h-5 text-white" />}
-                                        </div>
-                                        <span className={cn(
-                                            "text-base leading-tight pt-1",
-                                            feature.textClassName || "font-semibold text-white/95"
-                                        )}>
-                                            {feature.text}
-                                        </span>
-                                    </MotionDiv>
-                                ))}
-                            </MotionDiv>
-                        )}
-
-                        {/* Statistics */}
-                        {statistics && statistics.length > 0 && (
-                            <MotionDiv
-                                {...(shouldAnimate ? {
-                                    initial: { opacity: 0, y: 20 },
-                                    animate: { opacity: 1, y: 0 },
-                                    transition: { delay: mergedAnimationConfig.featuresDelay + 0.2, duration: 0.5 }
-                                } : {})}
-                                className={cn(
-                                    "grid grid-cols-2 md:grid-cols-3 gap-6 pt-6 border-t border-white/10",
-                                    layout.align === "center" && "mx-auto"
-                                )}
-                            >
-                                {statistics.map((stat, index) => (
-                                    <MotionDiv
-                                        key={index}
-                                        {...(shouldAnimate ? {
-                                            initial: { scale: 0.8, opacity: 0 },
-                                            animate: { scale: 1, opacity: 1 },
-                                            transition: {
-                                                delay: mergedAnimationConfig.featuresDelay + 0.3 + (index * 0.1),
-                                                duration: 0.4
-                                            }
-                                        } : {})}
-                                        className="text-center space-y-1"
-                                    >
-                                        <div className={cn(
-                                            "text-3xl md:text-4xl font-bold tracking-tight",
-                                            splitStyles.companyNameColor
-                                        )}>
-                                            {stat.value}
-                                        </div>
-                                        <div className={cn(
-                                            "text-sm font-semibold uppercase tracking-wider",
-                                            splitStyles.descriptionColor
-                                        )}>
-                                            {stat.label}
-                                        </div>
-                                        {stat.subtext && (
-                                            <div className={cn(
-                                                "text-xs opacity-80",
-                                                splitStyles.descriptionColor
-                                            )}>
-                                                {stat.subtext}
-                                            </div>
-                                        )}
-                                    </MotionDiv>
-                                ))}
-                            </MotionDiv>
-                        )}
-
-                        {/* Testimonials */}
-                        {testimonials && testimonials.length > 0 && (
-                            <MotionDiv
-                                {...(shouldAnimate ? {
-                                    initial: { opacity: 0, y: 20 },
-                                    animate: { opacity: 1, y: 0 },
-                                    transition: { delay: mergedAnimationConfig.featuresDelay + 0.4, duration: 0.5 }
-                                } : {})}
-                                className={cn(
-                                    "pt-8",
-                                    layout.align === "center" && "mx-auto"
-                                )}
-                            >
-                                <div className="space-y-6">
-                                    <div className={cn(
-                                        "text-sm font-semibold uppercase tracking-wider mb-4",
-                                        splitStyles.descriptionColor
-                                    )}>
-                                        Trusted by Industry Leaders
-                                    </div>
-                                    {testimonials.map((testimonial, index) => (
-                                        <MotionDiv
-                                            key={index}
-                                            {...(shouldAnimate ? {
-                                                initial: { opacity: 0, x: -20 },
-                                                animate: { opacity: 1, x: 0 },
-                                                transition: {
-                                                    delay: mergedAnimationConfig.featuresDelay + 0.5 + (index * 0.1),
-                                                    duration: 0.4
-                                                }
-                                            } : {})}
-                                            className="bg-white/10 backdrop-blur-sm p-6 rounded-xl border border-white/10"
-                                        >
-                                            <div className="flex items-start gap-3">
-                                                <div className="flex-shrink-0 mt-1">
-                                                    <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                                                </div>
-                                                <div>
-                                                    <p className={cn(
-                                                        "text-sm md:text-base leading-relaxed italic",
-                                                        splitStyles.descriptionColor
-                                                    )}>
-                                                        "{testimonial.quote}"
-                                                    </p>
-                                                    <div className={cn(
-                                                        "text-sm mt-4 flex flex-col sm:flex-row sm:items-center gap-1",
-                                                        splitStyles.descriptionColor
-                                                    )}>
-                                                        <span className="font-semibold">{testimonial.author}</span>
-                                                        {testimonial.role && (
-                                                            <>
-                                                                <span className="hidden sm:inline mx-2 opacity-50">•</span>
-                                                                <span className="opacity-75">{testimonial.role}</span>
-                                                            </>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </MotionDiv>
-                                    ))}
-                                </div>
-                            </MotionDiv>
-                        )}
-                    </div>
-
-                    {/* Footer */}
-                    {footerText !== null && (
-                        <MotionDiv
-                            {...(shouldAnimate ? {
-                                initial: { y: 20, opacity: 0 },
-                                animate: { y: 0, opacity: 1 },
-                                transition: { delay: mergedAnimationConfig.featuresDelay + 0.6, duration: 0.5 }
-                            } : {})}
-                            className={cn(
-                                "mt-12 pt-8 border-t border-white/10",
-                                splitStyles.descriptionColor
-                            )}
-                        >
-                            {footerText || (
-                                <div className="text-sm">
-                                    <span className="font-semibold">© 2024 {companyName}</span>
-                                    <span className="opacity-70 ml-2">• All rights reserved</span>
-                                </div>
-                            )}
-                        </MotionDiv>
-                    )}
-                </div>
-            </div>
-        );
-    };
-
-    // Render Form Content
-    const renderFormContent = () => {
-        const buttonStyles = getButtonStyles();
-
-        return (
-            <motion.div
-                className={cn(cardVariants({ variant, type }))}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-            >
-                {/* Logo */}
-                <div className="flex justify-center mb-8">
-                    <div className={cn(
-                        "w-16 h-16 rounded-xl flex items-center justify-center",
-                        "shadow-lg",
-                        isDarkVariant
-                            ? "bg-gradient-to-br from-green-900/20 to-emerald-800/10 border border-emerald-700/20"
-                            : "bg-gradient-to-br from-green-50 to-emerald-100 border border-emerald-200"
-                    )}>
-                        {logo || (
-                            <UserPlus className={cn(
-                                "w-8 h-8",
-                                isDarkVariant ? "text-emerald-400" : "text-emerald-600"
-                            )} />
-                        )}
-                    </div>
-                </div>
-
-                {/* Title */}
-                <div className="text-center mb-10">
-                    <h1 className={cn(
-                        "text-2xl md:text-3xl font-bold mb-3",
-                        isDarkVariant ? "text-white" : "text-gray-900"
-                    )}>
-                        Create Your Account
-                    </h1>
-                    <p className={cn(
-                        "text-sm md:text-base",
-                        isDarkVariant ? "text-gray-400" : "text-gray-600"
-                    )}>
-                        Join our community and start your journey today
-                    </p>
-                </div>
-
-                {/* Error Message */}
-                <AnimatePresence>
-                    {error && (
-                        <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className={cn(
-                                "mb-6 p-4 rounded-lg border flex items-start",
-                                isDarkVariant
-                                    ? "bg-red-900/20 border-red-800"
-                                    : "bg-red-50 border-red-200"
-                            )}
-                        >
-                            <AlertCircle className={cn(
-                                "w-5 h-5 mr-2 mt-0.5 flex-shrink-0",
-                                isDarkVariant ? "text-red-400" : "text-red-600"
-                            )} />
-                            <span className={cn(
-                                "text-sm font-medium",
-                                isDarkVariant ? "text-red-300" : "text-red-700"
-                            )}>
-                                {error}
-                            </span>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="space-y-5">
-                    {/* Name Fields - Side by side on desktop */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        {/* First Name Field */}
-                        <div className="space-y-2">
-                            <label htmlFor="firstName" className={cn(
-                                "block text-sm font-semibold",
-                                isDarkVariant ? "text-gray-300" : "text-gray-700"
-                            )}>
-                                First Name
-                            </label>
-                            <div className="relative">
-                                <div className="absolute left-3 top-1/2 -translate-y-1/2">
-                                    <User className={cn(
-                                        "w-5 h-5",
-                                        isDarkVariant ? "text-gray-500" : "text-gray-400"
-                                    )} />
-                                </div>
-                                <AnimatedInput
-                                    variant="clean"
-                                    type="text"
-                                    value={formData.firstName}
-                                    onChange={(value: string) => handleInputChange('firstName', value)}
-                                    onBlur={() => handleBlur('firstName')}
-                                    placeholder="John"
-                                    inputClassName={cn(getInputClasses(!!errors.firstName), "pl-10")}
-                                    aria-label="First name"
-                                    aria-invalid={!!errors.firstName}
-                                    aria-describedby={errors.firstName ? "first-name-error" : undefined}
-                                />
-                            </div>
-                            {errors.firstName && (
-                                <p id="first-name-error" className="mt-1 text-xs font-medium text-red-500">
-                                    {errors.firstName}
-                                </p>
-                            )}
-                        </div>
-
-                        {/* Last Name Field */}
-                        <div className="space-y-2">
-                            <label htmlFor="lastName" className={cn(
-                                "block text-sm font-semibold",
-                                isDarkVariant ? "text-gray-300" : "text-gray-700"
-                            )}>
-                                Last Name
-                            </label>
-                            <div className="relative">
-                                <div className="absolute left-3 top-1/2 -translate-y-1/2">
-                                    <User className={cn(
-                                        "w-5 h-5",
-                                        isDarkVariant ? "text-gray-500" : "text-gray-400"
-                                    )} />
-                                </div>
-                                <AnimatedInput
-                                    variant="clean"
-                                    type="text"
-                                    value={formData.lastName}
-                                    onChange={(value: string) => handleInputChange('lastName', value)}
-                                    onBlur={() => handleBlur('lastName')}
-                                    placeholder="Doe"
-                                    inputClassName={cn(getInputClasses(!!errors.lastName), "pl-10")}
-                                    aria-label="Last name"
-                                    aria-invalid={!!errors.lastName}
-                                    aria-describedby={errors.lastName ? "last-name-error" : undefined}
-                                />
-                            </div>
-                            {errors.lastName && (
-                                <p id="last-name-error" className="mt-1 text-xs font-medium text-red-500">
-                                    {errors.lastName}
-                                </p>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Email Field */}
-                    <div className="space-y-2">
-                        <label htmlFor="email" className={cn(
-                            "block text-sm font-semibold",
-                            isDarkVariant ? "text-gray-300" : "text-gray-700"
-                        )}>
-                            Email Address
-                        </label>
-                        <div className="relative">
-                            <div className="absolute left-3 top-1/2 -translate-y-1/2">
-                                <Mail className={cn(
-                                    "w-5 h-5",
-                                    isDarkVariant ? "text-gray-500" : "text-gray-400"
-                                )} />
-                            </div>
-                            <AnimatedInput
-                                variant="clean"
-                                type="email"
-                                value={formData.email}
-                                onChange={(value: string) => handleInputChange('email', value)}
-                                onBlur={() => handleBlur('email')}
-                                placeholder="you@example.com"
-                                inputClassName={cn(getInputClasses(!!errors.email), "pl-10")}
-                                aria-label="Email address"
-                                aria-invalid={!!errors.email}
-                                aria-describedby={errors.email ? "email-error" : undefined}
-                            />
-                        </div>
-                        {errors.email && (
-                            <p id="email-error" className="mt-1 text-xs font-medium text-red-500">
-                                {errors.email}
-                            </p>
-                        )}
-                    </div>
-
-                    {/* Confirm Email Field */}
-                    {requireEmailConfirmation && (
-                        <div className="space-y-2">
-                            {/* Confirm Email Field */}
-                            <label htmlFor="confirmEmail" className={cn(
-                                "block text-sm font-semibold",
-                                isDarkVariant ? "text-gray-300" : "text-gray-700"
-                            )}>
-                                Confirm Email
-                            </label>
-                            <div className="relative">
-                                <div className="absolute left-3 top-1/2 -translate-y-1/2">
-                                    <Mail className={cn(
-                                        "w-5 h-5",
-                                        isDarkVariant ? "text-gray-500" : "text-gray-400"
-                                    )} />
-                                </div>
-                                <AnimatedInput
-                                    variant="clean"
-                                    type="email"
-                                    value={formData.confirmEmail}
-                                    onChange={(value: string) => handleInputChange('confirmEmail', value)}
-                                    onBlur={() => handleBlur('confirmEmail')}
-                                    placeholder="you@example.com"
-                                    inputClassName={cn(getInputClasses(!!errors.confirmEmail), "pl-10")}
-                                    aria-label="Confirm email address"
-                                    aria-invalid={!!errors.confirmEmail}
-                                    aria-describedby={errors.confirmEmail ? "confirm-email-error" : undefined}
-                                />
-                            </div>
-                            {errors.confirmEmail && (
-                                <p id="confirm-email-error" className="mt-1 text-xs font-medium text-red-500">
-                                    {errors.confirmEmail}
-                                </p>
-                            )}
-                        </div>
-                    )}
-
-                    {/* Password Field */}
-                    <div className="space-y-2">
-                        <label htmlFor="password" className={cn(
-                            "block text-sm font-semibold",
-                            isDarkVariant ? "text-gray-300" : "text-gray-700"
-                        )}>
-                            Password
-                        </label>
-                        <div className="relative">
-                            <div className="absolute left-3 top-1/2 -translate-y-1/2">
-                                <Lock className={cn(
-                                    "w-5 h-5",
-                                    isDarkVariant ? "text-gray-500" : "text-gray-400"
-                                )} />
-                            </div>
-                            <AnimatedInput
-                                variant="clean"
-                                type={showPassword ? "text" : "password"}
-                                value={formData.password}
-                                onChange={(value: string) => handleInputChange('password', value)}
-                                onBlur={() => handleBlur('password')}
-                                placeholder="Create a strong password"
-                                inputClassName={cn(getInputClasses(!!errors.password), "pl-10 pr-10")}
-                                aria-label="Password"
-                                aria-invalid={!!errors.password}
-                                aria-describedby={errors.password ? "password-error" : undefined}
-                            />
-                            <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className={cn(
-                                    "absolute right-3 top-1/2 -translate-y-1/2 transition-colors",
-                                    "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 rounded p-1",
-                                    isDarkVariant
-                                        ? "text-gray-400 hover:text-gray-200"
-                                        : "text-gray-500 hover:text-gray-700"
-                                )}
-                                aria-label={showPassword ? "Hide password" : "Show password"}
-                                aria-controls="password"
-                            >
-                                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                            </button>
-                        </div>
-                        {renderPasswordStrength()}
-                        {errors.password && (
-                            <p id="password-error" className="mt-1 text-xs font-medium text-red-500">
-                                {errors.password}
-                            </p>
-                        )}
-                    </div>
-
-                    {/* Confirm Password Field */}
-                    <div className="space-y-2">
-                        <label htmlFor="confirmPassword" className={cn(
-                            "block text-sm font-semibold",
-                            isDarkVariant ? "text-gray-300" : "text-gray-700"
-                        )}>
-                            Confirm Password
-                        </label>
-                        <div className="relative">
-                            <div className="absolute left-3 top-1/2 -translate-y-1/2">
-                                <Lock className={cn(
-                                    "w-5 h-5",
-                                    isDarkVariant ? "text-gray-500" : "text-gray-400"
-                                )} />
-                            </div>
-                            <AnimatedInput
-                                variant="clean"
-                                type={showConfirmPassword ? "text" : "password"}
-                                value={formData.confirmPassword}
-                                onChange={(value: string) => handleInputChange('confirmPassword', value)}
-                                onBlur={() => handleBlur('confirmPassword')}
-                                placeholder="Confirm your password"
-                                inputClassName={cn(getInputClasses(!!errors.confirmPassword), "pl-10 pr-10")}
-                                aria-label="Confirm password"
-                                aria-invalid={!!errors.confirmPassword}
-                                aria-describedby={errors.confirmPassword ? "confirm-password-error" : undefined}
-                            />
-                            <button
-                                type="button"
-                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                className={cn(
-                                    "absolute right-3 top-1/2 -translate-y-1/2 transition-colors",
-                                    "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 rounded p-1",
-                                    isDarkVariant
-                                        ? "text-gray-400 hover:text-gray-200"
-                                        : "text-gray-500 hover:text-gray-700"
-                                )}
-                                aria-label={showConfirmPassword ? "Hide password" : "Show password"}
-                                aria-controls="confirmPassword"
-                            >
-                                {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                            </button>
-                        </div>
-                        {errors.confirmPassword && (
-                            <p id="confirm-password-error" className="mt-1 text-xs font-medium text-red-500">
-                                {errors.confirmPassword}
-                            </p>
-                        )}
-                    </div>
-
-                    {/* Terms & Conditions */}
-                    <div className="space-y-3 pt-2">
-                        <label className="flex items-start gap-3 cursor-pointer group">
-                            <input
-                                type="checkbox"
-                                id="acceptTerms"
-                                checked={formData.acceptTerms}
-                                onChange={(e) => handleInputChange('acceptTerms', e.target.checked)}
-                                className={cn(
-                                    "w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 transition-all duration-300 mt-1 flex-shrink-0",
-                                    isDarkVariant && "border-gray-600 bg-gray-700 focus:ring-blue-400",
-                                    errors.acceptTerms && "border-red-500"
-                                )}
-                                aria-label="Accept terms and conditions"
-                                aria-invalid={!!errors.acceptTerms}
-                            />
-                            <div className="flex-1">
-                                <span className={cn(
-                                    "text-sm",
-                                    isDarkVariant
-                                        ? "text-gray-400 group-hover:text-gray-200"
-                                        : "text-gray-600 group-hover:text-gray-900"
-                                )}>
-                                    I agree to the{" "}
-                                    <button
-                                        type="button"
-                                        onClick={termsConfig?.onTermsClick}
-                                        className={cn(
-                                            "font-semibold transition-colors cursor-pointer",
-                                            isDarkVariant
-                                                ? "text-blue-400 hover:text-blue-300"
-                                                : "text-blue-600 hover:text-blue-700"
-                                        )}
-                                        aria-label="Read terms and conditions"
-                                    >
-                                        Terms & Conditions
-                                    </button>
-                                    {" "}and{" "}
-                                    <button
-                                        type="button"
-                                        onClick={termsConfig?.onPrivacyClick}
-                                        className={cn(
-                                            "font-semibold transition-colors cursor-pointer",
-                                            isDarkVariant
-                                                ? "text-blue-400 hover:text-blue-300"
-                                                : "text-blue-600 hover:text-blue-700"
-                                        )}
-                                        aria-label="Read privacy policy"
-                                    >
-                                        Privacy Policy
-                                    </button>
-                                </span>
-                                {termsConfig?.termsText && (
-                                    <div className="text-xs mt-1 opacity-75">
-                                        {termsConfig.termsText}
-                                    </div>
-                                )}
-                            </div>
-                        </label>
-                        {errors.acceptTerms && (
-                            <p className="text-xs font-medium text-red-500">
-                                {errors.acceptTerms}
-                            </p>
-                        )}
-                    </div>
-
-                    {/* CAPTCHA */}
-                    {captchaConfig?.enabled && captchaConfig.siteKey && (
-                        <div className="space-y-2">
-                            <div className={cn(
-                                "p-4 rounded-lg border",
-                                isDarkVariant
-                                    ? "bg-gray-800/50 border-gray-700"
-                                    : "bg-gray-50 border-gray-200"
-                            )}>
-                                <div className="flex items-center gap-2 mb-3">
-                                    <Shield className={cn(
-                                        "w-5 h-5",
-                                        isDarkVariant ? "text-gray-400" : "text-gray-500"
-                                    )} />
-                                    <span className={cn(
-                                        "text-sm font-semibold",
-                                        isDarkVariant ? "text-gray-300" : "text-gray-700"
-                                    )}>
-                                        Security Verification
-                                    </span>
-                                </div>
-                                <div className="flex justify-center">
-                                    {/* In a real implementation, you would integrate with reCAPTCHA here */}
-                                    <div className={cn(
-                                        "p-4 rounded-lg border-2 border-dashed flex flex-col items-center justify-center gap-3",
-                                        isDarkVariant
-                                            ? "border-gray-700 bg-gray-900/50"
-                                            : "border-gray-300 bg-white"
-                                    )}>
-                                        <div className="text-center">
-                                            <div className={cn(
-                                                "text-sm mb-2",
-                                                isDarkVariant ? "text-gray-400" : "text-gray-600"
-                                            )}>
-                                                {captchaVerified ? "✓ Verified" : "Complete the CAPTCHA"}
-                                            </div>
-                                            <button
-                                                type="button"
-                                                onClick={() => setCaptchaVerified(!captchaVerified)}
-                                                className={cn(
-                                                    "px-4 py-2 rounded-md text-sm font-medium transition-all duration-300",
-                                                    captchaVerified
-                                                        ? "bg-green-100 text-green-700 border border-green-200"
-                                                        : "bg-blue-100 text-blue-700 border border-blue-200 hover:bg-blue-200"
-                                                )}
-                                            >
-                                                {captchaVerified ? "Verified ✓" : "Click to Verify"}
-                                            </button>
-                                        </div>
-                                        <div className={cn(
-                                            "text-xs text-center",
-                                            isDarkVariant ? "text-gray-500" : "text-gray-500"
-                                        )}>
-                                            This helps prevent spam
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            {errors.captcha && (
-                                <p className="text-xs font-medium text-red-500">
-                                    {errors.captcha}
-                                </p>
-                            )}
-                        </div>
-                    )}
-
-                    {/* Sign Up Button */}
-                    <Button
-                        type="submit"
-                        className={cn(
-                            "w-full py-3.5 font-semibold rounded-lg transform hover:scale-[1.02] active:scale-[0.98]",
-                            "transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none cursor-pointer",
-                            "shadow-lg",
-                            buttonStyles.gradient,
-                            buttonStyles.hoverGradient,
-                            buttonStyles.shadow,
-                            buttonStyles.hoverShadow,
-                            buttonStyles.textColor,
-                            buttonStyles.className
-                        )}
-                        disabled={loading || !formData.acceptTerms || (captchaConfig?.enabled && !captchaVerified)}
-                        aria-label="Create your account"
-                    >
-                        {loading ? (
-                            <span className="flex items-center justify-center gap-2">
-                                <Loader2 className="animate-spin h-5 w-5" />
-                                <span className="font-semibold">Creating Account...</span>
-                            </span>
-                        ) : (
-                            <span className="flex items-center justify-center gap-2">
-                                <UserPlus className="w-5 h-5" />
-                                <span className="font-semibold">Create Account</span>
-                            </span>
-                        )}
-                    </Button>
-
-                    {/* Social Sign Up Section */}
-                    {showSocialSignUp && (
-                        <div className="space-y-4">
-                            <div className="relative">
-                                <div className="absolute inset-0 flex items-center">
-                                    <div className={cn(
-                                        "w-full border-t",
-                                        isDarkVariant ? "border-gray-700" : "border-gray-300"
-                                    )}></div>
-                                </div>
-                                <div className="relative flex justify-center text-sm">
-                                    <span className={cn(
-                                        "px-3 text-xs font-semibold uppercase tracking-wider",
-                                        isDarkVariant
-                                            ? "bg-gray-800 text-gray-400"
-                                            : "bg-white text-gray-500"
-                                    )}>
-                                        Or sign up with
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-3 gap-3">
-                                {socialButtons.map((social) => (
-                                    <button
-                                        key={social.id}
-                                        type="button"
-                                        className={cn(
-                                            "w-full inline-flex justify-center items-center py-2.5 px-4 border rounded-lg text-sm font-medium transition-all duration-300",
-                                            "hover:shadow-md active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50",
-                                            "bg-white border-gray-300 hover:bg-gray-50 cursor-pointer",
-                                            social.loading && "opacity-50 cursor-wait"
-                                        )}
-                                        onClick={social.onClick}
-                                        disabled={social.loading}
-                                        aria-label={`Sign up with ${social.label}`}
-                                    >
-                                        {social.loading ? (
-                                            <Loader2 className="animate-spin w-5 h-5" />
-                                        ) : (
-                                            social.icon
-                                        )}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Login Link */}
-                    {showLoginLink && (
-                        <div className="text-center pt-6 border-t border-gray-200 dark:border-gray-700">
-                            <p className={cn(
-                                "text-sm",
-                                isDarkVariant ? "text-gray-400" : "text-gray-600"
-                            )}>
-                                {loginText || "Already have an account?"}{" "}
-                                <button
-                                    type="button"
-                                    onClick={handleLoginClick}
-                                    className={cn(
-                                        "font-semibold transition-colors cursor-pointer",
-                                        isDarkVariant
-                                            ? "text-blue-400 hover:text-blue-300"
-                                            : "text-blue-600 hover:text-blue-700"
-                                    )}
-                                    aria-label="Sign in to your account"
-                                >
-                                    Sign In
-                                </button>
-                            </p>
-                        </div>
-                    )}
-                </form>
-            </motion.div>
-        );
-    };
-
-    // For split layout, we need to handle the info panel
+    // For split layout
     if (type === "split") {
-        const splitStyles = getSplitLayoutStyles();
-
         return (
             <div className={cn(containerVariants({ variant, type }), className)}>
                 {/* Left Panel - Info */}
-                <div
-                    className={splitStyles.leftPanelClasses}
-                    style={splitStyles.backgroundStyle}
-                >
-                    {/* Overlay for background image */}
-                    {splitStyles.backgroundStyle.backgroundImage && (
-                        <div
-                            className="absolute inset-0"
-                            style={splitStyles.overlayStyle}
-                        />
-                    )}
-
-                    {renderLeftPanelContent()}
-                </div>
+                <LeftPanel
+                    companyName={companyName}
+                    logo={logo}
+                    splitBackground={splitBackground}
+                    leftPanelContent={leftPanelContent}
+                    isDarkVariant={isDarkVariant}
+                />
 
                 {/* Right Panel - Form */}
-                <div className={splitStyles.rightPanelClasses}>
-                    {renderFormContent()}
+                <div className={cn(
+                    "flex-1 flex items-center justify-center p-6 md:p-8 lg:p-12",
+                    splitBackground?.rightPanelClassName
+                )}>
+                    <FormContent
+                        variant={variant}
+                        type={type}
+                        formData={formData}
+                        errors={errors}
+                        showPassword={showPassword}
+                        showConfirmPassword={showConfirmPassword}
+                        loading={loading}
+                        error={error}
+                        showSocialSignUp={showSocialSignUp}
+                        showLoginLink={showLoginLink}
+                        loginText={loginText}
+                        requireEmailConfirmation={requireEmailConfirmation}
+                        captchaConfig={captchaConfig}
+                        passwordStrength={passwordStrength}
+                        termsConfig={termsConfig}
+                        buttonStyle={buttonStyle}
+                        logo={logo}
+                        onLogin={handleLoginClick}
+                        onGoogleSignUp={onGoogleSignUp}
+                        onGitHubSignUp={onGitHubSignUp}
+                        onMicrosoftSignUp={onMicrosoftSignUp}
+                        handleInputChange={handleInputChange}
+                        handleBlur={handleBlur}
+                        togglePasswordVisibility={togglePasswordVisibility}
+                        toggleConfirmPasswordVisibility={toggleConfirmPasswordVisibility}
+                        handleSubmit={handleSubmit}
+                        captchaVerified={captchaVerified}
+                        setCaptchaVerified={setCaptchaVerified}
+                        socialLoading={socialLoading}
+                        onSocialSignUp={handleSocialSignUp}
+                    />
                 </div>
             </div>
         );
@@ -1824,7 +199,38 @@ const SignUp: React.FC<SignUpProps> = ({
     // Centered layout
     return (
         <div className={cn(containerVariants({ variant, type }), className)}>
-            {renderFormContent()}
+            <FormContent
+                variant={variant}
+                type={type}
+                formData={formData}
+                errors={errors}
+                showPassword={showPassword}
+                showConfirmPassword={showConfirmPassword}
+                loading={loading}
+                error={error}
+                showSocialSignUp={showSocialSignUp}
+                showLoginLink={showLoginLink}
+                loginText={loginText}
+                requireEmailConfirmation={requireEmailConfirmation}
+                captchaConfig={captchaConfig}
+                passwordStrength={passwordStrength}
+                termsConfig={termsConfig}
+                buttonStyle={buttonStyle}
+                logo={logo}
+                onLogin={handleLoginClick}
+                onGoogleSignUp={onGoogleSignUp}
+                onGitHubSignUp={onGitHubSignUp}
+                onMicrosoftSignUp={onMicrosoftSignUp}
+                handleInputChange={handleInputChange}
+                handleBlur={handleBlur}
+                togglePasswordVisibility={togglePasswordVisibility}
+                toggleConfirmPasswordVisibility={toggleConfirmPasswordVisibility}
+                handleSubmit={handleSubmit}
+                captchaVerified={captchaVerified}
+                setCaptchaVerified={setCaptchaVerified}
+                socialLoading={socialLoading}
+                onSocialSignUp={handleSocialSignUp}
+            />
         </div>
     );
 };

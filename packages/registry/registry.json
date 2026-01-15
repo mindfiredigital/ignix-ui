@@ -55,6 +55,25 @@
         }
       }
     },
+    "button-with-icon": {
+      "name": "ButtonWithIcon",
+      "description": "An enhanced button component with icon support, multiple icon positions, and loading states",
+      "dependencies": [
+        "@radix-ui/react-slot", 
+        "class-variance-authority", 
+        "framer-motion"
+      ],
+      "componentDependencies": [
+        "button", 
+        "spinner"
+      ],
+      "files": {
+        "main": {
+          "path": "components/button-with-icon/index.tsx",
+          "type": "component"
+        }
+      }
+    },
     "button-with-spinner": {
       "name": "ButtonWithSpinner",
       "description": "A button component with integrated loading spinner that displays during async operations. Automatically adjusts spinner colors based on button variant for optimal visibility.",
@@ -63,6 +82,18 @@
       "files": {
         "main": {
           "path": "components/button-with-spinner/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "button-group": {
+      "name": "ButtonGroup",
+      "description": "A component that groups multiple buttons together with consistent spacing, clear active states, and responsive wrapping. Supports both single and multiple selection modes.",
+      "dependencies": ["class-variance-authority"],
+      "componentDependencies": ["button"],
+      "files": {
+        "main": {
+          "path": "components/button-group/index.tsx",
           "type": "component"
         }
       }
@@ -273,6 +304,29 @@
       "files": {
         "main": {
           "path": "components/input/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "list-basic": {
+      "name": "list-basic",
+      "description": "A flexible list component that supports both unordered (bullet points) and ordered (numbered) lists with consistent spacing between items. Optimized with React.memo, useMemo, and useCallback for performance.",
+      "dependencies": [],
+      "files": {
+        "main": {
+          "path": "components/list-basic/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "list-with-actions": {
+      "name": "List-With-Actions",
+      "description": "A list component that extends ListBasic functionality by adding contextual action buttons (like Edit, Delete, View) to each list item. Actions appear on hover/focus on desktop and remain always visible on mobile. Optimized with React.memo, useMemo, and useCallback for performance.",
+      "dependencies": [],
+      "componentDependencies": ["list-basic"],
+      "files": {
+        "main": {
+          "path": "components/list-with-actions/index.tsx",
           "type": "component"
         }
       }
@@ -703,7 +757,7 @@
       ],
       "files": {
         "main": {
-          "path": "templates/pages/sign-up/index.tsx",
+          "path": "templates/pages/signup/index.tsx",
           "type": "template"
         }
       }
@@ -863,6 +917,28 @@
       "files": {
         "main": {
           "path": "templates/pages/security/index.tsx",
+          "type": "template"
+        }
+      }
+    },
+    "notificationSettings": {
+      "name": "NotificationSettingsPage",
+      "description": "A notification settings page with email, SMS, and push notification preferences, featuring toggles and category grouping.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "button",
+        "switch",
+        "radio",
+        "accordion",
+        "card"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/notification-settings-page/index.tsx",
           "type": "template"
         }
       }
