@@ -5,9 +5,9 @@ import TabItem from '@theme/TabItem';
 import CodeBlock from '@theme/CodeBlock';
 import { Navbar } from '@site/src/components/UI/navbar';
 import { Sidebar } from '@site/src/components/UI/sidebar';
-import { Card } from '../UI/card';
+import { Card } from '@site/src/components/UI/card';
 import { Home, Settings, BookOpen, Palette, Layout } from 'lucide-react';
-import { SideBarLeftLayout } from '../UI/sidebarleft-layout';
+import { SideBarLeftLayout } from '@site/src/components/UI/sidebarleft-layout';
 import { cn } from '@site/src/utils/cn';
 
 const layoutVariants = ['default', 'dark', 'light', 'glass', 'gradient'];

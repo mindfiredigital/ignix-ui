@@ -87,18 +87,16 @@ describe("ForgotPasswordPage", () => {
     expect(screen.getByText("Enter your email to get reset link")).toBeInTheDocument();
   });
 
-  it("validates email and shows error for invalid email", async () => {
+  it("shows validation error for invalid email", async () => {
     renderComponent();
     const user = userEvent.setup();
 
-    const input = screen.getByPlaceholderText(/enter your email/i);
-    const button = screen.getByRole("button", { name: /send reset link/i });
+    const input = screen.getByPlaceholderText(/email address/i);
 
     await user.type(input, "invalid-email");
-    await user.click(button);
 
     expect(
-      screen.getByText("Please enter a valid email address.")
+      screen.getByText(/email must include @ symbol/i)
     ).toBeInTheDocument();
   });
   
@@ -106,7 +104,7 @@ describe("ForgotPasswordPage", () => {
     renderComponent();
     const user = userEvent.setup();
 
-    const input = screen.getByPlaceholderText(/enter your email/i);
+    const input = screen.getByPlaceholderText(/email address/i);
     const button = screen.getByRole("button", { name: /send reset link/i });
 
     await user.type(input, "user@example.com");
@@ -120,14 +118,17 @@ describe("ForgotPasswordPage", () => {
     renderComponent();
     const user = userEvent.setup();
 
-    const input = screen.getByPlaceholderText(/enter your email/i);
+    const input = screen.getByPlaceholderText(/email address/i);
     const button = screen.getByRole("button", { name: /send reset link/i });
 
     await user.type(input, "user@example.com");
     await user.click(button);
 
+    // Wait for async operation and check for success page title
+    await screen.findByText("Check your email");
+
     expect(
-      screen.getByText("Check your email for a reset link")
+      screen.getByText("Check your email")
     ).toBeInTheDocument();
   });
 
@@ -139,7 +140,7 @@ describe("ForgotPasswordPage", () => {
     renderComponent();
     const user = userEvent.setup();
 
-    const input = screen.getByPlaceholderText(/enter your email/i);
+    const input = screen.getByPlaceholderText(/email address/i);
     const button = screen.getByRole("button", { name: /send reset link/i });
 
     await user.type(input, "user@example.com");
@@ -174,35 +175,13 @@ describe("ForgotPasswordPage", () => {
     ).toBeInTheDocument()
   })
 
-  it("renders split layout by default", () => {
+  it("renders centered layout", () => {
     renderComponent()
 
-    // Split layout contains 2 main sections (header + form)
-    expect(
-      document.querySelectorAll(".md\\:w-1\\/2").length
-    ).toBeGreaterThan(0)
-  })
-
-  it("renders center layout when formType is center", () => {
-    renderComponent({ formType: "center" })
-
+    // Component uses centered layout by default
     expect(
       document.querySelector(".min-h-screen")
     ).toBeInTheDocument()
-  })
-
-  it("renders forgotSplitHeader when provided", () => {
-    render(
-      <ForgotPasswordPage
-        forgotSplitHeader={{
-          head: "Split Header",
-          para: "Split description",
-        }}
-      />
-    )
-
-    expect(screen.getByText("Split Header")).toBeInTheDocument()
-    expect(screen.getByText("Split description")).toBeInTheDocument()
   })
 
   it("falls back to formCardHeader node when forgotPasswordHeader is not provided", () => {
@@ -235,7 +214,7 @@ describe("ForgotPasswordPage", () => {
     renderComponent()
 
     expect(
-      screen.getByPlaceholderText("Enter your email")
+      screen.getByPlaceholderText("Email address")
     ).toBeInTheDocument()
   })
 
@@ -243,7 +222,7 @@ describe("ForgotPasswordPage", () => {
     renderComponent()
     const user = userEvent.setup()
 
-    const input = screen.getByPlaceholderText(/enter your email/i)
+    const input = screen.getByPlaceholderText(/email address/i)
     const button = screen.getByRole("button", { name: /send reset link/i })
 
     await user.type(input, "user@example.com")
@@ -284,74 +263,55 @@ describe("ForgotPasswordPage", () => {
     ).not.toBeInTheDocument()
   })
 
-  it("renders center layout when formType is center", () => {
-    renderComponent({ formType: "center" })
+  it("renders header text correctly", () => {
+    renderComponent()
 
     expect(
       screen.getByText("Forgot Password")
     ).toBeInTheDocument()
-  })
-
-  it("renders split layout header when provided", () => {
-    render(
-      <ForgotPasswordPage
-        forgotSplitHeader={{
-          head: "Welcome Back",
-          para: "Reset your password",
-        }}
-        onSubmit={onSubmitMock}
-        onNavigateTo={onNavigateMock}
-      />
-    )
-
-    expect(screen.getByText("Welcome Back")).toBeInTheDocument()
-    expect(screen.getByText("Reset your password")).toBeInTheDocument()
   })
 
   it("updates input value correctly", async () => {
     renderComponent()
     const user = userEvent.setup()
 
-    const input = screen.getByPlaceholderText(/enter your email/i)
+    const input = screen.getByPlaceholderText(/email address/i)
     await user.type(input, "test@example.com")
 
     expect(input).toHaveValue("test@example.com")
   })
 
   it("allows submitting again after validation error", async () => {
+    onSubmitMock.mockResolvedValue(undefined);
     renderComponent()
     const user = userEvent.setup()
 
-    const input = screen.getByPlaceholderText(/enter your email/i)
+    const input = screen.getByPlaceholderText(/email address/i)
     const button = screen.getByRole("button", { name: /send reset link/i })
 
     await user.type(input, "bad-email")
     await user.click(button)
 
+    // Component shows specific validation error messages
     expect(
-      screen.getByText(/please enter a valid email/i)
+      screen.getByText(/email must include @ symbol/i)
     ).toBeInTheDocument()
 
     await user.clear(input)
     await user.type(input, "valid@example.com")
     await user.click(button)
 
+    // Wait for async operation and check for success page
+    await screen.findByText("Check your email");
+
     expect(onSubmitMock).toHaveBeenCalledWith("valid@example.com")
   })
 
   it("renders dark variant styles without crashing", () => {
-    renderComponent({ variant: "dark", formType: "center" })
+    renderComponent({ variant: "dark" })
 
     expect(
       screen.getByText("Forgot Password")
-    ).toBeInTheDocument()
-  })
-
-  it("renders input placeholder correctly", () => {
-    renderComponent()
-
-    expect(
-      screen.getByPlaceholderText("Enter your email")
     ).toBeInTheDocument()
   })
 

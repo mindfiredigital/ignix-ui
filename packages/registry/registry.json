@@ -714,6 +714,7 @@
         "class-variance-authority"
       ],
       "componentDependencies": [
+        "card",
         "input",
         "button"
       ],

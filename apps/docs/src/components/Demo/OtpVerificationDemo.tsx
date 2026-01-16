@@ -5,72 +5,26 @@ import CodeBlock from "@theme/CodeBlock"
 import { useEffect, useState } from "react"
 import { OTPVerificationPage } from "../UI/otp-verification-page"
 
-const variants = ["default", "dark", "gradientOceanNight"]
-const animations = ["fadeUp", "scaleIn", "slideLeft", "slideRight", "flipIn"]
-const lengths = ["4", "5", "6", "7", "8", "9", "10"]
-const types = ["email", "phone"]
-const coolDownTimers = ["30", "45", "60", "90"]
+type OtpCoolDownTimer = typeof coolDownTimers[number];
+type OtpVariant = typeof variants[number];
+type OtpAnimation = typeof animations[number];
+type Otplengths = typeof lengths[number];
+type Otptypes = typeof types[number];
 
-// ---------------------------------------------
-// types.ts – shared type for all OTP responses
-// ---------------------------------------------
-  type OtpResult = {
-    success: boolean;
-    message?: string;
-  };
+const variants = ["default", "dark"] as const
+const animations = ["fadeUp", "scaleIn", "slideLeft", "slideRight", "flipIn"] as const
+const lengths = ["4", "5", "6", "7", "8", "9", "10"] as const
+const types = ["email", "phone"] as const
+const coolDownTimers = ["30", "45", "60", "90"] as const
 
-
-  // ---------------------------------------------
-  // api.ts – shared API helpers for open-source use
-  // ---------------------------------------------
-  async function resendOtp(
-    contact: string,
-    type: "email" | "phone"
-  ): Promise<OtpResult> {
-    // Demo-only mock response
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          success: true,
-          message: `OTP sent successfully to your ${type}`,
-        });
-      }, 500); // small delay to simulate API call
-    });
-  }
-
-
-  async function verifyOtpAPI(
-    endpoint: string,
-    code: string
-  ): Promise<OtpResult> {
-    try {
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code }),
-      });
-
-      if (!res.ok) {
-        const error = await res.json().catch(() => null);
-        return {
-          success: false,
-          message: error?.message || "Verification failed",
-        };
-      }
-
-      return { success: true, message: "OTP verified successfully" };
-    } catch {
-      return { success: false, message: "Network error" };
-    }
-  }
 
 const OtpVerificationDemo = () => {
-  const [variant, setVariant] = useState("dark");
-  const [animation, setAnimation] = useState("fadeUp");
-  const [otpLength, setOtpLength] = useState("6");
-  const [type, setTypes] = useState<"email" | "phone">("email");
-  const [contactDetail, setContactDetail] = useState("user@example.com");
-  const [coolDownTimer, setCoolDownTimer] = useState("45");
+  const [variant, setVariant] = useState<OtpVariant>("default");
+  const [animation, setAnimation] = useState<OtpAnimation>("fadeUp");
+  const [otpLength, setOtpLength] = useState<Otplengths>("6");
+  const [type, setTypes] = useState<Otptypes>("email");
+  const [contactDetail, setContactDetail] = useState<string>("user@example.com");
+  const [coolDownTimer, setCoolDownTimer] = useState<OtpCoolDownTimer>("45");
 
   useEffect(() => {
     if (type === "email") {
@@ -90,71 +44,58 @@ const OtpVerificationDemo = () => {
       contactDetail= "${contactDetail}"
       navigateToLabel= "Back To Login"
       submitButtonLabel= "Verify Code"
-      animation= "${animation}"
-      onNavigateTo= {() => console.log("navigated")}
-      onVerifyOtp= {(code) =>
-        verifyOtpAPI("/api/auth/verify-otp", code)
-      }
-          onResendOtp= {() => resendOtp("${contactDetail}", "${type}")}
-      >
-    </OTPVerificationPage>
+      animation= "${animation}" />
     `;
 
   return (
     <div className="space-y-6 mb-8">
       <div className="flex flex-wrap gap-4 justify-start sm:justify-end">
         <VariantSelector
-          variants={variants}
+          variants={[...variants]}
           selectedVariant={variant}
-          onSelectVariant={setVariant}
+          onSelectVariant={(v) => setVariant(v as "default" | "dark")}
           type="Select Variants"
         />
         <VariantSelector
-          variants={animations}
+          variants={[...animations]}
           selectedVariant={animation}
-          onSelectVariant={setAnimation}
+          onSelectVariant={(v) => setAnimation(v as "fadeUp"| "scaleIn"| "slideLeft"| "slideRight"| "flipIn")}
           type="Select Animation"
         />
         {/* OTP Length Input */}
         <VariantSelector
-          variants={lengths}
+          variants={[...lengths]}
           selectedVariant={otpLength}
-          onSelectVariant={setOtpLength}
+          onSelectVariant={(v) => setOtpLength(v as "4" | "5" | "6" | "7" | "8" | "9" | "10")}
           type="Select No of Digit for OTP"
         />
         <VariantSelector
-          variants={types}
+          variants={[...types]}
           selectedVariant={type}
           onSelectVariant={(val) => setTypes(val as "email" | "phone")}
           type="Select Verification Types"
         />
         <VariantSelector
-          variants={coolDownTimers}
+          variants={[...coolDownTimers]}
           selectedVariant={coolDownTimer}
-          onSelectVariant={setCoolDownTimer}
+          onSelectVariant={(v) => setCoolDownTimer(v as "30" | "45" | "60" | "90")}
           type="Select CoolDown Timer"
         />
       </div>
       <Tabs>
         <TabItem value="preview" label="Preview">
-          <div className="border rounded-lg overflow-hidden p-4">
+          <div className="border border-gray-300 rounded-lg overflow-hidden p-4">
             <OTPVerificationPage
-            variant= {variant as any}
+            variant= {variant}
             length= {Number(otpLength)}
             title= "Enter Verification Code"
-            resendCooldown= {coolDownTimer as any}
-            contactType= {type as any} 
-            contactDetail= {contactDetail as any}
+            resendCooldown= {Number(coolDownTimer)}
+            contactType= {type} 
+            contactDetail= {contactDetail}
             navigateToLabel= "Back To Login"
             submitButtonLabel= "Verify Code"
-            animation= {animation as any}
-            onNavigateTo= {() => console.log("navigated")}
-            onVerifyOtp= {(code) =>
-              verifyOtpAPI("/api/auth/verify-otp", code)
-            }
-            onResendOtp= {() => resendOtp(contactDetail as any, type as any)}
-            >
-            </OTPVerificationPage>
+            animation= {animation}
+            />
           </div>
         </TabItem>
         <TabItem value="code" label="Code">
