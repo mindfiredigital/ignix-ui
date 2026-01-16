@@ -1,14 +1,17 @@
-import React from "react";
+import * as React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
-import { SideBarRightLayout } from "."; // adjust the import path if needed
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { SidebarRightLayout } from ".";
 
-// ✅ Safe synchronous mocks (Vitest hoist-friendly)
+/* ---------------------------------- Mocks ---------------------------------- */
+
+// Lucide icons
 vi.mock("lucide-react", () => ({
   Menu: () => <div data-testid="menu-icon" />,
   X: () => <div data-testid="x-icon" />,
 }));
 
+// Framer motion (animation-safe)
 vi.mock("framer-motion", () => ({
   motion: {
     div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
@@ -17,88 +20,274 @@ vi.mock("framer-motion", () => ({
   AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-// ✅ Mock useSidebar context
-vi.mock("../../sidebar", () => {
-  return {
-    SidebarProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-    useSidebar: () => ({
-      isOpen: true,
-      setIsOpen: vi.fn(),
-    }),
-  };
-});
+// Sidebar context
+const setIsOpenMock = vi.fn();
 
-describe("SideBarRightLayout Component", () => {
-  it("renders children correctly", () => {
-    render(<SideBarRightLayout><div>Test Child</div></SideBarRightLayout>);
-    expect(screen.getByText("Test Child")).toBeInTheDocument();
+vi.mock("@ignix-ui/sidebar", () => ({
+  SidebarProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  useSidebar: () => ({
+    isOpen: true,
+    setIsOpen: setIsOpenMock,
+  }),
+}));
+
+/* -------------------------------- Test Suite -------------------------------- */
+
+describe("SidebarRightLayout", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    global.innerWidth = 1200;
   });
 
-  it("renders header and footer if provided", () => {
+  /* ----------------------------- Basic Rendering ----------------------------- */
+
+  it("renders children correctly", () => {
     render(
-      <SideBarRightLayout
-        header={<div>Header</div>}
-        footer={<div>Footer</div>}
-      >
-        <div>Sidebar</div>
+      <SidebarRightLayout>
+        <div>Content</div>
+      </SidebarRightLayout>
+    );
+    expect(screen.getByText("Content")).toBeInTheDocument();
+  });
+
+  it("renders header when provided", () => {
+    render(
+      <SidebarRightLayout header={<div>Header</div>}>
         <div>Body</div>
-      </SideBarRightLayout>
+      </SidebarRightLayout>
     );
     expect(screen.getByText("Header")).toBeInTheDocument();
-    expect(screen.getByText("Footer")).toBeInTheDocument();
-    expect(screen.getByText("Sidebar")).toBeInTheDocument();
   });
 
-  it("renders sidebar when passed as prop", () => {
+  it("renders footer when provided", () => {
     render(
-      <SideBarRightLayout sidebar={<div>Sidebar</div>}>
-        <div>Main</div>
-      </SideBarRightLayout>
+      <SidebarRightLayout footer={<div>Footer</div>}>
+        <div>Body</div>
+      </SidebarRightLayout>
+    );
+    expect(screen.getByText("Footer")).toBeInTheDocument();
+  });
+
+  it("renders sidebar when provided", () => {
+    render(
+      <SidebarRightLayout sidebar={<div>Sidebar</div>}>
+        <div>Body</div>
+      </SidebarRightLayout>
     );
     expect(screen.getByText("Sidebar")).toBeInTheDocument();
   });
 
-  it("applies the correct classes for the dark variant", () => {
+  it("renders without crashing when sidebar is omitted", () => {
+    render(
+      <SidebarRightLayout>
+        <div>Body</div>
+      </SidebarRightLayout>
+    );
+    expect(screen.getByText("Body")).toBeInTheDocument();
+  });
+
+  /* ------------------------------ Variants ---------------------------------- */
+
+  it("applies dark variant classes", () => {
     const { container } = render(
-      <SideBarRightLayout variant="dark" sidebar={<div>Sidebar</div>}>
-        <div>Variant Layout</div>
-      </SideBarRightLayout>
+      <SidebarRightLayout variant="dark">
+        <div>Body</div>
+      </SidebarRightLayout>
     );
 
-    // root of the rendered component
     const root = container.firstChild as HTMLElement;
-    expect(root).toBeTruthy();
-
-    // LayoutVariants for "dark" maps to "bg-card text-card-foreground"
     expect(root).toHaveClass("bg-card");
     expect(root).toHaveClass("text-card-foreground");
   });
 
-
-  it("toggles sidebar visibility when button is clicked (mobile simulation)", () => {
-    // simulate mobile screen
-    global.innerWidth = 500;
-    render(
-      <SideBarRightLayout sidebar={<div>Sidebar</div>}>
-        <div>Content</div>
-      </SideBarRightLayout>
+  it("applies gradient variant classes", () => {
+    const { container } = render(
+      <SidebarRightLayout variant="gradient">
+        <div>Body</div>
+      </SidebarRightLayout>
     );
 
-    const button = screen.getByRole("button");
-    expect(button).toBeInTheDocument();
-
-    fireEvent.click(button);
-    // just ensure click doesn’t throw and toggles state
-    expect(button).toBeDefined();
+    expect(container.firstChild).toHaveClass("bg-gradient-to-br");
   });
 
-  it("calls onSidebarToggle when sidebar opens/closes", () => {
-    const toggleSpy = vi.fn();
-    render(
-      <SideBarRightLayout sidebar={<div>Sidebar</div>} onSidebarToggle={toggleSpy}>
-        <div>Content</div>
-      </SideBarRightLayout>
+  /* ---------------------------- CSS Variables -------------------------------- */
+
+  it("sets CSS variables for header/footer/sidebar sizes", () => {
+    const { container } = render(
+      <SidebarRightLayout
+        headerHeight={80}
+        footerHeight={70}
+        sidebarWidth="wide"
+        sidebarCollapsedWidth={60}
+        sidebar={<div>Sidebar</div>}
+      >
+        <div>Body</div>
+      </SidebarRightLayout>
     );
-    expect(toggleSpy).toHaveBeenCalled();
+
+    const root = container.firstChild as HTMLElement;
+
+    expect(root.style.getPropertyValue("--header-h")).toBe("80px");
+    expect(root.style.getPropertyValue("--footer-h")).toBe("70px");
+    expect(root.style.getPropertyValue("--sidebar-w")).toBe("320px");
+    expect(root.style.getPropertyValue("--sidebar-w-collapsed")).toBe("60px");
+  });
+
+  /* -------------------------- Sidebar Collapsing ----------------------------- */
+
+  it("initializes sidebar closed when sidebarCollapsed=true", () => {
+    render(
+      <SidebarRightLayout sidebarCollapsed sidebar={<div>Sidebar</div>}>
+        <div>Body</div>
+      </SidebarRightLayout>
+    );
+
+    expect(setIsOpenMock).toHaveBeenCalledWith(false);
+  });
+
+  it("initializes sidebar open when sidebarCollapsed=false", () => {
+    render(
+      <SidebarRightLayout sidebarCollapsed={false} sidebar={<div>Sidebar</div>}>
+        <div>Body</div>
+      </SidebarRightLayout>
+    );
+
+    expect(setIsOpenMock).toHaveBeenCalledWith(true);
+  });
+
+  /* ------------------------------ Mobile Mode -------------------------------- */
+
+  it("renders mobile toggle button on small screens", () => {
+    global.innerWidth = 500;
+
+    render(
+      <SidebarRightLayout sidebar={<div>Sidebar</div>}>
+        <div>Body</div>
+      </SidebarRightLayout>
+    );
+
+    expect(screen.getByRole("button")).toBeInTheDocument();
+  });
+
+  it("shows overlay on mobile when sidebar is open", () => {
+    global.innerWidth = 500;
+
+    const { container } = render(
+      <SidebarRightLayout sidebar={<div>Sidebar</div>}>
+        <div>Body</div>
+      </SidebarRightLayout>
+    );
+
+    expect(container.querySelector(".bg-black\\/50")).toBeInTheDocument();
+  });
+
+  it("clicking overlay closes sidebar", () => {
+    global.innerWidth = 500;
+
+    const { container } = render(
+      <SidebarRightLayout sidebar={<div>Sidebar</div>}>
+        <div>Body</div>
+      </SidebarRightLayout>
+    );
+
+    fireEvent.click(container.querySelector(".bg-black\\/50")!);
+    expect(setIsOpenMock).toHaveBeenCalledWith(false);
+  });
+
+  it("does not render overlay when overlay=false", () => {
+    global.innerWidth = 500;
+
+    const { container } = render(
+      <SidebarRightLayout overlay={false} sidebar={<div>Sidebar</div>}>
+        <div>Body</div>
+      </SidebarRightLayout>
+    );
+
+    expect(container.querySelector(".bg-black\\/50")).toBeNull();
+  });
+
+  /* ----------------------------- Interaction -------------------------------- */
+
+  it("toggles sidebar when mobile button is clicked", () => {
+    global.innerWidth = 500;
+
+    render(
+      <SidebarRightLayout sidebar={<div>Sidebar</div>}>
+        <div>Body</div>
+      </SidebarRightLayout>
+    );
+
+    fireEvent.click(screen.getByRole("button"));
+    expect(setIsOpenMock).toHaveBeenCalled();
+  });
+
+  it("button has correct aria-label", () => {
+    global.innerWidth = 500;
+
+    render(
+      <SidebarRightLayout sidebar={<div>Sidebar</div>}>
+        <div>Body</div>
+      </SidebarRightLayout>
+    );
+
+    expect(screen.getByRole("button")).toHaveAttribute("aria-label");
+  });
+
+  /* ----------------------------- Footer Logic -------------------------------- */
+
+  it("uses fixed positioning when stickyFooter=true", () => {
+    render(
+      <SidebarRightLayout stickyFooter footer={<div>Footer</div>}>
+        <div>Body</div>
+      </SidebarRightLayout>
+    );
+
+    expect(screen.getByText("Footer").parentElement).toHaveClass("fixed");
+  });
+
+  /* --------------------------- Callback Behavior ----------------------------- */
+
+  it("calls onSidebarToggle when isOpen changes", () => {
+    const spy = vi.fn();
+
+    render(
+      <SidebarRightLayout sidebar={<div>Sidebar</div>} onSidebarToggle={spy}>
+        <div>Body</div>
+      </SidebarRightLayout>
+    );
+
+    expect(spy).toHaveBeenCalled();
+  });
+
+  /* ---------------------------- Defensive Tests ------------------------------ */
+
+  it("renders safely when gestures are disabled", () => {
+    render(
+      <SidebarRightLayout enableGestures={false} sidebar={<div>Sidebar</div>}>
+        <div>Body</div>
+      </SidebarRightLayout>
+    );
+
+    expect(screen.getByText("Body")).toBeInTheDocument();
+  });
+
+  it("renders safely with custom className", () => {
+    const { container } = render(
+      <SidebarRightLayout className="custom-layout">
+        <div>Body</div>
+      </SidebarRightLayout>
+    );
+
+    expect(container.firstChild).toHaveClass("custom-layout");
+  });
+
+  it("does not throw when no header, sidebar, or footer is provided", () => {
+    expect(() =>
+      render(
+        <SidebarRightLayout>
+          <div>Body</div>
+        </SidebarRightLayout>
+      )
+    ).not.toThrow();
   });
 });

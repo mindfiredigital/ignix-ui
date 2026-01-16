@@ -74,7 +74,6 @@ describe("SideBarLeftLayout Component", () => {
     expect(root).toHaveClass("text-card-foreground");
   });
 
-
   it("toggles sidebar visibility when button is clicked (mobile simulation)", () => {
     // simulate mobile screen
     global.innerWidth = 500;
@@ -101,4 +100,122 @@ describe("SideBarLeftLayout Component", () => {
     );
     expect(toggleSpy).toHaveBeenCalled();
   });
+
+  it("does not render sidebar when sidebar prop is not provided", () => {
+    render(
+      <SideBarLeftLayout>
+        <div>Main Content</div>
+      </SideBarLeftLayout>
+    );
+
+    expect(screen.queryByText("Sidebar")).not.toBeInTheDocument();
+  });
+
+  it("supports right positioned sidebar", () => {
+    render(
+      <SideBarLeftLayout
+        sidebarPosition="right"
+        sidebar={<div data-testid="sidebar">Sidebar</div>}
+      >
+        <div>Main</div>
+      </SideBarLeftLayout>
+    );
+
+    expect(screen.getByTestId("sidebar")).toBeInTheDocument();
+  });
+
+  it("applies CSS variables for header, footer, and sidebar width", () => {
+    const { container } = render(
+      <SideBarLeftLayout
+        headerHeight={80}
+        footerHeight={70}
+        sidebarWidth="wide"
+        sidebar={<div>Sidebar</div>}
+      >
+        <div>Content</div>
+      </SideBarLeftLayout>
+    );
+
+    const root = container.firstChild as HTMLElement;
+
+    expect(root.style.getPropertyValue("--header-h")).toBe("80px");
+    expect(root.style.getPropertyValue("--footer-h")).toBe("70px");
+    expect(root.style.getPropertyValue("--sidebar-w")).toBe("320px");
+  });
+
+  it("uses collapsed width when sidebarCollapsed is true", () => {
+    const { container } = render(
+      <SideBarLeftLayout
+        sidebarCollapsed
+        sidebarCollapsedWidth={60}
+        sidebar={<div>Sidebar</div>}
+      >
+        <div>Content</div>
+      </SideBarLeftLayout>
+    );
+
+    const root = container.firstChild as HTMLElement;
+    expect(root.style.getPropertyValue("--sidebar-w-collapsed")).toBe("60px");
+  });
+
+  it("renders overlay on mobile when sidebar is open", () => {
+    global.innerWidth = 500;
+
+    const { container } = render(
+      <SideBarLeftLayout sidebar={<div>Sidebar</div>}>
+        <div>Content</div>
+      </SideBarLeftLayout>
+    );
+
+    const overlay = container.querySelector(".bg-black\\/50");
+    expect(overlay).toBeInTheDocument();
+  });
+
+  it("applies fixed positioning when stickyFooter is enabled", () => {
+    render(
+      <SideBarLeftLayout stickyFooter footer={<div>Footer</div>}>
+        <div>Content</div>
+      </SideBarLeftLayout>
+    );
+
+    const footer = screen.getByText("Footer").parentElement!;
+    expect(footer.className).toContain("fixed");
+  });
+
+  it("renders safely when gestures are disabled", () => {
+    render(
+      <SideBarLeftLayout
+        enableGestures={false}
+        sidebar={<div>Sidebar</div>}
+      >
+        <div>Content</div>
+      </SideBarLeftLayout>
+    );
+
+    expect(screen.getByText("Content")).toBeInTheDocument();
+  });
+
+  it("accepts transitionDuration without throwing", () => {
+    render(
+      <SideBarLeftLayout
+        transitionDuration={0.8}
+        sidebar={<div>Sidebar</div>}
+      >
+        <div>Content</div>
+      </SideBarLeftLayout>
+    );
+
+    expect(screen.getByText("Content")).toBeInTheDocument();
+  });
+
+  it("renders cleanly without header or footer", () => {
+    render(
+      <SideBarLeftLayout sidebar={<div>Sidebar</div>}>
+        <div>Main Content</div>
+      </SideBarLeftLayout>
+    );
+
+    expect(screen.getByText("Main Content")).toBeInTheDocument();
+  });
+
 });
