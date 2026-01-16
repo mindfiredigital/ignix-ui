@@ -2,8 +2,8 @@ import * as React from "react";
 import { motion, AnimatePresence, type PanInfo } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Menu, X } from "lucide-react";
-import { cn } from "@site/src/utils/cn";
 import { SidebarProvider, useSidebar } from "../sidebar";
+import { cn } from "@site/src/utils/cn";
 
 export interface FullHeightSidebarLayoutProps {
   // React Nodes
@@ -47,7 +47,6 @@ const FullHeightSidebarLayoutVariants = cva("min-h-screen", {
       dark: "bg-card text-card-foreground",
       light: "bg-white text-gray-900 border-r",
       glass: "bg-white/10 backdrop-blur-lg text-foreground",
-      gradient: "bg-gradient-to-br from-purple-500 to-purple-400 text-white",
     },
     sidebarPosition: {
       left: "",
@@ -76,7 +75,7 @@ const FullHeightSidebarLayoutContent: React.FC<FullHeightSidebarLayoutProps> = (
   sidebarCollapsed = false,
   onSidebarToggle,
   headerHeight = 64, // px
-  zIndex = { header: 20, sidebar: 10, overlay: 80 },
+  zIndex = { header: 100, sidebar: 90, overlay: 80 },
 }) => {
   const { isOpen, setIsOpen } = useSidebar();
   const [isMobile, setIsMobile] = React.useState(false);
@@ -137,16 +136,12 @@ const FullHeightSidebarLayoutContent: React.FC<FullHeightSidebarLayoutProps> = (
       {/* Fixed header with reserved space via padding on the main shell */}
       {header && (
         <motion.header
-          className="relative inset-x-0 top-0"
-          style={{
-            height: headerHeight,
-            zIndex: zIndex.header
-          }}
+          className={cn("relative inset-x-0 top-0", `z-[${zIndex.header}]`,`[h:var(--header-h)]`)}
         >
           {header}
         </motion.header>
       )}
-    
+
       <div
         className={cn(
           // Desktop grid: sidebar + content
@@ -162,30 +157,24 @@ const FullHeightSidebarLayoutContent: React.FC<FullHeightSidebarLayoutProps> = (
         {sidebar && !isMobile && (
           <motion.aside
             className={cn(
-              "hidden md:block",
+              "hidden md:block sticky",
+              "top-[var(--header-h)]",
+              "h-[calc(100dvh-var(--header-h))]",
+              "z-[var(--z-sidebar)]",
+
               sidebarOnLeft && "order-1",
               sidebarOnRight && "order-2",
-              "sticky",
+
+              sidebarOnLeft &&
+                (isOpen && !sidebarCollapsed ? "mr-0" : "mr-[70px]"),
+              sidebarOnRight &&
+                (isOpen && !sidebarCollapsed ? "ml-0" : "ml-[70px]")
             )}
-            style={{
-              top: headerHeight,
-              height: `calc(100dvh - ${headerHeight}px)`,
-              zIndex: zIndex.sidebar,
-              width: !sidebarCollapsed && isOpen ? sidebarWidth : 0,
-
-              // Apply margin-right ONLY for left sidebar
-              marginRight: sidebarOnLeft
-                ? (!sidebarCollapsed && isOpen ? 0 : 70)
-                : undefined,
-
-              // Apply margin-left ONLY for right sidebar
-              marginLeft: sidebarOnRight
-                ? (!sidebarCollapsed && isOpen ? 0 : 70)
-                : undefined
-            }}
             initial={false}
             animate={{
-              width: !sidebarCollapsed && isOpen ? sidebarWidth : 0,
+              width: isOpen && !sidebarCollapsed
+                ? "var(--sidebar-w)"
+                : "0px",
             }}
             transition={{ duration: transitionDuration }}
           >
@@ -197,10 +186,9 @@ const FullHeightSidebarLayoutContent: React.FC<FullHeightSidebarLayoutProps> = (
         <main
           ref={mainRef}
           className={cn(
-            "h-[calc(100dvh-var(--header-h))]",
+            "h-[calc(100dvh-var(--header-h))] overflow-y-auto scrollbar-hidden",
             sidebarOnLeft && "md:order-2",
-            sidebarOnRight && "md:order-1",
-            (mobileBreakpoint==='sm' && isOpen) ? 'overflow-hidden' : 'overflow-y-auto'
+            sidebarOnRight && "md:order-1"
           )}
         >
             {children}
@@ -213,8 +201,8 @@ const FullHeightSidebarLayoutContent: React.FC<FullHeightSidebarLayoutProps> = (
           <AnimatePresence>
             {overlay && (
               <motion.div
-                className="fixed inset-0 bg-blue/50"
-                style={{ zIndex: zIndex.overlay, pointerEvents: isOpen ? 'auto' : 'none' }}
+                className={cn("fixed inset-0 bg-black/50",`z-[${zIndex.overlay}]`,
+                isOpen ? "pointer-events-auto" : "pointer-events-none",)}
                 initial={{ opacity: 0, pointerEvents: 'none' }}
                 animate={{ 
                   opacity: isOpen ? 1 : 0,
@@ -231,11 +219,9 @@ const FullHeightSidebarLayoutContent: React.FC<FullHeightSidebarLayoutProps> = (
             className={cn(
               "fixed inset-y-0 w-[var(--sidebar-w)]",
               sidebarOnLeft && "left-0" ,
-              sidebarOnRight && "right-0"
+              sidebarOnRight && "right-0",
+              `z-[${(zIndex.sidebar ?? 90) + 10}]`
             )}
-            style={{
-              zIndex: (zIndex.sidebar ?? 90) + 10,
-            }}
             initial={{
               x: sidebarOnLeft ? -sidebarWidth : sidebarWidth
             }}
@@ -259,6 +245,7 @@ const FullHeightSidebarLayoutContent: React.FC<FullHeightSidebarLayoutProps> = (
             className={cn(
               "fixed z-999 p-2 rounded-lg bg-background shadow-lg top-4",
               sidebarOnLeft && "left-4",
+              sidebarOnLeft && isOpen && "left-50",
               sidebarOnRight && "right-4"
             )}
             onClick={() => setIsOpen(!isOpen)}
