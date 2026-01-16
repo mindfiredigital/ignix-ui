@@ -76,6 +76,7 @@
         "components/button-group",
         "components/card",
         "components/image-card",
+        "components/user-card",
         "components/checkbox",
         "components/date-picker",
         "components/dialog-box",
