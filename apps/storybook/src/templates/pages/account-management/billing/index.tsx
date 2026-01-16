@@ -212,7 +212,7 @@ export const GlassCard: React.FC<GlassCardProps> = React.memo(({ children, varia
 /** ---------------------------- Current Plan -------------------------------- */
 export const CurrentPlanCard: React.FC<ActivePlanProps> = React.memo(
   ({ plan, features, renewalDate, variant, onUpgrade, animation, interactive }: ActivePlanProps) => {
-    
+    console.log(features)
     if (!plan) return null
     return (
       <GlassCard variant={variant} animation={animation} interactive={interactive}>
@@ -260,10 +260,19 @@ export const CurrentPlanCard: React.FC<ActivePlanProps> = React.memo(
         <ul className="space-y-3 text-md md:text-lg mt-4">
           {features.map((feature, i) => {
             const Icon = feature.icon ?? Check
+            const value = plan.featureMap[feature.id]
+
             return (
-              <li key={i} className="flex gap-3">
-                <Icon className="h-4 w-4" />
-                {feature.label}
+              <li key={i} className="flex gap-3 items-start">
+                <Icon className="h-4 w-4 mt-1 shrink-0" />
+                <span>
+                  {feature.label}
+                  {typeof value === "string" || typeof value === "number" ? (
+                    <span className="text-zinc-200 ml-1 text-left">
+                      : {value}
+                    </span>
+                  ) : null}
+                </span>
               </li>
             )
           })}
@@ -710,6 +719,7 @@ export const BillingContent:React.FC<BillingPageProps> = ({
 
     return features.filter((f) => {
       const value = activePlan.featureMap[f.id]
+      console.log(value,activePlan.featureMap[f.id])
       return (value)
     })
   }, [features, activePlan])
