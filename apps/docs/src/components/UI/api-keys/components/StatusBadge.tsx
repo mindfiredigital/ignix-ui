@@ -1,4 +1,4 @@
-import { cn } from "../../../../utils/cn";
+import { cn } from "@site/src/utils/cn";
 import { STATUS_BADGE_TYPES, STATUS_LABELS } from "../constants";
 import type { StatusBadgeProps } from "../types";
 import { NewBadge } from "./NewBadge";

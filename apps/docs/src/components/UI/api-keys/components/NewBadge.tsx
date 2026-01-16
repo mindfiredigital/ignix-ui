@@ -1,13 +1,12 @@
 import type { NewBadgeProps } from "../types";
-import { cn } from '../../../../utils/cn';
+import { cn } from '@site/src/utils/cn';
 
 export const NewBadge = ({
     text,
     type = 'default',
     variant,
     className,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    showIcon = false,
+    // showIcon = false,
     icon: Icon
 }: NewBadgeProps) => {
     const typeStyles = {

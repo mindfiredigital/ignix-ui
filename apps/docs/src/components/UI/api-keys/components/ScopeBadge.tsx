@@ -1,5 +1,5 @@
 import type { ScopeBadgeProps } from "../types";
-import { cn } from '../../../../utils/cn';
+import { cn } from '@site/src/utils/cn';
 import { SCOPE_RISK_BADGE_TYPES, SCOPES } from "../constants";
 import { NewBadge } from "./NewBadge";
 
