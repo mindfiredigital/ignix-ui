@@ -7,11 +7,16 @@ import {
   type LucideIcon,
   Trophy,
 } from "lucide-react"
-import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "@site/src/utils/cn"
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "../card"
 import { Typography } from "../typography"
-import { Card, CardContent, CardFooter, CardHeader } from "../card"
-import z from "zod"
+import { cn } from "@site/src/utils/cn"
+import { cva, type VariantProps } from "class-variance-authority"
+import { z } from "zod"
 
 /* -------------------------------------------------------------------------- */
 /*                                   TYPES                                    */
@@ -77,7 +82,7 @@ export interface PlanCardProps extends VariantsProps, AnimationProps, CurrentPla
   layout: "mobile" | "desktop"
 }
 
-export interface CardFooterActionProps extends VariantsProps{
+export interface CardFooterActionProps extends VariantsProps, CurrentPlanProps{
   plan: PlanProps
   price?: string
   recommended?: boolean
@@ -306,7 +311,8 @@ const CardFooterAction: React.FC<CardFooterActionProps> = React.memo(({
   variant,
   plan,
   recommendationGradient,
-  onCtaClick
+  onCtaClick,
+  currentPlanId
 }) => {
 
   const handleClick = () => {
@@ -320,6 +326,7 @@ const CardFooterAction: React.FC<CardFooterActionProps> = React.memo(({
         type="button"
         aria-label={`${ctaLabel}`}
         onClick={handleClick}
+        disabled={currentPlanId === plan.id}
         className={cn(
           "w-full rounded-lg py-2 text-sm font-semibold transition hover:cursor-pointer",
           recommended
@@ -327,7 +334,8 @@ const CardFooterAction: React.FC<CardFooterActionProps> = React.memo(({
             : variant === "light" 
             ? "bg-zinc-800 text-white hover:bg-zinc-700"
             : "bg-white/10 text-white hover:bg-white/20",
-          recommendationGradient && variant === "light" ? `${recommendationGradient}` : ""
+          recommendationGradient && variant === "light" ? `${recommendationGradient}` : "",
+          currentPlanId === plan.id && "opacity-50 cursor-not-allowed"
         )}
       >
         {ctaLabel}
@@ -339,6 +347,7 @@ const CardFooterAction: React.FC<CardFooterActionProps> = React.memo(({
 /* -------------------------------------------------------------------------- */
 /*                              PLAN CARD                                     */
 /* -------------------------------------------------------------------------- */
+
 /**
  * Individual pricing plan card.
  */
@@ -376,7 +385,7 @@ const PlanCard: React.FC<PlanCardProps> = React.memo(({
     >
       {plan.recommended && (
         <span
-          className={`absolute -top-2 left-1/2 -translate-x-1/2 flex items-center gap-1 rounded-full px-3 py-1 text-sm font-semibold text-white ${
+          className={`absolute -top-6 left-1/2 -translate-x-1/2 flex items-center gap-1 rounded-full px-3 py-1 text-sm font-semibold text-white ${
             recommendationGradient ? "bg-red-500" : "bg-indigo-500"
           }`}
         >
@@ -387,7 +396,7 @@ const PlanCard: React.FC<PlanCardProps> = React.memo(({
       {currentPlanId === plan.id && (
         <span
           className={cn(
-            "absolute -top-2 left-1/2 -translate-x-1/2 flex items-center gap-1 rounded-full px-3 py-1 text-sm font-semibold",
+            "absolute -top-6 left-1/2 -translate-x-1/2 flex items-center gap-1 rounded-full px-3 py-1 text-sm font-semibold",
             "bg-emerald-500 text-white border border-emerald-500/30"
           )}
         >
@@ -436,6 +445,7 @@ const PlanCard: React.FC<PlanCardProps> = React.memo(({
         variant={variant}
         recommendationGradient={recommendationGradient}
         onCtaClick={onCtaClick}
+        currentPlanId={currentPlanId}
       />
     </Card>
   )
@@ -444,6 +454,7 @@ const PlanCard: React.FC<PlanCardProps> = React.memo(({
 /* -------------------------------------------------------------------------- */
 /*                              MAIN COMPONENT                                 */
 /* -------------------------------------------------------------------------- */
+
 /**
  * Responsive pricing comparison table.
  */
@@ -512,7 +523,7 @@ export const ComparisonTableContent: React.FC<ComparisonTableData> = ({
           <Typography variant="h2" className={cn("text-center", ComparisonTableTextVariant({ variant }))}>
             {title}
           </Typography>
-          <p className={cn("mt-3 text-sm max-w-xl mx-auto text-right", ComparisonTableTextVariant({ variant }))}>
+          <p className={cn("mt-3 text-sm max-w-xl mx-auto", ComparisonTableTextVariant({ variant }))}>
             {description}
           </p>
         </div>

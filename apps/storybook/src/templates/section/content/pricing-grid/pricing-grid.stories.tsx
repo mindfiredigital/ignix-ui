@@ -116,66 +116,14 @@ export const Default: Story = {
       }
     ]
 
-    return <PricingGrid plans={plans} currentPlan={2} modernVariant="default" modernUI="basic"/>
-  },
-}
-
-export const ModernUI: Story = {
-  render: () => {
-    const plans = [
-      {
-        name: "Starter",
-        price: "$FREE /month",
-        icon: Lightbulb,
-        ctaLabel: "Check",
-        features: [
-          { label: "Disk Space 128 GB" },
-          { label: "Bandwidth 15 GB" },
-          { label: "Databases 1" },
-          { label: "License", available: false },
-          { label: "Email Accounts", available: false },
-          { label: "24 Hours Support", available: false },
-        ],
-      },
-      {
-        name: "Standard",
-        price: "$ 19.99/month",
-        highlighted: true,
-        icon: CreditCard,
-        ctaLabel: "Check",
-        features: [
-          { label: "Storage 20GB", icon: HardDrive },
-          { label: "Databases 20", icon: Database },
-          { label: "License", icon: Settings2  },
-          { label: "Email Accounts", icon: Mail },
-          { label: "24/7 Support", icon: LifeBuoy },
-          { label: "Agent Support", icon: Users, available: false },
-        ],
-      },
-      {
-        name: "Enterprise",
-        price: "$29.99/month",
-        icon: BarChart3,
-        ctaLabel: "Check",
-        features: [
-          { label: "Storage 50GB", icon: HardDrive },
-          { label: "Databases 50", icon: Database },
-          { label: "License", icon: Settings2  },
-          { label: "Email Accounts", icon: Mail },
-          { label: "24/7 Support", icon: LifeBuoy },
-          { label: "Agent Support", icon: Users },
-        ],
-      }
-    ]
-
-    return <PricingGrid title="Pricing Plans For Everyone" description="Lorem ipsum dolor sit amet, consectetur adipiscing" plans={plans} variant="dark" modernUI="vector"/>
+    return <PricingGrid plans={plans} variant="gradient"/>
 
   },
 }
 
-export const Animation :  Story = {
+export const BasicLight: Story = {
   render: () => {
-    const plans = [
+   const plans = [
       {
         name: "Starter",
         price: "$FREE /month",
@@ -192,8 +140,9 @@ export const Animation :  Story = {
         ctaLabel: "Check Now"
       },
       {
+        id:1,
         name: "Standard",
-        price: "$ 19.99 /month",
+        price: "$19.99 /month",
         highlighted: true,
         icon: CreditCard,
         gradient: "from-purple-500 to-fuchsia-500",
@@ -208,8 +157,9 @@ export const Animation :  Story = {
         ctaLabel: "Check Now"
       },
       {
+        id:2,
         name: "Enterprise",
-        price: "29.99",
+        price: "$29.99 /month",
         gradient: "from-teal-500 to-emerald-500",
         icon: BarChart3,
         features: [
@@ -223,19 +173,21 @@ export const Animation :  Story = {
         ctaLabel: "Check Now"
       }
     ]
-    return <PricingGrid plans={plans} modernUI="basic" animation="slideUp" table/>
+
+    return <PricingGrid plans={plans} modernVariant="light"/>
 
   },
 }
 
-export const DifferentColorsCard: Story = {
+export const Vector: Story = {
    render: () => {
    const plans = [
       {
         name: "Starter",
         price: "$FREE /month",
-        gradient: "bg-gradient-to-br from-yellow-500 to-orange-400 text-white",
+        gradient: "bg-gradient-to-br from-yellow-900 to-orange-500",
         icon: Lightbulb,
+        ctaLabel: "Check",
         features: [
           { label: "Disk Space 128 GB" },
           { label: "Bandwidth 15 GB" },
@@ -244,14 +196,13 @@ export const DifferentColorsCard: Story = {
           { label: "Email Accounts", available: false },
           { label: "24 Hours Support", available: false },
         ],
-        ctaLabel: "Check Now"
       },
       {
         name: "Standard",
-        price: "$19.99 /month",
+        price: "$ 19.99/month",
         highlighted: true,
         icon: CreditCard,
-        gradient: "bg-gradient-to-br from-purple-500 to-fuchsia-500 text-white",
+        gradient: "bg-gradient-to-br from-purple-500 to-fuchsia-500",
         features: [
           { label: "Storage 20GB", icon: HardDrive },
           { label: "Databases 20", icon: Database },
@@ -260,13 +211,13 @@ export const DifferentColorsCard: Story = {
           { label: "24/7 Support", icon: LifeBuoy },
           { label: "Agent Support", icon: Users, available: false },
         ],
-        ctaLabel: "Check Now"
       },
       {
         name: "Enterprise",
-        price: "$29.99 /month",
-        gradient: "bg-gradient-to-br from-teal-500 to-emerald-500 text-white",
+        price: "$29.99",
+        gradient: "bg-gradient-to-br from-teal-500 to-emerald-500",
         icon: BarChart3,
+        ctaLabel: "Check",
         features: [
           { label: "Storage 50GB", icon: HardDrive },
           { label: "Databases 50", icon: Database },
@@ -275,11 +226,10 @@ export const DifferentColorsCard: Story = {
           { label: "24/7 Support", icon: LifeBuoy },
           { label: "Agent Support", icon: Users },
         ],
-        ctaLabel: "Check Now"
       }
     ]
 
-    return <PricingGrid plans={plans} modernUI="vector" allowDifferentCardColors/>
+    return <PricingGrid plans={plans} modernUI="vector" />
 
   },
 }
@@ -290,6 +240,7 @@ export const PriceBadgePosition: Story = {
       {
         name: "Starter",
         price: "$FREE /month",
+        gradient: "bg-gradient-to-br from-yellow-900 to-orange-500",
         icon: Lightbulb,
         features: [
           { label: "Disk Space 128 GB" },
@@ -306,7 +257,7 @@ export const PriceBadgePosition: Story = {
         price: "$19.99 /month",
         highlighted: true,
         icon: CreditCard,
-        currentPlan: true,
+        gradient: "bg-gradient-to-br from-purple-500 to-fuchsia-500",
         features: [
           { label: "Storage 20GB", icon: HardDrive },
           { label: "Databases 20", icon: Database },
@@ -319,7 +270,172 @@ export const PriceBadgePosition: Story = {
       },
       {
         name: "Enterprise",
-        price: "$29.99 /month",
+        price: "29.99",
+        gradient: "bg-gradient-to-br from-teal-500 to-emerald-500",
+        icon: BarChart3,
+        features: [
+          { label: "Storage 50GB", icon: HardDrive },
+          { label: "Databases 50", icon: Database },
+          { label: "License", icon: Settings2  },
+          { label: "Email Accounts", icon: Mail },
+          { label: "24/7 Support", icon: LifeBuoy },
+          { label: "Agent Support", icon: Users },
+        ],
+        ctaLabel: "Check Now"
+      }
+    ]
+    return <PricingGrid plans={plans} modernUI="vector" animation="fadeIn" pricingBadgePosition="top"/>
+
+  },
+}
+
+export const VectorTable: Story = {
+   render: () => {
+    const plans = [
+      {
+        name: "Starter",
+        price: "$FREE /month",
+        gradient: "bg-gradient-to-br from-yellow-900 to-orange-500",
+        icon: Lightbulb,
+        features: [
+          { label: "Disk Space 128 GB" },
+          { label: "Bandwidth 15 GB" },
+          { label: "Databases 1" },
+          { label: "License", available: false },
+          { label: "Email Accounts", available: false },
+          { label: "24 Hours Support", available: false },
+        ],
+        ctaLabel: "Check Now"
+      },
+      {
+        name: "Standard",
+        price: "$19.99 /month",
+        highlighted: true,
+        icon: CreditCard,
+        gradient: "bg-gradient-to-br from-purple-500 to-fuchsia-500",
+        features: [
+          { label: "Storage 20GB", icon: HardDrive },
+          { label: "Databases 20", icon: Database },
+          { label: "License", icon: Settings2  },
+          { label: "Email Accounts", icon: Mail },
+          { label: "24/7 Support", icon: LifeBuoy },
+          { label: "Agent Support", icon: Users, available: false },
+        ],
+        ctaLabel: "Check Now"
+      },
+      {
+        name: "Enterprise",
+        price: "29.99",
+        gradient: "bg-gradient-to-br from-teal-500 to-emerald-500",
+        icon: BarChart3,
+        features: [
+          { label: "Storage 50GB", icon: HardDrive },
+          { label: "Databases 50", icon: Database },
+          { label: "License", icon: Settings2  },
+          { label: "Email Accounts", icon: Mail },
+          { label: "24/7 Support", icon: LifeBuoy },
+          { label: "Agent Support", icon: Users },
+        ],
+        ctaLabel: "Check Now"
+      }
+    ]
+    return <PricingGrid plans={plans} modernUI="vector" animation="fadeIn" pricingBadgePosition="top" table/>
+  },
+}
+
+export const DifferentColorsCard: Story = {
+   render: () => {
+   const plans = [
+      {
+        name: "Starter",
+        price: "$FREE /month",
+        gradient: "bg-gradient-to-br from-yellow-900 to-orange-500",
+        icon: Lightbulb,
+        ctaLabel: "Check",
+        features: [
+          { label: "Disk Space 128 GB" },
+          { label: "Bandwidth 15 GB" },
+          { label: "Databases 1" },
+          { label: "License", available: false },
+          { label: "Email Accounts", available: false },
+          { label: "24 Hours Support", available: false },
+        ],
+      },
+      {
+        name: "Standard",
+        price: "$ 19.99/month",
+        highlighted: true,
+        icon: CreditCard,
+        gradient: "bg-gradient-to-br from-purple-500 to-fuchsia-500",
+        features: [
+          { label: "Storage 20GB", icon: HardDrive },
+          { label: "Databases 20", icon: Database },
+          { label: "License", icon: Settings2  },
+          { label: "Email Accounts", icon: Mail },
+          { label: "24/7 Support", icon: LifeBuoy },
+          { label: "Agent Support", icon: Users, available: false },
+        ],
+      },
+      {
+        name: "Enterprise",
+        price: "$29.99",
+        gradient: "bg-gradient-to-br from-teal-500 to-emerald-500",
+        icon: BarChart3,
+        ctaLabel: "Check",
+        features: [
+          { label: "Storage 50GB", icon: HardDrive },
+          { label: "Databases 50", icon: Database },
+          { label: "License", icon: Settings2  },
+          { label: "Email Accounts", icon: Mail },
+          { label: "24/7 Support", icon: LifeBuoy },
+          { label: "Agent Support", icon: Users },
+        ],
+      }
+    ]
+
+    return <PricingGrid plans={plans} modernUI="vector" allowDifferentCardColors />
+
+  },
+}
+
+export const Animation :  Story = {
+  render: () => {
+    const plans = [
+      {
+        name: "Starter",
+        price: "$FREE /month",
+        gradient: "bg-gradient-to-br from-yellow-900 to-orange-500",
+        icon: Lightbulb,
+        features: [
+          { label: "Disk Space 128 GB" },
+          { label: "Bandwidth 15 GB" },
+          { label: "Databases 1" },
+          { label: "License", available: false },
+          { label: "Email Accounts", available: false },
+          { label: "24 Hours Support", available: false },
+        ],
+        ctaLabel: "Check Now"
+      },
+      {
+        name: "Standard",
+        price: "$ 19.99 /month",
+        highlighted: true,
+        icon: CreditCard,
+        gradient: "bg-gradient-to-br from-purple-500 to-fuchsia-500",
+        features: [
+          { label: "Storage 20GB", icon: HardDrive },
+          { label: "Databases 20", icon: Database },
+          { label: "License", icon: Settings2  },
+          { label: "Email Accounts", icon: Mail },
+          { label: "24/7 Support", icon: LifeBuoy },
+          { label: "Agent Support", icon: Users, available: false },
+        ],
+        ctaLabel: "Check Now"
+      },
+      {
+        name: "Enterprise",
+        price: "29.99",
+        gradient: "bg-gradient-to-br from-teal-500 to-emerald-500",
         icon: BarChart3,
         features: [
           { label: "Storage 50GB", icon: HardDrive },
@@ -333,19 +449,18 @@ export const PriceBadgePosition: Story = {
       }
     ]
 
-    return <PricingGrid plans={plans} pricingBadgePosition="top" modernUI="vector" variant="default"/>
+    return <PricingGrid plans={plans} pricingBadgePosition="top" modernUI="vector"/>
 
   },
 }
 
-export const Interactive :  Story = {
+export const Advance :  Story = {
   render: () => {
     const plans = [
       {
         id: 3,
         name: "Starter",
         price: "$FREE /month",
-        currentPlan: true,
         gradient: "bg-gradient-to-br from-yellow-900 to-orange-500",
         icon: Lightbulb,
         features: [
@@ -393,12 +508,67 @@ export const Interactive :  Story = {
       }
     ]
 
-    return <PricingGrid  toggleOptions={[
-    { label: "Monthly", value: "monthly" },
-    { label: "Yearly", value: "yearly" },
-  ]}
-  onValueChange={(v) => console.log(v)}
-  plans={plans} variant="dark" modernUI="advance" animation="flipIn" interactive="press"  onCtaClick={(plan) => console.log(`/checkout/${plan.id}`)}/>
+    return <PricingGrid plans={plans} modernVariant="default" modernUI="advance" animation="bounceIn" interactive="press"/>
+
+  },
+}
+
+export const ErrorDisplay :  Story = {
+  render: () => {
+    const plans = [
+      {
+        id: 3,
+        //name: "Starter",
+        price: "$FREE /month",
+        gradient: "bg-gradient-to-br from-yellow-900 to-orange-500",
+        icon: Lightbulb,
+        features: [
+          { label: "Disk Space 128 GB" },
+          { label: "Bandwidth 15 GB" },
+          { label: "Databases 1" },
+          { label: "License", available: false },
+          { label: "Email Accounts", available: false },
+          { label: "24 Hours Support", available: false },
+        ],
+        ctaLabel: "Tell me More"
+      },
+      {
+        id: 2,
+        name: "Standard",
+        price: "$19.99 /month",
+        highlighted: true,
+        icon: CreditCard,
+        gradient: "bg-gradient-to-br from-purple-500 to-fuchsia-500",
+        features: [
+          { label: "Storage 20GB", icon: HardDrive },
+          { label: "Databases 20", icon: Database },
+          { label: "License", icon: Settings2  },
+          { label: "Email Accounts", icon: Mail },
+          { label: "24/7 Support", icon: LifeBuoy },
+          { label: "Agent Support", icon: Users, available: false },
+        ],
+        ctaLabel: "Tell me More"
+      },
+      {
+        id: 1,
+        name: "Enterprise",
+        price: "$29.99 /month",
+        gradient: "bg-gradient-to-br from-teal-500 to-emerald-500",
+        icon: BarChart3,
+        features: [
+          { label: "Storage 50GB", icon: HardDrive },
+          { label: "Databases 50", icon: Database },
+          { label: "License", icon: Settings2  },
+          { label: "Email Accounts", icon: Mail },
+          { label: "24/7 Support", icon: LifeBuoy },
+          { label: "Agent Support", icon: Users },
+        ],
+        ctaLabel: "Tell me More"
+      }
+    ]
+
+    return <PricingGrid plans={plans} modernVariant="default" modernUI="advance" animation="bounceIn" interactive="press"/>
+
   },
 }
 

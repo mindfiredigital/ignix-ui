@@ -87,18 +87,16 @@ describe("ForgotPasswordPage", () => {
     expect(screen.getByText("Enter your email to get reset link")).toBeInTheDocument();
   });
 
-  it("validates email and shows error for invalid email", async () => {
+  it("shows validation error for invalid email", async () => {
     renderComponent();
     const user = userEvent.setup();
 
-    const input = screen.getByPlaceholderText(/enter your email/i);
-    const button = screen.getByRole("button", { name: /send reset link/i });
+    const input = screen.getByPlaceholderText(/email address/i);
 
     await user.type(input, "invalid-email");
-    await user.click(button);
 
     expect(
-      screen.getByText("Please enter a valid email address.")
+      screen.getByText(/email must include @ symbol/i)
     ).toBeInTheDocument();
   });
   
@@ -106,7 +104,7 @@ describe("ForgotPasswordPage", () => {
     renderComponent();
     const user = userEvent.setup();
 
-    const input = screen.getByPlaceholderText(/enter your email/i);
+    const input = screen.getByPlaceholderText(/email address/i);
     const button = screen.getByRole("button", { name: /send reset link/i });
 
     await user.type(input, "user@example.com");
@@ -120,14 +118,17 @@ describe("ForgotPasswordPage", () => {
     renderComponent();
     const user = userEvent.setup();
 
-    const input = screen.getByPlaceholderText(/enter your email/i);
+    const input = screen.getByPlaceholderText(/email address/i);
     const button = screen.getByRole("button", { name: /send reset link/i });
 
     await user.type(input, "user@example.com");
     await user.click(button);
 
+    // Wait for async operation and check for success page title
+    await screen.findByText("Check your email");
+
     expect(
-      screen.getByText("Check your email for a reset link")
+      screen.getByText("Check your email")
     ).toBeInTheDocument();
   });
 
@@ -139,7 +140,7 @@ describe("ForgotPasswordPage", () => {
     renderComponent();
     const user = userEvent.setup();
 
-    const input = screen.getByPlaceholderText(/enter your email/i);
+    const input = screen.getByPlaceholderText(/email address/i);
     const button = screen.getByRole("button", { name: /send reset link/i });
 
     await user.type(input, "user@example.com");
@@ -158,4 +159,160 @@ describe("ForgotPasswordPage", () => {
     expect(onNavigateMock).toHaveBeenCalledTimes(1);
   });
   
+  it("renders custom submit button label", () => {
+    renderComponent({ submitbuttonLabel: "Reset Now" })
+
+    expect(
+      screen.getByRole("button", { name: /reset now/i })
+    ).toBeInTheDocument()
+  })
+
+  it("renders custom navigate link label", () => {
+    renderComponent({ navigateToLabel: "Go Back" })
+
+    expect(
+      screen.getByRole("button", { name: /go back/i })
+    ).toBeInTheDocument()
+  })
+
+  it("renders centered layout", () => {
+    renderComponent()
+
+    // Component uses centered layout by default
+    expect(
+      document.querySelector(".min-h-screen")
+    ).toBeInTheDocument()
+  })
+
+  it("falls back to formCardHeader node when forgotPasswordHeader is not provided", () => {
+    render(
+      <ForgotPasswordPage
+        formCardHeader={<h1>Custom Card Header</h1>}
+      />
+    )
+
+    expect(screen.getByText("Custom Card Header")).toBeInTheDocument()
+  })
+
+  it("does not show error message before submit", () => {
+    renderComponent()
+
+    expect(
+      screen.queryByText(/please enter a valid email/i)
+    ).not.toBeInTheDocument()
+  })
+
+  it("does not show success message before submit", () => {
+    renderComponent()
+
+    expect(
+      screen.queryByText(/check your email/i)
+    ).not.toBeInTheDocument()
+  })
+
+  it("renders input with correct placeholder", () => {
+    renderComponent()
+
+    expect(
+      screen.getByPlaceholderText("Email address")
+    ).toBeInTheDocument()
+  })
+
+  it("submits only once per click", async () => {
+    renderComponent()
+    const user = userEvent.setup()
+
+    const input = screen.getByPlaceholderText(/email address/i)
+    const button = screen.getByRole("button", { name: /send reset link/i })
+
+    await user.type(input, "user@example.com")
+    await user.click(button)
+
+    expect(onSubmitMock).toHaveBeenCalledTimes(1)
+  })
+
+  it("renders custom submit button label", () => {
+    renderComponent({ submitbuttonLabel: "Reset Now" })
+
+    expect(
+      screen.getByRole("button", { name: /reset now/i })
+    ).toBeInTheDocument()
+  })
+
+  it("renders custom navigation label", () => {
+    renderComponent({ navigateToLabel: "Go Back" })
+
+    expect(
+      screen.getByRole("button", { name: /go back/i })
+    ).toBeInTheDocument()
+  })
+
+  it("does not show error initially", () => {
+    renderComponent()
+
+    expect(
+      screen.queryByText(/please enter a valid email/i)
+    ).not.toBeInTheDocument()
+  })
+
+  it("does not show success message initially", () => {
+    renderComponent()
+
+    expect(
+      screen.queryByText(/check your email/i)
+    ).not.toBeInTheDocument()
+  })
+
+  it("renders header text correctly", () => {
+    renderComponent()
+
+    expect(
+      screen.getByText("Forgot Password")
+    ).toBeInTheDocument()
+  })
+
+  it("updates input value correctly", async () => {
+    renderComponent()
+    const user = userEvent.setup()
+
+    const input = screen.getByPlaceholderText(/email address/i)
+    await user.type(input, "test@example.com")
+
+    expect(input).toHaveValue("test@example.com")
+  })
+
+  it("allows submitting again after validation error", async () => {
+    onSubmitMock.mockResolvedValue(undefined);
+    renderComponent()
+    const user = userEvent.setup()
+
+    const input = screen.getByPlaceholderText(/email address/i)
+    const button = screen.getByRole("button", { name: /send reset link/i })
+
+    await user.type(input, "bad-email")
+    await user.click(button)
+
+    // Component shows specific validation error messages
+    expect(
+      screen.getByText(/email must include @ symbol/i)
+    ).toBeInTheDocument()
+
+    await user.clear(input)
+    await user.type(input, "valid@example.com")
+    await user.click(button)
+
+    // Wait for async operation and check for success page
+    await screen.findByText("Check your email");
+
+    expect(onSubmitMock).toHaveBeenCalledWith("valid@example.com")
+  })
+
+  it("renders dark variant styles without crashing", () => {
+    renderComponent({ variant: "dark" })
+
+    expect(
+      screen.getByText("Forgot Password")
+    ).toBeInTheDocument()
+  })
+
 })

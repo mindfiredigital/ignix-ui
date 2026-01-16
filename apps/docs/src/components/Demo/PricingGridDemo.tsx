@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import VariantSelector from "./VariantSelector";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
@@ -75,6 +75,11 @@ const PricingGridBasicDemo = () => {
   const [animation, setAnimation] = useState<string>("fadeIn");
   const [interactive, setInteractive] = useState<string>("press");
   const [variant, setVariant] = useState<string>("dark");
+  const [animationKey, setAnimationKey] = useState<number>(0)
+
+  useEffect(() => {
+    setAnimationKey((k) => k + 1)
+  }, [animation])
 
   const codeString = `
   const plans = [
@@ -171,6 +176,7 @@ const PricingGridBasicDemo = () => {
         <TabItem value="preview" label="Preview">
           <div className="border rounded-lg overflow-hidden">
             <PricingGrid 
+              key={animationKey}
               plans={plans} 
               modernUI="basic"
               modernVariant={variant as any}

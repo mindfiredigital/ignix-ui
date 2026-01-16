@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { SecurityPage } from ".";
 
 const meta: Meta<typeof SecurityPage> = {
-  title: "Templates/Pages/AccountManagement/Security",
+  title: "Templates/Pages/Account Management/Security",
   component: SecurityPage,
   tags: ["autodocs"],
   parameters: {
@@ -10,7 +10,7 @@ const meta: Meta<typeof SecurityPage> = {
     docs: {
       description: {
         component:
-          "Account Security page showing change password form, active sessions list, logout-all control, login activity log, two-factor authentication toggle, and recovery codes management.",
+        "Account Security page showing change password form, active sessions list, logout-all control, login activity log, two-factor authentication toggle, and recovery codes management.",
       },
     },
   },
