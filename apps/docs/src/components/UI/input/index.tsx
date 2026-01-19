@@ -408,7 +408,7 @@ const inputVariants: Record<string, InputVariant> = {
   clean: {
     container: {
       initial: { scale: 1 },
-      animate: { scale: 1.005 },
+      animate: { scale: 1 },
     },
     label: {
       initial: { y: 0, scale: 1, color: "var(--primary)" },
