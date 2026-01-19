@@ -21,10 +21,11 @@ Wrap your application with the `ThemeProvider` component to enable theming throu
 ```tsx
 // our layout component or entrypoint of app
 import { ThemeProvider } from '@mindfiredigital/ignix-ui';
+import { cyberpunkNeonTheme } from "./themes/cyberpunk-neon";
 
 function Layout() {
   return (
-    <ThemeProvider defaultThemeId="cyberpunk-neon">
+    <ThemeProvider defaultTheme={cyberpunkNeonTheme}>
       {children}
     </ThemeProvider>
   );
