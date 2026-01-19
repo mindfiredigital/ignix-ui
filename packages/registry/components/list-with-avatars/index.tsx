@@ -309,8 +309,18 @@ const ListWithAvatarsComponent: React.FC<ListWithAvatarsProps> = ({
    * but the component itself is memoized to prevent unnecessary re-renders.
    */
   const renderItem = (item: ListItemWithAvatar, index: number) => {
-    const isClickable = showProfileLinks && (item.profileLink || onItemClick);
-    const finalRowClasses = isClickable ? clickableRowClasses : rowClasses;
+    // A row is considered visually clickable if it has an onItemClick handler or,
+    // when profile links are enabled, if it has a profileLink.
+    const hasClickHandler = Boolean(onItemClick) || (showProfileLinks && item.profileLink);
+    const finalRowClasses = hasClickHandler ? clickableRowClasses : rowClasses;
+
+    // Attach row-level click handler only when:
+    // - an onItemClick handler is provided, and
+    // - either there is no profileLink, or profile links are disabled.
+    // When a visible profile link exists, we rely on the <a> element's onClick
+    // to avoid double-invoking the handler via event bubbling.
+    const shouldHandleRowClick =
+      Boolean(onItemClick) && (!item.profileLink || !showProfileLinks);
     const finalAvatarSize = item.avatarSize || avatarSize;
     const finalAvatarShape = item.avatarShape || avatarShape;
 
@@ -338,7 +348,10 @@ const ListWithAvatarsComponent: React.FC<ListWithAvatarsProps> = ({
     );
 
     const itemContent = (
-      <div className={finalRowClasses} onClick={isClickable ? createItemClickHandler(item, index) : undefined}>
+      <div
+        className={finalRowClasses}
+        onClick={shouldHandleRowClick ? createItemClickHandler(item, index) : undefined}
+      >
         {type && (
           <span className="w-6 shrink-0 text-xs font-medium text-muted-foreground text-right">
             {type === "ordered" ? `${index + 1}.` : "•"}
