@@ -1079,6 +1079,21 @@
           "type": "component"
         }
       }
+    },
+    "rating":{
+      "name": "Rating",
+      "description": "A flexible rating component with animations, custom icons, emojis, and multiple interaction modes.",
+      "dependencies": [
+        "lucide-react", 
+        "class-variance-authority",
+        "framer-motion"
+      ],
+      "files": {
+        "main": {
+          "path": "components/rating/index.tsx",
+          "type": "component"
+        }
+      }
     }
   } 
 }
