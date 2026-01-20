@@ -88,6 +88,7 @@
         "components/list-with-actions",
         "components/navbar",
         "components/radio",
+        "components/rating",
         "components/sidebar",
         "components/slider",
         "components/spinner",
