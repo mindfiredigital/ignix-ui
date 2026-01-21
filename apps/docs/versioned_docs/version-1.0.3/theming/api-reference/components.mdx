@@ -34,9 +34,12 @@ import { ThemeProvider } from '@mindfiredigital/ignix-ui';
 ### Example
 
 ```tsx
+import { ThemeProvider } from '@mindfiredigital/ignix-ui';
+import { cyberpunkNeonTheme } from "./themes/cyberpunk-neon";
+
 function App() {
   return (
-    <ThemeProvider defaultThemeId="cyberpunk-neon">
+    <ThemeProvider defaultTheme={cyberpunkNeonTheme}>
       <YourApp />
     </ThemeProvider>
   );

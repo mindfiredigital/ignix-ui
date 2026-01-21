@@ -1,0 +1,92 @@
+---
+sidebar_position: 20
+title: Rating
+description: A flexible rating component with animations, custom icons, emojis, and multiple interaction modes.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { Rating } from '@site/src/components/UI/rating';
+import { Star, Heart, ThumbsUp } from 'lucide-react';
+import { RatingDemo, RatingSizesDemo, RatingColorsDemo, RatingAnimationsDemo, RatingIconsDemo, EmojiRatingDemo } from '@site/src/components/Demo/RatingDemo';
+
+## Overview
+
+The **Rating** component provides a visual representation of a rating value using configurable indicators (default: stars). It supports both read-only display and optional interactive rating selection modes with beautiful animations.
+
+## Preview
+
+<RatingDemo />
+
+### Emoji Rating
+
+<EmojiRatingDemo />
+
+## Variants
+
+### Sizes
+
+<RatingSizesDemo />
+
+### Color Schemes
+
+<RatingColorsDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="npm" label="npm" default>
+    ```bash
+    ignix add component rating
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+Import the component:
+
+```tsx
+import { Rating } from '@src/components/ui/rating';
+import { Star } from 'lucide-react';
+```
+
+### Basic Usage
+
+```tsx
+function BasicRating() {
+  const [value, setValue] = useState(0);
+  
+  return (
+    <Rating
+      value={value}
+      max={5}
+      interactive
+      iconType={Star}
+      onChange={setValue}
+    />
+  );
+}
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `number` | `undefined` | Current rating value (0 to max). If undefined, component manages its own state. |
+| `max` | `number` | `5` | Maximum rating scale |
+| `interactive` | `boolean` | `false` | Whether the rating is interactive |
+| `disabled` | `boolean` | `false` | Whether the rating is disabled (only applies when interactive) |
+| `allowHalf` | `boolean` | `false` | Whether to show half stars |
+| `showValue` | `boolean` | `false` | Whether to show the numeric value |
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | Size of the rating stars |
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Orientation of the rating |
+| `colorScheme` | `'yellow' \| 'red' \| 'blue' \| 'green' \| 'purple' \| 'pink' \| 'orange' \| 'indigo' \| 'teal' \| 'amber'` | `'yellow'` | Color scheme for filled icons |
+| `iconType` | `LucideIcon` | `Star` | Lucide icon component to use |
+| `emoji` | `string` | `undefined` | Single emoji to use for all rating items |
+| `emojis` | `string[]` | `undefined` | Array of emojis - one per rating item |
+| `emptyEmoji` | `string` | `undefined` | Emoji for empty/unfilled items |
+| `animationType` | `'bounce' \| 'pulse' \| 'fade' \| 'slide' \| 'rotate' \| 'scale' \| 'elastic' \| 'spring' \| 'glow' \| 'shimmer' \| 'none'` | `'spring'` | Animation type for star interactions |
+| `readOnly` | `boolean` | `false` | Read-only mode (overrides interactive) |
+| `onChange` | `(value: number) => void` | `undefined` | Callback when value changes |
+| `onEmojiSelect` | `(value: number, emoji: string) => void` | `undefined` | Callback when emoji is selected (only for emoji mode) |
