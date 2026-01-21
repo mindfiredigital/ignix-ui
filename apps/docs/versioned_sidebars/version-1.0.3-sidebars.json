@@ -86,6 +86,7 @@
         "components/input",
         "components/list-basic",
         "components/list-with-actions",
+        "components/list-with-avatars",
         "components/navbar",
         "components/radio",
         "components/rating",
