@@ -48,25 +48,8 @@ The Monorepo Starter scaffolds a Turborepo + pnpm workspaces setup with:
 ### Generate via CLI
 
 <Tabs>
+  
   <TabItem value="interactive" label="Interactive">
-
-Run the CLI and choose Starters → Monorepo:
-
-```bash
-ignix
-```
-
-  </TabItem>
-  <TabItem value="direct" label="Direct">
-
-Run the starter command directly:
-
-```bash
-ignix starters monorepo
-```
-
-  </TabItem>
-</Tabs>
 
 ### Via Interactive Mode
 
@@ -84,8 +67,27 @@ The interactive mode provides a beautiful, guided interface with the following o
 - 📦 **Starters Template** - Generate a new starter template
 - 🚪 **Exit** - Close the CLI
 
-Choose the option **Starters Template** and press Enter. Then select **Monorepo (Turborepo + pnpm)** from the list of available starters.
+Choose the option **Starters Template** and press Enter.
+<div className="border border-gray-300 rounded-lg inline-block p-2">
+![Ignix CLI](/img/ignix-cli.png)
+</div>
+<br />
+Then select **Monorepo (Turborepo + pnpm)** from the list of available starters.
+<br />
+<div className="border border-gray-300 rounded-lg inline-block p-2">
+![Ignix CLI Monorepo](/img/ignix-cli-monorepo.png)
+</div>
+</TabItem>
+<TabItem value="direct" label="Direct">
 
+Run the starter command directly:
+
+```bash
+ignix monorepo
+```
+
+  </TabItem>
+</Tabs>
 
 This will:
 - Create the monorepo structure
@@ -163,16 +165,5 @@ The `turbo.json` config enables:
 
 Builds are significantly faster on subsequent runs or when only a subset of packages change.
 
-## Acceptance Criteria Mapping
-
-- Monorepo CLI commands work: `npx ignix` → Starters → Monorepo, or `npx ignix starters monorepo`
-- Components shared across apps: `@acme/components` consumed in `apps/web`
-- Build times optimized with Turborepo caching: configured via `turbo.json`
-
-## Troubleshooting
-
-- Ensure pnpm is installed: `npm i -g pnpm`
-- If install fails, try clearing cache: `pnpm store prune`
-- On Windows WSL, verify Node and pnpm versions match between environments
 
 

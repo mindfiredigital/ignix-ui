@@ -54,19 +54,34 @@ npx @mindfiredigital/ignix-cli
 <Tabs>
   <TabItem value="interactive" label="Interactive">
 
-Run the CLI and choose **Starters → Next.js App**:
+Run the CLI and choose **Starters Template → Next.js App (App Router + TypeScript + Tailwind)**:
 
 ```bash
 ignix
 ```
+The interactive mode provides a beautiful, guided interface with the following options:
+- 🚀 **Initialize Ignix UI** - Set up your project
+- ➕ **Add components** - Add components to your project
+- 📋 **List components** - View available components
+- 🎨 **Manage themes** - Configure and manage themes
+- 📦 **Starters Template** - Generate a new starter template
+- 🚪 **Exit** - Close the CLI
 
+Choose the option **Starters Template** and press Enter. 
+<div className="border border-gray-300 rounded-lg inline-block p-2">
+![Ignix CLI](/img/ignix-cli.png)
+</div>
+Then select **Next.js App (App Router + TypeScript + Tailwind)** from the list of available starters.
+<div className="border border-gray-300 rounded-lg inline-block p-2">
+![Ignix CLI nextjs app](/img/ignix-cli-nextjs-app.png)
+</div>
   </TabItem>
   <TabItem value="direct" label="Manual">
 
 Skip the menu and scaffold immediately:
 
 ```bash
-ignix starters nextjs-app
+ignix nextjs-app
 ```
 
   </TabItem>
