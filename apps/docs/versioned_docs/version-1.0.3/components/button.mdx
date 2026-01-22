@@ -1,36 +1,35 @@
 ---
 sidebar_position: 4
 title: Button
-description: A customizable button component with variants, sizes, and animations.
+description: A customizable button component with variants, sizes, and animations. Includes Button, Button With Spinner, Button With Icon, and Button Group variants.
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import { Button } from '@site/src/components/UI/button';
+import { ButtonWithSpinner } from '@site/src/components/UI/button-with-spinner';
+import { ButtonGroup } from '@site/src/components/UI/button-group';
 import { Mail, ArrowRight, Loader2 } from 'lucide-react';
+import ButtonDemo from '@site/src/components/Demo/ButtonDemo';
+import ButtonWithSpinnerDemo, {
+  ButtonWithSpinnerVariantsDemo,
+  ButtonWithSpinnerSpinnerVariantsDemo,
+  ButtonWithSpinnerSizesDemo,
+  ButtonWithSpinnerLoadingTextDemo,
+} from '@site/src/components/Demo/ButtonWithSpinnerDemo';
+import ButtonWithIconDemo from '@site/src/components/Demo/ButtonWithIconDemo';
+import ButtonGroupDemo from '@site/src/components/Demo/ButtonGroupDemo';
 
-## Overview
+This documentation covers four types of buttons: the base Button, Button With Spinner, Button With Icon, and Button Group.
+
+## Button Variant
+
+<Tabs groupId="button-variant">
+  <TabItem value="button" label="Basic Button" default>
 
 Buttons allow users to take actions with a single tap. They can be customized with different styles, sizes, and animations.
 
-## Preview
-
-<Tabs defaultValue="preview">
-  <TabItem value="preview" label="Preview" default>
-    <div className="p-4 border rounded-lg">
-      <Button>Click me</Button>
-    </div>
-  </TabItem>
-  <TabItem value="code" label="Code">
-    ```tsx
-    import { Button } from './components/ui';
-
-    function MyComponent() {
-      return <Button>Click me</Button>;
-    }
-    ```
-  </TabItem>
-</Tabs>
+<ButtonDemo />
 
 ## Installation
 
@@ -443,8 +442,1060 @@ function BasicButton() {
 }
 ```
 
-import ButtonDemo from '@site/src/components/Demo/ButtonDemo';
+## Props
 
-## Variants
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'success' \| 'warning' \| 'danger' \| 'outline' \| 'ghost' \| 'link' \| 'subtle' \| 'elevated' \| 'glass' \| 'neon' \| 'pill' \| 'none'` | `'default'` | The visual style variant of the button |
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| 'icon' \| 'pill' \| 'block' \| 'compact' \| 'wide'` | `'md'` | The size of the button |
+| `asChild` | `boolean` | `false` | When true, merges props with the child component instead of rendering a button element |
+| `animationVariant` | `string` | `undefined` | Animation variant to apply to the button (e.g., 'bounce', 'pulse', 'spin', etc.) |
+| `children` | `React.ReactNode` | - | The button content/text |
+| `className` | `string` | - | Additional CSS classes to apply |
+| `disabled` | `boolean` | `false` | Whether the button is disabled |
+| `onClick` | `(event: React.MouseEvent<HTMLButtonElement>) => void` | - | Click event handler |
+| All standard button HTML attributes | - | - | All standard HTML button attributes are supported |
 
-<ButtonDemo />
+  </TabItem>
+
+  <TabItem value="button-with-spinner" label="Button With Spinner">
+    
+
+The ButtonWithSpinner component is a specialized button that displays a loading spinner and changes its text during loading states. It automatically disables the button during loading and intelligently adjusts spinner colors based on the button variant for optimal visibility.
+<br/>
+
+<ButtonWithSpinnerDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component button-with-spinner
+    ```
+  </TabItem>
+  <TabItem value="manual" label="MANUAL" className="max-h-[500px] overflow-y-auto">
+
+    ```tsx
+'use client';
+
+import * as React from 'react';
+import { Button, type ButtonProps } from '../button';
+import { Spinner } from '../spinner';
+import { cn } from '../../../utils/cn';
+
+export interface ButtonWithSpinnerProps extends Omit<ButtonProps, 'disabled'> {
+  isLoading?: boolean;
+  loadingText?: string;
+  spinnerSize?: number;
+  spinnerVariant?: 'default' | 'bars' | 'dots-bounce';
+  spinnerColor?: string;
+  children: React.ReactNode;
+}
+
+export const ButtonWithSpinner = React.forwardRef<
+  HTMLButtonElement,
+  ButtonWithSpinnerProps
+>(
+  (
+    {
+      isLoading = false,
+      loadingText = 'Loading...',
+      spinnerSize = 16,
+      spinnerVariant = 'default',
+      spinnerColor,
+      children,
+      className,
+      variant,
+      ...props
+    },
+    ref
+  ) => {
+    const getSpinnerColor = (): string => {
+      if (spinnerColor) return spinnerColor;
+      
+      const darkBackgroundVariants = ['default', 'primary', 'secondary', 'success', 'warning', 'danger', 'pill', 'neon'];
+      const lightBackgroundVariants = ['outline', 'ghost', 'subtle', 'elevated', 'glass'];
+      
+      if (variant && darkBackgroundVariants.includes(variant)) {
+        if (spinnerVariant === 'bars' || spinnerVariant === 'dots-bounce') {
+          return 'bg-white';
+        }
+        return 'border-white';
+      } else if (variant && lightBackgroundVariants.includes(variant)) {
+        if (spinnerVariant === 'bars' || spinnerVariant === 'dots-bounce') {
+          return 'bg-primary';
+        }
+        return 'border-primary';
+      }
+      
+      if (spinnerVariant === 'bars' || spinnerVariant === 'dots-bounce') {
+        return 'bg-white';
+      }
+      return 'border-white';
+    };
+
+    return (
+      <Button
+        ref={ref}
+        disabled={isLoading}
+        className={cn('relative', className)}
+        variant={variant}
+        {...props}
+      >
+        {isLoading && (
+          <Spinner
+            size={spinnerSize}
+            variant={spinnerVariant}
+            color={getSpinnerColor()}
+            className="mr-2"
+          />
+        )}
+        <span>{isLoading ? loadingText : children}</span>
+      </Button>
+    );
+  }
+);
+
+ButtonWithSpinner.displayName = 'ButtonWithSpinner';
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+Import the component:
+
+```tsx
+import { ButtonWithSpinner } from '@site/src/components/UI/button-with-spinner';
+```
+
+### Basic Usage
+
+```tsx
+function BasicButtonWithSpinner() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleClick = async () => {
+    setIsLoading(true);
+    try {
+      await someAsyncOperation();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <ButtonWithSpinner
+      isLoading={isLoading}
+      loadingText="Loading..."
+      onClick={handleClick}
+    >
+      Submit
+    </ButtonWithSpinner>
+  );
+}
+```
+
+### With Custom Loading Text
+
+```tsx
+function SaveButton() {
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await saveData();
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  return (
+    <ButtonWithSpinner
+      isLoading={isSaving}
+      loadingText="Saving..."
+      onClick={handleSave}
+    >
+      Save Changes
+    </ButtonWithSpinner>
+  );
+}
+```
+
+### With Different Spinner Variants
+
+```tsx
+function CustomSpinnerButton() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  return (
+    <div className="flex gap-4">
+      <ButtonWithSpinner
+        isLoading={isLoading}
+        spinnerVariant="default"
+        onClick={() => setIsLoading(!isLoading)}
+      >
+        Default Spinner
+      </ButtonWithSpinner>
+      <ButtonWithSpinner
+        isLoading={isLoading}
+        spinnerVariant="bars"
+        onClick={() => setIsLoading(!isLoading)}
+      >
+        Bars Spinner
+      </ButtonWithSpinner>
+      <ButtonWithSpinner
+        isLoading={isLoading}
+        spinnerVariant="dots-bounce"
+        onClick={() => setIsLoading(!isLoading)}
+      >
+        Dots Bounce
+      </ButtonWithSpinner>
+    </div>
+  );
+}
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `isLoading` | `boolean` | `false` | Whether the button is in a loading state. When true, the button is disabled and shows a spinner. |
+| `loadingText` | `string` | `'Loading...'` | Text to display when the button is in loading state. |
+| `spinnerSize` | `number` | `16` | Size of the spinner in pixels. Should be adjusted based on button size. |
+| `spinnerVariant` | `'default' \| 'bars' \| 'dots-bounce'` | `'default'` | Variant of the spinner animation. |
+| `spinnerColor` | `string` | - | Tailwind CSS class for spinner color (e.g., "bg-white", "border-white"). Auto-determined based on button variant if not provided. |
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'success' \| 'warning' \| 'danger' \| 'outline' \| 'ghost' \| 'subtle' \| 'elevated' \| 'glass' \| 'neon' \| 'pill'` | `'default'` | The visual style of the button. |
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | The size of the button. |
+| `children` | `React.ReactNode` | - | The button text/content to display when not loading. |
+
+
+
+### Example of Form Submission
+
+```tsx
+function FormExample() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      await submitForm();
+      // Show success message
+    } catch (error) {
+      // Handle error
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      {/* form fields */}
+      <ButtonWithSpinner
+        type="submit"
+        isLoading={isSubmitting}
+        loadingText="Submitting..."
+      >
+        Submit Form
+      </ButtonWithSpinner>
+    </form>
+  );
+}
+```
+
+### Example of API Call
+
+```tsx
+function ApiCallExample() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleApiCall = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/data');
+      const data = await response.json();
+      // Handle data
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <ButtonWithSpinner
+      isLoading={isLoading}
+      loadingText="Loading data..."
+      onClick={handleApiCall}
+    >
+      Load Data
+    </ButtonWithSpinner>
+  );
+}
+```
+
+  </TabItem>
+  <TabItem value="button-with-icon" label="Button With Icon">
+    
+
+The **ButtonWithIcon** component extends the base Button component with comprehensive icon support. It allows you to position icons on the left or right of text, create icon-only buttons, and display loading spinners. This component is perfect for creating intuitive and visually appealing user interfaces.
+
+<br/>
+<ButtonWithIconDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component button-with-icon
+    ```
+  </TabItem>
+  <TabItem value="manual" label="manual" className="max-h-[500px] overflow-y-auto">
+    ```tsx
+/**
+ * ButtonWithIcon Component
+ * 
+ * An enhanced button component that extends the base Button with icon support.
+ * Supports multiple icon positions, icon-only buttons, and loading states.
+ */
+
+'use client';
+
+import * as React from 'react';
+import { Button, type ButtonProps } from '../button';
+import { Spinner } from '../spinner';
+import { cn } from '../../../utils/cn';
+
+export interface ButtonWithIconProps extends ButtonProps {
+  /**
+   * Icon component to display. Can be from lucide-react or any React component.
+   */
+  icon?: React.ReactNode;
+  
+  /**
+   * Position of the icon relative to the text.
+   * - 'left': Icon appears before the text (default)
+   * - 'right': Icon appears after the text
+   * - 'only': Only the icon is displayed (no text)
+   */
+  iconPosition?: 'left' | 'right' | 'only';
+  
+  /**
+   * Show loading spinner instead of icon or text.
+   * When true, the button is automatically disabled.
+   */
+  loading?: boolean;
+  
+  /**
+   * Size of the icon in pixels. Defaults to 16.
+   */
+  iconSize?: number;
+}
+
+export const ButtonWithIcon = React.forwardRef<HTMLButtonElement, ButtonWithIconProps>(
+  (
+    {
+      icon,
+      iconPosition = 'left',
+      loading = false,
+      iconSize = 16,
+      children,
+      className,
+      disabled,
+      size = 'md',
+      ...props
+    },
+    ref
+  ) => {
+    const isIconOnly = iconPosition === 'only' || (!children && icon);
+    const isDisabled = disabled || loading;
+
+    // Loading state rendering
+    if (loading) {
+      const spinnerSize = size === 'xs' ? 12 : size === 'sm' ? 14 : size === 'lg' ? 18 : size === 'xl' ? 20 : 16;
+      
+      if (isIconOnly) {
+        return (
+          <Button
+            ref={ref}
+            size={size}
+            disabled={isDisabled}
+            className={cn('p-0', className)}
+            {...props}
+          >
+            <Spinner size={spinnerSize} variant="default" />
+          </Button>
+        );
+      }
+
+      return (
+        <Button
+          ref={ref}
+          size={size}
+          disabled={isDisabled}
+          className={className}
+          {...props}
+        >
+          <Spinner size={spinnerSize} variant="default" />
+          {children && <span className="ml-2">{children}</span>}
+        </Button>
+      );
+    }
+
+    // Icon-only button rendering
+    if (isIconOnly && icon) {
+      const iconButtonSize = size === 'icon' || iconPosition === 'only' ? 'icon' : size;
+      
+      return (
+        <Button
+          ref={ref}
+          size={iconButtonSize}
+          disabled={isDisabled}
+          className={className}
+          {...props}
+        >
+          <span
+            style={{
+              width: iconSize,
+              height: iconSize,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            {icon}
+          </span>
+        </Button>
+      );
+    }
+
+    // Button with icon and text rendering
+    const iconElement = icon && (
+      <span
+        style={{
+          width: iconSize,
+          height: iconSize,
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+        className="flex-shrink-0"
+      >
+        {icon}
+      </span>
+    );
+
+    return (
+      <Button
+        ref={ref}
+        size={size}
+        disabled={isDisabled}
+        className={className}
+        {...props}
+      >
+        {iconPosition === 'left' && iconElement}
+        {children && <span>{children}</span>}
+        {iconPosition === 'right' && iconElement}
+      </Button>
+    );
+  }
+);
+
+ButtonWithIcon.displayName = 'ButtonWithIcon';
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+Import the component:
+
+```tsx
+import { ButtonWithIcon } from './components/ui';
+```
+
+### Basic Usage
+
+```tsx
+import { ButtonWithIcon } from './components/ui';
+import { Download } from 'lucide-react';
+
+function BasicButtonWithIcon() {
+  return (
+    <ButtonWithIcon icon={<Download />}>
+      Download
+    </ButtonWithIcon>
+  );
+}
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `icon` | `React.ReactNode` | `undefined` | Icon component to display (from lucide-react or any React component) |
+| `iconPosition` | `'left' \| 'right' \| 'only'` | `'left'` | Position of the icon relative to text |
+| `loading` | `boolean` | `false` | Show loading spinner and disable button |
+| `iconSize` | `number` | `16` | Size of the icon in pixels |
+| `variant` | `string` | `'default'` | Visual variant of the button (inherited from Button) |
+| `size` | `string` | `'md'` | Size of the button (inherited from Button) |
+| `disabled` | `boolean` | `false` | Disable the button |
+| `children` | `React.ReactNode` | `undefined` | Button text content |
+
+All other props from the base `Button` component are also supported.
+
+## Examples
+
+### Icon Left (Default)
+
+The icon appears before the text. This is the most common pattern for buttons with icons.
+
+```tsx
+<ButtonWithIcon icon={<Download />} iconPosition="left">
+  Download
+</ButtonWithIcon>
+```
+
+### Icon Right
+
+The icon appears after the text. Useful for actions like "Next" or "Continue" where the icon indicates direction.
+
+```tsx
+<ButtonWithIcon icon={<Send />} iconPosition="right">
+  Send
+</ButtonWithIcon>
+```
+
+### Icon Only
+
+Icon-only buttons are compact and space-efficient. Perfect for toolbars, action menus, or when space is limited.
+
+```tsx
+<ButtonWithIcon icon={<Settings />} iconPosition="only" />
+```
+
+### Loading State
+
+The loading state automatically disables the button and shows a spinner. Useful for async operations like form submissions or API calls.
+
+```tsx
+<ButtonWithIcon loading={true}>
+  Processing
+</ButtonWithIcon>
+```
+
+### Form Submission with Loading
+
+```tsx
+import { useState } from 'react';
+import { ButtonWithIcon } from './components/ui';
+import { Save } from 'lucide-react';
+
+function FormExample() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    setIsSubmitting(false);
+  };
+
+  return (
+    <ButtonWithIcon
+      icon={<Save />}
+      loading={isSubmitting}
+      onClick={handleSubmit}
+      variant="primary"
+    >
+      Save Changes
+    </ButtonWithIcon>
+  );
+}
+```
+
+  </TabItem>
+  <TabItem value="button-group" label="Button Group">
+    
+The **ButtonGroup** component groups multiple buttons together with consistent spacing, active state highlighting, and responsive wrapping capabilities. It's perfect for creating filter buttons, toggle groups, size selectors, and other scenarios where you need related buttons grouped together.
+<br/>
+<ButtonGroupDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component button-group
+    ```
+  </TabItem>
+  <TabItem value="manual" label="manual" className="max-h-[500px] overflow-y-auto">
+    ```tsx
+/**
+ * ButtonGroup Component
+ * 
+ * A component that groups multiple buttons together with consistent spacing,
+ * active state highlighting, and responsive wrapping capabilities.
+ */
+
+'use client';
+
+import * as React from 'react';
+import { Button, type ButtonProps } from '../button';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '../../../utils/cn';
+
+const buttonGroupVariants = cva(
+  'inline-flex items-center',
+  {
+    variants: {
+      orientation: {
+        horizontal: 'flex-row',
+        vertical: 'flex-col',
+      },
+      wrap: {
+        true: 'flex-wrap',
+        false: 'flex-nowrap',
+      },
+    },
+    defaultVariants: {
+      orientation: 'horizontal',
+      wrap: true,
+    },
+  }
+);
+
+export interface ButtonGroupItem extends Omit<ButtonProps, 'onClick'> {
+  value: string;
+  onClick?: (value: string, event: React.MouseEvent<HTMLButtonElement>) => void;
+}
+
+export interface ButtonGroupProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'>,
+    VariantProps<typeof buttonGroupVariants> {
+  items: ButtonGroupItem[];
+  activeValue?: string;
+  defaultValue?: string;
+  onChange?: (value: string) => void;
+  spacing?: string;
+  activeVariant?: ButtonProps['variant'];
+  multiple?: boolean;
+  activeValues?: string[];
+}
+
+export const ButtonGroup = React.forwardRef<HTMLDivElement, ButtonGroupProps>(
+  (
+    {
+      items,
+      activeValue: controlledActiveValue,
+      defaultValue,
+      onChange,
+      wrap = true,
+      spacing = 'gap-2',
+      activeVariant,
+      multiple = false,
+      activeValues: controlledActiveValues,
+      orientation = 'horizontal',
+      className,
+      ...props
+    },
+    ref
+  ) => {
+    const [internalActiveValue, setInternalActiveValue] = React.useState<string | undefined>(
+      defaultValue
+    );
+    const [internalActiveValues, setInternalActiveValues] = React.useState<string[]>(
+      controlledActiveValues || (defaultValue ? [defaultValue] : [])
+    );
+
+    const isControlled = controlledActiveValue !== undefined || controlledActiveValues !== undefined;
+    const activeValue = isControlled && !multiple ? controlledActiveValue : internalActiveValue;
+    const activeValues = isControlled && multiple 
+      ? controlledActiveValues || [] 
+      : internalActiveValues;
+
+    const handleButtonClick = (
+      itemValue: string,
+      itemOnClick?: (value: string, event: React.MouseEvent<HTMLButtonElement>) => void
+    ) => {
+      return (event: React.MouseEvent<HTMLButtonElement>) => {
+        itemOnClick?.(itemValue, event);
+
+        if (multiple) {
+          const newActiveValues = activeValues.includes(itemValue)
+            ? activeValues.filter(v => v !== itemValue)
+            : [...activeValues, itemValue];
+          
+          if (!isControlled) {
+            setInternalActiveValues(newActiveValues);
+          }
+          
+          onChange?.(itemValue);
+        } else {
+          if (!isControlled) {
+            setInternalActiveValue(itemValue);
+          }
+          
+          onChange?.(itemValue);
+        }
+      };
+    };
+
+    const isButtonActive = (itemValue: string): boolean => {
+      if (multiple) {
+        return activeValues.includes(itemValue);
+      }
+      return activeValue === itemValue;
+    };
+
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          buttonGroupVariants({ orientation, wrap }),
+          spacing,
+          className
+        )}
+        role="group"
+        aria-label="Button group"
+        {...props}
+      >
+        {items.map((item) => {
+          const { value, onClick: itemOnClick, variant, className: itemClassName, ...itemProps } = item;
+          const isActive = isButtonActive(value);
+          const buttonVariant = isActive && activeVariant 
+            ? activeVariant 
+            : variant || 'default';
+
+          return (
+            <Button
+              key={value}
+              variant={buttonVariant}
+              className={cn(
+                isActive && !activeVariant && 'ring-2 ring-offset-2 ring-primary',
+                itemClassName
+              )}
+              onClick={handleButtonClick(value, itemOnClick)}
+              aria-pressed={isActive}
+              {...itemProps}
+            >
+              {item.children}
+            </Button>
+          );
+        })}
+      </div>
+    );
+  }
+);
+
+ButtonGroup.displayName = 'ButtonGroup';
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+Import the component:
+
+```tsx
+import { ButtonGroup } from './components/ui';
+```
+
+### Basic Usage
+
+```tsx
+import { ButtonGroup } from './components/ui';
+import { useState } from 'react';
+
+function BasicButtonGroup() {
+  const [activeValue, setActiveValue] = useState('save');
+
+  return (
+    <ButtonGroup
+      items={[
+        { value: 'save', children: 'Save' },
+        { value: 'cancel', children: 'Cancel' },
+        { value: 'delete', children: 'Delete' }
+      ]}
+      activeValue={activeValue}
+      onChange={(value) => setActiveValue(value)}
+    />
+  );
+}
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `ButtonGroupItem[]` | **required** | Array of button items to display in the group |
+| `activeValue` | `string` | `undefined` | Currently active button value (controlled mode) |
+| `defaultValue` | `string` | `undefined` | Default active button value (uncontrolled mode) |
+| `onChange` | `(value: string) => void` | `undefined` | Callback fired when a button is clicked |
+| `wrap` | `boolean` | `true` | Whether buttons should wrap to multiple lines |
+| `spacing` | `string` | `'gap-2'` | Spacing between buttons (Tailwind spacing class) |
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Orientation of the button group |
+| `activeVariant` | `ButtonProps['variant']` | `undefined` | Variant to apply to active buttons |
+| `multiple` | `boolean` | `false` | Allow multiple buttons to be active simultaneously |
+| `activeValues` | `string[]` | `undefined` | Array of active values when multiple selection is enabled |
+
+### ButtonGroupItem
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `value` | `string` | **required** - Unique identifier for the button |
+| `children` | `React.ReactNode` | Button text content |
+| `variant` | `string` | Visual variant of the button |
+| `size` | `string` | Size of the button |
+| `onClick` | `(value: string, event: MouseEvent) => void` | Click handler for the button |
+| All other `ButtonProps` | - | All other props from the base Button component |
+
+## Examples
+
+### Controlled Mode
+
+Use `activeValue` and `onChange` to control the active state from a parent component.
+
+```tsx
+import { useState } from 'react';
+import { ButtonGroup } from './components/ui';
+
+function ControlledButtonGroup() {
+  const [activeValue, setActiveValue] = useState('all');
+
+  return (
+    <ButtonGroup
+      items={[
+        { value: 'all', children: 'All' },
+        { value: 'active', children: 'Active' },
+        { value: 'inactive', children: 'Inactive' }
+      ]}
+      activeValue={activeValue}
+      onChange={(value) => {
+        setActiveValue(value);
+        console.log(`Filter changed to: ${value}`);
+      }}
+    />
+  );
+}
+```
+
+### Uncontrolled Mode
+
+Use `defaultValue` to set an initial active value without controlling it.
+
+```tsx
+import { ButtonGroup } from './components/ui';
+
+function UncontrolledButtonGroup() {
+  return (
+    <ButtonGroup
+      items={[
+        { value: 'option1', children: 'Option 1' },
+        { value: 'option2', children: 'Option 2' },
+        { value: 'option3', children: 'Option 3' }
+      ]}
+      defaultValue="option1"
+    />
+  );
+}
+```
+
+### Multiple Selection
+
+Enable multiple selection by setting `multiple={true}` and using `activeValues`.
+
+```tsx
+import { useState } from 'react';
+import { ButtonGroup } from './components/ui';
+
+function MultipleSelectionButtonGroup() {
+  const [activeValues, setActiveValues] = useState<string[]>(['bold']);
+
+  return (
+    <ButtonGroup
+      items={[
+        { value: 'bold', children: 'Bold' },
+        { value: 'italic', children: 'Italic' },
+        { value: 'underline', children: 'Underline' }
+      ]}
+      multiple
+      activeValues={activeValues}
+      onChange={(value) => {
+        setActiveValues(prev =>
+          prev.includes(value)
+            ? prev.filter(v => v !== value)
+            : [...prev, value]
+        );
+      }}
+    />
+  );
+}
+```
+
+### Filter Buttons
+
+Perfect for filtering content by status or category.
+
+```tsx
+import { useState } from 'react';
+import { ButtonGroup } from './components/ui';
+
+function FilterButtons() {
+  const [filter, setFilter] = useState('all');
+
+  return (
+    <div>
+      <p className="text-sm font-medium mb-2">Filter by status:</p>
+      <ButtonGroup
+        items={[
+          { value: 'all', children: 'All Items' },
+          { value: 'published', children: 'Published' },
+          { value: 'draft', children: 'Draft' },
+          { value: 'archived', children: 'Archived' }
+        ]}
+        activeValue={filter}
+        onChange={(value) => setFilter(value)}
+      />
+    </div>
+  );
+}
+```
+
+### Size Selector
+
+Use ButtonGroup for selecting sizes or other options.
+
+```tsx
+import { useState } from 'react';
+import { ButtonGroup } from './components/ui';
+
+function SizeSelector() {
+  const [size, setSize] = useState('md');
+
+  return (
+    <div>
+      <p className="text-sm font-medium mb-2">Select size:</p>
+      <ButtonGroup
+        items={[
+          { value: 'xs', children: 'XS' },
+          { value: 'sm', children: 'SM' },
+          { value: 'md', children: 'MD' },
+          { value: 'lg', children: 'LG' },
+          { value: 'xl', children: 'XL' }
+        ]}
+        activeValue={size}
+        onChange={(value) => setSize(value)}
+      />
+    </div>
+  );
+}
+```
+
+### Vertical Orientation
+
+Display buttons vertically instead of horizontally.
+
+```tsx
+import { ButtonGroup } from './components/ui';
+
+function VerticalButtonGroup() {
+  return (
+    <ButtonGroup
+      items={[
+        { value: 'top', children: 'Top' },
+        { value: 'middle', children: 'Middle' },
+        { value: 'bottom', children: 'Bottom' }
+      ]}
+      orientation="vertical"
+      defaultValue="middle"
+    />
+  );
+}
+```
+
+### Custom Spacing
+
+Adjust spacing between buttons using Tailwind spacing classes.
+
+```tsx
+import { ButtonGroup } from './components/ui';
+
+function CustomSpacingButtonGroup() {
+  return (
+    <>
+      <ButtonGroup
+        items={[
+          { value: '1', children: 'Tight' },
+          { value: '2', children: 'Spacing' }
+        ]}
+        spacing="gap-1"
+      />
+      
+      <ButtonGroup
+        items={[
+          { value: '1', children: 'Wide' },
+          { value: '2', children: 'Spacing' }
+        ]}
+        spacing="gap-4"
+      />
+    </>
+  );
+}
+```
+
+### Custom Active Variant
+
+Apply a specific variant to active buttons.
+
+```tsx
+import { useState } from 'react';
+import { ButtonGroup } from './components/ui';
+
+function CustomActiveVariantButtonGroup() {
+  const [activeValue, setActiveValue] = useState('option1');
+
+  return (
+    <ButtonGroup
+      items={[
+        { value: 'option1', children: 'Option 1', variant: 'outline' },
+        { value: 'option2', children: 'Option 2', variant: 'outline' },
+        { value: 'option3', children: 'Option 3', variant: 'outline' }
+      ]}
+      activeValue={activeValue}
+      onChange={setActiveValue}
+      activeVariant="success"
+    />
+  );
+}
+```
+
+### Responsive Wrapping
+
+Buttons automatically wrap to multiple lines on smaller screens when `wrap={true}`.
+
+```tsx
+import { ButtonGroup } from './components/ui';
+
+function ResponsiveButtonGroup() {
+  return (
+    <ButtonGroup
+      items={[
+        { value: '1', children: 'Button 1' },
+        { value: '2', children: 'Button 2' },
+        { value: '3', children: 'Button 3' },
+        { value: '4', children: 'Button 4' },
+        { value: '5', children: 'Button 5' },
+        { value: '6', children: 'Button 6' }
+      ]}
+      wrap={true}
+      spacing="gap-2"
+    />
+  );
+}
+```
+  </TabItem>
+</Tabs>
