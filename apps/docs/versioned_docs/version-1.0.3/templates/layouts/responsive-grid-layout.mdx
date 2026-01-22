@@ -9,11 +9,7 @@ import TabItem from '@theme/TabItem';
 import ResponsiveGridLayout from '@site/src/components/UI/responsive-grid-layout';
 import ResponsiveGridLayoutDemo from '@site/src/components/Demo/ResponsiveGridLayoutDemo';
 
-## Overview
-
 The **ResponsiveGridLayout** component is a powerful template for creating responsive grid-based dashboards and content layouts. It automatically adapts from a single column on mobile devices to multi-column grids on tablets, laptops, and large monitors. The component includes support for headers, footers, customizable cards, and various styling options.
-
-## Preview
 
 <ResponsiveGridLayoutDemo />
 
@@ -314,6 +310,43 @@ ResponsiveGridLayout.displayName = "ResponsiveGridLayout";
   </TabItem>
 </Tabs>
 
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `header` | `React.ReactNode` | `undefined` | Content for the header section |
+| `footer` | `React.ReactNode` | `undefined` | Content for the footer section |
+| `items` | `ResponsiveGridItem[]` | `[]` | Array of grid items to display |
+| `renderItem` | `(item: ResponsiveGridItem, index: number) => React.ReactNode` | `undefined` | Custom render function for items |
+| `padding` | `"sm" \| "md" \| "lg"` | `"md"` | Padding size for the container |
+| `gap` | `"sm" \| "md" \| "lg"` | `"md"` | Gap between grid items |
+| `maxWidth` | `"3xl" \| "4xl" \| "5xl" \| "6xl" \| "7xl" \| "full" \| "prose"` | `"7xl"` | Maximum width of the container |
+| `minCardHeight` | `number` | `220` | Minimum height for grid cards in pixels |
+| `stickyHeader` | `boolean` | `false` | Whether header should be sticky |
+| `stickyFooter` | `boolean` | `false` | Whether footer should be sticky |
+| `enableHover` | `boolean` | `true` | Whether to enable hover effects on cards |
+| `className` | `string` | `undefined` | Additional CSS classes for the root container |
+| `contentClassName` | `string` | `undefined` | Additional CSS classes for the content wrapper |
+| `gridClassName` | `string` | `undefined` | Additional CSS classes for the grid |
+| `cardClassName` | `string` | `undefined` | Additional CSS classes for default cards |
+
+## ResponsiveGridItem Interface
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `id` | `string \| number` | Unique identifier for the item |
+| `title` | `string` | Title of the grid item (required) |
+| `description` | `string` | Description text for the item |
+| `badge` | `React.ReactNode` | Badge or label to display |
+| `meta` | `string` | Metadata text (e.g., "Updated 2h ago") |
+| `statValue` | `string` | Statistic value to display |
+| `statChange` | `string` | Change indicator text |
+| `statTrend` | `"up" \| "down" \| "neutral"` | Trend direction for styling |
+| `media` | `React.ReactNode` | Media content (images, icons, etc.) |
+| `footer` | `React.ReactNode` | Custom footer content |
+| `actionLabel` | `string` | Label for the action button |
+| `actionHref` | `string` | URL for the action link (creates an anchor tag) |
+
 ## Usage
 
 ### Basic Example
@@ -401,43 +434,6 @@ function CompactLayout() {
   );
 }
 ```
-
-## Props
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `header` | `React.ReactNode` | `undefined` | Content for the header section |
-| `footer` | `React.ReactNode` | `undefined` | Content for the footer section |
-| `items` | `ResponsiveGridItem[]` | `[]` | Array of grid items to display |
-| `renderItem` | `(item: ResponsiveGridItem, index: number) => React.ReactNode` | `undefined` | Custom render function for items |
-| `padding` | `"sm" \| "md" \| "lg"` | `"md"` | Padding size for the container |
-| `gap` | `"sm" \| "md" \| "lg"` | `"md"` | Gap between grid items |
-| `maxWidth` | `"3xl" \| "4xl" \| "5xl" \| "6xl" \| "7xl" \| "full" \| "prose"` | `"7xl"` | Maximum width of the container |
-| `minCardHeight` | `number` | `220` | Minimum height for grid cards in pixels |
-| `stickyHeader` | `boolean` | `false` | Whether header should be sticky |
-| `stickyFooter` | `boolean` | `false` | Whether footer should be sticky |
-| `enableHover` | `boolean` | `true` | Whether to enable hover effects on cards |
-| `className` | `string` | `undefined` | Additional CSS classes for the root container |
-| `contentClassName` | `string` | `undefined` | Additional CSS classes for the content wrapper |
-| `gridClassName` | `string` | `undefined` | Additional CSS classes for the grid |
-| `cardClassName` | `string` | `undefined` | Additional CSS classes for default cards |
-
-## ResponsiveGridItem Interface
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `id` | `string \| number` | Unique identifier for the item |
-| `title` | `string` | Title of the grid item (required) |
-| `description` | `string` | Description text for the item |
-| `badge` | `React.ReactNode` | Badge or label to display |
-| `meta` | `string` | Metadata text (e.g., "Updated 2h ago") |
-| `statValue` | `string` | Statistic value to display |
-| `statChange` | `string` | Change indicator text |
-| `statTrend` | `"up" \| "down" \| "neutral"` | Trend direction for styling |
-| `media` | `React.ReactNode` | Media content (images, icons, etc.) |
-| `footer` | `React.ReactNode` | Custom footer content |
-| `actionLabel` | `string` | Label for the action button |
-| `actionHref` | `string` | URL for the action link (creates an anchor tag) |
 
 ## Responsive Breakpoints
 
