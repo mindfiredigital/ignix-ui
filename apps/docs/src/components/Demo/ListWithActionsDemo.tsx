@@ -168,7 +168,7 @@ export const ActionsBehavior = () => {
 
     return (
         <div className="space-y-6 mb-8">
-            <h3 className="text-lg font-semibold">Actions Behavior</h3>
+            {/* <h3 className="text-lg font-semibold">Actions Behavior</h3> */}
             <Tabs>
                 <TabItem value="preview" label="Preview" default>
                     <div className="p-6 border rounded-lg">
@@ -224,7 +224,7 @@ export const OrderedListExample = () => {
 
     return (
         <div className="space-y-6 mb-8">
-            <h3 className="text-lg font-semibold">Ordered List</h3>
+            {/* <h3 className="text-lg font-semibold">Ordered List</h3> */}
             <Tabs>
                 <TabItem value="preview" label="Preview" default>
                     <div className="p-6 border rounded-lg">
@@ -318,7 +318,7 @@ const items = [
 
     return (
         <div className="space-y-6 mb-8">
-            <h3 className="text-lg font-semibold">Rich Content</h3>
+            {/* <h3 className="text-lg font-semibold">Rich Content</h3> */}
             <Tabs>
                 <TabItem value="preview" label="Preview" default>
                     <div className="p-6 border rounded-lg">
