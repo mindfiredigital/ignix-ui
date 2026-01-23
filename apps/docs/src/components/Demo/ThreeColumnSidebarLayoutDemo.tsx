@@ -289,7 +289,7 @@ const ThreeColumnSidebarLayoutDemo = () => {
   );
 
   return (
-    <div className='space-y-6 mb-8'>
+    <div>
       <div className='flex flex-wrap gap-4 justify-start sm:justify-end'>
         <VariantSelector
           variants={sidebarWidths}

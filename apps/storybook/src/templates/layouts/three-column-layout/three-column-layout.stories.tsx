@@ -137,14 +137,9 @@ export const Documentation: Story = {
     header: (
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 flex items-center justify-center">
-              <div className="w-6 h-6 bg-gradient-to-br from-red-500 to-orange-500 rounded-sm rotate-45" />
-            </div>
-            <div>
-              <span className="text-lg font-bold text-[var(--foreground)]">Ignix UI</span>
-              <span className="text-sm text-[var(--muted-foreground)] ml-2">Documentation</span>
-            </div>
+          <div>
+            <span className="text-lg font-bold text-[var(--foreground)]">Ignix UI</span>
+            <span className="text-sm text-[var(--muted-foreground)] ml-2">Documentation</span>
           </div>
         </div>
         <div className="flex items-center gap-3">

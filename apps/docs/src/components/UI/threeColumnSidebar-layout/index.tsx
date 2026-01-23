@@ -342,7 +342,7 @@ const ThreeColumnLayoutContent: React.FC<ThreeColumnLayoutProps> = ({
               "shadow-lg top-4 left-4",
               "focus:outline-none focus:ring-2 focus:ring-[var(--primary)]",
               "hover:bg-[var(--accent)] transition-colors",
-              leftOpen && "left-60 top-0.5",
+              leftOpen && "left-45 top-2.5",
             )}
             onClick={toggleLeft}
             aria-label={leftOpen ? "Close sidebar" : "Open sidebar"}

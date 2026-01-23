@@ -131,7 +131,7 @@ const ThreeColumnLayoutContent: React.FC<ThreeColumnLayoutProps> = ({
           className={cn(
             "w-full border-b border-[var(--border)]",
             "bg-[var(--background)]",
-            "h-[var(--layout-header-h)]",
+            "h-[var(--layout-header-h)] pl-12 lg:pl-0",
             stickyHeader && "sticky top-0 z-[var(--layout-header-z)]"
           )}
           role="banner"
@@ -282,7 +282,7 @@ const ThreeColumnLayoutContent: React.FC<ThreeColumnLayoutProps> = ({
           <motion.aside
             className={cn(
               "fixed inset-y-0 left-0",
-              "bg-[var(--background)] border-r border-[var(--border)]",
+              "bg-[var(--background)]",
               "shadow-2xl z-[var(--layout-mobile-sidebar-z)]",
               "w-[var(--layout-sidebar-w)]"
             )}
@@ -340,7 +340,6 @@ const ThreeColumnLayoutContent: React.FC<ThreeColumnLayoutProps> = ({
               "fixed z-[999] p-2 rounded-lg",
               "bg-[var(--card)] border border-[var(--border)]",
               "shadow-lg top-4 left-4",
-              "focus:outline-none focus:ring-2 focus:ring-[var(--primary)]",
               "hover:bg-[var(--accent)] transition-colors",
               leftOpen && "left-60 top-0.5",
             )}

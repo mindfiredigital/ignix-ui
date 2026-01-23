@@ -76,9 +76,8 @@ const ThreeColumnLayoutContent: React.FC<ThreeColumnLayoutProps> = ({
   const { isOpen: leftOpen, toggle: toggleLeft } = useSidebar();
   const [isMobile, setIsMobile] = React.useState(false);
   const [isTablet, setIsTablet] = React.useState(false);
-
-  const mobileBp =
-    mobileBreakpoint === "sm" ? 640 : mobileBreakpoint === "md" ? 768 : 1024;
+  
+  const mobileBp = mobileBreakpoint === "sm" ? 640 : mobileBreakpoint === "md" ? 768 : 1024;
   const tabletBp = 1024; // iPad and similar tablets
 
   React.useEffect(() => {
@@ -98,19 +97,13 @@ const ThreeColumnLayoutContent: React.FC<ThreeColumnLayoutProps> = ({
     root.style.setProperty("--layout-header-h", `${headerHeight}px`);
     root.style.setProperty("--layout-footer-h", `${footerHeight}px`);
     root.style.setProperty("--layout-sidebar-w", `${sidebarWidth}px`);
-    root.style.setProperty(
-      "--layout-right-sidebar-w",
-      `${rightSidebarWidth}px`,
-    );
+    root.style.setProperty("--layout-right-sidebar-w", `${rightSidebarWidth}px`);
     root.style.setProperty("--layout-header-z", `${zIndex.header}`);
     root.style.setProperty("--layout-footer-z", `${zIndex.footer}`);
     root.style.setProperty("--layout-sidebar-z", `${zIndex.sidebar}`);
     root.style.setProperty("--layout-overlay-z", `${zIndex.overlay}`);
-    root.style.setProperty(
-      "--layout-mobile-sidebar-z",
-      `${(zIndex.sidebar ?? 90) + 10}`,
-    );
-
+    root.style.setProperty("--layout-mobile-sidebar-z", `${(zIndex.sidebar ?? 90) + 10}`);
+    
     return () => {
       root.style.removeProperty("--layout-header-h");
       root.style.removeProperty("--layout-footer-h");
@@ -129,7 +122,7 @@ const ThreeColumnLayoutContent: React.FC<ThreeColumnLayoutProps> = ({
       className={cn(
         "w-full min-h-screen flex flex-col",
         "bg-[var(--background)] text-[var(--foreground)]",
-        className,
+        className
       )}
     >
       {/* HEADER */}
@@ -138,12 +131,12 @@ const ThreeColumnLayoutContent: React.FC<ThreeColumnLayoutProps> = ({
           className={cn(
             "w-full border-b border-[var(--border)]",
             "bg-[var(--background)]",
-            "h-[var(--layout-header-h)]",
-            stickyHeader && "sticky top-0 z-[var(--layout-header-z)]",
+            "h-[var(--layout-header-h)] pl-12 lg:pl-0",
+            stickyHeader && "sticky top-0 z-[var(--layout-header-z)]"
           )}
           role="banner"
         >
-          {header}
+          <div className="h-full flex items-center px-4">{header}</div>
         </header>
       )}
 
@@ -158,7 +151,7 @@ const ThreeColumnLayoutContent: React.FC<ThreeColumnLayoutProps> = ({
               "overflow-y-auto overflow-x-hidden",
               "transition-all duration-300",
               "top-[var(--layout-header-h)] h-[calc(100vh-var(--layout-header-h))]",
-              leftOpen ? "w-[var(--layout-sidebar-w)]" : "w-0",
+              leftOpen ? "w-[var(--layout-sidebar-w)]" : "w-0"
             )}
             role="complementary"
             aria-label="Navigation sidebar"
@@ -180,7 +173,7 @@ const ThreeColumnLayoutContent: React.FC<ThreeColumnLayoutProps> = ({
                                 "block px-3 py-2 rounded-md text-sm transition-colors",
                                 item.active
                                   ? "bg-[var(--primary)]/10 text-[var(--primary)] font-medium"
-                                  : "text-[var(--foreground)] hover:bg-[var(--accent)]",
+                                  : "text-[var(--foreground)] hover:bg-[var(--accent)]"
                               )}
                             >
                               {item.label}
@@ -206,17 +199,15 @@ const ThreeColumnLayoutContent: React.FC<ThreeColumnLayoutProps> = ({
             // Full width on tablet (no sidebars)
             isTablet && "w-full",
             // Prevent blur on mobile when overlay is open
-            isMobile && leftOpen && "relative z-0",
+            isMobile && leftOpen && "relative z-0"
           )}
           role="main"
         >
-          <div
-            className={cn(
-              "mx-8 px-0 py-4",
-              // Wider max-width on tablet since no sidebars
-              isTablet ? "max-w-5xl" : "max-w-4xl",
-            )}
-          >
+          <div className={cn(
+            "mx-8 px-0 py-4",
+            // Wider max-width on tablet since no sidebars
+            isTablet ? "max-w-5xl" : "max-w-4xl"
+          )}>
             {children}
           </div>
         </main>
@@ -230,7 +221,7 @@ const ThreeColumnLayoutContent: React.FC<ThreeColumnLayoutProps> = ({
               "overflow-y-auto overflow-x-hidden",
               "transition-all duration-300",
               "top-[var(--layout-header-h)] h-[calc(100vh-var(--layout-header-h))]",
-              "w-[var(--layout-right-sidebar-w)]",
+              "w-[var(--layout-right-sidebar-w)]"
             )}
             role="complementary"
             aria-label="Table of contents"
@@ -252,7 +243,7 @@ const ThreeColumnLayoutContent: React.FC<ThreeColumnLayoutProps> = ({
                                 "block px-3 py-2 rounded-md text-sm transition-colors",
                                 item.active
                                   ? "bg-[var(--primary)]/10 text-[var(--primary)] font-medium"
-                                  : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--accent)]",
+                                  : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--accent)]"
                               )}
                             >
                               {item.label}
@@ -283,7 +274,7 @@ const ThreeColumnLayoutContent: React.FC<ThreeColumnLayoutProps> = ({
                 exit={{ opacity: 0 }}
                 onClick={toggleLeft}
                 aria-hidden="true"
-                style={{ pointerEvents: leftOpen ? "auto" : "none" }}
+                style={{ pointerEvents: leftOpen ? 'auto' : 'none' }}
               />
             )}
           </AnimatePresence>
@@ -291,16 +282,13 @@ const ThreeColumnLayoutContent: React.FC<ThreeColumnLayoutProps> = ({
           <motion.aside
             className={cn(
               "fixed inset-y-0 left-0",
-              "bg-[var(--background)] border-r border-[var(--border)]",
+              "bg-[var(--background)]",
               "shadow-2xl z-[var(--layout-mobile-sidebar-z)]",
-              "w-[var(--layout-sidebar-w)]",
+              "w-[var(--layout-sidebar-w)]"
             )}
             initial={{ x: "calc(-1 * var(--layout-sidebar-w))" }}
             animate={{ x: leftOpen ? 0 : "calc(-1 * var(--layout-sidebar-w))" }}
-            transition={{
-              duration: transitionDuration,
-              ease: [0.4, 0, 0.2, 1],
-            }}
+            transition={{ duration: transitionDuration, ease: [0.4, 0, 0.2, 1] }}
             role="complementary"
             aria-label="Mobile navigation"
             aria-hidden={!leftOpen}
@@ -324,7 +312,7 @@ const ThreeColumnLayoutContent: React.FC<ThreeColumnLayoutProps> = ({
                                   "cursor-pointer",
                                   item.active
                                     ? "bg-[var(--primary)]/10 text-[var(--primary)] font-medium"
-                                    : "text-[var(--foreground)] hover:bg-[var(--accent)]",
+                                    : "text-[var(--foreground)] hover:bg-[var(--accent)]"
                                 )}
                                 onClick={() => {
                                   // Allow navigation but also close sidebar
@@ -352,7 +340,6 @@ const ThreeColumnLayoutContent: React.FC<ThreeColumnLayoutProps> = ({
               "fixed z-[999] p-2 rounded-lg",
               "bg-[var(--card)] border border-[var(--border)]",
               "shadow-lg top-4 left-4",
-              "focus:outline-none focus:ring-2 focus:ring-[var(--primary)]",
               "hover:bg-[var(--accent)] transition-colors",
               leftOpen && "left-60 top-0.5",
             )}
@@ -360,11 +347,7 @@ const ThreeColumnLayoutContent: React.FC<ThreeColumnLayoutProps> = ({
             aria-label={leftOpen ? "Close sidebar" : "Open sidebar"}
             aria-expanded={leftOpen}
           >
-            {leftOpen ? (
-              <X className="w-5 h-5" />
-            ) : (
-              <Menu className="w-5 h-5" />
-            )}
+            {leftOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </>
       )}
@@ -376,13 +359,11 @@ const ThreeColumnLayoutContent: React.FC<ThreeColumnLayoutProps> = ({
             "w-full border-t border-[var(--border)]",
             "bg-[var(--background)]",
             "h-[var(--layout-footer-h)]",
-            stickyFooter && "sticky bottom-0 z-[var(--layout-footer-z)]",
+            stickyFooter && "sticky bottom-0 z-[var(--layout-footer-z)]"
           )}
           role="contentinfo"
         >
-          <div className="h-full flex items-center justify-center px-4">
-            {footer}
-          </div>
+          <div className="h-full flex items-center justify-center px-4">{footer}</div>
         </footer>
       )}
     </div>
@@ -392,9 +373,7 @@ const ThreeColumnLayoutContent: React.FC<ThreeColumnLayoutProps> = ({
 /**
  * Provider-wrapped exported layout.
  */
-export const ThreeColumnSidebarLayout: React.FC<ThreeColumnLayoutProps> = (
-  props,
-) => {
+export const ThreeColumnSidebarLayout: React.FC<ThreeColumnLayoutProps> = (props) => {
   return (
     <SidebarProvider initialOpen={true}>
       <ThreeColumnLayoutContent {...props} />
