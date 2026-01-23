@@ -17,6 +17,7 @@ const positions = ["top", "left", "right"] as const;
 const ImageCardBasicDemo = () => {
   const [layout, setLayout] = useState<ImageCardLayout>("overlay");
   const [size, setSize] = useState<ImageCardSizes>("md");
+  const [position, setPosition] = useState<ImageCardPosition>("left");
 
   const codeString = `
   <ImageCard
@@ -47,7 +48,7 @@ const ImageCardBasicDemo = () => {
   `;
 
   return (
-    <div className="space-y-8 mb-8">
+    <div className="space-y-1 mb-8">
       <div className="flex flex-wrap gap-4 justify-start sm:justify-end">
         <div className="space-y-2">
           <VariantSelector
@@ -58,15 +59,24 @@ const ImageCardBasicDemo = () => {
           />
         </div>
 
-      <div className="space-y-2">
-        <VariantSelector
-          variants={[...sizes]}
-          selectedVariant={size}
-          onSelectVariant={(v) => setSize(v as "sm"| "md"| "lg"| "xl")}
-          type="Sizes"
-        />
-      </div>
+        { layout === "below" && 
+        <div className="space-y-2">
+          <VariantSelector
+            variants={[...positions]}
+            selectedVariant={position}
+            onSelectVariant={(v) => setPosition(v as "top" | "left" | "right")}
+            type="Position"
+          />
+        </div>}
 
+        <div className="space-y-2">
+          <VariantSelector
+            variants={[...sizes]}
+            selectedVariant={size}
+            onSelectVariant={(v) => setSize(v as "sm"| "md"| "lg"| "xl")}
+            type="Sizes"
+          />
+        </div>
     </div>
 
       {/* Demo */}
@@ -81,6 +91,9 @@ const ImageCardBasicDemo = () => {
               category="Nature"
               variant="red"
               layout={layout}
+              {...(layout === "below" && position
+              ? { mediaPosition: position }
+              : {})}
               size={size}
               button={[
                 {
@@ -142,7 +155,7 @@ const ImageCardBelowDemo = () => {
   `;
 
   return (
-    <div className="space-y-8 mb-8">
+    <div className="space-y-0 mb-2">
       <div className="flex flex-wrap gap-4 justify-start sm:justify-end">
 
         <div className="space-y-2">
