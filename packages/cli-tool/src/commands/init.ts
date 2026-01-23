@@ -114,7 +114,7 @@ export const initCommand = new Command()
       spinner.text = 'Installing required dependencies...';
       const depService = new DependencyService();
       await depService.install(['@mindfiredigital/ignix-ui'], false);
-      await depService.install(['tailwindcss'], true);
+      await depService.install(['tailwindcss', 'postcss', 'autoprefixer'], true);
 
       spinner.succeed(chalk.green('Ignix UI initialized successfully!'));
       logger.info('\nNext steps:');
@@ -156,6 +156,7 @@ async function createConfigFiles() {
   await createUtilsFile();
   await createLlmsTxtFile();
   await createIgnixConfigFIle();
+  await updateGlobalStyles();
 }
 
 async function setupIgnixUIAlias(): Promise<void> {
@@ -251,5 +252,110 @@ async function createIgnixConfigFIle() {
   } else {
     await fs.copy(configTemplatePath, DEFAULT_CONFIG_PATH);
     logger.success('Created `ignix.config.js`.');
+  }
+}
+
+async function updateGlobalStyles() {
+  const root = process.cwd();
+
+  // Try multiple possible paths to find custom.css
+  // 1. Relative to CLI tool (monorepo structure)
+  // 2. Relative to project root (if docs is in the same repo)
+  const possibleCustomCssPaths = [
+    path.resolve(__dirname, '../../../apps/docs/src/css/custom.css'),
+    path.resolve(root, '../docs/src/css/custom.css'),
+    path.resolve(root, 'apps/docs/src/css/custom.css'),
+    path.resolve(root, 'docs/src/css/custom.css'),
+  ];
+
+  let customCssPath: string | null = null;
+  for (const cssPath of possibleCustomCssPaths) {
+    if (await fs.pathExists(cssPath)) {
+      customCssPath = cssPath;
+      break;
+    }
+  }
+
+  // Check if custom.css exists
+  if (!customCssPath) {
+    logger.warn('Custom CSS file not found. Skipping CSS update.');
+    return;
+  }
+
+  // Read the custom.css content
+  const customCssContent = await fs.readFile(customCssPath, 'utf-8');
+
+  // Detect project type and find the appropriate CSS file
+  const possibleCssPaths = [
+    // Next.js App Router
+    path.join(root, 'src', 'styles', 'globals.css'),
+    path.join(root, 'src', 'app', 'globals.css'),
+    // Vite/React
+    path.join(root, 'src', 'index.css'),
+    path.join(root, 'src', 'App.css'),
+    // Generic
+    path.join(root, 'src', 'styles.css'),
+    path.join(root, 'src', 'app.css'),
+    path.join(root, 'app.css'),
+    path.join(root, 'index.css'),
+  ];
+
+  let cssFilePath: string | null = null;
+  for (const cssPath of possibleCssPaths) {
+    if (await fs.pathExists(cssPath)) {
+      cssFilePath = cssPath;
+      break;
+    }
+  }
+
+  // If no CSS file exists, create one in the most common location
+  if (!cssFilePath) {
+    // Check if it's a Next.js project
+    const isNextJs =
+      (await fs.pathExists(path.join(root, 'next.config.js'))) ||
+      (await fs.pathExists(path.join(root, 'next.config.ts'))) ||
+      (await fs.pathExists(path.join(root, 'src', 'app')));
+
+    if (isNextJs) {
+      cssFilePath = path.join(root, 'src', 'styles', 'globals.css');
+      await fs.ensureDir(path.dirname(cssFilePath));
+    } else {
+      // Default to src/index.css for Vite/React
+      cssFilePath = path.join(root, 'src', 'index.css');
+      await fs.ensureDir(path.dirname(cssFilePath));
+    }
+  }
+
+  if (cssFilePath) {
+    // Read existing content if file exists
+    let existingContent = '';
+    if (await fs.pathExists(cssFilePath)) {
+      existingContent = await fs.readFile(cssFilePath, 'utf-8');
+    }
+
+    // Merge or replace: if file has Tailwind directives, prepend custom.css, otherwise replace
+    let finalContent = '';
+    if (
+      existingContent &&
+      (existingContent.includes('@tailwind') || existingContent.includes('@import'))
+    ) {
+      // Merge: keep Tailwind directives and add custom.css content
+      const tailwindDirectives =
+        existingContent.match(/@(?:tailwind|import)[^;]+;?/g)?.join('\n') || '';
+      const restOfContent = existingContent.replace(/@(?:tailwind|import)[^;]+;?\n?/g, '').trim();
+
+      // Extract @import 'tailwindcss' from custom.css if present
+      const customCssWithoutTailwind = customCssContent
+        .replace(/@import\s+['"]tailwindcss['"];?\n?/g, '')
+        .trim();
+
+      finalContent = `${tailwindDirectives}\n\n${customCssWithoutTailwind}\n\n${restOfContent}`.trim();
+    } else {
+      // Replace: use custom.css content
+      finalContent = customCssContent;
+    }
+
+    await fs.writeFile(cssFilePath, finalContent, 'utf-8');
+    logger.success(`✔ Updated ${path.relative(root, cssFilePath)} with custom styles`);
   }
 }

@@ -176,6 +176,9 @@ module.exports = {
   // Default directory for UI components
   componentsDir: 'src/components/ui',
 
+  // Template directory for Layouts
+  templateLayoutDir: 'src/components/templates',
+
   // Your other configuration options...
 };
 ```
