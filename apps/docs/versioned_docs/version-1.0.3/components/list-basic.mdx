@@ -2,6 +2,7 @@
 sidebar_position: 20
 title: List
 description: A flexible list component with bullet points or numbers and consistent spacing.
+toc_max_heading_level: 4
 ---
 
 import Tabs from '@theme/Tabs';
@@ -11,14 +12,30 @@ import ListBasicDemo, { SpacingComparison, TypeComparison, ChildrenExample } fro
 import { ListWithActions } from '@site/src/components/UI/list-with-actions';
 import ListWithActionsDemo, { ActionsBehavior, OrderedListExample, RichContentExample } from '@site/src/components/Demo/ListWithActionsDemo';
 
-## List Variant
-<Tabs>
-  <TabItem value="" label="Basic List" default>
-  The List-Basic component provides a clean and accessible way to display lists of content with consistent spacing. It supports both unordered lists (bullet points) and ordered lists (numbers), making it perfect for feature lists, instructions, or any content that needs to be organized in a list format.
-<br/>
-<ListBasicDemo />
+<style>{`
+  /* Hide headings with toc-only span visually but keep in DOM for TOC parsing */
+  /* Using visibility: hidden and height: 0 to hide visually while keeping structure */
+  h3:has(> span.toc-only) {
+    visibility: hidden;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    line-height: 0;
+  }
+`}</style>
 
-## Installation
+## List Variant
+
+<Tabs>
+
+  <TabItem value="Basic List" label="Basic List" default>
+### <span className="toc-only">Basic List</span>
+  The List-Basic component provides a clean and accessible way to display lists of content with consistent spacing. It supports both unordered lists (bullet points) and ordered lists (numbers), making it perfect for feature lists, instructions, or any content that needs to be organized in a list format.
+  <br/>
+  <ListBasicDemo />
+
+#### Installation
 
 <Tabs>
   <TabItem value="cli" label="CLI" default>
@@ -109,7 +126,7 @@ export { ListBasic };
   </TabItem>
 </Tabs>
 
-## Usage
+#### Usage
 
 Import the component:
 
@@ -117,7 +134,7 @@ Import the component:
 import { ListBasic } from './components/ui/list-basic';
 ```
 
-### Basic Usage
+#### Basic Usage
 
 The simplest way to use ListBasic is with the `items` prop:
 
@@ -131,7 +148,7 @@ function BasicList() {
 }
 ```
 
-### Ordered List
+#### Ordered List
 
 To create a numbered list, set the `type` prop to `"ordered"`:
 
@@ -146,7 +163,7 @@ function OrderedList() {
 }
 ```
 
-### Custom Spacing
+#### Custom Spacing
 
 Control the spacing between items using the `spacing` prop:
 
@@ -161,7 +178,7 @@ function CustomSpacing() {
 }
 ```
 
-### Using Children
+#### Using Children
 
 For more complex content, you can use the `children` prop:
 
@@ -184,25 +201,25 @@ function ComplexList() {
 ```
 
 
-### Spacing Variants
+#### Spacing Variants
 
 The component supports three spacing options to control the vertical spacing between list items:
 
 <SpacingComparison />
 
-### List Types
+#### List Types
 
 Choose between unordered (bullet points) and ordered (numbers) lists:
 
 <TypeComparison />
 
-### Using Children
+#### Using Children
 
 When you need more control over individual list items, use the `children` prop:
 
 <ChildrenExample />
 
-## Props
+#### Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
@@ -212,9 +229,9 @@ When you need more control over individual list items, use the `children` prop:
 | `className` | `string` | `undefined` | Additional CSS classes to apply to the list container. |
 | `children` | `React.ReactNode` | `undefined` | Alternative way to pass list items as children. If provided, `items` prop will be ignored. |
 
-## Examples
+#### Examples
 
-### Feature List
+#### Feature List
 
 A common use case for displaying product features:
 
@@ -232,7 +249,7 @@ A common use case for displaying product features:
 />
 ```
 
-### Step-by-Step Instructions
+#### Step-by-Step Instructions
 
 Perfect for tutorials or guides:
 
@@ -249,7 +266,7 @@ Perfect for tutorials or guides:
 />
 ```
 
-### Mixed Content List
+#### Mixed Content List
 
 Using children for complex content:
 
@@ -270,7 +287,7 @@ Using children for complex content:
 </ListBasic>
 ```
 
-## Accessibility
+#### Accessibility
 
 The ListBasic component uses semantic HTML (`<ul>` and `<ol>`) which provides:
 
@@ -278,7 +295,7 @@ The ListBasic component uses semantic HTML (`<ul>` and `<ol>`) which provides:
 - **Keyboard navigation**: Standard list navigation works as expected
 - **Semantic meaning**: The list structure is clear to assistive technologies
 
-## Best Practices
+#### Best Practices
 
 1. **Use unordered lists** for items that don't have a specific order (features, options, etc.)
 2. **Use ordered lists** for sequential steps, rankings, or numbered instructions
@@ -291,12 +308,15 @@ The ListBasic component uses semantic HTML (`<ul>` and `<ol>`) which provides:
 
 
   </TabItem>
+  
   <TabItem value="ListWithActions" label="List With Actions">
+  {/* ### List With Actions */}
+  ### <span className="toc-only">List With Actions</span>
   The List With Actions component extends the basic list functionality by adding contextual action buttons (like Edit, Delete, View) to each list item. Actions are intelligently revealed on hover or focus on desktop devices, while remaining always visible on mobile for better touch interaction.
 
 <ListWithActionsDemo />
 
-## Installation
+#### Installation
 
 <Tabs>
   <TabItem value="cli" label="CLI" default>
@@ -402,7 +422,7 @@ export const ListWithActions = React.memo(ListWithActionsComponent);
   </TabItem>
 </Tabs>
 
-## Usage
+#### Usage
 
 Import the component:
 
@@ -410,7 +430,7 @@ Import the component:
 import { ListWithActions } from './components/ui/list-with-actions';
 ```
 
-### Basic Usage
+#### Basic Usage
 
 The simplest way to use ListWithActions is with the `items` and `actions` props:
 
@@ -431,7 +451,7 @@ function BasicList() {
 }
 ```
 
-### With Ordered List
+#### With Ordered List
 
 To show numbered markers, pass the `type` prop:
 
@@ -452,7 +472,7 @@ function OrderedList() {
 }
 ```
 
-### Without Markers
+#### Without Markers
 
 If you don't want bullets or numbers, simply omit the `type` prop:
 
@@ -467,7 +487,7 @@ function NoMarkers() {
 }
 ```
 
-### Custom Spacing
+#### Custom Spacing
 
 Control the spacing between items:
 
@@ -483,7 +503,7 @@ function CustomSpacing() {
 }
 ```
 
-### Rich Content Items
+#### Rich Content Items
 
 You can pass complex JSX as items:
 
@@ -516,27 +536,27 @@ function RichContent() {
 
 
 
-## Variants
+#### Variants
 
-### Actions Behavior
+#### Actions Behavior
 
 Actions appear on hover/focus on desktop and are always visible on mobile:
 
 <ActionsBehavior />
 
-### Ordered List
+#### Ordered List
 
 Use numbered markers for sequential items:
 
 <OrderedListExample />
 
-### Rich Content
+#### Rich Content
 
 Display complex content in list items:
 
 <RichContentExample />
 
-## Props
+#### Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
@@ -547,7 +567,7 @@ Display complex content in list items:
 | `className` | `string` | `undefined` | Additional CSS classes to apply to the list container. |
 | `itemClassName` | `string` | `undefined` | Additional CSS classes to apply to each list row. |
 
-### ListAction Interface
+#### ListAction Interface
 
 | Property | Type | Required | Description |
 |----------|------|----------|-------------|
@@ -557,7 +577,7 @@ Display complex content in list items:
 | `onClick` | `(index: number) => void` | **required** | Callback fired when the action is clicked. Receives the item's index. |
 
 
-## Accessibility
+#### Accessibility
 
 The ListWithActions component is designed with accessibility in mind:
 
@@ -566,7 +586,7 @@ The ListWithActions component is designed with accessibility in mind:
 - **Focus management**: Actions become visible when a row receives focus, ensuring keyboard users can access all functionality
 - **Semantic HTML**: Uses proper list semantics (`<ul>` or `<ol>`) inherited from `ListBasic`
 
-## Best Practices
+#### Best Practices
 
 1. **Use memoized callbacks**: To prevent unnecessary re-renders, memoize your action handlers with `useCallback`:
 
@@ -600,7 +620,7 @@ The ListWithActions component is designed with accessibility in mind:
    - Use `type="unordered"` for feature lists or options
    - Omit `type` for clean, marker-free lists
 
-## Performance
+#### Performance
 
 The component is optimized for performance:
 
