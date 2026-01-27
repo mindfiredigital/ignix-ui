@@ -1070,6 +1070,42 @@
           "type": "component"
         }
       }
+    },
+    "userCard":{
+      "name": "userCard",
+      "description": "An image card component with different variants.",
+      "dependencies": [
+        "lucide-react", 
+        "class-variance-authority",
+        "react-icons"
+      ],
+      "componentDependencies": [
+        "card",
+        "avatar",
+        "button",
+        "typography"
+      ],
+      "files": {
+        "main": {
+          "path": "components/user-card/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "rating":{
+      "name": "Rating",
+      "description": "A flexible rating component with animations, custom icons, emojis, and multiple interaction modes.",
+      "dependencies": [
+        "lucide-react", 
+        "class-variance-authority",
+        "framer-motion"
+      ],
+      "files": {
+        "main": {
+          "path": "components/rating/index.tsx",
+          "type": "component"
+        }
+      }
     }
   } 
 }

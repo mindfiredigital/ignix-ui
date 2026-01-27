@@ -44,8 +44,10 @@
     "prism-react-renderer": "^2.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-icons": "^5.5.0",
     "react-live": "^4.1.8",
-    "tailwind-merge": "^3.3.0"
+    "tailwind-merge": "^3.3.0",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "3.7.0",
