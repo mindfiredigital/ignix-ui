@@ -1,4 +1,4 @@
-import { cn } from '../../../../utils/cn';
+import { cn } from '../../../utils/cn';
 import * as React from "react";
 
 export type ContainerSize = "small" | "normal" | "large" | "full" | "readable";

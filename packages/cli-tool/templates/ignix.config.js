@@ -16,5 +16,5 @@ module.exports = {
   themesDir: 'src/themes',
 
   // Template directory for Layouts
-  templateLayoutDir: 'src/components/templates',
+  templateDir: 'src/components/templates',
 };

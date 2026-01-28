@@ -7,11 +7,11 @@ import { UserCard } from "@site/src/components/UI/user-card";
 import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
 import { Users, MessageCircle, Heart, TrendingUp } from "lucide-react";
 
-type ProfileCardVariant = typeof variants[number];
-type ProfileCardSize = typeof sizes[number];
-type ProfileCardOrientation = typeof orientations[number];
-type ProfileCardBackgroundPattern = typeof backgroundPatterns[number];
-type ProfileCardAvatarShapes = typeof shapes[number];
+type UserCardVariant = typeof variants[number];
+type UserCardSize = typeof sizes[number];
+type UserCardOrientation = typeof orientations[number];
+type UserCardBackgroundPattern = typeof backgroundPatterns[number];
+type UserCardAvatarShapes = typeof shapes[number];
 
 const variants = ["default", "elevated", "glass", "outline", "minimal"] as const;
 const sizes = ["sm", "md", "lg", "xl"] as const;
@@ -19,11 +19,11 @@ const orientations = ["vertical", "horizontal"] as const;
 const backgroundPatterns = ["none", "gradient", "dots", "grid"] as const;
 const shapes = ["circle", "square", "rounded", "decagon", "hexagon", "pentagon", "star", "diamond", "triangle", "triangle-down", "parallelogram", "rhombus", "cross", "octagon", "ellipse", "egg", "trapezoid"] as const;
 
-const ProfileCardBasicDemo = () => {
-  const [variant, setVariant] = useState<ProfileCardVariant>("default");
-  const [size, setSize] = useState<ProfileCardSize>("md");
-  const [orientation, setOrientation] = useState<ProfileCardOrientation>("vertical");
-  const [shape, setShape] = useState<ProfileCardAvatarShapes>("circle");
+const UserCardBasicDemo = () => {
+  const [variant, setVariant] = useState<UserCardVariant>("default");
+  const [size, setSize] = useState<UserCardSize>("md");
+  const [orientation, setOrientation] = useState<UserCardOrientation>("vertical");
+  const [shape, setShape] = useState<UserCardAvatarShapes>("circle");
 
   const codeString = `
   <UserCard
@@ -60,7 +60,7 @@ const ProfileCardBasicDemo = () => {
   `;
 
   return (
-    <div className="space-y-8 mb-8">
+    <div className="space-y-8 mb-8 mt-4">
       <div className="flex flex-wrap gap-4 justify-start sm:justify-end">
         <div className="space-y-2">
           <VariantSelector
@@ -149,8 +149,8 @@ const ProfileCardBasicDemo = () => {
   );
 };
 
-const ProfileCardAdvancedDemo = () => {
-  const [backgroundPattern, setBackgroundPattern] = useState<ProfileCardBackgroundPattern>("gradient");
+const UserCardAdvancedDemo = () => {
+  const [backgroundPattern, setBackgroundPattern] = useState<UserCardBackgroundPattern>("gradient");
   const [badgeType, setBadgeType] = useState<"none" | "verified" | "premium" | "badge">("verified");
   const [customBadgeText, setCustomBadgeText] = useState<string>("Pro");
 
@@ -315,7 +315,7 @@ ${getBadgeCode()}
   );
 };
 
-const ProfileCardExamplesDemo = () => {
+const UserCardExamplesDemo = () => {
     const codeString = `
   <UserCard
     advanced
@@ -406,4 +406,4 @@ const ProfileCardExamplesDemo = () => {
   );
 };
 
-export { ProfileCardBasicDemo, ProfileCardAdvancedDemo, ProfileCardExamplesDemo };
+export { UserCardBasicDemo, UserCardAdvancedDemo, UserCardExamplesDemo };
