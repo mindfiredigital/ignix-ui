@@ -157,7 +157,8 @@
           "label": "Sections",
           "items": [
             "templates/sections/content/pricing-grid",
-            "templates/sections/content/comparison-table"
+            "templates/sections/content/comparison-table",
+            "templates/sections/content/hero"
           ]
         }
       ]
