@@ -1,48 +1,43 @@
 ---
 sidebar_position: 20
-title: List-Basic
+title: List
 description: A flexible list component with bullet points or numbers and consistent spacing.
+toc_max_heading_level: 4
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import { ListBasic } from '@site/src/components/UI/list-basic';
 import ListBasicDemo, { SpacingComparison, TypeComparison, ChildrenExample } from '@site/src/components/Demo/ListBasicDemo';
+import { ListWithActions } from '@site/src/components/UI/list-with-actions';
+import ListWithActionsDemo, { ActionsBehavior, OrderedListExample, RichContentExample } from '@site/src/components/Demo/ListWithActionsDemo';
+import { ListWithStatus } from '@site/src/components/UI/list-with-status';
+import ListWithStatusDemo, { StatusVariantsDemo, OrderedListExample as StatusOrderedListExample, CustomContentExample as StatusCustomContentExample, SpacingVariantsDemo } from '@site/src/components/Demo/ListWithStatusDemo';
 
-## Overview
+<style>{`
+  /* Hide headings with toc-only span visually but keep in DOM for TOC parsing */
+  /* Using visibility: hidden and height: 0 to hide visually while keeping structure */
+  h3:has(> span.toc-only) {
+    visibility: hidden;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    line-height: 0;
+  }
+`}</style>
 
-The List-Basic component provides a clean and accessible way to display lists of content with consistent spacing. It supports both unordered lists (bullet points) and ordered lists (numbers), making it perfect for feature lists, instructions, or any content that needs to be organized in a list format.
+## List Variant
 
-## Preview
+<Tabs>
 
-<Tabs defaultValue="preview">
-  <TabItem value="preview" label="Preview" default>
-    <div className="p-4 border rounded-lg">
-      <ListBasic 
-        items={['First item', 'Second item', 'Third item']}
-        type="unordered"
-        spacing="md"
-      />
-    </div>
-  </TabItem>
-  <TabItem value="code" label="Code">
-    ```tsx
-    import { ListBasic } from './components/ui/list-basic';
+  <TabItem value="Basic List" label="Basic List" default>
+### <span className="toc-only">Basic List</span>
+  The List-Basic component provides a clean and accessible way to display lists of content with consistent spacing. It supports both unordered lists (bullet points) and ordered lists (numbers), making it perfect for feature lists, instructions, or any content that needs to be organized in a list format.
+  <br/>
+  <ListBasicDemo />
 
-    function MyComponent() {
-      return (
-        <ListBasic 
-          items={['First item', 'Second item', 'Third item']}
-          type="unordered"
-          spacing="md"
-        />
-      );
-    }
-    ```
-  </TabItem>
-</Tabs>
-
-## Installation
+#### Installation
 
 <Tabs>
   <TabItem value="cli" label="CLI" default>
@@ -133,7 +128,7 @@ export { ListBasic };
   </TabItem>
 </Tabs>
 
-## Usage
+#### Usage
 
 Import the component:
 
@@ -141,7 +136,7 @@ Import the component:
 import { ListBasic } from './components/ui/list-basic';
 ```
 
-### Basic Usage
+#### Basic Usage
 
 The simplest way to use ListBasic is with the `items` prop:
 
@@ -155,7 +150,7 @@ function BasicList() {
 }
 ```
 
-### Ordered List
+#### Ordered List
 
 To create a numbered list, set the `type` prop to `"ordered"`:
 
@@ -170,7 +165,7 @@ function OrderedList() {
 }
 ```
 
-### Custom Spacing
+#### Custom Spacing
 
 Control the spacing between items using the `spacing` prop:
 
@@ -185,7 +180,7 @@ function CustomSpacing() {
 }
 ```
 
-### Using Children
+#### Using Children
 
 For more complex content, you can use the `children` prop:
 
@@ -207,31 +202,26 @@ function ComplexList() {
 }
 ```
 
-## Interactive Demo
 
-<ListBasicDemo />
-
-## Variants
-
-### Spacing Variants
+#### Spacing Variants
 
 The component supports three spacing options to control the vertical spacing between list items:
 
 <SpacingComparison />
 
-### List Types
+#### List Types
 
 Choose between unordered (bullet points) and ordered (numbers) lists:
 
 <TypeComparison />
 
-### Using Children
+#### Using Children
 
 When you need more control over individual list items, use the `children` prop:
 
 <ChildrenExample />
 
-## Props
+#### Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
@@ -241,9 +231,9 @@ When you need more control over individual list items, use the `children` prop:
 | `className` | `string` | `undefined` | Additional CSS classes to apply to the list container. |
 | `children` | `React.ReactNode` | `undefined` | Alternative way to pass list items as children. If provided, `items` prop will be ignored. |
 
-## Examples
+#### Examples
 
-### Feature List
+#### Feature List
 
 A common use case for displaying product features:
 
@@ -261,7 +251,7 @@ A common use case for displaying product features:
 />
 ```
 
-### Step-by-Step Instructions
+#### Step-by-Step Instructions
 
 Perfect for tutorials or guides:
 
@@ -278,7 +268,7 @@ Perfect for tutorials or guides:
 />
 ```
 
-### Mixed Content List
+#### Mixed Content List
 
 Using children for complex content:
 
@@ -299,7 +289,7 @@ Using children for complex content:
 </ListBasic>
 ```
 
-## Accessibility
+#### Accessibility
 
 The ListBasic component uses semantic HTML (`<ul>` and `<ol>`) which provides:
 
@@ -307,7 +297,7 @@ The ListBasic component uses semantic HTML (`<ul>` and `<ol>`) which provides:
 - **Keyboard navigation**: Standard list navigation works as expected
 - **Semantic meaning**: The list structure is clear to assistive technologies
 
-## Best Practices
+#### Best Practices
 
 1. **Use unordered lists** for items that don't have a specific order (features, options, etc.)
 2. **Use ordered lists** for sequential steps, rankings, or numbered instructions
@@ -318,3 +308,853 @@ The ListBasic component uses semantic HTML (`<ul>` and `<ol>`) which provides:
 4. **Use children prop** when you need to customize individual items with links, icons, or formatting
 5. **Keep items concise** for better readability and scanning
 
+
+  </TabItem>
+  
+  <TabItem value="ListWithActions" label="List With Actions">
+  {/* ### List With Actions */}
+  ### <span className="toc-only">List With Actions</span>
+  The List With Actions component extends the basic list functionality by adding contextual action buttons (like Edit, Delete, View) to each list item. Actions are intelligently revealed on hover or focus on desktop devices, while remaining always visible on mobile for better touch interaction.
+
+<ListWithActionsDemo />
+
+#### Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component list-with-actions
+    ```
+  </TabItem>
+  <TabItem value="manual" label="Manual" className="max-h-[500px] overflow-y-auto">
+
+    ```tsx
+import React, { useCallback, useMemo } from "react";
+import { cn } from "../../../utils/cn";
+import { ListBasic, type ListBasicProps } from "../list-basic";
+
+export interface ListAction {
+  id: string;
+  label: React.ReactNode;
+  ariaLabel?: string;
+  onClick: (index: number) => void;
+}
+
+export interface ListWithActionsProps {
+  items: React.ReactNode[];
+  actions: ListAction[];
+  type?: ListBasicProps["type"];
+  spacing?: "sm" | "md" | "lg";
+  className?: string;
+  itemClassName?: string;
+}
+
+const ListWithActionsComponent: React.FC<ListWithActionsProps> = ({
+  items,
+  actions,
+  type,
+  spacing = "md",
+  className,
+  itemClassName,
+}) => {
+  const listClassName = useMemo(
+    () => cn("w-full", "text-foreground", "list-none", className),
+    [className]
+  );
+
+  const rowClasses = useMemo(
+    () =>
+      cn(
+        "flex items-center justify-between gap-3 rounded-md border border-border/60 bg-background px-3 py-2",
+        "transition-colors",
+        "hover:bg-muted/60 focus-within:bg-muted/60",
+        "group",
+        itemClassName
+      ),
+    [itemClassName]
+  );
+
+  const createActionClickHandler = useCallback(
+    (action: ListAction, index: number) => () => {
+      action.onClick(index);
+    },
+    []
+  );
+
+  return (
+    <ListBasic type={type} spacing={spacing} className={listClassName}>
+      {items.map((item, index) => (
+        <li key={index} className={rowClasses} tabIndex={0}>
+          <div className={cn("flex-1 min-w-0", type && "flex items-center gap-2")}>
+            {type && (
+              <span className="w-6 shrink-0 text-xs font-medium text-muted-foreground text-right">
+                {type === "ordered" ? `${index + 1}.` : "•"}
+              </span>
+            )}
+            <div className="flex-1 min-w-0">{item}</div>
+          </div>
+
+          <div
+            className={cn(
+              "flex items-center gap-1",
+              "hidden group-hover:flex group-focus-within:flex",
+              "sm:flex"
+            )}
+          >
+            {actions.map((action) => (
+              <button
+                key={action.id}
+                type="button"
+                className="inline-flex items-center justify-center rounded-md px-2 py-1 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                aria-label={action.ariaLabel}
+                onClick={createActionClickHandler(action, index)}
+              >
+                {action.label}
+              </button>
+            ))}
+          </div>
+        </li>
+      ))}
+    </ListBasic>
+  );
+};
+
+export const ListWithActions = React.memo(ListWithActionsComponent);
+    ```
+  </TabItem>
+</Tabs>
+
+#### Usage
+
+Import the component:
+
+```tsx
+import { ListWithActions } from './components/ui/list-with-actions';
+```
+
+#### Basic Usage
+
+The simplest way to use ListWithActions is with the `items` and `actions` props:
+
+```tsx
+function BasicList() {
+  const actions = [
+    { id: 'view', label: 'View', onClick: (index) => console.log('View', index) },
+    { id: 'edit', label: 'Edit', onClick: (index) => console.log('Edit', index) },
+    { id: 'delete', label: 'Delete', onClick: (index) => console.log('Delete', index) },
+  ];
+
+  return (
+    <ListWithActions 
+      items={['Item 1', 'Item 2', 'Item 3']}
+      actions={actions}
+    />
+  );
+}
+```
+
+#### With Ordered List
+
+To show numbered markers, pass the `type` prop:
+
+```tsx
+function OrderedList() {
+  const actions = [
+    { id: 'edit', label: 'Edit', onClick: (index) => {} },
+    { id: 'delete', label: 'Delete', onClick: (index) => {} },
+  ];
+
+  return (
+    <ListWithActions 
+      type="ordered"
+      items={['Step 1', 'Step 2', 'Step 3']}
+      actions={actions}
+    />
+  );
+}
+```
+
+#### Without Markers
+
+If you don't want bullets or numbers, simply omit the `type` prop:
+
+```tsx
+function NoMarkers() {
+  return (
+    <ListWithActions 
+      items={['Task 1', 'Task 2', 'Task 3']}
+      actions={actions}
+    />
+  );
+}
+```
+
+#### Custom Spacing
+
+Control the spacing between items:
+
+```tsx
+function CustomSpacing() {
+  return (
+    <ListWithActions 
+      items={['Item 1', 'Item 2', 'Item 3']}
+      actions={actions}
+      spacing="lg"  // Options: 'sm', 'md', 'lg'
+    />
+  );
+}
+```
+
+#### Rich Content Items
+
+You can pass complex JSX as items:
+
+```tsx
+function RichContent() {
+  const items = [
+    (
+      <div className="flex flex-col">
+        <span className="font-medium">Analytics Dashboard</span>
+        <span className="text-xs text-muted-foreground">Last updated 2 hours ago</span>
+      </div>
+    ),
+    (
+      <div className="flex flex-col">
+        <span className="font-medium">Marketing Campaign</span>
+        <span className="text-xs text-muted-foreground">Running · Ends in 3 days</span>
+      </div>
+    ),
+  ];
+
+  return (
+    <ListWithActions 
+      items={items}
+      actions={actions}
+      spacing="lg"
+    />
+  );
+}
+```
+
+
+
+#### Variants
+
+#### Actions Behavior
+
+Actions appear on hover/focus on desktop and are always visible on mobile:
+
+<ActionsBehavior />
+
+#### Ordered List
+
+Use numbered markers for sequential items:
+
+<OrderedListExample />
+
+#### Rich Content
+
+Display complex content in list items:
+
+<RichContentExample />
+
+#### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `React.ReactNode[]` | **required** | Array of items to display in the list. Can be strings or React nodes. |
+| `actions` | `ListAction[]` | **required** | Array of action definitions. Each action must have `id`, `label`, and `onClick`. |
+| `type` | `'unordered' \| 'ordered'` | `undefined` | Type of list marker. When provided, shows bullets (`unordered`) or numbers (`ordered`). When omitted, no markers are shown. |
+| `spacing` | `'sm' \| 'md' \| 'lg'` | `'md'` | Spacing size between list items. `'sm'` (8px), `'md'` (12px), `'lg'` (16px). |
+| `className` | `string` | `undefined` | Additional CSS classes to apply to the list container. |
+| `itemClassName` | `string` | `undefined` | Additional CSS classes to apply to each list row. |
+
+#### ListAction Interface
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| `id` | `string` | **required** | Unique identifier for the action (used as React key). |
+| `label` | `React.ReactNode` | **required** | Visible label or icon for the action button. |
+| `ariaLabel` | `string` | optional | Accessible label announced to screen readers. |
+| `onClick` | `(index: number) => void` | **required** | Callback fired when the action is clicked. Receives the item's index. |
+
+
+#### Accessibility
+
+The ListWithActions component is designed with accessibility in mind:
+
+- **Keyboard navigation**: Each row is focusable (`tabIndex={0}`), allowing keyboard users to reveal actions by focusing on items
+- **Screen reader support**: Actions include `ariaLabel` props for better screen reader announcements
+- **Focus management**: Actions become visible when a row receives focus, ensuring keyboard users can access all functionality
+- **Semantic HTML**: Uses proper list semantics (`<ul>` or `<ol>`) inherited from `ListBasic`
+
+#### Best Practices
+
+1. **Use memoized callbacks**: To prevent unnecessary re-renders, memoize your action handlers with `useCallback`:
+
+   ```tsx
+   const handleEdit = useCallback((index: number) => {
+     editItem(index);
+   }, []);
+   
+   const actions = [
+     { id: 'edit', label: 'Edit', onClick: handleEdit },
+   ];
+   ```
+
+2. **Provide aria labels**: Always include `ariaLabel` for icon-only actions:
+
+   ```tsx
+   { id: 'delete', label: <TrashIcon />, ariaLabel: 'Delete item', onClick: handleDelete }
+   ```
+
+3. **Keep actions concise**: Limit the number of actions per item (3-4 max) to avoid cluttering the UI
+
+4. **Mobile-first**: Remember that actions are always visible on mobile, so design them to be touch-friendly
+
+5. **Use appropriate spacing**: Choose spacing based on content density:
+   - `sm`: For compact lists or when space is limited
+   - `md`: For standard content (default)
+   - `lg`: For better readability with rich content
+
+6. **Consider type prop**: 
+   - Use `type="ordered"` for sequential steps or ranked items
+   - Use `type="unordered"` for feature lists or options
+   - Omit `type` for clean, marker-free lists
+
+#### Performance
+
+The component is optimized for performance:
+
+- **React.memo**: Prevents re-renders when props haven't changed
+- **useMemo**: Memoizes computed class names
+- **useCallback**: Memoizes action click handlers
+
+To maximize performance in your application, ensure your `actions` array and `items` array references remain stable between renders.
+
+
+  </TabItem>
+  
+  <TabItem value="ListWithStatus" label="List With Status">
+  {/* ### List With Status */}
+  ### <span className="toc-only">List With Status</span>
+  The List With Status component extends the basic list functionality by adding status badges to each list item. Each item displays a status badge with appropriate colors and icons (success, error, warning, info, pending), making it perfect for displaying task lists, order statuses, notification lists, or any content that needs status indicators.
+
+<ListWithStatusDemo />
+
+#### Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component list-with-status
+    ```
+  </TabItem>
+  <TabItem value="manual" label="Manual" className="max-h-[500px] overflow-y-auto">
+    ```tsx
+import React, { useMemo, useCallback } from "react";
+import { cn } from "../../../utils/cn";
+import { ListBasic, type ListBasicProps } from "../list-basic";
+import { CheckCircle2, XCircle, AlertCircle, Clock, Info } from "lucide-react";
+
+export type StatusType = 'success' | 'error' | 'warning' | 'info' | 'pending';
+
+export interface ListItemWithStatus {
+  id: string;
+  title: string;
+  description?: string;
+  status: StatusType;
+  statusLabel?: string;
+  statusIcon?: React.ReactNode;
+  customContent?: React.ReactNode;
+}
+
+export interface ListWithStatusProps {
+  items: ListItemWithStatus[];
+  type?: ListBasicProps["type"];
+  spacing?: "sm" | "md" | "lg";
+  className?: string;
+  itemClassName?: string;
+  onItemClick?: (item: ListItemWithStatus, index: number) => void;
+}
+
+const STATUS_LABELS: Record<StatusType, string> = {
+  success: 'Success',
+  error: 'Error',
+  warning: 'Warning',
+  info: 'Info',
+  pending: 'Pending',
+} as const;
+
+const STATUS_BADGE_CLASSES: Record<StatusType, string> = {
+  success: cn("bg-success/30 text-success border-success/20", "dark:bg-success/100 dark:text-success-foreground"),
+  error: cn("bg-destructive/30 text-destructive border-destructive/20", "dark:bg-destructive/50 dark:text-destructive-foreground"),
+  warning: cn("bg-warning/10 text-warning border-warning/20", "dark:bg-warning/50 dark:text-warning-foreground"),
+  info: cn("bg-primary/10 text-primary border-primary/20", "dark:bg-primary/30 dark:text-primary-foreground"),
+  pending: cn("bg-secondary/10 text-secondary-foreground border-primary/20", "dark:bg-secondary/20"),
+} as const;
+
+const STATUS_ICON_CLASSES: Record<StatusType, string> = {
+  success: "text-success",
+  error: "text-destructive",
+  warning: "text-warning",
+  info: "text-primary",
+  pending: "text-secondary-foreground",
+} as const;
+
+const STATUS_ICONS: Record<StatusType, React.ReactNode> = {
+  success: <CheckCircle2 className="h-3 w-3" />,
+  error: <XCircle className="h-3 w-3" />,
+  warning: <AlertCircle className="h-3 w-3" />,
+  info: <Info className="h-3 w-3" />,
+  pending: <Clock className="h-3 w-3" />,
+} as const;
+
+const ListWithStatusComponent: React.FC<ListWithStatusProps> = ({
+  items,
+  type,
+  spacing = "md",
+  className,
+  itemClassName,
+  onItemClick,
+}) => {
+  const listClassName = useMemo(
+    () => cn("w-full", "text-foreground", "list-none", className),
+    [className]
+  );
+
+  const rowClasses = useMemo(
+    () =>
+      cn(
+        "flex items-center justify-between gap-3 pr-4",
+        "transition-colors",
+        onItemClick && "cursor-pointer rounded-md px-3 py-2 hover:bg-muted/60 focus-within:bg-muted/60 focus-within:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2",
+        itemClassName
+      ),
+    [itemClassName, onItemClick]
+  );
+
+  const createItemClickHandler = useCallback(
+    (item: ListItemWithStatus, index: number) => () => {
+      if (onItemClick) {
+        onItemClick(item, index);
+      }
+    },
+    [onItemClick]
+  );
+
+  const getStatusBadgeConfig = useCallback((item: ListItemWithStatus) => {
+    return {
+      label: item.statusLabel || STATUS_LABELS[item.status],
+      icon: item.statusIcon || STATUS_ICONS[item.status],
+      iconClasses: STATUS_ICON_CLASSES[item.status],
+      badgeClasses: STATUS_BADGE_CLASSES[item.status],
+    };
+  }, []);
+
+  const renderItem = (item: ListItemWithStatus, index: number) => {
+    const badgeConfig = getStatusBadgeConfig(item);
+    const hasClickHandler = !!onItemClick;
+
+    const content = item.customContent || (
+      <div className="flex flex-col min-w-0 flex-1">
+        <span className="font-medium text-foreground truncate">{item.title}</span>
+        {item.description && (
+          <span className="text-sm text-muted-foreground truncate">
+            {item.description}
+          </span>
+        )}
+      </div>
+    );
+
+    const statusBadge = (
+      <div className="flex items-center gap-1.5 shrink-0">
+        {badgeConfig.icon && (
+          <span className={cn("flex-shrink-0", badgeConfig.iconClasses)} aria-hidden="true">
+            {badgeConfig.icon}
+          </span>
+        )}
+        <span
+          className={cn(
+            "inline-flex items-center px-2 py-1 rounded-md text-xs font-medium",
+            "border transition-colors",
+            badgeConfig.badgeClasses
+          )}
+          aria-label={\`Status: ${'${badgeConfig.label}'}\`}
+        >
+          {badgeConfig.label}
+        </span>
+      </div>
+    );
+
+    const itemContent = (
+      <div 
+        className={rowClasses} 
+        onClick={hasClickHandler ? createItemClickHandler(item, index) : undefined}
+      >
+        {type && (
+          <span className="w-6 shrink-0 text-xs font-medium text-muted-foreground text-right">
+            {type === "ordered" ? \`${'${index + 1}'}.\` : "•"}
+          </span>
+        )}
+        {content}
+        {statusBadge}
+      </div>
+    );
+
+    return (
+      <li key={item.id}>
+        {itemContent}
+      </li>
+    );
+  };
+
+  return (
+    <ListBasic type={type} spacing={spacing} className={listClassName}>
+      {items.map(renderItem)}
+    </ListBasic>
+  );
+};
+
+ListWithStatusComponent.displayName = "ListWithStatus";
+
+export const ListWithStatus = React.memo(ListWithStatusComponent);
+    ```
+  </TabItem>
+</Tabs>
+
+#### Usage
+
+Import the component:
+
+```tsx
+import { ListWithStatus } from './components/ui/list-with-status';
+```
+
+#### Basic Usage
+
+The simplest way to use ListWithStatus is with the `items` prop:
+
+```tsx
+function BasicListWithStatus() {
+  const items = [
+    {
+      id: '1',
+      title: 'Payment Processed',
+      description: 'Your payment has been successfully processed',
+      status: 'success',
+    },
+    {
+      id: '2',
+      title: 'Order Failed',
+      description: 'Unable to process your order',
+      status: 'error',
+    },
+  ];
+
+  return (
+    <ListWithStatus items={items} />
+  );
+}
+```
+
+#### With Ordered List
+
+To show numbered markers, pass the `type` prop:
+
+```tsx
+function OrderedListWithStatus() {
+  const items = [
+    {
+      id: '1',
+      title: 'Step 1: Gather requirements',
+      description: 'Collect all necessary information',
+      status: 'success',
+    },
+    {
+      id: '2',
+      title: 'Step 2: Design the solution',
+      description: 'Create a detailed design plan',
+      status: 'pending',
+    },
+  ];
+
+  return (
+    <ListWithStatus 
+      type="ordered"
+      items={items}
+    />
+  );
+}
+```
+
+#### With Click Handler
+
+Add interactivity by providing an `onItemClick` callback:
+
+```tsx
+function InteractiveListWithStatus() {
+  const items = [
+    {
+      id: '1',
+      title: 'Task 1',
+      description: 'Click to view details',
+      status: 'success',
+    },
+    {
+      id: '2',
+      title: 'Task 2',
+      description: 'Click to view details',
+      status: 'pending',
+    },
+  ];
+
+  const handleItemClick = (item, index) => {
+    console.log('Clicked:', item.title);
+    // Navigate to detail page, open modal, etc.
+  };
+
+  return (
+    <ListWithStatus 
+      items={items}
+      onItemClick={handleItemClick}
+    />
+  );
+}
+```
+
+#### Custom Status Labels and Icons
+
+Override default status labels and icons:
+
+```tsx
+function CustomStatusList() {
+  const items = [
+    {
+      id: '1',
+      title: 'Custom Status',
+      description: 'With custom label and icon',
+      status: 'success',
+      statusLabel: 'Completed',
+      statusIcon: <CheckIcon className="h-3 w-3" />,
+    },
+  ];
+
+  return (
+    <ListWithStatus items={items} />
+  );
+}
+```
+
+#### Custom Content
+
+Use `customContent` for more complex item layouts:
+
+```tsx
+function CustomContentList() {
+  const items = [
+    {
+      id: '1',
+      title: 'Analytics Dashboard',
+      status: 'success',
+      customContent: (
+        <div className="flex flex-col">
+          <span className="font-medium">Analytics Dashboard</span>
+          <span className="text-xs text-muted-foreground">
+            Last updated 2 hours ago
+          </span>
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <ListWithStatus items={items} spacing="lg" />
+  );
+}
+```
+
+#### Variants
+
+#### Status Variants
+
+All available status types with their default colors and icons:
+
+<StatusVariantsDemo />
+
+#### Ordered List
+
+Use numbered markers for sequential items:
+
+<StatusOrderedListExample />
+
+#### Custom Content
+
+Display complex content in list items:
+
+<StatusCustomContentExample />
+
+#### Spacing Variants
+
+Different spacing options for list items:
+
+<SpacingVariantsDemo />
+
+#### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `ListItemWithStatus[]` | **required** | Array of items to display in the list. Each item must have `id`, `title`, and `status`. |
+| `type` | `'unordered' \| 'ordered'` | `undefined` | Type of list marker. When provided, shows bullets (`unordered`) or numbers (`ordered`). When omitted, no markers are shown. |
+| `spacing` | `'sm' \| 'md' \| 'lg'` | `'md'` | Spacing size between list items. `'sm'` (8px), `'md'` (12px), `'lg'` (16px). |
+| `className` | `string` | `undefined` | Additional CSS classes to apply to the list container. |
+| `itemClassName` | `string` | `undefined` | Additional CSS classes to apply to each list row. |
+| `onItemClick` | `(item: ListItemWithStatus, index: number) => void` | `undefined` | Callback fired when an item is clicked. |
+
+#### ListItemWithStatus Interface
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| `id` | `string` | **required** | Unique identifier for the item (used as React key). |
+| `title` | `string` | **required** | Display title of the item. |
+| `description` | `string` | optional | Optional description or subtitle text displayed below the title. |
+| `status` | `'success' \| 'error' \| 'warning' \| 'info' \| 'pending'` | **required** | Status type that determines badge color and icon. |
+| `statusLabel` | `string` | optional | Custom label for the status badge. If not provided, uses default label based on status type. |
+| `statusIcon` | `React.ReactNode` | optional | Custom icon for the status badge. If not provided, uses default icon based on status type. |
+| `customContent` | `React.ReactNode` | optional | Custom content to render instead of title/description. If provided, `title` and `description` are ignored. |
+
+#### Examples
+
+#### Task List
+
+Perfect for displaying tasks with their completion status:
+
+```tsx
+const tasks = [
+  {
+    id: '1',
+    title: 'Design landing page',
+    description: 'Create mockups and wireframes',
+    status: 'success',
+  },
+  {
+    id: '2',
+    title: 'Implement authentication',
+    description: 'Set up user login flow',
+    status: 'pending',
+  },
+  {
+    id: '3',
+    title: 'Fix critical bug',
+    description: 'Resolve payment processing issue',
+    status: 'error',
+  },
+];
+
+<ListWithStatus items={tasks} />
+```
+
+#### Order Status
+
+Display order or transaction statuses:
+
+```tsx
+const orders = [
+  {
+    id: '1',
+    title: 'Order #12345',
+    description: 'Shipped · Expected delivery: Jan 30',
+    status: 'success',
+  },
+  {
+    id: '2',
+    title: 'Order #12346',
+    description: 'Processing · Will ship soon',
+    status: 'pending',
+  },
+  {
+    id: '3',
+    title: 'Order #12347',
+    description: 'Payment failed · Please retry',
+    status: 'error',
+  },
+];
+
+<ListWithStatus items={orders} spacing="lg" />
+```
+
+#### Notification List
+
+Show notifications with different priority levels:
+
+```tsx
+const notifications = [
+  {
+    id: '1',
+    title: 'New message received',
+    description: 'You have a new message from John',
+    status: 'info',
+  },
+  {
+    id: '2',
+    title: 'System maintenance scheduled',
+    description: 'Maintenance will occur tonight at 2 AM',
+    status: 'warning',
+  },
+  {
+    id: '3',
+    title: 'Profile updated successfully',
+    description: 'Your profile changes have been saved',
+    status: 'success',
+  },
+];
+
+<ListWithStatus items={notifications} />
+```
+
+#### Accessibility
+
+The ListWithStatus component is designed with accessibility in mind:
+
+- **Status indicators**: Status badges include `aria-label` attributes for screen readers
+- **Semantic HTML**: Uses proper list semantics (`<ul>` or `<ol>`) inherited from `ListBasic`
+- **Keyboard navigation**: Items with `onItemClick` are keyboard accessible and focusable
+- **Color contrast**: Status badges use appropriate color contrast ratios for readability
+- **Icon accessibility**: Icons are marked with `aria-hidden="true"` since status labels provide text alternatives
+
+#### Best Practices
+
+1. **Use appropriate status types**: Choose status types that clearly communicate the state:
+   - `success`: Completed, approved, or successful operations
+   - `error`: Failed operations or critical issues
+   - `warning`: Requires attention or review
+   - `info`: Informational messages or updates
+   - `pending`: In progress or waiting states
+
+2. **Provide descriptions**: Include `description` text to provide context about the status
+
+3. **Use custom labels when needed**: Override default status labels when your domain uses different terminology
+
+4. **Consider spacing**: Choose spacing based on content density:
+   - `sm`: For compact lists or when space is limited
+   - `md`: For standard content (default)
+   - `lg`: For better readability with descriptions
+
+5. **Use click handlers for interactivity**: Add `onItemClick` when items should be clickable (e.g., to view details, navigate, or open modals)
+
+6. **Keep item IDs unique**: Ensure each item has a unique `id` for proper React key handling
+
+7. **Memoize click handlers**: Use `useCallback` to memoize `onItemClick` handlers to prevent unnecessary re-renders
+
+#### Performance
+
+The component is optimized for performance:
+
+- **React.memo**: Prevents re-renders when props haven't changed
+- **useMemo**: Memoizes computed class names
+- **useCallback**: Memoizes click handlers and badge configuration functions
+
+To maximize performance in your application, ensure your `items` array reference remains stable between renders.
+
+  </TabItem>
+</Tabs>
