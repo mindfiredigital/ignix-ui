@@ -27,7 +27,7 @@
 'use client';
 
 import React, { useMemo, useCallback } from "react";
-import { cn } from "../../utils/cn";
+import { cn } from "../../../utils/cn";
 import { ListBasic, type ListBasicProps } from "../list-basic";
 import { CheckCircle2, XCircle, AlertCircle, Clock, Info } from "lucide-react";
 
