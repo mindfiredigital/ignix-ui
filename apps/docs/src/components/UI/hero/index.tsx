@@ -134,6 +134,7 @@ export interface HeroContextValue {
   isLightVariant: boolean;
   textColor: string;
   subheadingColor: string;
+  split?: boolean;
   getAnimationProps: (delay?: number) => Pick<AnimationProps, 'initial' | 'animate' | 'transition'>;
 }
 
@@ -170,6 +171,10 @@ export interface HeroProps extends VariantProps<typeof heroVariants> {
    */
   animationType?: 'none' | 'fadeIn' | 'fadeInUp' | 'fadeInDown' | 'slideUp' | 'slideDown' | 'slideLeft' | 'slideRight' | 'scaleIn' | 'zoomIn' | 'flipIn' | 'bounceIn' | 'floatIn' | 'rotateIn';
   /**
+   * 'split' for side-by-side layout
+   */
+  split?: boolean;
+  /**
    * Custom className
    */
   className?: string;
@@ -186,19 +191,74 @@ export interface HeroContentProps{
 
 export const HeroContent = React.forwardRef<HTMLDivElement, HeroContentProps>(
   ({ children, className, ...props }, ref) => {
-    const { align } = useHeroContext();
+    const { align, split } = useHeroContext();
+    
+    // Check if there's a HeroImage with position left/right in children
+    // We check for the position prop since HeroImage might not be defined yet
+    const hasSplitImage = React.Children.toArray(children).some(
+      (child) => {
+        if (!React.isValidElement(child)) return false;
+        const props = child.props as { position?: string };
+        return props.position === 'left' || props.position === 'right';
+      }
+    );
+    
+    const isSplitLayout = split && hasSplitImage;
+    
+    // Separate text content from image for split layout
+    const textChildren: React.ReactNode[] = [];
+    const imageChildren: React.ReactNode[] = [];
+    let imagePosition: 'left' | 'right' | null = null;
+    
+    if (isSplitLayout) {
+      React.Children.forEach(children, (child) => {
+        if (React.isValidElement(child)) {
+          const props = child.props as { position?: string };
+          if (props.position === 'left' || props.position === 'right') {
+            imageChildren.push(child);
+            imagePosition = props.position as 'left' | 'right';
+          } else {
+            textChildren.push(child);
+          }
+        } else {
+          textChildren.push(child);
+        }
+      });
+    }
     
     return (
       <div
         ref={ref}
         className={cn(
-          'flex flex-col gap-10 md:gap-12 max-w-5xl',
-          contentVariants({ align }),
+          isSplitLayout 
+            ? 'flex flex-col lg:flex-row lg:items-stretch gap-8 lg:gap-12 w-full'
+            : 'flex flex-col gap-10 md:gap-12 max-w-5xl',
+          !isSplitLayout && contentVariants({ align }),
           className
         )}
         {...props}
       >
-        {children}
+        {isSplitLayout ? (
+          <>
+            {imagePosition === 'left' ? (
+              <>
+                {imageChildren}
+                <div className="flex flex-col gap-6 lg:gap-8 lg:w-1/2 justify-center">
+                  {textChildren}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex flex-col gap-6 lg:gap-8 lg:w-1/2 justify-center">
+                  {textChildren}
+                </div>
+                {imageChildren}
+              </>
+            )}
+          </>
+        ) : (
+          children
+        )}
       </div>
     );
   }
@@ -249,15 +309,15 @@ export interface HeroSubheadingProps {
 export const HeroSubheading = React.forwardRef<HTMLParagraphElement, HeroSubheadingProps>(
   ({ children, className }) => {
     const { subheadingColor, align, getAnimationProps } = useHeroContext();
-
+    
     const content = (
       <Typography
         variant="lead"
         className={cn(
-          'text-lg sm:text-xl md:text-2xl',
+          'text-lg sm:text-xl md:text-2xl mt-3',
           subheadingColor,
           align === 'center' && 'max-w-2xl mx-auto',
-          align === 'left' && 'max-w-2xl mx-auto',
+          align === 'left' && 'max-w-2xl',
           align === 'right' && 'max-w-2xl ml-auto',
           className
         )}
@@ -285,7 +345,10 @@ export interface HeroImageProps {
 }
 
 export const HeroImage = React.forwardRef<HTMLImageElement, HeroImageProps>(
-  ({ src, alt = 'background Image', position = 'background', overlayOpacity = 70, className, ...props }, ref) => {
+  ({ src, alt = 'background Image', position = 'background', overlayOpacity = 40, className, ...props }, ref) => {
+    const { split } = useHeroContext();
+    const isSplitLayout = split;
+
     if (position === 'background') {
       const overlayOpacityClass = overlayOpacity === 0 ? 'bg-transparent' :
         overlayOpacity <= 10 ? 'bg-black/10' :
@@ -318,9 +381,12 @@ export const HeroImage = React.forwardRef<HTMLImageElement, HeroImageProps>(
       <div
         className={cn(
           'relative z-10',
-          position === 'left' && 'order-1',
-          position === 'right' && 'order-2',
-          position === 'center' && 'w-full'
+          isSplitLayout && position === 'left' && 'order-1 lg:order-1',
+          isSplitLayout && position === 'right' && 'order-2 lg:order-2',
+          !isSplitLayout && position === 'left' && 'order-1',
+          !isSplitLayout && position === 'right' && 'order-2',
+          position === 'center' && 'w-full',
+          isSplitLayout && (position === 'left' || position === 'right') && 'lg:w-1/2 flex min-h-0'
         )}
       >
         <img
@@ -328,10 +394,14 @@ export const HeroImage = React.forwardRef<HTMLImageElement, HeroImageProps>(
           src={src}
           alt={alt}
           className={cn(
-            'object-cover rounded-lg shadow-2xl',
-            position === 'left' || position === 'right'
+            'rounded-lg shadow-2xl',
+            isSplitLayout && (position === 'left' || position === 'right')
+              ? 'w-full h-full object-cover flex-shrink-0'
+              : 'object-cover',
+            !isSplitLayout && (position === 'left' || position === 'right')
               ? 'w-full max-w-md lg:max-w-lg'
-              : 'w-full max-w-2xl mx-auto',
+              : '',
+            position === 'center' && 'w-full max-w-2xl mx-auto',
             className
           )}
           {...props}
@@ -396,8 +466,14 @@ export interface HeroBadgeProps {
 
 export const HeroBadge = React.forwardRef<HTMLDivElement, HeroBadgeProps>(
   ({ children, icon: Icon, variant = 'default', className, ...props }, ref) => {
-    const { getAnimationProps } = useHeroContext();
+    const { getAnimationProps, align } = useHeroContext();
     const isLightVariant = useHeroContext().isLightVariant;
+
+    const alignmentClasses = {
+      center: 'justify-center',
+      left: 'justify-start',
+      right: 'justify-end',
+    };
 
     const variantClasses = {
       default: 'bg-white/10 backdrop-blur-sm border border-white/20',
@@ -408,16 +484,23 @@ export const HeroBadge = React.forwardRef<HTMLDivElement, HeroBadgeProps>(
 
     const content = (
       <div
-        ref={ref}
         className={cn(
-          'inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider mb-8',
-          variantClasses[variant],
-          className
+          'flex mb-8',
+          alignmentClasses[align]
         )}
-        {...props}
       >
-        {Icon && <Icon className="w-4 h-4" />}
-        {children}
+        <div
+          ref={ref}
+          className={cn(
+            'inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider',
+            variantClasses[variant],
+            className
+          )}
+          {...props}
+        >
+          {Icon && <Icon className="w-4 h-4" />}
+          {children}
+        </div>
       </div>
     );
 
@@ -438,7 +521,13 @@ export interface HeroFeaturesProps {
 
 export const HeroFeatures = React.forwardRef<HTMLDivElement, HeroFeaturesProps>(
   ({ features, variant = 'default', className, ...props }, ref) => {
-    const { getAnimationProps, isLightVariant } = useHeroContext();
+    const { getAnimationProps, isLightVariant, align } = useHeroContext();
+
+    const alignmentClasses = {
+      center: 'justify-center',
+      left: 'justify-start',
+      right: 'justify-end',
+    };
 
     const variantClasses = {
       default: isLightVariant
@@ -450,7 +539,9 @@ export const HeroFeatures = React.forwardRef<HTMLDivElement, HeroFeaturesProps>(
     const content = (
       <div
         ref={ref}
-        className={cn('flex flex-wrap justify-center gap-3 mt-8', className)}
+        className={cn('flex flex-wrap justify-center gap-3 mt-8',
+          alignmentClasses[align],
+          className)}
         {...props}
       >
         {features.map((feature, idx) => (
@@ -547,6 +638,7 @@ export const HeroStats = React.forwardRef<HTMLDivElement, HeroStatsProps>(
             {stat.icon && variant === 'cards' && (
               <stat.icon className={cn(
                 'w-6 h-6 mb-3 text-gray-300',
+                isLightVariant && 'text-gray-600', 
                 'group-hover:scale-110 transition-transform'
               )} />
             )}
@@ -596,7 +688,8 @@ export const Hero: React.FC<HeroProps> = ({
   backgroundClassName,
   align = 'center',
   containerSize = 'full',
-  animationType = 'none',
+  animationType = 'slideUp',
+  split,
   className,
 }) => {
   const isLightVariant = variant === 'default';
@@ -622,6 +715,7 @@ export const Hero: React.FC<HeroProps> = ({
     isLightVariant,
     textColor,
     subheadingColor,
+    split,
     getAnimationProps,
   }), [
     variant,
@@ -630,6 +724,7 @@ export const Hero: React.FC<HeroProps> = ({
     isLightVariant,
     textColor,
     subheadingColor,
+    split,
     getAnimationProps,
   ]);
 
@@ -669,7 +764,8 @@ export const Hero: React.FC<HeroProps> = ({
         <Container
           size={containerSize}
           className={cn(
-            'relative z-10 py-12 md:py-16 lg:py-20',
+            'relative',
+            'z-10 py-5 md:py-10 lg:py-20',
             hasBackgroundImage && 'py-16 md:py-20 lg:py-20'
           )}
         >
@@ -683,4 +779,3 @@ export const Hero: React.FC<HeroProps> = ({
 Hero.displayName = 'Hero';
 
 export default Hero;
-

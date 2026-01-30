@@ -9,11 +9,6 @@ import { ButtonWithIcon } from '@site/src/components/UI/button-with-icon';
 
 type Animations = typeof animationTypes[number];
 
-const heroVariants = [
-  { value: 'default', label: 'Default (Light)' },
-  { value: 'dark', label: 'Dark' },
-];
-
 const alignOptions = [
   { value: 'left', label: 'Left' },
   { value: 'center', label: 'Center' },
@@ -25,7 +20,6 @@ const animationTypes = [
 ] as const;
 
 const HeroDemo = () => {
-  const [variant, setVariant] = useState<'default' | 'dark'>('dark');
   const [align, setAlign] = useState<'left' | 'center' | 'right'>('center');
   const [animationType, setAnimationType] = useState<Animations>('fadeInUp');
   const [showBadge, setShowBadge] = useState<boolean>(false);
@@ -34,8 +28,8 @@ const HeroDemo = () => {
   const [showStats, setShowStats] = useState<boolean>(false);
   const [showBackgroundImage, setShowBackgroundImage] = useState<boolean>(false);
   const [animationKey, setAnimationKey] = useState<number>(0);
-  
- // Force remount and reset value when animation type changes to show initial animation
+
+  // Force remount and reset value when animation type changes to show initial animation
   useEffect(() => {
     setAnimationKey((k) => k + 1);
   }, [animationType]);
@@ -44,7 +38,6 @@ const HeroDemo = () => {
   const codeParts: string[] = [];
   
   codeParts.push(`<Hero 
-  variant="${variant}" 
   align="${align}" 
   animationType="${animationType}"
 >`);
@@ -91,7 +84,6 @@ const HeroDemo = () => {
     if (showFeatures) {
       codeParts.push(`      <HeroFeatures 
         features={['AI Powered', 'Fully Responsive', 'Lightning Fast', 'Developer Friendly']}
-        variant="glass"
       />`);
     }
     codeParts.push(`    </HeroGlassCard>`);
@@ -125,7 +117,6 @@ const HeroDemo = () => {
     if (showFeatures) {
       codeParts.push(`    <HeroFeatures 
       features={['AI Powered', 'Fully Responsive', 'Lightning Fast', 'Developer Friendly']}
-      variant="glass"
     />`);
     }
   }
@@ -138,15 +129,6 @@ const HeroDemo = () => {
   return (
     <div className="space-y-1">
       <div className="flex flex-wrap gap-4 justify-start sm:justify-end">
-        {!showBackgroundImage && !showGlassMorph && <div className="space-y-2">
-          <VariantSelector
-            variants={heroVariants.map(v => v.value)}
-            selectedVariant={variant}
-            onSelectVariant={(value) => setVariant(value as 'default' | 'dark')}
-            type="Variant"
-          />
-        </div>}
-
         <div className="space-y-2">
           <VariantSelector
             variants={alignOptions.map(a => a.value)}
@@ -222,7 +204,6 @@ const HeroDemo = () => {
           <div className="border border-gray-300 p-4 rounded-lg overflow-hidden mt-4">
             <Hero 
               key={`hero-${animationType}-${animationKey}`}
-              variant={variant} 
               align={align} 
               animationType={animationType}
             >
@@ -231,7 +212,7 @@ const HeroDemo = () => {
                   src="https://images.unsplash.com/photo-1501785888041-af3ef285b470"
                   alt="Hero background"
                   position="background"
-                  overlayOpacity={60}
+                  overlayOpacity={40}
                 />
               )}
               <HeroContent>
@@ -266,7 +247,6 @@ const HeroDemo = () => {
                     {showFeatures && (
                       <HeroFeatures 
                         features={['AI Powered', 'Fully Responsive', 'Lightning Fast', 'Developer Friendly']}
-                        variant="glass"
                       />
                     )}
                   </HeroGlassCard>
@@ -301,7 +281,6 @@ const HeroDemo = () => {
                     {showFeatures && (
                       <HeroFeatures 
                         features={['AI Powered', 'Fully Responsive', 'Lightning Fast', 'Developer Friendly']}
-                        variant="glass"
                       />
                     )}
                   </>
@@ -322,5 +301,145 @@ const HeroDemo = () => {
   );
 };
 
-export default HeroDemo;
+const HeroSplitDemo = () => {
+  const [align, setAlign] = useState<'left' | 'center' | 'right'>('center');
+  const [showBackgroundImage, setShowBackgroundImage] = useState<boolean>(true);
+  
+  // Build code string parts to avoid extra whitespace
+  const codeParts: string[] = [];
+  
+  codeParts.push(`<Hero 
+  split
+  align="${align}" 
+>`);
+  
+  if (showBackgroundImage) {
+    codeParts.push(`  <HeroImage
+    src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1600&h=900&fit=crop&q=90"
+    alt="Hero background"
+    position="background"
+    overlayOpacity={60}
+  />`);
+  }
+  
+  codeParts.push(`  <HeroContent>`);
+    codeParts.push(`      <HeroHeading>Build Amazing Experiences</HeroHeading>
+      <HeroSubheading>
+        Create beautiful, responsive user interfaces with our powerful component library.
+        Start building today and bring your ideas to life.
+      </HeroSubheading>
+      <HeroActions>
+        <ButtonWithIcon 
+          variant="outline" 
+          size="lg" 
+          iconPosition="right"
+          icon={<Rocket />}
+          className="px-8 py-6 rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700"
+        >
+          Start Building
+        </ButtonWithIcon>
+        <ButtonWithIcon 
+          variant="outline" 
+          size="lg" 
+          iconPosition="right"
+          icon={<ArrowUpRight />}
+          className="px-8 py-6 rounded-lg border-2 border-fuchsia-300 text-fuchsia-200 hover:bg-fuchsia-500/30 hover:border-fuchsia-200 transition-all duration-300 hover:scale-105"
+        >
+          Watch Demo
+        </ButtonWithIcon>
+      </HeroActions>`);
+    codeParts.push(`   <HeroImage position="right" src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=900&h=800&fit=crop&q=90" alt="Modern workspace interior"/>`)
+  codeParts.push(`  </HeroContent>
+</Hero>`);
+  
+  const codeString = codeParts.join('\n');
+
+  return (
+    <div className="space-y-1">
+      <div className="flex flex-wrap gap-4 justify-start sm:justify-end">
+
+        <div className="space-y-2">
+          <VariantSelector
+            variants={alignOptions.map(a => a.value)}
+            selectedVariant={align}
+            onSelectVariant={(value) => setAlign(value as 'left' | 'center' | 'right')}
+            type="Align"
+          />
+        </div>
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={showBackgroundImage}
+            onChange={(e) => setShowBackgroundImage(e.target.checked)}
+            className="rounded"
+          />
+          <span className="text-sm">Background Image</span>
+        </label>
+      </div>
+
+      <Tabs>
+        <TabItem value="preview" label="Preview">
+          <div className="border border-gray-300 p-4 rounded-lg overflow-hidden mt-4">
+            <Hero 
+              align={align} 
+              split 
+            >
+            {showBackgroundImage && <HeroImage 
+            src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1600&h=900&fit=crop&q=90"
+            position="background"
+            overlayOpacity={40}
+            />}
+              <HeroContent>
+                <HeroHeading>
+                  Build the Future of Your Business
+                </HeroHeading>
+
+                <HeroSubheading>
+                  Transform your ideas into reality with our cutting-edge platform. 
+                  Join thousands of teams already building amazing products.
+                </HeroSubheading>
+
+                <HeroActions className="mt-8">
+                  <ButtonWithIcon 
+                    variant="outline" 
+                    size="lg" 
+                    iconPosition="right"
+                    icon={<Rocket />}
+                    className="px-8 py-6 rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700"
+                  >
+                    Start Building
+                  </ButtonWithIcon>
+                  <ButtonWithIcon 
+                    variant="outline" 
+                    size="lg" 
+                    iconPosition="right"
+                    icon={<ArrowUpRight />}
+                    className="px-8 py-6 rounded-lg border-2 border-fuchsia-300 text-fuchsia-200 hover:bg-fuchsia-500/30 hover:border-fuchsia-200 transition-all duration-300 hover:scale-105"
+                  >
+                    Watch Demo
+                  </ButtonWithIcon>
+                </HeroActions>
+
+                <HeroImage 
+                  position="right" 
+                  src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=900&h=800&fit=crop&q=90"
+                  alt="Modern workspace interior"
+                />
+              </HeroContent>
+            </Hero>
+          </div>
+        </TabItem>
+        <TabItem value="code" label="Code">
+          <div className="mt-4">
+            <CodeBlock language="tsx" className="text-sm">
+              {codeString}
+            </CodeBlock>
+          </div>
+        </TabItem>
+      </Tabs>
+    </div>
+  );
+};
+
+export { HeroDemo, HeroSplitDemo };
 
