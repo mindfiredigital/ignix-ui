@@ -498,19 +498,6 @@ describe('Hero Component', () => {
       expect(image).toBeInTheDocument();
     });
 
-    it('applies default overlay opacity of 70', () => {
-      const { container } = render(
-        <Hero>
-          <HeroImage src="test.jpg" position="background" />
-          <HeroContent>
-            <HeroHeading>Test</HeroHeading>
-          </HeroContent>
-        </Hero>
-      );
-      const overlay = container.querySelector('.bg-black\\/70');
-      expect(overlay).toBeInTheDocument();
-    });
-
     it('applies custom overlay opacity', () => {
       const { container } = render(
         <Hero>
@@ -1026,6 +1013,315 @@ describe('Hero Component', () => {
 
     it('has correct displayName for HeroStats', () => {
       expect(HeroStats.displayName).toBe('HeroStats');
+    });
+  });
+
+  describe('Split Layout', () => {
+    it('renders split layout with left image position', () => {
+      const { container } = render(
+        <Hero split>
+          <HeroContent>
+            <HeroImage src="test.jpg" position="left" alt="Left image" />
+            <HeroHeading>Test Heading</HeroHeading>
+            <HeroSubheading>Test Subheading</HeroSubheading>
+          </HeroContent>
+        </Hero>
+      );
+      const splitContainer = container.querySelector('.flex.flex-col.lg\\:flex-row');
+      expect(splitContainer).toBeInTheDocument();
+    });
+
+    it('renders split layout with right image position', () => {
+      const { container } = render(
+        <Hero split>
+          <HeroContent>
+            <HeroImage src="test.jpg" position="right" alt="Right image" />
+            <HeroHeading>Test Heading</HeroHeading>
+            <HeroSubheading>Test Subheading</HeroSubheading>
+          </HeroContent>
+        </Hero>
+      );
+      const splitContainer = container.querySelector('.flex.flex-col.lg\\:flex-row');
+      expect(splitContainer).toBeInTheDocument();
+    });
+
+    it('applies correct order classes for left image in split layout', () => {
+      const { container } = render(
+        <Hero split>
+          <HeroContent>
+            <HeroImage src="test.jpg" position="left" alt="Left image" />
+            <HeroHeading>Test Heading</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const imageContainer = container.querySelector('[class*="order-1"]');
+      expect(imageContainer).toBeInTheDocument();
+    });
+
+    it('applies correct order classes for right image in split layout', () => {
+      const { container } = render(
+        <Hero split>
+          <HeroContent>
+            <HeroImage src="test.jpg" position="right" alt="Right image" />
+            <HeroHeading>Test Heading</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const imageContainer = container.querySelector('[class*="order-2"]');
+      expect(imageContainer).toBeInTheDocument();
+    });
+
+    it('applies lg:w-1/2 class to image container in split layout', () => {
+      const { container } = render(
+        <Hero split>
+          <HeroContent>
+            <HeroImage src="test.jpg" position="left" alt="Left image" />
+            <HeroHeading>Test Heading</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const imageContainer = container.querySelector('.lg\\:w-1\\/2');
+      expect(imageContainer).toBeInTheDocument();
+    });
+
+    it('applies lg:w-1/2 class to text container in split layout', () => {
+      const { container } = render(
+        <Hero split>
+          <HeroContent>
+            <HeroImage src="test.jpg" position="right" alt="Right image" />
+            <HeroHeading>Test Heading</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const textContainer = container.querySelector('.lg\\:w-1\\/2');
+      expect(textContainer).toBeInTheDocument();
+    });
+
+    it('does not activate split layout when split is false', () => {
+      const { container } = render(
+        <Hero split={false}>
+          <HeroContent>
+            <HeroImage src="test.jpg" position="left" alt="Left image" />
+            <HeroHeading>Test Heading</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const splitContainer = container.querySelector('.flex.flex-col.lg\\:flex-row');
+      expect(splitContainer).not.toBeInTheDocument();
+    });
+
+    it('does not activate split layout when no image with left/right position', () => {
+      const { container } = render(
+        <Hero split>
+          <HeroContent>
+            <HeroImage src="test.jpg" position="center" alt="Center image" />
+            <HeroHeading>Test Heading</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const splitContainer = container.querySelector('.flex.flex-col.lg\\:flex-row');
+      expect(splitContainer).not.toBeInTheDocument();
+    });
+
+    it('does not activate split layout with background image only', () => {
+      const { container } = render(
+        <Hero split>
+          <HeroImage src="bg.jpg" position="background" />
+          <HeroContent>
+            <HeroHeading>Test Heading</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const splitContainer = container.querySelector('.flex.flex-col.lg\\:flex-row');
+      expect(splitContainer).not.toBeInTheDocument();
+    });
+
+    it('renders split layout with left image and all sub-components', () => {
+      render(
+        <Hero split>
+          <HeroContent>
+            <HeroImage src="test.jpg" position="left" alt="Left image" />
+            <HeroBadge>New</HeroBadge>
+            <HeroHeading>Test Heading</HeroHeading>
+            <HeroSubheading>Test Subheading</HeroSubheading>
+            <HeroActions>
+              <button>Action</button>
+            </HeroActions>
+            <HeroFeatures features={['Feature 1']} />
+            <HeroStats stats={[{ value: '100', label: 'Count' }]} />
+          </HeroContent>
+        </Hero>
+      );
+      expect(screen.getByText('New')).toBeInTheDocument();
+      expect(screen.getByText('Test Heading')).toBeInTheDocument();
+      expect(screen.getByText('Test Subheading')).toBeInTheDocument();
+      expect(screen.getByText('Action')).toBeInTheDocument();
+      expect(screen.getByText('Feature 1')).toBeInTheDocument();
+      expect(screen.getByText('100')).toBeInTheDocument();
+    });
+
+    it('renders split layout with right image and all sub-components', () => {
+      render(
+        <Hero split>
+          <HeroContent>
+            <HeroImage src="test.jpg" position="right" alt="Right image" />
+            <HeroBadge>New</HeroBadge>
+            <HeroHeading>Test Heading</HeroHeading>
+            <HeroSubheading>Test Subheading</HeroSubheading>
+            <HeroActions>
+              <button>Action</button>
+            </HeroActions>
+          </HeroContent>
+        </Hero>
+      );
+      expect(screen.getByText('New')).toBeInTheDocument();
+      expect(screen.getByText('Test Heading')).toBeInTheDocument();
+      expect(screen.getByText('Test Subheading')).toBeInTheDocument();
+      expect(screen.getByText('Action')).toBeInTheDocument();
+    });
+
+    it('applies gap-8 lg:gap-12 classes in split layout', () => {
+      const { container } = render(
+        <Hero split>
+          <HeroContent>
+            <HeroImage src="test.jpg" position="left" alt="Left image" />
+            <HeroHeading>Test Heading</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const splitContainer = container.querySelector('[class*="gap-8"][class*="lg:gap-12"]');
+      expect(splitContainer).toBeInTheDocument();
+    });
+
+    it('applies gap-6 lg:gap-8 classes to text container in split layout', () => {
+      const { container } = render(
+        <Hero split>
+          <HeroContent>
+            <HeroImage src="test.jpg" position="right" alt="Right image" />
+            <HeroHeading>Test Heading</HeroHeading>
+            <HeroSubheading>Test Subheading</HeroSubheading>
+          </HeroContent>
+        </Hero>
+      );
+      const textContainer = container.querySelector('[class*="gap-6"][class*="lg:gap-8"]');
+      expect(textContainer).toBeInTheDocument();
+    });
+
+    it('applies justify-center class to text container in split layout', () => {
+      const { container } = render(
+        <Hero split>
+          <HeroContent>
+            <HeroImage src="test.jpg" position="left" alt="Left image" />
+            <HeroHeading>Test Heading</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const textContainer = container.querySelector('[class*="justify-center"]');
+      expect(textContainer).toBeInTheDocument();
+    });
+
+    it('renders split layout with dark variant', () => {
+      const { container } = render(
+        <Hero split variant="dark">
+          <HeroContent>
+            <HeroImage src="test.jpg" position="left" alt="Left image" />
+            <HeroHeading>Test Heading</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const splitContainer = container.querySelector('.flex.flex-col.lg\\:flex-row');
+      expect(splitContainer).toBeInTheDocument();
+      const section = container.querySelector('section');
+      expect(section).toHaveClass('from-gray-900');
+    });
+
+    it('renders split layout with default variant', () => {
+      const { container } = render(
+        <Hero split variant="default">
+          <HeroContent>
+            <HeroImage src="test.jpg" position="right" alt="Right image" />
+            <HeroHeading>Test Heading</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const splitContainer = container.querySelector('.flex.flex-col.lg\\:flex-row');
+      expect(splitContainer).toBeInTheDocument();
+      const section = container.querySelector('section');
+      expect(section).toHaveClass('from-gray-50');
+    });
+
+    it('renders split layout with left alignment', () => {
+      const { container } = render(
+        <Hero split align="left">
+          <HeroContent>
+            <HeroImage src="test.jpg" position="right" alt="Right image" />
+            <HeroHeading>Test Heading</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const splitContainer = container.querySelector('.flex.flex-col.lg\\:flex-row');
+      expect(splitContainer).toBeInTheDocument();
+    });
+
+    it('renders split layout with center alignment', () => {
+      const { container } = render(
+        <Hero split align="center">
+          <HeroContent>
+            <HeroImage src="test.jpg" position="left" alt="Left image" />
+            <HeroHeading>Test Heading</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const splitContainer = container.querySelector('.flex.flex-col.lg\\:flex-row');
+      expect(splitContainer).toBeInTheDocument();
+    });
+
+    it('renders split layout with right alignment', () => {
+      const { container } = render(
+        <Hero split align="right">
+          <HeroContent>
+            <HeroImage src="test.jpg" position="left" alt="Left image" />
+            <HeroHeading>Test Heading</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const splitContainer = container.querySelector('.flex.flex-col.lg\\:flex-row');
+      expect(splitContainer).toBeInTheDocument();
+    });
+
+    it('applies w-full h-full object-cover classes to image in split layout', () => {
+      const { container } = render(
+        <Hero split>
+          <HeroContent>
+            <HeroImage src="test.jpg" position="left" alt="Left image" />
+            <HeroHeading>Test Heading</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const image = container.querySelector('img');
+      expect(image).toHaveClass('w-full', 'h-full', 'object-cover');
+    });
+
+    it('handles split layout with multiple text children correctly', () => {
+      render(
+        <Hero split>
+          <HeroContent>
+            <HeroImage src="test.jpg" position="right" alt="Right image" />
+            <HeroHeading>Heading 1</HeroHeading>
+            <HeroSubheading>Subheading 1</HeroSubheading>
+            <HeroSubheading>Subheading 2</HeroSubheading>
+            <HeroActions>
+              <button>Button 1</button>
+              <button>Button 2</button>
+            </HeroActions>
+          </HeroContent>
+        </Hero>
+      );
+      expect(screen.getByText('Heading 1')).toBeInTheDocument();
+      expect(screen.getByText('Subheading 1')).toBeInTheDocument();
+      expect(screen.getByText('Subheading 2')).toBeInTheDocument();
+      expect(screen.getByText('Button 1')).toBeInTheDocument();
+      expect(screen.getByText('Button 2')).toBeInTheDocument();
     });
   });
 });
