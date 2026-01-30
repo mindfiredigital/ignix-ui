@@ -757,7 +757,7 @@
       ],
       "files": {
         "main": {
-          "path": "templates/pages/signup/index.tsx",
+          "path": "templates/pages/sign-up/index.tsx",
           "type": "template"
         }
       }
