@@ -191,10 +191,8 @@ export const RenderFunctionCustomization: Story = {
     args: {
         variant: "glass",
         children: <DemoContent />,
-        // Keep variant parameter for API consistency - component consumers may want to use it
-        // Using destructured renaming with _prefix to mark it as intentionally unused
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        renderHeader: ({ logo, navLinks, authControls, mobileMenuButton, variant: _variant }) => (
+        renderHeader: ({ logo, navLinks, authControls, mobileMenuButton, variant }) => (
             <div className="flex items-center justify-between w-full h-full px-6">
                 {logo}
                 <div className="flex-1 flex justify-center">
@@ -215,10 +213,8 @@ export const RenderFunctionCustomization: Story = {
                 </div>
             </div>
         ),
-        // Keep variant parameter to maintain consistent function signature with other implementations
-        // The underscore prefix (_variant) indicates intentional non-use while preserving API contract
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        renderFooter: ({ variant: _variant, content }) => (
+        renderFooter: ({ variant, content }) => (
             <div className="flex flex-col items-center justify-center py-6 space-y-4">
                 {content}
                 <div className="flex space-x-4">
@@ -266,16 +262,14 @@ export const CompleteControl: Story = {
                 <div className="relative z-10">{children}</div>
             </div>
         ),
-        // Keep href and label parameters to maintain API contract - other implementations may use them
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        onNavLinkClick: (href: string, label: string) => {
-            // Custom navigation logic
+        onNavLinkClick: (href, label) => {
+            console.log(`Navigating to ${label}: ${href}`);
         },
         onSignInClick: () => {
-            // Custom sign-in logic
+            console.log("Sign in clicked");
         },
         onSignUpClick: () => {
-            // Custom sign-up logic
+            console.log("Sign up clicked");
         },
     },
 };
