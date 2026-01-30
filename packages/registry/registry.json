@@ -594,7 +594,7 @@
         }
       }
     },
-     "singlecolumnlayout": {
+     "singleColumnLayout": {
       "name": "SingleColumnLayout",
       "description": "A clean, responsive single-column layout with header, constrained content area, and footer. Supports multiple theme variants and animations.",
       "dependencies": ["framer-motion", "lucide-react", "class-variance-authority"],
@@ -943,8 +943,8 @@
         }
       }
     },
-    "api-keys":{
-      "name": "api-keys",
+    "apiKeys":{
+      "name": "ApiKeys",
       "description": "A page for managing API keys with responsive design and form validation.",
       "dependencies": [
         "framer-motion",
@@ -1023,7 +1023,7 @@
       }
     },
     "fileUpload":{
-      "name": "fileUpload",
+      "name": "FileUpload",
       "description": "A file uploader component with responsive design and form validation.",
       "dependencies": [
         "framer-motion",
@@ -1042,7 +1042,7 @@
       }
     }, 
     "datePicker":{
-      "name": "datePicker",
+      "name": "DatePicker",
       "description": "A date picker component with responsive design and form validation.",
       "dependencies": [
         "framer-motion",
