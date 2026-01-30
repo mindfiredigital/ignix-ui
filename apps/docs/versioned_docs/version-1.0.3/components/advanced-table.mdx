@@ -1,0 +1,100 @@
+---
+sidebar_position: 17
+title: Advanced Table
+description: A configurable data table with sorting, filtering, and pagination. Data and columns are required; behavior is controlled via props.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import AdvancedTableDemo from '@site/src/components/Demo/AdvancedTableDemo';
+import { AdvancedTableBaseDemo, AdvancedTableSortableDemo, AdvancedTableFilterableDemo, AdvancedTablePaginatedDemo, AdvancedTableFullDemo } from '@site/src/components/Demo/AdvancedTableDemo';
+
+## Overview
+
+The **Advanced Table** component displays tabular data with optional sorting, filtering, and pagination. You pass **rows** and **columns** as required props; each column can be marked sortable or not. Numeric columns (e.g. ID, marks) are sorted numerically; others are sorted as strings. Filtering is real-time and highlights matching text.
+
+## Preview
+
+<AdvancedTableDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component advanced-table
+    ```
+  </TabItem>
+  <TabItem value="manual" label="MANUAL">
+    Add the component from the registry or copy the implementation from the docs app `@site/src/components/UI/advanced-table`.
+  </TabItem>
+</Tabs>
+
+## Usage
+
+Import the component and pass **rows** and **columns**:
+
+```tsx
+import { AdvancedTable, type AdvancedTableRow } from '@site/src/components/UI/advanced-table';
+
+const columns = [
+  { key: 'id', label: 'ID', sortable: true },
+  { key: 'name', label: 'Name', sortable: true },
+  { key: 'email', label: 'Email', sortable: true },
+  { key: 'status', label: 'Status', sortable: false },
+];
+
+const rows: AdvancedTableRow[] = [
+  { id: 1, name: 'Alice', email: 'alice@example.com', status: 'Active' },
+  { id: 2, name: 'Bob', email: 'bob@example.com', status: 'Pending' },
+];
+
+function MyTable() {
+  return (
+    <AdvancedTable
+      rows={rows}
+      columns={columns}
+      enableSorting
+      enableFiltering
+      enablePagination
+    />
+  );
+}
+```
+
+### Base table (no sort, filter, pagination)
+
+<AdvancedTableBaseDemo />
+
+### Sortable table
+
+<AdvancedTableSortableDemo />
+
+### Filterable table
+
+<AdvancedTableFilterableDemo />
+
+### Paginated table
+
+<AdvancedTablePaginatedDemo />
+
+### Full-featured table
+
+<AdvancedTableFullDemo />
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `rows` | `AdvancedTableRow[]` | **required** | Data rows; each row is a record keyed by column keys. |
+| `columns` | `Array<{ key: string; label: string; sortable?: boolean }>` | **required** | Column definitions. Use `sortable: false` to disable sorting for that column. |
+| `enableSorting` | `boolean` | `true` | When `true`, sortable column headers are clickable and show ↑/↓. |
+| `defaultSortKey` | `string` | first column key | Initial sort column when sorting is enabled. |
+| `defaultSortDirection` | `'asc' \| 'desc'` | `'asc'` | Initial sort direction. |
+| `enableFiltering` | `boolean` | `true` | When `true`, shows filter input and clear button; filters rows and highlights matches. |
+| `filterPlaceholder` | `string` | `'Filter rows...'` | Placeholder for the filter input. |
+| `enablePagination` | `boolean` | `true` | When `true`, shows rows-per-page selector and page controls. |
+| `initialPage` | `number` | `1` | Initial page (1-based). |
+| `initialRowsPerPage` | `number` | `5` | Initial rows per page. |
+| `rowsPerPageOptions` | `number[]` | `[5, 10, 20]` | Options for the rows-per-page dropdown. |
+| `className` | `string` | - | Optional class for the outer container. |

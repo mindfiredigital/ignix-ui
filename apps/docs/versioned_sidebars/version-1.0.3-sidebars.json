@@ -96,6 +96,7 @@
         "components/switch",
         "components/tab",
         "components/table",
+        "components/advanced-table",
         "components/textarea",
         "components/toast",
         "components/tooltip",
