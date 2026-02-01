@@ -331,6 +331,18 @@
         }
       }
     },
+    "list-with-avatars": {
+      "name": "List-With-Avatars",
+      "description": "A list component that extends ListBasic functionality by displaying avatars on the left side of each item, with names and descriptions on the right. Items can optionally link to profile pages and support custom click handlers. Optimized with React.memo, useMemo, and useCallback for performance.",
+      "dependencies": [],
+      "componentDependencies": ["list-basic", "avatar"],
+      "files": {
+        "main": {
+          "path": "components/list-with-avatars/index.tsx",
+          "type": "component"
+        }
+      }
+    },
     "textarea": {
       "name": "Textarea",
       "description": "An animated textarea component with different variants",
@@ -501,7 +513,7 @@
       "dependencies": ["class-variance-authority"],
       "files": {
         "main": {
-          "path": "components/layouts/container/index.tsx",
+          "path": "components/container/index.tsx",
           "type": "component"
         }
       }
@@ -672,21 +684,6 @@
         }
       }
     },
-    "threeColumnSidebar": {
-      "name": "ThreeColumnSidebar",
-      "description": "A flexible layout component with header, sidebar that supports app dashboard with responsive design.",
-      "dependencies": [
-        "framer-motion",
-        "lucide-react",
-        "class-variance-authority"
-      ],
-      "files": {
-        "main": {
-          "path": "components/threeColumnSidebar/index.tsx",
-          "type": "template"
-        }
-      }
-    },
     "threecolumnsidebarlayout": {
       "name": "ThreeColumnSidebarLayout",
       "description": "A flexible layout component with header, sidebar that supports app dashboard with responsive design.",
@@ -694,9 +691,6 @@
         "framer-motion",
         "lucide-react",
         "class-variance-authority"
-      ],
-      "componentDependencies": [
-        "threeColumnSidebar"
       ],
       "files": {
         "main": {
@@ -757,7 +751,7 @@
       ],
       "files": {
         "main": {
-          "path": "templates/pages/signup/index.tsx",
+          "path": "templates/pages/sign-up/index.tsx",
           "type": "template"
         }
       }
@@ -1087,6 +1081,25 @@
         "lucide-react", 
         "class-variance-authority",
         "framer-motion"
+      ],
+      "files": {
+        "main": {
+          "path": "components/rating/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "hero":{
+      "name": "Hero",
+      "description": "A flexible hero component with animations, custom icons, emojis, and multiple interaction modes.",
+      "dependencies": [
+        "lucide-react", 
+        "class-variance-authority",
+        "framer-motion"
+      ],
+      "componentDependencies": [
+        "container",
+        "typography"
       ],
       "files": {
         "main": {

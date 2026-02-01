@@ -120,20 +120,20 @@ const meta: Meta<typeof ProfilePage> = {
                 defaultValue: { summary: "Edit Profile" },
             },
         },
-        // saveButtonLabel: {
-        //     control: "text",
-        //     description: "Label for save button",
-        //     table: {
-        //         defaultValue: { summary: "Save Changes" },
-        //     },
-        // },
-        // cancelButtonLabel: {
-        //     control: "text",
-        //     description: "Label for cancel button",
-        //     table: {
-        //         defaultValue: { summary: "Cancel" },
-        //     },
-        // },
+        saveButtonLabel: {
+            control: "text",
+            description: "Label for save button",
+            table: {
+                defaultValue: { summary: "Save Changes" },
+            },
+        },
+        cancelButtonLabel: {
+            control: "text",
+            description: "Label for cancel button",
+            table: {
+                defaultValue: { summary: "Cancel" },
+            },
+        },
     },
     decorators: [
         (Story) => (
@@ -448,11 +448,11 @@ export const LightTheme: Story = {
         },
         status: 'away'
     },
-    parameters: {
-        themes: {
-            themeOverride: 'light', // This depends on your Storybook setup
-        },
-    },
+    // parameters: {
+    //     themes: {
+    //         themeOverride: 'light', // This depends on your Storybook setup
+    //     },
+    // },
     name: "Light Mode New",
 };
 
