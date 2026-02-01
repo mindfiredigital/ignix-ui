@@ -11,7 +11,7 @@ export interface IgnixConfig {
   themesDir: string;
   tokensDir: string;
   templateLayoutUrl: string;
-  templateLayoutDir: string;
+  templateDir: string;
 }
 
 export async function loadConfig(): Promise<IgnixConfig> {
