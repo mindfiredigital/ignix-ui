@@ -513,7 +513,7 @@
       "dependencies": ["class-variance-authority"],
       "files": {
         "main": {
-          "path": "components/layouts/container/index.tsx",
+          "path": "components/container/index.tsx",
           "type": "component"
         }
       }
@@ -1081,6 +1081,25 @@
         "lucide-react", 
         "class-variance-authority",
         "framer-motion"
+      ],
+      "files": {
+        "main": {
+          "path": "components/rating/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "hero":{
+      "name": "Hero",
+      "description": "A flexible hero component with animations, custom icons, emojis, and multiple interaction modes.",
+      "dependencies": [
+        "lucide-react", 
+        "class-variance-authority",
+        "framer-motion"
+      ],
+      "componentDependencies": [
+        "container",
+        "typography"
       ],
       "files": {
         "main": {
