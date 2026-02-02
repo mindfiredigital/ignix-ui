@@ -10,7 +10,7 @@
 "use client";
 
 import type React from "react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Search, X } from "lucide-react";
 import { cn } from "../../../utils/cn";
 import { Button } from "../button";
@@ -25,7 +25,11 @@ const includesQuery = (value: string, query: string): boolean => {
   return value.toLowerCase().includes(query.toLowerCase());
 };
 
-const HighlightedText: React.FC<{ value: string; query: string }> = ({ value, query }) => {
+/**
+ * Renders a string with all instances of the query wrapped in `<mark>` tags.
+ * Memoized to prevent re-rendering when props haven't changed.
+ */
+const HighlightedText: React.FC<{ value: string; query: string }> = memo(({ value, query }) => {
   if (!query || !includesQuery(value, query)) return <span>{value}</span>;
   const lowerValue = value.toLowerCase();
   const lowerQuery = query.toLowerCase();
@@ -45,9 +49,121 @@ const HighlightedText: React.FC<{ value: string; query: string }> = ({ value, qu
   }
   if (startIndex < value.length) nodes.push(value.slice(startIndex));
   return <span>{nodes}</span>;
-};
+});
 
 HighlightedText.displayName = "HighlightedText";
+
+/**
+ * Props for a table cell component.
+ */
+interface TableCellProps {
+  cell: React.ReactNode;
+  isString: boolean;
+  filterQuery: string;
+}
+
+/**
+ * Table cell component that handles highlighting for string values.
+ * Memoized to prevent re-rendering when props haven't changed.
+ */
+const TableCell: React.FC<TableCellProps> = memo(({ cell, isString, filterQuery }) => {
+  return (
+    <td className="px-3 py-2 whitespace-nowrap">
+      {isString ? <HighlightedText value={cell as string} query={filterQuery} /> : cell}
+    </td>
+  );
+});
+
+TableCell.displayName = "TableCell";
+
+/**
+ * Props for a table row component.
+ */
+interface TableRowProps {
+  row: AdvancedTableRow;
+  rowIndex: number;
+  columns: Array<{ key: AdvancedTableColumnKey; label: string; sortable?: boolean }>;
+  filterQuery: string;
+}
+
+/**
+ * Table row component that renders a single row with all its cells.
+ * Memoized to prevent re-rendering when props haven't changed.
+ */
+const TableRow: React.FC<TableRowProps> = memo(({ row, rowIndex, columns, filterQuery }) => {
+  return (
+    <tr
+      className={cn(
+        "border-b border-border transition-colors",
+        rowIndex % 2 === 1 ? "bg-muted/40" : "bg-background",
+        "hover:bg-primary/5"
+      )}
+    >
+      {columns.map((column) => {
+        const cell = row[column.key];
+        const isString = typeof cell === "string";
+        return (
+          <TableCell
+            key={column.key}
+            cell={cell}
+            isString={isString}
+            filterQuery={filterQuery}
+          />
+        );
+      })}
+    </tr>
+  );
+});
+
+TableRow.displayName = "TableRow";
+
+/**
+ * Props for a table header cell component.
+ */
+interface TableHeaderCellProps {
+  column: { key: AdvancedTableColumnKey; label: string; sortable?: boolean };
+  isActive: boolean;
+  direction: AdvancedTableSortDirection;
+  isSortableColumn: boolean;
+  onHeaderClick: (key: AdvancedTableColumnKey) => void;
+}
+
+/**
+ * Table header cell component that renders a sortable/non-sortable header.
+ * Memoized to prevent re-rendering when props haven't changed.
+ */
+const TableHeaderCell: React.FC<TableHeaderCellProps> = memo(
+  ({ column, isActive, direction, isSortableColumn, onHeaderClick }) => {
+    return (
+      <th
+        scope="col"
+        onClick={isSortableColumn ? () => onHeaderClick(column.key) : undefined}
+        className={cn(
+          "select-none px-3 py-2 text-left font-semibold border-b border-border",
+          "whitespace-nowrap",
+          isSortableColumn && "cursor-pointer hover:bg-muted/80"
+        )}
+      >
+        <div className="flex items-center justify-between gap-2">
+          <span>{column.label}</span>
+          {isSortableColumn && (
+            <span
+              aria-hidden="true"
+              className={cn(
+                "text-xs transition-transform",
+                isActive ? "text-primary" : "text-muted-foreground"
+              )}
+            >
+              {direction === "asc" ? "↑" : "↓"}
+            </span>
+          )}
+        </div>
+      </th>
+    );
+  }
+);
+
+TableHeaderCell.displayName = "TableHeaderCell";
 
 export interface AdvancedTableProps {
   className?: string;
@@ -104,12 +220,36 @@ export const AdvancedTable: React.FC<AdvancedTableProps> = ({
     );
   }, [enableFiltering, effectiveRows, effectiveColumns, normalizedFilter]);
 
+  const totalFilteredCount = filteredRows.length;
+  const totalPages = useMemo(
+    () => (enablePagination ? Math.max(1, Math.ceil(totalFilteredCount / rowsPerPage)) : 1),
+    [enablePagination, totalFilteredCount, rowsPerPage]
+  );
+
+  useEffect(() => {
+    if (!enablePagination) {
+      setCurrentPage(1);
+      return;
+    }
+    setCurrentPage((prev) => {
+      if (prev > totalPages) return totalPages;
+      if (prev < 1) return 1;
+      return prev;
+    });
+  }, [enablePagination, totalPages]);
+
+  const paginatedRows = useMemo<AdvancedTableRow[]>(() => {
+    if (!enablePagination) return filteredRows;
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    return filteredRows.slice(startIndex, startIndex + rowsPerPage);
+  }, [enablePagination, filteredRows, currentPage, rowsPerPage]);
+
   const sortedRows = useMemo<AdvancedTableRow[]>(() => {
-    if (!enableSorting || !sortKey) return filteredRows;
+    if (!enableSorting || !sortKey) return paginatedRows;
     const columnForSort = effectiveColumns.find((c) => c.key === sortKey);
-    if (!columnForSort || columnForSort.sortable === false) return filteredRows;
-    const copy = [...filteredRows];
-    const columnValues = filteredRows
+    if (!columnForSort || columnForSort.sortable === false) return paginatedRows;
+    const copy = [...paginatedRows];
+    const columnValues = paginatedRows
       .map((row) => row[sortKey])
       .filter((v) => v !== null && v !== undefined);
     const isNumericColumn =
@@ -134,38 +274,14 @@ export const AdvancedTable: React.FC<AdvancedTableProps> = ({
       return sortDirection === "asc" ? compare : -compare;
     });
     return copy;
-  }, [enableSorting, filteredRows, sortKey, sortDirection, effectiveColumns]);
-
-  const totalFilteredCount = sortedRows.length;
-  const totalPages = useMemo(
-    () => (enablePagination ? Math.max(1, Math.ceil(totalFilteredCount / rowsPerPage)) : 1),
-    [enablePagination, totalFilteredCount, rowsPerPage]
-  );
-
-  useEffect(() => {
-    if (!enablePagination) {
-      setCurrentPage(1);
-      return;
-    }
-    setCurrentPage((prev) => {
-      if (prev > totalPages) return totalPages;
-      if (prev < 1) return 1;
-      return prev;
-    });
-  }, [enablePagination, totalPages]);
-
-  const paginatedRows = useMemo<AdvancedTableRow[]>(() => {
-    if (!enablePagination) return sortedRows;
-    const startIndex = (currentPage - 1) * rowsPerPage;
-    return sortedRows.slice(startIndex, startIndex + rowsPerPage);
-  }, [enablePagination, sortedRows, currentPage, rowsPerPage]);
+  }, [enableSorting, paginatedRows, sortKey, sortDirection, effectiveColumns]);
 
   const handleHeaderClick = useCallback(
     (columnKey: AdvancedTableColumnKey) => {
       if (!enableSorting) return;
       const column = columns.find((col) => col.key === columnKey);
       if (!column || column.sortable === false) return;
-      setCurrentPage(1);
+      // Don't reset page when sorting - we're sorting only the current page
       setSortKey((prevKey) => {
         if (prevKey !== columnKey) {
           setSortDirection("asc");
@@ -283,62 +399,34 @@ export const AdvancedTable: React.FC<AdvancedTableProps> = ({
                   const isSortableColumn = enableSorting && column.sortable !== false;
                   const direction = isActive ? sortDirection : "asc";
                   return (
-                    <th
+                    <TableHeaderCell
                       key={column.key}
-                      scope="col"
-                      onClick={isSortableColumn ? () => handleHeaderClick(column.key) : undefined}
-                      className={cn(
-                        "select-none px-3 py-2 text-left font-semibold border-b border-border whitespace-nowrap",
-                        isSortableColumn && "cursor-pointer hover:bg-muted/80"
-                      )}
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <span>{column.label}</span>
-                        {isSortableColumn && (
-                          <span
-                            aria-hidden="true"
-                            className={cn("text-xs", isActive ? "text-primary" : "text-muted-foreground")}
-                          >
-                            {direction === "asc" ? "↑" : "↓"}
-                          </span>
-                        )}
-                      </div>
-                    </th>
+                      column={column}
+                      isActive={isActive}
+                      direction={direction}
+                      isSortableColumn={isSortableColumn}
+                      onHeaderClick={handleHeaderClick}
+                    />
                   );
                 })}
               </tr>
             </thead>
             <tbody>
-              {paginatedRows.length === 0 ? (
+              {sortedRows.length === 0 ? (
                 <tr>
                   <td colSpan={effectiveColumns.length} className="px-3 py-6 text-center text-sm text-muted-foreground">
                     No rows match your filter.
                   </td>
                 </tr>
               ) : (
-                paginatedRows.map((row, rowIndex) => (
-                  <tr
+                sortedRows.map((row, rowIndex) => (
+                  <TableRow
                     key={rowIndex}
-                    className={cn(
-                      "border-b border-border transition-colors",
-                      rowIndex % 2 === 1 ? "bg-muted/40" : "bg-background",
-                      "hover:bg-primary/5"
-                    )}
-                  >
-                    {effectiveColumns.map((column) => {
-                      const cell = row[column.key];
-                      const isString = typeof cell === "string";
-                      return (
-                        <td key={column.key} className="px-3 py-2 whitespace-nowrap">
-                          {isString ? (
-                            <HighlightedText value={cell as string} query={normalizedFilter} />
-                          ) : (
-                            cell
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
+                    row={row}
+                    rowIndex={rowIndex}
+                    columns={effectiveColumns}
+                    filterQuery={normalizedFilter}
+                  />
                 ))
               )}
             </tbody>
