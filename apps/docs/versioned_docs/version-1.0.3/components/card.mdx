@@ -7,598 +7,2497 @@ description: A versatile card component for displaying content in a structured f
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@site/src/components/UI/card';
-import {CardsDemo, FeatureCardDemo, StatCardDemo} from '@site/src/components/Demo/CardsDemo';
+import { CardsDemo, FeatureCardDemo, StatCardDemo } from '@site/src/components/Demo/CardsDemo';
+import { ImageCardBasicDemo,ImageCardBelowDemo,ImageCardMediaDemo } from '@site/src/components/Demo/ImageCardDemo';
+import { UserCard } from '@site/src/components/UI/user-card';
+import { UserCardBasicDemo, UserCardAdvancedDemo, UserCardExamplesDemo} from '@site/src/components/Demo/UserCardDemo';
+import { FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
 
-## Overview
+This documentation describes the supported card types, including Basic, Image, and User cards.
 
-The card component is a container for text, photos, and actions in the context of a single subject.
+<Tabs groupId="card-variant">
+<TabItem value="card" label="Basic Card" default>
 
-## Preview
+    The card component is a container for text, photos, and actions in the context of a single subject.
 
-<Tabs defaultValue="preview">
-  <TabItem value="preview" label="Preview" default>
-    <div className="p-4 border rounded-lg">
-      <Card>
-        <CardHeader>
-          <CardTitle>Card Title</CardTitle>
-          <CardDescription>Card Description</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p>Card Content</p>
-        </CardContent>
-        <CardFooter>
-          Card Footer
-        </CardFooter>
-      </Card>
-    </div>
-  </TabItem>
-  <TabItem value="code" label="Code">
+    <CardsDemo />
+
+    ## Feature Card
+
+    <FeatureCardDemo />
+
+    ## Stat Card
+
+    <StatCardDemo />
+
+    ## Installation
+
+    <Tabs>
+      <TabItem value="cli" label="CLI" default>
+        ```bash
+        ignix add component card
+        ```
+      </TabItem>
+      <TabItem value="manual" label="manual" className="max-h-[500px] overflow-y-auto">
+
+        ```tsx
+    import { cn } from "@site/src/utils/cn"
+    import * as React from "react"
+    import { HTMLMotionProps, motion } from "framer-motion"
+    import { cva, type VariantProps } from "class-variance-authority"
+
+    // Card Animation Variants
+    const cardAnimations = {
+      none: {},
+      fadeIn: {
+        initial: { opacity: 0, y: 20 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] }
+      },
+      slideUp: {
+        initial: { opacity: 0, y: 60, scale: 0.95 },
+        animate: { opacity: 1, y: 0, scale: 1 },
+        transition: { duration: 0.7, ease: [0.4, 0, 0.2, 1] }
+      },
+      scaleIn: {
+        initial: { opacity: 0, scale: 0.8, rotateX: 15 },
+        animate: { opacity: 1, scale: 1, rotateX: 0 },
+        transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] }
+      },
+      flipIn: {
+        initial: { opacity: 0, rotateY: -90, scale: 0.8 },
+        animate: { opacity: 1, rotateY: 0, scale: 1 },
+        transition: { duration: 0.8, ease: [0.4, 0, 0.2, 1] }
+      },
+      bounceIn: {
+        initial: { opacity: 0, scale: 0.3, y: 50 },
+        animate: { opacity: 1, scale: 1, y: 0 },
+        transition: { 
+          type: "spring", 
+          stiffness: 300, 
+          damping: 20,
+          duration: 0.8 
+        }
+      },
+      floatIn: {
+        initial: { opacity: 0, y: 100, rotateX: 45 },
+        animate: { opacity: 1, y: 0, rotateX: 0 },
+        transition: { duration: 0.8, ease: [0.68, -0.55, 0.265, 1.55] }
+      }
+    };
+
+    type AnimationVariant = keyof typeof cardAnimations;
+
+    // CVA Variants for Card
+    const cardVariants = cva(
+      "relative overflow-hidden transition-all duration-300 transform-gpu will-change-transform group",
+      {
+        variants: {
+          variant: {
+            default: cn(
+              "rounded-xl bg-background/80 backdrop-blur-sm text-foreground",
+              "border border-border/60 shadow-lg shadow-black/5",
+              "hover:shadow-xl hover:shadow-black/10",
+              "hover:border-border/80",
+              "before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/5 before:to-transparent before:pointer-events-none"
+            ),
+            elevated: cn(
+              "rounded-2xl bg-background text-foreground",
+              "shadow-2xl shadow-black/15 dark:shadow-black/40",
+              "hover:shadow-3xl hover:-translate-y-2 hover:shadow-black/20",
+              "dark:hover:shadow-black/50 border border-border/40",
+              "before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/10 before:via-white/5 before:to-transparent before:pointer-events-none"
+            ),
+            glass: cn(
+              "rounded-2xl bg-white/10 dark:bg-black/10 backdrop-blur-xl",
+              "text-foreground border border-white/20 dark:border-white/10",
+              "shadow-xl shadow-black/10 dark:shadow-white/5",
+              "hover:bg-white/20 dark:hover:bg-black/20 hover:shadow-2xl",
+              "before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/20 before:via-white/10 before:to-transparent before:pointer-events-none"
+            ),
+            gradient: cn(
+              "rounded-2xl bg-gradient-to-br from-blue-500/90 via-purple-600/90 to-pink-500/90",
+              "text-white border border-white/20 backdrop-blur-sm",
+              "shadow-xl shadow-blue-500/25 hover:shadow-2xl hover:shadow-purple-500/30",
+              "hover:from-blue-600/90 hover:via-purple-700/90 hover:to-pink-600/90",
+              "before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/10 before:to-white/20 before:pointer-events-none"
+            ),
+            neon: cn(
+              "rounded-2xl bg-black text-white border-2 border-cyan-400/50",
+              "shadow-xl shadow-cyan-400/25 hover:shadow-2xl hover:shadow-cyan-400/40",
+              "hover:border-cyan-400/80 animate-pulse hover:animate-none",
+              "before:absolute before:inset-0 before:bg-gradient-to-br before:from-cyan-400/10 before:to-transparent before:pointer-events-none"
+            ),
+            outline: cn(
+              "rounded-xl bg-transparent text-foreground",
+              "border-2 border-border/60 hover:border-border",
+              "hover:bg-muted/30 backdrop-blur-sm",
+              "shadow-sm hover:shadow-lg hover:shadow-black/5"
+            ),
+            minimal: cn(
+              "rounded-lg bg-transparent text-foreground",
+              "hover:bg-muted/40 transition-colors duration-200"
+            ),
+            premium: cn(
+              "rounded-3xl bg-gradient-to-br from-background/95 to-muted/30",
+              "text-foreground border border-border/40 backdrop-blur-xl",
+              "shadow-2xl shadow-black/10 dark:shadow-black/30",
+              "hover:shadow-3xl hover:shadow-black/15 dark:hover:shadow-black/40",
+              "hover:-translate-y-1 hover:scale-[1.02]",
+              "before:absolute before:inset-0 before:rounded-3xl before:bg-gradient-to-br before:from-white/20 before:via-white/5 before:to-transparent before:pointer-events-none",
+              "after:absolute after:inset-0 after:rounded-3xl after:bg-gradient-to-t after:from-black/5 after:to-transparent after:pointer-events-none"
+            ),
+            success: cn(
+              "rounded-xl bg-gradient-to-br from-emerald-500/90 to-green-600/90",
+              "text-white border border-emerald-400/30",
+              "shadow-lg shadow-emerald-500/25 hover:shadow-xl hover:shadow-emerald-500/40",
+              "hover:from-emerald-600/90 hover:to-green-700/90"
+            ),
+            warning: cn(
+              "rounded-xl bg-gradient-to-br from-amber-400/90 to-orange-500/90",
+              "text-amber-950 border border-amber-300/30",
+              "shadow-lg shadow-amber-500/25 hover:shadow-xl hover:shadow-amber-500/40",
+              "hover:from-amber-500/90 hover:to-orange-600/90"
+            ),
+            error: cn(
+              "rounded-xl bg-gradient-to-br from-red-500/90 to-rose-600/90",
+              "text-white border border-red-400/30",
+              "shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40",
+              "hover:from-red-600/90 hover:to-rose-700/90"
+            ),
+            info: cn(
+              "rounded-xl bg-gradient-to-br from-blue-500/90 to-cyan-600/90",
+              "text-white border border-blue-400/30",
+              "shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40",
+              "hover:from-blue-600/90 hover:to-cyan-700/90"
+            )
+          },
+          size: {
+            sm: "text-sm",
+            md: "text-base", 
+            lg: "text-lg",
+            xl: "text-xl"
+          },
+          interactive: {
+            none: "",
+            hover: "hover:scale-[1.02] cursor-pointer",
+            press: "hover:scale-[1.02] active:scale-[0.98] cursor-pointer",
+            lift: "hover:-translate-y-2 hover:scale-[1.02] cursor-pointer",
+            tilt: "hover:rotate-1 hover:scale-[1.02] cursor-pointer",
+            glow: "hover:shadow-2xl hover:shadow-primary/20 cursor-pointer"
+          }
+        },
+        defaultVariants: {
+          variant: "default",
+          size: "md",
+          interactive: "none"
+        }
+      }
+    );
+
+    type CardProps = React.PropsWithChildren<
+      HTMLMotionProps<"div"> &
+      VariantProps<typeof cardVariants> &
+      {
+        asChild?: boolean;
+        animation?: AnimationVariant;
+      }
+    >;
+
+    const Card = React.forwardRef<HTMLDivElement, CardProps>(
+      ({ className, variant, size, interactive, animation = "none", asChild = false, children, ...props }, ref) => {
+        const animationProps = cardAnimations[animation];
+        
+        if (asChild) {
+          return (
+            <motion.div
+              ref={ref}
+              className={cn(cardVariants({ variant, size, interactive }), className)}
+              {...props}
+            >
+              {children}
+            </motion.div>
+          );
+        }
+
+        return (
+          <motion.div
+            ref={ref}
+            className={cn(cardVariants({ variant, size, interactive }), className)}
+            {...animationProps}
+            whileHover={
+              interactive !== "none" 
+                ? { 
+                    scale: interactive === "tilt" ? 1.02 : undefined,
+                    rotate: interactive === "tilt" ? 1 : undefined,
+                    y: interactive === "lift" ? -8 : undefined 
+                  }
+                : undefined
+            }
+            whileTap={
+              interactive === "press" 
+                ? { scale: 0.98, transition: { duration: 0.1 } }
+                : undefined
+            }
+            {...props}
+          >
+            {/* Animated shimmer effect - FIXED: Moved outside children */}
+            {(variant === "premium" || variant === "glass" || variant === "gradient") && (
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 pointer-events-none"
+                initial={{ x: "-100%" }}
+                whileHover={{ 
+                  x: "100%",
+                  transition: { duration: 0.8, ease: "easeInOut" }
+                }}
+              />
+            )}
+            
+            {/* Properly typed children */}
+            <div className="relative z-10">
+              {children}
+            </div>
+          </motion.div>
+        );
+      }
+    );
+    Card.displayName = "Card";
+
+    // Enhanced Card Header - FIXED: Proper typing
+    const cardHeaderVariants = cva(
+      "flex flex-col space-y-1.5 relative",
+      {
+        variants: {
+          variant: {
+            default: "p-6",
+            compact: "p-4", 
+            spacious: "p-8",
+            minimal: "p-3"
+          }
+        },
+        defaultVariants: {
+          variant: "default"
+        }
+      }
+    );
+
+    type CardHeaderProps = React.PropsWithChildren<HTMLMotionProps<"div"> & VariantProps<typeof cardHeaderVariants>>;
+
+
+    const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
+      ({ className, variant, children, ...props }, ref) => (
+        <motion.div
+          ref={ref}
+          className={cn(cardHeaderVariants({ variant }), className)}
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.5 }}
+          {...props}
+        >
+          {children}
+        </motion.div>
+      )
+    );
+    CardHeader.displayName = "CardHeader";
+
+    // Enhanced Card Title - FIXED: Proper typing with React.ReactNode
+    const cardTitleVariants = cva(
+      "font-semibold leading-none tracking-tight",
+      {
+        variants: {
+          size: {
+            sm: "text-lg",
+            md: "text-xl", 
+            lg: "text-2xl",
+            xl: "text-3xl"
+          },
+          gradient: {
+            none: "",
+            blue: "bg-gradient-to-r from-primary to-cyan-600 bg-clip-text text-transparent",
+            purple: "bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent",
+            green: "bg-gradient-to-r from-success to-green-600 bg-clip-text text-transparent",
+            gold: "bg-gradient-to-r from-warning to-orange-600 bg-clip-text text-transparent"
+          }
+        },
+        defaultVariants: {
+          size: "lg",
+          gradient: "none"
+        }
+      }
+    );
+
+    type CardTitleProps = React.PropsWithChildren<HTMLMotionProps<"h3"> & VariantProps<typeof cardTitleVariants>>;
+
+    const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(
+      ({ className, size, gradient, children, ...props }, ref) => (
+        <motion.h3
+          ref={ref}
+          className={cn(cardTitleVariants({ size, gradient }), className)}
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+          {...props}
+        >
+          {children}
+        </motion.h3>
+      )
+    );
+    CardTitle.displayName = "CardTitle";
+
+    // Enhanced Card Description - FIXED: Proper typing
+    type CardDescriptionProps = React.PropsWithChildren<HTMLMotionProps<"p"> & VariantProps<typeof cardHeaderVariants>>;
+
+    const CardDescription = React.forwardRef<HTMLParagraphElement, CardDescriptionProps>(
+      ({ className, children, ...props }, ref) => (
+        <motion.p
+          ref={ref}
+          className={cn("text-sm text-muted-foreground leading-relaxed", className)}
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+          {...props}
+        >
+          {children}
+        </motion.p>
+      )
+    );
+    CardDescription.displayName = "CardDescription";
+
+    // Enhanced Card Content - FIXED: Proper typing
+    const cardContentVariants = cva(
+      "relative",
+      {
+        variants: {
+          variant: {
+            default: "p-6 pt-0",
+            compact: "p-4 pt-0",
+            spacious: "p-8 pt-0", 
+            minimal: "p-3 pt-0",
+            flush: "p-0"
+          }
+        },
+        defaultVariants: {
+          variant: "default"
+        }
+      }
+    );
+
+    type CardContentProps = React.PropsWithChildren<
+      HTMLMotionProps<"div"> & VariantProps<typeof cardContentVariants>
+    >;
+
+    const CardContent = React.forwardRef<HTMLDivElement, CardContentProps>(
+      ({ className, variant, children, ...props }, ref) => (
+        <motion.div
+          ref={ref}
+          className={cn(cardContentVariants({ variant }), className)}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+          {...props}
+        >
+          {children}
+        </motion.div>
+      )
+    );
+    CardContent.displayName = "CardContent";
+
+    // Enhanced Card Footer - FIXED: Proper typing
+    const cardFooterVariants = cva(
+      "flex items-center relative",
+      {
+        variants: {
+          variant: {
+            default: "p-6 pt-0",
+            compact: "p-4 pt-0",
+            spacious: "p-8 pt-0",
+            minimal: "p-3 pt-0"
+          },
+          justify: {
+            start: "justify-start",
+            center: "justify-center", 
+            end: "justify-end",
+            between: "justify-between",
+            around: "justify-around"
+          }
+        },
+        defaultVariants: {
+          variant: "default",
+          justify: "start"
+        }
+      }
+    );
+
+    type CardFooterProps = React.PropsWithChildren<
+      HTMLMotionProps<"div"> & VariantProps<typeof cardFooterVariants>
+    >;
+
+    const CardFooter = React.forwardRef<HTMLDivElement, CardFooterProps>(
+      ({ className, variant, justify, children, ...props }, ref) => (
+        <motion.div
+          ref={ref}
+          className={cn(cardFooterVariants({ variant, justify }), className)}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+          {...props}
+        >
+          {children}
+        </motion.div>
+      )
+    );
+    CardFooter.displayName = "CardFooter";
+
+    // Special Card Components - FIXED: Proper typing
+    interface FeatureCardProps extends CardProps {
+      icon?: React.ReactNode;
+      }
+
+    const FeatureCard = React.forwardRef<HTMLDivElement, FeatureCardProps>(
+      ({ icon, children, className, ...props }, ref) => (
+        <Card
+          ref={ref}
+          variant="premium"
+          interactive="lift"
+          animation="slideUp"
+          className={cn("text-center", className)}
+          {...props}
+        >
+          {icon && (
+            <CardHeader variant="spacious">
+              <>
+                <motion.div
+                  className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mb-4"
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                >
+                  {icon}
+                </motion.div>
+                {children}
+              </>
+            </CardHeader>
+          )}
+        </Card>
+      )
+    );
+    FeatureCard.displayName = "FeatureCard";
+
+    // Stat Card - FIXED: Proper typing
+    interface StatCardProps extends CardProps {
+      value: string | number; 
+      label: string; 
+      trend?: "up" | "down" | "neutral";
+      trendValue?: string;
+    }
+
+    const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
+      ({ value, label, trend, trendValue, className, ...props }, ref) => (
+        <Card
+          ref={ref}
+          variant="elevated"
+          interactive="hover"
+          animation="scaleIn"
+          className={cn("text-center", className)}
+          {...props}
+        >
+          <CardContent variant="spacious">
+            <motion.div
+              className="text-3xl font-bold text-primary mb-2"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 300 }}
+            >
+              {value}
+            </motion.div>
+            <div className="text-sm text-muted-foreground mb-2">{label}</div>
+            {trend && trendValue && (
+              <div className={cn(
+                "text-xs font-medium",
+                trend === "up" && "text-success",
+                trend === "down" && "text-destructive", 
+                trend === "neutral" && "text-muted-foreground"
+              )}>
+                {trend === "up" && "↗ "}
+                {trend === "down" && "↘ "}
+                {trendValue}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )
+    );
+    StatCard.displayName = "StatCard";
+
+    export { 
+      Card, 
+      CardHeader, 
+      CardFooter, 
+      CardTitle, 
+      CardDescription, 
+      CardContent,
+      FeatureCard,
+      StatCard,
+      cardVariants,
+      type AnimationVariant,
+      type CardProps
+    };
+
+        ```
+      </TabItem>
+    </Tabs>
+
+    ## Usage
+
+    Import the component:
+
     ```tsx
-    import { Card } from './components/ui';
+    import { Card } from '@mindfiredigital/ignix-ui';
+    ```
 
-    function MyComponent() {
-      return <Card>
-        <CardHeader>
-          <CardTitle>Card Title</CardTitle>
-          <CardDescription>Card Description</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p>Card Content</p>
-        </CardContent>
-        <CardFooter>
-          Card Footer
-        </CardFooter>
-      </Card>;
+    ### Basic Usage
+
+    ```tsx
+    function BasicCard() {
+      return (
+        <Card>
+          This is a basic card.
+        </Card>
+      );
     }
     ```
+
+    ## Props
+
+    ### Card
+
+    | Prop | Type | Default | Description |
+    |------|------|---------|-------------|
+    | `variant` | `"default" \| "elevated" \| "glass" \| "gradient" \| "neon" \| "outline" \| "minimal" \| "premium" \| "success" \| "warning" \| "error" \| "info"` | `"default"` | Visual style variant of the card |
+    | `size` | `"sm" \| "md" \| "lg" \| "xl"` | `"md"` | Controls the text size within the card |
+    | `interactive` | `"none" \| "hover" \| "press" \| "lift" \| "tilt" \| "glow"` | `"none"` | Interactive behavior on hover/click |
+    | `animation` | `"none" \| "fadeIn" \| "slideUp" \| "scaleIn" \| "flipIn" \| "bounceIn" \| "floatIn"` | `"none"` | Animation variant for card entrance |
+    | `asChild` | `boolean` | `false` | Render as child component |
+    | `className` | `string` | — | Additional CSS classes |
+    | `children` | `React.ReactNode` | — | Card content |
+
+    ### CardHeader
+
+    | Prop | Type | Default | Description |
+    |------|------|---------|-------------|
+    | `variant` | `"default" \| "compact" \| "spacious" \| "minimal"` | `"default"` | Padding variant for the header |
+    | `className` | `string` | — | Additional CSS classes |
+    | `children` | `React.ReactNode` | — | Header content |
+
+    ### CardTitle
+
+    | Prop | Type | Default | Description |
+    |------|------|---------|-------------|
+    | `size` | `"sm" \| "md" \| "lg" \| "xl"` | `"lg"` | Title text size |
+    | `gradient` | `"none" \| "blue" \| "purple" \| "green" \| "gold"` | `"none"` | Gradient text effect |
+    | `className` | `string` | — | Additional CSS classes |
+    | `children` | `React.ReactNode` | — | Title text |
+
+    ### CardDescription
+
+    | Prop | Type | Default | Description |
+    |------|------|---------|-------------|
+    | `className` | `string` | — | Additional CSS classes |
+    | `children` | `React.ReactNode` | — | Description text |
+
+    ### CardContent
+
+    | Prop | Type | Default | Description |
+    |------|------|---------|-------------|
+    | `variant` | `"default" \| "compact" \| "spacious" \| "minimal" \| "flush"` | `"default"` | Padding variant for the content |
+    | `className` | `string` | — | Additional CSS classes |
+    | `children` | `React.ReactNode` | — | Content |
+
+    ### CardFooter
+
+    | Prop | Type | Default | Description |
+    |------|------|---------|-------------|
+    | `variant` | `"default" \| "compact" \| "spacious" \| "minimal"` | `"default"` | Padding variant for the footer |
+    | `justify` | `"start" \| "center" \| "end" \| "between" \| "around"` | `"start"` | Flexbox justify content alignment |
+    | `className` | `string` | — | Additional CSS classes |
+    | `children` | `React.ReactNode` | — | Footer content |
+
   </TabItem>
+<TabItem value="image-card" label="Image Card">
+
+ImageCard is a highly customizable card component built for modern UI use-cases.
+It supports multiple layouts, media positioning, hover animations, and rich visual variants.
+
+<ImageCardBasicDemo />
+
+## Media Card
+
+<ImageCardMediaDemo />
+
+---
+## Installation 
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component imageCard
+    ```
+  </TabItem>
+  <TabItem value="manual" label="Manual">
+```bash
+import React, { useState, useEffect, useCallback, type ComponentType } from "react"
+import { ImageIcon, Tag, type LucideProps } from "lucide-react"
+import { cva, type VariantProps } from "class-variance-authority"
+import { cn } from "../../../utils/cn"
+import { Typography } from "@ignix-ui/typography"
+import { LazyLoad } from "@ignix-ui/lazyload"
+import { AspectRatio } from "@ignix-ui/aspectratio"
+
+
+/* -------------------------------------------------------------------------- */
+/*                              INTERFACE                                     */
+/* -------------------------------------------------------------------------- */
+export interface CardLink {
+  label?: string
+  href?: string
+  icon?: ComponentType<LucideProps>
+  ariaLabel?: string
+  onClick?: () => void
+}
+
+interface ImageCardProps {
+  image?: string
+  title: string
+  description?: string
+  layout?: "overlay" | "below"
+  button?: string | CardLink | CardLink[]
+  variant?: VariantProps<typeof ImageCardVariant>["variant"]
+  size?: "sm" | "md" | "lg" | "xl"
+  category?: string
+  error?: boolean
+  categoryIcon?: React.ReactNode
+  className?: string
+  onAction?: () => void
+  mode?: "card" | "image" | "media"
+  mediaPosition?: "left" | "right" | "top"
+}
+
+/* -------------------------------------------------------------------------- */
+/*                              VARIANTS                                      */
+/* -------------------------------------------------------------------------- */
+const ImageCardVariant = cva("", {
+  variants: {
+    variant: {
+      dark: "bg-gradient-to-r from-zinc-700 via-zinc-900 to-black text-white",
+      default: "bg-gradient-to-r from-blue-500 to-cyan-500 text-white",
+      light: "bg-white text-black",
+      green: "bg-gradient-to-r from-emerald-500 to-teal-600 text-white",
+      purple: "bg-gradient-to-r from-purple-500 to-pink-500 text-white",
+      red: "bg-gradient-to-r from-rose-500 to-red-600 text-white",
+      orange: "bg-gradient-to-r from-orange-500 to-amber-500 text-white",
+      pink: "bg-gradient-to-r from-pink-500 to-fuchsia-500 text-white",
+      elegant: "bg-gradient-to-r from-slate-600 to-slate-800 text-white",
+      vibrant: "bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 text-white",
+      ocean: "bg-gradient-to-r from-cyan-500 to-blue-600 text-white",
+      sunset: "bg-gradient-to-r from-orange-400 via-pink-500 to-red-500 text-white",
+      forest: "bg-gradient-to-r from-green-600 to-emerald-700 text-white",
+      minimal: "bg-slate-100 text-slate-900 border border-slate-200",
+      royal: "bg-gradient-to-r from-indigo-600 to-purple-700 text-white",
+    },
+  },
+  defaultVariants: {
+    variant: "default",
+  },
+})
+
+const ImageCardSizeVariant = cva("", {
+  variants: {
+    size: {
+      sm: "max-w-md",
+      md: "max-w-lg",
+      lg: "max-w-xl",
+      xl: "max-w-2xl",
+    },
+  },
+  defaultVariants: {
+    size: "md",
+  },
+})
+
+const ImageCardBelowLayoutSizeVariant = cva("", {
+  variants: {
+    size: {
+      sm: "max-w-xl",
+      md: "max-w-2xl",
+      lg: "max-w-3xl",
+      xl: "max-w-3xl",
+    },
+  },
+  defaultVariants: {
+    size: "md",
+  },
+})
+
+const ImageCardMediaSizeVariant = cva("", {
+  variants: {
+    size: {
+      sm: "w-40",
+      md: "w-48",
+      lg: "w-64",
+      xl: "w-100",
+    },
+  },
+  defaultVariants: {
+    size: "md",
+  },
+})
+
+const ImageCardContentSizeVariant = cva("", {
+  variants: {
+    size: {
+      sm: "p-5",
+      md: "p-6",
+      lg: "p-10",
+      xl: "p-12",
+    },
+  },
+  defaultVariants: {
+    size: "md",
+  },
+})
+
+const ImageCardTitleSizeVariant = cva("", {
+  variants: {
+    size: {
+      sm: "text-lg",
+      md: "text-2xl",
+      lg: "text-3xl",
+      xl: "text-4xl",
+    },
+  },
+  defaultVariants: {
+    size: "md",
+  },
+})
+
+const ImageCardDescriptionSizeVariant = cva("", {
+  variants: {
+    size: {
+      sm: "text-sm",
+      md: "text-md",
+      lg: "text-lg",
+      xl: "text-xl",
+    },
+  },
+  defaultVariants: {
+    size: "md",
+  },
+})
+
+const ImageCardCategorySizeVariant = cva("", {
+  variants: {
+    size: {
+      sm: "px-3 py-1 text-xs",
+      md: "px-4 py-1 text-sm",
+      lg: "px-5 py-1.5 text-base",
+      xl: "px-6 py-2 text-lg",
+    },
+  },
+  defaultVariants: {
+    size: "md",
+  },
+})
+
+const ImageCardIconSizeVariant = cva("", {
+  variants: {
+    size: {
+      sm: "w-3 h-3",
+      md: "w-4 h-4",
+      lg: "w-5 h-5",
+      xl: "w-6 h-6",
+    },
+  },
+  defaultVariants: {
+    size: "md",
+  },
+})
+
+const ImageCardMediaIconSizeVariant = cva("", {
+  variants: {
+    size: {
+      sm: "w-5 h-5",
+      md: "w-6 h-6",
+      lg: "w-7 h-7",
+      xl: "w-8 h-8",
+    },
+  },
+  defaultVariants: {
+    size: "md",
+  },
+})
+
+// Mapping variant to title hover color
+const getTitleHoverColor = cva("", {
+  variants: {
+    variant: {
+      dark: "group-hover:text-zinc-300",
+      default: "group-hover:text-blue-500",
+      light: "group-hover:text-black",
+      green: "group-hover:text-emerald-500",
+      purple: "group-hover:text-purple-500",
+      pink: "group-hover:text-pink-500",
+      red: "group-hover:text-rose-500",
+      orange: "group-hover:text-orange-500",
+      elegant: "group-hover:text-slate-400",
+      vibrant: "group-hover:text-purple-500",
+      ocean: "group-hover:text-cyan-500",
+      sunset: "group-hover:text-pink-500",
+      forest: "group-hover:text-green-500",
+      minimal: "group-hover:text-slate-700",
+      royal: "group-hover:text-indigo-500",
+    }
+  },
+  defaultVariants: {
+    variant: "default",
+  }
+})
+
+// Mapping variant to link hover color (individual hover, not group hover)
+const getLinkHoverColor = cva("", {
+  variants: {
+    variant: {
+      dark: "hover:text-zinc-300",
+      default: "hover:text-blue-500",
+      light: "hover:text-black",
+      green: "hover:text-emerald-500",
+      purple: "hover:text-purple-500",
+      pink: "hover:text-pink-500",
+      red: "hover:text-rose-500",
+      orange: "hover:text-orange-500",
+      elegant: "hover:text-slate-400",
+      vibrant: "hover:text-purple-500",
+      ocean: "hover:text-cyan-500",
+      sunset: "hover:text-pink-500",
+      forest: "hover:text-green-500",
+      minimal: "hover:text-slate-700",
+      royal: "hover:text-indigo-500",
+    }
+  },
+  defaultVariants: {
+    variant: "default",
+  }
+})
+
+// Mapping variant to icon fill and stroke color on hover
+const getIconHoverColor = cva("", {
+  variants: {
+    variant: {
+      dark: "group-hover/link:stroke-zinc-300 group-hover/link:fill-zinc-300",
+      default: "group-hover/link:stroke-blue-500 group-hover/link:fill-blue-500",
+      light: "group-hover/link:stroke-black group-hover/link:fill-black",
+      green: "group-hover/link:stroke-emerald-500 group-hover/link:fill-emerald-500",
+      purple: "group-hover/link:stroke-purple-500 group-hover/link:fill-purple-500",
+      pink: "group-hover/link:stroke-pink-500 group-hover/link:fill-pink-500",
+      red: "group-hover/link:stroke-rose-500 group-hover/link:fill-rose-500",
+      orange: "group-hover/link:stroke-orange-500 group-hover/link:fill-orange-500",
+      elegant: "group-hover/link:stroke-slate-400 group-hover/link:fill-slate-400",
+      vibrant: "group-hover/link:stroke-purple-500 group-hover/link:fill-purple-500",
+      ocean: "group-hover/link:stroke-cyan-500 group-hover/link:fill-cyan-500",
+      sunset: "group-hover/link:stroke-pink-500 group-hover/link:fill-pink-500",
+      forest: "group-hover/link:stroke-green-500 group-hover/link:fill-green-500",
+      minimal: "group-hover/link:stroke-slate-700 group-hover/link:fill-slate-700",
+      royal: "group-hover/link:stroke-indigo-500 group-hover/link:fill-indigo-500",
+    }
+  },
+  defaultVariants: {
+    variant: "default",
+  }
+})
+
+const getMediaIconHoverColor = cva("", {
+  variants: {
+    variant: {
+      dark: "group-hover:stroke-zinc-300 group-hover:fill-zinc-300",
+      default: "group-hover:stroke-blue-500 group-hover:fill-blue-500",
+      light: "group-hover:stroke-black group-hover:fill-black",
+      green: "group-hover:stroke-emerald-500 group-hover:fill-emerald-500",
+      purple: "group-hover:stroke-purple-500 group-hover:fill-purple-500",
+      pink: "group-hover:stroke-pink-500 group-hover:fill-pink-500",
+      red: "group-hover:stroke-rose-500 group-hover:fill-rose-500",
+      orange: "group-hover:stroke-orange-500 group-hover:fill-orange-500",
+      elegant: "group-hover:stroke-slate-400 group-hover:fill-slate-400",
+      vibrant: "group-hover:stroke-purple-500 group-hover:fill-purple-500",
+      ocean: "group-hover:stroke-cyan-500 group-hover:fill-cyan-500",
+      sunset: "group-hover:stroke-pink-500 group-hover:fill-pink-500",
+      forest: "group-hover:stroke-green-500 group-hover:fill-green-500",
+      minimal: "group-hover:stroke-slate-700 group-hover:fill-slate-700",
+      royal: "group-hover:stroke-indigo-500 group-hover:fill-indigo-500",
+    }
+  },
+  defaultVariants: {
+    variant: "default",
+  }
+})
+
+/* -------------------------------------------------------------------------- */
+/*                              Card Content Action                           */
+/* -------------------------------------------------------------------------- */
+export const CardContentAction: React.FC<ImageCardProps> = React.memo(({
+  category,
+  variant,
+  size,
+  categoryIcon,
+  title,
+  description,
+  layout = "overlay",
+  onAction,
+  error,
+  button,
+  mediaPosition
+  }) => {
+  const isOverlay = layout === "overlay";
+  
+  const handleClick = useCallback(() => {
+    onAction?.();
+  }, [onAction])
+
+  const links = React.useMemo<CardLink[]>(() => {
+    if (!button) return []
+
+    if (typeof button === "string") {
+      return [{ label: button, onClick: handleClick }]
+    }
+
+    if (Array.isArray(button)) {
+      return button
+    }
+
+    return [button]
+  }, [button, handleClick])
+
+
+  return (
+    <>
+    {category && (
+      <span className={cn(
+        "inline-flex items-center gap-2 mb-3 font-semibold tracking-wider uppercase rounded-full",
+        ImageCardVariant({ variant }),
+        ImageCardCategorySizeVariant({ size }),
+        isOverlay 
+          ? error
+          ? "opacity-100 transition-opacity duration-500 delay-100"
+          : "opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"
+          : ""
+      )}>
+        {categoryIcon ? (
+          <span className={ImageCardIconSizeVariant({ size })}>{categoryIcon}</span>
+        ) : (
+          <Tag className={ImageCardIconSizeVariant({ size })} />
+        )}
+        {category}
+      </span>
+    )}
+    <Typography 
+      variant={isOverlay ? "h3" : "h2"} 
+      className={cn(
+        "mb-2 transition-colors duration-300",
+        ImageCardTitleSizeVariant({ size }),
+        isOverlay
+          ? error
+            ? "font-bold drop-shadow-lg text-slate-900"
+            : "font-bold drop-shadow-lg text-white"
+          : cn("font-semibold text-slate-900", getTitleHoverColor({ variant }))
+      )}
+    >
+      {title}
+    </Typography>
+    <Typography variant="body-small" className={cn(
+      "leading-relaxed",
+      ImageCardDescriptionSizeVariant({ size }),
+      isOverlay 
+        ? error
+          ? "opacity-100 transition-opacity duration-500 delay-150 line-clamp-2 mb-3 text-slate-900"
+        :"text-white/90 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-150 line-clamp-2 mb-3"
+        : "text-slate-600 line-clamp-3 mb-4"
+    )}>
+      {description}
+    </Typography>
+    {links.length > 0 && (
+      <div className={cn("flex items-center gap-4", mediaPosition !== "top" ? "min-h-[80px] mt-auto": "min-h-[60px] mt-auto")}>
+        {links.map((link, idx) => {
+          const isIconOnly = !link.label && link.icon
+          return (
+            <a
+              key={idx}
+              href={link.href}
+              onClick={link.onClick}
+              aria-label={link.ariaLabel || link.label}
+              role="button"
+              className={cn(
+                "inline-flex items-center gap-2 font-semibold cursor-pointer group/link",
+                "transition-all duration-300",
+                isOverlay
+                  ? error
+                    ? "opacity-100"
+                    : "opacity-0 group-hover:opacity-100"
+                  : "",
+                getLinkHoverColor({ variant }),
+                isIconOnly && "p-2 rounded-full hover:bg-white/10"
+              )}
+            >
+              {/* TEXT LINK */}
+              {link.label && <span>{link.label}</span>}
+
+              {/* ICON LINK */}
+              {link.icon && (
+                <link.icon
+                  className={cn(
+                    "w-5 h-5 fill-none",
+                    getIconHoverColor({ variant }),
+                  )}
+                />
+              )}
+
+            </a>
+          )
+        })}
+      </div>
+    )}
+    </>
+  )
+}
+)
+
+/* -------------------------------------------------------------------------- */
+/*                              Image Content Content                         */
+/* -------------------------------------------------------------------------- */
+const ImageCardContent: React.FC<ImageCardProps> = ({
+  image,
+  title,
+  description,
+  variant = "default",
+  size = "md",
+  layout = "overlay",
+  category,
+  categoryIcon,
+  className = "",
+  onAction,
+  button,
+  mode,
+  mediaPosition = "top"
+}) => {
+  const [imageLoaded, setImageLoaded] = useState<boolean>(false);
+  const [imageError, setImageError] = useState<boolean>(false);
+
+  // Reset image state when image prop changes
+  useEffect(() => {
+    setImageLoaded(false);
+    setImageError(false);
+  }, [image]);
+
+  const handleImageLoad = useCallback(() => {
+    setImageLoaded(true);
+  }, []);
+
+  const handleImageError = useCallback(() => {
+    setImageError(true);
+  }, []);
+
+  // When layout is "below" we also allow positioning the media left/right similar to media mode
+  const isSideBySideBelowLayout =
+    mode !== "media" &&
+    layout === "below" &&
+    (mediaPosition === "left" || mediaPosition === "right");
+
+  if (isSideBySideBelowLayout) {
+    const isLeft = mediaPosition === "left";
+
+    return (
+      <div
+        className={cn(
+          "group relative overflow-hidden rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-all duration-500",
+          ImageCardBelowLayoutSizeVariant({size}),
+          "flex flex-col sm:flex-row",
+          isLeft ? "" : "sm:flex-row-reverse",
+          className
+        )}
+      >
+        {/* IMAGE */}
+        <div className="relative overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 sm:w-1/2">
+          {image && !imageError ? (
+            <LazyLoad
+              threshold="0px"
+              animation="fade"
+              once={false}
+              placeholder={
+                <AspectRatio ratio="4:3">
+                  <div className="flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
+                    <ImageIcon className="w-16 h-16 text-slate-400 animate-pulse" />
+                  </div>
+                </AspectRatio>
+              }
+            >
+              <AspectRatio ratio="1:1">
+                <img
+                  src={image}
+                  alt={title}
+                  onLoad={handleImageLoad}
+                  onError={handleImageError}
+                  className={cn(
+                    "transition-all duration-700",
+                    imageLoaded
+                      ? "opacity-100 scale-100 group-hover:scale-110"
+                      : "opacity-0 scale-95"
+                  )}
+                />
+              </AspectRatio>
+            </LazyLoad>
+          ) : (
+            <AspectRatio ratio="4:3">
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
+                <div className="text-center">
+                  <ImageIcon className="w-16 h-16 mx-auto text-slate-400 animate-pulse" />
+                  <p className="mt-2 text-sm text-slate-500">No image</p>
+                </div>
+              </div>
+            </AspectRatio>
+          )}
+        </div>
+
+        {/* CONTENT */}
+        <div className={cn("sm:w-1/2 mt-5 flex flex-col h-full", ImageCardContentSizeVariant({ size }))}>
+          <CardContentAction
+            title={title}
+            description={description}
+            variant={variant}
+            size={size}
+            layout="below"
+            categoryIcon={categoryIcon}
+            category={category}
+            onAction={onAction}
+            button={button}
+            mediaPosition={mediaPosition}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  if (mode === "media") {
+    const isLeft = mediaPosition === "left"
+    const isTop = mediaPosition === "top"
+
+    const mediaImage = (
+      <div
+        className={cn(
+          "rounded-xl overflow-hidden shrink-0",
+          isTop ? "w-full" : ImageCardMediaSizeVariant({size})
+        )}
+      >
+        <AspectRatio ratio={isTop ? "16:9" : "1"}>
+          {image ? (
+            <img
+              src={image}
+              alt={title}
+              className="w-full h-full object-cover hover:scale-110"
+            />
+          ) : (
+            <div className="flex items-center justify-center bg-slate-100">
+              <ImageIcon className="w-8 h-8 text-slate-400" />
+            </div>
+          )}
+        </AspectRatio>
+      </div>
+    )
+
+    const mediaContent = (
+      <div className="flex-1 gap-6">
+        <Typography variant="h3" className="mb-1">
+          {title}
+        </Typography>
+
+        {description && (
+          <Typography variant="body-small" className="text-slate-600 mb-4">
+            {description}
+          </Typography>
+        )}
+
+        {/* CONTROLS */}
+        {Array.isArray(button) && (
+          <div className={cn("flex items-center gap-3", mediaPosition !== "top" ? "min-h-[40px] mt-auto": "min-h-[60px] mt-auto")}>
+            {button.map((link, idx) => {
+              const Icon = link.icon
+              const Element = link.href ? "a" : "button"
+
+              return (
+                <Element
+                  key={idx}
+                  href={link.href}
+                  onClick={link.onClick}
+                  aria-label={link.ariaLabel}
+                  role="button"
+                  className={cn(
+                    "group p-2 rounded-full transition",
+                    "hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  )}
+                >
+                  {Icon && (
+                  <Icon
+                    className={cn(
+                      ImageCardMediaIconSizeVariant({ size }),
+                      // default (not hovered)
+                      "stroke-current fill-none",
+                      // hover = selected variant
+                      "group-hover:fill-current group-hover:stroke-none",
+                      // smooth animation
+                      "transition-all duration-200",
+                      // variant color on hover
+                      getMediaIconHoverColor({ variant })
+                    )}
+                  />
+                  )}
+                </Element>
+              )
+            })}
+          </div>
+        )}
+      </div>
+    )
+
+    return (
+      <div
+        className={cn(
+          "rounded-2xl bg-white shadow-md p-4",
+          ImageCardSizeVariant({ size }),
+          isTop ? "flex flex-col gap-4" : "flex items-center gap-6",
+          className
+        )}
+      >
+        {isTop ? (
+          <>
+            {mediaImage}
+            {mediaContent}
+          </>
+        ) : (
+          <>
+            {isLeft && mediaImage}
+            {mediaContent}
+            {!isLeft && mediaImage}
+          </>
+        )}
+      </div>
+    )
+  }
+
+  return (
+    <>
+    <div
+      className={cn(
+        "group relative overflow-hidden rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-all duration-500",
+        ImageCardSizeVariant({ size }),
+        className
+      )}
+    >
+      <div className="relative overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
+        {image && !imageError ? (
+          <LazyLoad
+            threshold="0px"
+            animation="fade"
+            once={false}
+            placeholder={
+              <AspectRatio ratio="4:3">
+                <div className="flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
+                  <ImageIcon className="w-16 h-16 text-slate-400 animate-pulse" />
+                </div>
+              </AspectRatio>
+            }
+          >
+            <AspectRatio ratio="4:3">
+              <img
+                src={image}
+                alt={title}
+                onLoad={handleImageLoad}
+                onError={handleImageError}
+                className={cn(
+                  "transition-all duration-700",
+                  imageLoaded
+                    ? "opacity-100 scale-100 group-hover:scale-110"
+                    : "opacity-0 scale-95"
+                )}
+              />
+            </AspectRatio>
+          </LazyLoad>
+        ) : (
+          <>
+          <AspectRatio ratio="4:3">
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
+              <div className="text-center">
+                <ImageIcon className="w-16 h-16 mx-auto text-slate-400 animate-pulse" />
+                <p className="mt-2 text-sm text-slate-500">No image</p>
+              </div>
+            </div>
+          </AspectRatio>
+          {layout === "overlay" && (
+            <div className={ImageCardContentSizeVariant({ size })}>
+              <CardContentAction 
+                title={title} 
+                description={description} 
+                variant={variant} 
+                size={size} 
+                layout="overlay"
+                categoryIcon={categoryIcon} 
+                category={category}
+                onAction={onAction}
+                error={imageError}
+                button={button}
+                mediaPosition={mediaPosition}
+              />
+            </div>
+          )}
+          </>
+        )}
+
+        {layout === "overlay" && !imageError && (
+          <>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+            <div className={cn(
+              "absolute bottom-0 left-0 right-0 text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500",
+              ImageCardContentSizeVariant({ size })
+            )}>
+              <CardContentAction 
+                title={title} 
+                description={description} 
+                variant={variant} 
+                size={size} 
+                layout="overlay"
+                categoryIcon={categoryIcon} 
+                category={category}
+                onAction={onAction}
+                button={button}
+                mediaPosition={mediaPosition}
+              />
+            </div>
+          </>
+        )}
+      </div>
+
+      {layout === "below" && (
+        <div className={ImageCardContentSizeVariant({ size })}>
+          <CardContentAction 
+            title={title} 
+            description={description} 
+            variant={variant} 
+            size={size} 
+            layout="below"
+            categoryIcon={categoryIcon} 
+            category={category}
+            onAction={onAction}
+            button={button}
+            mediaPosition={mediaPosition}
+          />
+        </div>
+      )}
+    </div>
+    </>
+  );
+}
+
+export const ImageCard:React.FC<ImageCardProps> = (props) => { 
+  return( <ImageCardContent {...props} /> ) 
+}
+
+```
+ </TabItem>
 </Tabs>
+---
+
+## Basic Usage
+```tsx
+import { ImageCard } from "@ignix-ui/imagecard";
+import { Star } from "lucide-react";
+
+function App() {
+  return (
+    <ImageCard
+      image="https://picsum.photos/id/237/800/600"
+      title="Explore Pets"
+      description="A flexible image card component designed for modern interfaces. 
+    Supports multiple layouts, media positions, and interactive actions."
+      category="Nature"
+      variant="default"
+      layout="overlay"
+      size="md"
+      button={[
+        {
+          label: "Documentation",
+          href: "/docs",
+        },
+        {
+          label: "Source Code",
+          href: "https://github.com",
+        },
+        {
+          href: "https://github.com",
+          icon: Star,
+          ariaLabel: "Star repository",
+        },
+      ]}
+    />
+  );
+}
+
+export default App;
+
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|-----|-----|---------|-------------|
+| `title` | `string` | — | **Required.** Title text displayed on the card |
+| `image` | `string` | — | Image URL for the card |
+| `description` | `string` | — | Supporting description text |
+| `layout` | `"overlay" \| "below"` | `"overlay"` | Controls how content is placed relative to the image |
+| `mode` | `"card" \| "image" \| "media"` | `"card"` | Enables media-style layout behavior |
+| `mediaPosition` | `"top" \| "left" \| "right"` | `"top"` | Position of the image in `below` and `media` layouts |
+| `variant` | `"default" \| "dark" \| "light" \| "green" \| "purple" \| "red" \| "orange" \| "pink" \| "elegant" \| "vibrant" \| "ocean" \| "sunset" \| "forest" \| "minimal" \| "royal"` | `"red"` | Visual variant for category Icon & hover |
+| `size` | `"sm" \| "md" \| "lg" \| "xl"` | `"md"` | Controls spacing and typography scale |
+| `category` | `string` | — | Optional category badge label |
+| `categoryIcon` | `ReactNode` | — | Icon displayed inside the category badge |
+| `button` | `string \| CardLink \| CardLink[]` | — | Action button(s) rendered at the bottom |
+| `onAction` | `() => void` | — | Callback fired when default button is clicked |
+| `error` | `boolean` | `false` | Displays error state when image fails to load |
+| `className` | `string` | — | Custom class overrides |
+
+---
+
+## CardLink Interface
+
+Used when passing custom buttons via the `button` prop.
+
+```ts
+interface CardLink {
+  label?: string
+  href?: string
+  icon?: ComponentType<LucideProps>
+  ariaLabel?: string
+  onClick?: () => void
+}
+```
+</TabItem>
+
+<TabItem value="user-card" label="UserCard">
+
+
+The Profile Card component displays user information in a clean, organized format. It supports both basic and advanced layouts with features like stats, verification badges, action buttons, and social media links.
+
+
+<UserCardBasicDemo />
+<UserCardAdvancedDemo/> 
+<UserCardExamplesDemo />
 
 ## Installation
 
 <Tabs>
   <TabItem value="cli" label="CLI" default>
     ```bash
-    ignix add component card
+    ignix add component UserCard
     ```
   </TabItem>
-  <TabItem value="manual" label="manual" className="max-h-[500px] overflow-y-auto">
+  <TabItem value="manual" label="MANUAL">
+  ```bash
 
-    ```tsx
-import { cn } from "@site/src/utils/cn"
-import * as React from "react"
-import { HTMLMotionProps, motion } from "framer-motion"
-import { cva, type VariantProps } from "class-variance-authority"
+import React, { useMemo, memo } from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "../../../utils/cn";
+import { Card, CardContent, CardHeader, type CardProps } from "@ignix-ui/card";
+import { Avatar, type AvatarProps } from "@ignix-ui/avatar";
+import { Typography } from "@ignix-ui/typography";
+import { Button } from "@ignix-ui/button";
+import { CheckCircle2, Star } from "lucide-react";
 
-// Card Animation Variants
-const cardAnimations = {
-  none: {},
-  fadeIn: {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] }
+/* -------------------------------------------------------------------------- */
+/*                              INTERFACE                                     */
+/* -------------------------------------------------------------------------- */
+interface SocialLinksProps extends SizeAlignProps{
+  socialLinks: SocialLink[];
+  name: string;
+  isHorizontal?: boolean;
+}
+
+interface SizeAlignProps {
+    size: NonNullable<UserCardProps["size"]>;
+    align?: "left" | "center";
+}
+
+interface TypographyRoleProps extends SizeAlignProps{
+  role: string;
+}
+
+export interface SocialLink {
+  /** URL for the social media profile */
+  url: string;
+  /** Icon component to display (e.g., from react-icons, lucide-react, etc.) */
+  icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
+  /** Accessible label for the social link */
+  label: string;
+  /** Optional platform name for identification */
+  platform?: string;
+}
+
+interface TypographyNameProps extends SizeAlignProps{
+  name?: string;
+  username?: string;
+  uppercase?: boolean;
+}
+
+interface TypographyBioProps extends SizeAlignProps{
+  bio: string;
+  lineClamp?: boolean;
+}
+
+export interface StatItem {
+  /** Label for the stat (e.g., "Posts", "Followers") */
+  label: string;
+  /** Value for the stat */
+  value: number | string;
+  /** Optional icon component */
+  icon?: React.ComponentType<{ className?: string }>;
+}
+
+export interface ActionButton {
+  /** Button label */
+  label: string;
+  /** Button variant */
+  variant?: "default" | "outline" | "ghost";
+  /** Click handler */
+  onClick?: () => void;
+  /** Icon component */
+  icon?: React.ComponentType<{ className?: string }>;
+}
+
+export interface UserCardProps  extends CardProps{
+  /** User's avatar image URL */
+  avatar?: string;
+  /** User's full name */
+  name: string;
+  /** User's username/handle (e.g., "@username") */
+  username?: string;
+  /** User's role or job title */
+  role?: string;
+  /** User's bio or description */
+  bio?: string;
+  /** Social media links */
+  socialLinks?: SocialLink[];
+  /** Avatar size */
+  avatarSize?: AvatarProps["size"];
+  /** Avatar shape */
+  avatarShape?: AvatarProps["shape"];
+  /** Card variant */
+  variant?: VariantProps<typeof userCardVariants>["variant"];
+  /** Card size */
+  size?: VariantProps<typeof userCardVariants>["size"];
+  /** Layout orientation */
+  orientation?: "vertical" | "horizontal";
+  /** Show avatar border */
+  avatarBordered?: boolean;
+  /** Avatar status indicator */
+  avatarStatus?: AvatarProps["status"];
+  /** Fallback text for avatar (initials) */
+  avatarFallback?: string;
+  /** Header/banner image URL (for horizontal layout with banner) */
+  headerImage?: string;
+  /** Enable advanced design features */
+  advanced?: boolean;
+  /** Stats/metrics to display */
+  stats?: StatItem[];
+  /** Show verification badge */
+  verified?: boolean;
+  /** Show premium badge */
+  premium?: boolean;
+  /** Custom badge text */
+  badge?: string;
+  /** Action buttons (e.g., Follow, Message) */
+  actions?: ActionButton[];
+  /** Background pattern/gradient */
+  backgroundPattern?: "gradient" | "dots" | "grid" | "waves" | "none";
+}
+
+/* -------------------------------------------------------------------------- */
+/*                              VARIANTS                                      */
+/* -------------------------------------------------------------------------- */
+const userCardVariants = cva("", {
+  variants: {
+    variant: {
+      default: "",
+      elevated: "",
+      glass: "",
+      outline: "",
+      minimal: "",
+    },
+    size: {
+      sm: "",
+      md: "",
+      lg: "",
+      xl: "",
+    },
   },
-  slideUp: {
-    initial: { opacity: 0, y: 60, scale: 0.95 },
-    animate: { opacity: 1, y: 0, scale: 1 },
-    transition: { duration: 0.7, ease: [0.4, 0, 0.2, 1] }
+  defaultVariants: {
+    variant: "default",
+    size: "md",
   },
-  scaleIn: {
-    initial: { opacity: 0, scale: 0.8, rotateX: 15 },
-    animate: { opacity: 1, scale: 1, rotateX: 0 },
-    transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] }
-  },
-  flipIn: {
-    initial: { opacity: 0, rotateY: -90, scale: 0.8 },
-    animate: { opacity: 1, rotateY: 0, scale: 1 },
-    transition: { duration: 0.8, ease: [0.4, 0, 0.2, 1] }
-  },
-  bounceIn: {
-    initial: { opacity: 0, scale: 0.3, y: 50 },
-    animate: { opacity: 1, scale: 1, y: 0 },
-    transition: { 
-      type: "spring", 
-      stiffness: 300, 
-      damping: 20,
-      duration: 0.8 
-    }
-  },
-  floatIn: {
-    initial: { opacity: 0, y: 100, rotateX: 45 },
-    animate: { opacity: 1, y: 0, rotateX: 0 },
-    transition: { duration: 0.8, ease: [0.68, -0.55, 0.265, 1.55] }
-  }
+});
+
+// Avatar size mapping (for Avatar component prop, not CSS classes)
+const avatarSizeMap: Record<
+  NonNullable<UserCardProps["size"]>,
+  AvatarProps["size"]
+> = {
+  sm: "3xl",
+  md: "5xl",
+  lg: "6xl",
+  xl: "7xl",
 };
 
-type AnimationVariant = keyof typeof cardAnimations;
-
-// CVA Variants for Card
-const cardVariants = cva(
-  "relative overflow-hidden transition-all duration-300 transform-gpu will-change-transform group",
-  {
-    variants: {
-      variant: {
-        default: cn(
-          "rounded-xl bg-background/80 backdrop-blur-sm text-foreground",
-          "border border-border/60 shadow-lg shadow-black/5",
-          "hover:shadow-xl hover:shadow-black/10",
-          "hover:border-border/80",
-          "before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/5 before:to-transparent before:pointer-events-none"
-        ),
-        elevated: cn(
-          "rounded-2xl bg-background text-foreground",
-          "shadow-2xl shadow-black/15 dark:shadow-black/40",
-          "hover:shadow-3xl hover:-translate-y-2 hover:shadow-black/20",
-          "dark:hover:shadow-black/50 border border-border/40",
-          "before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/10 before:via-white/5 before:to-transparent before:pointer-events-none"
-        ),
-        glass: cn(
-          "rounded-2xl bg-white/10 dark:bg-black/10 backdrop-blur-xl",
-          "text-foreground border border-white/20 dark:border-white/10",
-          "shadow-xl shadow-black/10 dark:shadow-white/5",
-          "hover:bg-white/20 dark:hover:bg-black/20 hover:shadow-2xl",
-          "before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/20 before:via-white/10 before:to-transparent before:pointer-events-none"
-        ),
-        gradient: cn(
-          "rounded-2xl bg-gradient-to-br from-blue-500/90 via-purple-600/90 to-pink-500/90",
-          "text-white border border-white/20 backdrop-blur-sm",
-          "shadow-xl shadow-blue-500/25 hover:shadow-2xl hover:shadow-purple-500/30",
-          "hover:from-blue-600/90 hover:via-purple-700/90 hover:to-pink-600/90",
-          "before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/10 before:to-white/20 before:pointer-events-none"
-        ),
-        neon: cn(
-          "rounded-2xl bg-black text-white border-2 border-cyan-400/50",
-          "shadow-xl shadow-cyan-400/25 hover:shadow-2xl hover:shadow-cyan-400/40",
-          "hover:border-cyan-400/80 animate-pulse hover:animate-none",
-          "before:absolute before:inset-0 before:bg-gradient-to-br before:from-cyan-400/10 before:to-transparent before:pointer-events-none"
-        ),
-        outline: cn(
-          "rounded-xl bg-transparent text-foreground",
-          "border-2 border-border/60 hover:border-border",
-          "hover:bg-muted/30 backdrop-blur-sm",
-          "shadow-sm hover:shadow-lg hover:shadow-black/5"
-        ),
-        minimal: cn(
-          "rounded-lg bg-transparent text-foreground",
-          "hover:bg-muted/40 transition-colors duration-200"
-        ),
-        premium: cn(
-          "rounded-3xl bg-gradient-to-br from-background/95 to-muted/30",
-          "text-foreground border border-border/40 backdrop-blur-xl",
-          "shadow-2xl shadow-black/10 dark:shadow-black/30",
-          "hover:shadow-3xl hover:shadow-black/15 dark:hover:shadow-black/40",
-          "hover:-translate-y-1 hover:scale-[1.02]",
-          "before:absolute before:inset-0 before:rounded-3xl before:bg-gradient-to-br before:from-white/20 before:via-white/5 before:to-transparent before:pointer-events-none",
-          "after:absolute after:inset-0 after:rounded-3xl after:bg-gradient-to-t after:from-black/5 after:to-transparent after:pointer-events-none"
-        ),
-        success: cn(
-          "rounded-xl bg-gradient-to-br from-emerald-500/90 to-green-600/90",
-          "text-white border border-emerald-400/30",
-          "shadow-lg shadow-emerald-500/25 hover:shadow-xl hover:shadow-emerald-500/40",
-          "hover:from-emerald-600/90 hover:to-green-700/90"
-        ),
-        warning: cn(
-          "rounded-xl bg-gradient-to-br from-amber-400/90 to-orange-500/90",
-          "text-amber-950 border border-amber-300/30",
-          "shadow-lg shadow-amber-500/25 hover:shadow-xl hover:shadow-amber-500/40",
-          "hover:from-amber-500/90 hover:to-orange-600/90"
-        ),
-        error: cn(
-          "rounded-xl bg-gradient-to-br from-red-500/90 to-rose-600/90",
-          "text-white border border-red-400/30",
-          "shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40",
-          "hover:from-red-600/90 hover:to-rose-700/90"
-        ),
-        info: cn(
-          "rounded-xl bg-gradient-to-br from-blue-500/90 to-cyan-600/90",
-          "text-white border border-blue-400/30",
-          "shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40",
-          "hover:from-blue-600/90 hover:to-cyan-700/90"
-        )
-      },
-      size: {
-        sm: "text-sm",
-        md: "text-base", 
-        lg: "text-lg",
-        xl: "text-xl"
-      },
-      interactive: {
-        none: "",
-        hover: "hover:scale-[1.02] cursor-pointer",
-        press: "hover:scale-[1.02] active:scale-[0.98] cursor-pointer",
-        lift: "hover:-translate-y-2 hover:scale-[1.02] cursor-pointer",
-        tilt: "hover:rotate-1 hover:scale-[1.02] cursor-pointer",
-        glow: "hover:shadow-2xl hover:shadow-primary/20 cursor-pointer"
-      }
+// Name size variants
+const nameSizeVariants = cva("font-semibold text-foreground mb-1 break-words w-full", {
+  variants: {
+    size: {
+      sm: "text-lg",
+      md: "text-xl",
+      lg: "text-2xl",
+      xl: "text-3xl"
     },
-    defaultVariants: {
-      variant: "default",
-      size: "md",
-      interactive: "none"
+  },
+  defaultVariants: {
+    size: "md",
+  },
+});
+
+// Role size variants
+const roleSizeVariants = cva("mb-2 break-words w-full", {
+  variants: {
+    size: {
+      sm: "text-sm",
+      md: "text-base",
+      lg: "text-lg",
+      xl: "text-xl"
+    },
+  },
+  defaultVariants: {
+    size: "md",
+  },
+});
+
+// Bio size variants
+const bioSizeVariants = cva("leading-relaxed mb-4 break-words w-full", {
+  variants: {
+    size: {
+      sm: "text-xs",
+      md: "text-sm",
+      lg: "text-base",
+      xl: "text-lg"
+    },
+  },
+  defaultVariants: {
+    size: "md",
+  },
+});
+
+// Social icon size variants
+const socialIconSizeVariants = cva("fill-current", {
+  variants: {
+    size: {
+      sm: "w-4 h-4",
+      md: "w-5 h-5",
+      lg: "w-6 h-6",
+      xl: "w-7 h-7"
+    },
+  },
+  defaultVariants: {
+    size: "md",
+  },
+});
+
+// Social link spacing variants
+const socialLinkSpacingVariants = cva("flex items-center justify-center", {
+  variants: {
+    size: {
+      sm: "gap-2",
+      md: "gap-3",
+      lg: "gap-4",
+      xl: "gap-5"
+    },
+  },
+  defaultVariants: {
+    size: "md",
+  },
+});
+
+// Vertical social link spacing variants (for horizontal layout)
+const verticalSocialLinkSpacingVariants = cva("flex flex-col items-center", {
+  variants: {
+    size: {
+      sm: "gap-2",
+      md: "gap-3",
+      lg: "gap-4",
+      xl: "gap-5"
+    },
+  },
+  defaultVariants: {
+    size: "md",
+  },
+});
+
+// Card max width variants
+const cardMaxWidthVariants = cva("w-full", {
+  variants: {
+    size: {
+      sm: "max-w-xs",
+      md: "max-w-sm",
+      lg: "max-w-md",
+      xl: "max-w-lg"
+    },
+  },
+  defaultVariants: {
+    size: "md",
+  },
+});
+
+// Avatar margin bottom variants
+const avatarMarginBottomVariants = cva("", {
+  variants: {
+    size: {
+      sm: "mb-2",
+      md: "mb-3",
+      lg: "mb-4",
+      xl: "mb-5"
+    },
+  },
+});
+
+/* -------------------------------------------------------------------------- */
+/*                          STATS DISPLAY COMPONENT                          */
+/* -------------------------------------------------------------------------- */
+interface StatsDisplayProps {
+  stats: StatItem[];
+  size: NonNullable<UserCardProps["size"]>;
+  orientation?: "vertical" | "horizontal";
+}
+
+const StatsDisplay: React.FC<StatsDisplayProps> = memo(({ stats, size, orientation = "vertical" }) => {
+  if (!stats || stats.length === 0) return null;
+
+  const containerClass = useMemo(
+    () => cn(
+      "flex",
+      orientation === "horizontal" 
+        ? "flex-row gap-2 sm:gap-3 md:gap-4 flex-wrap" 
+        : "flex-col gap-2",
+      "w-full"
+    ),
+    [orientation]
+  );
+
+  const statItemClass = useMemo(
+    () => cn(
+      "flex items-center gap-2",
+      orientation === "horizontal" ? "flex-1" : "justify-between"
+    ),
+    [orientation]
+  );
+
+  const valueSizeClass = useMemo(() => {
+    switch (size) {
+      case "sm": return "text-base font-bold";
+      case "md": return "text-lg font-bold";
+      case "lg": return "text-xl font-bold";
+      case "xl": return "text-2xl font-bold";
+      default: return "text-lg font-bold";
     }
-  }
-);
+  }, [size]);
 
-type CardProps = React.PropsWithChildren<
-  HTMLMotionProps<"div"> &
-  VariantProps<typeof cardVariants> &
-  {
-    asChild?: boolean;
-    animation?: AnimationVariant;
-  }
->;
+  const labelSizeClass = useMemo(() => {
+    switch (size) {
+      case "sm": return "text-xs";
+      case "md": return "text-sm";
+      case "lg": return "text-base";
+      case "xl": return "text-lg";
+      default: return "text-sm";
+    }
+  }, [size]);
 
-const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, variant, size, interactive, animation = "none", asChild = false, children, ...props }, ref) => {
-    const animationProps = cardAnimations[animation];
-    
-    if (asChild) {
+  return (
+    <div className={containerClass}>
+      {stats.map((stat, index) => {
+        const Icon = stat.icon;
+        return (
+          <div key={index} className={statItemClass}>
+            {Icon && <Icon className="w-4 h-4 text-muted-foreground" />}
+            <div className="flex flex-col">
+              <span className={cn(valueSizeClass, "text-foreground")}>
+                {typeof stat.value === "number" ? stat.value.toLocaleString() : stat.value}
+              </span>
+              <span className={cn(labelSizeClass, "text-muted-foreground")}>
+                {stat.label}
+              </span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+});
+
+StatsDisplay.displayName = "StatsDisplay";
+
+/* -------------------------------------------------------------------------- */
+/*                          VERIFICATION BADGE                                */
+/* -------------------------------------------------------------------------- */
+interface VerificationBadgeProps {
+  verified?: boolean;
+  premium?: boolean;
+  badge?: string;
+  size?: NonNullable<UserCardProps["size"]>;
+}
+
+const VerificationBadge: React.FC<VerificationBadgeProps> = memo(({ verified, premium, badge, size = "md" }) => {
+  const iconSize = useMemo(() => {
+    switch (size) {
+      case "sm": return "w-3 h-3";
+      case "md": return "w-4 h-4";
+      case "lg": return "w-5 h-5";
+      case "xl": return "w-6 h-6";
+      default: return "w-4 h-4";
+    }
+  }, [size]);
+
+  if (verified) {
+    return (
+      <div className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+        <CheckCircle2 className={iconSize} />
+        <span className="text-xs font-medium">Verified</span>
+      </div>
+    );
+  }
+
+  if (premium) {
+    return (
+      <div className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gradient-to-r from-yellow-400/20 to-orange-400/20 text-yellow-600 dark:text-yellow-400 border border-yellow-500/20">
+        <Star className={iconSize} />
+        <span className="text-xs font-medium">Premium</span>
+      </div>
+    );
+  }
+
+  if (badge) {
+    return (
+      <div className="inline-flex items-center px-2 py-1 rounded-full bg-muted text-muted-foreground border border-border">
+        <span className="text-xs font-medium">{badge}</span>
+      </div>
+    );
+  }
+
+  return null;
+});
+
+VerificationBadge.displayName = "VerificationBadge";
+
+/* -------------------------------------------------------------------------- */
+/*                             COMMON COMPONENT                               */
+/* -------------------------------------------------------------------------- */
+const SocialLinks:React.FC<SocialLinksProps> = memo(({ socialLinks, name, size, isHorizontal = false }) => {
+  const spacingVariants = useMemo(
+    () => isHorizontal ? verticalSocialLinkSpacingVariants : socialLinkSpacingVariants,
+    [isHorizontal]
+  );
+
+  const containerClassName = useMemo(
+    () => cn(
+      spacingVariants({ size }),
+      isHorizontal ? "shrink-0" : "justify-center w-full"
+    ),
+    [spacingVariants, size, isHorizontal]
+  );
+
+  const linkClassName = useMemo(
+    () => isHorizontal
+      ? cn(
+          "inline-flex justify-start items-end",
+          "text-foreground hover:opacity-70",
+          "transition-all duration-200",
+          "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded",
+          "dark:focus:ring-offset-background",
+          "group-hover:scale-105 hover:scale-110"
+        )
+      : cn(
+          "inline-flex items-center justify-center",
+          "rounded-full p-2",
+          "text-muted-foreground hover:text-foreground",
+          "bg-muted/50 hover:bg-muted cursor-pointer",
+          "transition-all duration-200",
+          "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
+          "dark:focus:ring-offset-background",
+          "group-hover:scale-105 hover:scale-110"
+        ),
+    [isHorizontal]
+  );
+
+  if (socialLinks.length === 0) return null;
+
+  return (
+    <div
+      className={containerClassName}
+      role="list"
+      aria-label="Social media links"
+    >
+      {socialLinks.map((link, index) => {
+        const Icon = link.icon;
+        const ariaLabel = link.label || `Visit ${link.platform || "social media"} profile for ${name}`;
+        const key = link.platform ? `${link.platform}-${index}` : `social-link-${index}`;
+
+        return (
+          <a
+            key={key}
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={ariaLabel}
+            className={linkClassName}
+            role="listitem"
+          >
+            <Icon
+              className={socialIconSizeVariants({ size })}
+              aria-hidden={true}
+            />
+          </a>
+        );
+      })}
+    </div>
+  );
+});
+
+/* -------------------------------------------------------------------------- */
+/*                          TYPOGRAPHY COMPONENTS                            */
+/* -------------------------------------------------------------------------- */
+const TypographyName = memo<TypographyNameProps>(({ name, size, align = "center", uppercase = false }) => {
+  const className = useMemo(
+    () => cn(
+      nameSizeVariants({ size }),
+      align === "left" ? "text-left" : "text-center",
+      uppercase && "uppercase font-bold tracking-tight mb-1"
+    ),
+    [size, align, uppercase]
+  );
+
+  return (
+    <h2 className={className}>
+      {name}
+    </h2>
+  );
+});
+
+const TypographyUsername = memo<TypographyNameProps>(({ username, size, align = "center" }) => {
+  const displayUsername = useMemo(
+    () => username?.startsWith("@") ? username : `@${username}`,
+    [username]
+  );
+
+  const className = useMemo(
+    () => cn(
+      "text-left mb-2",
+      roleSizeVariants({ size }),
+      align === "center" && "text-center"
+    ),
+    [size, align]
+  );
+
+  return (
+    <Typography variant="body-small" color="muted" className={className}>
+      {displayUsername}
+    </Typography>
+  );
+});
+
+
+const TypographyBio = memo<TypographyBioProps>(({ bio, size, align = "center", lineClamp = false }) => {
+  const className = useMemo(
+    () => cn(
+      bioSizeVariants({ size }),
+      align === "left" ? "text-left leading-relaxed" : "text-center leading-relaxed mb-4",
+      lineClamp && "line-clamp-3"
+    ),
+    [size, align, lineClamp]
+  );
+
+  return (
+    <Typography variant="body-small" color="muted" className={className}>
+      {bio}
+    </Typography>
+  );
+});
+
+const TypographyRole = memo<TypographyRoleProps>(({ role, size, align = "center" }) => {
+  const className = useMemo(
+    () => cn(
+      "text-left mt-1",
+      roleSizeVariants({ size }),
+      align === "center" && "text-center mb-2"
+    ),
+    [size, align]
+  );
+
+  return (
+    <Typography variant="body-small" color="muted" className={className}>
+      {role}
+    </Typography>
+  );
+});
+
+/* -------------------------------------------------------------------------- */
+/*                              USER CARD COMPONENT                          */
+/* -------------------------------------------------------------------------- */
+const UserCardContent = React.forwardRef<HTMLDivElement, UserCardProps>(
+  (
+    {
+      avatar,
+      name,
+      username,
+      role,
+      bio,
+      socialLinks = [],
+      avatarSize,
+      avatarShape = "circle",
+      variant = "default",
+      size = "md",
+      orientation = "vertical",
+      avatarBordered = false,
+      avatarStatus,
+      avatarFallback,
+      headerImage,
+      advanced = false,
+      stats,
+      verified,
+      premium,
+      badge,
+      actions,
+      backgroundPattern = "none",
+      className,
+      ...props
+    },
+    ref
+  ) => {
+    const resolvedSize = size ?? "md"
+    const resolvedAvatarSize = useMemo(
+      () => avatarSize || avatarSizeMap[resolvedSize],
+      [avatarSize, resolvedSize]
+    );
+    // Advanced design is restricted to vertical orientation only
+    const isAdvanced = advanced || stats !== undefined || verified || premium || badge || actions !== undefined;
+    const isHorizontal = orientation === "horizontal" && !isAdvanced;
+
+    // Background pattern classes
+    const backgroundPatternClass = useMemo(() => {
+      if (!isAdvanced || backgroundPattern === "none") return "";
+      switch (backgroundPattern) {
+        case "gradient":
+          return "bg-gradient-to-br from-primary/5 via-secondary/5 to-primary/5";
+        case "dots":
+          return "relative before:absolute before:inset-0 before:bg-[radial-gradient(circle_at_1px_1px,rgb(148,163,184)_1px,transparent_0)] before:bg-[length:20px_20px] before:opacity-10";
+        case "grid":
+          return "relative before:absolute before:inset-0 before:bg-[linear-gradient(rgba(148,163,184,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.1)_1px,transparent_1px)] before:bg-[length:20px_20px]";
+        default:
+          return "";
+      }
+    }, [isAdvanced, backgroundPattern]);
+
+    const initials = useMemo(() => {
+      if (avatarFallback) return avatarFallback;
+      const words = name.trim().split(/\s+/);
+      if (words.length >= 2) {
+        return `${words[0][0]}${words[1][0]}`.toUpperCase();
+      }
+      return name.slice(0, 2).toUpperCase();
+    }, [avatarFallback, name]);
+
+    // Horizontal layout - enhanced with advanced features
+    if (isHorizontal) {
       return (
-        <motion.div
+        <Card
           ref={ref}
-          className={cn(cardVariants({ variant, size, interactive }), className)}
+          variant={variant}
+          className={cn(
+            cardMaxWidthVariants({ size: resolvedSize }),
+            "w-full h-full group max-w-2xl",
+            headerImage ? "flex flex-col overflow-hidden" : "flex flex-row items-center p-6 gap-6",
+            className
+          )}
           {...props}
         >
-          {children}
-        </motion.div>
+          {/* Header Image Banner (optional) - Lazy loaded */}
+          {headerImage && (
+            <div className="relative w-full h-32 overflow-hidden">
+              <img
+                src={headerImage}
+                alt={`${name}'s header banner`}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+          )}
+
+          {/* Main Content Row */}
+          <div className={cn(
+            "flex flex-row items-center gap-6",
+            headerImage ? "p-6 pt-0" : ""
+          )}>
+            {/* Avatar on left */}
+            <div className={cn(
+              "shrink-0 relative",
+              "rounded-2xl p-2",
+              headerImage && "-mt-8 relative z-10",
+              resolvedSize === "sm" && "w-24 h-24",
+              resolvedSize === "md" && "w-32 h-32",
+              resolvedSize === "lg" && "w-40 h-40",
+              resolvedSize === "xl" && "w-48 h-48"
+            )}>
+              <div className="w-full h-full flex items-center justify-center">
+                <Avatar
+                  src={avatar}
+                  alt={`${name}'s avatar`}
+                  size={resolvedAvatarSize}
+                  shape={avatarShape}
+                  status={avatarStatus}
+                  letters={!avatar ? initials : undefined}
+                  className="transition-transform duration-300 ease-in-out group-hover:scale-110"
+                />
+              </div>
+            </div>
+
+            {/* Details in middle */}
+            <div className="flex-1 min-w-0 flex flex-col justify-center">
+              {/* Name */}
+              <TypographyName name={name} size={resolvedSize} align="left" />
+
+              {/* Username */}
+              {username && (
+                <TypographyUsername username={username} size={resolvedSize} align="left" />
+              )}
+
+              {/* Role */}
+              {role && (
+                <TypographyRole role={role} size={resolvedSize} align="left" />
+              )}
+
+              {/* Bio */}
+              {bio && (
+                <TypographyBio bio={bio} size={resolvedSize} align="left" />
+              )}
+            </div>
+
+            {/* Social Links on right */}
+            <div className="shrink-0">
+              <SocialLinks
+                socialLinks={socialLinks}
+                name={name}
+                size={resolvedSize}
+                isHorizontal={true}
+              />
+            </div>
+          </div>
+        </Card>
       );
     }
 
+    // Vertical layout - enhanced with advanced features
     return (
-      <motion.div
+      <Card
         ref={ref}
-        className={cn(cardVariants({ variant, size, interactive }), className)}
-        {...animationProps}
-        whileHover={
-          interactive !== "none" 
-            ? { 
-                scale: interactive === "tilt" ? 1.02 : undefined,
-                rotate: interactive === "tilt" ? 1 : undefined,
-                y: interactive === "lift" ? -8 : undefined 
-              }
-            : undefined
-        }
-        whileTap={
-          interactive === "press" 
-            ? { scale: 0.98, transition: { duration: 0.1 } }
-            : undefined
-        }
+        variant={variant}
+        className={cn(
+          cardMaxWidthVariants({ size: resolvedSize }),
+          "w-full h-full flex flex-col group relative overflow-hidden",
+          isAdvanced && backgroundPatternClass,
+          className
+        )}
         {...props}
       >
-        {/* Animated shimmer effect - FIXED: Moved outside children */}
-        {(variant === "premium" || variant === "glass" || variant === "gradient") && (
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 pointer-events-none"
-            initial={{ x: "-100%" }}
-            whileHover={{ 
-              x: "100%",
-              transition: { duration: 0.8, ease: "easeInOut" }
-            }}
-          />
+        {/* Header Image (for advanced mode) */}
+        {isAdvanced && headerImage && (
+          <div className="relative w-full h-64 overflow-hidden">
+            <img
+              src={headerImage}
+              alt={`${name}'s header banner`}
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+          </div>
         )}
-        
-        {/* Properly typed children */}
-        <div className="relative z-10">
-          {children}
-        </div>
-      </motion.div>
+
+        <CardHeader
+          variant="default"
+          className={cn(
+            "flex flex-col items-center text-center relative",
+            isAdvanced && headerImage && "pt-0 -mt-16"
+          )}
+        >
+          {/* Avatar with advanced styling */}
+          <div className={cn(
+            "relative",
+            avatarMarginBottomVariants({ size: resolvedSize })
+          )}>
+            {/* Gradient border wrapper */}
+            {isAdvanced && (
+              <div className={cn(
+                "absolute inset-0 rounded-full p-0.5",
+              )}>
+                <div className="w-full h-full rounded-full bg-background" />
+              </div>
+            )}
+            <Avatar
+              src={avatar}
+              alt={`${name}'s avatar`}
+              size={resolvedAvatarSize}
+              shape={avatarShape}
+              bordered={avatarBordered || (!!isAdvanced)}
+              status={avatarStatus}
+              letters={!avatar ? initials : undefined}
+              className={cn(
+                "mx-auto transition-transform duration-300 ease-in-out group-hover:scale-110 relative z-10")}/>
+            {/* Glow effect */}
+            {isAdvanced && (
+              <div className="absolute inset-0 rounded-full bg-primary/20 blur-xl -z-10 animate-pulse" />
+            )}
+          </div>
+
+          {/* Verification Badge */}
+          {(verified || premium || badge) && (
+            <div className="mb-2">
+              <VerificationBadge verified={verified} premium={premium} badge={badge} size={resolvedSize} />
+            </div>
+          )}
+        </CardHeader>
+
+        <CardContent
+          variant="default"
+          className="flex flex-col items-center text-center w-full flex-1"
+        >
+          {/* Name */}
+          <TypographyName name={name} size={resolvedSize} align="center" />
+
+          {/* Username */}
+          {username && (
+            <TypographyUsername username={username} size={resolvedSize} align="center" />
+          )}
+
+          {/* Role */}
+          {role && !username && (
+            <TypographyRole role={role} size={resolvedSize} align="center" />
+          )}
+
+          {/* Bio */}
+          {bio && (
+            <TypographyBio bio={bio} size={resolvedSize} align="center" lineClamp />
+          )}
+
+          {/* Stats */}
+          {isAdvanced && stats && stats.length > 0 && (
+            <div className="w-full my-4 px-4 py-3 rounded-lg bg-muted/50 border border-border">
+              <StatsDisplay stats={stats} size={resolvedSize} orientation="horizontal" />
+            </div>
+          )}
+
+          {/* Action Buttons */}
+          {isAdvanced && actions && actions.length > 0 && (
+            <div className="flex flex-wrap gap-2 w-full justify-center mb-4">
+              {actions.map((action, index) => {
+                const Icon = action.icon;
+                return (
+                  <Button
+                    key={index}
+                    variant={action.variant || "default"}
+                    size="sm"
+                    onClick={action.onClick}
+                  >
+                    {Icon && <Icon className="w-4 h-4" />}
+                    {action.label}
+                  </Button>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Social Links */}
+          <SocialLinks
+            socialLinks={socialLinks}
+            name={name}
+            size={resolvedSize}
+            isHorizontal={false}
+          />
+        </CardContent>
+      </Card>
     );
   }
 );
-Card.displayName = "Card";
 
-// Enhanced Card Header - FIXED: Proper typing
-const cardHeaderVariants = cva(
-  "flex flex-col space-y-1.5 relative",
-  {
-    variants: {
-      variant: {
-        default: "p-6",
-        compact: "p-4", 
-        spacious: "p-8",
-        minimal: "p-3"
-      }
-    },
-    defaultVariants: {
-      variant: "default"
-    }
-  }
-);
-
-type CardHeaderProps = React.PropsWithChildren<HTMLMotionProps<"div"> & VariantProps<typeof cardHeaderVariants>>;
-
-
-const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
-  ({ className, variant, children, ...props }, ref) => (
-    <motion.div
-      ref={ref}
-      className={cn(cardHeaderVariants({ variant }), className)}
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.1, duration: 0.5 }}
-      {...props}
-    >
-      {children}
-    </motion.div>
+export const UserCard: React.FC<UserCardProps> = (props) => {
+  return (
+    <UserCardContent {...props} />
   )
-);
-CardHeader.displayName = "CardHeader";
-
-// Enhanced Card Title - FIXED: Proper typing with React.ReactNode
-const cardTitleVariants = cva(
-  "font-semibold leading-none tracking-tight",
-  {
-    variants: {
-      size: {
-        sm: "text-lg",
-        md: "text-xl", 
-        lg: "text-2xl",
-        xl: "text-3xl"
-      },
-      gradient: {
-        none: "",
-        blue: "bg-gradient-to-r from-primary to-cyan-600 bg-clip-text text-transparent",
-        purple: "bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent",
-        green: "bg-gradient-to-r from-success to-green-600 bg-clip-text text-transparent",
-        gold: "bg-gradient-to-r from-warning to-orange-600 bg-clip-text text-transparent"
-      }
-    },
-    defaultVariants: {
-      size: "lg",
-      gradient: "none"
-    }
-  }
-);
-
-type CardTitleProps = React.PropsWithChildren<HTMLMotionProps<"h3"> & VariantProps<typeof cardTitleVariants>>;
-
-const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(
-  ({ className, size, gradient, children, ...props }, ref) => (
-    <motion.h3
-      ref={ref}
-      className={cn(cardTitleVariants({ size, gradient }), className)}
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: 0.2, duration: 0.5 }}
-      {...props}
-    >
-      {children}
-    </motion.h3>
-  )
-);
-CardTitle.displayName = "CardTitle";
-
-// Enhanced Card Description - FIXED: Proper typing
-type CardDescriptionProps = React.PropsWithChildren<HTMLMotionProps<"p"> & VariantProps<typeof cardHeaderVariants>>;
-
-const CardDescription = React.forwardRef<HTMLParagraphElement, CardDescriptionProps>(
-  ({ className, children, ...props }, ref) => (
-    <motion.p
-      ref={ref}
-      className={cn("text-sm text-muted-foreground leading-relaxed", className)}
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: 0.3, duration: 0.5 }}
-      {...props}
-    >
-      {children}
-    </motion.p>
-  )
-);
-CardDescription.displayName = "CardDescription";
-
-// Enhanced Card Content - FIXED: Proper typing
-const cardContentVariants = cva(
-  "relative",
-  {
-    variants: {
-      variant: {
-        default: "p-6 pt-0",
-        compact: "p-4 pt-0",
-        spacious: "p-8 pt-0", 
-        minimal: "p-3 pt-0",
-        flush: "p-0"
-      }
-    },
-    defaultVariants: {
-      variant: "default"
-    }
-  }
-);
-
-type CardContentProps = React.PropsWithChildren<
-  HTMLMotionProps<"div"> & VariantProps<typeof cardContentVariants>
->;
-
-const CardContent = React.forwardRef<HTMLDivElement, CardContentProps>(
-  ({ className, variant, children, ...props }, ref) => (
-    <motion.div
-      ref={ref}
-      className={cn(cardContentVariants({ variant }), className)}
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.3, duration: 0.5 }}
-      {...props}
-    >
-      {children}
-    </motion.div>
-  )
-);
-CardContent.displayName = "CardContent";
-
-// Enhanced Card Footer - FIXED: Proper typing
-const cardFooterVariants = cva(
-  "flex items-center relative",
-  {
-    variants: {
-      variant: {
-        default: "p-6 pt-0",
-        compact: "p-4 pt-0",
-        spacious: "p-8 pt-0",
-        minimal: "p-3 pt-0"
-      },
-      justify: {
-        start: "justify-start",
-        center: "justify-center", 
-        end: "justify-end",
-        between: "justify-between",
-        around: "justify-around"
-      }
-    },
-    defaultVariants: {
-      variant: "default",
-      justify: "start"
-    }
-  }
-);
-
-type CardFooterProps = React.PropsWithChildren<
-  HTMLMotionProps<"div"> & VariantProps<typeof cardFooterVariants>
->;
-
-const CardFooter = React.forwardRef<HTMLDivElement, CardFooterProps>(
-  ({ className, variant, justify, children, ...props }, ref) => (
-    <motion.div
-      ref={ref}
-      className={cn(cardFooterVariants({ variant, justify }), className)}
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.4, duration: 0.5 }}
-      {...props}
-    >
-      {children}
-    </motion.div>
-  )
-);
-CardFooter.displayName = "CardFooter";
-
-// Special Card Components - FIXED: Proper typing
-interface FeatureCardProps extends CardProps {
-  icon?: React.ReactNode;
-  }
-
-const FeatureCard = React.forwardRef<HTMLDivElement, FeatureCardProps>(
-  ({ icon, children, className, ...props }, ref) => (
-    <Card
-      ref={ref}
-      variant="premium"
-      interactive="lift"
-      animation="slideUp"
-      className={cn("text-center", className)}
-      {...props}
-    >
-      {icon && (
-        <CardHeader variant="spacious">
-          <>
-            <motion.div
-              className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mb-4"
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              transition={{ type: "spring", stiffness: 400, damping: 15 }}
-            >
-              {icon}
-            </motion.div>
-            {children}
-          </>
-        </CardHeader>
-      )}
-    </Card>
-  )
-);
-FeatureCard.displayName = "FeatureCard";
-
-// Stat Card - FIXED: Proper typing
-interface StatCardProps extends CardProps {
-  value: string | number; 
-  label: string; 
-  trend?: "up" | "down" | "neutral";
-  trendValue?: string;
 }
 
-const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
-  ({ value, label, trend, trendValue, className, ...props }, ref) => (
-    <Card
-      ref={ref}
-      variant="elevated"
-      interactive="hover"
-      animation="scaleIn"
-      className={cn("text-center", className)}
-      {...props}
-    >
-      <CardContent variant="spacious">
-        <motion.div
-          className="text-3xl font-bold text-primary mb-2"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.2, type: "spring", stiffness: 300 }}
-        >
-          {value}
-        </motion.div>
-        <div className="text-sm text-muted-foreground mb-2">{label}</div>
-        {trend && trendValue && (
-          <div className={cn(
-            "text-xs font-medium",
-            trend === "up" && "text-success",
-            trend === "down" && "text-destructive", 
-            trend === "neutral" && "text-muted-foreground"
-          )}>
-            {trend === "up" && "↗ "}
-            {trend === "down" && "↘ "}
-            {trendValue}
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  )
-);
-StatCard.displayName = "StatCard";
-
-export { 
-  Card, 
-  CardHeader, 
-  CardFooter, 
-  CardTitle, 
-  CardDescription, 
-  CardContent,
-  FeatureCard,
-  StatCard,
-  cardVariants,
-  type AnimationVariant,
-  type CardProps
-};
-
-    ```
+UserCard.displayName = "UserCard";
+  ```
   </TabItem>
 </Tabs>
 
-## Usage
-
-Import the component:
+## Basic Usage
 
 ```tsx
-import { Card } from '@mindfiredigital/ignix-ui';
-```
+import { UserCard } from '';
+import { FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
 
-### Basic Usage
-
-```tsx
-function BasicCard() {
+function BasicUserCard() {
   return (
-    <Card>
-      This is a basic card.
-    </Card>
+    <UserCard
+      name="Alex Thompson"
+      username="alexthompson"
+      role="Senior Frontend Developer"
+      bio="Passionate about building beautiful and accessible user interfaces."
+      avatar="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop"
+      socialLinks={[
+        {
+          platform: "github",
+          url: "https://github.com/alexthompson",
+          label: "GitHub",
+          icon: FaGithub,
+        },
+        {
+          platform: "linkedin",
+          url: "https://linkedin.com/in/alexthompson",
+          label: "LinkedIn",
+          icon: FaLinkedin,
+        },
+      ]}
+    />
   );
 }
 ```
 
-## Examples
+### Vertical Layout
 
-<CardsDemo />
+The default layout displays content vertically with the avatar centered at the top.
 
-## Feature Card
+```tsx
+<UserCard
+  name="Sarah Johnson"
+  role="UI/UX Designer"
+  bio="Creating beautiful user experiences."
+  avatar="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop"
+  orientation="vertical"
+/>
+```
 
-<FeatureCardDemo />
+### Horizontal Layout
 
-## Stat Card
+Display the profile card horizontally with avatar on the left and details on the right.
 
-<StatCardDemo />
+```tsx
+<UserCard
+  name="Michael Chen"
+  role="Full Stack Developer"
+  bio="Building modern web applications."
+  avatar="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d"
+  orientation="horizontal"
+/>
+```
 
+### Advanced Design
+
+Enable advanced features including stats, verification badges, and action buttons. **Note:** Advanced design is restricted to vertical orientation only.
+
+```tsx
+import { Users, MessageCircle, Heart, TrendingUp } from 'lucide-react';
+
+<UserCard
+  advanced
+  name="Emma Davis"
+  username="emmadavis"
+  role="Product Manager"
+  bio="Leading product strategy and innovation."
+  avatar="https://images.unsplash.com/photo-1438761681033-6461ffad8d80"
+  verified={true}
+  stats={[
+    { label: "Projects", value: 124, icon: TrendingUp },
+    { label: "Followers", value: "12.5K", icon: Users },
+    { label: "Likes", value: "8.9K", icon: Heart },
+  ]}
+  actions={[
+    { label: "Follow", variant: "default", icon: Users },
+    { label: "Message", variant: "outline", icon: MessageCircle },
+  ]}
+  backgroundPattern="gradient"
+/>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `name` | `string` | **required** | User's full name |
+| `avatar` | `string` | - | Avatar image URL |
+| `username` | `string` | - | User's username/handle (e.g., "@username") |
+| `role` | `string` | - | User's role or job title |
+| `bio` | `string` | - | User's bio or description |
+| `socialLinks` | `SocialLink[]` | `[]` | Array of social media links |
+| `orientation` | `"vertical" \| "horizontal"` | `"vertical"` | Card layout orientation |
+| `variant` | `"default" \| "elevated" \| "glass" \| "outline" \| "minimal"` | `"default"` | Card variant style |
+| `size` | `"sm" \| "md" \| "lg" \| "xl"` | `"md"` | Card size |
+| `avatarSize` | `AvatarProps["size"]` | - | Avatar size (overrides size-based default) |
+| `avatarShape` | `'circle' \| 'square' \| 'rounded' \| 'decagon' \| 'hexagon' \| 'pentagon' \| 'star' \| 'diamond' \| 'triangle' \| 'triangle-down' \| 'parallelogram' \| 'rhombus' \| 'cross' \| 'octagon' \| 'ellipse' \| 'egg' \| 'trapezoid'` | `'circle'` | Shape of the avatar |
+| `avatarBordered` | `boolean` | `false` | Show avatar border |
+| `avatarStatus` | `"online" \| "offline" \| "away" \| "busy"` | - | Avatar status indicator |
+| `avatarFallback` | `string` | - | Fallback text for avatar (initials) |
+| `headerImage` | `string` | - | Header/banner image URL (for horizontal layout) |
+| `advanced` | `boolean` | `false` | Enable advanced design features (vertical only) |
+| `stats` | `StatItem[]` | - | Stats/metrics to display (advanced mode) |
+| `verified` | `boolean` | `false` | Show verification badge (advanced mode) |
+| `premium` | `boolean` | `false` | Show premium badge (advanced mode) |
+| `badge` | `string` | - | Custom badge text (advanced mode) |
+| `actions` | `ActionButton[]` | - | Action buttons (advanced mode) |
+| `backgroundPattern` | `"gradient" \| "dots" \| "grid" \| "none"` | `"none"` | Background pattern (advanced mode) |
+
+### SocialLink Interface
+
+```tsx
+interface SocialLink {
+  url: string;
+  icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
+  label: string;
+  platform?: string;
+}
+```
+
+### StatItem Interface
+
+```tsx
+interface StatItem {
+  label: string;
+  value: number | string;
+  icon?: React.ComponentType<{ className?: string }>;
+}
+```
+
+### ActionButton Interface
+
+```tsx
+interface ActionButton {
+  label: string;
+  variant?: "default" | "outline" | "ghost";
+  onClick?: () => void;
+  icon?: React.ComponentType<{ className?: string }>;
+}
+```
+</TabItem>
+</Tabs>
