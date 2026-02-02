@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Hero, HeroContent, HeroHeading, HeroSubheading, HeroActions, HeroImage, HeroBadge, HeroFeatures, HeroGlassCard, HeroStats } from '@site/src/components/UI/hero';
+import { Hero, HeroContent, HeroHeading, HeroSubheading, HeroActions, HeroImage, HeroVideo, HeroBadge, HeroFeatures, HeroGlassCard, HeroStats } from '@site/src/components/UI/hero';
 import VariantSelector from './VariantSelector';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -441,5 +441,110 @@ const HeroSplitDemo = () => {
   );
 };
 
-export { HeroDemo, HeroSplitDemo };
+const HeroVideoDemo = () => {
+  const codeParts: string[] = [];
+  
+  codeParts.push(`<Hero 
+  align="center" 
+  animationType="fadeInUp"
+>`);
+    codeParts.push(`  <HeroVideo
+    src="https://assets.mixkit.co/videos/513/513-720.mp4"
+    overlayOpacity={50}
+    showPlayPause
+    fallbackImage="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1600&h=900&fit=crop&q=90"
+  />`);  
+  codeParts.push(`  <HeroContent>`);
+    codeParts.push(`    <HeroHeading>Experience the Future in Motion</HeroHeading>
+    <HeroSubheading>
+      Watch your ideas come to life with stunning video backgrounds. 
+      Create immersive experiences that captivate and inspire your audience.
+    </HeroSubheading>
+    <HeroActions>
+      <ButtonWithIcon 
+        variant="outline" 
+        size="lg" 
+        iconPosition="right"
+        icon={<Rocket />}
+        className="px-8 py-6 rounded-lg border-2 border-white/30 text-white hover:bg-white/10 hover:border-white/50 transition-all duration-300 hover:scale-105 backdrop-blur-sm"
+      >
+        Get Started
+      </ButtonWithIcon>
+      <ButtonWithIcon 
+        variant="outline" 
+        size="lg" 
+        iconPosition="right"
+        icon={<ArrowUpRight />}
+        className="px-8 py-6 rounded-lg border-2 border-white/30 text-white hover:bg-white/10 hover:border-white/50 transition-all duration-300 hover:scale-105 backdrop-blur-sm"
+      >
+        Learn More
+      </ButtonWithIcon>
+    </HeroActions>`);
+  codeParts.push(`  </HeroContent>
+</Hero>`);
+  
+  const codeString = codeParts.join('\n');
+
+  return (
+    <div className="space-y-1">
+      <Tabs>
+        <TabItem value="preview" label="Preview">
+          <div className="border border-gray-300 p-4 rounded-lg overflow-hidden mt-4">
+            <Hero 
+              align="center" 
+              animationType="fadeInUp"
+            >
+              <HeroVideo 
+                src="https://assets.mixkit.co/videos/513/513-720.mp4"
+                overlayOpacity={50}
+                showPlayPause
+                fallbackImage="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1600&h=900&fit=crop&q=90"
+              />
+              <HeroContent>
+                <HeroHeading>
+                  Experience the Future in Motion
+                </HeroHeading>
+
+                <HeroSubheading>
+                  Watch your ideas come to life with stunning video backgrounds. 
+                  Create immersive experiences that captivate and inspire your audience.
+                </HeroSubheading>
+
+                <HeroActions className="mt-8">
+                  <ButtonWithIcon 
+                    variant="outline" 
+                    size="lg" 
+                    iconPosition="right"
+                    icon={<Rocket />}
+                    className="px-8 py-6 rounded-lg border-2 border-white/30 text-white hover:bg-white/10 hover:border-white/50 transition-all duration-300 hover:scale-105 backdrop-blur-sm"
+                  >
+                    Get Started
+                  </ButtonWithIcon>
+                  <ButtonWithIcon 
+                    variant="outline" 
+                    size="lg" 
+                    iconPosition="right"
+                    icon={<ArrowUpRight />}
+                    className="px-8 py-6 rounded-lg border-2 border-white/30 text-white hover:bg-white/10 hover:border-white/50 transition-all duration-300 hover:scale-105 backdrop-blur-sm"
+                  >
+                    Learn More
+                  </ButtonWithIcon>
+                </HeroActions>
+              </HeroContent>
+            </Hero>
+          </div>
+        </TabItem>
+        <TabItem value="code" label="Code">
+          <div className="mt-4">
+            <CodeBlock language="tsx" className="text-sm">
+              {codeString}
+            </CodeBlock>
+          </div>
+        </TabItem>
+      </Tabs>
+    </div>
+  );
+};
+
+export { HeroDemo, HeroSplitDemo, HeroVideoDemo };
 
