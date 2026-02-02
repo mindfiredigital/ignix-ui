@@ -888,7 +888,7 @@ const useFileUpload = ({
                     try {
                         preview = await createImagePreview(file);
                     } catch (error) {
-                        console.error('Failed to create preview:', error);
+                        // console.error('Failed to create preview:', error);
                     }
                 }
 

@@ -45,14 +45,13 @@ const ProfilePageDemo = () => {
 
     // const [isDarkMode, setIsDarkMode] = useState(false);
 
-    const handleSave = async (data: any) => {
-        console.log('Saving profile:', data);
+    const handleSave = async (_data: any) => {
         // Simulate API call
         return new Promise(resolve => setTimeout(resolve, 1500));
     };
 
     const handleCancel = () => {
-        console.log('Cancelled editing');
+        // console.log('Cancelled editing');
     };
 
     const codeString = `

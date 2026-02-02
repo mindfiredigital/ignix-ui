@@ -36,7 +36,7 @@ import { Checkbox } from '../../../../components/checkbox';
 import { AnimatedInput } from '../../../../components/input';
 
 // ==================== TYPES ====================
-type ApiKeyScope =
+export type ApiKeyScope =
     | "read:users"
     | "write:users"
     | "read:data"
@@ -84,7 +84,7 @@ interface Notification {
     duration?: number;
 }
 
-interface ApiKey {
+export interface ApiKey {
     id: string;
     name: string;
     keyPrefix: string;

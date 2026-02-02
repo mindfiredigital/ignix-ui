@@ -6,7 +6,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Users, Zap, Globe, BarChart, Award, Shield } from "lucide-react";
 
 const meta: Meta<typeof SignIn> = {
-    title: "Forms/SignIn",
+    title: "Templates/Pages/Authentication/SignIn",
     component: SignIn,
     parameters: {
         layout: "fullscreen",
@@ -455,20 +455,19 @@ export const WithErrorState: Story = {
 export const InteractiveSocialLogin: Story = {
     name: "Interactive Social Login",
     render: function Render(args) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [socialLoading, setSocialLoading] = React.useState<SocialProvider | null>(null);
 
         const handleSocialLogin = (provider: SocialProvider) => {
             setSocialLoading(provider);
             setTimeout(() => {
                 setSocialLoading(null);
-                console.log(`${provider} sign-in completed`);
             }, 2000);
         };
 
         return (
             <SignIn
                 {...args}
+                loading={socialLoading === 'google' || socialLoading === 'github' || socialLoading === 'microsoft'}
                 onGoogleSignIn={() => handleSocialLogin('google')}
                 onGitHubSignIn={() => handleSocialLogin('github')}
                 onMicrosoftSignIn={() => handleSocialLogin('microsoft')}

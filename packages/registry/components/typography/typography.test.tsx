@@ -199,9 +199,6 @@ describe('Typography', () => {
             render(<Typography variant="link">Click me</Typography>);
             const link = screen.getByText('Click me');
 
-            // Debug: log the actual classes to see what's being applied
-            console.log('Link variant classes:', link.className);
-
             // Check for the specific link variant classes that should be present
             expect(link).toHaveClass('underline-offset-4', 'hover:underline', 'cursor-pointer');
 
