@@ -30,13 +30,13 @@ import {
 } from 'lucide-react';
 import { cva } from "class-variance-authority";
 import { cn } from '@site/src/utils/cn';
-import { Button } from '../button';
-import { Typography } from '../typography';
-import { Checkbox } from '../checkbox';
-import { AnimatedInput } from '../input';
+import { Button } from '@site/src/components/UI/button';
+import { Typography } from '@site/src/components/UI/typography';
+import { Checkbox } from '@site/src/components/UI/checkbox';
+import { AnimatedInput } from '@site/src/components/UI/input';
 
 // ==================== TYPES ====================
-type ApiKeyScope =
+export type ApiKeyScope =
     | "read:users"
     | "write:users"
     | "read:data"
@@ -84,7 +84,7 @@ interface Notification {
     duration?: number;
 }
 
-interface ApiKey {
+export interface ApiKey {
     id: string;
     name: string;
     keyPrefix: string;
