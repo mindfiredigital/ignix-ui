@@ -4,14 +4,15 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
+import { Play, Pause } from "lucide-react";
 import { cn } from "../../../utils/cn";
 import { Typography } from "@ignix-ui/typography";
 import { Container } from "@ignix-ui/container";
+import { Button } from "@ignix-ui/button";
 
 /* -------------------------------------------------------------------------- */
 /*                              VARIANT STYLES                                */
 /* -------------------------------------------------------------------------- */
-
 const heroVariants = cva(
   "relative w-full overflow-hidden flex items-center justify-center min-h-[500px] md:min-h-[600px] lg:min-h-[700px]",
   {
@@ -42,10 +43,45 @@ const contentVariants = cva("relative z-10 w-full", {
   },
 });
 
+const overlayOpacityVariants = cva("absolute inset-0 z-10", {
+  variants: {
+    opacity: {
+      0: "bg-transparent",
+      10: "bg-black/10",
+      20: "bg-black/20",
+      30: "bg-black/30",
+      40: "bg-black/40",
+      50: "bg-black/50",
+      60: "bg-black/60",
+      70: "bg-black/70",
+      80: "bg-black/80",
+      90: "bg-black/90",
+      100: "bg-black",
+    },
+  },
+  defaultVariants: {
+    opacity: 40,
+  },
+});
+
+// Helper function to get overlay opacity variant from numeric value
+const getOverlayOpacityVariant = (opacity: number): 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100 => {
+  if (opacity === 0) return 0;
+  if (opacity <= 10) return 10;
+  if (opacity <= 20) return 20;
+  if (opacity <= 30) return 30;
+  if (opacity <= 40) return 40;
+  if (opacity <= 50) return 50;
+  if (opacity <= 60) return 60;
+  if (opacity <= 70) return 70;
+  if (opacity <= 80) return 80;
+  if (opacity <= 90) return 90;
+  return 100;
+};
+
 /* -------------------------------------------------------------------------- */
 /*                              ANIMATION VARIANTS                            */
 /* -------------------------------------------------------------------------- */
-
 const heroAnimations = {
   none: {
     initial: { opacity: 0 },
@@ -138,6 +174,9 @@ export interface HeroContextValue {
   textColor: string;
   subheadingColor: string;
   split?: boolean;
+  videoRef?: React.RefObject<HTMLVideoElement | null>;
+  isPlaying?: boolean;
+  onPlayPause?: () => void;
   getAnimationProps: (
     delay?: number,
   ) => Pick<AnimationProps, "initial" | "animate" | "transition">;
@@ -373,29 +412,6 @@ export const HeroImage = React.forwardRef<HTMLImageElement, HeroImageProps>(
     const isSplitLayout = split;
 
     if (position === "background") {
-      const overlayOpacityClass =
-        overlayOpacity === 0
-          ? "bg-transparent"
-          : overlayOpacity <= 10
-            ? "bg-black/10"
-            : overlayOpacity <= 20
-              ? "bg-black/20"
-              : overlayOpacity <= 30
-                ? "bg-black/30"
-                : overlayOpacity <= 40
-                  ? "bg-black/40"
-                  : overlayOpacity <= 50
-                    ? "bg-black/50"
-                    : overlayOpacity <= 60
-                      ? "bg-black/60"
-                      : overlayOpacity <= 70
-                        ? "bg-black/70"
-                        : overlayOpacity <= 80
-                          ? "bg-black/80"
-                          : overlayOpacity <= 90
-                            ? "bg-black/90"
-                            : "bg-black";
-
       return (
         <>
           <div
@@ -404,7 +420,7 @@ export const HeroImage = React.forwardRef<HTMLImageElement, HeroImageProps>(
               backgroundImage: `url(${src})`,
             }}
           />
-          <div className={cn("absolute inset-0 z-1", overlayOpacityClass)} />
+          <div className={overlayOpacityVariants({ opacity: getOverlayOpacityVariant(overlayOpacity) })} />
         </>
       );
     }
@@ -445,6 +461,282 @@ export const HeroImage = React.forwardRef<HTMLImageElement, HeroImageProps>(
   },
 );
 HeroImage.displayName = "HeroImage";
+
+export interface HeroVideoProps {
+  src: string;
+  overlayOpacity?: number;
+  showPlayPause?: boolean;
+  fallbackImage?: string;
+  className?: string;
+}
+
+export const HeroVideo = React.forwardRef<HTMLVideoElement, HeroVideoProps>(
+  (
+    {
+      src,
+      overlayOpacity = 50,
+      showPlayPause: showPlayPauseProp,
+      fallbackImage,
+      className,
+      ...props
+    },
+    ref,
+  ) => {
+    const { videoRef, isPlaying, onPlayPause } = useHeroContext();
+    const shouldShowPlayPause = showPlayPauseProp !== undefined ? showPlayPauseProp : false;
+    const internalRef = React.useRef<HTMLVideoElement>(null);
+    const imageRef = React.useRef<HTMLImageElement>(null);
+    const [isVideoPlaying, setIsVideoPlaying] = React.useState(true);
+    const [hasError, setHasError] = React.useState(false);
+    const [isVideoReady, setIsVideoReady] = React.useState(false);
+    const [videoSupported, setVideoSupported] = React.useState(true);
+    const [isGif, setIsGif] = React.useState(false);
+    const [gifSrc, setGifSrc] = React.useState(src);
+
+    // Use the context videoRef if available, otherwise use internal ref
+    const videoElementRef = videoRef || internalRef;
+
+    // Detect if source is a GIF or determine video type
+    React.useEffect(() => {
+      const srcLower = src.toLowerCase();
+      const isGifFile = srcLower.endsWith('.gif') || srcLower.includes('gif');
+      setIsGif(isGifFile);
+      
+      if (!isGifFile) {
+        // Check video support
+        const video = document.createElement('video');
+        const isSupported = !!video.canPlayType && (
+          video.canPlayType('video/mp4') !== '' ||
+          video.canPlayType('video/webm') !== '' ||
+          video.canPlayType('video/ogg') !== ''
+        );
+        setVideoSupported(isSupported);
+      }
+    }, [src]);
+
+    // Ensure overlay opacity is at least 40 for text readability, but allow override
+    const effectiveOverlayOpacity = overlayOpacity < 40 ? 40 : overlayOpacity;
+
+    const handlePlayPause = React.useCallback(() => {
+      if (isGif) {
+        // For GIFs, toggle by removing/adding query param to restart animation
+        if (isVideoPlaying) {
+          // Pause GIF by removing the src (stops animation)
+          setGifSrc('');
+          setIsVideoPlaying(false);
+        } else {
+          // Resume GIF by restoring the src
+          setGifSrc(src);
+          setIsVideoPlaying(true);
+        }
+      } else {
+        const videoEl = videoElementRef.current;
+        if (videoEl) {
+          if (isVideoPlaying) {
+            videoEl.pause();
+            setIsVideoPlaying(false);
+          } else {
+            videoEl.play()
+              .then(() => {
+                setIsVideoPlaying(true);
+              })
+              .catch((error) => {
+                console.error("Error playing video:", error);
+              });
+          }
+        }
+      }
+      if (onPlayPause) {
+        onPlayPause();
+      }
+    }, [isVideoPlaying, onPlayPause, videoElementRef, isGif, src]);
+
+    const currentIsPlaying = isPlaying !== undefined ? isPlaying : isVideoPlaying;
+
+    // Handle ref assignment
+    const setRefs = React.useCallback((node: HTMLVideoElement | null) => {
+      // Set internal ref
+      internalRef.current = node;
+      
+      // Set context ref if available
+      if (videoRef && 'current' in videoRef) {
+        (videoRef as React.MutableRefObject<HTMLVideoElement | null>).current = node;
+      }
+      
+      // Set forwarded ref
+      if (typeof ref === 'function') {
+        ref(node);
+      } else if (ref && 'current' in ref) {
+        (ref as React.MutableRefObject<HTMLVideoElement | null>).current = node;
+      }
+    }, [ref, videoRef]);
+
+    // Play video when it's ready and should be playing
+    const playVideo = React.useCallback(() => {
+      const videoEl = videoElementRef.current;
+      if (videoEl && isVideoReady && currentIsPlaying) {
+        const playPromise = videoEl.play();
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              setIsVideoPlaying(true);
+            })
+            .catch((error) => {
+              console.error("Autoplay prevented:", error);
+              setIsVideoPlaying(false);
+            });
+        }
+      }
+    }, [isVideoReady, currentIsPlaying, videoElementRef]);
+
+    // Try to play when video becomes ready
+    React.useEffect(() => {
+      playVideo();
+    }, [playVideo]);
+
+    // Determine MIME type based on file extension
+    const getVideoType = (url: string): string => {
+      const urlLower = url.toLowerCase();
+      if (urlLower.endsWith('.webm')) return 'video/webm';
+      if (urlLower.endsWith('.ogg') || urlLower.endsWith('.ogv')) return 'video/ogg';
+      if (urlLower.endsWith('.mov')) return 'video/quicktime';
+      return 'video/mp4'; // default
+    };
+
+    // Show fallback image if video is not supported or has error
+    const showFallback = (!isGif && !videoSupported) || hasError;
+
+    return (
+      <>
+        {showFallback && fallbackImage ? (
+          <>
+            <div
+              className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+              style={{
+                backgroundImage: `url(${fallbackImage})`,
+              }}
+            />
+            <div className={overlayOpacityVariants({ opacity: getOverlayOpacityVariant(effectiveOverlayOpacity) })} />
+          </>
+        ) : isGif ? (
+          <>
+            {/* Render GIF as image */}
+            <img
+              ref={imageRef}
+              src={gifSrc}
+              alt="Animated background"
+              className={cn("absolute inset-0 z-0 w-full h-full object-cover", className)}
+              onError={(e) => {
+                console.error("GIF error:", e);
+                setHasError(true);
+              }}
+              onLoad={() => {
+                setHasError(false);
+                setIsVideoReady(true);
+              }}
+              {...(props as React.ImgHTMLAttributes<HTMLImageElement>)}
+            />
+            {/* Fallback image shown behind GIF */}
+            {fallbackImage && (
+              <div
+                className="absolute inset-0 z-[-1] bg-cover bg-center bg-no-repeat"
+                style={{
+                  backgroundImage: `url(${fallbackImage})`,
+                }}
+              />
+            )}
+          </>
+        ) : (
+          <>
+            {/* Render video */}
+            <video
+              ref={setRefs}
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="auto"
+              className={cn("absolute inset-0 z-0 w-full h-full object-cover", className)}
+              onPlay={() => {
+                setIsVideoPlaying(true);
+              }}
+              onPause={() => {
+                setIsVideoPlaying(false);
+              }}
+              onCanPlay={() => {
+                setIsVideoReady(true);
+                const videoEl = videoElementRef.current;
+                if (videoEl && currentIsPlaying) {
+                  videoEl.play().catch(() => {
+                    setIsVideoPlaying(false);
+                  });
+                }
+              }}
+              onLoadedData={() => {
+                setHasError(false);
+                setIsVideoReady(true);
+                const videoEl = videoElementRef.current;
+                if (videoEl && currentIsPlaying) {
+                  videoEl.play().catch(() => {
+                    setIsVideoPlaying(false);
+                  });
+                }
+              }}
+              onLoadedMetadata={() => {
+                setIsVideoReady(true);
+                const videoEl = videoElementRef.current;
+                if (videoEl && currentIsPlaying) {
+                  videoEl.play().catch(() => {
+                    setIsVideoPlaying(false);
+                  });
+                }
+              }}
+              onError={(e) => {
+                console.error("Video error:", e);
+                setHasError(true);
+                setIsVideoReady(false);
+              }}
+              {...props}
+            >
+              <source src={src} type={getVideoType(src)} />
+              <source src={src} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+            {/* Fallback image shown behind video for browsers that don't support video */}
+            {fallbackImage && (
+              <div
+                className="absolute inset-0 z-[-1] bg-cover bg-center bg-no-repeat"
+                style={{
+                  backgroundImage: `url(${fallbackImage})`,
+                }}
+              />
+            )}
+          </>
+        )}
+        {/* Overlay for text readability - always shown */}
+        <div className={overlayOpacityVariants({ opacity: getOverlayOpacityVariant(effectiveOverlayOpacity) })} />
+        {/* Play/Pause button - show for both video and GIF */}
+        {shouldShowPlayPause && !showFallback && (
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20">
+            <Button
+              variant="ghost"
+              size="lg"
+              onClick={handlePlayPause}
+              className="bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 text-white rounded-full p-4 shadow-lg"
+            >
+              {currentIsPlaying ? (
+                <Pause className="w-7 h-7" />
+              ) : (
+                <Play className="w-7 h-7" />
+              )}
+            </Button>
+          </div>
+        )}
+      </>
+    );
+  },
+);
+HeroVideo.displayName = "HeroVideo";
 
 export interface HeroActionsProps {
   children: React.ReactNode;
@@ -716,6 +1008,21 @@ export const Hero: React.FC<HeroProps> = ({
   const textColor = isLightVariant ? "text-gray-900" : "text-white";
   const subheadingColor = isLightVariant ? "text-gray-700" : "text-gray-100";
 
+  // Video play/pause state
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = React.useState(true);
+
+  const handlePlayPause = React.useCallback(() => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  }, [isPlaying]);
+
   // Get animation props based on animationType
   const getAnimationProps = React.useCallback(
     (delay = 0): Pick<AnimationProps, "initial" | "animate" | "transition"> => {
@@ -740,6 +1047,9 @@ export const Hero: React.FC<HeroProps> = ({
       textColor,
       subheadingColor,
       split,
+      videoRef,
+      isPlaying,
+      onPlayPause: handlePlayPause,
       getAnimationProps,
     }),
     [
@@ -750,12 +1060,15 @@ export const Hero: React.FC<HeroProps> = ({
       textColor,
       subheadingColor,
       split,
+      videoRef,
+      isPlaying,
+      handlePlayPause,
       getAnimationProps,
     ],
   );
 
-  // Separate background images from other children
   const backgroundImages: React.ReactNode[] = [];
+  const backgroundVideos: React.ReactNode[] = [];
   const otherChildren: React.ReactNode[] = [];
 
   function isHeroImage(
@@ -764,9 +1077,17 @@ export const Hero: React.FC<HeroProps> = ({
     return React.isValidElement(child) && child.type === HeroImage;
   }
 
+  function isHeroVideo(
+    child: React.ReactNode,
+  ): child is React.ReactElement<HeroVideoProps> {
+    return React.isValidElement(child) && child.type === HeroVideo;
+  }
+
   React.Children.forEach(children, (child) => {
     if (isHeroImage(child)) {
       backgroundImages.push(child);
+    } else if (isHeroVideo(child)) {
+      backgroundVideos.push(child);
     } else {
       otherChildren.push(child);
     }
@@ -786,6 +1107,8 @@ export const Hero: React.FC<HeroProps> = ({
       >
         {/* Render static background images */}
         {backgroundImages}
+        {/* Render background videos */}
+        {backgroundVideos}
 
         <Container
           size={containerSize}
