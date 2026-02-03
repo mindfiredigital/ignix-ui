@@ -430,7 +430,7 @@
       }
     },
     "advanced-table": {
-      "name": "AdvancedTable",
+      "name": "Advanced-Table",
       "description": "A configurable data-table component with sorting, filtering, and pagination. Data and columns are required props; behavior is controlled via flags. Supports numeric column sorting, real-time filtering with highlighted matches, and customizable pagination.",
       "dependencies": ["lucide-react"],
       "componentDependencies": ["button", "input"],
