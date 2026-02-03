@@ -1,6 +1,6 @@
 ---
 sidebar_position: 17
-title: Advanced Table
+title: Table
 description: A configurable data table with sorting, filtering, and pagination. Data and columns are required; behavior is controlled via props.
 ---
 
@@ -9,11 +9,11 @@ import TabItem from '@theme/TabItem';
 import AdvancedTableDemo from '@site/src/components/Demo/AdvancedTableDemo';
 import { AdvancedTableBaseDemo, AdvancedTableSortableDemo, AdvancedTableFilterableDemo, AdvancedTablePaginatedDemo, AdvancedTableFullDemo } from '@site/src/components/Demo/AdvancedTableDemo';
 
-## Overview
 
-The **Advanced Table** component displays tabular data with optional sorting, filtering, and pagination. You pass **rows** and **columns** as required props; each column can be marked sortable or not. Numeric columns (e.g. ID, marks) are sorted numerically; others are sorted as strings. Filtering is real-time and highlights matching text.
 
-## Preview
+The **Table** component displays tabular data with optional sorting, filtering, and pagination. You pass **rows** and **columns** as required props; each column can be marked sortable or not. Numeric columns (e.g. ID, marks) are sorted numerically; others are sorted as strings. Filtering is real-time and highlights matching text. This compnent is named as **AdvancedTable**.
+
+
 
 <AdvancedTableDemo />
 
@@ -24,9 +24,6 @@ The **Advanced Table** component displays tabular data with optional sorting, fi
     ```bash
     ignix add component advanced-table
     ```
-  </TabItem>
-  <TabItem value="manual" label="MANUAL">
-    Add the component from the registry or copy the implementation from the docs app `@site/src/components/UI/advanced-table`.
   </TabItem>
 </Tabs>
 

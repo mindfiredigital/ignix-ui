@@ -534,16 +534,19 @@ export const AdvancedTable: React.FC<AdvancedTableProps> = ({
       const column = columns.find((col) => col.key === columnKey);
       if (!column || column.sortable === false) return;
       // Don't reset page when sorting - we're sorting only the current page
-      setSortKey((prevKey) => {
-        if (prevKey !== columnKey) {
-          setSortDirection("asc");
-          return columnKey;
-        }
-        setSortDirection((prevDir) => (prevDir === "asc" ? "desc" : "asc"));
-        return prevKey;
-      });
+      // 
+      // If clicking a new column, sort ascending
+      if (sortKey !== columnKey) {
+        setSortKey(columnKey);
+        setSortDirection("asc");
+      } else {
+        // If clicking the same column, toggle direction
+        const newDirection = sortDirection === "asc" ? "desc" : "asc";
+        setSortDirection(newDirection);
+        
+      }
     },
-    [enableSorting, columns]
+    [enableSorting, columns,sortKey, sortDirection]
   );
 
   const handlePageChange = useCallback(
