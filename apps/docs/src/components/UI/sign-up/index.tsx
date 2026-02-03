@@ -7,9 +7,9 @@
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "../../../../../utils/cn";
-import { Button } from "../../../../components/button";
-import { AnimatedInput } from "../../../../components/input";
+import { cn } from "../../../utils/cn";
+import { Button } from "../button";
+import { AnimatedInput } from "..//input";
 import {
     Eye,
     EyeOff,

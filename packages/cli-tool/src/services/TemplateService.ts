@@ -53,7 +53,7 @@ export class TemplateService {
       // 3. Download template layout files
       spinner.text = `Downloading template layout files...`;
 
-      const templateDir = path.resolve(config.templateLayoutDir, name.toLowerCase());
+      const templateDir = path.resolve(config.templateDir, name.toLowerCase());
       await fs.ensureDir(templateDir);
 
       const baseUrl = config.registryUrl.substring(0, config.registryUrl.lastIndexOf('/'));

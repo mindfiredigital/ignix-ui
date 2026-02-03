@@ -72,8 +72,6 @@
         "components/breadcrumbs",
         "components/button",
         "components/card",
-        "components/image-card",
-        "components/user-card",
         "components/checkbox",
         "components/date-picker",
         "components/dialog-box",
@@ -156,7 +154,8 @@
           "label": "Sections",
           "items": [
             "templates/sections/content/pricing-grid",
-            "templates/sections/content/comparison-table"
+            "templates/sections/content/comparison-table",
+            "templates/sections/content/hero"
           ]
         }
       ]

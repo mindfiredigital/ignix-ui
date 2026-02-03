@@ -525,7 +525,7 @@
       "dependencies": ["class-variance-authority"],
       "files": {
         "main": {
-          "path": "components/layouts/container/index.tsx",
+          "path": "components/container/index.tsx",
           "type": "component"
         }
       }
@@ -696,21 +696,6 @@
         }
       }
     },
-    "threeColumnSidebar": {
-      "name": "ThreeColumnSidebar",
-      "description": "A flexible layout component with header, sidebar that supports app dashboard with responsive design.",
-      "dependencies": [
-        "framer-motion",
-        "lucide-react",
-        "class-variance-authority"
-      ],
-      "files": {
-        "main": {
-          "path": "components/threeColumnSidebar/index.tsx",
-          "type": "template"
-        }
-      }
-    },
     "threecolumnsidebarlayout": {
       "name": "ThreeColumnSidebarLayout",
       "description": "A flexible layout component with header, sidebar that supports app dashboard with responsive design.",
@@ -718,9 +703,6 @@
         "framer-motion",
         "lucide-react",
         "class-variance-authority"
-      ],
-      "componentDependencies": [
-        "threeColumnSidebar"
       ],
       "files": {
         "main": {
@@ -781,7 +763,7 @@
       ],
       "files": {
         "main": {
-          "path": "templates/pages/signup/index.tsx",
+          "path": "templates/pages/sign-up/index.tsx",
           "type": "template"
         }
       }
@@ -1111,6 +1093,25 @@
         "lucide-react", 
         "class-variance-authority",
         "framer-motion"
+      ],
+      "files": {
+        "main": {
+          "path": "components/rating/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "hero":{
+      "name": "Hero",
+      "description": "A flexible hero component with animations, custom icons, emojis, and multiple interaction modes.",
+      "dependencies": [
+        "lucide-react", 
+        "class-variance-authority",
+        "framer-motion"
+      ],
+      "componentDependencies": [
+        "container",
+        "typography"
       ],
       "files": {
         "main": {
