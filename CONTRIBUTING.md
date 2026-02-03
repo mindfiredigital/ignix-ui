@@ -189,6 +189,35 @@ We require tests for all new features to maintain code quality.
 - Fill out the Pull Request (PR) template with all the required information.
 - Click "Create pull request" to submit it for review.
 
+- ## Pull Request Scope Guidelines
+
+To keep reviews fast, focused, and fair for everyone, we enforce **small and scoped pull requests**.
+
+Please follow these rules strictly:
+
+- **One component per PR**
+
+  - A PR must introduce or modify **only one component**.
+  - Do not bundle multiple components into a single PR.
+
+- **One fix per PR**
+
+  - Bug-fix PRs must address **only one bug or issue**.
+  - Even if fixes are related, they must be split into separate PRs.
+
+- **Minimal file changes**
+  - Avoid touching unrelated files (formatting, refactors, renames, or cleanups).
+  - If a change is not required for your component or fix, it does not belong in the PR.
+
+PRs that modify multiple components, bundle multiple fixes, or include unrelated changes **will be requested to split or may be closed without review**.
+
+This rule helps maintain:
+
+- Faster reviews
+- Clear change history
+- Easier rollbacks
+- Higher-quality discussions
+
 ---
 
 ## Code Review Process

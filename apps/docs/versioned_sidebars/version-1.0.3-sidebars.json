@@ -72,8 +72,6 @@
         "components/breadcrumbs",
         "components/button",
         "components/card",
-        "components/image-card",
-        "components/user-card",
         "components/checkbox",
         "components/date-picker",
         "components/dialog-box",
@@ -82,6 +80,8 @@
         "components/file-upload",
         "components/input",
         "components/list-basic",
+        "components/list-with-actions",
+        "components/list-with-avatars",
         "components/navbar",
         "components/radio",
         "components/rating",
@@ -155,7 +155,8 @@
           "label": "Sections",
           "items": [
             "templates/sections/content/pricing-grid",
-            "templates/sections/content/comparison-table"
+            "templates/sections/content/comparison-table",
+            "templates/sections/content/hero"
           ]
         }
       ]
