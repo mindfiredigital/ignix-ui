@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { SignUp } from '@site/src/components/UI/signup';
-import { type SignUpFormData } from '@site/src/components/UI/signup/types';
+import { SignUp, type SignUpFormData } from '@site/src/components/UI/sign-up';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import CodeBlock from '@theme/CodeBlock';

@@ -1,387 +1,381 @@
 import * as React from "react";
-import { AnimatePresence, motion, type PanInfo } from "framer-motion";
-import { cva, type VariantProps } from "class-variance-authority";
+import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "../../../../utils/cn";
-import { SidebarProvider, useSidebar } from "../../../components/threeColumSidebar";
+import { SidebarProvider, useSidebar } from "../../../components/sidebar";
 import { Menu, X } from "lucide-react";
 
+/**
+ * Represents a navigation or TOC section.
+ */
+interface NavSection {
+  label: string;
+  items: Array<{
+    label: string;
+    href: string;
+    active?: boolean;
+  }>;
+}
+
+/**
+ * Props for the ThreeColumnSidebarLayout component.
+ */
 export interface ThreeColumnLayoutProps {
   header?: React.ReactNode;
   sidebar?: React.ReactNode;
   rightSidebar?: React.ReactNode;
+  navItems?: NavSection[];
+  tocItems?: NavSection[];
   children: React.ReactNode;
   footer?: React.ReactNode;
-  sidebarLeftPosition?: 'left';
-  sidebarRightPosition?: 'right';
   sidebarWidth?: number;
-  sidebarCollapsedWidth?: number;
-
+  rightSidebarWidth?: number;
   stickyHeader?: boolean;
   stickyFooter?: boolean;
-
-  variant?: VariantProps<typeof ThreeColumnLayoutVariants>["variant"];
   mobileBreakpoint?: "sm" | "md" | "lg";
-
-  sidebarCollapsed?: boolean;
-  rightSidebarCollapsed?: boolean;
   overlay?: boolean;
-  enableGestures?: boolean;
-
   transitionDuration?: number;
   headerHeight?: number;
   footerHeight?: number;
-
   zIndex?: {
     header?: number;
     sidebar?: number;
     footer?: number;
-    overlay?: number; 
+    overlay?: number;
   };
-
   className?: string;
-  theme?:
-    | "none"
-    | "light"
-    | "dark"
-    | "corporate"
-    | "custom"
-    | "glass"
-    | "modern"
-    | "ocean"
-    | "forest"
-    | "solarized";
-
-  sidebarLayoutMode?: "OVERLAY_ONLY" | "BOTTOM_DOCKED"| "OVERLAY_WITH_PANE"
 }
 
-const ThreeColumnLayoutVariants = cva("w-full", {
-  variants: {
-    variant: {
-      default: "bg-background text-foreground",
-      dark: "bg-card text-card-foreground",
-      light: "bg-white text-gray-900",
-      glass: "bg-white/10 backdrop-blur-lg",
-      gradient: "bg-gradient-to-br from-purple-500 to-purple-400 text-white",
-    },
-  },
-  defaultVariants: {
-    variant: "default",
-  },
-});
-
+/**
+ * Core three-column responsive layout with:
+ * - Header
+ * - Left sidebar (navigation / filters)
+ * - Main content
+ * - Right sidebar (TOC / stats)
+ * - Footer
+ */
 const ThreeColumnLayoutContent: React.FC<ThreeColumnLayoutProps> = ({
   header,
   sidebar,
   rightSidebar,
+  navItems,
+  tocItems,
   children,
   footer,
-
-  sidebarWidth = 260,
-  sidebarCollapsedWidth = 64,
-  sidebarLayoutMode='BOTTOM_DOCKED',
-
+  sidebarWidth = 300,
+  rightSidebarWidth = 240,
   stickyFooter = false,
-  stickyHeader = false,
-
-  variant = "default",
+  stickyHeader = true,
   mobileBreakpoint = "md",
-  enableGestures = true,
   overlay = true,
   transitionDuration = 0.3,
-
-  sidebarCollapsed = false,
-  rightSidebarCollapsed = false,
-
-  headerHeight = 64,
-  footerHeight = 64,
-
-  zIndex = { header: 50, sidebar: 40, footer: 30 , overlay: 80},
+  headerHeight = 60,
+  footerHeight = 60,
+  zIndex = { header: 50, sidebar: 40, footer: 30, overlay: 80 },
   className,
-  theme = "none",
 }) => {
-  const { isOpen: leftOpen, setOpen: setLeftOpen } = useSidebar("left");
-  const { isOpen: rightOpen, setOpen: setIsRightOpen } = useSidebar("right");
-
+  const { isOpen: leftOpen, toggle: toggleLeft } = useSidebar();
   const [isMobile, setIsMobile] = React.useState(false);
-
-  const bp = mobileBreakpoint === "sm" ? 640 : mobileBreakpoint === "md" ? 768 : 1024;
+  const [isTablet, setIsTablet] = React.useState(false);
+  
+  const mobileBp = mobileBreakpoint === "sm" ? 640 : mobileBreakpoint === "md" ? 768 : 1024;
+  const tabletBp = 1024; // iPad and similar tablets
 
   React.useEffect(() => {
-  const check = () => {
-    const mobile = window.innerWidth < bp
-    setIsMobile(mobile)
+    const check = () => {
+      const width = window.innerWidth;
+      setIsMobile(width < mobileBp);
+      setIsTablet(width >= mobileBp && width < tabletBp);
+    };
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, [mobileBp, tabletBp]);
 
-    if (!mobile) {
-      setLeftOpen(!sidebarCollapsed)
-      setIsRightOpen(!rightSidebarCollapsed)
-    } else {
-      setLeftOpen(false)
-    }
-  }
-
-  check()
-  window.addEventListener("resize", check)
-  return () => window.removeEventListener("resize", check)
-  }, [bp, sidebarCollapsed, rightSidebarCollapsed])
-
-  const layoutStyle: React.CSSProperties = {
-    ["--header-h" as any]: `${headerHeight}px`,
-    ["--footer-h" as any]: `${footerHeight}px`,
-    ["--sidebar-w" as any]: `${sidebarWidth}px`,
-    ["--sidebar-collapsed-w" as any]: `${sidebarCollapsedWidth}px`,
-  };
-
-  const gridCols = (() => {
-    // MOBILE
-    if (isMobile) {
-      return "grid-cols-1";
-    }
-
-    // DESKTOP
-    if (sidebar && rightSidebar) return "grid-cols-[auto_1fr_auto]";
-    if (sidebar) return "grid-cols-[auto_1fr]";
-    if (rightSidebar) return "grid-cols-[1fr_auto]";
-    return "grid-cols-1";
-  })();
-
-  const toggleSidebar = React.useCallback((open?: boolean) => {
-  const next = open !== undefined ? open : !leftOpen;
-    setLeftOpen(next);
-  }, [leftOpen, setLeftOpen]);
-
-  // gesture support for mobile overlay sidebar
-  const handleDragEnd = (_: Event, info: PanInfo) => {
-    if (!enableGestures || !isMobile) return;
-    const threshold = 60;
-    const vx = info.velocity.x;
-    const dx = info.offset.x;
-    const shouldClose = dx > threshold || vx > 300;
-    const shouldOpen = dx < -threshold || vx < -300;
-    if (leftOpen && shouldClose) toggleSidebar(false);
-    else if (!leftOpen && shouldOpen) toggleSidebar(true);
-  };
-
+  // Set CSS custom properties for dynamic values (necessary for prop-based sizing)
+  React.useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty("--layout-header-h", `${headerHeight}px`);
+    root.style.setProperty("--layout-footer-h", `${footerHeight}px`);
+    root.style.setProperty("--layout-sidebar-w", `${sidebarWidth}px`);
+    root.style.setProperty("--layout-right-sidebar-w", `${rightSidebarWidth}px`);
+    root.style.setProperty("--layout-header-z", `${zIndex.header}`);
+    root.style.setProperty("--layout-footer-z", `${zIndex.footer}`);
+    root.style.setProperty("--layout-sidebar-z", `${zIndex.sidebar}`);
+    root.style.setProperty("--layout-overlay-z", `${zIndex.overlay}`);
+    root.style.setProperty("--layout-mobile-sidebar-z", `${(zIndex.sidebar ?? 90) + 10}`);
+    
+    return () => {
+      root.style.removeProperty("--layout-header-h");
+      root.style.removeProperty("--layout-footer-h");
+      root.style.removeProperty("--layout-sidebar-w");
+      root.style.removeProperty("--layout-right-sidebar-w");
+      root.style.removeProperty("--layout-header-z");
+      root.style.removeProperty("--layout-footer-z");
+      root.style.removeProperty("--layout-sidebar-z");
+      root.style.removeProperty("--layout-overlay-z");
+      root.style.removeProperty("--layout-mobile-sidebar-z");
+    };
+  }, [headerHeight, footerHeight, sidebarWidth, rightSidebarWidth, zIndex]);
 
   return (
     <div
-      className={cn(ThreeColumnLayoutVariants({ variant }),"overflow-x-hidden", className,{
-      "bg-background text-card-foreground": theme === "none",
-      "bg-gray-200 !text-gray-800": theme === "light",
-      "bg-gray-300 !text-gray-700": theme === "corporate",
-      "bg-gray-700 !text-gray-200": theme === "dark",
-      "bg-white/60 !text-gray-700": theme === "glass",
-      "bg-gray-700/80 !text-gray-200": theme === "modern",
-      "bg-teal-600/80 !text-gray-200": theme === "ocean",
-      "bg-green-700/80 !text-gray-200": theme === "forest",
-      "bg-[#e0dab5] !text-gray-700": theme === "solarized",
-    })}
-      style={layoutStyle}
+      className={cn(
+        "w-full min-h-screen flex flex-col",
+        "bg-[var(--background)] text-[var(--foreground)]",
+        className
+      )}
     >
       {/* HEADER */}
       {header && (
         <header
           className={cn(
-            "w-full top-0 inset-0",
-            stickyHeader ? "sticky" : "relative"
+            "w-full border-b border-[var(--border)]",
+            "bg-[var(--background)]",
+            "h-[var(--layout-header-h)] pl-12 lg:pl-0",
+            stickyHeader && "sticky top-0 z-[var(--layout-header-z)]"
           )}
-          style={{ height: headerHeight, zIndex: zIndex.header }}
+          role="banner"
         >
-          {header}
+          <div className="h-full flex items-center px-4">{header}</div>
         </header>
       )}
 
-      {/* BODY GRID */}
-      <div
-        className={cn(
-          "grid w-full",gridCols)}
-        style={{
-          minHeight: `calc(100dvh - ${headerHeight}px - ${footerHeight}px)`,
-        }}
-      >
-        {/* LEFT SIDEBAR */}
-        {sidebar && !isMobile && (
-          <motion.aside
-            className={cn("sticky top-[var(--header-h)] overflow-hidden")}
-            style={{
-              height: `calc(100dvh - ${headerHeight}px - ${footerHeight}px)`,
-              zIndex: zIndex.sidebar,
-            }}
-            initial={false}
-            animate={{
-              width: leftOpen && !sidebarCollapsed ? sidebarWidth : sidebarCollapsedWidth
-            }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
+      {/* MAIN LAYOUT */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* LEFT SIDEBAR - Desktop only (hidden on tablet and mobile) */}
+        {(sidebar || navItems) && !isMobile && !isTablet && (
+          <aside
+            className={cn(
+              "sticky border-r border-[var(--border)]",
+              "bg-[var(--background)]",
+              "overflow-y-auto overflow-x-hidden",
+              "transition-all duration-300",
+              "top-[var(--layout-header-h)] h-[calc(100vh-var(--layout-header-h))]",
+              leftOpen ? "w-[var(--layout-sidebar-w)]" : "w-0"
+            )}
+            role="complementary"
+            aria-label="Navigation sidebar"
           >
-            <div
-              className={cn(
-                "h-full",
-                {
-                  "bg-gray-200 text-gray-800": theme === "light",
-                  "bg-gray-300 text-gray-700": theme === "corporate",
-                  "bg-gray-700 text-gray-200": theme === "dark",
-                  "bg-white/60 text-gray-700": theme === "glass",
-                  "bg-gray-700/80 text-gray-200": theme === "modern",
-                  "bg-teal-600/80 text-gray-200": theme === "ocean",
-                  "bg-green-700/80 text-gray-200": theme === "forest",
-                  "bg-[#e0dab5] text-gray-700": theme === "solarized",
-                }
-              )}
-            >
-              {sidebar}
-            </div>
-          </motion.aside>
+            {navItems ? (
+              <nav className="h-full overflow-y-auto p-4">
+                <div className="space-y-6">
+                  {navItems.map((section) => (
+                    <div key={section.label}>
+                      <h2 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider mb-2 px-2">
+                        {section.label}
+                      </h2>
+                      <ul className="space-y-1">
+                        {section.items.map((item, index) => (
+                          <li key={index}>
+                            <a
+                              href={item.href}
+                              className={cn(
+                                "block px-3 py-2 rounded-md text-sm transition-colors",
+                                item.active
+                                  ? "bg-[var(--primary)]/10 text-[var(--primary)] font-medium"
+                                  : "text-[var(--foreground)] hover:bg-[var(--accent)]"
+                              )}
+                            >
+                              {item.label}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </nav>
+            ) : (
+              sidebar
+            )}
+          </aside>
         )}
 
-        {/** MAIN SECTION */}
+        {/* MAIN CONTENT */}
         <main
-          className="scrollbar-thin overflow-y-auto"
-          style={{
-            height: `calc(100dvh - ${headerHeight}px - ${footerHeight}px)`
-          }}
+          className={cn(
+            "flex-1 overflow-y-auto overflow-x-hidden",
+            "h-[calc(100vh-var(--layout-header-h))]",
+            // Full width on tablet (no sidebars)
+            isTablet && "w-full",
+            // Prevent blur on mobile when overlay is open
+            isMobile && leftOpen && "relative z-0"
+          )}
+          role="main"
         >
-          {children}
+          <div className={cn(
+            "mx-8 px-0 py-4",
+            // Wider max-width on tablet since no sidebars
+            isTablet ? "max-w-5xl" : "max-w-4xl"
+          )}>
+            {children}
+          </div>
         </main>
 
-        {/* RIGHT SIDEBAR */}
-        {rightSidebar && !isMobile && (
-          <motion.aside
-            className="sticky top-[var(--header-h)] overflow-y-auto"
-            style={{
-              height: `calc(100dvh - ${headerHeight}px - ${footerHeight}px)`,
-              zIndex: zIndex.sidebar,
-            }}
-            initial={false}
-            animate={{
-              width:
-                rightOpen && !rightSidebarCollapsed ? sidebarWidth : sidebarCollapsedWidth
-            }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
-          >
-            <div
+        {/* RIGHT SIDEBAR - Desktop only (hidden on tablet and mobile) */}
+        {(rightSidebar || tocItems) && !isMobile && !isTablet && (
+          <aside
             className={cn(
-              "h-full",
-              {
-                "bg-gray-200 text-gray-800": theme === "light",
-                "bg-gray-300 text-gray-700": theme === "corporate",
-                "bg-gray-700 text-gray-200": theme === "dark",
-                "bg-white/60 text-gray-700": theme === "glass",
-                "bg-gray-700/80 text-gray-200": theme === "modern",
-                "bg-teal-600/80 text-gray-200": theme === "ocean",
-                "bg-green-700/80 text-gray-200": theme === "forest",
-                "bg-[#e0dab5] text-gray-700": theme === "solarized",
-              }
+              "sticky border-l border-[var(--border)]",
+              "bg-[var(--background)]",
+              "overflow-y-auto overflow-x-hidden",
+              "transition-all duration-300",
+              "top-[var(--layout-header-h)] h-[calc(100vh-var(--layout-header-h))]",
+              "w-[var(--layout-right-sidebar-w)]"
             )}
+            role="complementary"
+            aria-label="Table of contents"
           >
-            {rightSidebar}
-          </div>
-          </motion.aside>
+            {tocItems ? (
+              <nav className="h-full overflow-y-auto p-4">
+                <div className="space-y-6">
+                  {tocItems.map((section) => (
+                    <div key={section.label}>
+                      <h2 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider mb-3 px-2">
+                        {section.label}
+                      </h2>
+                      <ul className="space-y-1">
+                        {section.items.map((item, index) => (
+                          <li key={index}>
+                            <a
+                              href={item.href}
+                              className={cn(
+                                "block px-3 py-2 rounded-md text-sm transition-colors",
+                                item.active
+                                  ? "bg-[var(--primary)]/10 text-[var(--primary)] font-medium"
+                                  : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--accent)]"
+                              )}
+                            >
+                              {item.label}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </nav>
+            ) : (
+              rightSidebar
+            )}
+          </aside>
         )}
-
       </div>
 
-      {/* SIDE BAR IN MOBILE */}
-      {isMobile && sidebarLayoutMode !=='OVERLAY_ONLY' && (
-        <div
-          className="sticky left-0 w-full bottom-0"
-        >
-          {sidebarLayoutMode === 'BOTTOM_DOCKED' ? sidebar : rightSidebar }
-        </div>
-      )}
-
-      {/* Mobile off-canvas sidebar + overlay */}
-      {sidebar && isMobile && (sidebarLayoutMode === 'OVERLAY_ONLY' ||  sidebarLayoutMode === 'OVERLAY_WITH_PANE') && (
+      {/* MOBILE OVERLAY SIDEBAR */}
+      {(sidebar || navItems) && (isMobile || isTablet) && (
         <>
           <AnimatePresence>
-            {overlay && (
+            {overlay && leftOpen && (
               <motion.div
-                className="fixed inset-0 bg-black/50"
-                style={{ zIndex: zIndex.overlay, pointerEvents: leftOpen ? 'auto' : 'none' }}
-                initial={{ opacity: 0, pointerEvents: 'none' }}
-                animate={{ 
-                  opacity: leftOpen ? 1 : 0,
-                  pointerEvents: leftOpen ? 'auto' : 'none'
-                }}
-                exit={{ opacity: 0, pointerEvents: 'none' }}
-                transition={{ duration: transitionDuration }}
-                onClick={() => toggleSidebar(false)}
+                className="fixed inset-0 z-[var(--layout-overlay-z)]"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={toggleLeft}
+                aria-hidden="true"
+                style={{ pointerEvents: leftOpen ? 'auto' : 'none' }}
               />
             )}
           </AnimatePresence>
 
           <motion.aside
             className={cn(
-              "fixed inset-y-0 w-[var(--sidebar-w)]",
-              sidebar && "left-0" ,
-              {
-                  "bg-gray-200 text-gray-800": theme === "light",
-                  "bg-gray-300 text-gray-700": theme === "corporate",
-                  "bg-gray-700 text-gray-200": theme === "dark",
-                  "bg-white/60 text-gray-700": theme === "glass",
-                  "bg-gray-700/80 text-gray-200": theme === "modern",
-                  "bg-teal-600/80 text-gray-200": theme === "ocean",
-                  "bg-green-700/80 text-gray-200": theme === "forest",
-                  "bg-[#e0dab5] text-gray-700": theme === "solarized",
-                }
+              "fixed inset-y-0 left-0",
+              "bg-[var(--background)]",
+              "shadow-2xl z-[var(--layout-mobile-sidebar-z)]",
+              "w-[var(--layout-sidebar-w)]"
             )}
-            style={{
-              zIndex: (zIndex.sidebar ?? 90) + 10,
-            }}
-            initial={{
-              x: sidebar ? -sidebarWidth : sidebarWidth
-            }}
-            animate={{
-              x: leftOpen ? 0 : (sidebar ? -sidebarWidth : sidebarWidth),
-            }}
-            exit={{
-              x: sidebar ? -sidebarWidth : sidebarWidth
-            }}
-            transition={{ duration: transitionDuration, ease: "easeInOut" }}
-            drag={enableGestures ? "x" : false}
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.2}
-            onDragEnd={handleDragEnd}
+            initial={{ x: "calc(-1 * var(--layout-sidebar-w))" }}
+            animate={{ x: leftOpen ? 0 : "calc(-1 * var(--layout-sidebar-w))" }}
+            transition={{ duration: transitionDuration, ease: [0.4, 0, 0.2, 1] }}
+            role="complementary"
+            aria-label="Mobile navigation"
+            aria-hidden={!leftOpen}
           >
-            {sidebar}
+            <div className="h-full overflow-y-auto relative isolate">
+              {navItems ? (
+                <nav className="h-full overflow-y-auto p-4">
+                  <div className="space-y-6">
+                    {navItems.map((section) => (
+                      <div key={section.label}>
+                        <h2 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider mb-2 px-2">
+                          {section.label}
+                        </h2>
+                        <ul className="space-y-1">
+                          {section.items.map((item, index) => (
+                            <li key={index}>
+                              <a
+                                href={item.href}
+                                className={cn(
+                                  "block px-3 py-2 rounded-md text-sm transition-colors",
+                                  "cursor-pointer",
+                                  item.active
+                                    ? "bg-[var(--primary)]/10 text-[var(--primary)] font-medium"
+                                    : "text-[var(--foreground)] hover:bg-[var(--accent)]"
+                                )}
+                                onClick={() => {
+                                  // Allow navigation but also close sidebar
+                                  toggleLeft();
+                                }}
+                              >
+                                {item.label}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </nav>
+              ) : (
+                sidebar
+              )}
+            </div>
           </motion.aside>
 
-          {/* Mobile toggle button */}
+          {/* Mobile Toggle Button */}
           <button
             className={cn(
-              "fixed z-999 p-2 rounded-lg bg-background shadow-lg top-4",
-              sidebar && "left-4",
+              "fixed z-[999] p-2 rounded-lg",
+              "bg-[var(--card)] border border-[var(--border)]",
+              "shadow-lg top-4 left-4",
+              "hover:bg-[var(--accent)] transition-colors",
+              leftOpen && "left-60 top-0.5",
             )}
-            onClick={() => setLeftOpen(!leftOpen)}
+            onClick={toggleLeft}
             aria-label={leftOpen ? "Close sidebar" : "Open sidebar"}
+            aria-expanded={leftOpen}
           >
-            {leftOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {leftOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </>
       )}
 
       {/* FOOTER */}
-      {footer && (sidebarLayoutMode === 'OVERLAY_ONLY' || !isMobile )&& (
+      {footer && (
         <footer
           className={cn(
-            stickyFooter ? "sticky bottom-0" : "relative",
-            "w-full"
+            "w-full border-t border-[var(--border)]",
+            "bg-[var(--background)]",
+            "h-[var(--layout-footer-h)]",
+            stickyFooter && "sticky bottom-0 z-[var(--layout-footer-z)]"
           )}
-          style={{
-            height: footerHeight,
-            zIndex: zIndex.footer,
-          }}
+          role="contentinfo"
         >
-          {footer}
+          <div className="h-full flex items-center justify-center px-4">{footer}</div>
         </footer>
       )}
     </div>
   );
 };
 
-export const ThreeColumnSidebarLayout: React.FC<ThreeColumnLayoutProps> = (
-  props
-) => {
+/**
+ * Provider-wrapped exported layout.
+ */
+export const ThreeColumnSidebarLayout: React.FC<ThreeColumnLayoutProps> = (props) => {
   return (
-    <SidebarProvider initialState={{left: !props.sidebarCollapsed, right: !props.rightSidebarCollapsed,  bottomLeft: true, bottomRight: false}}>
+    <SidebarProvider initialOpen={true}>
       <ThreeColumnLayoutContent {...props} />
     </SidebarProvider>
   );

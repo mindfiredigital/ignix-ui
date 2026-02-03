@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -16,59 +16,30 @@ import TabItem from '@theme/TabItem';
 import CodeBlock from '@theme/CodeBlock';
 import { Star } from 'lucide-react';
 
-const cardVariants = [
-  { value: 'default', label: 'Default' },
-  { value: 'elevated', label: 'Elevated' },
-  { value: 'glass', label: 'Glass' },
-  { value: 'gradient', label: 'Gradient' },
-  { value: 'neon', label: 'Neon' },
-  { value: 'outline', label: 'Outline' },
-  { value: 'minimal', label: 'Minimal' },
-  { value: 'premium', label: 'Premium' },
-  { value: 'success', label: 'Success' },
-  { value: 'warning', label: 'Warning' },
-  { value: 'error', label: 'Error' },
-  { value: 'info', label: 'Info' },
-];
+const cardVariants = ['default','elevated','glass','gradient','neon','outline','minimal','premium','success','warning','error','info'] as const;
 
-const cardSizes = [
-  { value: 'sm', label: 'Small' },
-  { value: 'md', label: 'Medium' },
-  { value: 'lg', label: 'Large' },
-  { value: 'xl', label: 'Extra Large' },
-];
+const cardSizes = ['sm', 'md', 'lg', 'xl'] as const;
 
-const cardAnimations = [
-  { value: 'none', label: 'None' },
-  { value: 'fadeIn', label: 'Fade In' },
-  { value: 'slideUp', label: 'Slide Up' },
-  { value: 'scaleIn', label: 'Scale In' },
-  { value: 'flipIn', label: 'Flip In' },
-  { value: 'bounceIn', label: 'Bounce In' },
-  { value: 'floatIn', label: 'Float In' },
-];
+const cardAnimations = ['none','fadeIn','slideUp','scaleIn','flipIn','bounceIn','floatIn'] as const;
 
-const cardInteractions = [
-  { value: 'none', label: 'None' },
-  { value: 'hover', label: 'Hover' },
-  { value: 'press', label: 'Press' },
-  { value: 'lift', label: 'Lift' },
-  { value: 'tilt', label: 'Tilt' },
-  { value: 'glow', label: 'Glow' },
-];
+const cardInteractions = ['none','hover','press','lift','tilt','glow'] as const;
+
+type CardVariants = typeof cardVariants[number];
+type CardAnimations = typeof cardAnimations[number];
+type CardSizes = typeof cardSizes[number];
+type CardInteractions = typeof cardInteractions[number];
 
 const CardsDemo = () => {
-  const [variant, setVariant] = useState('default');
-  const [size, setSize] = useState('md');
-  const [animation, setAnimation] = useState('none');
-  const [interaction, setInteraction] = useState('none');
-  const [animationKey, setAnimationKey] = useState(0);
+  const [variant, setVariant] = useState<CardVariants>('default');
+  const [size, setSize] = useState<CardSizes>('md');
+  const [animation, setAnimation] = useState<CardAnimations>('none');
+  const [interaction, setInteraction] = useState<CardInteractions>('none');
+  const [animationKey, setAnimationKey] = useState<number>(0);
 
   // Reset animation key when animation prop changes
-  const handleAnimationChange = (newAnimation: string) => {
-    setAnimation(newAnimation);
-    setAnimationKey((prevKey) => prevKey + 1);
-  };
+  useEffect(() => {
+    setAnimationKey((k) => k + 1);
+  },[animation]);
 
   const codeString = `
 <Card 
@@ -91,39 +62,39 @@ const CardsDemo = () => {
 `;
 
   return (
-    <div className="space-y-6 mb-8">
+    <div className="space-y-6 mb-8 mt-4">
       <div className="flex flex-wrap gap-4 justify-start sm:justify-end">
         <div className="space-y-2">
           <VariantSelector
-            variants={cardVariants.map((v) => v.value)}
+            variants={[...cardVariants]}
             selectedVariant={variant}
-            onSelectVariant={setVariant}
+            onSelectVariant={(v) => setVariant(v as 'default'|'elevated'|'glass'|'gradient'|'neon'|'outline'|'minimal'|'premium'|'success'|'warning'|'error'|'info')}
           />
         </div>
 
         <div className="space-y-2">
           <VariantSelector
-            variants={cardSizes.map((s) => s.value)}
+            variants={[...cardSizes]}
             selectedVariant={size}
-            onSelectVariant={setSize}
+            onSelectVariant={(v) => setSize(v as 'sm'| 'md'| 'lg'| 'xl')}
             type="Size"
           />
         </div>
 
         <div className="space-y-2">
           <VariantSelector
-            variants={cardAnimations.map((a) => a.value)}
+            variants={[...cardAnimations]}
             selectedVariant={animation}
-            onSelectVariant={handleAnimationChange}
+            onSelectVariant={(v) => setAnimation(v as 'none'|'fadeIn'|'slideUp'|'scaleIn'|'flipIn'|'bounceIn'|'floatIn')}
             type="Animation"
           />
         </div>
 
         <div className="space-y-2">
           <VariantSelector
-            variants={cardInteractions.map((i) => i.value)}
+            variants={[...cardInteractions]}
             selectedVariant={interaction}
-            onSelectVariant={setInteraction}
+            onSelectVariant={(v) => setInteraction(v as 'none'|'hover'|'press'|'lift'|'tilt'|'glow')}
             type="Interaction"
           />
         </div>
@@ -131,14 +102,14 @@ const CardsDemo = () => {
 
       <Tabs>
         <TabItem value="preview" label="Preview">
-          <div className="p-6 border rounded-lg mt-4">
+          <div className="p-6 border border-gray-300 rounded-lg mt-4">
             <div className="flex flex-wrap gap-4 items-center justify-center p-4">
               <Card
                 key={`card-${animationKey}`}
-                variant={variant as any}
-                size={size as any}
-                animation={animation as any}
-                interactive={interaction as any}
+                variant={variant}
+                size={size}
+                animation={animation}
+                interactive={interaction}
               >
                 <CardHeader>
                   <CardTitle>Card Title</CardTitle>
@@ -177,14 +148,16 @@ const FeatureCardDemo = () => {
 </FeatureCard>
 `;
   return (
-    <div className="p-6 border rounded-lg mt-4">
+    <div className="space-y-6 mb-8 mt-4">
       <Tabs>
         <TabItem value="preview" label="Preview">
-          <div className="flex flex-wrap gap-4 items-center justify-center p-4">
-            <FeatureCard icon={<Star className="h-8 w-8 text-primary" />} variant="elevated">
-              <CardTitle>Amazing Feature</CardTitle>
-              <CardDescription>This feature will blow your mind</CardDescription>
-            </FeatureCard>
+          <div className="p-6 border border-gray-300 rounded-lg mt-4">
+            <div className="flex flex-wrap gap-4 items-center justify-center p-4">
+              <FeatureCard icon={<Star className="h-8 w-8 text-primary" />} variant="elevated">
+                <CardTitle>Amazing Feature</CardTitle>
+                <CardDescription>This feature will blow your mind</CardDescription>
+              </FeatureCard>
+            </div>
           </div>
         </TabItem>
         <TabItem value="code" label="Code">
@@ -204,16 +177,18 @@ const StatCardDemo = () => {
 <StatCard value="99.9%" label="Uptime" trend="up" trendValue="+2.1%"/>
 `;
   return (
-    <div className="p-6 border rounded-lg mt-4">
+    <div className="space-y-6 mb-8 mt-4">
       <Tabs>
         <TabItem value="preview" label="Preview">
-          <div className="flex flex-wrap gap-4 items-center justify-center p-4">
-            <StatCard
-              value="99.9%"
-              label="Uptime"
-              trend="up"
-              trendValue="+2.1%"
-            />
+          <div className="p-6 border border-gray-300 rounded-lg mt-4">
+            <div className="flex flex-wrap gap-4 items-center justify-center p-4">
+              <StatCard
+                value="99.9%"
+                label="Uptime"
+                trend="up"
+                trendValue="+2.1%"
+              />
+            </div>
           </div>
         </TabItem>
         <TabItem value="code" label="Code">
