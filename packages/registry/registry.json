@@ -1107,6 +1107,25 @@
           "type": "component"
         }
       }
+    }, 
+    "callToAction" :{
+      "name": "CallToAction",
+      "description": "",
+      "dependencies": [
+        "lucide-react", 
+        "class-variance-authority",
+        "framer-motion"
+      ],
+      "componentDependencies": [
+        "button",
+        "typography"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/sections/call-to-action/index.tsx",
+          "type": "template"
+        }
+      }
     }
   } 
 }
