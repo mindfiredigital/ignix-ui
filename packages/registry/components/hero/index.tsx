@@ -4,17 +4,17 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
-import { Play, Pause } from "lucide-react";
+import { Play, Pause, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "../../../utils/cn";
 import { Typography } from "@ignix-ui/typography";
 import { Container } from "@ignix-ui/container";
 import { Button } from "@ignix-ui/button";
+import { ButtonWithIcon } from "@ignix-ui/buttonwithicon";
 
 /* -------------------------------------------------------------------------- */
 /*                              VARIANT STYLES                                */
 /* -------------------------------------------------------------------------- */
-const heroVariants = cva(
-  "relative w-full overflow-hidden flex items-center justify-center min-h-[500px] md:min-h-[600px] lg:min-h-[700px]",
+const heroVariants = cva("relative w-full overflow-hidden flex items-center justify-center min-h-[500px] md:min-h-[600px] lg:min-h-[700px]",
   {
     variants: {
       variant: {
@@ -31,11 +31,9 @@ const heroVariants = cva(
 const contentVariants = cva("relative z-10 w-full", {
   variants: {
     align: {
-      left: "text-left items-start max-w-[85%] lg:max-w-[100%] xl:max-w-7xl",
-      center:
-        "text-center items-center max-w-[90%] lg:max-w-[85%] xl:max-w-7xl mx-auto",
-      right:
-        "text-right items-end max-w-[85%] lg:max-w-[75%] xl:max-w-7xl ml-auto",
+      left: "text-left items-start max-w-[85%] lg:max-w-[100%] xl:max-w-7xl px-7 lg:px-12",
+      center: "text-center items-center max-w-[90%] lg:max-w-[85%] xl:max-w-7xl mx-auto",
+      right: "text-right items-end max-w-[85%] lg:max-w-[90%] xl:max-w-7xl ml-auto px-10 lg:px-12",
     },
   },
   defaultVariants: {
@@ -83,11 +81,6 @@ const getOverlayOpacityVariant = (opacity: number): 0 | 10 | 20 | 30 | 40 | 50 |
 /*                              ANIMATION VARIANTS                            */
 /* -------------------------------------------------------------------------- */
 const heroAnimations = {
-  none: {
-    initial: { opacity: 0 },
-    animate: { opacity: 0 },
-    transition: { duration: 0, ease: [0, 0, 0] },
-  },
   fadeIn: {
     initial: { opacity: 0 },
     animate: { opacity: 1 },
@@ -163,12 +156,10 @@ const heroAnimations = {
 /* -------------------------------------------------------------------------- */
 /*                                INTERFACES                                  */
 /* -------------------------------------------------------------------------- */
-
 type AnimationProps = React.ComponentProps<typeof motion.div>;
 
-export interface HeroContextValue {
+export interface HeroContextValue extends ClassProps{
   variant: "default" | "dark";
-  align: "left" | "center" | "right";
   animationType: string;
   isLightVariant: boolean;
   textColor: string;
@@ -182,6 +173,84 @@ export interface HeroContextValue {
   ) => Pick<AnimationProps, "initial" | "animate" | "transition">;
 }
 
+export interface ClassProps {
+  className?: string;
+  align?: "left" | "center" | "right";
+}
+
+export interface HeroProps extends HeroChildrenProps, VariantProps<typeof heroVariants> {
+  variant?: "default" | "dark";
+  backgroundClassName?: string;
+  containerSize?: "small" | "normal" | "large" | "full" | "readable";
+  animationType?: "fadeIn"| "fadeInUp"| "fadeInDown"| "slideUp"| "slideDown"| "slideLeft"| "slideRight"| "scaleIn"| "zoomIn"| "flipIn"| "bounceIn"| "floatIn"| "rotateIn";
+  split?: boolean;
+}
+
+export interface HeroChildrenProps extends ClassProps{
+  children: React.ReactNode;
+}
+
+export interface HeroHeadingProps extends HeroChildrenProps {
+  as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+}
+
+export interface HeroMediaProps extends ClassProps{
+  src: string;
+  alt?: string;
+  position?: "left" | "right" | "center" | "background";
+  overlayOpacity?: number;
+  showPlayPause?: boolean;
+  fallbackImage?: string;
+  videoRef?: React.RefObject<HTMLVideoElement | null>;
+  isPlaying?: boolean;
+  onPlayPause?: () => void;
+}
+
+export interface HeroBadgeProps extends HeroChildrenProps{
+  icon?: LucideIcon;
+  variant?: "default" | "glass" | "solid" | "outline";
+}
+
+export interface HeroFeaturesProps extends ClassProps{
+  features: string[];
+  variant?: "default" | "glass";
+}
+
+export interface StatItem {
+  value: string;
+  label: string;
+  icon?: LucideIcon;
+}
+
+export interface HeroStatsProps extends ClassProps{
+  stats: StatItem[];
+  variant?: "default" | "cards" | "minimal";
+  columns?: 2 | 3 | 4;
+}
+
+export interface HeroCarouselSlide {
+  id?: string;
+  src?: string; 
+  image?: string; 
+  video?: string; 
+  overlayOpacity?: number;
+  content: React.ReactNode;
+}
+
+export interface HeroCarouselProps extends ClassProps{
+  slides: HeroCarouselSlide[];
+  autoRotate?: boolean;
+  rotationInterval?: number;
+  showNavigation?: boolean;
+  showDots?: boolean;
+  variant?: "default" | "dark";
+  animationType?: HeroProps["animationType"];
+  containerSize?: HeroProps["containerSize"];
+}
+
+/* -------------------------------------------------------------------------- */
+/*                              SUB-COMPONENTS                                */
+/* -------------------------------------------------------------------------- */
 const HeroContext = React.createContext<HeroContextValue | null>(null);
 
 const useHeroContext = () => {
@@ -192,67 +261,11 @@ const useHeroContext = () => {
   return context;
 };
 
-export interface HeroProps extends VariantProps<typeof heroVariants> {
-  children: React.ReactNode;
-  /**
-   * Background gradient variant
-   */
-  variant?: "default" | "dark";
-  /**
-   * Custom background class (overrides variant)
-   */
-  backgroundClassName?: string;
-  /**
-   * Content alignment
-   */
-  align?: "left" | "center" | "right";
-  /**
-   * Container max width
-   */
-  containerSize?: "small" | "normal" | "large" | "full" | "readable";
-  /**
-   * Animation type for content elements
-   */
-  animationType?:
-    | "none"
-    | "fadeIn"
-    | "fadeInUp"
-    | "fadeInDown"
-    | "slideUp"
-    | "slideDown"
-    | "slideLeft"
-    | "slideRight"
-    | "scaleIn"
-    | "zoomIn"
-    | "flipIn"
-    | "bounceIn"
-    | "floatIn"
-    | "rotateIn";
-  /**
-   * 'split' for side-by-side layout
-   */
-  split?: boolean;
-  /**
-   * Custom className
-   */
-  className?: string;
-}
-
-/* -------------------------------------------------------------------------- */
-/*                              SUB-COMPONENTS                                */
-/* -------------------------------------------------------------------------- */
-
-export interface HeroContentProps {
-  children: React.ReactNode;
-  className?: string;
-}
-
-export const HeroContent = React.forwardRef<HTMLDivElement, HeroContentProps>(
+export const HeroContent = React.forwardRef<HTMLDivElement, HeroChildrenProps>(
   ({ children, className, ...props }, ref) => {
     const { align, split } = useHeroContext();
 
-    // Check if there's a HeroImage with position left/right in children
-    // We check for the position prop since HeroImage might not be defined yet
+    // We check for the position prop since HeroMedia might not be defined yet
     const hasSplitImage = React.Children.toArray(children).some((child) => {
       if (!React.isValidElement(child)) return false;
       const props = child.props as { position?: string };
@@ -319,13 +332,8 @@ export const HeroContent = React.forwardRef<HTMLDivElement, HeroContentProps>(
     );
   },
 );
-HeroContent.displayName = "HeroContent";
 
-export interface HeroHeadingProps {
-  children: React.ReactNode;
-  className?: string;
-  as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
-}
+HeroContent.displayName = "HeroContent";
 
 export const HeroHeading = React.forwardRef<
   HTMLHeadingElement,
@@ -340,9 +348,7 @@ export const HeroHeading = React.forwardRef<
   const content = (
     <Typography
       variant="h1"
-      className={cn(
-        "font-bold tracking-tight text-white",
-        "text-4xl sm:text-5xl md:text-6xl lg:text-7xl",
+      className={cn("font-bold tracking-tight text-white text-4xl sm:text-5xl md:text-6xl lg:text-7xl",
         !hasGradientText && textColor,
         className,
       )}
@@ -354,24 +360,19 @@ export const HeroHeading = React.forwardRef<
 
   return <motion.div {...getAnimationProps(0)}>{content}</motion.div>;
 });
-HeroHeading.displayName = "HeroHeading";
 
-export interface HeroSubheadingProps {
-  children: React.ReactNode;
-  className?: string;
-}
+HeroHeading.displayName = "HeroHeading";
 
 export const HeroSubheading = React.forwardRef<
   HTMLParagraphElement,
-  HeroSubheadingProps
+  HeroHeadingProps
 >(({ children, className }) => {
   const { subheadingColor, align, getAnimationProps } = useHeroContext();
 
   const content = (
     <Typography
       variant="lead"
-      className={cn(
-        "text-lg sm:text-xl md:text-2xl m-2",
+      className={cn("text-lg sm:text-xl md:text-2xl m-2",
         subheadingColor,
         align === "center" && "max-w-2xl mx-auto",
         align === "left" && "max-w-2xl",
@@ -386,372 +387,17 @@ export const HeroSubheading = React.forwardRef<
 
   return <motion.div {...getAnimationProps(0.1)}>{content}</motion.div>;
 });
+
 HeroSubheading.displayName = "HeroSubheading";
 
-export interface HeroImageProps {
-  src: string;
-  alt?: string;
-  position?: "left" | "right" | "center" | "background";
-  overlayOpacity?: number;
-  className?: string;
-}
-
-export const HeroImage = React.forwardRef<HTMLImageElement, HeroImageProps>(
-  (
-    {
-      src,
-      alt = "background Image",
-      position = "background",
-      overlayOpacity = 40,
-      className,
-      ...props
-    },
-    ref,
-  ) => {
-    const { split } = useHeroContext();
-    const isSplitLayout = split;
-
-    if (position === "background") {
-      return (
-        <>
-          <div
-            className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-            style={{
-              backgroundImage: `url(${src})`,
-            }}
-          />
-          <div className={overlayOpacityVariants({ opacity: getOverlayOpacityVariant(overlayOpacity) })} />
-        </>
-      );
-    }
-
-    return (
-      <div
-        className={cn(
-          "relative z-10",
-          isSplitLayout && position === "left" && "order-1 lg:order-1",
-          isSplitLayout && position === "right" && "order-2 lg:order-2",
-          !isSplitLayout && position === "left" && "order-1",
-          !isSplitLayout && position === "right" && "order-2",
-          position === "center" && "w-full",
-          isSplitLayout &&
-            (position === "left" || position === "right") &&
-            "lg:w-1/2 flex",
-        )}
-      >
-        <img
-          ref={ref}
-          src={src}
-          alt={alt}
-          className={cn(
-            "rounded-lg shadow-2xl",
-            isSplitLayout && (position === "left" || position === "right")
-              ? "w-full h-full object-cover"
-              : "object-cover",
-            !isSplitLayout && (position === "left" || position === "right")
-              ? "w-full max-w-md lg:max-w-lg"
-              : "",
-            position === "center" && "w-full max-w-2xl mx-auto",
-            className,
-          )}
-          {...props}
-        />
-      </div>
-    );
-  },
-);
-HeroImage.displayName = "HeroImage";
-
-export interface HeroVideoProps {
-  src: string;
-  overlayOpacity?: number;
-  showPlayPause?: boolean;
-  fallbackImage?: string;
-  className?: string;
-}
-
-export const HeroVideo = React.forwardRef<HTMLVideoElement, HeroVideoProps>(
-  (
-    {
-      src,
-      overlayOpacity = 50,
-      showPlayPause: showPlayPauseProp,
-      fallbackImage,
-      className,
-      ...props
-    },
-    ref,
-  ) => {
-    const { videoRef, isPlaying, onPlayPause } = useHeroContext();
-    const shouldShowPlayPause = showPlayPauseProp !== undefined ? showPlayPauseProp : false;
-    const internalRef = React.useRef<HTMLVideoElement>(null);
-    const imageRef = React.useRef<HTMLImageElement>(null);
-    const [isVideoPlaying, setIsVideoPlaying] = React.useState(true);
-    const [hasError, setHasError] = React.useState(false);
-    const [isVideoReady, setIsVideoReady] = React.useState(false);
-    const [videoSupported, setVideoSupported] = React.useState(true);
-    const [isGif, setIsGif] = React.useState(false);
-    const [gifSrc, setGifSrc] = React.useState(src);
-
-    // Use the context videoRef if available, otherwise use internal ref
-    const videoElementRef = videoRef || internalRef;
-
-    // Detect if source is a GIF or determine video type
-    React.useEffect(() => {
-      const srcLower = src.toLowerCase();
-      const isGifFile = srcLower.endsWith('.gif') || srcLower.includes('gif');
-      setIsGif(isGifFile);
-      
-      if (!isGifFile) {
-        // Check video support
-        const video = document.createElement('video');
-        const isSupported = !!video.canPlayType && (
-          video.canPlayType('video/mp4') !== '' ||
-          video.canPlayType('video/webm') !== '' ||
-          video.canPlayType('video/ogg') !== ''
-        );
-        setVideoSupported(isSupported);
-      }
-    }, [src]);
-
-    // Ensure overlay opacity is at least 40 for text readability, but allow override
-    const effectiveOverlayOpacity = overlayOpacity < 40 ? 40 : overlayOpacity;
-
-    const handlePlayPause = React.useCallback(() => {
-      if (isGif) {
-        // For GIFs, toggle by removing/adding query param to restart animation
-        if (isVideoPlaying) {
-          // Pause GIF by removing the src (stops animation)
-          setGifSrc('');
-          setIsVideoPlaying(false);
-        } else {
-          // Resume GIF by restoring the src
-          setGifSrc(src);
-          setIsVideoPlaying(true);
-        }
-      } else {
-        const videoEl = videoElementRef.current;
-        if (videoEl) {
-          if (isVideoPlaying) {
-            videoEl.pause();
-            setIsVideoPlaying(false);
-          } else {
-            videoEl.play()
-              .then(() => {
-                setIsVideoPlaying(true);
-              })
-              .catch((error) => {
-                console.error("Error playing video:", error);
-              });
-          }
-        }
-      }
-      if (onPlayPause) {
-        onPlayPause();
-      }
-    }, [isVideoPlaying, onPlayPause, videoElementRef, isGif, src]);
-
-    const currentIsPlaying = isPlaying !== undefined ? isPlaying : isVideoPlaying;
-
-    // Handle ref assignment
-    const setRefs = React.useCallback((node: HTMLVideoElement | null) => {
-      // Set internal ref
-      internalRef.current = node;
-      
-      // Set context ref if available
-      if (videoRef && 'current' in videoRef) {
-        (videoRef as React.MutableRefObject<HTMLVideoElement | null>).current = node;
-      }
-      
-      // Set forwarded ref
-      if (typeof ref === 'function') {
-        ref(node);
-      } else if (ref && 'current' in ref) {
-        (ref as React.MutableRefObject<HTMLVideoElement | null>).current = node;
-      }
-    }, [ref, videoRef]);
-
-    // Play video when it's ready and should be playing
-    const playVideo = React.useCallback(() => {
-      const videoEl = videoElementRef.current;
-      if (videoEl && isVideoReady && currentIsPlaying) {
-        const playPromise = videoEl.play();
-        if (playPromise !== undefined) {
-          playPromise
-            .then(() => {
-              setIsVideoPlaying(true);
-            })
-            .catch((error) => {
-              console.error("Autoplay prevented:", error);
-              setIsVideoPlaying(false);
-            });
-        }
-      }
-    }, [isVideoReady, currentIsPlaying, videoElementRef]);
-
-    // Try to play when video becomes ready
-    React.useEffect(() => {
-      playVideo();
-    }, [playVideo]);
-
-    // Determine MIME type based on file extension
-    const getVideoType = (url: string): string => {
-      const urlLower = url.toLowerCase();
-      if (urlLower.endsWith('.webm')) return 'video/webm';
-      if (urlLower.endsWith('.ogg') || urlLower.endsWith('.ogv')) return 'video/ogg';
-      if (urlLower.endsWith('.mov')) return 'video/quicktime';
-      return 'video/mp4'; // default
-    };
-
-    // Show fallback image if video is not supported or has error
-    const showFallback = (!isGif && !videoSupported) || hasError;
-
-    return (
-      <>
-        {showFallback && fallbackImage ? (
-          <>
-            <div
-              className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-              style={{
-                backgroundImage: `url(${fallbackImage})`,
-              }}
-            />
-            <div className={overlayOpacityVariants({ opacity: getOverlayOpacityVariant(effectiveOverlayOpacity) })} />
-          </>
-        ) : isGif ? (
-          <>
-            {/* Render GIF as image */}
-            <img
-              ref={imageRef}
-              src={gifSrc}
-              alt="Animated background"
-              className={cn("absolute inset-0 z-0 w-full h-full object-cover", className)}
-              onError={(e) => {
-                console.error("GIF error:", e);
-                setHasError(true);
-              }}
-              onLoad={() => {
-                setHasError(false);
-                setIsVideoReady(true);
-              }}
-              {...(props as React.ImgHTMLAttributes<HTMLImageElement>)}
-            />
-            {/* Fallback image shown behind GIF */}
-            {fallbackImage && (
-              <div
-                className="absolute inset-0 z-[-1] bg-cover bg-center bg-no-repeat"
-                style={{
-                  backgroundImage: `url(${fallbackImage})`,
-                }}
-              />
-            )}
-          </>
-        ) : (
-          <>
-            {/* Render video */}
-            <video
-              ref={setRefs}
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="auto"
-              className={cn("absolute inset-0 z-0 w-full h-full object-cover", className)}
-              onPlay={() => {
-                setIsVideoPlaying(true);
-              }}
-              onPause={() => {
-                setIsVideoPlaying(false);
-              }}
-              onCanPlay={() => {
-                setIsVideoReady(true);
-                const videoEl = videoElementRef.current;
-                if (videoEl && currentIsPlaying) {
-                  videoEl.play().catch(() => {
-                    setIsVideoPlaying(false);
-                  });
-                }
-              }}
-              onLoadedData={() => {
-                setHasError(false);
-                setIsVideoReady(true);
-                const videoEl = videoElementRef.current;
-                if (videoEl && currentIsPlaying) {
-                  videoEl.play().catch(() => {
-                    setIsVideoPlaying(false);
-                  });
-                }
-              }}
-              onLoadedMetadata={() => {
-                setIsVideoReady(true);
-                const videoEl = videoElementRef.current;
-                if (videoEl && currentIsPlaying) {
-                  videoEl.play().catch(() => {
-                    setIsVideoPlaying(false);
-                  });
-                }
-              }}
-              onError={(e) => {
-                console.error("Video error:", e);
-                setHasError(true);
-                setIsVideoReady(false);
-              }}
-              {...props}
-            >
-              <source src={src} type={getVideoType(src)} />
-              <source src={src} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-            {/* Fallback image shown behind video for browsers that don't support video */}
-            {fallbackImage && (
-              <div
-                className="absolute inset-0 z-[-1] bg-cover bg-center bg-no-repeat"
-                style={{
-                  backgroundImage: `url(${fallbackImage})`,
-                }}
-              />
-            )}
-          </>
-        )}
-        {/* Overlay for text readability - always shown */}
-        <div className={overlayOpacityVariants({ opacity: getOverlayOpacityVariant(effectiveOverlayOpacity) })} />
-        {/* Play/Pause button - show for both video and GIF */}
-        {shouldShowPlayPause && !showFallback && (
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20">
-            <Button
-              variant="ghost"
-              size="lg"
-              onClick={handlePlayPause}
-              className="bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 text-white rounded-full p-4 shadow-lg"
-            >
-              {currentIsPlaying ? (
-                <Pause className="w-7 h-7" />
-              ) : (
-                <Play className="w-7 h-7" />
-              )}
-            </Button>
-          </div>
-        )}
-      </>
-    );
-  },
-);
-HeroVideo.displayName = "HeroVideo";
-
-export interface HeroActionsProps {
-  children: React.ReactNode;
-  className?: string;
-}
-
-export const HeroActions = React.forwardRef<HTMLDivElement, HeroActionsProps>(
+export const HeroActions = React.forwardRef<HTMLDivElement, HeroChildrenProps>(
   ({ children, className, ...props }, ref) => {
     const { align } = useHeroContext();
 
     const content = (
       <div
         ref={ref}
-        className={cn(
-          "flex flex-wrap gap-4 mt-3",
+        className={cn("flex flex-wrap gap-4 mt-3",
           align === "center" && "justify-center",
           align === "left" && "justify-start",
           align === "right" && "justify-end",
@@ -777,22 +423,311 @@ export const HeroActions = React.forwardRef<HTMLDivElement, HeroActionsProps>(
     return <>{content}</>;
   },
 );
+
 HeroActions.displayName = "HeroActions";
+
+/* -------------------------------------------------------------------------- */
+/*                            HERO MEDIA COMPONENT                            */
+/* -------------------------------------------------------------------------- */
+export const HeroMedia = React.forwardRef<HTMLImageElement | HTMLVideoElement, HeroMediaProps>(
+  (
+    {
+      src,
+      alt = "background Image",
+      position = "background",
+      overlayOpacity = 50,
+      showPlayPause: showPlayPauseProp,
+      fallbackImage,
+      className,
+      videoRef,
+      isPlaying,
+      onPlayPause,
+      ...props
+    },
+    ref,
+  ) => {
+    const { split, videoRef: contextVideoRef, isPlaying: contextIsPlaying, onPlayPause: contextOnPlayPause } = useHeroContext();
+    const isSplitLayout = split;
+    
+    // Use context videoRef if available, otherwise use prop
+    const effectiveVideoRef = videoRef || contextVideoRef;
+    const effectiveIsPlaying = isPlaying !== undefined ? isPlaying : contextIsPlaying;
+    const effectiveOnPlayPause = onPlayPause || contextOnPlayPause;
+
+    // Detect if source is a video/GIF or image
+    const srcLower = src.toLowerCase();
+    const isVideoFile = srcLower.endsWith('.mp4') || srcLower.endsWith('.webm') || srcLower.endsWith('.ogg') || srcLower.endsWith('.ogv') || srcLower.endsWith('.mov') ||srcLower.endsWith('.gif') ||srcLower.includes('video') || srcLower.includes('gif');
+    
+    const isImageFile = !isVideoFile;
+
+    // Video/GIF state management
+    const internalVideoRef = React.useRef<HTMLVideoElement>(null);
+    const imageRef = React.useRef<HTMLImageElement>(null);
+    const [isVideoPlaying, setIsVideoPlaying] = React.useState<boolean>(true);
+    const [hasError, setHasError] = React.useState<boolean>(false);
+    const [isVideoReady, setIsVideoReady] = React.useState<boolean>(false);
+    const [videoSupported, setVideoSupported] = React.useState<boolean>(true);
+    const [isGif, setIsGif] = React.useState<boolean>(false);
+    const [gifSrc, setGifSrc] = React.useState<string>(src);
+
+    const videoElementRef = effectiveVideoRef || internalVideoRef;
+
+    // Detect GIF and video support
+    React.useEffect(() => {
+      if (isVideoFile) {
+        const isGifFile = srcLower.endsWith('.gif') || srcLower.includes('gif');
+        setIsGif(isGifFile);
+        
+        if (!isGifFile) {
+          const video = document.createElement('video');
+          const isSupported = !!video.canPlayType && (video.canPlayType('video/mp4') !== '' || video.canPlayType('video/webm') !== '' || video.canPlayType('video/ogg') !== '');
+          setVideoSupported(isSupported);
+        }
+      }
+    }, [src, srcLower, isVideoFile]);
+
+    // Ensure overlay opacity is at least 40 for text readability (for videos)
+    const effectiveOverlayOpacity = isVideoFile && overlayOpacity < 40 ? 40 : overlayOpacity;
+
+    // Video play/pause handler
+    const handlePlayPause = React.useCallback(() => {
+      if (isGif) {
+        if (isVideoPlaying) {
+          setGifSrc('');
+          setIsVideoPlaying(false);
+        } else {
+          setGifSrc(src);
+          setIsVideoPlaying(true);
+        }
+      } else {
+        const videoEl = videoElementRef.current;
+        if (videoEl) {
+          if (isVideoPlaying) {
+            videoEl.pause();
+            setIsVideoPlaying(false);
+          } else {
+            videoEl.play();
+            setIsVideoPlaying(true);
+          }
+        }
+      }
+      if (effectiveOnPlayPause) {
+        effectiveOnPlayPause();
+      }
+    }, [isVideoPlaying, effectiveOnPlayPause, videoElementRef, isGif, src]);
+
+    const currentIsPlaying = effectiveIsPlaying !== undefined ? effectiveIsPlaying : isVideoPlaying;
+    const shouldShowPlayPause = showPlayPauseProp !== undefined ? showPlayPauseProp : false;
+
+    // Handle ref assignment for videos
+    const setVideoRefs = React.useCallback((node: HTMLVideoElement | null) => {
+      internalVideoRef.current = node;
+      
+      if (effectiveVideoRef && 'current' in effectiveVideoRef) {
+        (effectiveVideoRef as React.MutableRefObject<HTMLVideoElement | null>).current = node;
+      }
+      
+      if (typeof ref === 'function') {
+        ref(node);
+      } else if (ref && 'current' in ref) {
+        (ref as React.MutableRefObject<HTMLVideoElement | null>).current = node;
+      }
+    }, [ref, effectiveVideoRef]);
+
+    // Play video when ready
+    const playVideo = React.useCallback(() => {
+      const videoEl = videoElementRef.current;
+      if (videoEl && isVideoReady && currentIsPlaying) {
+        videoEl.play();
+        setIsVideoPlaying(true);
+      }
+    }, [isVideoReady, currentIsPlaying, videoElementRef]);
+
+    React.useEffect(() => {
+      if (isVideoFile && !isGif) {
+        playVideo();
+      }
+    }, [playVideo, isVideoFile, isGif]);
+
+    // Determine MIME type for videos
+    const getVideoType = (url: string): string => {
+      const urlLower = url.toLowerCase();
+      if (urlLower.endsWith('.webm')) return 'video/webm';
+      if (urlLower.endsWith('.ogg') || urlLower.endsWith('.ogv')) return 'video/ogg';
+      if (urlLower.endsWith('.mov')) return 'video/quicktime';
+      return 'video/mp4';
+    };
+
+    const showFallback = isVideoFile && ((!isGif && !videoSupported) || hasError);
+
+    // Handle image rendering (background or positioned)
+    if (isImageFile) {
+      if (position === "background") {
+        return (
+          <>
+            <div
+              className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+              style={{ backgroundImage: `url(${src})` }}
+            />
+            <div className={overlayOpacityVariants({ opacity: getOverlayOpacityVariant(overlayOpacity) })} />
+          </>
+        );
+      }
+
+      return (
+        <div
+          className={cn("relative z-10",
+            isSplitLayout && position === "left" && "order-1 lg:order-1",
+            isSplitLayout && position === "right" && "order-2 lg:order-2",
+            !isSplitLayout && position === "left" && "order-1",
+            !isSplitLayout && position === "right" && "order-2",
+            position === "center" && "w-full",
+            isSplitLayout &&
+              (position === "left" || position === "right") &&
+              "lg:w-1/2 flex",
+          )}
+        >
+          <img
+            ref={ref as React.RefObject<HTMLImageElement>}
+            src={src}
+            alt={alt}
+            className={cn("rounded-lg shadow-2xl",
+              isSplitLayout && (position === "left" || position === "right")
+                ? "w-full h-full object-cover"
+                : "object-cover",
+              !isSplitLayout && (position === "left" || position === "right")
+                ? "w-full max-w-md lg:max-w-lg"
+                : "",
+              position === "center" && "w-full max-w-2xl mx-auto",
+              className,
+            )}
+            {...(props as React.ImgHTMLAttributes<HTMLImageElement>)}
+          />
+        </div>
+      );
+    }
+
+    // Handle video/GIF rendering (only background position supported)
+    if (position !== "background") {
+      return null;
+    }
+
+    return (
+      <>
+        {showFallback && fallbackImage ? (
+          <>
+            <div
+              className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+              style={{ backgroundImage: `url(${fallbackImage})` }}
+            />
+            <div className={overlayOpacityVariants({ opacity: getOverlayOpacityVariant(effectiveOverlayOpacity) })} />
+          </>
+        ) : isGif ? (
+          <>
+            <img
+              ref={imageRef}
+              src={gifSrc}
+              alt={alt || "Animated background"}
+              className={cn("absolute inset-0 z-0 w-full h-full object-cover", className)}
+              onError={() => setHasError(true)}
+              onLoad={() => {
+                setHasError(false);
+                setIsVideoReady(true);
+              }}
+              {...(props as React.ImgHTMLAttributes<HTMLImageElement>)}
+            />
+            {fallbackImage && (
+              <div
+                className="absolute inset-0 z-[-1] bg-cover bg-center bg-no-repeat"
+                style={{ backgroundImage: `url(${fallbackImage})` }}
+              />
+            )}
+          </>
+        ) : (
+          <>
+            <video
+              ref={setVideoRefs}
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="auto"
+              className={cn("absolute inset-0 z-0 w-full h-full object-cover", className)}
+              onPlay={() => setIsVideoPlaying(true)}
+              onPause={() => setIsVideoPlaying(false)}
+              onCanPlay={() => {
+                setIsVideoReady(true);
+                const videoEl = videoElementRef.current;
+                if (videoEl && currentIsPlaying) {
+                  videoEl.play();
+                  setIsVideoPlaying(true);
+                }
+              }}
+              onLoadedData={() => {
+                setHasError(false);
+                setIsVideoReady(true);
+                const videoEl = videoElementRef.current;
+                if (videoEl && currentIsPlaying) {
+                  videoEl.play();
+                  setIsVideoPlaying(true);
+                }
+              }}
+              onLoadedMetadata={() => {
+                setIsVideoReady(true);
+                const videoEl = videoElementRef.current;
+                if (videoEl && currentIsPlaying) {
+                  videoEl.play();
+                  setIsVideoPlaying(true);
+                }
+              }}
+              onError={() => {
+                setHasError(true);
+                setIsVideoReady(false);
+              }}
+              {...(props as React.VideoHTMLAttributes<HTMLVideoElement>)}
+            >
+              <source src={src} type={getVideoType(src)} />
+              <source src={src} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+            {fallbackImage && (
+              <div
+                className="absolute inset-0 z-[-1] bg-cover bg-center bg-no-repeat"
+                style={{ backgroundImage: `url(${fallbackImage})` }}
+              />
+            )}
+          </>
+        )}
+        <div className={overlayOpacityVariants({ opacity: getOverlayOpacityVariant(effectiveOverlayOpacity) })} />
+        {shouldShowPlayPause && !showFallback && (
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20">
+            <Button
+              variant="ghost"
+              size="lg"
+              onClick={handlePlayPause}
+              className="bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 text-white rounded-full p-4 shadow-lg"
+            >
+              {currentIsPlaying ? (
+                <Pause className="w-7 h-7" />
+              ) : (
+                <Play className="w-7 h-7" />
+              )}
+            </Button>
+          </div>
+        )}
+      </>
+    );
+  },
+);
+
+HeroMedia.displayName = "HeroMedia";
 
 /* -------------------------------------------------------------------------- */
 /*                            ADVANCED SUB-COMPONENTS                         */
 /* -------------------------------------------------------------------------- */
-
-export interface HeroBadgeProps {
-  children: React.ReactNode;
-  icon?: LucideIcon;
-  variant?: "default" | "glass" | "solid" | "outline";
-  className?: string;
-}
-
 export const HeroBadge = React.forwardRef<HTMLDivElement, HeroBadgeProps>(
   ({ children, icon: Icon, variant = "default", className, ...props }, ref) => {
-    const { getAnimationProps, align } = useHeroContext();
+    const { getAnimationProps, align = "center" } = useHeroContext();
     const isLightVariant = useHeroContext().isLightVariant;
 
     const alignmentClasses = {
@@ -832,17 +767,12 @@ export const HeroBadge = React.forwardRef<HTMLDivElement, HeroBadgeProps>(
     return <motion.div {...getAnimationProps(0)}>{content}</motion.div>;
   },
 );
-HeroBadge.displayName = "HeroBadge";
 
-export interface HeroFeaturesProps {
-  features: string[];
-  variant?: "default" | "glass";
-  className?: string;
-}
+HeroBadge.displayName = "HeroBadge";
 
 export const HeroFeatures = React.forwardRef<HTMLDivElement, HeroFeaturesProps>(
   ({ features, variant = "default", className, ...props }, ref) => {
-    const { getAnimationProps, isLightVariant, align } = useHeroContext();
+    const { getAnimationProps, isLightVariant, align = "center" } = useHeroContext();
 
     const alignmentClasses = {
       center: "justify-center",
@@ -882,16 +812,12 @@ export const HeroFeatures = React.forwardRef<HTMLDivElement, HeroFeaturesProps>(
     return <motion.div {...getAnimationProps(0.3)}>{content}</motion.div>;
   },
 );
-HeroFeatures.displayName = "HeroFeatures";
 
-export interface HeroGlassCardProps {
-  children: React.ReactNode;
-  className?: string;
-}
+HeroFeatures.displayName = "HeroFeatures";
 
 export const HeroGlassCard = React.forwardRef<
   HTMLDivElement,
-  HeroGlassCardProps
+  HeroChildrenProps
 >(({ children, className, ...props }, ref) => {
   const { getAnimationProps } = useHeroContext();
 
@@ -910,20 +836,8 @@ export const HeroGlassCard = React.forwardRef<
 
   return <motion.div {...getAnimationProps(0)}>{content}</motion.div>;
 });
+
 HeroGlassCard.displayName = "HeroGlassCard";
-
-export interface StatItem {
-  value: string;
-  label: string;
-  icon?: LucideIcon;
-}
-
-export interface HeroStatsProps {
-  stats: StatItem[];
-  variant?: "default" | "cards" | "minimal";
-  columns?: 2 | 3 | 4;
-  className?: string;
-}
 
 export const HeroStats = React.forwardRef<HTMLDivElement, HeroStatsProps>(
   ({ stats, variant = "default", columns = 4, className, ...props }, ref) => {
@@ -947,33 +861,18 @@ export const HeroStats = React.forwardRef<HTMLDivElement, HeroStatsProps>(
     const content = (
       <div
         ref={ref}
-        className={cn("grid gap-6 md:gap-8", gridCols[columns], className)}
+        className={cn("grid gap-6 md:gap-8 mt-4", gridCols[columns], className)}
         {...props}
       >
         {stats.map((stat, idx) => (
           <div key={idx} className={cn(variantClasses[variant])}>
             {stat.icon && variant === "cards" && (
-              <stat.icon
-                className={cn(
-                  "w-6 h-6 mb-3 text-gray-300",
-                  isLightVariant && "text-gray-600",
-                  "group-hover:scale-110 transition-transform",
-                )}
-              />
+              <stat.icon className={cn("w-6 h-6 mb-3 text-gray-300 group-hover:scale-110 transition-transform", isLightVariant && "text-gray-600")}/>
             )}
-            <Typography
-              variant="h2"
-              className={cn("text-3xl md:text-4xl font-bold mb-1", textColor)}
-            >
+            <Typography variant="h2" className={cn("text-3xl md:text-4xl font-bold mb-1", textColor)}>
               {stat.value}
             </Typography>
-            <Typography
-              variant="small"
-              className={cn(
-                "uppercase tracking-wider text-xs",
-                subheadingColor,
-              )}
-            >
+            <Typography variant="small" className={cn("uppercase tracking-wider text-xs", subheadingColor)}>
               {stat.label}
             </Typography>
           </div>
@@ -984,16 +883,12 @@ export const HeroStats = React.forwardRef<HTMLDivElement, HeroStatsProps>(
     return <motion.div {...getAnimationProps(0.2)}>{content}</motion.div>;
   },
 );
+
 HeroStats.displayName = "HeroStats";
 
 /* -------------------------------------------------------------------------- */
 /*                                MAIN HERO COMPONENT                         */
 /* -------------------------------------------------------------------------- */
-
-/**
- * Hero Section Component
- * A flexible hero section using composition pattern.
- */
 export const Hero: React.FC<HeroProps> = ({
   children,
   variant = "dark",
@@ -1010,7 +905,7 @@ export const Hero: React.FC<HeroProps> = ({
 
   // Video play/pause state
   const videoRef = React.useRef<HTMLVideoElement>(null);
-  const [isPlaying, setIsPlaying] = React.useState(true);
+  const [isPlaying, setIsPlaying] = React.useState<boolean>(true);
 
   const handlePlayPause = React.useCallback(() => {
     if (videoRef.current) {
@@ -1067,33 +962,24 @@ export const Hero: React.FC<HeroProps> = ({
     ],
   );
 
-  const backgroundImages: React.ReactNode[] = [];
-  const backgroundVideos: React.ReactNode[] = [];
+  const backgroundMedia: React.ReactNode[] = [];
   const otherChildren: React.ReactNode[] = [];
 
-  function isHeroImage(
+  function isHeroMedia(
     child: React.ReactNode,
-  ): child is React.ReactElement<HeroImageProps> {
-    return React.isValidElement(child) && child.type === HeroImage;
-  }
-
-  function isHeroVideo(
-    child: React.ReactNode,
-  ): child is React.ReactElement<HeroVideoProps> {
-    return React.isValidElement(child) && child.type === HeroVideo;
+  ): child is React.ReactElement<HeroMediaProps> {
+    return React.isValidElement(child) && child.type === HeroMedia;
   }
 
   React.Children.forEach(children, (child) => {
-    if (isHeroImage(child)) {
-      backgroundImages.push(child);
-    } else if (isHeroVideo(child)) {
-      backgroundVideos.push(child);
+    if (isHeroMedia(child)) {
+      backgroundMedia.push(child);
     } else {
       otherChildren.push(child);
     }
   });
 
-  const hasBackgroundImage = backgroundImages.length > 0;
+  const hasBackgroundMedia = backgroundMedia.length > 0;
 
   return (
     <HeroContext.Provider value={contextValue}>
@@ -1105,17 +991,13 @@ export const Hero: React.FC<HeroProps> = ({
           className,
         )}
       >
-        {/* Render static background images */}
-        {backgroundImages}
-        {/* Render background videos */}
-        {backgroundVideos}
+        {/* Render background media (images/videos) */}
+        {backgroundMedia}
 
-        <Container
-          size={containerSize}
+        <Container size={containerSize} 
           className={cn(
-            "relative",
-            "z-10 py-12 md:py-10 lg:py-20",
-            hasBackgroundImage && "py-16 md:py-20 lg:py-32",
+            "relative z-10 py-12 md:py-10 lg:py-20",
+            hasBackgroundMedia && "py-16 md:py-20 lg:py-32",
           )}
         >
           {otherChildren}
@@ -1126,5 +1008,211 @@ export const Hero: React.FC<HeroProps> = ({
 };
 
 Hero.displayName = "Hero";
+
+/* -------------------------------------------------------------------------- */
+/*                            HERO CAROUSEL COMPONENT                         */
+/* -------------------------------------------------------------------------- */
+export const HeroCarousel: React.FC<HeroCarouselProps> = ({
+  slides,
+  autoRotate = false,
+  rotationInterval = 3000,
+  showNavigation = false,
+  showDots = false,
+  variant = "dark",
+  align = "center",
+  animationType = "fadeIn",
+  containerSize = "full",
+  className,
+}) => {
+  // clone slides for seamless looping
+  const extendedSlides = React.useMemo(
+    () => [slides[slides.length - 1], ...slides, slides[0]],
+    [slides]
+  );
+
+  const [currentIndex, setCurrentIndex] = React.useState<number>(1);
+  const [isPaused, setIsPaused] = React.useState<boolean>(false);
+  const [isTransitioning, setIsTransitioning] = React.useState<boolean>(false);
+  const [enableTransition, setEnableTransition] = React.useState<boolean>(true);
+
+  const intervalRef = React.useRef<NodeJS.Timeout | null>(null);
+  const carouselRef = React.useRef<HTMLDivElement>(null);
+
+  const effectiveInterval = Math.max(1000, Math.min(5000, rotationInterval));
+  const transitionDuration = 700;
+
+  // Auto-rotate
+  React.useEffect(() => {
+    if (autoRotate && !isPaused && slides.length > 1 && !isTransitioning) {
+      intervalRef.current = setInterval(() => {
+        setCurrentIndex((prev) => prev + 1);
+      }, effectiveInterval);
+
+      return () => {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+      };
+    }
+  }, [autoRotate, isPaused, slides.length, effectiveInterval, isTransitioning]);
+
+  // Snap instantly when hitting cloned slides
+  React.useEffect(() => {
+    if (currentIndex === extendedSlides.length - 1) {
+      setTimeout(() => {
+        setEnableTransition(false);
+        setCurrentIndex(1);
+      }, transitionDuration);
+    }
+
+    if (currentIndex === 0) {
+      setTimeout(() => {
+        setEnableTransition(false);
+        setCurrentIndex(slides.length);
+      }, transitionDuration);
+    }
+  }, [currentIndex, extendedSlides.length, slides.length]);
+
+  // Re-enable animation after snap
+  React.useEffect(() => {
+    if (!enableTransition) {
+      requestAnimationFrame(() => setEnableTransition(true));
+    }
+  }, [enableTransition]);
+
+  const handleMouseEnter = () => setIsPaused(true);
+  const handleMouseLeave = () => setIsPaused(false);
+
+  const goToSlide = (index: number) => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setCurrentIndex(index + 1);
+    setIsPaused(true);
+    setTimeout(() => {
+      setIsTransitioning(false);
+      setIsPaused(false);
+    }, transitionDuration);
+  };
+
+  const goToPrevious = () => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setCurrentIndex((prev) => prev - 1);
+    setIsPaused(true);
+    setTimeout(() => {
+      setIsTransitioning(false);
+      setIsPaused(false);
+    }, transitionDuration);
+  };
+
+  const goToNext = () => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setCurrentIndex((prev) => prev + 1);
+    setIsPaused(true);
+    setTimeout(() => {
+      setIsTransitioning(false);
+      setIsPaused(false);
+    }, transitionDuration);
+  };
+
+  // Keyboard navigation
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") goToPrevious();
+      if (e.key === "ArrowRight") goToNext();
+    };
+
+    carouselRef.current?.addEventListener("keydown", handleKeyDown);
+    return () => carouselRef.current?.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  if (!slides.length) return null;
+
+  const navigations = [
+    { onClick: goToPrevious, className: "left-6", label: "Previous slide", icon: <ChevronLeft className="w-6 h-6" /> },
+    { onClick: goToNext, className: "right-6", label: "Next slide", icon: <ChevronRight className="w-6 h-6" /> },
+  ];
+
+  return (
+    <div
+      ref={carouselRef}
+      className={cn("relative w-full", className)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      tabIndex={0}
+      role="region"
+      aria-label="Hero carousel"
+    >
+      <div className="relative w-full overflow-hidden min-h-[500px] md:min-h-[600px] lg:min-h-[700px]">
+        <div
+          className={cn(
+            "relative w-full min-h-[500px] md:min-h-[600px] lg:min-h-[700px]",
+            enableTransition && "transition-transform duration-700 ease-[cubic-bezier(0.4,0,0.2,1)]"
+          )}
+          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+        >
+          <div className="flex w-full" style={{ width: `${extendedSlides.length * 100}%` }}>
+            {extendedSlides.map((slide, index) => (
+              <div
+                key={`${slide.id ?? index}-clone`}
+                className="flex-shrink-0"
+                style={{ width: `${100 / extendedSlides.length}%` }}
+              >
+                <Hero
+                  variant={variant}
+                  align={align}
+                  animationType={animationType}
+                  containerSize={containerSize}
+                >
+                  {(slide.src || slide.image || slide.video) && (
+                    <HeroMedia
+                      src={slide.src || slide.image || slide.video || ""}
+                      position="background"
+                      overlayOpacity={slide.overlayOpacity || 50}
+                      alt={`Slide background`}
+                      showPlayPause={false}
+                      fallbackImage={slide.image || slide.src}
+                    />
+                  )}
+                  {slide.content}
+                </Hero>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {showNavigation && slides.length > 1 && (
+          <>
+            {navigations.map(({ onClick, className, label, icon }) => (
+              <ButtonWithIcon
+                key={label}
+                onClick={onClick}
+                aria-label={label}
+                className={cn("absolute top-1/2 -translate-y-1/2 z-30 bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 text-white rounded-full p-3 shadow-lg transition-all duration-300 hover:scale-110 active:scale-95", className)}
+                icon={icon}
+              />
+            ))}
+          </>
+        )}
+
+        {showDots && slides.length > 1 && (
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-2">
+            {slides.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => goToSlide(index)}
+                className={cn("w-2 h-2 rounded-full transition-all",
+                  index === currentIndex - 1 ? "bg-white" : "bg-white/50"
+                )}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+HeroCarousel.displayName = "HeroCarousel";
 
 export default Hero;
