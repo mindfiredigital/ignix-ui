@@ -6,9 +6,9 @@ import {
     Sparkles,
     CheckCircle,
 } from 'lucide-react';
-import { cn } from '../../../../../utils/cn';
-import { Button } from '../../../../components/button';
-import { Typography } from '../../../../components/typography';
+import { cn } from '../../../utils/cn';
+import { Button } from '@ignix-ui//button';
+import { Typography } from '@ignix-ui//typography';
 
 /* ============================================
    TYPES & INTERFACES

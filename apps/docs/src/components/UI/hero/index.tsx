@@ -45,7 +45,8 @@ const contentVariants = cva('relative z-10 w-full', {
 /* -------------------------------------------------------------------------- */
 
 const heroAnimations = {
-  none: { initial: { opacity: 0 },
+  none: {
+    initial: { opacity: 0 },
     animate: { opacity: 0 },
     transition: { duration: 0, ease: [0, 0, 0] }
   },
@@ -184,7 +185,7 @@ export interface HeroProps extends VariantProps<typeof heroVariants> {
 /*                              SUB-COMPONENTS                                */
 /* -------------------------------------------------------------------------- */
 
-export interface HeroContentProps{
+export interface HeroContentProps {
   children: React.ReactNode;
   className?: string;
 }
@@ -192,7 +193,7 @@ export interface HeroContentProps{
 export const HeroContent = React.forwardRef<HTMLDivElement, HeroContentProps>(
   ({ children, className, ...props }, ref) => {
     const { align, split } = useHeroContext();
-    
+
     // Check if there's a HeroImage with position left/right in children
     // We check for the position prop since HeroImage might not be defined yet
     const hasSplitImage = React.Children.toArray(children).some(
@@ -202,14 +203,14 @@ export const HeroContent = React.forwardRef<HTMLDivElement, HeroContentProps>(
         return props.position === 'left' || props.position === 'right';
       }
     );
-    
+
     const isSplitLayout = split && hasSplitImage;
-    
+
     // Separate text content from image for split layout
     const textChildren: React.ReactNode[] = [];
     const imageChildren: React.ReactNode[] = [];
     let imagePosition: 'left' | 'right' | null = null;
-    
+
     if (isSplitLayout) {
       React.Children.forEach(children, (child) => {
         if (React.isValidElement(child)) {
@@ -225,12 +226,12 @@ export const HeroContent = React.forwardRef<HTMLDivElement, HeroContentProps>(
         }
       });
     }
-    
+
     return (
       <div
         ref={ref}
         className={cn(
-          isSplitLayout 
+          isSplitLayout
             ? 'flex flex-col lg:flex-row lg:items-stretch gap-8 lg:gap-12 w-full'
             : 'flex flex-col gap-10 md:gap-12 max-w-5xl',
           !isSplitLayout && contentVariants({ align }),
@@ -265,7 +266,7 @@ export const HeroContent = React.forwardRef<HTMLDivElement, HeroContentProps>(
 );
 HeroContent.displayName = 'HeroContent';
 
-export interface HeroHeadingProps{
+export interface HeroHeadingProps {
   children: React.ReactNode;
   className?: string;
   as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
@@ -273,11 +274,11 @@ export interface HeroHeadingProps{
 
 export const HeroHeading = React.forwardRef<HTMLHeadingElement, HeroHeadingProps>(
   ({ children, className }) => {
-    const {textColor, align, getAnimationProps } = useHeroContext();
+    const { textColor, align, getAnimationProps } = useHeroContext();
 
     // Check if children contain gradient text pattern
     const hasGradientText = typeof children === 'string' && children.includes('bg-gradient');
-    
+
     const content = (
       <Typography
         className={cn(
@@ -309,7 +310,7 @@ export interface HeroSubheadingProps {
 export const HeroSubheading = React.forwardRef<HTMLParagraphElement, HeroSubheadingProps>(
   ({ children, className }) => {
     const { subheadingColor, align, getAnimationProps } = useHeroContext();
-    
+
     const content = (
       <Typography
         variant="lead"
@@ -352,15 +353,15 @@ export const HeroImage = React.forwardRef<HTMLImageElement, HeroImageProps>(
     if (position === 'background') {
       const overlayOpacityClass = overlayOpacity === 0 ? 'bg-transparent' :
         overlayOpacity <= 10 ? 'bg-black/10' :
-        overlayOpacity <= 20 ? 'bg-black/20' :
-        overlayOpacity <= 30 ? 'bg-black/30' :
-        overlayOpacity <= 40 ? 'bg-black/40' :
-        overlayOpacity <= 50 ? 'bg-black/50' :
-        overlayOpacity <= 60 ? 'bg-black/60' :
-        overlayOpacity <= 70 ? 'bg-black/70' :
-        overlayOpacity <= 80 ? 'bg-black/80' :
-        overlayOpacity <= 90 ? 'bg-black/90' :
-        'bg-black';
+          overlayOpacity <= 20 ? 'bg-black/20' :
+            overlayOpacity <= 30 ? 'bg-black/30' :
+              overlayOpacity <= 40 ? 'bg-black/40' :
+                overlayOpacity <= 50 ? 'bg-black/50' :
+                  overlayOpacity <= 60 ? 'bg-black/60' :
+                    overlayOpacity <= 70 ? 'bg-black/70' :
+                      overlayOpacity <= 80 ? 'bg-black/80' :
+                        overlayOpacity <= 90 ? 'bg-black/90' :
+                          'bg-black';
 
       return (
         <>
@@ -412,7 +413,7 @@ export const HeroImage = React.forwardRef<HTMLImageElement, HeroImageProps>(
 );
 HeroImage.displayName = 'HeroImage';
 
-export interface HeroActionsProps  {
+export interface HeroActionsProps {
   children: React.ReactNode;
   className?: string;
 }
@@ -586,11 +587,11 @@ export const HeroGlassCard = React.forwardRef<HTMLDivElement, HeroGlassCardProps
       </div>
     );
 
-      return (
-        <motion.div {...getAnimationProps(0)}>
-          {content}
-        </motion.div>
-      );
+    return (
+      <motion.div {...getAnimationProps(0)}>
+        {content}
+      </motion.div>
+    );
   }
 );
 HeroGlassCard.displayName = 'HeroGlassCard';
@@ -638,7 +639,7 @@ export const HeroStats = React.forwardRef<HTMLDivElement, HeroStatsProps>(
             {stat.icon && variant === 'cards' && (
               <stat.icon className={cn(
                 'w-6 h-6 mb-3 text-gray-300',
-                isLightVariant && 'text-gray-600', 
+                isLightVariant && 'text-gray-600',
                 'group-hover:scale-110 transition-transform'
               )} />
             )}
@@ -706,7 +707,7 @@ export const Hero: React.FC<HeroProps> = ({
         delay,
       },
     } as Pick<AnimationProps, 'initial' | 'animate' | 'transition'>;
-  }, [ animationType]);
+  }, [animationType]);
 
   const contextValue = React.useMemo<HeroContextValue>(() => ({
     variant,
@@ -760,7 +761,7 @@ export const Hero: React.FC<HeroProps> = ({
       >
         {/* Render static background images */}
         {backgroundImages}
-        
+
         <Container
           size={containerSize}
           className={cn(
