@@ -69,6 +69,10 @@ export interface ModalProps {
   closeOnEscape?: boolean;
   /** Size variant of the modal */
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  /** Optional icon rendered to the left of the title in the header. */
+  headerIcon?: React.ReactNode;
+  /** Optional className for the header icon wrapper. */
+  headerIconClassName?: string;
   /** Color scheme for header, borders, and buttons. */
   colorScheme?: ModalColorScheme;
   /** Override default color classes for specific areas. Merged with colorScheme. */
@@ -115,6 +119,10 @@ export interface ModalContentProps extends Omit<HTMLMotionProps<'div'>, 'childre
 export interface ModalHeaderProps extends Omit<ComponentPropsWithoutRef<'div'>, 'title'> {
   /** Optional title to render in the header. */
   title?: React.ReactNode;
+  /** Optional icon rendered to the left of the title. */
+  icon?: React.ReactNode;
+  /** Optional className for the icon wrapper. */
+  iconClassName?: string;
   /** Whether to show the close button (X) in the header. */
   showCloseButton?: boolean;
   /** Handler called when the close button is clicked. */
@@ -328,10 +336,13 @@ const overlayAnimation: Variants = {
  */
 export const ModalOverlay = React.memo<ModalOverlayProps>(
   ({ closeOnOverlayClick = true, onRequestClose, className, backdropClassName, children, ...props }) => {
-    
     const handleClick = React.useCallback(
       (event: MouseEvent<HTMLDivElement>) => {
-        if (closeOnOverlayClick && event.target === event.currentTarget) {
+        // Close whenever a click bubbles to the overlay wrapper,
+        // as long as overlay-click-to-close is enabled.
+        // Clicks inside the modal content are stopped in ModalContent,
+        // so they will not reach this handler.
+        if (event && closeOnOverlayClick) {
           onRequestClose?.();
         }
       },
@@ -433,7 +444,7 @@ ModalContent.displayName = 'ModalContent';
  * Modal header sub-component.
  */
 export const ModalHeader = React.memo<ModalHeaderProps>(
-  ({ title, showCloseButton = true, onClose, className, closeButtonClassName, children, ...props }) => (
+  ({ title, icon, iconClassName, showCloseButton = true, onClose, className, closeButtonClassName, children, ...props }) => (
     <div
       className={cn(
         'relative flex items-center justify-between px-6 py-5',
@@ -442,16 +453,30 @@ export const ModalHeader = React.memo<ModalHeaderProps>(
       )}
       {...props}
     >
-      {title && (
-        <motion.h2
-          id="modal-title"
-          className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-black tracking-tight"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.3 }}
-        >
-          {title}
-        </motion.h2>
+      {(title || icon) && (
+        <div className="flex items-center gap-3">
+          {icon && (
+            <span
+              className={cn(
+                'flex h-9 w-9 items-center justify-center rounded-xl bg-background/60 border border-border/60 shadow-sm',
+                iconClassName
+              )}
+            >
+              {icon}
+            </span>
+          )}
+          {title && (
+            <motion.h2
+              id="modal-title"
+              className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-black tracking-tight"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1, duration: 0.3 }}
+            >
+              {title}
+            </motion.h2>
+          )}
+        </div>
       )}
       {children}
       {showCloseButton && onClose && (
@@ -608,6 +633,8 @@ export const Modal = React.memo<ModalProps>(
     size = 'md',
     colorScheme = 'primary',
     colorOverrides,
+    headerIcon,
+    headerIconClassName,
     className,
     overlayClassName,
     headerClassName,
@@ -719,6 +746,8 @@ export const Modal = React.memo<ModalProps>(
               {(title || showCloseButton) && (
                 <ModalHeader
                   title={title}
+                  icon={headerIcon}
+                  iconClassName={headerIconClassName}
                   showCloseButton={showCloseButton}
                   onClose={handleCloseClick}
                   className={headerClasses}

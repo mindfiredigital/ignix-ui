@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState, useCallback } from 'react';
+import { Info, CheckCircle2, Trash2 } from 'lucide-react';
 import { Modal, type ModalProps } from './index';
 import { Button } from '../button';
 
@@ -87,6 +88,14 @@ and \`onClose\` callback to handle closing the modal.
       options: ['sm', 'md', 'lg', 'xl', 'full'],
       description: 'Size variant of the modal',
     },
+    headerIcon: {
+      control: false,
+      description: 'Optional icon rendered to the left of the title in the header',
+    },
+    headerIconClassName: {
+      control: 'text',
+      description: 'Optional Tailwind classes for the header icon wrapper',
+    },
     colorScheme: {
       control: 'select',
       options: ['primary', 'accent', 'success', 'warning', 'destructive', 'info'],
@@ -142,6 +151,8 @@ export const Default: Story = {
   render: ModalTemplate,
   args: {
     title: 'Confirm Action',
+    headerIcon: <Info className="h-5 w-5 text-primary" />,
+    headerIconClassName: 'bg-primary/10 border-primary/30',
     children: (
       <div>
         <p className="mb-4">
@@ -170,6 +181,8 @@ export const ColorSchemeSuccess: Story = {
   args: {
     title: 'Success',
     colorScheme: 'success',
+    headerIcon: <CheckCircle2 className="h-5 w-5 text-success" />,
+    headerIconClassName: 'bg-success/10 border-success/30',
     children: (
       <div>
         <p className="mb-4">Your changes have been saved successfully.</p>
@@ -192,6 +205,8 @@ export const ColorSchemeDestructive: Story = {
   args: {
     title: 'Delete item?',
     colorScheme: 'destructive',
+    headerIcon: <Trash2 className="h-5 w-5 text-destructive" />,
+    headerIconClassName: 'bg-destructive/10 border-destructive/30',
     children: (
       <div>
         <p className="mb-4">
@@ -216,6 +231,8 @@ export const ColorSchemeInfo: Story = {
   args: {
     title: 'Information',
     colorScheme: 'info',
+    headerIcon: <Info className="h-5 w-5 text-info" />,
+    headerIconClassName: 'bg-info/10 border-info/30',
     children: (
       <div>
         <p className="mb-4">
