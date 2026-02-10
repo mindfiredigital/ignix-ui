@@ -34,20 +34,18 @@ Key features:
     ignix add component modals
     ```
   </TabItem>
-  <TabItem value="manual" label="Manual" className="max-h-[500px] overflow-y-auto">
-
-```tsx
-import { Modal } from './components/ui/modals';
-```
-
-Use the CLI command above to generate the full component implementation, including styles and stories.
-
-  </TabItem>
 </Tabs>
 
 ## Usage
 
-### Basic usage
+You can use the Modal in two ways:
+
+1. **Simple** — Use the `<Modal>` component with props and `children` for the body.
+2. **Composable (nested)** — Compose `ModalOverlay`, `ModalContent`, `ModalHeader`, `ModalBody`, and `ModalFooter` yourself (similar to Accordion). Use `Modal.colorSchemeConfig` to apply the same color schemes.
+
+The demo above includes both **Simple (Modal)** and **Composable (nested)** tabs.
+
+### Basic usage (Simple)
 
 ```tsx
 import { Modal } from './components/ui/modals';
@@ -70,6 +68,101 @@ function BasicModalExample() {
   );
 }
 ```
+
+### Composable (nested) usage
+
+Build the modal from primitives for full control over structure and layout. Use `Modal.colorSchemeConfig` so styles match the built-in schemes:
+
+```tsx
+import { useState, useCallback } from 'react';
+import { AnimatePresence } from 'framer-motion';
+import {
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Modal,
+} from './components/ui/modals';
+import { Button } from './components/ui/button';
+import { cn } from './utils/cn';
+import { Info } from 'lucide-react';
+
+// Type for Modal's static colorSchemeConfig (for TypeScript)
+type ModalWithColorConfig = typeof Modal & {
+  colorSchemeConfig: Record<
+    string,
+    {
+      backdrop: string;
+      content: string;
+      header: string;
+      body: string;
+      footer: string;
+      closeButton: string;
+      cancelButton: string;
+      confirmButton: string;
+    }
+  >;
+};
+
+function ComposableModalExample() {
+  const [isOpen, setIsOpen] = useState(false);
+  const close = useCallback(() => setIsOpen(false), []);
+
+  const colorScheme = 'primary';
+  const scheme = (Modal as ModalWithColorConfig).colorSchemeConfig[colorScheme];
+
+  const backdropClassName = cn(scheme.backdrop);
+  const contentClassName = cn(scheme.content);
+  const headerClassName = cn(scheme.header);
+  const bodyClassName = cn('border-l-4', scheme.body);
+  const footerClassName = cn(scheme.footer);
+
+  return (
+    <>
+      <Button onClick={() => setIsOpen(true)}>Open modal</Button>
+      <AnimatePresence>
+        {isOpen && (
+          <ModalOverlay
+            closeOnOverlayClick
+            onRequestClose={close}
+            backdropClassName={backdropClassName}
+          >
+            <ModalContent size="md" className={contentClassName}>
+              <ModalHeader
+                title="Confirm action"
+                icon={<Info className="h-5 w-5 text-primary" />}
+                iconClassName="bg-primary/10 border-primary/30"
+                showCloseButton
+                onClose={close}
+                className={headerClassName}
+                closeButtonClassName={scheme.closeButton}
+              />
+              <ModalBody className={bodyClassName}>
+                <p className="mb-2">Are you sure you want to proceed? This cannot be undone.</p>
+                <p className="text-sm text-muted-foreground">Press Esc or click outside to close.</p>
+              </ModalBody>
+              <ModalFooter
+                confirmText="Confirm"
+                cancelText="Cancel"
+                onConfirm={() => close()}
+                onCancel={close}
+                className={footerClassName}
+                cancelButtonClassName={scheme.cancelButton}
+                confirmButtonClassName={scheme.confirmButton}
+              />
+            </ModalContent>
+          </ModalOverlay>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+```
+
+When using the composable API, you own visibility (e.g. `isOpen` and `close`). For Escape key and body scroll lock, add your own `useEffect` and key listener if needed.
+
+Subcomponents: `ModalOverlay`, `ModalContent`, `ModalHeader`, `ModalBody`, `ModalFooter`. Each accepts the same styling and behavior props as the areas of the main `Modal` component.
 
 ### With header icon
 

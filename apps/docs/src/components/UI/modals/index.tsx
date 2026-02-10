@@ -481,7 +481,22 @@ export const ModalFooter = React.memo<ModalFooterProps>(
 
 ModalFooter.displayName = 'ModalFooter';
 
-export const Modal = React.memo<ModalProps>(
+type ModalColorSchemeConfig = {
+  backdrop: string;
+  content: string;
+  header: string;
+  body: string;
+  footer: string;
+  closeButton: string;
+  cancelButton: string;
+  confirmButton: string;
+};
+
+type ModalComponentType = React.MemoExoticComponent<(props: ModalProps) => React.ReactElement> & {
+  colorSchemeConfig: Record<ModalColorScheme, ModalColorSchemeConfig>;
+};
+
+const ModalComponent = React.memo<ModalProps>(
   ({
     isOpen,
     onClose,
@@ -623,7 +638,11 @@ export const Modal = React.memo<ModalProps>(
       </AnimatePresence>
     );
   }
-);
+) as ModalComponentType;
+
+ModalComponent.colorSchemeConfig = colorSchemeConfig;
+
+export const Modal = ModalComponent;
 
 Modal.displayName = 'Modal';
 
