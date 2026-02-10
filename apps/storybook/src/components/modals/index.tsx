@@ -616,7 +616,22 @@ ModalFooter.displayName = 'ModalFooter';
  * </Modal>
  * ```
  */
-export const Modal = React.memo<ModalProps>(
+type ModalColorSchemeConfig = {
+  backdrop: string;
+  content: string;
+  header: string;
+  body: string;
+  footer: string;
+  closeButton: string;
+  cancelButton: string;
+  confirmButton: string;
+};
+
+type ModalComponentType = React.MemoExoticComponent<(props: ModalProps) => React.ReactElement> & {
+  colorSchemeConfig: Record<ModalColorScheme, ModalColorSchemeConfig>;
+};
+
+const ModalComponent = React.memo(
   ({
     isOpen,
     onClose,
@@ -776,7 +791,13 @@ export const Modal = React.memo<ModalProps>(
       </AnimatePresence>
     );
   }
-);
+) as ModalComponentType;
+
+// Attach internal color scheme config as a static property so consumers (e.g. Storybook)
+// can reuse it without needing a separate export.
+ModalComponent.colorSchemeConfig = colorSchemeConfig;
+
+export const Modal = ModalComponent;
 
 Modal.displayName = 'Modal';
 
