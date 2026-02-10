@@ -1,0 +1,179 @@
+---
+sidebar_position: 6
+title: Modals
+description: A flexible modal component with overlay, header, footer, color schemes, and optional header icon.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { Modal } from '@site/src/components/UI/modals';
+import ModalsDemo from '@site/src/components/Demo/ModalsDemo';
+
+The **Modals** component provides an accessible, animated dialog for displaying important content, confirmations, or flows that require user attention.
+It includes a dimmed overlay, structured header/body/footer slots, keyboard support, and configurable color schemes.
+
+<ModalsDemo />
+
+Key features:
+
+- Overlay with backdrop blur and click-to-close support
+- Structured header, body, and footer sections
+- Optional header icon to the left of the title
+- Confirm and cancel buttons in the footer
+- Keyboard support: <kbd>Esc</kbd> closes the modal
+- Multiple size options: `sm`, `md`, `lg`, `xl`, `full`
+- Built-in color schemes: `primary`, `accent`, `success`, `warning`, `destructive`, `info`
+- Fine-grained color overrides via `colorOverrides`
+
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component modals
+    ```
+  </TabItem>
+  <TabItem value="manual" label="Manual" className="max-h-[500px] overflow-y-auto">
+
+```tsx
+import { Modal } from './components/ui/modals';
+```
+
+Use the CLI command above to generate the full component implementation, including styles and stories.
+
+  </TabItem>
+</Tabs>
+
+## Usage
+
+### Basic usage
+
+```tsx
+import { Modal } from './components/ui/modals';
+import { Button } from './components/ui/button';
+
+function BasicModalExample() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <>
+      <Button onClick={() => setIsOpen(true)}>Open modal</Button>
+      <Modal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        title="Confirm action"
+      >
+        <p>Are you sure you want to proceed?</p>
+      </Modal>
+    </>
+  );
+}
+```
+
+### With header icon
+
+```tsx
+import { Info } from 'lucide-react';
+
+<Modal
+  isOpen={isOpen}
+  onClose={() => setIsOpen(false)}
+  title="New update available"
+  headerIcon={<Info className="h-5 w-5 text-primary" />}
+  headerIconClassName="bg-primary/10 border-primary/30"
+>
+  <p className="mb-2">
+    A new version of the application is available. Would you like to update now?
+  </p>
+</Modal>
+```
+
+### Color schemes
+
+Use the `colorScheme` prop to switch between predefined visual styles:
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={() => setIsOpen(false)}
+  title="Success"
+  colorScheme="success"
+>
+  <p>Your changes have been saved successfully.</p>
+</Modal>
+
+<Modal
+  isOpen={isOpen}
+  onClose={() => setIsOpen(false)}
+  title="Delete item?"
+  colorScheme="destructive"
+>
+  <p>This action cannot be undone. Are you sure?</p>
+</Modal>
+```
+
+### Custom colors with `colorOverrides`
+
+If you need more control, use the `colorOverrides` prop to pass custom Tailwind classes for specific areas:
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={() => setIsOpen(false)}
+  title="Custom styled modal"
+  colorScheme="primary"
+  colorOverrides={{
+    header: 'border-b border-violet-500/30 bg-gradient-to-r from-violet-500/20 via-fuchsia-500/10 to-violet-500/20',
+    content: 'border-violet-500/30 shadow-violet-500/20 before:from-violet-500/10 before:to-fuchsia-500/10',
+    body: 'border-l-violet-500/30',
+    footer: 'border-t border-violet-500/20 bg-gradient-to-r from-fuchsia-500/5 via-violet-500/10 to-fuchsia-500/5',
+    closeButton: 'hover:text-violet-600 hover:bg-violet-500/20 focus:ring-violet-500/50',
+    cancelButton: 'hover:border-violet-500/40 focus:ring-violet-500/50',
+    confirmButton:
+      'bg-gradient-to-r from-violet-600 to-violet-500 text-white hover:from-violet-500 hover:to-violet-600 shadow-violet-500/30 border-violet-500/40 focus:ring-violet-500',
+  }}
+>
+  <p>Use colorOverrides to fully customize the modal appearance.</p>
+</Modal>
+```
+
+### Sizes
+
+```tsx
+<Modal size="sm" {...commonProps} />
+<Modal size="md" {...commonProps} />
+<Modal size="lg" {...commonProps} />
+<Modal size="xl" {...commonProps} />
+<Modal size="full" {...commonProps} />
+```
+
+
+
+## Props
+
+| Prop                 | Type                                                                                                      | Default     | Description                                                                                           |
+|----------------------|-----------------------------------------------------------------------------------------------------------|-------------|-------------------------------------------------------------------------------------------------------|
+| `isOpen`             | `boolean`                                                                                                | `false`     | Whether the modal is visible.                                                                         |
+| `onClose`            | `() => void`                                                                                             | —           | Callback fired when the modal should close (overlay click, Esc, footer buttons, close icon, etc.).   |
+| `onConfirm`          | `() => void`                                                                                             | `undefined` | Called when the confirm button is clicked.                                                            |
+| `onCancel`           | `() => void`                                                                                             | `undefined` | Called when the cancel button is clicked.                                                             |
+| `title`              | `React.ReactNode`                                                                                        | `undefined` | Header title text or node.                                                                            |
+| `children`           | `React.ReactNode`                                                                                        | `undefined` | Modal body content.                                                                                   |
+| `confirmText`        | `string`                                                                                                 | `"Confirm"` | Label for the confirm button.                                                                         |
+| `cancelText`         | `string`                                                                                                 | `"Cancel"`  | Label for the cancel button.                                                                          |
+| `showFooter`         | `boolean`                                                                                                | `true`      | Whether to render the footer with action buttons.                                                     |
+| `showCloseButton`    | `boolean`                                                                                                | `true`      | Whether to show the close (X) button in the header.                                                   |
+| `closeOnOverlayClick`| `boolean`                                                                                                | `true`      | Whether clicking on the overlay closes the modal.                                                     |
+| `closeOnEscape`      | `boolean`                                                                                                | `true`      | Whether pressing the Escape key closes the modal.                                                     |
+| `size`               | `'sm' \| 'md' \| 'lg' \| 'xl' \| 'full'`                                                                 | `"md"`      | Size variant of the modal.                                                                            |
+| `colorScheme`        | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'destructive' \| 'info'`                             | `"primary"` | Built-in color scheme controlling header, borders, and button styles.                                 |
+| `colorOverrides`     | `{ overlay?, backdrop?, content?, header?, body?, footer?, closeButton?, cancelButton?, confirmButton? }`| `undefined` | Fine-grained Tailwind class overrides for different visual areas.                                     |
+| `className`          | `string`                                                                                                 | `undefined` | Additional classes for the modal content container.                                                   |
+| `overlayClassName`   | `string`                                                                                                 | `undefined` | Additional classes for the overlay wrapper.                                                           |
+| `headerClassName`    | `string`                                                                                                 | `undefined` | Additional classes for the header.                                                                    |
+| `bodyClassName`      | `string`                                                                                                 | `undefined` | Additional classes for the body.                                                                      |
+| `footerClassName`    | `string`                                                                                                 | `undefined` | Additional classes for the footer.                                                                    |
+| `headerIcon`         | `React.ReactNode`                                                                                        | `undefined` | Optional icon rendered to the left of the title in the header.                                       |
+| `headerIconClassName`| `string`                                                                                                 | `undefined` | Additional classes for the header icon wrapper.                                                       |
+
