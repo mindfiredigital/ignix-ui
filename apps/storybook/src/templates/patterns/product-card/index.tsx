@@ -440,7 +440,7 @@ export const ProductCardThumbnails: React.FC<ProductCardThumbnailsProps> = memo(
 
   return (
     <div className={cn(
-      "flex items-center justify-center gap-2 px-3 py-2 bg-gray-50/50",
+      "flex items-center justify-center gap-2 px-3 py-2",
       className
     )}>
       {/* Left Arrow */}
