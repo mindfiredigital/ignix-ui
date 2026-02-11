@@ -490,6 +490,19 @@
         }
       }
     },
+    "progress-indicator": {
+      "name": "progress-indicator",
+      "description": "A versatile progress indicator with linear and circular types, optional percentage label, multiple animation variants, and flexible label positions. Supports determinate and indeterminate states. Styled with Tailwind CSS only; optimized with React.memo, useMemo, and useCallback.",
+      "dependencies": [
+        "framer-motion"
+      ],
+      "files": {
+        "main": {
+          "path": "components/progress-indicator/index.tsx",
+          "type": "component"
+        }
+      }
+    },
     "radio": {
       "name":"Radio",
       "description":"An animated radio component with different variants and animation options",
