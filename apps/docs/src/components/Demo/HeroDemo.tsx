@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Hero, HeroContent, HeroHeading, HeroSubheading, HeroActions, HeroImage, HeroBadge, HeroFeatures, HeroGlassCard, HeroStats } from '@site/src/components/UI/hero';
+import { Hero, HeroContent, HeroHeading, HeroSubheading, HeroActions, HeroMedia, HeroBadge, HeroFeatures, HeroGlassCard, HeroStats, HeroCarousel } from '@site/src/components/UI/hero';
 import VariantSelector from './VariantSelector';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -43,7 +43,7 @@ const HeroDemo = () => {
 >`);
   
   if (showBackgroundImage || showGlassMorph) {
-    codeParts.push(`  <HeroImage
+    codeParts.push(`  <HeroMedia
     src="https://images.unsplash.com/photo-1501785888041-af3ef285b470"
     alt="Hero background"
     position="background"
@@ -208,7 +208,7 @@ const HeroDemo = () => {
               animationType={animationType}
             >
               {(showBackgroundImage || showGlassMorph) && (
-                <HeroImage
+                <HeroMedia
                   src="https://images.unsplash.com/photo-1501785888041-af3ef285b470"
                   alt="Hero background"
                   position="background"
@@ -303,7 +303,7 @@ const HeroDemo = () => {
 
 const HeroSplitDemo = () => {
   const [align, setAlign] = useState<'left' | 'center' | 'right'>('center');
-  const [showBackgroundImage, setShowBackgroundImage] = useState<boolean>(true);
+  const [showBackgroundImage, setShowBackgroundImage] = useState<boolean>(false);
   
   // Build code string parts to avoid extra whitespace
   const codeParts: string[] = [];
@@ -314,7 +314,7 @@ const HeroSplitDemo = () => {
 >`);
   
   if (showBackgroundImage) {
-    codeParts.push(`  <HeroImage
+    codeParts.push(`  <HeroMedia
     src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1600&h=900&fit=crop&q=90"
     alt="Hero background"
     position="background"
@@ -348,7 +348,7 @@ const HeroSplitDemo = () => {
           Watch Demo
         </ButtonWithIcon>
       </HeroActions>`);
-    codeParts.push(`   <HeroImage position="right" src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=900&h=800&fit=crop&q=90" alt="Modern workspace interior"/>`)
+    codeParts.push(`   <HeroMedia position="right" src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=900&h=800&fit=crop&q=90" alt="Modern workspace interior"/>`)
   codeParts.push(`  </HeroContent>
 </Hero>`);
   
@@ -384,7 +384,7 @@ const HeroSplitDemo = () => {
               align={align} 
               split 
             >
-            {showBackgroundImage && <HeroImage 
+            {showBackgroundImage && <HeroMedia 
             src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1600&h=900&fit=crop&q=90"
             position="background"
             overlayOpacity={40}
@@ -420,7 +420,7 @@ const HeroSplitDemo = () => {
                   </ButtonWithIcon>
                 </HeroActions>
 
-                <HeroImage 
+                <HeroMedia 
                   position="right" 
                   src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=900&h=800&fit=crop&q=90"
                   alt="Modern workspace interior"
@@ -441,5 +441,312 @@ const HeroSplitDemo = () => {
   );
 };
 
-export { HeroDemo, HeroSplitDemo };
+const HeroVideoDemo = () => {
+  const codeParts: string[] = [];
+  
+  codeParts.push(`<Hero 
+  align="center" 
+  animationType="fadeInUp"
+>`);
+    codeParts.push(`  <HeroMedia
+    src="https://assets.mixkit.co/videos/513/513-720.mp4"
+    overlayOpacity={50}
+    showPlayPause
+    fallbackImage="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1600&h=900&fit=crop&q=90"
+  />`);  
+  codeParts.push(`  <HeroContent>`);
+    codeParts.push(`    <HeroHeading>Experience the Future in Motion</HeroHeading>
+    <HeroSubheading>
+      Watch your ideas come to life with stunning video backgrounds. 
+      Create immersive experiences that captivate and inspire your audience.
+    </HeroSubheading>
+    <HeroActions>
+      <ButtonWithIcon 
+        variant="outline" 
+        size="lg" 
+        iconPosition="right"
+        icon={<Rocket />}
+        className="px-8 py-6 rounded-lg border-2 border-white/30 text-white hover:bg-white/10 hover:border-white/50 transition-all duration-300 hover:scale-105 backdrop-blur-sm"
+      >
+        Get Started
+      </ButtonWithIcon>
+      <ButtonWithIcon 
+        variant="outline" 
+        size="lg" 
+        iconPosition="right"
+        icon={<ArrowUpRight />}
+        className="px-8 py-6 rounded-lg border-2 border-white/30 text-white hover:bg-white/10 hover:border-white/50 transition-all duration-300 hover:scale-105 backdrop-blur-sm"
+      >
+        Learn More
+      </ButtonWithIcon>
+    </HeroActions>`);
+  codeParts.push(`  </HeroContent>
+</Hero>`);
+  
+  const codeString = codeParts.join('\n');
+
+  return (
+    <div className="space-y-1">
+      <Tabs>
+        <TabItem value="preview" label="Preview">
+          <div className="border border-gray-300 p-4 rounded-lg overflow-hidden mt-4">
+            <Hero 
+              align="center" 
+              animationType="fadeInUp"
+            >
+              <HeroMedia 
+                src="https://assets.mixkit.co/videos/513/513-720.mp4"
+                overlayOpacity={50}
+                showPlayPause
+                fallbackImage="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1600&h=900&fit=crop&q=90"
+              />
+              <HeroContent>
+                <HeroHeading>
+                  Experience the Future in Motion
+                </HeroHeading>
+
+                <HeroSubheading>
+                  Watch your ideas come to life with stunning video backgrounds. 
+                  Create immersive experiences that captivate and inspire your audience.
+                </HeroSubheading>
+
+                <HeroActions className="mt-8">
+                  <ButtonWithIcon 
+                    variant="outline" 
+                    size="lg" 
+                    iconPosition="right"
+                    icon={<Rocket />}
+                    className="px-8 py-6 rounded-lg border-2 border-white/30 text-white hover:bg-white/10 hover:border-white/50 transition-all duration-300 hover:scale-105 backdrop-blur-sm"
+                  >
+                    Get Started
+                  </ButtonWithIcon>
+                  <ButtonWithIcon 
+                    variant="outline" 
+                    size="lg" 
+                    iconPosition="right"
+                    icon={<ArrowUpRight />}
+                    className="px-8 py-6 rounded-lg border-2 border-white/30 text-white hover:bg-white/10 hover:border-white/50 transition-all duration-300 hover:scale-105 backdrop-blur-sm"
+                  >
+                    Learn More
+                  </ButtonWithIcon>
+                </HeroActions>
+              </HeroContent>
+            </Hero>
+          </div>
+        </TabItem>
+        <TabItem value="code" label="Code">
+          <div className="mt-4">
+            <CodeBlock language="tsx" className="text-sm">
+              {codeString}
+            </CodeBlock>
+          </div>
+        </TabItem>
+      </Tabs>
+    </div>
+  );
+};
+
+const HeroCarouselDemo = () => {
+  const [autoRotate, setAutoRotate] = useState<boolean>(true);
+  const [showNavigation, setShowNavigation] = useState<boolean>(true);
+  const [showDots, setShowDots] = useState<boolean>(true);
+  const [rotationInterval, setRotationInterval] = useState<number>(1000);
+
+  const slides = [
+    {
+      id: 'slide-1',
+      src: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1920&h=1080&fit=crop',
+      overlayOpacity: 50,
+      content: (
+        <HeroContent>
+          <HeroHeading>Welcome to Our Platform</HeroHeading>
+          <HeroSubheading>
+            Discover amazing features and build something extraordinary with our powerful tools.
+          </HeroSubheading>
+          <HeroActions>
+            <ButtonWithIcon variant="primary" size="lg" iconPosition="right" icon={<Rocket />}>
+              Get Started
+            </ButtonWithIcon>
+            <ButtonWithIcon variant="primary" size="lg" iconPosition="right" icon={<ArrowUpRight />}>
+              Learn More
+            </ButtonWithIcon>
+          </HeroActions>
+        </HeroContent>
+      ),
+    },
+    {
+      id: 'slide-2',
+      src: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1920&h=1080&fit=crop',
+      overlayOpacity: 60,
+      content: (
+        <HeroContent>
+          <HeroHeading>Innovation at Your Fingertips</HeroHeading>
+          <HeroSubheading>
+            Experience cutting-edge technology designed to help you achieve your goals faster.
+          </HeroSubheading>
+          <HeroActions>
+            <ButtonWithIcon variant="primary" size="lg" iconPosition="right" icon={<Rocket />}>
+              Explore Features
+            </ButtonWithIcon>
+          </HeroActions>
+        </HeroContent>
+      ),
+    },
+    {
+      id: 'slide-3',
+      src: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1920&h=1080&fit=crop',
+      overlayOpacity: 55,
+      content: (
+        <HeroContent>
+          <HeroHeading>Join Thousands of Happy Users</HeroHeading>
+          <HeroSubheading>
+            Be part of a growing community that's transforming the way we work and create.
+          </HeroSubheading>
+          <HeroActions>
+            <ButtonWithIcon variant="primary" size="lg" iconPosition="right" icon={<Rocket />}>
+              Join Now
+            </ButtonWithIcon>
+          </HeroActions>
+        </HeroContent>
+      ),
+    },
+  ];
+
+  // Build code string
+  const codeParts: string[] = [];
+  
+  codeParts.push(`<HeroCarousel
+  slides={[
+    {
+      id: 'slide-1',
+      src: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1920&h=1080&fit=crop',
+      overlayOpacity: 50,
+      content: (
+        <HeroContent>
+          <HeroHeading>Welcome to Our Platform</HeroHeading>
+          <HeroSubheading>
+            Discover amazing features and build something extraordinary with our powerful tools.
+          </HeroSubheading>
+          <HeroActions>
+            <Button variant="default" size="lg">Get Started</Button>
+            <Button variant="default" size="lg">Learn More</Button>
+          </HeroActions>
+        </HeroContent>
+      ),
+    },
+    {
+      id: 'slide-2',
+      src: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1920&h=1080&fit=crop',
+      overlayOpacity: 60,
+      content: (
+        <HeroContent>
+          <HeroHeading>Innovation at Your Fingertips</HeroHeading>
+          <HeroSubheading>
+            Experience cutting-edge technology designed to help you achieve your goals faster.
+          </HeroSubheading>
+          <HeroActions>
+            <Button variant="default" size="lg">Explore Features</Button>
+          </HeroActions>
+        </HeroContent>
+      ),
+    },
+    {
+      id: 'slide-3',
+      src: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1920&h=1080&fit=crop',
+      overlayOpacity: 55,
+      content: (
+        <HeroContent>
+          <HeroHeading>Join Thousands of Happy Users</HeroHeading>
+          <HeroSubheading>
+            Be part of a growing community that's transforming the way we work and create.
+          </HeroSubheading>
+          <HeroActions>
+            <Button variant="default" size="lg">Join Now</Button>
+          </HeroActions>
+        </HeroContent>
+      ),
+    },
+  ]}
+${(() => {
+    const props = [
+      autoRotate ? `  autoRotate` : null,
+      autoRotate ? `  rotationInterval={${rotationInterval}}` : null,
+      showNavigation ? `  showNavigation` : null,
+      showDots ? `  showDots` : null,
+    ].filter(Boolean);
+    return props.length > 0 ? '\n' + props.join('\n') : '';
+  })()}
+/>`);
+  
+  const codeString = codeParts.join('\n');
+
+  return (
+    <div className="space-y-1">
+      <div className="flex flex-wrap gap-4 justify-start sm:justify-end rounded-lg">
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={autoRotate}
+            onChange={(e) => setAutoRotate(e.target.checked)}
+            className="rounded"
+          />
+          <span className="text-sm">Auto Rotate</span>
+        </label>
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={showNavigation}
+            onChange={(e) => setShowNavigation(e.target.checked)}
+            className="rounded"
+          />
+          <span className="text-sm">Show Navigation</span>
+        </label>
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={showDots}
+            onChange={(e) => setShowDots(e.target.checked)}
+            className="rounded"
+          />
+          <span className="text-sm">Show Dots</span>
+        </label>
+        {autoRotate && <label className="flex items-center gap-2 cursor-pointer">
+          <span className="text-sm">Rotation Interval (ms):</span>
+          <input
+            type="number"
+            min="1000"
+            max="5000"
+            step="500"
+            value={rotationInterval}
+            onChange={(e) => setRotationInterval(Number(e.target.value))}
+            className="w-24 px-2 py-1 rounded border border-gray-300"
+          />
+        </label>}
+      </div>
+
+      <Tabs>
+        <TabItem value="preview" label="Preview">
+          <div className="border border-gray-300 p-4 rounded-lg overflow-hidden mt-4">
+            <HeroCarousel
+              slides={slides}
+              autoRotate={autoRotate}
+              rotationInterval={rotationInterval}
+              showNavigation={showNavigation}
+              showDots={showDots}
+            />
+          </div>
+        </TabItem>
+        <TabItem value="code" label="Code">
+          <div className="mt-4">
+            <CodeBlock language="tsx" className="text-sm">
+              {codeString}
+            </CodeBlock>
+          </div>
+        </TabItem>
+      </Tabs>
+    </div>
+  );
+};
+
+export { HeroDemo, HeroSplitDemo, HeroVideoDemo, HeroCarouselDemo };
 

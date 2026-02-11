@@ -2,7 +2,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ApiKeysPage } from ".";
 import { Key, Zap, Lock, Users, Server, Database, Globe } from "lucide-react";
-import type { ApiKey, ApiKeyScope } from "./types";
+import type { ApiKey, ApiKeyScope } from "./";
 
 const meta: Meta<typeof ApiKeysPage> = {
     title: "Templates/Pages/Account Management/API Keys",
@@ -615,8 +615,7 @@ export const WithRealCallbacks: Story = {
         },
         // Keep keyId parameter for API consistency - in production, this would be used
         // The callback signature must match what the component expects to pass
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        onDeleteKey: async (keyId) => {
+        onDeleteKey: async (_keyId) => {
             await new Promise(resolve => setTimeout(resolve, 500));
         },
         onExportKeys: (format) => {

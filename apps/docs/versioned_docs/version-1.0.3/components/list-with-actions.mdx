@@ -9,48 +9,10 @@ import TabItem from '@theme/TabItem';
 import { ListWithActions } from '@site/src/components/UI/list-with-actions';
 import ListWithActionsDemo, { ActionsBehavior, OrderedListExample, RichContentExample } from '@site/src/components/Demo/ListWithActionsDemo';
 
-## Overview
 
 The List With Actions component extends the basic list functionality by adding contextual action buttons (like Edit, Delete, View) to each list item. Actions are intelligently revealed on hover or focus on desktop devices, while remaining always visible on mobile for better touch interaction.
 
-## Preview
-
-<Tabs defaultValue="preview">
-  <TabItem value="preview" label="Preview" default>
-    <div className="p-4 border rounded-lg">
-      <ListWithActions 
-        items={['Design landing page', 'Implement authentication', 'Review pull requests']}
-        actions={[
-          { id: 'view', label: 'View', onClick: () => {} },
-          { id: 'edit', label: 'Edit', onClick: () => {} },
-          { id: 'delete', label: 'Delete', onClick: () => {} },
-        ]}
-        spacing="md"
-      />
-    </div>
-  </TabItem>
-  <TabItem value="code" label="Code">
-    ```tsx
-    import { ListWithActions } from './components/ui/list-with-actions';
-
-    function MyComponent() {
-      const actions = [
-        { id: 'view', label: 'View', onClick: (index) => console.log('View', index) },
-        { id: 'edit', label: 'Edit', onClick: (index) => console.log('Edit', index) },
-        { id: 'delete', label: 'Delete', onClick: (index) => console.log('Delete', index) },
-      ];
-
-      return (
-        <ListWithActions 
-          items={['Item 1', 'Item 2', 'Item 3']}
-          actions={actions}
-          spacing="md"
-        />
-      );
-    }
-    ```
-  </TabItem>
-</Tabs>
+<ListWithActionsDemo />
 
 ## Installation
 
@@ -270,9 +232,7 @@ function RichContent() {
 }
 ```
 
-## Interactive Demo
 
-<ListWithActionsDemo />
 
 ## Variants
 
@@ -314,61 +274,6 @@ Display complex content in list items:
 | `ariaLabel` | `string` | optional | Accessible label announced to screen readers. |
 | `onClick` | `(index: number) => void` | **required** | Callback fired when the action is clicked. Receives the item's index. |
 
-## Examples
-
-### Task Management
-
-A common use case for managing tasks with actions:
-
-```tsx
-const tasks = ['Design landing page', 'Implement auth', 'Write tests'];
-const taskActions = [
-  { id: 'complete', label: 'Complete', onClick: (i) => markComplete(i) },
-  { id: 'edit', label: 'Edit', onClick: (i) => editTask(i) },
-  { id: 'delete', label: 'Delete', onClick: (i) => deleteTask(i) },
-];
-
-<ListWithActions items={tasks} actions={taskActions} />
-```
-
-### User List
-
-Displaying users with management actions:
-
-```tsx
-const users = ['John Doe', 'Jane Smith', 'Bob Johnson'];
-const userActions = [
-  { id: 'view', label: 'View Profile', onClick: (i) => viewUser(i) },
-  { id: 'edit', label: 'Edit', onClick: (i) => editUser(i) },
-  { id: 'delete', label: 'Remove', onClick: (i) => removeUser(i) },
-];
-
-<ListWithActions items={users} actions={userActions} spacing="md" />
-```
-
-### Step-by-Step Guide
-
-Using ordered list for instructions:
-
-```tsx
-const steps = [
-  'Open the application',
-  'Navigate to Settings',
-  'Select your preferences',
-  'Click Save to apply changes',
-];
-
-const stepActions = [
-  { id: 'view', label: 'View Details', onClick: (i) => showDetails(i) },
-];
-
-<ListWithActions 
-  type="ordered"
-  items={steps}
-  actions={stepActions}
-  spacing="md"
-/>
-```
 
 ## Accessibility
 

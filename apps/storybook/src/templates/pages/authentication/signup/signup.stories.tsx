@@ -1,7 +1,7 @@
 // signup/signup-form.stories.tsx
 
 import React from "react";
-import { SignUp, type SocialProvider } from "./";
+import { SignUp, type SignUpFormData, type SocialProvider } from "./";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Users, Zap, Globe, BarChart, Award, Shield, Mail } from "lucide-react";
 
@@ -524,20 +524,19 @@ export const WithErrorState: Story = {
 export const InteractiveSocialSignUp: Story = {
     name: "Interactive Social Sign Up",
     render: function Render(args) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [socialLoading, setSocialLoading] = React.useState<SocialProvider | null>(null);
 
         const handleSocialSignUp = (provider: SocialProvider) => {
             setSocialLoading(provider);
             setTimeout(() => {
                 setSocialLoading(null);
-                console.log(`${provider} sign-up completed`);
             }, 2000);
         };
 
         return (
             <SignUp
                 {...args}
+                loading={socialLoading === 'google' || socialLoading === 'github' || socialLoading === 'microsoft'}
                 onGoogleSignUp={() => handleSocialSignUp('google')}
                 onGitHubSignUp={() => handleSocialSignUp('github')}
                 onMicrosoftSignUp={() => handleSocialSignUp('microsoft')}
@@ -817,9 +816,7 @@ export const FormValidationDemo: Story = {
     render: function Render(args) {
         const [loading, setLoading] = React.useState(false);
         const [error, setError] = React.useState("");
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const handleSubmit = (data: any) => {
+        const handleSubmit = (data: SignUpFormData) => {
             setLoading(true);
             setError("");
 
@@ -868,8 +865,7 @@ export const FormValidationNoEmailConfirm: Story = {
         const [loading, setLoading] = React.useState(false);
         const [error, setError] = React.useState("");
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const handleSubmit = (data: any) => {
+        const handleSubmit = (data: SignUpFormData) => {
             setLoading(true);
             setError("");
 
