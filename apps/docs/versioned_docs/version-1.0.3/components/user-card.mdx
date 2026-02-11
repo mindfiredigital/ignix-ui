@@ -7,7 +7,7 @@ description: A versatile user profile card component with support for basic and 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import { UserCard } from '@site/src/components/UI/user-card';
-import { ProfileCardBasicDemo, ProfileCardAdvancedDemo, ProfileCardExamplesDemo} from '@site/src/components/Demo/UserCardDemo';
+import { UserCardBasicDemo, UserCardAdvancedDemo, UserCardExamplesDemo} from '@site/src/components/Demo/UserCardDemo';
 import { FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
 
 ## Overview
@@ -16,10 +16,10 @@ The Profile Card component displays user information in a clean, organized forma
 
 ## Preview
 
-<ProfileCardBasicDemo />
+<UserCardBasicDemo />
 
-<ProfileCardAdvancedDemo/> 
-<ProfileCardExamplesDemo />
+<UserCardAdvancedDemo/> 
+<UserCardExamplesDemo />
 
 ## Installation
 
@@ -883,7 +883,7 @@ UserCard.displayName = "UserCard";
 import { UserCard } from '';
 import { FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
 
-function BasicProfileCard() {
+function BasicUserCard() {
   return (
     <UserCard
       name="Alex Thompson"

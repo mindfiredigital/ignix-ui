@@ -12,17 +12,17 @@ import { Home, Search, Bell, User, Shield, Globe, Mail, Phone, MapPin } from 'lu
 const SingleColumnLayoutDemo = () => {
     const [customizationType, setCustomizationType] = useState('basic');
 
-    const handleNavClick = (href, label) => {
-        console.log(`Navigating to ${label}: ${href}`);
+    const handleNavClick = (_href, _label) => {
+        // console.log(`Navigating to ${label}: ${href}`);
     };
 
     const handleSignIn = () => {
-        console.log("Sign in clicked");
+        // console.log("Sign in clicked");
         alert("Sign In clicked!");
     };
 
     const handleSignUp = () => {
-        console.log("Sign up clicked");
+        // console.log("Sign up clicked");
         alert("Sign Up clicked!");
     };
 

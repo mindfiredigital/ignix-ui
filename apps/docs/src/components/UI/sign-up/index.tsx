@@ -139,7 +139,6 @@ export interface SignUpProps {
         /** Callback when CAPTCHA expires */
         onExpire?: () => void;
         /** Callback when CAPTCHA errors */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onError?: (error: any) => void;
     };
 
@@ -470,8 +469,7 @@ const SignUp: React.FC<SignUpProps> = ({
     const [showPassword, setShowPassword] = React.useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
     const [errors, setErrors] = React.useState<Record<string, string>>({});
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [touched, setTouched] = React.useState<Record<string, boolean>>({});
+    // const [touched, setTouched] = React.useState<Record<string, boolean>>({});
     const [socialLoading, setSocialLoading] = React.useState<SocialProvider | null>(null);
     const [captchaVerified, setCaptchaVerified] = React.useState(false);
 
@@ -548,11 +546,11 @@ const SignUp: React.FC<SignUpProps> = ({
         e.preventDefault();
 
         // Mark all fields as touched for validation
-        const allTouched: Record<string, boolean> = {};
-        Object.keys(formData).forEach(key => {
-            allTouched[key] = true;
-        });
-        setTouched(allTouched);
+        // const allTouched: Record<string, boolean> = {};
+        // Object.keys(formData).forEach(key => {
+        //     allTouched[key] = true;
+        // });
+        // setTouched(allTouched);
 
         if (!validateForm()) return;
 
@@ -564,8 +562,6 @@ const SignUp: React.FC<SignUpProps> = ({
     const handleLoginClick = () => {
         if (onLogin) {
             onLogin();
-        } else {
-            console.warn('Login callback not provided. Implement navigation to login page.');
         }
     };
 
@@ -577,29 +573,23 @@ const SignUp: React.FC<SignUpProps> = ({
                 case 'google':
                     if (onGoogleSignUp) {
                         await onGoogleSignUp();
-                    } else {
-                        console.warn(`onGoogleSignUp callback not implemented.`);
                     }
                     break;
                 case 'github':
                     if (onGitHubSignUp) {
                         await onGitHubSignUp();
-                    } else {
-                        console.warn(`onGitHubSignUp callback not implemented.`);
                     }
                     break;
                 case 'microsoft':
                     if (onMicrosoftSignUp) {
                         await onMicrosoftSignUp();
-                    } else {
-                        console.warn(`onMicrosoftSignUp callback not implemented.`);
                     }
                     break;
                 default:
-                    console.warn(`Unsupported social provider: ${provider}`);
+                // console.warn(`Unsupported social provider: ${provider}`);
             }
         } catch (error) {
-            console.error(`Social sign-up failed for ${provider}:`, error);
+            // console.error(`Social sign-up failed for ${provider}:`, error);
         } finally {
             setTimeout(() => setSocialLoading(null), 500);
         }
@@ -619,7 +609,7 @@ const SignUp: React.FC<SignUpProps> = ({
     };
 
     const handleBlur = (field: keyof SignUpFormData) => {
-        setTouched(prev => ({ ...prev, [field]: true }));
+        // setTouched(prev => ({ ...prev, [field]: true }));
 
         // Validate specific field on blur
         const newErrors = { ...errors };
