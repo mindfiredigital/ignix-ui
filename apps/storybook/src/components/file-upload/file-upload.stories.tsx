@@ -67,7 +67,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 // Template for controlled component
-const ControlledTemplate = (args: any) => {
+const ControlledTemplate = (args: Parameters<typeof FileUpload>[0]) => {
     const [files, setFiles] = useState<File[]>([]);
 
     return (

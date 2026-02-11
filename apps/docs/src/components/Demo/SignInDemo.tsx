@@ -579,14 +579,10 @@ const SplitDarkDemo = () => {
 // Demo 3: Fully Customizable Layout
 const FullyCustomizableDemo = () => {
     const [isLoading, setIsLoading] = useState(false);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [companyName, setCompanyName] = useState('InnovateCorp');
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [background, setBackground] = useState('gradient');
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [showTestimonials, setShowTestimonials] = useState(true);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [showStatistics, setShowStatistics] = useState(true);
+    const [companyName] = useState('InnovateCorp');
+    const [background] = useState('gradient');
+    const [showTestimonials] = useState(true);
+    const [showStatistics] = useState(true);
 
     const handleSubmit = async (data: SignInFormData) => {
         setIsLoading(true);
@@ -820,17 +816,15 @@ const FullyCustomizableDemo = () => {
 
 // Split Backgrounds Demo
 const SplitBackgroundsDemo = () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [selectedBackgrounds, setSelectedBackgrounds] = useState<string[]>(['nature']);
+    // const [selectedBackgrounds, setSelectedBackgrounds] = useState<string[]>(['nature']);
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const handleBackgroundChange = (bg: string) => (checked: boolean) => {
-        setSelectedBackgrounds(prev =>
-            checked
-                ? [...prev, bg]
-                : prev.filter(item => item !== bg)
-        );
-    };
+    // const handleBackgroundChange = (bg: string) => (checked: boolean) => {
+    //     setSelectedBackgrounds(prev =>
+    //         checked
+    //             ? [...prev, bg]
+    //             : prev.filter(item => item !== bg)
+    //     );
+    // };
 
     const getBackgroundConfig = (bg: string) => {
         switch (bg) {
