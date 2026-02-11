@@ -30,12 +30,12 @@ type VariantType = 'default' | 'primary' | 'secondary' | 'accent' | 'muted' | 'g
 type ImagePositionType = 'left' | 'right';
 type FormType = 'banner' | 'newsletter' | 'contact-form' | 'demo-request';
 
-const formTypeOptions = [
-    { value: 'banner', label: 'Basic Banner' },
-    { value: 'newsletter', label: 'Newsletter Form' },
-    { value: 'contact-form', label: 'Contact Form' },
-    { value: 'demo-request', label: 'Demo Request Form' },
-];
+// const formTypeOptions = [
+//     { value: 'banner', label: 'Basic Banner' },
+//     { value: 'newsletter', label: 'Newsletter Form' },
+//     { value: 'contact-form', label: 'Contact Form' },
+//     { value: 'demo-request', label: 'Demo Request Form' },
+// ];
 
 // Helper function to get theme-aware variant based on color mode
 const getThemeAwareVariant = (demoType: string, colorMode: 'light' | 'dark'): VariantType => {
@@ -58,10 +58,10 @@ const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light'
         case 'banner':
             return (
                 <>
-                    <CTABannerHeading>
+                    <CTABannerHeading className={theme === 'dark' ? 'text-gray-100 text-3xl' : 'text-gray-900 text-4xl'}>
                         Let's Build Something Amazing
                     </CTABannerHeading>
-                    <CTABannerSubheading>
+                    <CTABannerSubheading className="dark:text-gray-300 text-gray-900 text-lg">
                         Join thousands of satisfied customers who have transformed their business with our platform.
                         Get started today and see the difference.
                     </CTABannerSubheading>
@@ -79,19 +79,19 @@ const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light'
                     <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm">
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-green-500" />
-                            <span className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>
+                            <span className={theme === 'dark' ? 'text-gray-300 text-lg' : 'text-gray-900 text-lg'}>
                                 30-day free trial
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-green-500" />
-                            <span className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>
+                            <span className={theme === 'dark' ? 'text-gray-300 text-lg' : 'text-gray-900 text-lg'}>
                                 No credit card required
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-green-500" />
-                            <span className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>
+                            <span className={theme === 'dark' ? 'text-gray-300 text-lg' : 'text-gray-900 text-lg'}>
                                 24/7 support
                             </span>
                         </div>
@@ -329,20 +329,6 @@ const CTABannerDemo = ({
         setVariant(getThemeAwareVariant(demoType, colorMode));
     }, [colorMode, demoType]);
 
-    // Get appropriate variant options based on demo type
-    // const getVariantOptions = () => {
-    //     if (demoType === 'background-image') {
-    //         return ['dark', 'light', 'glass'];
-    //     }
-    //     if (demoType === 'gradient-background') {
-    //         return ['dark', 'light', 'default'];
-    //     }
-    //     if (demoType === 'split') {
-    //         return ['light', 'dark', 'default', 'accent'];
-    //     }
-    //     // For centered demo
-    //     return colorMode === 'dark' ? ['dark', 'muted', 'glass'] : ['default', 'primary', 'light', 'accent'];
-    // };
 
     const renderBanner = () => {
         const bannerProps: any = {
@@ -378,7 +364,7 @@ const CTABannerDemo = ({
                 )}
 
                 {(demoType === 'background-image') && (
-                    <div className={`absolute inset-0 ${variant === 'dark' ? 'bg-black/40' : 'bg-white/30'}`} />
+                    <div className={`absolute inset-0 ${variant === 'dark' ? 'bg-black/40' : 'bg-white/20'}`} />
                 )}
 
                 <CTABannerContent className={(demoType === 'background-image' || demoType === 'gradient-background') ? "relative z-10" : ""}>
@@ -398,37 +384,28 @@ const CTABannerDemo = ({
 
     return (
         <div className="space-y-6">
-            <div className="border-b pb-4">
+            <div className="pb-4">
                 <h3 className="text-xl font-bold">{title}</h3>
                 <p className="text-gray-600 dark:text-gray-400">{description}</p>
             </div>
 
-            <div className="flex flex-wrap gap-4 justify-between items-center">
+            <div className="flex flex-wrap gap-4 justify-end items-center">
                 
 
-                <div className="flex flex-wrap gap-4">
-                    {/* <div className="space-y-2">
-                        <VariantSelector
-                            variants={getVariantOptions()}
-                            selectedVariant={variant}
-                            onSelectVariant={(value) => setVariant(value as VariantType)}
-                            type="Variant"
-                        />
-                    </div> */}
-                    <div>
-                        <label className="block text-sm font-medium mb-2 dark:text-gray-300">Form Type</label>
-                        <select
-                            value={formType}
-                            onChange={(e) => setFormType(e.target.value as FormType)}
-                            className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
-                        >
-                            {formTypeOptions.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                <div className="flex flex-row items-center gap-2">
+                   
+                    <VariantSelector
+                        variants={['banner', 'newsletter', 'contact-form', 'demo-request']}
+                        selectedVariant={formType}
+                        onSelectVariant={(value) => setFormType(value as FormType)}
+                        type="Form Type"
+                        variantLabels={{
+                            'banner': 'Basic Banner',
+                            'newsletter': 'Newsletter Form',
+                            'contact-form': 'Contact Form',
+                            'demo-request': 'Demo Request Form'
+                        }}
+                    />
                     {demoType === 'split' && (
                         <div className="space-y-2">
                             <VariantSelector
@@ -468,32 +445,32 @@ const CTABannerDemo = ({
 // Export the four demos
 export const CenteredDemo = () => (
     <CTABannerDemo
-        title="1. Centered Layout"
-        description="Classic centered layout perfect for most use cases. Content is centered with equal padding on all sides."
+        // title="1. Centered Layout"
+        // description="Classic centered layout perfect for most use cases. Content is centered with equal padding on all sides."
         demoType="centered"
     />
 );
 
 export const SplitDemo = () => (
     <CTABannerDemo
-        title="2. Split Layout"
-        description="Split layout with content on one side and an image on the other. Great for visual storytelling."
+        // title="2. Split Layout"
+        // description="Split layout with content on one side and an image on the other. Great for visual storytelling."
         demoType="split"
     />
 );
 
 export const BackgroundImageDemo = () => (
     <CTABannerDemo
-        title="3. Background Image"
-        description="Full-width background image with optional overlay. Creates a visually striking call-to-action."
+        // title="3. Background Image"
+        // description="Full-width background image with optional overlay. Creates a visually striking call-to-action."
         demoType="background-image"
     />
 );
 
 export const GradientBackgroundDemo = () => (
     <CTABannerDemo
-        title="4. Gradient Background"
-        description="Gradient overlay over a background image for modern, eye-catching designs."
+        // title="4. Gradient Background"
+        // description="Gradient overlay over a background image for modern, eye-catching designs."
         demoType="gradient-background"
     />
 );

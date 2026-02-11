@@ -1,6 +1,6 @@
 ---
 sidebar_position: 11
-title: Call to Action (CTA) Banner
+title: Call to Action
 description: A full-width CTA banner component with multiple layouts, variants, and advanced animations for effective call-to-action sections.
 ---
 
@@ -2037,67 +2037,69 @@ export type { CTABannerProps };
 ### CTABanner Props
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-|`variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'muted' \| 'gradient' \| 'glass' \| 'dark' \| 'light'` |	`'default'` |	Visual variant of the banner
-|`layout` |	`'centered' \| 'split' \| 'compact'` |	`'centered'` |	Layout arrangement
-| `contentAlign`	| `'left' \| 'center' \| 'right'` |	`'center'` | Content alignment within the banner
-| `backgroundType` |	`'solid' \| 'gradient' \| 'image'`	| `'solid'` |	Type of background styling
-| `backgroundColor` |	`string`	| `-`|	Custom background color (for solid background)
-| `gradientFrom` |	`string`	| `-`	| Start color for gradient background
-|`gradientTo` |	`string`	| `-` |	End color for gradient background
+| `variant` |	`'default' \| 'primary' \| 'secondary' \| 'accent' \| 'muted' \| 'gradient' \| 'glass' \| 'dark' \| 'light'` |	`'default'`	| Visual variant of the banner
+| `layout`	|`'centered' \| 'split' \| 'compact'`	'centered'	Layout arrangement
+|`contentAlign` |	`'left' \| 'center' \| 'right'`	| `'center'`	| Content alignment within the banner
+|`backgroundType` |	`'solid' \| 'gradient' \| 'image'`	| `'solid'` |	Type of background styling
+|`backgroundColor` |	`string`	| `-`|	Custom background color (for solid background)
+|`gradientFrom` |	`string`	| `-` |	Start color for gradient background
+|`gradientTo` |	`string`	| `- ` |	End color for gradient background
 |`backgroundImage` |	`string`	| `-`	|URL for background image
 |`imagePosition` |	`'left' \| 'right'`	| `'right'`	| Image position for split layout
-|`imageVariant` |	`'light' \| 'dark' \| 'default'`	| `'default'`	| Image styling variant
+|`imageVariant` |	`'light' \| 'dark' \| 'default'`	| `'default'`	| Image styling variant (affects brightness/contrast)
 |`theme` |	`'light' \| 'dark'`	| `-`	| Force a specific theme (overrides variant-based theme)
 |`forceTheme` |	`boolean`	| `false`	| Force theme CSS classes
 |`animate` |	`boolean`	| `true`	| Enable/disable animations
 |`animationDelay` |	`number`	| `0`	| Initial animation delay in seconds
-|`animationType` |	`'fade' \| 'slide' \| 'scale'`	| `'fade'`	| Type of entrance animation
-|`padding` |	`'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'`	| `'lg'`	| Vertical padding size
-|`ariaLabel` |	`string`	| `'Call to action banner'`	| Accessibility label
-|`role` |	`string`	| `'banner'`	| ARIA role
-|`children` |	`React.ReactNode`	| `required`|	Banner content components
+|`animationType` |	 `'fade' \| 'slide' \| 'scale' ` | `'fade' ` |	Type of entrance animation
+| `padding ` | `'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl '` | `'lg '` | Vertical padding size
+| `ariaLabel ` | `string ` | `'Call to action banner '` | Accessibility label
+|`role` |	`string` |	`'banner'` |	ARIA role
+|`children` |	`React.ReactNode`	| `required` |	Banner content components
 
 ### CTABannerHeading Props
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-|`Prop` | `Type` | `Default` |	Description
-|`children` | `React.ReactNode` | `required`|	Heading text content
-|`className` | `string` | `-` |	Custom className
+| `children` |	`React.ReactNode` | `required` |	Heading text content
+|`className` | `string` | `-` |	Additional CSS classes
+
 
 ### CTABannerSubheading Props
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-|`children` | `React.ReactNode` | required	| Subheading text content
-|`className` | `string` | `-` |	Custom className
+| `children` |	`React.ReactNode` | `required` |	Subheading text content
+|`className` | `string` | `-` |	Additional CSS classes
+
 
 ### CTABannerActions Props
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-|`children` | `React.ReactNode` | required |	Action buttons
-|`className` | `string` | `-`|	Custom className
+| `children` |	`React.ReactNode` |	`required` | Action buttons
+| `className` | `string` | `-` | Additional CSS classes
+
 
 ### CTABannerButton Props
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-|`label` | `string` | `required` |	Button text
-|`variant` | `'primary' \| 'secondary' \| 'outline' \| 'ghost' \| 'link'` | `'primary'` |	Button variant
-|`icon` | `React.ElementType` | `-` |	Optional icon component
-|`onClick` | `() => void` | `-`	| Click handler
-|`href` | `string` | `-`	| Link URL (renders as anchor tag)
-|`external` | `boolean` | `false` |	Open link in new tab
-|`size` | `'sm' \| 'md' \| 'lg'` | `'md' (compact) / 'lg'(others)` | 	Button size
-|`className` | `string` | `-`	| Custom className
+| `label` | `string` | `required` | Button text
+| `variant` | `'primary' \| 'secondary' \| 'outline' \| 'ghost' \| 'link'` | `'primary'` | Button variant
+| `icon` | `React.ElementType` | `-` | Optional icon component
+| `onClick` | `() => void` | `-`	| Click handler
+| `href` | `string` | `-`	| Link URL (renders as anchor tag)
+| `external` | `boolean` | `false` |	Open link in new tab
+| `size` |	`'sm' \| 'md' \| 'lg'`	| `'md' (compact layout) / 'lg' (centered/split) |`	Button size (auto-detected from layout if not provided)
+| `className` | `string` | `-` | Additional CSS classes
 
 ### CTABannerContent Props
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-|`children` | `React.ReactNode` | `required` |	Content elements (heading, subheading, actions)
-|`className` | `string` | `-` |	Custom className
+| `children`	| `React.ReactNode` | `required` |	Content elements (heading, subheading, actions)
+| `className` | `string` | `-` | Additional CSS classes
 
 ### CTABannerImage Props
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-|`src` | `string` | `required`	|Image source URL
-|`alt` | `string` | `'CTA Visual'` |	Image alt text
-|`className` | `string` | `-`	| Custom className
-|`variant` | `'light' \| 'dark' \| 'default'` | `-`	| Image styling variant (overrides banner's imageVariant)
+| `src` | `string` | `required` | Image source URL
+| `alt` | `string` | `'CTA Visual'` | Image alt text
+| `className` | `string` | `-` | Additional CSS classes
+| `variant` | `'light' \| 'dark' \| 'default'` | `-` | Image styling variant (overrides banner's imageVariant)
