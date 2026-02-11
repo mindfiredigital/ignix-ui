@@ -343,6 +343,21 @@
         }
       }
     },
+    "modal": {
+      "name": "Modal",
+      "description": "A modern, animated modal component with overlay, header, body, footer, color schemes, and optional header icon support. Includes Escape and overlay close behavior plus customizable color overrides.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react"
+      ],
+      "componentDependencies": [],
+      "files": {
+        "main": {
+          "path": "components/modals/index.tsx",
+          "type": "component"
+        }
+      }
+    },
     "textarea": {
       "name": "Textarea",
       "description": "An animated textarea component with different variants",
