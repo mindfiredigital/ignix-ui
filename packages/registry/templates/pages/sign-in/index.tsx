@@ -6,9 +6,9 @@
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "../../../../utils/cn";
-import { Button } from "../../../components/button";
-import { AnimatedInput } from "../../../components/input";
+import { cn } from "../../../utils/cn";
+import { Button } from "@ignix-ui/button";
+import { AnimatedInput } from "@ignix-ui/input";
 import {
     Eye,
     EyeOff,
@@ -383,8 +383,6 @@ const SignIn: React.FC<SignInProps> = ({
     const handleSignUpClick = () => {
         if (onSignUp) {
             onSignUp();
-        } else {
-            console.warn('SignUp callback not provided. Implement navigation to sign-up page.');
         }
     };
 
@@ -396,29 +394,23 @@ const SignIn: React.FC<SignInProps> = ({
                 case 'google':
                     if (onGoogleSignIn) {
                         await onGoogleSignIn();
-                    } else {
-                        console.warn(`onGoogleSignIn callback not implemented.`);
                     }
                     break;
                 case 'github':
                     if (onGitHubSignIn) {
                         await onGitHubSignIn();
-                    } else {
-                        console.warn(`onGitHubSignIn callback not implemented.`);
                     }
                     break;
                 case 'microsoft':
                     if (onMicrosoftSignIn) {
                         await onMicrosoftSignIn();
-                    } else {
-                        console.warn(`onMicrosoftSignIn callback not implemented.`);
                     }
                     break;
                 default:
-                    console.warn(`Unsupported social provider: ${provider}`);
+                // console.warn(`Unsupported social provider: ${provider}`);
             }
         } catch (error) {
-            console.error(`Social sign-in failed for ${provider}:`, error);
+            // console.error(`Social sign-in failed for ${provider}:`, error);
         } finally {
             setTimeout(() => setSocialLoading(null), 500);
         }

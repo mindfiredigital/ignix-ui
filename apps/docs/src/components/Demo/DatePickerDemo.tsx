@@ -6,6 +6,8 @@ import CodeBlock from '@theme/CodeBlock';
 import { Button } from '@site/src/components/UI/button';
 import { Moon, Sun } from 'lucide-react';
 import { Typography } from '@site/src/components/UI/typography';
+import { useColorMode } from '@docusaurus/theme-common';
+
 
 // Component for individual demos
 const DemoSection = ({ title, description, children, code }: {
@@ -63,6 +65,7 @@ const popupPositionOptions = [
 
 // Demo 1: Basic Single Date Picker
 export const BasicDatePickerDemo = () => {
+    const { colorMode } = useColorMode();
     const [date, setDate] = useState<Date | null>(null);
     // Handler for single date picker
     const handleSingleDateChange = (date: Date | null) => {
@@ -102,7 +105,7 @@ function MyComponent() {
                     placeholder="Select a date"
                     label="Appointment Date"
                     helperText="Choose your appointment date"
-                    themeMode='dark'
+                    themeMode={colorMode as 'light' | 'dark'}
                 />
                 {date && (
                     <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded">
@@ -123,6 +126,7 @@ function MyComponent() {
 
 // Demo 2: Range Date Selector
 export const RangeDatePickerDemo = () => {
+    const { colorMode } = useColorMode();
     const [range, setRange] = useState<{ start: Date | null; end: Date | null }>({
         start: null,
         end: null
@@ -166,7 +170,7 @@ function MyComponent() {
         >
             <div className="max-w-md">
                 <DatePicker
-                    themeMode='dark'
+                    themeMode={colorMode as 'light' | 'dark'}
                     variant="range"
                     value={range}
                     onChange={handleRangeDateChange}
@@ -194,6 +198,7 @@ function MyComponent() {
 
 // Demo 3: Different Sizes
 export const SizeVariantsDemo = () => {
+    const { colorMode } = useColorMode();
     const [dates, setDates] = useState({
         sm: null as Date | null,
         md: null as Date | null,
@@ -219,7 +224,7 @@ export const SizeVariantsDemo = () => {
                 <div className="space-y-2">
                     <Typography variant="label" className="text-gray-700 dark:text-gray-300">Small</Typography>
                     <DatePicker
-                        themeMode='dark'
+                        themeMode={colorMode as 'light' | 'dark'}
                         size="sm"
                         placeholder="Small date picker"
                         value={dates.sm || undefined}
@@ -229,7 +234,7 @@ export const SizeVariantsDemo = () => {
                 <div className="space-y-2">
                     <Typography variant="label" className="text-gray-700 dark:text-gray-300">Medium (Default)</Typography>
                     <DatePicker
-                        themeMode='dark'
+                        themeMode={colorMode as 'light' | 'dark'}
                         size="md"
                         placeholder="Medium date picker"
                         value={dates.md || undefined}
@@ -239,7 +244,7 @@ export const SizeVariantsDemo = () => {
                 <div className="space-y-2">
                     <Typography variant="label" className="text-gray-700 dark:text-gray-300">Large</Typography>
                     <DatePicker
-                        themeMode='dark'
+                        themeMode={colorMode as 'light' | 'dark'}
                         size="lg"
                         placeholder="Large date picker"
                         value={dates.lg || undefined}
@@ -249,7 +254,7 @@ export const SizeVariantsDemo = () => {
                 <div className="space-y-2">
                     <Typography variant="label" className="text-gray-700 dark:text-gray-300">Extra Large</Typography>
                     <DatePicker
-                        themeMode='dark'
+                        themeMode={colorMode as 'light' | 'dark'}
                         size="xl"
                         placeholder="Extra large date picker"
                         value={dates.xl || undefined}
@@ -317,6 +322,7 @@ export const ColorSchemesDemo = () => {
 
 // Demo 5: Popup Positions
 export const PopupPositionsDemo = () => {
+    const { colorMode } = useColorMode();
     const [selectedPositions, setSelectedPositions] = useState<Record<string, Date | null>>({});
 
     const codeString = `
@@ -343,7 +349,7 @@ export const PopupPositionsDemo = () => {
                                 {position.label}
                             </Typography>
                             <DatePicker
-                                themeMode='dark'
+                                themeMode={colorMode as 'light' | 'dark'}
                                 popupPosition={position.value as any}
                                 placeholder={position.label}
                                 size="sm"
@@ -369,6 +375,7 @@ export const PopupPositionsDemo = () => {
 
 // Demo 6: Hotel Booking Example
 export const HotelBookingDemo = () => {
+    const { colorMode } = useColorMode();
     const [booking, setBooking] = useState({
         checkIn: null as Date | null,
         checkOut: null as Date | null,
@@ -453,7 +460,7 @@ function HotelBooking() {
             <div className="space-y-6 max-w-2xl">
 
                 <DatePicker
-                    themeMode='dark'
+                    themeMode={colorMode as 'light' | 'dark'}
                     variant="range"
                     value={booking}
                     onChange={handleBookingChange}
@@ -507,7 +514,7 @@ function HotelBooking() {
                     </div>
                 )}
 
-                <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded">
+                {/* <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded">
                     <Typography variant="body-small" weight="medium" className="mb-1">Features demonstrated:</Typography>
                     <ul className="list-disc pl-5 space-y-1">
                         <Typography variant="caption" as="li">Date range selection</Typography>
@@ -516,13 +523,14 @@ function HotelBooking() {
                         <Typography variant="caption" as="li">Today and Clear buttons</Typography>
                         <Typography variant="caption" as="li">Custom date format (MMM DD, YYYY)</Typography>
                     </ul>
-                </div>
+                </div> */}
             </div>
         </DemoSection>
     );
 };
 // Demo 8: Validation Examples
 export const ValidationExamplesDemo = () => {
+    const { colorMode } = useColorMode();
     const [dates, setDates] = useState({
         required: null as Date | null,
         minMax: null as Date | null,
@@ -548,7 +556,7 @@ export const ValidationExamplesDemo = () => {
                 <div className="space-y-2">
                     <Typography variant="label" className="text-gray-700 dark:text-gray-300">Required Field</Typography>
                     <DatePicker
-                        themeMode='dark'
+                        themeMode={colorMode as 'light' | 'dark'}
                         required
                         placeholder="Select a date (required)"
                         value={dates.required || undefined}
@@ -561,7 +569,7 @@ export const ValidationExamplesDemo = () => {
                 <div className="space-y-2">
                     <Typography variant="label" className="text-gray-700 dark:text-gray-300">Min/Max Date Constraints</Typography>
                     <DatePicker
-                        themeMode='dark'
+                        themeMode={colorMode as 'light' | 'dark'}
                         minDate={today}
                         maxDate={nextWeek}
                         placeholder={`Select date within next week`}
@@ -575,7 +583,7 @@ export const ValidationExamplesDemo = () => {
                 <div className="space-y-2">
                     <Typography variant="label" className="text-gray-700 dark:text-gray-300">Disabled Dates</Typography>
                     <DatePicker
-                        themeMode='dark'
+                        themeMode={colorMode as 'light' | 'dark'}
                         disabledDates={disabledDates}
                         placeholder="Select date (some dates disabled)"
                         value={dates.disabled || undefined}
@@ -588,7 +596,7 @@ export const ValidationExamplesDemo = () => {
                 <div className="space-y-2">
                     <Typography variant="label" className="text-gray-700 dark:text-gray-300">Error State</Typography>
                     <DatePicker
-                        themeMode='dark'
+                        themeMode={colorMode as 'light' | 'dark'}
                         error
                         errorMessage="Invalid date selected"
                         placeholder="This field has an error"
@@ -789,6 +797,7 @@ export const DatePickerPlayground = () => {
 
 
 export const ControlledDatePickerDemo = () => {
+    const { colorMode } = useColorMode();
     const [singleDate, setSingleDate] = useState<Date | null>(null);
     const [rangeDate, setRangeDate] = useState<{ start: Date | null; end: Date | null }>({
         start: null,
@@ -866,7 +875,7 @@ function RangeDateExample() {
                         placeholder="Select a date"
                         label="Single Date Picker"
                         helperText="Date is controlled by React state"
-                        themeMode='dark'
+                        themeMode={colorMode as 'light' | 'dark'}
                     />
                     <div className="flex items-center justify-between">
                         <Typography variant="body-small">
@@ -896,7 +905,7 @@ function RangeDateExample() {
                         placeholder={['Start date', 'End date']}
                         label="Range Date Picker"
                         helperText="Range is controlled by React state"
-                        themeMode='dark'
+                        themeMode={colorMode as 'light' | 'dark'}
                     />
                     <div className="space-y-2">
                         <Typography variant="body-small">

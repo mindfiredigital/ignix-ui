@@ -137,7 +137,7 @@ export const SpacingComparison = () => {
 
     return (
         <div className="space-y-6 mb-8">
-            <h3 className="text-lg font-semibold">Spacing Variants</h3>
+            {/* <h3 className="text-lg font-semibold">Spacing Variants</h3> */}
             <Tabs>
                 <TabItem value="preview" label="Preview" default>
                     <div className="p-6 border rounded-lg">
@@ -208,7 +208,7 @@ export const TypeComparison = () => {
 
     return (
         <div className="space-y-6 mb-8">
-            <h3 className="text-lg font-semibold">List Types</h3>
+            {/* <h3 className="text-lg font-semibold">List Types</h3> */}
             <Tabs>
                 <TabItem value="preview" label="Preview" default>
                     <div className="p-6 border rounded-lg">
@@ -268,7 +268,7 @@ export const ChildrenExample = () => {
 
     return (
         <div className="space-y-6 mb-8">
-            <h3 className="text-lg font-semibold">Using Children</h3>
+            {/* <h3 className="text-lg font-semibold">Using Children</h3> */}
             <Tabs>
                 <TabItem value="preview" label="Preview" default>
                     <div className="p-6 border rounded-lg">

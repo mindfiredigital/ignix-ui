@@ -191,8 +191,7 @@ export const RenderFunctionCustomization: Story = {
     args: {
         variant: "glass",
         children: <DemoContent />,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        renderHeader: ({ logo, navLinks, authControls, mobileMenuButton, variant }) => (
+        renderHeader: ({ logo, navLinks, authControls, mobileMenuButton, _variant }) => (
             <div className="flex items-center justify-between w-full h-full px-6">
                 {logo}
                 <div className="flex-1 flex justify-center">
@@ -213,8 +212,7 @@ export const RenderFunctionCustomization: Story = {
                 </div>
             </div>
         ),
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        renderFooter: ({ variant, content }) => (
+        renderFooter: ({ _variant, content }) => (
             <div className="flex flex-col items-center justify-center py-6 space-y-4">
                 {content}
                 <div className="flex space-x-4">
@@ -266,10 +264,10 @@ export const CompleteControl: Story = {
             console.log(`Navigating to ${label}: ${href}`);
         },
         onSignInClick: () => {
-            console.log("Sign in clicked");
+            // console.log("Sign in clicked");
         },
         onSignUpClick: () => {
-            console.log("Sign up clicked");
+            // console.log("Sign up clicked");
         },
     },
 };

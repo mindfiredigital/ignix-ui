@@ -86,12 +86,15 @@ interface SocialLinksListProps {
     onLinksChange: (links: SocialLink[]) => void;
 }
 
+// Define the Button variant type based on the Button component
+type ButtonVariantType = 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'outline' | 'ghost' | 'link' | 'subtle' | 'elevated' | 'glass' | 'neon' | 'pill' | 'none';
+
 interface SaveCancelBarProps {
     onSave: () => void;
     onCancel: () => void;
     isSaving?: boolean;
-    saveButtonVariant?: string;
-    cancelButtonVariant?: string;
+    saveButtonVariant?: ButtonVariantType;
+    cancelButtonVariant?: ButtonVariantType;
 }
 
 interface ProfileProps {
@@ -139,6 +142,8 @@ interface ProfileProps {
 
     darkMode?: boolean;
 }
+
+
 
 /* ============================================
    VARIANTS
@@ -516,7 +521,7 @@ const SaveCancelBar = ({
             "border-t border-border animate-fade-in cursor-pointer"
         )}>
             <Button
-                variant={cancelButtonVariant as any}
+                variant={cancelButtonVariant}
                 onClick={onCancel}
                 disabled={isSaving}
                 className="min-w-[100px] cursor-pointer"
@@ -526,7 +531,7 @@ const SaveCancelBar = ({
                 Cancel
             </Button>
             <Button
-                variant={saveButtonVariant as any}
+                variant={saveButtonVariant}
                 onClick={onSave}
                 disabled={isSaving}
                 className="min-w-[100px] cursor-pointer"
@@ -731,7 +736,6 @@ export const ProfilePage: React.FC<ProfileProps> = ({
                 showNotification('success', saveNotificationMessage);
             }
         } catch (error) {
-            console.error('Failed to save profile:', error);
             // Show error notification
             showNotification('error', 'Failed to save changes. Please try again.');
         } finally {
@@ -795,7 +799,7 @@ export const ProfilePage: React.FC<ProfileProps> = ({
                             {!isEditing && (
                                 <Button
                                     onClick={handleEdit}
-                                    variant={buttonVariant as any}
+                                    variant={buttonVariant}
                                     animationVariant={buttonAnimationVariant}
                                     className='cursor-pointer'
                                 >

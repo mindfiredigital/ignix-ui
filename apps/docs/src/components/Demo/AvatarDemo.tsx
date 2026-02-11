@@ -68,7 +68,6 @@ const AvatarDemo = () => {
         const url = URL.createObjectURL(file);
         setAvatarUrl(url);
         setUploadedImage(file);
-        console.log('Uploaded file:', file.name);
     };
 
     const handleRemove = () => {
@@ -82,7 +81,6 @@ const AvatarDemo = () => {
     const handleAvatarClick = () => {
         if (isClickable) {
             setClickCount(prev => prev + 1);
-            console.log('Avatar clicked!');
         }
     };
 
@@ -452,7 +450,6 @@ const AvatarUploadDemo = () => {
         const url = URL.createObjectURL(file);
         setAvatarUrl(url);
         setUploadedFile(file);
-        console.log('Uploaded file:', file.name, file.size, file.type);
     };
 
     const handleRemove = () => {
@@ -584,7 +581,6 @@ const AvatarAdvancedDemo = () => {
 
     const handleClick = (name: string) => {
         setClickedAvatar(name);
-        console.log(`Clicked on ${name}`);
     };
 
     return (
