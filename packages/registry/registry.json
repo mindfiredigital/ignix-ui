@@ -69,7 +69,7 @@
       ],
       "files": {
         "main": {
-          "path": "components/button-with-icon/index.tsx",
+          "path": "components/buttonwithicon/index.tsx",
           "type": "component"
         }
       }

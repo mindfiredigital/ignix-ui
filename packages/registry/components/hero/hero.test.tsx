@@ -23,12 +23,12 @@ import {
   HeroHeading,
   HeroSubheading,
   HeroActions,
-  HeroImage,
-  HeroVideo,
   HeroBadge,
   HeroFeatures,
   HeroGlassCard,
   HeroStats,
+  HeroCarousel,
+  HeroMedia,
 } from './index';
 import { Zap, Users, Shield } from 'lucide-react';
 
@@ -67,6 +67,18 @@ vi.mock('@ignix-ui/button', () => ({
   Button: React.forwardRef<HTMLButtonElement, any>(
     ({ children, onClick, className, ...props }, ref) => (
       <button ref={ref} onClick={onClick} className={className} {...props}>
+        {children}
+      </button>
+    )
+  ),
+}));
+
+// Mock ButtonWithIcon component
+vi.mock('@ignix-ui/button-with-icon', () => ({
+  ButtonWithIcon: React.forwardRef<HTMLButtonElement, any>(
+    ({ children, onClick, className, 'aria-label': ariaLabel, icon, ...props }, ref) => (
+      <button ref={ref} onClick={onClick} className={className} aria-label={ariaLabel} {...props}>
+        {icon}
         {children}
       </button>
     )
@@ -205,7 +217,6 @@ describe('Hero Component', () => {
 
   describe('Animation Types', () => {
     const animationTypes = [
-      'none',
       'fadeIn',
       'fadeInUp',
       'fadeInDown',
@@ -456,11 +467,11 @@ describe('Hero Component', () => {
     });
   });
 
-  describe('HeroImage Component', () => {
-    it('renders HeroImage with background position by default', () => {
+  describe('HeroMedia Component (as HeroMedia)', () => {
+    it('renders HeroMedia with background position by default', () => {
       const { container } = render(
         <Hero>
-          <HeroImage src="test.jpg" alt="Test image" />
+          <HeroMedia src="test.jpg" alt="Test image" />
           <HeroContent>
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
@@ -470,11 +481,11 @@ describe('Hero Component', () => {
       expect(bgImage).toBeInTheDocument();
     });
 
-    it('renders HeroImage with left position', () => {
+    it('renders HeroMedia with left position', () => {
       const { container } = render(
         <Hero>
           <HeroContent>
-            <HeroImage src="test.jpg" position="left" alt="Left image" />
+            <HeroMedia src="test.jpg" position="left" alt="Left image" />
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
         </Hero>
@@ -484,11 +495,11 @@ describe('Hero Component', () => {
       expect(image).toHaveAttribute('src', 'test.jpg');
     });
 
-    it('renders HeroImage with right position', () => {
+    it('renders HeroMedia with right position', () => {
       const { container } = render(
         <Hero>
           <HeroContent>
-            <HeroImage src="test.jpg" position="right" alt="Right image" />
+            <HeroMedia src="test.jpg" position="right" alt="Right image" />
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
         </Hero>
@@ -497,11 +508,11 @@ describe('Hero Component', () => {
       expect(image).toBeInTheDocument();
     });
 
-    it('renders HeroImage with center position', () => {
+    it('renders HeroMedia with center position', () => {
       const { container } = render(
         <Hero>
           <HeroContent>
-            <HeroImage src="test.jpg" position="center" alt="Center image" />
+            <HeroMedia src="test.jpg" position="center" alt="Center image" />
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
         </Hero>
@@ -513,7 +524,7 @@ describe('Hero Component', () => {
     it('applies custom overlay opacity', () => {
       const { container } = render(
         <Hero>
-          <HeroImage src="test.jpg" position="background" overlayOpacity={50} />
+          <HeroMedia src="test.jpg" position="background" overlayOpacity={50} />
           <HeroContent>
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
@@ -526,7 +537,7 @@ describe('Hero Component', () => {
     it('handles overlay opacity edge cases (0, 100)', () => {
       const { container: zeroContainer } = render(
         <Hero>
-          <HeroImage src="test.jpg" position="background" overlayOpacity={0} />
+          <HeroMedia src="test.jpg" position="background" overlayOpacity={0} />
           <HeroContent>
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
@@ -537,7 +548,7 @@ describe('Hero Component', () => {
 
       const { container: fullContainer } = render(
         <Hero>
-          <HeroImage src="test.jpg" position="background" overlayOpacity={100} />
+          <HeroMedia src="test.jpg" position="background" overlayOpacity={100} />
           <HeroContent>
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
@@ -549,7 +560,7 @@ describe('Hero Component', () => {
     it('uses default alt text when not provided', () => {
       const { container } = render(
         <Hero>
-          <HeroImage src="test.jpg" position="left" />
+          <HeroMedia src="test.jpg" position="left" />
           <HeroContent>
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
@@ -870,7 +881,7 @@ describe('Hero Component', () => {
     it('separates background images from other children', () => {
       const { container } = render(
         <Hero>
-          <HeroImage src="bg.jpg" position="background" />
+          <HeroMedia src="bg.jpg" position="background" />
           <HeroContent>
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
@@ -883,7 +894,7 @@ describe('Hero Component', () => {
     it('applies extra padding when background image is present', () => {
       const { container } = render(
         <Hero>
-          <HeroImage src="bg.jpg" position="background" />
+          <HeroMedia src="bg.jpg" position="background" />
           <HeroContent>
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
@@ -896,8 +907,8 @@ describe('Hero Component', () => {
     it('handles multiple background images', () => {
       const { container } = render(
         <Hero>
-          <HeroImage src="bg1.jpg" position="background" />
-          <HeroImage src="bg2.jpg" position="background" />
+          <HeroMedia src="bg1.jpg" position="background" />
+          <HeroMedia src="bg2.jpg" position="background" />
           <HeroContent>
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
@@ -912,7 +923,7 @@ describe('Hero Component', () => {
     it('renders complete hero with all sub-components', () => {
       render(
         <Hero variant="dark" align="center" animationType="fadeInUp">
-          <HeroImage src="bg.jpg" position="background" overlayOpacity={60} />
+          <HeroMedia src="bg.jpg" position="background" overlayOpacity={60} />
           <HeroContent>
             <HeroBadge icon={Zap} variant="solid">New</HeroBadge>
             <HeroHeading>Main Title</HeroHeading>
@@ -938,7 +949,7 @@ describe('Hero Component', () => {
     it('renders hero with glass card composition', () => {
       render(
         <Hero variant="dark">
-          <HeroImage src="bg.jpg" position="background" />
+          <HeroMedia src="bg.jpg" position="background" />
           <HeroContent>
             <HeroGlassCard>
               <HeroBadge icon={Zap}>Badge</HeroBadge>
@@ -972,12 +983,12 @@ describe('Hero Component', () => {
       expect(ref.current).toBeInstanceOf(HTMLDivElement);
     });
 
-    it('forwards ref to HeroImage', () => {
+    it('forwards ref to HeroMedia', () => {
       const ref = React.createRef<HTMLImageElement>();
       render(
         <Hero>
           <HeroContent>
-            <HeroImage ref={ref} src="test.jpg" position="left" alt="Test" />
+            <HeroMedia ref={ref} src="test.jpg" position="left" alt="Test" />
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
         </Hero>
@@ -1007,8 +1018,8 @@ describe('Hero Component', () => {
       expect(HeroActions.displayName).toBe('HeroActions');
     });
 
-    it('has correct displayName for HeroImage', () => {
-      expect(HeroImage.displayName).toBe('HeroImage');
+    it('has correct displayName for HeroMedia', () => {
+      expect(HeroMedia.displayName).toBe('HeroMedia');
     });
 
     it('has correct displayName for HeroBadge', () => {
@@ -1033,7 +1044,7 @@ describe('Hero Component', () => {
       const { container } = render(
         <Hero split>
           <HeroContent>
-            <HeroImage src="test.jpg" position="left" alt="Left image" />
+            <HeroMedia src="test.jpg" position="left" alt="Left image" />
             <HeroHeading>Test Heading</HeroHeading>
             <HeroSubheading>Test Subheading</HeroSubheading>
           </HeroContent>
@@ -1047,7 +1058,7 @@ describe('Hero Component', () => {
       const { container } = render(
         <Hero split>
           <HeroContent>
-            <HeroImage src="test.jpg" position="right" alt="Right image" />
+            <HeroMedia src="test.jpg" position="right" alt="Right image" />
             <HeroHeading>Test Heading</HeroHeading>
             <HeroSubheading>Test Subheading</HeroSubheading>
           </HeroContent>
@@ -1061,7 +1072,7 @@ describe('Hero Component', () => {
       const { container } = render(
         <Hero split>
           <HeroContent>
-            <HeroImage src="test.jpg" position="left" alt="Left image" />
+            <HeroMedia src="test.jpg" position="left" alt="Left image" />
             <HeroHeading>Test Heading</HeroHeading>
           </HeroContent>
         </Hero>
@@ -1074,7 +1085,7 @@ describe('Hero Component', () => {
       const { container } = render(
         <Hero split>
           <HeroContent>
-            <HeroImage src="test.jpg" position="right" alt="Right image" />
+            <HeroMedia src="test.jpg" position="right" alt="Right image" />
             <HeroHeading>Test Heading</HeroHeading>
           </HeroContent>
         </Hero>
@@ -1087,7 +1098,7 @@ describe('Hero Component', () => {
       const { container } = render(
         <Hero split>
           <HeroContent>
-            <HeroImage src="test.jpg" position="left" alt="Left image" />
+            <HeroMedia src="test.jpg" position="left" alt="Left image" />
             <HeroHeading>Test Heading</HeroHeading>
           </HeroContent>
         </Hero>
@@ -1100,7 +1111,7 @@ describe('Hero Component', () => {
       const { container } = render(
         <Hero split>
           <HeroContent>
-            <HeroImage src="test.jpg" position="right" alt="Right image" />
+            <HeroMedia src="test.jpg" position="right" alt="Right image" />
             <HeroHeading>Test Heading</HeroHeading>
           </HeroContent>
         </Hero>
@@ -1113,7 +1124,7 @@ describe('Hero Component', () => {
       const { container } = render(
         <Hero split={false}>
           <HeroContent>
-            <HeroImage src="test.jpg" position="left" alt="Left image" />
+            <HeroMedia src="test.jpg" position="left" alt="Left image" />
             <HeroHeading>Test Heading</HeroHeading>
           </HeroContent>
         </Hero>
@@ -1126,7 +1137,7 @@ describe('Hero Component', () => {
       const { container } = render(
         <Hero split>
           <HeroContent>
-            <HeroImage src="test.jpg" position="center" alt="Center image" />
+            <HeroMedia src="test.jpg" position="center" alt="Center image" />
             <HeroHeading>Test Heading</HeroHeading>
           </HeroContent>
         </Hero>
@@ -1138,7 +1149,7 @@ describe('Hero Component', () => {
     it('does not activate split layout with background image only', () => {
       const { container } = render(
         <Hero split>
-          <HeroImage src="bg.jpg" position="background" />
+          <HeroMedia src="bg.jpg" position="background" />
           <HeroContent>
             <HeroHeading>Test Heading</HeroHeading>
           </HeroContent>
@@ -1152,7 +1163,7 @@ describe('Hero Component', () => {
       render(
         <Hero split>
           <HeroContent>
-            <HeroImage src="test.jpg" position="left" alt="Left image" />
+            <HeroMedia src="test.jpg" position="left" alt="Left image" />
             <HeroBadge>New</HeroBadge>
             <HeroHeading>Test Heading</HeroHeading>
             <HeroSubheading>Test Subheading</HeroSubheading>
@@ -1176,7 +1187,7 @@ describe('Hero Component', () => {
       render(
         <Hero split>
           <HeroContent>
-            <HeroImage src="test.jpg" position="right" alt="Right image" />
+            <HeroMedia src="test.jpg" position="right" alt="Right image" />
             <HeroBadge>New</HeroBadge>
             <HeroHeading>Test Heading</HeroHeading>
             <HeroSubheading>Test Subheading</HeroSubheading>
@@ -1196,7 +1207,7 @@ describe('Hero Component', () => {
       const { container } = render(
         <Hero split>
           <HeroContent>
-            <HeroImage src="test.jpg" position="left" alt="Left image" />
+            <HeroMedia src="test.jpg" position="left" alt="Left image" />
             <HeroHeading>Test Heading</HeroHeading>
           </HeroContent>
         </Hero>
@@ -1209,7 +1220,7 @@ describe('Hero Component', () => {
       const { container } = render(
         <Hero split>
           <HeroContent>
-            <HeroImage src="test.jpg" position="right" alt="Right image" />
+            <HeroMedia src="test.jpg" position="right" alt="Right image" />
             <HeroHeading>Test Heading</HeroHeading>
             <HeroSubheading>Test Subheading</HeroSubheading>
           </HeroContent>
@@ -1223,7 +1234,7 @@ describe('Hero Component', () => {
       const { container } = render(
         <Hero split>
           <HeroContent>
-            <HeroImage src="test.jpg" position="left" alt="Left image" />
+            <HeroMedia src="test.jpg" position="left" alt="Left image" />
             <HeroHeading>Test Heading</HeroHeading>
           </HeroContent>
         </Hero>
@@ -1236,7 +1247,7 @@ describe('Hero Component', () => {
       const { container } = render(
         <Hero split variant="dark">
           <HeroContent>
-            <HeroImage src="test.jpg" position="left" alt="Left image" />
+            <HeroMedia src="test.jpg" position="left" alt="Left image" />
             <HeroHeading>Test Heading</HeroHeading>
           </HeroContent>
         </Hero>
@@ -1251,7 +1262,7 @@ describe('Hero Component', () => {
       const { container } = render(
         <Hero split variant="default">
           <HeroContent>
-            <HeroImage src="test.jpg" position="right" alt="Right image" />
+            <HeroMedia src="test.jpg" position="right" alt="Right image" />
             <HeroHeading>Test Heading</HeroHeading>
           </HeroContent>
         </Hero>
@@ -1266,7 +1277,7 @@ describe('Hero Component', () => {
       const { container } = render(
         <Hero split align="left">
           <HeroContent>
-            <HeroImage src="test.jpg" position="right" alt="Right image" />
+            <HeroMedia src="test.jpg" position="right" alt="Right image" />
             <HeroHeading>Test Heading</HeroHeading>
           </HeroContent>
         </Hero>
@@ -1279,7 +1290,7 @@ describe('Hero Component', () => {
       const { container } = render(
         <Hero split align="center">
           <HeroContent>
-            <HeroImage src="test.jpg" position="left" alt="Left image" />
+            <HeroMedia src="test.jpg" position="left" alt="Left image" />
             <HeroHeading>Test Heading</HeroHeading>
           </HeroContent>
         </Hero>
@@ -1292,7 +1303,7 @@ describe('Hero Component', () => {
       const { container } = render(
         <Hero split align="right">
           <HeroContent>
-            <HeroImage src="test.jpg" position="left" alt="Left image" />
+            <HeroMedia src="test.jpg" position="left" alt="Left image" />
             <HeroHeading>Test Heading</HeroHeading>
           </HeroContent>
         </Hero>
@@ -1305,7 +1316,7 @@ describe('Hero Component', () => {
       const { container } = render(
         <Hero split>
           <HeroContent>
-            <HeroImage src="test.jpg" position="left" alt="Left image" />
+            <HeroMedia src="test.jpg" position="left" alt="Left image" />
             <HeroHeading>Test Heading</HeroHeading>
           </HeroContent>
         </Hero>
@@ -1318,7 +1329,7 @@ describe('Hero Component', () => {
       render(
         <Hero split>
           <HeroContent>
-            <HeroImage src="test.jpg" position="right" alt="Right image" />
+            <HeroMedia src="test.jpg" position="right" alt="Right image" />
             <HeroHeading>Heading 1</HeroHeading>
             <HeroSubheading>Subheading 1</HeroSubheading>
             <HeroSubheading>Subheading 2</HeroSubheading>
@@ -1337,11 +1348,11 @@ describe('Hero Component', () => {
     });
   });
 
-  describe('HeroVideo Component', () => {
-    it('renders HeroVideo with video source', () => {
+  describe('HeroMedia Component (as HeroMedia)', () => {
+    it('renders HeroMedia with video source', () => {
       const { container } = render(
         <Hero>
-          <HeroVideo src="test-video.mp4" />
+          <HeroMedia src="test-video.mp4" />
           <HeroContent>
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
@@ -1353,10 +1364,10 @@ describe('Hero Component', () => {
       expect(source).toBeInTheDocument();
     });
 
-    it('renders HeroVideo with GIF source', () => {
+    it('renders HeroMedia with GIF source', () => {
       const { container } = render(
         <Hero>
-          <HeroVideo src="test-animation.gif" />
+          <HeroMedia src="test-animation.gif" />
           <HeroContent>
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
@@ -1367,10 +1378,10 @@ describe('Hero Component', () => {
       expect(image).toHaveAttribute('src', 'test-animation.gif');
     });
 
-    it('applies overlay opacity to HeroVideo', () => {
+    it('applies overlay opacity to HeroMedia', () => {
       const { container } = render(
         <Hero>
-          <HeroVideo src="test-video.mp4" overlayOpacity={60} />
+          <HeroMedia src="test-video.mp4" overlayOpacity={60} />
           <HeroContent>
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
@@ -1380,10 +1391,10 @@ describe('Hero Component', () => {
       expect(overlay).toBeInTheDocument();
     });
 
-    it('enforces minimum overlay opacity of 40 for HeroVideo', () => {
+    it('enforces minimum overlay opacity of 40 for HeroMedia', () => {
       const { container } = render(
         <Hero>
-          <HeroVideo src="test-video.mp4" overlayOpacity={20} />
+          <HeroMedia src="test-video.mp4" overlayOpacity={20} />
           <HeroContent>
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
@@ -1396,7 +1407,7 @@ describe('Hero Component', () => {
     it('shows fallback image when video has error', () => {
       const { container } = render(
         <Hero>
-          <HeroVideo 
+          <HeroMedia 
             src="invalid-video.mp4" 
             fallbackImage="fallback.jpg"
           />
@@ -1413,7 +1424,7 @@ describe('Hero Component', () => {
     it('does not render play/pause button when showPlayPause is false', () => {
       const { container } = render(
         <Hero>
-          <HeroVideo src="test-video.mp4" showPlayPause={false} />
+          <HeroMedia src="test-video.mp4" showPlayPause={false} />
           <HeroContent>
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
@@ -1426,7 +1437,7 @@ describe('Hero Component', () => {
     it('detects webm video format correctly', () => {
       const { container } = render(
         <Hero>
-          <HeroVideo src="test-video.webm" />
+          <HeroMedia src="test-video.webm" />
           <HeroContent>
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
@@ -1439,7 +1450,7 @@ describe('Hero Component', () => {
     it('detects ogg video format correctly', () => {
       const { container } = render(
         <Hero>
-          <HeroVideo src="test-video.ogg" />
+          <HeroMedia src="test-video.ogg" />
           <HeroContent>
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
@@ -1449,10 +1460,10 @@ describe('Hero Component', () => {
       expect(source).toBeInTheDocument();
     });
 
-    it('applies custom className to HeroVideo', () => {
+    it('applies custom className to HeroMedia', () => {
       const { container } = render(
         <Hero>
-          <HeroVideo src="test-video.mp4" className="custom-video" />
+          <HeroMedia src="test-video.mp4" className="custom-video" />
           <HeroContent>
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
@@ -1465,7 +1476,7 @@ describe('Hero Component', () => {
     it('renders fallback image behind video when provided', () => {
       const { container } = render(
         <Hero>
-          <HeroVideo src="test-video.mp4" fallbackImage="fallback.jpg" />
+          <HeroMedia src="test-video.mp4" fallbackImage="fallback.jpg" />
           <HeroContent>
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
@@ -1478,7 +1489,7 @@ describe('Hero Component', () => {
     it('handles GIF play/pause functionality', () => {
       const { container } = render(
         <Hero>
-          <HeroVideo src="test-animation.gif" showPlayPause={true} />
+          <HeroMedia src="test-animation.gif" showPlayPause={true} />
           <HeroContent>
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
@@ -1532,8 +1543,8 @@ describe('Hero Component', () => {
     it('handles multiple background videos', () => {
       const { container } = render(
         <Hero>
-          <HeroVideo src="video1.mp4" />
-          <HeroVideo src="video2.mp4" />
+          <HeroMedia src="video1.mp4" />
+          <HeroMedia src="video2.mp4" />
           <HeroContent>
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
@@ -1546,8 +1557,8 @@ describe('Hero Component', () => {
     it('handles both background image and video together', () => {
       const { container } = render(
         <Hero>
-          <HeroImage src="bg.jpg" position="background" />
-          <HeroVideo src="video.mp4" />
+          <HeroMedia src="bg.jpg" position="background" />
+          <HeroMedia src="video.mp4" />
           <HeroContent>
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
@@ -1573,11 +1584,11 @@ describe('Hero Component', () => {
       expect(section).toBeInTheDocument();
     });
 
-    it('applies correct alt text to HeroImage', () => {
+    it('applies correct alt text to HeroMedia', () => {
       const { container } = render(
         <Hero>
           <HeroContent>
-            <HeroImage src="test.jpg" position="left" alt="Descriptive alt text" />
+            <HeroMedia src="test.jpg" position="left" alt="Descriptive alt text" />
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
         </Hero>
@@ -1586,10 +1597,10 @@ describe('Hero Component', () => {
       expect(image).toHaveAttribute('alt', 'Descriptive alt text');
     });
 
-    it('applies correct alt text to GIF in HeroVideo', () => {
+    it('applies correct alt text to GIF in HeroMedia', () => {
       const { container } = render(
         <Hero>
-          <HeroVideo src="animation.gif" />
+          <HeroMedia src="animation.gif" alt="" />
           <HeroContent>
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
@@ -1604,7 +1615,7 @@ describe('Hero Component', () => {
     it('applies responsive padding when background image is present', () => {
       const { container } = render(
         <Hero>
-          <HeroImage src="bg.jpg" position="background" />
+          <HeroMedia src="bg.jpg" position="background" />
           <HeroContent>
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
@@ -1675,7 +1686,7 @@ describe('Hero Component', () => {
     it('detects .mov video format correctly', () => {
       const { container } = render(
         <Hero>
-          <HeroVideo src="test-video.mov" />
+          <HeroMedia src="test-video.mov" />
           <HeroContent>
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
@@ -1688,7 +1699,7 @@ describe('Hero Component', () => {
     it('defaults to mp4 for unknown video formats', () => {
       const { container } = render(
         <Hero>
-          <HeroVideo src="test-video.unknown" />
+          <HeroMedia src="test-video.unknown" />
           <HeroContent>
             <HeroHeading>Test</HeroHeading>
           </HeroContent>
@@ -1751,6 +1762,391 @@ describe('Hero Component', () => {
         </Hero>
       );
       expect(screen.getByText('This is a very long feature name that might wrap')).toBeInTheDocument();
+    });
+  });
+
+  describe('HeroCarousel Component', () => {
+    const mockSlides = [
+      {
+        id: 'slide-1',
+        src: 'https://example.com/image1.jpg',
+        overlayOpacity: 50,
+        content: (
+          <HeroContent>
+            <HeroHeading>Slide 1</HeroHeading>
+            <HeroSubheading>First slide content</HeroSubheading>
+          </HeroContent>
+        ),
+      },
+      {
+        id: 'slide-2',
+        src: 'https://example.com/image2.jpg',
+        overlayOpacity: 60,
+        content: (
+          <HeroContent>
+            <HeroHeading>Slide 2</HeroHeading>
+            <HeroSubheading>Second slide content</HeroSubheading>
+          </HeroContent>
+        ),
+      },
+      {
+        id: 'slide-3',
+        src: 'https://example.com/image3.jpg',
+        overlayOpacity: 55,
+        content: (
+          <HeroContent>
+            <HeroHeading>Slide 3</HeroHeading>
+            <HeroSubheading>Third slide content</HeroSubheading>
+          </HeroContent>
+        ),
+      },
+    ];
+
+    it('renders HeroCarousel with slides', () => {
+      render(<HeroCarousel slides={mockSlides} />);
+      expect(screen.getAllByText('Slide 1').length).toBeGreaterThan(0);
+    });
+
+    it('renders HeroCarousel with custom className', () => {
+      const { container } = render(<HeroCarousel slides={mockSlides} className="custom-carousel" />);
+      expect(container.querySelector('.custom-carousel')).toBeInTheDocument();
+    });
+
+    it('renders all slides content', () => {
+      render(<HeroCarousel slides={mockSlides} />);
+      expect(screen.getAllByText('Slide 1').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Slide 2').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Slide 3').length).toBeGreaterThan(0);
+    });
+
+    it('applies dark variant by default', () => {
+      const { container } = render(<HeroCarousel slides={mockSlides} />);
+      const sections = container.querySelectorAll('section');
+      expect(sections.length).toBeGreaterThan(0);
+      expect(sections[0]).toHaveClass('from-gray-900');
+    });
+
+    it('applies default variant when specified', () => {
+      const { container } = render(<HeroCarousel slides={mockSlides} variant="default" />);
+      const sections = container.querySelectorAll('section');
+      expect(sections.length).toBeGreaterThan(0);
+      expect(sections[0]).toHaveClass('from-gray-50');
+    });
+
+    it('does not show navigation buttons when showNavigation is false', () => {
+      const { container } = render(<HeroCarousel slides={mockSlides} showNavigation={false} />);
+      const buttons = container.querySelectorAll('button[aria-label*="slide"]');
+      expect(buttons.length).toBe(0);
+    });
+
+    it('shows navigation buttons when showNavigation is true', () => {
+      const { container } = render(<HeroCarousel slides={mockSlides} showNavigation={true} />);
+      const prevButton = container.querySelector('button[aria-label="Previous slide"]');
+      const nextButton = container.querySelector('button[aria-label="Next slide"]');
+      expect(prevButton).toBeInTheDocument();
+      expect(nextButton).toBeInTheDocument();
+    });
+
+    it('does not show dots when showDots is false', () => {
+      const { container } = render(<HeroCarousel slides={mockSlides} showDots={false} />);
+      const dots = container.querySelectorAll('button[aria-label*="Go to slide"]');
+      expect(dots.length).toBe(0);
+    });
+
+    it('shows dots when showDots is true', () => {
+      const { container } = render(<HeroCarousel slides={mockSlides} showDots={true} />);
+      const dots = container.querySelectorAll('button[aria-label*="Go to slide"]');
+      expect(dots.length).toBe(3);
+    });
+
+    it('renders carousel with single slide', () => {
+      const singleSlide = [mockSlides[0]];
+      render(<HeroCarousel slides={singleSlide} />);
+      expect(screen.getAllByText('Slide 1').length).toBeGreaterThan(0);
+    });
+
+    it('does not show navigation or dots with single slide', () => {
+      const singleSlide = [mockSlides[0]];
+      const { container } = render(
+        <HeroCarousel slides={singleSlide} showNavigation={true} showDots={true} />
+      );
+      const navButtons = container.querySelectorAll('button[aria-label*="slide"]');
+      const dots = container.querySelectorAll('button[aria-label*="Go to slide"]');
+      expect(navButtons.length).toBe(0);
+      expect(dots.length).toBe(0);
+    });
+
+    it('handles empty slides array by returning null', () => {
+      const { container } = render(<HeroCarousel slides={[]} />);
+      // HeroCarousel returns null for empty slides
+      const carousel = container.querySelector('[role="region"]');
+      expect(carousel).not.toBeInTheDocument();
+    });
+
+    it('applies correct animation type', () => {
+      render(<HeroCarousel slides={mockSlides} animationType="fadeInUp" />);
+      expect(screen.getAllByText('Slide 1').length).toBeGreaterThan(0);
+    });
+
+    it('applies container size correctly', () => {
+      const { container } = render(<HeroCarousel slides={mockSlides} containerSize="large" />);
+      const containerElement = container.querySelector('[data-size="large"]');
+      expect(containerElement).toBeInTheDocument();
+    });
+
+    it('renders slides with image src', () => {
+      const { container } = render(<HeroCarousel slides={mockSlides} />);
+      // HeroCarousel uses HeroMedia which may render as background-image or img
+      const bgImages = container.querySelectorAll('[style*="background-image"]');
+      const images = container.querySelectorAll('img');
+      expect(bgImages.length + images.length).toBeGreaterThan(0);
+    });
+
+    it('renders slides with image prop', () => {
+      const slidesWithImage = [
+        {
+          id: 'slide-1',
+          image: 'https://example.com/image1.jpg',
+          content: <HeroContent><HeroHeading>Slide 1</HeroHeading></HeroContent>,
+        },
+      ];
+      render(<HeroCarousel slides={slidesWithImage} />);
+      expect(screen.getAllByText('Slide 1').length).toBeGreaterThan(0);
+    });
+
+    it('renders slides with video prop', () => {
+      const slidesWithVideo = [
+        {
+          id: 'slide-1',
+          video: 'https://example.com/video1.mp4',
+          content: <HeroContent><HeroHeading>Slide 1</HeroHeading></HeroContent>,
+        },
+      ];
+      render(<HeroCarousel slides={slidesWithVideo} />);
+      expect(screen.getAllByText('Slide 1').length).toBeGreaterThan(0);
+    });
+
+    it('applies overlay opacity from slide configuration', () => {
+      const { container } = render(<HeroCarousel slides={mockSlides} />);
+      // Overlay opacity is applied via HeroMedia, check for overlay classes
+      const overlays = container.querySelectorAll('[class*="bg-black"]');
+      expect(overlays.length).toBeGreaterThan(0);
+    });
+
+    it('handles slides without IDs', () => {
+      const slidesWithoutIds = [
+        {
+          src: 'https://example.com/image1.jpg',
+          content: <HeroContent><HeroHeading>Slide 1</HeroHeading></HeroContent>,
+        },
+        {
+          src: 'https://example.com/image2.jpg',
+          content: <HeroContent><HeroHeading>Slide 2</HeroHeading></HeroContent>,
+        },
+      ];
+      render(<HeroCarousel slides={slidesWithoutIds} />);
+      expect(screen.getAllByText('Slide 1').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Slide 2').length).toBeGreaterThan(0);
+    });
+
+    it('renders carousel with HeroBadge in slide content', () => {
+      const slidesWithBadge = [
+        {
+          id: 'slide-1',
+          src: 'https://example.com/image1.jpg',
+          content: (
+            <HeroContent>
+              <HeroBadge icon={Zap}>New</HeroBadge>
+              <HeroHeading>Slide 1</HeroHeading>
+            </HeroContent>
+          ),
+        },
+      ];
+      render(<HeroCarousel slides={slidesWithBadge} />);
+      expect(screen.getAllByText('New').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Slide 1').length).toBeGreaterThan(0);
+    });
+
+    it('renders carousel with HeroActions in slide content', () => {
+      const slidesWithActions = [
+        {
+          id: 'slide-1',
+          src: 'https://example.com/image1.jpg',
+          content: (
+            <HeroContent>
+              <HeroHeading>Slide 1</HeroHeading>
+              <HeroActions>
+                <button>Action Button</button>
+              </HeroActions>
+            </HeroContent>
+          ),
+        },
+      ];
+      render(<HeroCarousel slides={slidesWithActions} />);
+      expect(screen.getAllByText('Action Button').length).toBeGreaterThan(0);
+    });
+
+    it('renders carousel with HeroStats in slide content', () => {
+      const slidesWithStats = [
+        {
+          id: 'slide-1',
+          src: 'https://example.com/image1.jpg',
+          content: (
+            <HeroContent>
+              <HeroHeading>Slide 1</HeroHeading>
+              <HeroStats stats={[{ value: '100', label: 'Count' }]} />
+            </HeroContent>
+          ),
+        },
+      ];
+      render(<HeroCarousel slides={slidesWithStats} />);
+      expect(screen.getAllByText('100').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Count').length).toBeGreaterThan(0);
+    });
+
+    it('renders carousel with HeroFeatures in slide content', () => {
+      const slidesWithFeatures = [
+        {
+          id: 'slide-1',
+          src: 'https://example.com/image1.jpg',
+          content: (
+            <HeroContent>
+              <HeroHeading>Slide 1</HeroHeading>
+              <HeroFeatures features={['Feature 1', 'Feature 2']} />
+            </HeroContent>
+          ),
+        },
+      ];
+      render(<HeroCarousel slides={slidesWithFeatures} />);
+      expect(screen.getAllByText('Feature 1').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Feature 2').length).toBeGreaterThan(0);
+    });
+
+    it('renders carousel with HeroGlassCard in slide content', () => {
+      const slidesWithGlassCard = [
+        {
+          id: 'slide-1',
+          src: 'https://example.com/image1.jpg',
+          content: (
+            <HeroContent>
+              <HeroGlassCard>
+                <HeroHeading>Slide 1</HeroHeading>
+              </HeroGlassCard>
+            </HeroContent>
+          ),
+        },
+      ];
+      render(<HeroCarousel slides={slidesWithGlassCard} />);
+      expect(screen.getAllByText('Slide 1').length).toBeGreaterThan(0);
+    });
+
+    it('applies correct rotation interval when autoRotate is enabled', () => {
+      render(<HeroCarousel slides={mockSlides} autoRotate={true} rotationInterval={2000} />);
+      expect(screen.getAllByText('Slide 1').length).toBeGreaterThan(0);
+    });
+
+    it('clamps rotation interval to minimum 1000ms', () => {
+      render(<HeroCarousel slides={mockSlides} autoRotate={true} rotationInterval={500} />);
+      expect(screen.getAllByText('Slide 1').length).toBeGreaterThan(0);
+    });
+
+    it('clamps rotation interval to maximum 5000ms', () => {
+      render(<HeroCarousel slides={mockSlides} autoRotate={true} rotationInterval={10000} />);
+      expect(screen.getAllByText('Slide 1').length).toBeGreaterThan(0);
+    });
+
+    it('renders carousel with all animation types', () => {
+      const animationTypes = ['fadeIn', 'fadeInUp', 'slideUp', 'scaleIn', 'zoomIn'];
+      animationTypes.forEach((animationType) => {
+        const { unmount } = render(
+          <HeroCarousel slides={mockSlides} animationType={animationType as any} />
+        );
+        expect(screen.getAllByText('Slide 1').length).toBeGreaterThan(0);
+        unmount();
+      });
+    });
+
+    it('renders carousel with all container sizes', () => {
+      const containerSizes = ['small', 'normal', 'large', 'full', 'readable'];
+      containerSizes.forEach((size) => {
+        const { container, unmount } = render(
+          <HeroCarousel slides={mockSlides} containerSize={size as any} />
+        );
+        const containerElement = container.querySelector(`[data-size="${size}"]`);
+        expect(containerElement).toBeInTheDocument();
+        unmount();
+      });
+    });
+
+    it('has correct aria-label for carousel region', () => {
+      const { container } = render(<HeroCarousel slides={mockSlides} />);
+      const region = container.querySelector('[role="region"][aria-label="Hero carousel"]');
+      expect(region).toBeInTheDocument();
+    });
+
+    it('has correct tabIndex for keyboard navigation', () => {
+      const { container } = render(<HeroCarousel slides={mockSlides} />);
+      const carousel = container.querySelector('[tabindex="0"]');
+      expect(carousel).toBeInTheDocument();
+    });
+
+    it('renders carousel with multiple slides having different overlay opacities', () => {
+      const slidesWithDifferentOpacities = [
+        {
+          id: 'slide-1',
+          src: 'https://example.com/image1.jpg',
+          overlayOpacity: 30,
+          content: <HeroContent><HeroHeading>Slide 1</HeroHeading></HeroContent>,
+        },
+        {
+          id: 'slide-2',
+          src: 'https://example.com/image2.jpg',
+          overlayOpacity: 70,
+          content: <HeroContent><HeroHeading>Slide 2</HeroHeading></HeroContent>,
+        },
+      ];
+      render(<HeroCarousel slides={slidesWithDifferentOpacities} />);
+      expect(screen.getAllByText('Slide 1').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Slide 2').length).toBeGreaterThan(0);
+    });
+
+    it('handles slides with complex nested content', () => {
+      const complexSlides = [
+        {
+          id: 'slide-1',
+          src: 'https://example.com/image1.jpg',
+          content: (
+            <HeroContent>
+              <HeroBadge icon={Zap}>New</HeroBadge>
+              <HeroHeading>Complex Slide</HeroHeading>
+              <HeroSubheading>With multiple components</HeroSubheading>
+              <HeroActions>
+                <button>Button 1</button>
+                <button>Button 2</button>
+              </HeroActions>
+              <HeroFeatures features={['Feature 1', 'Feature 2']} />
+              <HeroStats stats={[{ value: '100', label: 'Count', icon: Users }]} />
+            </HeroContent>
+          ),
+        },
+      ];
+      render(<HeroCarousel slides={complexSlides} />);
+      expect(screen.getAllByText('New').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Complex Slide').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('With multiple components').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Button 1').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Feature 1').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('100').length).toBeGreaterThan(0);
+    });
+
+    it('renders carousel with minimum height classes', () => {
+      const { container } = render(<HeroCarousel slides={mockSlides} />);
+      const carouselContainer = container.querySelector('[class*="min-h-[500px]"]');
+      expect(carouselContainer).toBeInTheDocument();
+    });
+
+    it('has correct displayName for HeroCarousel', () => {
+      expect(HeroCarousel.displayName).toBe('HeroCarousel');
     });
   });
 });

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Hero, HeroContent, HeroHeading, HeroSubheading, HeroImage, HeroVideo, HeroActions, HeroBadge, HeroFeatures, HeroGlassCard, HeroStats } from '.';
+import { Hero, HeroContent, HeroHeading, HeroSubheading, HeroMedia, HeroActions, HeroBadge, HeroFeatures, HeroGlassCard, HeroStats, HeroCarousel } from '.';
 import { Button } from '../../../../components/button';
 import { ArrowRight, ArrowUpRight, Zap, Users, TrendingUp, Shield, Sparkles, Rocket, CheckCircle2 } from 'lucide-react';
 import { ButtonWithIcon } from '../../../../components/button-with-icon';
@@ -94,7 +94,7 @@ export const BounceAnimation: Story = {
 
 export const LeftAligned: Story = {
   render: () => (
-    <Hero variant="dark" align="left" animationType="slideLeft">
+    <Hero variant="dark" align="right" animationType="slideLeft">
       <HeroContent>
         <HeroHeading>Your Journey Starts Here</HeroHeading>
         <HeroSubheading>
@@ -123,7 +123,7 @@ export const LeftAligned: Story = {
 export const WithBackgroundImage: Story = {
   render: () => (
     <Hero align="center" animationType="fadeInUp">
-      <HeroImage src="https://images.unsplash.com/photo-1501785888041-af3ef285b470"/>
+      <HeroMedia src="https://images.unsplash.com/photo-1501785888041-af3ef285b470"/>
       <HeroContent>
 
         <HeroHeading>
@@ -165,7 +165,7 @@ export const GlassMorphismHero: Story = {
       align="center" 
       animationType="fadeInUp"
     >
-      <HeroImage
+      <HeroMedia
         src="https://images.unsplash.com/photo-1501785888041-af3ef285b470"
         alt="Abstract background"
         position="background"
@@ -229,7 +229,7 @@ export const GlassMorphismHero: Story = {
 export const AdvancedHeroWithStats: Story = {
   render: () => (
     <Hero align="center" animationType="fadeInUp">
-      <HeroImage src="https://images.unsplash.com/photo-1501785888041-af3ef285b470" overlayOpacity={60}/>
+      <HeroMedia src="https://images.unsplash.com/photo-1501785888041-af3ef285b470" overlayOpacity={60}/>
       <HeroContent>
         <HeroBadge icon={Sparkles} variant="solid">
           Trusted by 10,000+ Companies
@@ -318,7 +318,7 @@ export const SplitLayout: Story = {
               Contact Us
             </ButtonWithIcon>
         </HeroActions>
-        <HeroImage 
+        <HeroMedia 
           src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=900&h=700&fit=crop&q=90" 
           alt="Business analytics dashboard"
           position="left"
@@ -379,7 +379,7 @@ export const CustomiseHeroContent: Story = {
         <HeroFeatures 
           features={['Enterprise Ready', 'GDPR Compliant', 'API First', 'Open Source', 'Developer Friendly']}
         />
-        <HeroImage 
+        <HeroMedia 
           src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=900&h=700&fit=crop&q=90" 
           alt="Modern workspace"
           position="right"
@@ -397,7 +397,7 @@ export const SplitBackgroundImage: Story = {
       animationType="fadeInUp"
       split 
     >
-    <HeroImage 
+    <HeroMedia 
     src="https://unsplash.com/photos/split-background-of-light-and-dark-textured-surfaces-HOTAvTkG2NU"
     position="background"
     overlayOpacity={50}
@@ -452,7 +452,7 @@ export const SplitBackgroundImage: Story = {
           features={['Enterprise Ready', 'GDPR Compliant', 'API First', 'Open Source', 'Developer Friendly']}
         />
          
-        <HeroImage 
+        <HeroMedia 
           position="left" 
           src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=900&h=800&fit=crop&q=90"
           alt="Colorful gradient abstract"
@@ -469,7 +469,7 @@ export const VideoHero: Story = {
       align="center" 
       animationType="fadeInUp"
     >
-      <HeroVideo 
+      <HeroMedia 
         src="https://assets.mixkit.co/videos/513/513-720.mp4"
         overlayOpacity={60}
         fallbackImage="https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1920&h=1080&fit=crop"
@@ -516,7 +516,7 @@ export const VideoHeroWithPlayPause: Story = {
       align="center" 
       animationType="fadeInUp"
     >
-      <HeroVideo 
+      <HeroMedia 
         src="https://assets.mixkit.co/videos/513/513-720.mp4"
         overlayOpacity={55}
         showPlayPause
@@ -565,7 +565,7 @@ export const VideoHeroAllConditions: Story = {
       <div>
         <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">1. Video with Play/Pause Controls</h2>
         <Hero align="center" animationType="fadeInUp">
-          <HeroVideo 
+          <HeroMedia 
             src="https://assets.mixkit.co/videos/513/513-720.mp4"
             overlayOpacity={50}
             showPlayPause
@@ -586,7 +586,7 @@ export const VideoHeroAllConditions: Story = {
       <div>
         <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">3. Video with Low Overlay Opacity (40%)</h2>
         <Hero align="center" animationType="fadeInUp">
-          <HeroVideo 
+          <HeroMedia 
             src="https://assets.mixkit.co/videos/513/513-720.mp4"
             overlayOpacity={40}
             showPlayPause
@@ -607,7 +607,7 @@ export const VideoHeroAllConditions: Story = {
       <div>
         <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">4. Video with High Overlay Opacity (70%)</h2>
         <Hero align="center" animationType="fadeInUp">
-          <HeroVideo 
+          <HeroMedia 
             src="https://assets.mixkit.co/videos/513/513-720.mp4"
             overlayOpacity={70}
             showPlayPause
@@ -628,7 +628,7 @@ export const VideoHeroAllConditions: Story = {
       <div>
         <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">6. Video with Left Alignment</h2>
         <Hero align="left" animationType="fadeInUp">
-          <HeroVideo 
+          <HeroMedia 
             src="https://assets.mixkit.co/videos/513/513-720.mp4"
             overlayOpacity={55}
             showPlayPause
@@ -652,7 +652,7 @@ export const VideoHeroAllConditions: Story = {
       <div>
         <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">7. Video with Stats and Features</h2>
         <Hero align="center" animationType="fadeInUp">
-          <HeroVideo 
+          <HeroMedia 
             src="https://assets.mixkit.co/videos/513/513-720.mp4"
             overlayOpacity={60}
             showPlayPause
@@ -697,7 +697,7 @@ export const VideoHeroAllConditions: Story = {
       <div>
         <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">8. Video with Glass Morphism Card</h2>
         <Hero align="center" animationType="fadeInUp">
-          <HeroVideo 
+          <HeroMedia 
             src="https://assets.mixkit.co/videos/513/513-720.mp4"
             overlayOpacity={40}
             showPlayPause
@@ -733,7 +733,7 @@ export const VideoHeroAllConditions: Story = {
       <div>
         <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">9. Video Error State with Fallback</h2>
         <Hero align="center" animationType="fadeInUp">
-          <HeroVideo 
+          <HeroMedia 
             src="https://invalid-video-url-that-does-not-exist.mp4"
             overlayOpacity={50}
             showPlayPause
@@ -754,7 +754,7 @@ export const VideoHeroAllConditions: Story = {
       <div>
         <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">10. GIF Support</h2>
         <Hero align="center" animationType="fadeInUp">
-          <HeroVideo 
+          <HeroMedia 
             src="https://media.giphy.com/media/3o7aCTPPm4OHfRLSH6/giphy.gif"
             overlayOpacity={50}
             showPlayPause
@@ -765,7 +765,7 @@ export const VideoHeroAllConditions: Story = {
               Animated GIF Support
             </HeroHeading>
             <HeroSubheading className="text-gray-100 max-w-2xl mx-auto">
-              HeroVideo supports GIF files! Small animated GIFs work perfectly as background videos. Use play/pause to control GIF animation.
+              HeroMedia supports GIF files! Small animated GIFs work perfectly as background videos. Use play/pause to control GIF animation.
             </HeroSubheading>
             <HeroActions className="mt-8">
               <ButtonWithIcon 
@@ -785,7 +785,7 @@ export const VideoHeroAllConditions: Story = {
       <div>
         <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">11. GIF without Play/Pause Controls</h2>
         <Hero align="center" animationType="fadeInUp">
-          <HeroVideo 
+          <HeroMedia 
             src="https://media.giphy.com/media/3o7aCTPPm4OHfRLSH6/giphy.gif"
             overlayOpacity={55}
             fallbackImage="https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1920&h=1080&fit=crop"
@@ -802,4 +802,204 @@ export const VideoHeroAllConditions: Story = {
       </div>
     </div>
   ),
+};
+
+// HeroCarousel Stories
+export const CarouselBasic: Story = {
+  render: () => {
+    const slides = [
+      {
+        id: 'slide-1',
+        src: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1920&h=1080&fit=crop',
+        overlayOpacity: 50,
+        content: (
+          <HeroContent>
+            <HeroHeading>Welcome to Our Platform</HeroHeading>
+            <HeroSubheading>
+              Discover amazing features and build something extraordinary with our powerful tools.
+            </HeroSubheading>
+            <HeroActions>
+              <Button variant="default" size="lg">Get Started</Button>
+              <Button variant="default" size="lg">Learn More</Button>
+            </HeroActions>
+          </HeroContent>
+        ),
+      },
+      {
+        id: 'slide-2',
+        src: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1920&h=1080&fit=crop',
+        overlayOpacity: 60,
+        content: (
+          <HeroContent>
+            <HeroBadge icon={Zap} variant="solid">New Release</HeroBadge>
+            <HeroHeading>Innovation at Your Fingertips</HeroHeading>
+            <HeroSubheading>
+              Experience cutting-edge technology designed to help you achieve your goals faster.
+            </HeroSubheading>
+            <HeroActions>
+              <Button variant="default" size="lg">Explore Features</Button>
+            </HeroActions>
+          </HeroContent>
+        ),
+      },
+      {
+        id: 'slide-3',
+        src: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1800&h=1080&fit=crop',
+        overlayOpacity: 55,
+        content: (
+          <HeroContent>
+            <HeroHeading>Join Thousands of Happy Users</HeroHeading>
+            <HeroSubheading>
+              Be part of a growing community that's transforming the way we work and create.
+            </HeroSubheading>
+            <HeroActions>
+              <Button variant="default" size="lg">Join Now</Button>
+            </HeroActions>
+          </HeroContent>
+        ),
+      },
+    ];
+
+    return (
+      <HeroCarousel
+        slides={slides}
+        autoRotate
+        rotationInterval={3000}
+        showNavigation
+        showDots
+        variant="dark"
+        align="center"
+        animationType="fadeInUp"
+      />
+    );
+  },
+};
+
+export const CarouselWithGlassCard: Story = {
+  render: () => {
+    const slides = [
+      {
+        id: 'slide-1',
+        src: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1920&h=1080&fit=crop',
+        overlayOpacity: 70,
+        content: (
+          <HeroContent>
+            <HeroGlassCard className="p-12">
+              <HeroBadge icon={Sparkles} variant="solid">Premium</HeroBadge>
+              <HeroHeading>Elevate Your Experience</HeroHeading>
+              <HeroSubheading>
+                Discover premium features wrapped in beautiful glass morphism design.
+              </HeroSubheading>
+              <HeroActions>
+                <Button variant="default" size="lg">Upgrade Now</Button>
+              </HeroActions>
+            </HeroGlassCard>
+          </HeroContent>
+        ),
+      },
+      {
+        id: 'slide-2',
+        src: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1920&h=1080&fit=crop',
+        overlayOpacity: 70,
+        content: (
+          <HeroContent>
+            <HeroGlassCard className="p-12">
+              <HeroBadge icon={Rocket} variant="solid">Launch</HeroBadge>
+              <HeroHeading>Launch Your Project</HeroHeading>
+              <HeroSubheading>
+                Get started with our comprehensive toolkit and launch your project in days, not months.
+              </HeroSubheading>
+              <HeroActions>
+                <Button variant="default" size="lg">Start Building</Button>
+              </HeroActions>
+            </HeroGlassCard>
+          </HeroContent>
+        ),
+      },
+      {
+        id: 'slide-3',
+        src: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1920&h=1080&fit=crop',
+        overlayOpacity: 70,
+        content: (
+          <HeroContent>
+            <HeroGlassCard className="p-12">
+              <HeroBadge icon={Zap} variant="outline">Fast</HeroBadge>
+              <HeroHeading>Lightning Fast Performance</HeroHeading>
+              <HeroSubheading>
+                Experience blazing-fast speeds with our optimized platform built for scale.
+              </HeroSubheading>
+              <HeroActions>
+                <Button variant="default" size="lg">See Performance</Button>
+              </HeroActions>
+            </HeroGlassCard>
+          </HeroContent>
+        ),
+      },
+    ];
+
+    return (
+      <HeroCarousel
+        slides={slides}
+        autoRotate
+        rotationInterval={1000}
+        showNavigation
+        showDots
+        variant="dark"
+        align="center"
+        animationType="fadeInUp"
+      />
+    );
+  },
+};
+
+export const CarouselLeftAligned: Story = {
+  render: () => {
+    const slides = [
+      {
+        id: 'slide-1',
+        src: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1920&h=1080&fit=crop',
+        overlayOpacity: 50,
+        content: (
+          <HeroContent>
+            <HeroHeading>Left Aligned Content</HeroHeading>
+            <HeroSubheading>
+              Content aligned to the left creates a different visual hierarchy and reading flow.
+            </HeroSubheading>
+            <HeroActions>
+              <Button variant="default" size="lg">Get Started</Button>
+            </HeroActions>
+          </HeroContent>
+        ),
+      },
+      {
+        id: 'slide-2',
+        src: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1920&h=1080&fit=crop',
+        overlayOpacity: 50,
+        content: (
+          <HeroContent>
+            <HeroHeading>Perfect for Reading</HeroHeading>
+            <HeroSubheading>
+              Left alignment follows natural reading patterns and works great for longer content.
+            </HeroSubheading>
+            <HeroActions>
+              <Button variant="default" size="lg">Learn More</Button>
+            </HeroActions>
+          </HeroContent>
+        ),
+      },
+    ];
+
+    return (
+      <HeroCarousel
+        slides={slides}
+        autoRotate
+        rotationInterval={100}
+        showNavigation
+        showDots
+        variant="dark"
+        align="right"
+        animationType="slideLeft"
+      />
+    );
+  },
 };
