@@ -196,10 +196,12 @@ To keep reviews fast, focused, and fair for everyone, we enforce **small and sco
 Please follow these rules strictly:
 
 - **One component per PR**
+
   - A PR must introduce or modify **only one component**.
   - Do not bundle multiple components into a single PR.
 
 - **One fix per PR**
+
   - Bug-fix PRs must address **only one bug or issue**.
   - Even if fixes are related, they must be split into separate PRs.
 
@@ -210,11 +212,11 @@ Please follow these rules strictly:
 PRs that modify multiple components, bundle multiple fixes, or include unrelated changes **will be requested to split or may be closed without review**.
 
 This rule helps maintain:
+
 - Faster reviews
 - Clear change history
 - Easier rollbacks
 - Higher-quality discussions
-
 
 ---
 

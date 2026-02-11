@@ -1,54 +1,86 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { cva, type VariantProps } from 'class-variance-authority';
-import { motion } from 'framer-motion';
-import type { LucideIcon } from 'lucide-react';
-import { Typography } from '@site/src/components/UI/typography';
-import { cn } from '@site/src/utils/cn';
-import { Container } from '@site/src/components/UI/container';
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { motion } from "framer-motion";
+import type { LucideIcon } from "lucide-react";
+import { Play, Pause, ChevronLeft, ChevronRight } from "lucide-react";
+import { Typography } from "@site/src/components/UI/typography";
+import { Container } from "@site/src/components/UI/container";
+import { Button } from "@site/src/components/UI/button";
+import { ButtonWithIcon } from "@site/src/components/UI/button-with-icon";
+import { cn } from "@site/src/utils/cn";
 
 /* -------------------------------------------------------------------------- */
 /*                              VARIANT STYLES                                */
 /* -------------------------------------------------------------------------- */
-
-const heroVariants = cva(
-  'relative w-full overflow-hidden flex items-center justify-center min-h-[500px] md:min-h-[600px] lg:min-h-[700px]',
+const heroVariants = cva("relative w-full overflow-hidden flex items-center justify-center min-h-[500px] md:min-h-[600px] lg:min-h-[700px]",
   {
     variants: {
       variant: {
-        dark: 'bg-gradient-to-br from-gray-900 via-gray-800 to-black',
-        default: 'bg-gradient-to-br from-gray-50 via-white to-gray-100',
+        dark: "bg-gradient-to-br from-gray-900 via-gray-800 to-black",
+        default: "bg-gradient-to-br from-gray-50 via-white to-gray-100",
       },
     },
     defaultVariants: {
-      variant: 'default',
+      variant: "default",
     },
-  }
+  },
 );
 
-const contentVariants = cva('relative z-10 w-full', {
+const contentVariants = cva("relative z-10 w-full", {
   variants: {
     align: {
-      left: 'text-left items-start max-w-[85%] lg:max-w-[100%] xl:max-w-7xl',
-      center: 'text-center items-center max-w-[90%] lg:max-w-[85%] xl:max-w-7xl mx-auto',
-      right: 'text-right items-end max-w-[85%] lg:max-w-[75%] xl:max-w-7xl ml-auto',
+      left: "text-left items-start max-w-[85%] lg:max-w-[100%] xl:max-w-7xl px-7 lg:px-12",
+      center: "text-center items-center max-w-[90%] lg:max-w-[85%] xl:max-w-7xl mx-auto",
+      right: "text-right items-end max-w-[85%] lg:max-w-[90%] xl:max-w-7xl ml-auto px-10 lg:px-12",
     },
   },
   defaultVariants: {
-    align: 'center',
+    align: "center",
   },
 });
+
+const overlayOpacityVariants = cva("absolute inset-0 z-10", {
+  variants: {
+    opacity: {
+      0: "bg-transparent",
+      10: "bg-black/10",
+      20: "bg-black/20",
+      30: "bg-black/30",
+      40: "bg-black/40",
+      50: "bg-black/50",
+      60: "bg-black/60",
+      70: "bg-black/70",
+      80: "bg-black/80",
+      90: "bg-black/90",
+      100: "bg-black",
+    },
+  },
+  defaultVariants: {
+    opacity: 40,
+  },
+});
+
+// Helper function to get overlay opacity variant from numeric value
+const getOverlayOpacityVariant = (opacity: number): 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100 => {
+  if (opacity === 0) return 0;
+  if (opacity <= 10) return 10;
+  if (opacity <= 20) return 20;
+  if (opacity <= 30) return 30;
+  if (opacity <= 40) return 40;
+  if (opacity <= 50) return 50;
+  if (opacity <= 60) return 60;
+  if (opacity <= 70) return 70;
+  if (opacity <= 80) return 80;
+  if (opacity <= 90) return 90;
+  return 100;
+};
 
 /* -------------------------------------------------------------------------- */
 /*                              ANIMATION VARIANTS                            */
 /* -------------------------------------------------------------------------- */
-
 const heroAnimations = {
-  none: { initial: { opacity: 0 },
-    animate: { opacity: 0 },
-    transition: { duration: 0, ease: [0, 0, 0] }
-  },
   fadeIn: {
     initial: { opacity: 0 },
     animate: { opacity: 1 },
@@ -103,7 +135,7 @@ const heroAnimations = {
     initial: { opacity: 0, scale: 0.3, y: 50 },
     animate: { opacity: 1, scale: 1, y: 0 },
     transition: {
-      type: 'spring' as const,
+      type: "spring" as const,
       stiffness: 300,
       damping: 20,
       duration: 0.8,
@@ -124,99 +156,136 @@ const heroAnimations = {
 /* -------------------------------------------------------------------------- */
 /*                                INTERFACES                                  */
 /* -------------------------------------------------------------------------- */
-
 type AnimationProps = React.ComponentProps<typeof motion.div>;
 
-export interface HeroContextValue {
-  variant: 'default' | 'dark';
-  align: 'left' | 'center' | 'right';
+export interface HeroContextValue extends ClassProps{
+  variant: "default" | "dark";
   animationType: string;
   isLightVariant: boolean;
   textColor: string;
   subheadingColor: string;
   split?: boolean;
-  getAnimationProps: (delay?: number) => Pick<AnimationProps, 'initial' | 'animate' | 'transition'>;
+  videoRef?: React.RefObject<HTMLVideoElement | null>;
+  isPlaying?: boolean;
+  onPlayPause?: () => void;
+  getAnimationProps: (
+    delay?: number,
+  ) => Pick<AnimationProps, "initial" | "animate" | "transition">;
 }
 
-const HeroContext = React.createContext<HeroContextValue | null>(null);
-
-const useHeroContext = () => {
-  const context = React.useContext(HeroContext);
-  if (!context) {
-    throw new Error('Hero sub-components must be used within Hero component');
-  }
-  return context;
-};
-
-export interface HeroProps extends VariantProps<typeof heroVariants> {
-  children: React.ReactNode;
-  /**
-   * Background gradient variant
-   */
-  variant?: 'default' | 'dark';
-  /**
-   * Custom background class (overrides variant)
-   */
-  backgroundClassName?: string;
-  /**
-   * Content alignment
-   */
-  align?: 'left' | 'center' | 'right';
-  /**
-   * Container max width
-   */
-  containerSize?: 'small' | 'normal' | 'large' | 'full' | 'readable';
-  /**
-   * Animation type for content elements
-   */
-  animationType?: 'none' | 'fadeIn' | 'fadeInUp' | 'fadeInDown' | 'slideUp' | 'slideDown' | 'slideLeft' | 'slideRight' | 'scaleIn' | 'zoomIn' | 'flipIn' | 'bounceIn' | 'floatIn' | 'rotateIn';
-  /**
-   * 'split' for side-by-side layout
-   */
-  split?: boolean;
-  /**
-   * Custom className
-   */
+export interface ClassProps {
   className?: string;
+  align?: "left" | "center" | "right";
+}
+
+export interface HeroProps extends HeroChildrenProps, VariantProps<typeof heroVariants> {
+  variant?: "default" | "dark";
+  backgroundClassName?: string;
+  containerSize?: "small" | "normal" | "large" | "full" | "readable";
+  animationType?: "fadeIn"| "fadeInUp"| "fadeInDown"| "slideUp"| "slideDown"| "slideLeft"| "slideRight"| "scaleIn"| "zoomIn"| "flipIn"| "bounceIn"| "floatIn"| "rotateIn";
+  split?: boolean;
+}
+
+export interface HeroChildrenProps extends ClassProps{
+  children: React.ReactNode;
+}
+
+export interface HeroHeadingProps extends HeroChildrenProps {
+  as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+}
+
+export interface HeroMediaProps extends ClassProps{
+  src: string;
+  alt?: string;
+  position?: "left" | "right" | "center" | "background";
+  overlayOpacity?: number;
+  showPlayPause?: boolean;
+  fallbackImage?: string;
+  videoRef?: React.RefObject<HTMLVideoElement | null>;
+  isPlaying?: boolean;
+  onPlayPause?: () => void;
+}
+
+export interface HeroBadgeProps extends HeroChildrenProps{
+  icon?: LucideIcon;
+  variant?: "default" | "glass" | "solid" | "outline";
+}
+
+export interface HeroFeaturesProps extends ClassProps{
+  features: string[];
+  variant?: "default" | "glass";
+}
+
+export interface StatItem {
+  value: string;
+  label: string;
+  icon?: LucideIcon;
+}
+
+export interface HeroStatsProps extends ClassProps{
+  stats: StatItem[];
+  variant?: "default" | "cards" | "minimal";
+  columns?: 2 | 3 | 4;
+}
+
+export interface HeroCarouselSlide {
+  id?: string;
+  src?: string; 
+  image?: string; 
+  video?: string; 
+  overlayOpacity?: number;
+  content: React.ReactNode;
+}
+
+export interface HeroCarouselProps extends ClassProps{
+  slides: HeroCarouselSlide[];
+  autoRotate?: boolean;
+  rotationInterval?: number;
+  showNavigation?: boolean;
+  showDots?: boolean;
+  variant?: "default" | "dark";
+  animationType?: HeroProps["animationType"];
+  containerSize?: HeroProps["containerSize"];
 }
 
 /* -------------------------------------------------------------------------- */
 /*                              SUB-COMPONENTS                                */
 /* -------------------------------------------------------------------------- */
+const HeroContext = React.createContext<HeroContextValue | null>(null);
 
-export interface HeroContentProps{
-  children: React.ReactNode;
-  className?: string;
-}
+const useHeroContext = () => {
+  const context = React.useContext(HeroContext);
+  if (!context) {
+    throw new Error("Hero sub-components must be used within Hero component");
+  }
+  return context;
+};
 
-export const HeroContent = React.forwardRef<HTMLDivElement, HeroContentProps>(
+export const HeroContent = React.forwardRef<HTMLDivElement, HeroChildrenProps>(
   ({ children, className, ...props }, ref) => {
     const { align, split } = useHeroContext();
-    
-    // Check if there's a HeroImage with position left/right in children
-    // We check for the position prop since HeroImage might not be defined yet
-    const hasSplitImage = React.Children.toArray(children).some(
-      (child) => {
-        if (!React.isValidElement(child)) return false;
-        const props = child.props as { position?: string };
-        return props.position === 'left' || props.position === 'right';
-      }
-    );
-    
+
+    // We check for the position prop since HeroMedia might not be defined yet
+    const hasSplitImage = React.Children.toArray(children).some((child) => {
+      if (!React.isValidElement(child)) return false;
+      const props = child.props as { position?: string };
+      return props.position === "left" || props.position === "right";
+    });
+
     const isSplitLayout = split && hasSplitImage;
-    
+
     // Separate text content from image for split layout
     const textChildren: React.ReactNode[] = [];
     const imageChildren: React.ReactNode[] = [];
-    let imagePosition: 'left' | 'right' | null = null;
-    
+    let imagePosition: "left" | "right" | null = null;
+
     if (isSplitLayout) {
       React.Children.forEach(children, (child) => {
         if (React.isValidElement(child)) {
           const props = child.props as { position?: string };
-          if (props.position === 'left' || props.position === 'right') {
+          if (props.position === "left" || props.position === "right") {
             imageChildren.push(child);
-            imagePosition = props.position as 'left' | 'right';
+            imagePosition = props.position as "left" | "right";
           } else {
             textChildren.push(child);
           }
@@ -225,22 +294,22 @@ export const HeroContent = React.forwardRef<HTMLDivElement, HeroContentProps>(
         }
       });
     }
-    
+
     return (
       <div
         ref={ref}
         className={cn(
-          isSplitLayout 
-            ? 'flex flex-col lg:flex-row lg:items-stretch gap-8 lg:gap-12 w-full'
-            : 'flex flex-col gap-10 md:gap-12 max-w-5xl',
+          isSplitLayout
+            ? "flex flex-col lg:flex-row lg:items-stretch gap-8 lg:gap-12 w-full"
+            : "flex flex-col gap-10 md:gap-12 max-w-5xl",
           !isSplitLayout && contentVariants({ align }),
-          className
+          className,
         )}
         {...props}
       >
         {isSplitLayout ? (
           <>
-            {imagePosition === 'left' ? (
+            {imagePosition === "left" ? (
               <>
                 {imageChildren}
                 <div className="flex flex-col gap-6 lg:gap-8 lg:w-1/2 justify-center">
@@ -261,175 +330,77 @@ export const HeroContent = React.forwardRef<HTMLDivElement, HeroContentProps>(
         )}
       </div>
     );
-  }
+  },
 );
-HeroContent.displayName = 'HeroContent';
 
-export interface HeroHeadingProps{
-  children: React.ReactNode;
-  className?: string;
-  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
-}
+HeroContent.displayName = "HeroContent";
 
-export const HeroHeading = React.forwardRef<HTMLHeadingElement, HeroHeadingProps>(
-  ({ children, className }) => {
-    const {textColor, align, getAnimationProps } = useHeroContext();
+export const HeroHeading = React.forwardRef<
+  HTMLHeadingElement,
+  HeroHeadingProps
+>(({ children, className }) => {
+  const { textColor, align, getAnimationProps } = useHeroContext();
 
-    // Check if children contain gradient text pattern
-    const hasGradientText = typeof children === 'string' && children.includes('bg-gradient');
-    
-    const content = (
-      <Typography
-        className={cn(
-          'font-bold tracking-tight text-white',
-          'text-4xl sm:text-5xl md:text-3xl lg:text-6xl',
-          !hasGradientText && textColor,
-          className
-        )}
-        align={align}
-      >
-        {children}
-      </Typography>
-    );
+  // Check if children contain gradient text pattern
+  const hasGradientText =
+    typeof children === "string" && children.includes("bg-gradient");
 
-    return (
-      <motion.div {...getAnimationProps(0)}>
-        {content}
-      </motion.div>
-    );
-  }
-);
-HeroHeading.displayName = 'HeroHeading';
+  const content = (
+    <Typography
+      className={cn("font-bold tracking-tight text-white text-4xl sm:text-5xl md:text-3xl lg:text-6xl",
+        !hasGradientText && textColor,
+        className,
+      )}
+      align={align}
+    >
+      {children}
+    </Typography>
+  );
 
-export interface HeroSubheadingProps {
-  children: React.ReactNode;
-  className?: string;
-}
+  return <motion.div {...getAnimationProps(0)}>{content}</motion.div>;
+});
 
-export const HeroSubheading = React.forwardRef<HTMLParagraphElement, HeroSubheadingProps>(
-  ({ children, className }) => {
-    const { subheadingColor, align, getAnimationProps } = useHeroContext();
-    
-    const content = (
-      <Typography
-        variant="lead"
-        className={cn(
-          'text-lg sm:text-xl md:text-2xl mt-3',
-          subheadingColor,
-          align === 'center' && 'max-w-2xl mx-auto',
-          align === 'left' && 'max-w-2xl',
-          align === 'right' && 'max-w-2xl ml-auto',
-          className
-        )}
-        align={align}
-      >
-        {children}
-      </Typography>
-    );
+HeroHeading.displayName = "HeroHeading";
 
-    return (
-      <motion.div {...getAnimationProps(0.1)}>
-        {content}
-      </motion.div>
-    );
-  }
-);
-HeroSubheading.displayName = 'HeroSubheading';
+export const HeroSubheading = React.forwardRef<
+  HTMLParagraphElement,
+  HeroHeadingProps
+>(({ children, className }) => {
+  const { subheadingColor, align, getAnimationProps } = useHeroContext();
 
-export interface HeroImageProps {
-  src: string;
-  alt?: string;
-  position?: 'left' | 'right' | 'center' | 'background';
-  overlayOpacity?: number;
-  className?: string;
-}
+  const content = (
+    <Typography
+      variant="lead"
+      className={cn("text-lg sm:text-xl md:text-2xl m-2",
+        subheadingColor,
+        align === "center" && "max-w-2xl mx-auto",
+        align === "left" && "max-w-2xl",
+        align === "right" && "max-w-2xl ml-auto",
+        className,
+      )}
+      align={align}
+    >
+      {children}
+    </Typography>
+  );
 
-export const HeroImage = React.forwardRef<HTMLImageElement, HeroImageProps>(
-  ({ src, alt = 'background Image', position = 'background', overlayOpacity = 40, className, ...props }, ref) => {
-    const { split } = useHeroContext();
-    const isSplitLayout = split;
+  return <motion.div {...getAnimationProps(0.1)}>{content}</motion.div>;
+});
 
-    if (position === 'background') {
-      const overlayOpacityClass = overlayOpacity === 0 ? 'bg-transparent' :
-        overlayOpacity <= 10 ? 'bg-black/10' :
-        overlayOpacity <= 20 ? 'bg-black/20' :
-        overlayOpacity <= 30 ? 'bg-black/30' :
-        overlayOpacity <= 40 ? 'bg-black/40' :
-        overlayOpacity <= 50 ? 'bg-black/50' :
-        overlayOpacity <= 60 ? 'bg-black/60' :
-        overlayOpacity <= 70 ? 'bg-black/70' :
-        overlayOpacity <= 80 ? 'bg-black/80' :
-        overlayOpacity <= 90 ? 'bg-black/90' :
-        'bg-black';
+HeroSubheading.displayName = "HeroSubheading";
 
-      return (
-        <>
-          <div
-            className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-            style={{
-              backgroundImage: `url(${src})`,
-            }}
-          />
-          <div
-            className={cn('absolute inset-0 z-[1]', overlayOpacityClass)}
-          />
-        </>
-      );
-    }
-
-    return (
-      <div
-        className={cn(
-          'relative z-10',
-          isSplitLayout && position === 'left' && 'order-1 lg:order-1',
-          isSplitLayout && position === 'right' && 'order-2 lg:order-2',
-          !isSplitLayout && position === 'left' && 'order-1',
-          !isSplitLayout && position === 'right' && 'order-2',
-          position === 'center' && 'w-full',
-          isSplitLayout && (position === 'left' || position === 'right') && 'lg:w-1/2 flex min-h-0'
-        )}
-      >
-        <img
-          ref={ref}
-          src={src}
-          alt={alt}
-          className={cn(
-            'rounded-lg shadow-2xl',
-            isSplitLayout && (position === 'left' || position === 'right')
-              ? 'w-full h-full object-cover flex-shrink-0'
-              : 'object-cover',
-            !isSplitLayout && (position === 'left' || position === 'right')
-              ? 'w-full max-w-md lg:max-w-lg'
-              : '',
-            position === 'center' && 'w-full max-w-2xl mx-auto',
-            className
-          )}
-          {...props}
-        />
-      </div>
-    );
-  }
-);
-HeroImage.displayName = 'HeroImage';
-
-export interface HeroActionsProps  {
-  children: React.ReactNode;
-  className?: string;
-}
-
-export const HeroActions = React.forwardRef<HTMLDivElement, HeroActionsProps>(
+export const HeroActions = React.forwardRef<HTMLDivElement, HeroChildrenProps>(
   ({ children, className, ...props }, ref) => {
     const { align } = useHeroContext();
 
     const content = (
       <div
         ref={ref}
-        className={cn(
-          'flex flex-wrap gap-4 mt-3',
-          align === 'center' && 'justify-center',
-          align === 'left' && 'justify-start',
-          align === 'right' && 'justify-end',
-          className
+        className={cn("flex flex-wrap gap-4 mt-3",
+          align === "center" && "justify-center",
+          align === "left" && "justify-start",
+          align === "right" && "justify-end",
+          className,
         )}
         {...props}
       >
@@ -440,7 +411,7 @@ export const HeroActions = React.forwardRef<HTMLDivElement, HeroActionsProps>(
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.97 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
               {child}
             </motion.div>
@@ -449,52 +420,340 @@ export const HeroActions = React.forwardRef<HTMLDivElement, HeroActionsProps>(
       </div>
     );
     return <>{content}</>;
-  }
+  },
 );
-HeroActions.displayName = 'HeroActions';
+
+HeroActions.displayName = "HeroActions";
+
+/* -------------------------------------------------------------------------- */
+/*                            HERO MEDIA COMPONENT                            */
+/* -------------------------------------------------------------------------- */
+export const HeroMedia = React.forwardRef<HTMLImageElement | HTMLVideoElement, HeroMediaProps>(
+  (
+    {
+      src,
+      alt = "background Image",
+      position = "background",
+      overlayOpacity = 50,
+      showPlayPause: showPlayPauseProp,
+      fallbackImage,
+      className,
+      videoRef,
+      isPlaying,
+      onPlayPause,
+      ...props
+    },
+    ref,
+  ) => {
+    const { split, videoRef: contextVideoRef, isPlaying: contextIsPlaying, onPlayPause: contextOnPlayPause } = useHeroContext();
+    const isSplitLayout = split;
+    
+    // Use context videoRef if available, otherwise use prop
+    const effectiveVideoRef = videoRef || contextVideoRef;
+    const effectiveIsPlaying = isPlaying !== undefined ? isPlaying : contextIsPlaying;
+    const effectiveOnPlayPause = onPlayPause || contextOnPlayPause;
+
+    // Detect if source is a video/GIF or image
+    const srcLower = src.toLowerCase();
+    const isVideoFile = srcLower.endsWith('.mp4') || srcLower.endsWith('.webm') || srcLower.endsWith('.ogg') || srcLower.endsWith('.ogv') || srcLower.endsWith('.mov') ||srcLower.endsWith('.gif') ||srcLower.includes('video') || srcLower.includes('gif');
+    
+    const isImageFile = !isVideoFile;
+
+    // Video/GIF state management
+    const internalVideoRef = React.useRef<HTMLVideoElement>(null);
+    const imageRef = React.useRef<HTMLImageElement>(null);
+    const [isVideoPlaying, setIsVideoPlaying] = React.useState<boolean>(true);
+    const [hasError, setHasError] = React.useState<boolean>(false);
+    const [isVideoReady, setIsVideoReady] = React.useState<boolean>(false);
+    const [videoSupported, setVideoSupported] = React.useState<boolean>(true);
+    const [isGif, setIsGif] = React.useState<boolean>(false);
+    const [gifSrc, setGifSrc] = React.useState<string>(src);
+
+    const videoElementRef = effectiveVideoRef || internalVideoRef;
+
+    // Detect GIF and video support
+    React.useEffect(() => {
+      if (isVideoFile) {
+        const isGifFile = srcLower.endsWith('.gif') || srcLower.includes('gif');
+        setIsGif(isGifFile);
+        
+        if (!isGifFile) {
+          const video = document.createElement('video');
+          const isSupported = !!video.canPlayType && (video.canPlayType('video/mp4') !== '' || video.canPlayType('video/webm') !== '' || video.canPlayType('video/ogg') !== '');
+          setVideoSupported(isSupported);
+        }
+      }
+    }, [src, srcLower, isVideoFile]);
+
+    // Ensure overlay opacity is at least 40 for text readability (for videos)
+    const effectiveOverlayOpacity = isVideoFile && overlayOpacity < 40 ? 40 : overlayOpacity;
+
+    // Video play/pause handler
+    const handlePlayPause = React.useCallback(() => {
+      if (isGif) {
+        if (isVideoPlaying) {
+          setGifSrc('');
+          setIsVideoPlaying(false);
+        } else {
+          setGifSrc(src);
+          setIsVideoPlaying(true);
+        }
+      } else {
+        const videoEl = videoElementRef.current;
+        if (videoEl) {
+          if (isVideoPlaying) {
+            videoEl.pause();
+            setIsVideoPlaying(false);
+          } else {
+            videoEl.play();
+            setIsVideoPlaying(true);
+          }
+        }
+      }
+      if (effectiveOnPlayPause) {
+        effectiveOnPlayPause();
+      }
+    }, [isVideoPlaying, effectiveOnPlayPause, videoElementRef, isGif, src]);
+
+    const currentIsPlaying = effectiveIsPlaying !== undefined ? effectiveIsPlaying : isVideoPlaying;
+    const shouldShowPlayPause = showPlayPauseProp !== undefined ? showPlayPauseProp : false;
+
+    // Handle ref assignment for videos
+    const setVideoRefs = React.useCallback((node: HTMLVideoElement | null) => {
+      internalVideoRef.current = node;
+      
+      if (effectiveVideoRef && 'current' in effectiveVideoRef) {
+        (effectiveVideoRef as React.MutableRefObject<HTMLVideoElement | null>).current = node;
+      }
+      
+      if (typeof ref === 'function') {
+        ref(node);
+      } else if (ref && 'current' in ref) {
+        (ref as React.MutableRefObject<HTMLVideoElement | null>).current = node;
+      }
+    }, [ref, effectiveVideoRef]);
+
+    // Play video when ready
+    const playVideo = React.useCallback(() => {
+      const videoEl = videoElementRef.current;
+      if (videoEl && isVideoReady && currentIsPlaying) {
+        videoEl.play();
+        setIsVideoPlaying(true);
+      }
+    }, [isVideoReady, currentIsPlaying, videoElementRef]);
+
+    React.useEffect(() => {
+      if (isVideoFile && !isGif) {
+        playVideo();
+      }
+    }, [playVideo, isVideoFile, isGif]);
+
+    // Determine MIME type for videos
+    const getVideoType = (url: string): string => {
+      const urlLower = url.toLowerCase();
+      if (urlLower.endsWith('.webm')) return 'video/webm';
+      if (urlLower.endsWith('.ogg') || urlLower.endsWith('.ogv')) return 'video/ogg';
+      if (urlLower.endsWith('.mov')) return 'video/quicktime';
+      return 'video/mp4';
+    };
+
+    const showFallback = isVideoFile && ((!isGif && !videoSupported) || hasError);
+
+    // Handle image rendering (background or positioned)
+    if (isImageFile) {
+      if (position === "background") {
+        return (
+          <>
+            <div
+              className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+              style={{ backgroundImage: `url(${src})` }}
+            />
+            <div className={overlayOpacityVariants({ opacity: getOverlayOpacityVariant(overlayOpacity) })} />
+          </>
+        );
+      }
+
+      return (
+        <div
+          className={cn("relative z-10",
+            isSplitLayout && position === "left" && "order-1 lg:order-1",
+            isSplitLayout && position === "right" && "order-2 lg:order-2",
+            !isSplitLayout && position === "left" && "order-1",
+            !isSplitLayout && position === "right" && "order-2",
+            position === "center" && "w-full",
+            isSplitLayout &&
+              (position === "left" || position === "right") &&
+              "lg:w-1/2 flex",
+          )}
+        >
+          <img
+            ref={ref as React.RefObject<HTMLImageElement>}
+            src={src}
+            alt={alt}
+            className={cn("rounded-lg shadow-2xl",
+              isSplitLayout && (position === "left" || position === "right")
+                ? "w-full h-full object-cover"
+                : "object-cover",
+              !isSplitLayout && (position === "left" || position === "right")
+                ? "w-full max-w-md lg:max-w-lg"
+                : "",
+              position === "center" && "w-full max-w-2xl mx-auto",
+              className,
+            )}
+            {...(props as React.ImgHTMLAttributes<HTMLImageElement>)}
+          />
+        </div>
+      );
+    }
+
+    // Handle video/GIF rendering (only background position supported)
+    if (position !== "background") {
+      return null;
+    }
+
+    return (
+      <>
+        {showFallback && fallbackImage ? (
+          <>
+            <div
+              className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+              style={{ backgroundImage: `url(${fallbackImage})` }}
+            />
+            <div className={overlayOpacityVariants({ opacity: getOverlayOpacityVariant(effectiveOverlayOpacity) })} />
+          </>
+        ) : isGif ? (
+          <>
+            <img
+              ref={imageRef}
+              src={gifSrc}
+              alt={alt || "Animated background"}
+              className={cn("absolute inset-0 z-0 w-full h-full object-cover", className)}
+              onError={() => setHasError(true)}
+              onLoad={() => {
+                setHasError(false);
+                setIsVideoReady(true);
+              }}
+              {...(props as React.ImgHTMLAttributes<HTMLImageElement>)}
+            />
+            {fallbackImage && (
+              <div
+                className="absolute inset-0 z-[-1] bg-cover bg-center bg-no-repeat"
+                style={{ backgroundImage: `url(${fallbackImage})` }}
+              />
+            )}
+          </>
+        ) : (
+          <>
+            <video
+              ref={setVideoRefs}
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="auto"
+              className={cn("absolute inset-0 z-0 w-full h-full object-cover", className)}
+              onPlay={() => setIsVideoPlaying(true)}
+              onPause={() => setIsVideoPlaying(false)}
+              onCanPlay={() => {
+                setIsVideoReady(true);
+                const videoEl = videoElementRef.current;
+                if (videoEl && currentIsPlaying) {
+                  videoEl.play();
+                  setIsVideoPlaying(true);
+                }
+              }}
+              onLoadedData={() => {
+                setHasError(false);
+                setIsVideoReady(true);
+                const videoEl = videoElementRef.current;
+                if (videoEl && currentIsPlaying) {
+                  videoEl.play();
+                  setIsVideoPlaying(true);
+                }
+              }}
+              onLoadedMetadata={() => {
+                setIsVideoReady(true);
+                const videoEl = videoElementRef.current;
+                if (videoEl && currentIsPlaying) {
+                  videoEl.play();
+                  setIsVideoPlaying(true);
+                }
+              }}
+              onError={() => {
+                setHasError(true);
+                setIsVideoReady(false);
+              }}
+              {...(props as React.VideoHTMLAttributes<HTMLVideoElement>)}
+            >
+              <source src={src} type={getVideoType(src)} />
+              <source src={src} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+            {fallbackImage && (
+              <div
+                className="absolute inset-0 z-[-1] bg-cover bg-center bg-no-repeat"
+                style={{ backgroundImage: `url(${fallbackImage})` }}
+              />
+            )}
+          </>
+        )}
+        <div className={overlayOpacityVariants({ opacity: getOverlayOpacityVariant(effectiveOverlayOpacity) })} />
+        {shouldShowPlayPause && !showFallback && (
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20">
+            <Button
+              variant="ghost"
+              size="lg"
+              onClick={handlePlayPause}
+              className="bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 text-white rounded-full p-4 shadow-lg"
+            >
+              {currentIsPlaying ? (
+                <Pause className="w-7 h-7" />
+              ) : (
+                <Play className="w-7 h-7" />
+              )}
+            </Button>
+          </div>
+        )}
+      </>
+    );
+  },
+);
+
+HeroMedia.displayName = "HeroMedia";
 
 /* -------------------------------------------------------------------------- */
 /*                            ADVANCED SUB-COMPONENTS                         */
 /* -------------------------------------------------------------------------- */
-
-export interface HeroBadgeProps {
-  children: React.ReactNode;
-  icon?: LucideIcon;
-  variant?: 'default' | 'glass' | 'solid' | 'outline';
-  className?: string;
-}
-
 export const HeroBadge = React.forwardRef<HTMLDivElement, HeroBadgeProps>(
-  ({ children, icon: Icon, variant = 'default', className, ...props }, ref) => {
-    const { getAnimationProps, align } = useHeroContext();
+  ({ children, icon: Icon, variant = "default", className, ...props }, ref) => {
+    const { getAnimationProps, align = "center" } = useHeroContext();
     const isLightVariant = useHeroContext().isLightVariant;
 
     const alignmentClasses = {
-      center: 'justify-center',
-      left: 'justify-start',
-      right: 'justify-end',
+      center: "justify-center",
+      left: "justify-start",
+      right: "justify-end",
     };
 
     const variantClasses = {
-      default: 'bg-white/10 backdrop-blur-sm border border-white/20',
-      glass: 'bg-white/10 backdrop-blur-md border border-white/20',
-      solid: isLightVariant ? 'bg-gray-900 text-white' : 'bg-white/20 text-white',
-      outline: isLightVariant ? 'border-gray-300 text-gray-700' : 'border-white/30 text-white',
+      default: "bg-white/10 backdrop-blur-sm border border-white/20",
+      glass: "bg-white/10 backdrop-blur-md border border-white/20",
+      solid: isLightVariant
+        ? "bg-gray-900 text-white"
+        : "bg-white/20 text-white",
+      outline: isLightVariant
+        ? "border-gray-300 text-gray-700"
+        : "border-white/30 text-white",
     };
 
     const content = (
-      <div
-        className={cn(
-          'flex mb-8',
-          alignmentClasses[align]
-        )}
-      >
+      <div className={cn("flex mb-8", alignmentClasses[align])}>
         <div
           ref={ref}
           className={cn(
-            'inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider',
+            "inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider",
             variantClasses[variant],
-            className
+            className,
           )}
           {...props}
         >
@@ -504,50 +763,44 @@ export const HeroBadge = React.forwardRef<HTMLDivElement, HeroBadgeProps>(
       </div>
     );
 
-    return (
-      <motion.div {...getAnimationProps(0)}>
-        {content}
-      </motion.div>
-    );
-  }
+    return <motion.div {...getAnimationProps(0)}>{content}</motion.div>;
+  },
 );
-HeroBadge.displayName = 'HeroBadge';
 
-export interface HeroFeaturesProps {
-  features: string[];
-  variant?: 'default' | 'glass';
-  className?: string;
-}
+HeroBadge.displayName = "HeroBadge";
 
 export const HeroFeatures = React.forwardRef<HTMLDivElement, HeroFeaturesProps>(
-  ({ features, variant = 'default', className, ...props }, ref) => {
-    const { getAnimationProps, isLightVariant, align } = useHeroContext();
+  ({ features, variant = "default", className, ...props }, ref) => {
+    const { getAnimationProps, isLightVariant, align = "center" } = useHeroContext();
 
     const alignmentClasses = {
-      center: 'justify-center',
-      left: 'justify-start',
-      right: 'justify-end',
+      center: "justify-center",
+      left: "justify-start",
+      right: "justify-end",
     };
 
     const variantClasses = {
       default: isLightVariant
-        ? 'px-4 py-2 rounded-full bg-gray-100 border border-gray-200 text-gray-700'
-        : 'px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white',
-      glass: 'px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white',
+        ? "px-4 py-2 rounded-full bg-gray-100 border border-gray-200 text-gray-700"
+        : "px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white",
+      glass:
+        "px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white",
     };
 
     const content = (
       <div
         ref={ref}
-        className={cn('flex flex-wrap justify-center gap-3 mt-8',
+        className={cn(
+          "flex flex-wrap justify-center gap-3 mt-8",
           alignmentClasses[align],
-          className)}
+          className,
+        )}
         {...props}
       >
         {features.map((feature, idx) => (
           <div
             key={idx}
-            className={cn('text-sm font-medium', variantClasses[variant])}
+            className={cn("text-sm font-medium", variantClasses[variant])}
           >
             {feature}
           </div>
@@ -555,109 +808,70 @@ export const HeroFeatures = React.forwardRef<HTMLDivElement, HeroFeaturesProps>(
       </div>
     );
 
-    return (
-      <motion.div {...getAnimationProps(0.3)}>
-        {content}
-      </motion.div>
-    );
-  }
+    return <motion.div {...getAnimationProps(0.3)}>{content}</motion.div>;
+  },
 );
-HeroFeatures.displayName = 'HeroFeatures';
 
-export interface HeroGlassCardProps {
-  children: React.ReactNode;
-  className?: string;
-}
+HeroFeatures.displayName = "HeroFeatures";
 
-export const HeroGlassCard = React.forwardRef<HTMLDivElement, HeroGlassCardProps>(
-  ({ children, className, ...props }, ref) => {
-    const { getAnimationProps } = useHeroContext();
+export const HeroGlassCard = React.forwardRef<
+  HTMLDivElement,
+  HeroChildrenProps
+>(({ children, className, ...props }, ref) => {
+  const { getAnimationProps } = useHeroContext();
 
-    const content = (
-      <div
-        ref={ref}
-        className={cn(
-          'backdrop-blur-xl bg-white/10 rounded-3xl p-8 md:p-10 border border-white/20 shadow-2xl gap-3',
-          className
-        )}
-        {...props}
-      >
-        {children}
-      </div>
-    );
+  const content = (
+    <div
+      ref={ref}
+      className={cn(
+        "backdrop-blur-xl bg-white/10 rounded-3xl p-8 md:p-12 border border-white/20 shadow-2xl",
+        className,
+      )}
+      {...props}
+    >
+      {children}
+    </div>
+  );
 
-      return (
-        <motion.div {...getAnimationProps(0)}>
-          {content}
-        </motion.div>
-      );
-  }
-);
-HeroGlassCard.displayName = 'HeroGlassCard';
+  return <motion.div {...getAnimationProps(0)}>{content}</motion.div>;
+});
 
-export interface StatItem {
-  value: string;
-  label: string;
-  icon?: LucideIcon;
-}
-
-export interface HeroStatsProps {
-  stats: StatItem[];
-  variant?: 'default' | 'cards' | 'minimal';
-  columns?: 2 | 3 | 4;
-  className?: string;
-}
+HeroGlassCard.displayName = "HeroGlassCard";
 
 export const HeroStats = React.forwardRef<HTMLDivElement, HeroStatsProps>(
-  ({ stats, variant = 'default', columns = 4, className, ...props }, ref) => {
+  ({ stats, variant = "default", columns = 4, className, ...props }, ref) => {
     const { getAnimationProps, textColor, subheadingColor } = useHeroContext();
     const isLightVariant = useHeroContext().isLightVariant;
 
     const gridCols = {
-      2: 'grid-cols-2',
-      3: 'grid-cols-3',
-      4: 'grid-cols-2 md:grid-cols-4',
+      2: "grid-cols-2",
+      3: "grid-cols-3",
+      4: "grid-cols-2 md:grid-cols-4",
     };
 
     const variantClasses = {
-      default: '',
+      default: "",
       cards: isLightVariant
-        ? 'p-6 rounded-xl bg-gray-100 border border-gray-200 hover:bg-gray-200 transition-all duration-300 group'
-        : 'p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 group',
-      minimal: '',
+        ? "p-6 rounded-xl bg-gray-100 border border-gray-200 hover:bg-gray-200 transition-all duration-300 group"
+        : "p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 group",
+      minimal: "",
     };
 
     const content = (
       <div
         ref={ref}
-        className={cn('grid gap-6 md:gap-6 mt-4', gridCols[columns], className)}
+        className={cn("grid gap-6 md:gap-8 mt-4", gridCols[columns], className)}
         {...props}
       >
         {stats.map((stat, idx) => (
           <div key={idx} className={cn(variantClasses[variant])}>
-            {stat.icon && variant === 'cards' && (
-              <stat.icon className={cn(
-                'w-6 h-6 mb-3 text-gray-300',
-                isLightVariant && 'text-gray-600', 
-                'group-hover:scale-110 transition-transform'
-              )} />
+            {stat.icon && variant === "cards" && (
+              <stat.icon className={cn("w-6 h-6 mb-3 text-gray-300 group-hover:scale-110 transition-transform", isLightVariant && "text-gray-600")}/>
             )}
-            <Typography
-              variant="small"
-              className={cn(
-                'text-3xl md:text-4xl font-bold mb-1',
-                textColor
-              )}
-            >
+            <Typography variant="small" className={cn("text-3xl md:text-4xl font-bold mb-1", textColor)}>
               {stat.value}
             </Typography>
-            <Typography
-              variant="small"
-              className={cn(
-                'uppercase tracking-wider text-xs',
-                subheadingColor
-              )}
-            >
+            <Typography variant="small" className={cn("uppercase tracking-wider text-xs", subheadingColor)}>
               {stat.label}
             </Typography>
           </div>
@@ -665,108 +879,124 @@ export const HeroStats = React.forwardRef<HTMLDivElement, HeroStatsProps>(
       </div>
     );
 
-    return (
-      <motion.div {...getAnimationProps(0.2)}>
-        {content}
-      </motion.div>
-    );
-  }
+    return <motion.div {...getAnimationProps(0.2)}>{content}</motion.div>;
+  },
 );
-HeroStats.displayName = 'HeroStats';
+
+HeroStats.displayName = "HeroStats";
 
 /* -------------------------------------------------------------------------- */
 /*                                MAIN HERO COMPONENT                         */
 /* -------------------------------------------------------------------------- */
-
-/**
- * Hero Section Component
- * A flexible hero section using composition pattern.
- */
 export const Hero: React.FC<HeroProps> = ({
   children,
-  variant = 'dark',
+  variant = "dark",
   backgroundClassName,
-  align = 'center',
-  containerSize = 'full',
-  animationType = 'slideUp',
+  align = "center",
+  containerSize = "full",
+  animationType = "slideUp",
   split,
   className,
 }) => {
-  const isLightVariant = variant === 'default';
-  const textColor = isLightVariant ? 'text-gray-900' : 'text-white';
-  const subheadingColor = isLightVariant ? 'text-gray-700' : 'text-gray-100';
+  const isLightVariant = variant === "default";
+  const textColor = isLightVariant ? "text-gray-900" : "text-white";
+  const subheadingColor = isLightVariant ? "text-gray-700" : "text-gray-100";
+
+  // Video play/pause state
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = React.useState<boolean>(true);
+
+  const handlePlayPause = React.useCallback(() => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  }, [isPlaying]);
 
   // Get animation props based on animationType
-  const getAnimationProps = React.useCallback((delay = 0): Pick<AnimationProps, 'initial' | 'animate' | 'transition'> => {
-    const animation = heroAnimations[animationType];
-    return {
-      ...animation,
-      transition: {
-        ...animation.transition,
-        delay,
-      },
-    } as Pick<AnimationProps, 'initial' | 'animate' | 'transition'>;
-  }, [ animationType]);
+  const getAnimationProps = React.useCallback(
+    (delay = 0): Pick<AnimationProps, "initial" | "animate" | "transition"> => {
+      const animation = heroAnimations[animationType];
+      return {
+        ...animation,
+        transition: {
+          ...animation.transition,
+          delay,
+        },
+      } as Pick<AnimationProps, "initial" | "animate" | "transition">;
+    },
+    [animationType],
+  );
 
-  const contextValue = React.useMemo<HeroContextValue>(() => ({
-    variant,
-    align,
-    animationType,
-    isLightVariant,
-    textColor,
-    subheadingColor,
-    split,
-    getAnimationProps,
-  }), [
-    variant,
-    align,
-    animationType,
-    isLightVariant,
-    textColor,
-    subheadingColor,
-    split,
-    getAnimationProps,
-  ]);
+  const contextValue = React.useMemo<HeroContextValue>(
+    () => ({
+      variant,
+      align,
+      animationType,
+      isLightVariant,
+      textColor,
+      subheadingColor,
+      split,
+      videoRef,
+      isPlaying,
+      onPlayPause: handlePlayPause,
+      getAnimationProps,
+    }),
+    [
+      variant,
+      align,
+      animationType,
+      isLightVariant,
+      textColor,
+      subheadingColor,
+      split,
+      videoRef,
+      isPlaying,
+      handlePlayPause,
+      getAnimationProps,
+    ],
+  );
 
-  // Separate background images from other children
-  const backgroundImages: React.ReactNode[] = [];
+  const backgroundMedia: React.ReactNode[] = [];
   const otherChildren: React.ReactNode[] = [];
 
-  function isHeroImage(
-    child: React.ReactNode
-  ): child is React.ReactElement<HeroImageProps> {
-    return React.isValidElement(child) && child.type === HeroImage;
+  function isHeroMedia(
+    child: React.ReactNode,
+  ): child is React.ReactElement<HeroMediaProps> {
+    return React.isValidElement(child) && child.type === HeroMedia;
   }
 
   React.Children.forEach(children, (child) => {
-    if (isHeroImage(child)) {
-      backgroundImages.push(child);
+    if (isHeroMedia(child)) {
+      backgroundMedia.push(child);
     } else {
       otherChildren.push(child);
     }
   });
 
-  const hasBackgroundImage = backgroundImages.length > 0;
+  const hasBackgroundMedia = backgroundMedia.length > 0;
 
   return (
     <HeroContext.Provider value={contextValue}>
       <section
         className={cn(
-          'relative w-full overflow-hidden flex items-center justify-center min-h-[500px] md:min-h-[600px] lg:min-h-[700px]',
+          "relative w-full overflow-hidden flex items-center justify-center min-h-125 md:min-h-150 lg:min-h-175",
           !backgroundClassName && heroVariants({ variant }),
           backgroundClassName,
-          className
+          className,
         )}
       >
-        {/* Render static background images */}
-        {backgroundImages}
-        
-        <Container
-          size={containerSize}
+        {/* Render background media (images/videos) */}
+        {backgroundMedia}
+
+        <Container size={containerSize} 
           className={cn(
-            'relative',
-            'z-10 py-5 md:py-10 lg:py-20',
-            hasBackgroundImage && 'py-16 md:py-20 lg:py-20'
+            "relative z-10 py-12 md:py-10 lg:py-20",
+            hasBackgroundMedia && "py-16 md:py-20 lg:py-32",
           )}
         >
           {otherChildren}
@@ -776,6 +1006,212 @@ export const Hero: React.FC<HeroProps> = ({
   );
 };
 
-Hero.displayName = 'Hero';
+Hero.displayName = "Hero";
+
+/* -------------------------------------------------------------------------- */
+/*                            HERO CAROUSEL COMPONENT                         */
+/* -------------------------------------------------------------------------- */
+export const HeroCarousel: React.FC<HeroCarouselProps> = ({
+  slides,
+  autoRotate = false,
+  rotationInterval = 3000,
+  showNavigation = false,
+  showDots = false,
+  variant = "dark",
+  align = "center",
+  animationType = "fadeIn",
+  containerSize = "full",
+  className,
+}) => {
+  // clone slides for seamless looping
+  const extendedSlides = React.useMemo(
+    () => [slides[slides.length - 1], ...slides, slides[0]],
+    [slides]
+  );
+
+  const [currentIndex, setCurrentIndex] = React.useState<number>(1);
+  const [isPaused, setIsPaused] = React.useState<boolean>(false);
+  const [isTransitioning, setIsTransitioning] = React.useState<boolean>(false);
+  const [enableTransition, setEnableTransition] = React.useState<boolean>(true);
+
+  const intervalRef = React.useRef<NodeJS.Timeout | null>(null);
+  const carouselRef = React.useRef<HTMLDivElement>(null);
+
+  const effectiveInterval = Math.max(1000, Math.min(5000, rotationInterval));
+  const transitionDuration = 700;
+
+  // Auto-rotate
+  React.useEffect(() => {
+    if (autoRotate && !isPaused && slides.length > 1 && !isTransitioning) {
+      intervalRef.current = setInterval(() => {
+        setCurrentIndex((prev) => prev + 1);
+      }, effectiveInterval);
+
+      return () => {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+      };
+    }
+  }, [autoRotate, isPaused, slides.length, effectiveInterval, isTransitioning]);
+
+  // Snap instantly when hitting cloned slides
+  React.useEffect(() => {
+    if (currentIndex === extendedSlides.length - 1) {
+      setTimeout(() => {
+        setEnableTransition(false);
+        setCurrentIndex(1);
+      }, transitionDuration);
+    }
+
+    if (currentIndex === 0) {
+      setTimeout(() => {
+        setEnableTransition(false);
+        setCurrentIndex(slides.length);
+      }, transitionDuration);
+    }
+  }, [currentIndex, extendedSlides.length, slides.length]);
+
+  // Re-enable animation after snap
+  React.useEffect(() => {
+    if (!enableTransition) {
+      requestAnimationFrame(() => setEnableTransition(true));
+    }
+  }, [enableTransition]);
+
+  const handleMouseEnter = () => setIsPaused(true);
+  const handleMouseLeave = () => setIsPaused(false);
+
+  const goToSlide = (index: number) => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setCurrentIndex(index + 1);
+    setIsPaused(true);
+    setTimeout(() => {
+      setIsTransitioning(false);
+      setIsPaused(false);
+    }, transitionDuration);
+  };
+
+  const goToPrevious = () => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setCurrentIndex((prev) => prev - 1);
+    setIsPaused(true);
+    setTimeout(() => {
+      setIsTransitioning(false);
+      setIsPaused(false);
+    }, transitionDuration);
+  };
+
+  const goToNext = () => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setCurrentIndex((prev) => prev + 1);
+    setIsPaused(true);
+    setTimeout(() => {
+      setIsTransitioning(false);
+      setIsPaused(false);
+    }, transitionDuration);
+  };
+
+  // Keyboard navigation
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") goToPrevious();
+      if (e.key === "ArrowRight") goToNext();
+    };
+
+    carouselRef.current?.addEventListener("keydown", handleKeyDown);
+    return () => carouselRef.current?.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  if (!slides.length) return null;
+
+  const navigations = [
+    { onClick: goToPrevious, className: "left-6", label: "Previous slide", icon: <ChevronLeft className="w-6 h-6" /> },
+    { onClick: goToNext, className: "right-6", label: "Next slide", icon: <ChevronRight className="w-6 h-6" /> },
+  ];
+
+  return (
+    <div
+      ref={carouselRef}
+      className={cn("relative w-full", className)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      tabIndex={0}
+      role="region"
+      aria-label="Hero carousel"
+    >
+      <div className="relative w-full overflow-hidden min-h-[500px] md:min-h-[600px] lg:min-h-[700px]">
+        <div
+          className={cn(
+            "relative w-full min-h-[500px] md:min-h-[600px] lg:min-h-[700px]",
+            enableTransition && "transition-transform duration-700 ease-[cubic-bezier(0.4,0,0.2,1)]"
+          )}
+          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+        >
+          <div className="flex w-full" style={{ width: `${extendedSlides.length * 100}%` }}>
+            {extendedSlides.map((slide, index) => (
+              <div
+                key={`${slide.id ?? index}-clone`}
+                className="flex-shrink-0"
+                style={{ width: `${100 / extendedSlides.length}%` }}
+              >
+                <Hero
+                  variant={variant}
+                  align={align}
+                  animationType={animationType}
+                  containerSize={containerSize}
+                >
+                  {(slide.src || slide.image || slide.video) && (
+                    <HeroMedia
+                      src={slide.src || slide.image || slide.video || ""}
+                      position="background"
+                      overlayOpacity={slide.overlayOpacity || 50}
+                      alt={`Slide background`}
+                      showPlayPause={false}
+                      fallbackImage={slide.image || slide.src}
+                    />
+                  )}
+                  {slide.content}
+                </Hero>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {showNavigation && slides.length > 1 && (
+          <>
+            {navigations.map(({ onClick, className, label, icon }) => (
+              <ButtonWithIcon
+                key={label}
+                onClick={onClick}
+                aria-label={label}
+                className={cn("absolute top-1/2 -translate-y-1/2 z-30 bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 text-white rounded-full p-3 shadow-lg transition-all duration-300 hover:scale-110 active:scale-95", className)}
+                icon={icon}
+              />
+            ))}
+          </>
+        )}
+
+        {showDots && slides.length > 1 && (
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-2">
+            {slides.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => goToSlide(index)}
+                className={cn("w-2 h-2 rounded-full transition-all",
+                  index === currentIndex - 1 ? "bg-white" : "bg-white/50"
+                )}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+HeroCarousel.displayName = "HeroCarousel";
 
 export default Hero;

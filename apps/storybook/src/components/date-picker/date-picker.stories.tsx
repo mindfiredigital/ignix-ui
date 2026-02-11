@@ -3,7 +3,7 @@ import DatePicker from './';
 import { Calendar, Search, Moon, Sun } from 'lucide-react';
 import { Typography } from '../typography';
 import { Button } from '../button';
-import type { DateRange, ThemeMode, ColorScheme } from './types';
+import type { DateRange, ThemeMode, ColorScheme } from './';
 
 export default {
     title: 'Components/DatePicker',

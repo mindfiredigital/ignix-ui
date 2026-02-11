@@ -69,7 +69,7 @@
       ],
       "files": {
         "main": {
-          "path": "components/button-with-icon/index.tsx",
+          "path": "components/buttonwithicon/index.tsx",
           "type": "component"
         }
       }
@@ -453,6 +453,18 @@
         }
       }
     },
+    "advanced-table": {
+      "name": "Advanced-Table",
+      "description": "A configurable data-table component with sorting, filtering, and pagination. Data and columns are required props; behavior is controlled via flags. Supports numeric column sorting, real-time filtering with highlighted matches, and customizable pagination.",
+      "dependencies": ["lucide-react"],
+      "componentDependencies": ["button", "input"],
+      "files": {
+        "main": {
+          "path": "components/advanced-table/index.tsx",
+          "type": "component"
+        }
+      }
+    },
     "pagination": {
       "name": "Pagination",
       "description": "An animated pagination component with different variants",
@@ -487,6 +499,19 @@
         "main":{
           "path":"components/checkbox/index.tsx",
           "type":"component"
+        }
+      }
+    },
+    "progress-indicator": {
+      "name": "progress-indicator",
+      "description": "A versatile progress indicator with linear and circular types, optional percentage label, multiple animation variants, and flexible label positions. Supports determinate and indeterminate states. Styled with Tailwind CSS only; optimized with React.memo, useMemo, and useCallback.",
+      "dependencies": [
+        "framer-motion"
+      ],
+      "files": {
+        "main": {
+          "path": "components/progress-indicator/index.tsx",
+          "type": "component"
         }
       }
     },
@@ -618,7 +643,7 @@
         }
       }
     },
-     "singlecolumnlayout": {
+     "singleColumnLayout": {
       "name": "SingleColumnLayout",
       "description": "A clean, responsive single-column layout with header, constrained content area, and footer. Supports multiple theme variants and animations.",
       "dependencies": ["framer-motion", "lucide-react", "class-variance-authority"],
@@ -949,8 +974,8 @@
         }
       }
     },
-    "api-keys":{
-      "name": "api-keys",
+    "apiKeys":{
+      "name": "ApiKeys",
       "description": "A page for managing API keys with responsive design and form validation.",
       "dependencies": [
         "framer-motion",
@@ -1029,7 +1054,7 @@
       }
     },
     "fileUpload":{
-      "name": "fileUpload",
+      "name": "FileUpload",
       "description": "A file uploader component with responsive design and form validation.",
       "dependencies": [
         "framer-motion",
@@ -1048,7 +1073,7 @@
       }
     }, 
     "datePicker":{
-      "name": "datePicker",
+      "name": "DatePicker",
       "description": "A date picker component with responsive design and form validation.",
       "dependencies": [
         "framer-motion",
@@ -1111,11 +1136,33 @@
       ],
       "componentDependencies": [
         "container",
-        "typography"
+        "typography",
+        "button",
+        "buttonwithicon"
       ],
       "files": {
         "main": {
-          "path": "components/rating/index.tsx",
+          "path": "components/hero/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "productCard":{
+      "name": "ProductCard",
+      "description": "A flexible product card component with custom tags and multiple interaction modes.",
+      "dependencies": [
+        "lucide-react", 
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "rating",
+        "typography",
+        "buttonwithicon",
+        "card"
+      ],
+      "files": {
+        "main": {
+          "path": "components/product-card/index.tsx",
           "type": "component"
         }
       }
