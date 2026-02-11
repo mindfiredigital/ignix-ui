@@ -1,3 +1,5 @@
+
+
 import React, { useState } from 'react';
 import {
     CTABanner,
@@ -6,601 +8,455 @@ import {
     CTABannerActions,
     CTABannerButton,
     CTABannerContent,
-    CTABannerImage
+    CTABannerImage,
+    CTABannerContactForm,
+    CTABannerNewsletter,
+    CTABannerDemoRequest,
+    ContactFormHeading,
+    ContactFormSubheading,
+    NewsletterHeading,
+    NewsletterSubheading,
+    DemoFormHeading,
+    DemoFormSubheading
 } from '../UI/call-to-action';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import CodeBlock from '@theme/CodeBlock';
-import { Calendar, Zap } from 'lucide-react';
+import { Zap } from 'lucide-react';
 import VariantSelector from './VariantSelector';
 import { useColorMode } from '@docusaurus/theme-common';
 
 type VariantType = 'default' | 'primary' | 'secondary' | 'accent' | 'muted' | 'gradient' | 'glass' | 'dark' | 'light';
-// type LayoutType = 'centered' | 'split' | 'compact';
-type ContentAlignType = 'left' | 'center' | 'right';
-type AnimationType = 'fade' | 'slide' | 'scale';
 type ImagePositionType = 'left' | 'right';
+type FormType = 'banner' | 'newsletter' | 'contact-form' | 'demo-request';
 
-// const variantOptions: { value: VariantType; label: string }[] = [
-//     { value: 'default', label: 'Default' },
-//     { value: 'primary', label: 'Primary' },
-//     { value: 'secondary', label: 'Secondary' },
-//     { value: 'accent', label: 'Accent' },
-//     { value: 'muted', label: 'Muted' },
-//     { value: 'gradient', label: 'Gradient' },
-//     { value: 'glass', label: 'Glass' },
-//     { value: 'dark', label: 'Dark' },
-//     { value: 'light', label: 'Light' },
-// ];
-
-// const layoutOptions: { value: LayoutType; label: string }[] = [
-//     { value: 'centered', label: 'Centered' },
-//     { value: 'split', label: 'Split' },
-//     { value: 'compact', label: 'Compact' },
-// ];
-
-const alignOptions: { value: ContentAlignType; label: string }[] = [
-    { value: 'left', label: 'Left' },
-    { value: 'center', label: 'Center' },
-    { value: 'right', label: 'Right' },
+const formTypeOptions = [
+    { value: 'banner', label: 'Basic Banner' },
+    { value: 'newsletter', label: 'Newsletter Form' },
+    { value: 'contact-form', label: 'Contact Form' },
+    { value: 'demo-request', label: 'Demo Request Form' },
 ];
 
-const animationOptions: { value: AnimationType; label: string }[] = [
-    { value: 'fade', label: 'Fade' },
-    { value: 'slide', label: 'Slide' },
-    { value: 'scale', label: 'Scale' },
-];
-
-const paddingOptions: { value: 'sm' | 'md' | 'lg' | 'xl' | '2xl'; label: string }[] = [
-    { value: 'sm', label: 'Small' },
-    { value: 'md', label: 'Medium' },
-    { value: 'lg', label: 'Large' },
-    { value: 'xl', label: 'XL' },
-    { value: '2xl', label: '2XL' },
-];
-
-// Gradient Overlay Background Demo
-export const GradientOverlayBackgroundDemo = () => {
-    const [variant, setVariant] = useState<VariantType>('default');
-    const [animate, setAnimate] = useState<boolean>(true);
-    const [animationType, setAnimationType] = useState<AnimationType>('fade');
-    const [padding, setPadding] = useState<'sm' | 'md' | 'lg' | 'xl' | '2xl'>('2xl');
-    const [showOverlay, setShowOverlay] = useState<boolean>(true);
-
-    const codeString = `<CTABanner
-  variant="${variant}"
-  layout="centered"
-  contentAlign="center"
-  backgroundType="image"
-  backgroundImage="https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3"
-  padding="${padding}"
-  animate={${animate}}
-  animationType="${animationType}"
->
-  ${showOverlay ? `  {/* Gradient overlay */}` : ''}
-  ${showOverlay ? `  <div` : ''}
-  ${showOverlay ? `    className="absolute inset-0"` : ''}
-  ${showOverlay ? `    style={{` : ''}
-  ${showOverlay ? `      background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(139, 92, 246, 0.8) 100%)',` : ''}
-  ${showOverlay ? `    }}` : ''}
-  ${showOverlay ? `  />` : ''}
-
-  <div className="relative z-10">
-    <CTABannerHeading className="text-white">
-      Ready to Transform?
-    </CTABannerHeading>
-
-    <CTABannerSubheading className="text-gray-100 max-w-xl">
-      Take the first step towards innovation. Our team is here to guide you every step of the way.
-    </CTABannerSubheading>
-
-    <CTABannerActions>
-      <CTABannerButton
-        label="Schedule Consultation"
-        variant="primary"
-        icon={Calendar}
-        className="bg-white text-blue-600 hover:bg-gray-100"
-      />
-      <CTABannerButton
-        label="View Case Studies"
-        variant="outline"
-        className="border-white text-white hover:bg-white/20"
-      />
-    </CTABannerActions>
-  </div>
-</CTABanner>`;
-
-    return (
-        <div className="space-y-6">
-            <div className="flex flex-wrap gap-4 justify-start sm:justify-end">
-                <div className="space-y-2">
-                    <VariantSelector
-                        variants={['default', 'primary', 'accent', 'dark']}
-                        selectedVariant={variant}
-                        onSelectVariant={(value) => setVariant(value as VariantType)}
-                        type="Variant"
-                    />
-                </div>
-
-                <div className="space-y-2">
-                    <VariantSelector
-                        variants={animationOptions.map(a => a.value)}
-                        selectedVariant={animationType}
-                        onSelectVariant={(value) => setAnimationType(value as AnimationType)}
-                        type="Animation"
-                    />
-                </div>
-
-                <div className="space-y-2">
-                    <VariantSelector
-                        variants={paddingOptions.map(p => p.value)}
-                        selectedVariant={padding}
-                        onSelectVariant={(value) => setPadding(value as 'sm' | 'md' | 'lg' | 'xl' | '2xl')}
-                        type="Padding"
-                    />
-                </div>
-            </div>
-
-            <div className="flex flex-wrap gap-4 justify-start sm:justify-end rounded-lg">
-                <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                        type="checkbox"
-                        checked={animate}
-                        onChange={(e) => setAnimate(e.target.checked)}
-                        className="rounded"
-                    />
-                    <span className="text-sm">Animate</span>
-                </label>
-
-                <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                        type="checkbox"
-                        checked={showOverlay}
-                        onChange={(e) => setShowOverlay(e.target.checked)}
-                        className="rounded"
-                    />
-                    <span className="text-sm">Show Gradient Overlay</span>
-                </label>
-            </div>
-
-            <Tabs>
-                <TabItem value="preview" label="Preview">
-                    <div className="border border-gray-300 rounded-lg overflow-hidden mt-4">
-                        <CTABanner
-                            variant={variant}
-                            layout="centered"
-                            contentAlign="center"
-                            backgroundType="image"
-                            backgroundImage="https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3"
-                            padding={padding}
-                            animate={animate}
-                            animationType={animationType}
-                        >
-                            {showOverlay && (
-                                <div
-                                    className="absolute inset-0"
-                                    style={{
-                                        background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(139, 92, 246, 0.8) 100%)',
-                                    }}
-                                />
-                            )}
-
-                            <div className="relative z-10">
-                                <CTABannerHeading className="text-white">
-                                    Ready to Transform?
-                                </CTABannerHeading>
-
-                                <CTABannerSubheading className="text-gray-100 max-w-xl">
-                                    Take the first step towards innovation. Our team is here to guide you every step of the way.
-                                </CTABannerSubheading>
-
-                                <CTABannerActions className='mt-5'>
-                                    <CTABannerButton
-                                        label="Schedule Consultation"
-                                        variant="primary"
-                                        icon={Calendar}
-                                        className="bg-white text-blue-600 hover:bg-gray-100"
-                                    />
-                                    <CTABannerButton
-                                        label="View Case Studies"
-                                        variant="outline"
-                                        className="border-white text-white hover:bg-white/20"
-                                    />
-                                </CTABannerActions>
-                            </div>
-                        </CTABanner>
-                    </div>
-                </TabItem>
-
-                <TabItem value="code" label="Code">
-                    <div className="mt-4">
-                        <CodeBlock language="tsx" className="text-sm">
-                            {codeString}
-                        </CodeBlock>
-                    </div>
-                </TabItem>
-            </Tabs>
-        </div>
-    );
+// Helper function to get theme-aware variant based on color mode
+const getThemeAwareVariant = (demoType: string, colorMode: 'light' | 'dark'): VariantType => {
+    if (demoType === 'background-image') {
+        return colorMode === 'dark' ? 'dark' : 'light';
+    }
+    if (demoType === 'gradient-background') {
+        return colorMode === 'dark' ? 'dark' : 'light';
+    }
+    if (demoType === 'split') {
+        return colorMode === 'dark' ? 'dark' : 'light';
+    }
+    // For centered demo
+    return colorMode === 'dark' ? 'dark' : 'default';
 };
 
-// Centered with Background Image Demo
-export const CenteredWithBackgroundImageDemo = () => {
-    const [variant, setVariant] = useState<VariantType>('dark');
-    const [animate, setAnimate] = useState<boolean>(true);
-    const [animationType, setAnimationType] = useState<AnimationType>('slide');
-    const [padding, setPadding] = useState<'sm' | 'md' | 'lg' | 'xl' | '2xl'>('2xl');
-    const [showFeatures, setShowFeatures] = useState<boolean>(true);
-    const [showOverlay, setShowOverlay] = useState<boolean>(true);
-
-    const codeString = `<CTABanner
-  variant="${variant}"
-  layout="centered"
-  contentAlign="center"
-  backgroundType="image"
-  backgroundImage="https://images.unsplash.com/photo-1663427929868-3941f957bb36?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-  padding="${padding}"
-  animate={${animate}}
-  animationType="${animationType}"
->
-  ${showOverlay ? `  {/* Optional overlay for background image */}` : ''}
-  ${showOverlay ? `  <div className="absolute inset-0 bg-black/40" />` : ''}
-
-  <div className="relative z-10">
-    <CTABannerHeading className="text-white">
-      Experience Excellence
-    </CTABannerHeading>
-
-    <CTABannerSubheading className="text-gray-200 max-w-2xl">
-      Join our community of innovators and thought leaders shaping the future of technology.
-      Discover how our platform can transform your digital experience.
-    </CTABannerSubheading>
-
-    <CTABannerActions>
-      <CTABannerButton
-        label="Get Started"
-        variant="primary"
-        icon={Zap}
-        className="bg-white text-gray-900 hover:bg-gray-100 border-0"
-      />
-      <CTABannerButton
-        label="Watch Demo"
-        variant="outline"
-        className="border-white text-white hover:bg-white/10"
-      />
-    </CTABannerActions>
-
-    ${showFeatures ? `    {/* Optional additional info */}` : ''}
-    ${showFeatures ? `    <motion.div` : ''}
-    ${showFeatures ? `      initial={{ opacity: 0, y: 20 }}` : ''}
-    ${showFeatures ? `      animate={{ opacity: 1, y: 0 }}` : ''}
-    ${showFeatures ? `      transition={{ delay: 0.5 }}` : ''}
-    ${showFeatures ? `      className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-gray-300"` : ''}
-    ${showFeatures ? `    >` : ''}
-    ${showFeatures ? `      <div className="flex items-center gap-2">` : ''}
-    ${showFeatures ? `        <div className="w-2 h-2 rounded-full bg-green-500" />` : ''}
-    ${showFeatures ? `        <span>No credit card required</span>` : ''}
-    ${showFeatures ? `      </div>` : ''}
-    ${showFeatures ? `      <div className="flex items-center gap-2">` : ''}
-    ${showFeatures ? `        <div className="w-2 h-2 rounded-full bg-green-500" />` : ''}
-    ${showFeatures ? `        <span>14-day free trial</span>` : ''}
-    ${showFeatures ? `      </div>` : ''}
-    ${showFeatures ? `      <div className="flex items-center gap-2">` : ''}
-    ${showFeatures ? `        <div className="w-2 h-2 rounded-full bg-green-500" />` : ''}
-    ${showFeatures ? `        <span>24/7 support</span>` : ''}
-    ${showFeatures ? `      </div>` : ''}
-    ${showFeatures ? `    </motion.div>` : ''}
-  </div>
-</CTABanner>`;
-
-    return (
-        <div className="space-y-6">
-            <div className="flex flex-wrap gap-4 justify-start sm:justify-end">
-                <div className="space-y-2">
-                    <VariantSelector
-                        variants={['dark', 'default', 'light', 'glass']}
-                        selectedVariant={variant}
-                        onSelectVariant={(value) => setVariant(value as VariantType)}
-                        type="Variant"
-                    />
-                </div>
-
-                <div className="space-y-2">
-                    <VariantSelector
-                        variants={animationOptions.map(a => a.value)}
-                        selectedVariant={animationType}
-                        onSelectVariant={(value) => setAnimationType(value as AnimationType)}
-                        type="Animation"
-                    />
-                </div>
-
-                <div className="space-y-2">
-                    <VariantSelector
-                        variants={paddingOptions.map(p => p.value)}
-                        selectedVariant={padding}
-                        onSelectVariant={(value) => setPadding(value as 'sm' | 'md' | 'lg' | 'xl' | '2xl')}
-                        type="Padding"
-                    />
-                </div>
-            </div>
-
-            <div className="flex flex-wrap gap-4 justify-start sm:justify-end rounded-lg">
-                <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                        type="checkbox"
-                        checked={animate}
-                        onChange={(e) => setAnimate(e.target.checked)}
-                        className="rounded"
-                    />
-                    <span className="text-sm">Animate</span>
-                </label>
-
-                <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                        type="checkbox"
-                        checked={showOverlay}
-                        onChange={(e) => setShowOverlay(e.target.checked)}
-                        className="rounded"
-                    />
-                    <span className="text-sm">Show Dark Overlay</span>
-                </label>
-
-                <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                        type="checkbox"
-                        checked={showFeatures}
-                        onChange={(e) => setShowFeatures(e.target.checked)}
-                        className="rounded"
-                    />
-                    <span className="text-sm">Show Features</span>
-                </label>
-            </div>
-
-            <Tabs>
-                <TabItem value="preview" label="Preview">
-                    <div className="border border-gray-300 rounded-lg overflow-hidden mt-4">
-                        <CTABanner
-                            variant={variant}
-                            layout="centered"
-                            contentAlign="center"
-                            backgroundType="image"
-                            backgroundImage="https://images.unsplash.com/photo-1663427929868-3941f957bb36?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                            padding={padding}
-                            animate={animate}
-                        // animationType={animationType}
-                        >
-                            {showOverlay && (
-                                <div className="absolute inset-0 bg-black/40" />
-                            )}
-
-                            <div className="relative z-10">
-                                <CTABannerHeading className="text-white">
-                                    Experience Excellence
-                                </CTABannerHeading>
-
-                                <CTABannerSubheading className="text-gray-200 max-w-2xl">
-                                    Join our community of innovators and thought leaders shaping the future of technology.
-                                    Discover how our platform can transform your digital experience.
-                                </CTABannerSubheading>
-
-                                <CTABannerActions className='mt-8'>
-                                    <CTABannerButton
-                                        label="Get Started"
-                                        variant="primary"
-                                        icon={Zap}
-                                        className="bg-white text-gray-900 hover:bg-gray-100 border-0"
-                                    />
-                                    <CTABannerButton
-                                        label="Watch Demo"
-                                        variant="outline"
-                                        className="border-white text-white hover:bg-white/10"
-                                    />
-                                </CTABannerActions>
-
-                                {showFeatures && (
-                                    <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-gray-300">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-2 h-2 rounded-full bg-green-500" />
-                                            <span>No credit card required</span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-2 h-2 rounded-full bg-green-500" />
-                                            <span>14-day free trial</span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-2 h-2 rounded-full bg-green-500" />
-                                            <span>24/7 support</span>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </CTABanner>
+// Helper function to render form content based on type
+const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light') => {
+    switch (formType) {
+        case 'banner':
+            return (
+                <>
+                    <CTABannerHeading>
+                        Let's Build Something Amazing
+                    </CTABannerHeading>
+                    <CTABannerSubheading>
+                        Join thousands of satisfied customers who have transformed their business with our platform.
+                        Get started today and see the difference.
+                    </CTABannerSubheading>
+                    <CTABannerActions>
+                        <CTABannerButton
+                            label="Get Started"
+                            variant="primary"
+                            icon={Zap}
+                        />
+                        <CTABannerButton
+                            label="Learn More"
+                            variant="outline"
+                        />
+                    </CTABannerActions>
+                    <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm">
+                        <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-green-500" />
+                            <span className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>
+                                30-day free trial
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-green-500" />
+                            <span className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>
+                                No credit card required
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-green-500" />
+                            <span className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>
+                                24/7 support
+                            </span>
+                        </div>
                     </div>
-                </TabItem>
-
-                <TabItem value="code" label="Code">
-                    <div className="mt-4">
-                        <CodeBlock language="tsx" className="text-sm">
-                            {codeString}
-                        </CodeBlock>
-                    </div>
-                </TabItem>
-            </Tabs>
-        </div>
-    );
+                </>
+            );
+        
+        case 'newsletter':
+            return (
+                <CTABannerNewsletter
+                    placeholder="Enter your email"
+                    submitText="Subscribe"
+                    privacyNote="We'll never share your email. Unsubscribe at any time."
+                    buttonVariant="primary"
+                    layout="inline"
+                    onSubmit={async (email) => {
+                        console.log('Newsletter subscription:', email);
+                    }}
+                >
+                    <NewsletterHeading>Stay in the Loop</NewsletterHeading>
+                    <NewsletterSubheading>
+                        Subscribe to our newsletter for the latest updates, tips, and exclusive content.
+                        Join 10,000+ professionals already subscribed.
+                    </NewsletterSubheading>
+                </CTABannerNewsletter>
+            );
+        
+        case 'contact-form':
+            return (
+                <CTABannerContactForm
+                    namePlaceholder="Your name"
+                    emailPlaceholder="you@example.com"
+                    subjectPlaceholder="How can we help you?"
+                    messagePlaceholder="Tell us about your inquiry..."
+                    submitText="Send Message"
+                    successMessage="Thank you! We'll get back to you within 24 hours."
+                    requireSubject={true}
+                    maxMessageLength={1000}
+                    layout="vertical"
+                    onSubmit={async (data) => {
+                        console.log('Contact form submitted:', data);
+                    }}
+                >
+                    <ContactFormHeading>Get In Touch</ContactFormHeading>
+                    <ContactFormSubheading>
+                        Have questions or need assistance? Our team is here to help you succeed.
+                    </ContactFormSubheading>
+                </CTABannerContactForm>
+            );
+        
+        case 'demo-request':
+            return (
+                <CTABannerDemoRequest
+                    namePlaceholder="John Doe"
+                    emailPlaceholder="john@company.com"
+                    companyPlaceholder="Acme Inc."
+                    phonePlaceholder="(555) 123-4567"
+                    submitText="Request Demo"
+                    successMessage="Thank you! We'll contact you within 24 hours to schedule your demo."
+                    requireCompany={true}
+                    requirePhone={false}
+                    layout="two-column"
+                    onSubmit={async (data) => {
+                        console.log('Demo request submitted:', data);
+                    }}
+                >
+                    <DemoFormHeading>See Our Platform Live</DemoFormHeading>
+                    <DemoFormSubheading>
+                        Get a personalized demo tailored to your business needs.
+                        See firsthand how we can help you achieve your goals.
+                    </DemoFormSubheading>
+                </CTABannerDemoRequest>
+            );
+    }
 };
 
-// Split Layout Demo
-export const SplitLayoutDemo = () => {
-    const { colorMode } = useColorMode();
-    const [variant, setVariant] = useState<VariantType>('light');
-    const layout = 'split'
-    // const [layout, setLayout] = useState<LayoutType>('split');
-    const [contentAlign, setContentAlign] = useState<ContentAlignType>('left');
-    const [animate, setAnimate] = useState<boolean>(true);
-    const [animationType, setAnimationType] = useState<AnimationType>('fade');
-    const [padding, setPadding] = useState<'sm' | 'md' | 'lg' | 'xl' | '2xl'>('sm');
-    const [imagePosition, setImagePosition] = useState<ImagePositionType>('right');
-    const [imageVariant, setImageVariant] = useState<'light' | 'dark' | 'default'>('default');
+// Helper function to get code snippet
+const getCodeSnippet = (formType: FormType, demoType: string, variant: VariantType, additionalProps: any = {}) => {
+    // Determine if we should show overlay based on variant and demo type
+    const shouldShowOverlay = 
+        (demoType === 'gradient-background') || 
+        (demoType === 'background-image' && (variant === 'dark' || variant === 'light'));
 
-    const codeString = `<CTABanner
+    const baseCode = `import { CTABanner, CTABannerContent${formType !== 'banner' ? `, ${formType === 'newsletter' ? 'CTABannerNewsletter, NewsletterHeading, NewsletterSubheading' : formType === 'contact-form' ? 'CTABannerContactForm, ContactFormHeading, ContactFormSubheading' : 'CTABannerDemoRequest, DemoFormHeading, DemoFormSubheading'}` : ''} } from '../UI/call-to-action';
+
+<CTABanner
   variant="${variant}"
-  layout="${layout}"
-  contentAlign="${contentAlign}"
-  padding="${padding}"
-  animate={${animate}}
-  animationType="${animationType}"
-  imagePosition="${imagePosition}"
-  imageVariant="${imageVariant}"
+  layout="${demoType === 'centered' ? 'centered' : demoType === 'split' ? 'split' : 'centered'}"
+  contentAlign="${demoType === 'split' ? 'left' : 'center'}"
+  ${demoType === 'background-image' ? 'backgroundType="image"' : ''}
+  ${demoType === 'background-image' ? 'backgroundImage="https://images.unsplash.com/photo-1663427929868-3941f957bb36?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"' : ''}
+  ${demoType === 'gradient-background' ? 'backgroundType="image"' : ''}
+  ${demoType === 'gradient-background' ? 'backgroundImage="https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3"' : ''}
+  ${demoType === 'split' ? `imagePosition="${additionalProps.imagePosition || 'right'}"` : ''}
+  ${demoType === 'split' ? 'imageVariant="default"' : ''}
 >
-  <CTABannerContent>
-    <CTABannerHeading>
-      Connect With Our Team
-    </CTABannerHeading>
-    
-    <CTABannerSubheading>
-      Our experts are ready to help you achieve your goals. Schedule a personalized
-      consultation today to discuss your specific needs and challenges.
-    </CTABannerSubheading>
-    
-    <CTABannerActions>
-      <CTABannerButton
-        label="Schedule Now"
-        variant="primary"
-        icon={Calendar}
-      />
-      <CTABannerButton
-        label="Contact Us"
-        variant="outline"
-      />
-    </CTABannerActions>
+  ${demoType === 'gradient-background' ? '  {/* Gradient overlay */}' : ''}
+  ${demoType === 'gradient-background' ? '  <div' : ''}
+  ${demoType === 'gradient-background' ? '    className="absolute inset-0"' : ''}
+  ${demoType === 'gradient-background' ? '    style={{' : ''}
+  ${demoType === 'gradient-background' ? `      background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(139, 92, 246, 0.8) 100%)',` : ''}
+  ${demoType === 'gradient-background' ? '    }}' : ''}
+  ${demoType === 'gradient-background' ? '  />' : ''}
+  
+  ${demoType === 'background-image' && shouldShowOverlay ? '  {/* Optional overlay for better contrast */}' : ''}
+  ${demoType === 'background-image' && variant === 'dark' ? '  <div className="absolute inset-0 bg-black/40" />' : ''}
+  ${demoType === 'background-image' && variant === 'light' ? '  <div className="absolute inset-0 bg-white/30" />' : ''}
+
+  <CTABannerContent${demoType === 'background-image' || demoType === 'gradient-background' ? ' className="relative z-10"' : ''}>
+    ${getFormCode(formType)}
   </CTABannerContent>
   
-  <CTABannerImage
+  ${demoType === 'split' ? `  <CTABannerImage
     src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
     alt="Team collaboration"
     className="h-[420px] lg:h-[480px]"
-    variant="${imageVariant}"
-  />
+  />` : ''}
 </CTABanner>`;
+
+    return baseCode;
+};
+
+const getFormCode = (formType: FormType) => {
+    switch (formType) {
+        case 'banner':
+            return `    <>
+      <CTABannerHeading>
+        Let's Build Something Amazing
+      </CTABannerHeading>
+      
+      <CTABannerSubheading>
+        Join thousands of satisfied customers who have transformed their business with our platform.
+        Get started today and see the difference.
+      </CTABannerSubheading>
+      
+      <CTABannerActions>
+        <CTABannerButton
+          label="Get Started"
+          variant="primary"
+          icon={Zap}
+        />
+        <CTABannerButton
+          label="Learn More"
+          variant="outline"
+        />
+      </CTABannerActions>
+    </>`;
+        
+        case 'newsletter':
+            return `    <CTABannerNewsletter
+      placeholder="Enter your email"
+      submitText="Subscribe"
+      privacyNote="We'll never share your email. Unsubscribe at any time."
+      buttonVariant="primary"
+      layout="inline"
+      onSubmit={async (email) => {
+        console.log('Newsletter subscription:', email);
+      }}
+    >
+      <NewsletterHeading>Stay in the Loop</NewsletterHeading>
+      <NewsletterSubheading>
+        Subscribe to our newsletter for the latest updates, tips, and exclusive content.
+        Join 10,000+ professionals already subscribed.
+      </NewsletterSubheading>
+    </CTABannerNewsletter>`;
+        
+        case 'contact-form':
+            return `    <CTABannerContactForm
+      namePlaceholder="Your name"
+      emailPlaceholder="you@example.com"
+      subjectPlaceholder="How can we help you?"
+      messagePlaceholder="Tell us about your inquiry..."
+      submitText="Send Message"
+      successMessage="Thank you! We'll get back to you within 24 hours."
+      requireSubject={true}
+      maxMessageLength={1000}
+      layout="vertical"
+      onSubmit={async (data) => {
+        console.log('Contact form submitted:', data);
+      }}
+    >
+      <ContactFormHeading>Get In Touch</ContactFormHeading>
+      <ContactFormSubheading>
+        Have questions or need assistance? Our team is here to help you succeed.
+      </ContactFormSubheading>
+    </CTABannerContactForm>`;
+        
+        case 'demo-request':
+            return `    <CTABannerDemoRequest
+      namePlaceholder="John Doe"
+      emailPlaceholder="john@company.com"
+      companyPlaceholder="Acme Inc."
+      phonePlaceholder="(555) 123-4567"
+      submitText="Request Demo"
+      successMessage="Thank you! We'll contact you within 24 hours to schedule your demo."
+      requireCompany={true}
+      requirePhone={false}
+      layout="two-column"
+      onSubmit={async (data) => {
+        console.log('Demo request submitted:', data);
+      }}
+    >
+      <DemoFormHeading>See Our Platform Live</DemoFormHeading>
+      <DemoFormSubheading>
+        Get a personalized demo tailored to your business needs.
+        See firsthand how we can help you achieve your goals.
+      </DemoFormSubheading>
+    </CTABannerDemoRequest>`;
+    }
+};
+
+// Generic Demo Component
+const CTABannerDemo = ({ 
+    title, 
+    description, 
+    demoType 
+}: { 
+    title: string; 
+    description: string;
+    demoType: 'centered' | 'split' | 'background-image' | 'gradient-background';
+}) => {
+    const { colorMode } = useColorMode();
+    
+    // Initialize variant based on theme
+    const [variant, setVariant] = useState<VariantType>(
+        getThemeAwareVariant(demoType, colorMode)
+    );
+    const [formType, setFormType] = useState<FormType>('banner');
+    const [imagePosition, setImagePosition] = useState<ImagePositionType>('right');
+
+    const theme = variant === 'dark' || variant === 'gradient' || (demoType === 'background-image' && variant === 'dark') ? 'dark' : 'light';
+
+    // Update variant when color mode changes
+    React.useEffect(() => {
+        setVariant(getThemeAwareVariant(demoType, colorMode));
+    }, [colorMode, demoType]);
+
+    // Get appropriate variant options based on demo type
+    // const getVariantOptions = () => {
+    //     if (demoType === 'background-image') {
+    //         return ['dark', 'light', 'glass'];
+    //     }
+    //     if (demoType === 'gradient-background') {
+    //         return ['dark', 'light', 'default'];
+    //     }
+    //     if (demoType === 'split') {
+    //         return ['light', 'dark', 'default', 'accent'];
+    //     }
+    //     // For centered demo
+    //     return colorMode === 'dark' ? ['dark', 'muted', 'glass'] : ['default', 'primary', 'light', 'accent'];
+    // };
+
+    const renderBanner = () => {
+        const bannerProps: any = {
+            variant,
+            layout: demoType === 'split' ? 'split' : 'centered',
+            contentAlign: demoType === 'split' ? 'left' : 'center',
+        };
+
+        if (demoType === 'split') {
+            bannerProps.imagePosition = imagePosition;
+            bannerProps.imageVariant = 'default';
+        }
+
+        if (demoType === 'background-image') {
+            bannerProps.backgroundType = 'image';
+            bannerProps.backgroundImage = 'https://images.unsplash.com/photo-1663427929868-3941f957bb36?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
+        }
+
+        if (demoType === 'gradient-background') {
+            bannerProps.backgroundType = 'image';
+            bannerProps.backgroundImage = 'https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3';
+        }
+
+        return (
+            <CTABanner {...bannerProps}>
+                {(demoType === 'gradient-background') && (
+                    <div
+                        className="absolute inset-0"
+                        style={{
+                            background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(139, 92, 246, 0.8) 100%)',
+                        }}
+                    />
+                )}
+
+                {(demoType === 'background-image') && (
+                    <div className={`absolute inset-0 ${variant === 'dark' ? 'bg-black/40' : 'bg-white/30'}`} />
+                )}
+
+                <CTABannerContent className={(demoType === 'background-image' || demoType === 'gradient-background') ? "relative z-10" : ""}>
+                    {renderFormContent(formType, theme)}
+                </CTABannerContent>
+
+                {demoType === 'split' && (
+                    <CTABannerImage
+                        src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                        alt="Team collaboration"
+                        className="h-[420px] lg:h-[480px]"
+                    />
+                )}
+            </CTABanner>
+        );
+    };
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-wrap gap-4 justify-start sm:justify-end">
-                <div className="space-y-2">
-                    <VariantSelector
-                        variants={['light', 'dark', 'default', 'accent']}
-                        selectedVariant={variant}
-                        onSelectVariant={(value) => setVariant(value as VariantType)}
-                        type="Variant"
-                    />
-                </div>
-
-                <div className="space-y-2">
-                    <VariantSelector
-                        variants={alignOptions.map(a => a.value)}
-                        selectedVariant={contentAlign}
-                        onSelectVariant={(value) => setContentAlign(value as ContentAlignType)}
-                        type="Align"
-                    />
-                </div>
-
-                <div className="space-y-2">
-                    <VariantSelector
-                        variants={animationOptions.map(a => a.value)}
-                        selectedVariant={animationType}
-                        onSelectVariant={(value) => setAnimationType(value as AnimationType)}
-                        type="Animation"
-                    />
-                </div>
-
-                <div className="space-y-2">
-                    <VariantSelector
-                        variants={paddingOptions.map(p => p.value)}
-                        selectedVariant={padding}
-                        onSelectVariant={(value) => setPadding(value as 'sm' | 'md' | 'lg' | 'xl' | '2xl')}
-                        type="Padding"
-                    />
-                </div>
-
-                <div className="space-y-2">
-                    <VariantSelector
-                        variants={['left', 'right']}
-                        selectedVariant={imagePosition}
-                        onSelectVariant={(value) => setImagePosition(value as ImagePositionType)}
-                        type="Image Pos"
-                    />
-                </div>
-
-                <div className="space-y-2">
-                    <VariantSelector
-                        variants={['light', 'dark', 'default']}
-                        selectedVariant={imageVariant}
-                        onSelectVariant={(value) => setImageVariant(value as 'light' | 'dark' | 'default')}
-                        type="Image Variant"
-                    />
-                </div>
+            <div className="border-b pb-4">
+                <h3 className="text-xl font-bold">{title}</h3>
+                <p className="text-gray-600 dark:text-gray-400">{description}</p>
             </div>
 
-            <div className="flex flex-wrap gap-4 justify-start sm:justify-end rounded-lg">
-                <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                        type="checkbox"
-                        checked={animate}
-                        onChange={(e) => setAnimate(e.target.checked)}
-                        className="rounded"
-                    />
-                    <span className="text-sm">Animate</span>
-                </label>
+            <div className="flex flex-wrap gap-4 justify-between items-center">
+                
+
+                <div className="flex flex-wrap gap-4">
+                    {/* <div className="space-y-2">
+                        <VariantSelector
+                            variants={getVariantOptions()}
+                            selectedVariant={variant}
+                            onSelectVariant={(value) => setVariant(value as VariantType)}
+                            type="Variant"
+                        />
+                    </div> */}
+                    <div>
+                        <label className="block text-sm font-medium mb-2 dark:text-gray-300">Form Type</label>
+                        <select
+                            value={formType}
+                            onChange={(e) => setFormType(e.target.value as FormType)}
+                            className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+                        >
+                            {formTypeOptions.map((option) => (
+                                <option key={option.value} value={option.value}>
+                                    {option.label}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    {demoType === 'split' && (
+                        <div className="space-y-2">
+                            <VariantSelector
+                                variants={['left', 'right']}
+                                selectedVariant={imagePosition}
+                                onSelectVariant={(value) => setImagePosition(value as ImagePositionType)}
+                                type="Image Position"
+                            />
+                        </div>
+                    )}
+
+                </div>
             </div>
 
             <Tabs>
                 <TabItem value="preview" label="Preview">
-                    <div className="border border-gray-300 rounded-lg overflow-hidden mt-4">
-                        <CTABanner
-                            variant={colorMode as 'light' | 'dark'}
-                            layout={layout}
-                            contentAlign={contentAlign}
-                            padding={padding}
-                            animate={animate}
-                            animationType={animationType}
-                            imagePosition={imagePosition}
-                            imageVariant={imageVariant}
-                        >
-                            <CTABannerContent>
-                                <CTABannerHeading>
-                                    Connect With Our Team
-                                </CTABannerHeading>
-                                <CTABannerSubheading>
-                                    Our experts are ready to help you achieve your goals. Schedule a personalized
-                                    consultation today to discuss your specific needs and challenges.
-                                </CTABannerSubheading>
-                                <CTABannerActions className='mt-10'>
-                                    <CTABannerButton
-                                        label="Schedule Now"
-                                        variant="primary"
-                                        icon={Calendar}
-                                    />
-                                    <CTABannerButton
-                                        label="Contact Us"
-                                        variant="outline"
-                                    />
-                                </CTABannerActions>
-                            </CTABannerContent>
-                            <CTABannerImage
-                                src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-                                alt="Team collaboration"
-                                className="h-[420px] lg:h-[480px]"
-                                variant={imageVariant}
-                            />
-                        </CTABanner>
+                    <div className="border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden mt-4">
+                        {renderBanner()}
                     </div>
                 </TabItem>
 
                 <TabItem value="code" label="Code">
                     <div className="mt-4">
                         <CodeBlock language="tsx" className="text-sm">
-                            {codeString}
+                            {getCodeSnippet(formType, demoType, variant, 
+                            {
+                                imagePosition,
+                            })}
                         </CodeBlock>
                     </div>
                 </TabItem>
@@ -608,3 +464,36 @@ export const SplitLayoutDemo = () => {
         </div>
     );
 };
+
+// Export the four demos
+export const CenteredDemo = () => (
+    <CTABannerDemo
+        title="1. Centered Layout"
+        description="Classic centered layout perfect for most use cases. Content is centered with equal padding on all sides."
+        demoType="centered"
+    />
+);
+
+export const SplitDemo = () => (
+    <CTABannerDemo
+        title="2. Split Layout"
+        description="Split layout with content on one side and an image on the other. Great for visual storytelling."
+        demoType="split"
+    />
+);
+
+export const BackgroundImageDemo = () => (
+    <CTABannerDemo
+        title="3. Background Image"
+        description="Full-width background image with optional overlay. Creates a visually striking call-to-action."
+        demoType="background-image"
+    />
+);
+
+export const GradientBackgroundDemo = () => (
+    <CTABannerDemo
+        title="4. Gradient Background"
+        description="Gradient overlay over a background image for modern, eye-catching designs."
+        demoType="gradient-background"
+    />
+);
