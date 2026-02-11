@@ -1125,11 +1125,32 @@
       "componentDependencies": [
         "container",
         "typography",
-        "button"
+        "button",
+        "buttonwithicon"
       ],
       "files": {
         "main": {
           "path": "components/hero/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "productCard":{
+      "name": "ProductCard",
+      "description": "A flexible product card component with custom tags and multiple interaction modes.",
+      "dependencies": [
+        "lucide-react", 
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "rating",
+        "typography",
+        "buttonwithicon",
+        "card"
+      ],
+      "files": {
+        "main": {
+          "path": "components/product-card/index.tsx",
           "type": "component"
         }
       }
