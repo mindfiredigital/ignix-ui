@@ -30,12 +30,6 @@ type VariantType = 'default' | 'primary' | 'secondary' | 'accent' | 'muted' | 'g
 type ImagePositionType = 'left' | 'right';
 type FormType = 'banner' | 'newsletter' | 'contact-form' | 'demo-request';
 
-// const formTypeOptions = [
-//     { value: 'banner', label: 'Basic Banner' },
-//     { value: 'newsletter', label: 'Newsletter Form' },
-//     { value: 'contact-form', label: 'Contact Form' },
-//     { value: 'demo-request', label: 'Demo Request Form' },
-// ];
 
 // Helper function to get theme-aware variant based on color mode
 const getThemeAwareVariant = (demoType: string, colorMode: 'light' | 'dark'): VariantType => {
@@ -169,47 +163,128 @@ const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light'
 };
 
 // Helper function to get code snippet
-const getCodeSnippet = (formType: FormType, demoType: string, variant: VariantType, additionalProps: any = {}) => {
-    // Determine if we should show overlay based on variant and demo type
-    const shouldShowOverlay = 
-        (demoType === 'gradient-background') || 
-        (demoType === 'background-image' && (variant === 'dark' || variant === 'light'));
+// const getCodeSnippet = (formType: FormType, demoType: string, variant: VariantType, additionalProps: any = {}) => {
+//     // Determine if we should show overlay based on variant and demo type
+//     const shouldShowOverlay = 
+//         (demoType === 'gradient-background') || 
+//         (demoType === 'background-image' && (variant === 'dark' || variant === 'light'));
 
-    const baseCode = `import { CTABanner, CTABannerContent${formType !== 'banner' ? `, ${formType === 'newsletter' ? 'CTABannerNewsletter, NewsletterHeading, NewsletterSubheading' : formType === 'contact-form' ? 'CTABannerContactForm, ContactFormHeading, ContactFormSubheading' : 'CTABannerDemoRequest, DemoFormHeading, DemoFormSubheading'}` : ''} } from '../UI/call-to-action';
+//     const baseCode = `import { CTABanner, CTABannerContent${formType !== 'banner' ? `, ${formType === 'newsletter' ? 'CTABannerNewsletter, NewsletterHeading, NewsletterSubheading' : formType === 'contact-form' ? 'CTABannerContactForm, ContactFormHeading, ContactFormSubheading' : 'CTABannerDemoRequest, DemoFormHeading, DemoFormSubheading'}` : ''} } from '../UI/call-to-action';
+
+// <CTABanner
+//   variant="${variant}"
+//   layout="${demoType === 'centered' ? 'centered' : demoType === 'split' ? 'split' : 'centered'}"
+//   contentAlign="${demoType === 'split' ? 'left' : 'center'}"
+//   ${demoType === 'background-image' ? 'backgroundType="image"' : ''}
+//   ${demoType === 'background-image' ? 'backgroundImage="https://images.unsplash.com/photo-1663427929868-3941f957bb36?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"' : ''}
+//   ${demoType === 'gradient-background' ? 'backgroundType="image"' : ''}
+//   ${demoType === 'gradient-background' ? 'backgroundImage="https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3"' : ''}
+//   ${demoType === 'split' ? `imagePosition="${additionalProps.imagePosition || 'right'}"` : ''}
+//   ${demoType === 'split' ? 'imageVariant="default"' : ''}
+// >
+//   ${demoType === 'gradient-background' ? '  {/* Gradient overlay */}' : ''}
+//   ${demoType === 'gradient-background' ? '  <div' : ''}
+//   ${demoType === 'gradient-background' ? '    className="absolute inset-0"' : ''}
+//   ${demoType === 'gradient-background' ? '    style={{' : ''}
+//   ${demoType === 'gradient-background' ? `      background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(139, 92, 246, 0.8) 100%)',` : ''}
+//   ${demoType === 'gradient-background' ? '    }}' : ''}
+//   ${demoType === 'gradient-background' ? '  />' : ''}
+  
+//   ${demoType === 'background-image' && shouldShowOverlay ? '  {/* Optional overlay for better contrast */}' : ''}
+//   ${demoType === 'background-image' && variant === 'dark' ? '  <div className="absolute inset-0 bg-black/40" />' : ''}
+//   ${demoType === 'background-image' && variant === 'light' ? '  <div className="absolute inset-0 bg-white/30" />' : ''}
+
+//   <CTABannerContent${demoType === 'background-image' || demoType === 'gradient-background' ? ' className="relative z-10"' : ''}>
+//     ${getFormCode(formType)}
+//   </CTABannerContent>
+  
+//   ${demoType === 'split' ? `  <CTABannerImage
+//     src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+//     alt="Team collaboration"
+//     className="h-[420px] lg:h-[480px]"
+//   />` : ''}
+// </CTABanner>`;
+
+//     return baseCode;
+// };
+
+// Helper function to get code snippet
+const getCodeSnippet = (formType: FormType, demoType: string, variant: VariantType, additionalProps: any = {}) => {
+    // Build props string dynamically
+    const props: string[] = [
+        `variant="${variant}"`,
+        `layout="${demoType === 'centered' ? 'centered' : demoType === 'split' ? 'split' : 'centered'}"`,
+        `contentAlign="${demoType === 'split' ? 'left' : 'center'}"`,
+    ];
+
+    if (demoType === 'background-image') {
+        props.push('backgroundType="image"');
+        props.push('backgroundImage="https://images.unsplash.com/photo-1663427929868-3941f957bb36?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"');
+    }
+
+    if (demoType === 'gradient-background') {
+        props.push('backgroundType="image"');
+        props.push('backgroundImage="https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3"');
+    }
+
+    if (demoType === 'split') {
+        props.push(`imagePosition="${additionalProps.imagePosition || 'right'}"`);
+        props.push('imageVariant="default"');
+    }
+
+    const propsString = props.join('\n  ');
+
+    // Build children content
+    let childrenContent = '';
+
+    if (demoType === 'gradient-background') {
+        childrenContent += `  {/* Gradient overlay */}\n`;
+        childrenContent += `  <div\n`;
+        childrenContent += `    className="absolute inset-0"\n`;
+        childrenContent += `    style={{\n`;
+        childrenContent += `      background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(139, 92, 246, 0.8) 100%)',\n`;
+        childrenContent += `    }}\n`;
+        childrenContent += `  />\n\n`;
+    }
+
+    if (demoType === 'background-image') {
+        if (variant === 'dark' || variant === 'light') {
+            childrenContent += `  {/* Optional overlay for better contrast */}\n`;
+            if (variant === 'dark') {
+                childrenContent += `  <div className="absolute inset-0 bg-black/40" />\n\n`;
+            } else if (variant === 'light') {
+                childrenContent += `  <div className="absolute inset-0 bg-black/10" />\n\n`;
+            }
+        }
+    }
+
+    const contentClassName = (demoType === 'background-image' || demoType === 'gradient-background') ? ' className="relative z-10"' : '';
+    childrenContent += `  <CTABannerContent${contentClassName}>\n`;
+    childrenContent += `    ${getFormCode(formType).replace(/\n/g, '\n    ')}\n`;
+    childrenContent += `  </CTABannerContent>\n`;
+
+    if (demoType === 'split') {
+        childrenContent += `\n  <CTABannerImage\n`;
+        childrenContent += `    src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"\n`;
+        childrenContent += `    alt="Team collaboration"\n`;
+        childrenContent += `    className="h-[420px] lg:h-[480px]"\n`;
+        childrenContent += `  />\n`;
+    }
+
+    const importStatement = formType === 'banner' 
+        ? `import { CTABanner, CTABannerContent } from '../UI/call-to-action';`
+        : formType === 'newsletter'
+            ? `import { CTABanner, CTABannerContent, CTABannerNewsletter, NewsletterHeading, NewsletterSubheading } from '../UI/call-to-action';`
+            : formType === 'contact-form'
+                ? `import { CTABanner, CTABannerContent, CTABannerContactForm, ContactFormHeading, ContactFormSubheading } from '../UI/call-to-action';`
+                : `import { CTABanner, CTABannerContent, CTABannerDemoRequest, DemoFormHeading, DemoFormSubheading } from '../UI/call-to-action';`;
+
+    const baseCode = `${importStatement}
 
 <CTABanner
-  variant="${variant}"
-  layout="${demoType === 'centered' ? 'centered' : demoType === 'split' ? 'split' : 'centered'}"
-  contentAlign="${demoType === 'split' ? 'left' : 'center'}"
-  ${demoType === 'background-image' ? 'backgroundType="image"' : ''}
-  ${demoType === 'background-image' ? 'backgroundImage="https://images.unsplash.com/photo-1663427929868-3941f957bb36?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"' : ''}
-  ${demoType === 'gradient-background' ? 'backgroundType="image"' : ''}
-  ${demoType === 'gradient-background' ? 'backgroundImage="https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3"' : ''}
-  ${demoType === 'split' ? `imagePosition="${additionalProps.imagePosition || 'right'}"` : ''}
-  ${demoType === 'split' ? 'imageVariant="default"' : ''}
+  ${propsString}
 >
-  ${demoType === 'gradient-background' ? '  {/* Gradient overlay */}' : ''}
-  ${demoType === 'gradient-background' ? '  <div' : ''}
-  ${demoType === 'gradient-background' ? '    className="absolute inset-0"' : ''}
-  ${demoType === 'gradient-background' ? '    style={{' : ''}
-  ${demoType === 'gradient-background' ? `      background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(139, 92, 246, 0.8) 100%)',` : ''}
-  ${demoType === 'gradient-background' ? '    }}' : ''}
-  ${demoType === 'gradient-background' ? '  />' : ''}
-  
-  ${demoType === 'background-image' && shouldShowOverlay ? '  {/* Optional overlay for better contrast */}' : ''}
-  ${demoType === 'background-image' && variant === 'dark' ? '  <div className="absolute inset-0 bg-black/40" />' : ''}
-  ${demoType === 'background-image' && variant === 'light' ? '  <div className="absolute inset-0 bg-white/30" />' : ''}
-
-  <CTABannerContent${demoType === 'background-image' || demoType === 'gradient-background' ? ' className="relative z-10"' : ''}>
-    ${getFormCode(formType)}
-  </CTABannerContent>
-  
-  ${demoType === 'split' ? `  <CTABannerImage
-    src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-    alt="Team collaboration"
-    className="h-[420px] lg:h-[480px]"
-  />` : ''}
-</CTABanner>`;
+${childrenContent}</CTABanner>`;
 
     return baseCode;
 };
