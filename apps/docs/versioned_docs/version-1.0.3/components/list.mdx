@@ -13,6 +13,8 @@ import { ListWithActions } from '@site/src/components/UI/list-with-actions';
 import ListWithActionsDemo, { ActionsBehavior, OrderedListExample, RichContentExample } from '@site/src/components/Demo/ListWithActionsDemo';
 import { ListWithStatus } from '@site/src/components/UI/list-with-status';
 import ListWithStatusDemo, { StatusVariantsDemo, OrderedListExample as StatusOrderedListExample, CustomContentExample as StatusCustomContentExample, SpacingVariantsDemo } from '@site/src/components/Demo/ListWithStatusDemo';
+import { ListWithAvatars } from '@site/src/components/UI/list-with-avatars';
+import ListWithAvatarsDemo, { AvatarAlignment, ProfileLinks, AvatarVariants, TextReadability } from '@site/src/components/Demo/ListWithAvatarsDemo';
 
 <style>{`
   /* Hide headings with toc-only span visually but keep in DOM for TOC parsing */
@@ -231,7 +233,7 @@ When you need more control over individual list items, use the `children` prop:
 | `className` | `string` | `undefined` | Additional CSS classes to apply to the list container. |
 | `children` | `React.ReactNode` | `undefined` | Alternative way to pass list items as children. If provided, `items` prop will be ignored. |
 
-#### Examples
+#### Examples:
 
 #### Feature List
 
@@ -636,6 +638,7 @@ To maximize performance in your application, ensure your `actions` array and `it
   </TabItem>
   
   <TabItem value="ListWithStatus" label="List With Status">
+
   {/* ### List With Status */}
   ### <span className="toc-only">List With Status</span>
   The List With Status component extends the basic list functionality by adding status badges to each list item. Each item displays a status badge with appropriate colors and icons (success, error, warning, info, pending), making it perfect for displaying task lists, order statuses, notification lists, or any content that needs status indicators.
@@ -1023,7 +1026,7 @@ Different spacing options for list items:
 | `statusIcon` | `React.ReactNode` | optional | Custom icon for the status badge. If not provided, uses default icon based on status type. |
 | `customContent` | `React.ReactNode` | optional | Custom content to render instead of title/description. If provided, `title` and `description` are ignored. |
 
-#### Examples
+#### Examples:
 
 #### Task List
 
@@ -1155,6 +1158,557 @@ The component is optimized for performance:
 - **useCallback**: Memoizes click handlers and badge configuration functions
 
 To maximize performance in your application, ensure your `items` array reference remains stable between renders.
+
+  </TabItem>
+
+  <TabItem value='ListWithAvatars' label='List With Avatars'>
+  {/* ### List With Avatars */}
+  The List With Avatars component extends the basic list functionality by displaying avatars on the left side of each item, with names and descriptions on the right. Each item can optionally link to a profile page, making it perfect for user directories, team listings, contact lists, and member directories.
+  ### <span className="toc-only">List With Avatars</span>
+  <br/>
+  <ListWithAvatarsDemo />
+
+  #### Installation
+
+  <Tabs>
+    <TabItem value="cli" label="CLI" default>
+      ```bash
+      ignix add component list-with-avatars
+      ```
+    </TabItem>
+    <TabItem value="manual" label="Manual" className="max-h-[500px] overflow-y-auto">
+
+      ```tsx
+  import React, { useMemo, useCallback } from "react";
+  import { cn } from "../../../utils/cn";
+  import { ListBasic, type ListBasicProps } from "../list-basic";
+  import { Avatar, type AvatarProps } from "../avatar";
+
+  export interface ListItemWithAvatar {
+    id: string;
+    name: string;
+    description?: string;
+    profileLink?: string;
+    avatarSrc?: string;
+    avatarAlt?: string;
+    avatarLetters?: string;
+    avatarIcon?: React.ReactNode;
+    avatarSize?: AvatarProps["size"];
+    avatarShape?: AvatarProps["shape"];
+    customContent?: React.ReactNode;
+  }
+
+  export interface ListWithAvatarsProps {
+    items: ListItemWithAvatar[];
+    type?: ListBasicProps["type"];
+    spacing?: "sm" | "md" | "lg";
+    className?: string;
+    itemClassName?: string;
+    avatarSize?: AvatarProps["size"];
+    avatarShape?: AvatarProps["shape"];
+    onItemClick?: (item: ListItemWithAvatar, index: number) => void;
+    showProfileLinks?: boolean;
+  }
+
+  const ListWithAvatarsComponent: React.FC<ListWithAvatarsProps> = ({
+    items,
+    type,
+    spacing = "md",
+    className,
+    itemClassName,
+    avatarSize = "md",
+    avatarShape = "circle",
+    onItemClick,
+    showProfileLinks = true,
+  }) => {
+    const listClassName = useMemo(
+      () =>
+        cn(
+          "w-full",
+          "text-foreground",
+          "list-none",
+          className
+        ),
+      [className]
+    );
+
+    const rowClasses = useMemo(
+      () =>
+        cn(
+          "flex items-center gap-3",
+          "transition-colors",
+          itemClassName
+        ),
+      [itemClassName]
+    );
+
+    const clickableRowClasses = useMemo(
+      () =>
+        cn(
+          rowClasses,
+          showProfileLinks && "cursor-pointer rounded-md px-3 py-2 hover:bg-muted/60 focus-within:bg-muted/60 focus-within:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2"
+        ),
+      [rowClasses, showProfileLinks]
+    );
+
+    const createItemClickHandler = useCallback(
+      (item: ListItemWithAvatar, index: number) => () => {
+        if (onItemClick) {
+          onItemClick(item, index);
+        }
+      },
+      [onItemClick, showProfileLinks]
+    );
+
+    const renderItem = (item: ListItemWithAvatar, index: number) => {
+      const isClickable = showProfileLinks && (item.profileLink || onItemClick);
+      const finalRowClasses = isClickable ? clickableRowClasses : rowClasses;
+      const finalAvatarSize = item.avatarSize || avatarSize;
+      const finalAvatarShape = item.avatarShape || avatarShape;
+
+      const content = item.customContent || (
+        <div className="flex flex-col min-w-0 flex-1">
+          <span className="font-medium text-foreground truncate">{item.name}</span>
+          {item.description && (
+            <span className="text-sm text-muted-foreground truncate">
+              {item.description}
+            </span>
+          )}
+        </div>
+      );
+
+      const avatar = (
+        <Avatar
+          src={item.avatarSrc}
+          alt={item.avatarAlt || item.name}
+          letters={item.avatarLetters}
+          icon={item.avatarIcon}
+          size={finalAvatarSize}
+          shape={finalAvatarShape}
+          className="shrink-0"
+        />
+      );
+
+      const itemContent = (
+        <div className={finalRowClasses} onClick={isClickable ? createItemClickHandler(item, index) : undefined}>
+          {type && (
+            <span className="w-6 shrink-0 text-xs font-medium text-muted-foreground text-right">
+              {type === "ordered" ? `${index + 1}.` : "•"}
+            </span>
+          )}
+          {avatar}
+          {item.profileLink && showProfileLinks ? (
+            <a
+              href={item.profileLink}
+              className="flex flex-col min-w-0 flex-1 no-underline text-inherit hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm"
+              onClick={(e) => {
+                if (onItemClick) {
+                  e.preventDefault();
+                  onItemClick(item, index);
+                }
+              }}
+              tabIndex={0}
+            >
+              {content}
+            </a>
+          ) : (
+            content
+          )}
+        </div>
+      );
+
+      return (
+        <li key={item.id}>
+          {itemContent}
+        </li>
+      );
+    };
+
+    return (
+      <ListBasic type={type} spacing={spacing} className={listClassName}>
+        {items.map(renderItem)}
+      </ListBasic>
+    );
+  };
+
+  ListWithAvatarsComponent.displayName = "ListWithAvatars";
+
+  export const ListWithAvatars = React.memo(ListWithAvatarsComponent);
+      ```
+    </TabItem>
+  </Tabs>
+
+  #### Usage
+
+  Import the component:
+
+  ```tsx
+  import { ListWithAvatars } from './components/ui/list-with-avatars';
+  ```
+
+  #### Basic Usage
+
+  The simplest way to use ListWithAvatars is with the `items` prop:
+
+  ```tsx
+  function BasicList() {
+    const items = [
+      {
+        id: '1',
+        name: 'John Doe',
+        description: 'Software Engineer',
+        profileLink: '/profile/john-doe',
+        avatarSrc: '/avatars/john.jpg',
+        avatarAlt: 'John Doe',
+      },
+      {
+        id: '2',
+        name: 'Jane Smith',
+        description: 'Product Designer',
+        profileLink: '/profile/jane-smith',
+        avatarSrc: '/avatars/jane.jpg',
+        avatarAlt: 'Jane Smith',
+      },
+    ];
+
+    return (
+      <ListWithAvatars 
+        items={items}
+      />
+    );
+  }
+  ```
+
+  #### With Avatar Initials
+
+  When you don't have avatar images, use the `avatarLetters` prop:
+
+  ```tsx
+  function WithInitials() {
+    const items = [
+      {
+        id: '1',
+        name: 'John Doe',
+        description: 'Software Engineer',
+        profileLink: '/profile/john-doe',
+        avatarLetters: 'JD',
+      },
+      {
+        id: '2',
+        name: 'Jane Smith',
+        description: 'Product Designer',
+        profileLink: '/profile/jane-smith',
+        avatarLetters: 'JS',
+      },
+    ];
+
+    return (
+      <ListWithAvatars 
+        items={items}
+      />
+    );
+  }
+  ```
+
+  #### With Ordered List
+
+  To show numbered markers, pass the `type` prop:
+
+  ```tsx
+  function OrderedList() {
+    return (
+      <ListWithAvatars 
+        type="ordered"
+        items={items}
+      />
+    );
+  }
+  ```
+
+  #### Custom Avatar Sizes
+
+  Control the avatar size globally or per item:
+
+  ```tsx
+  function CustomSizes() {
+    return (
+      <ListWithAvatars 
+        items={items}
+        avatarSize="lg"  // Options: 'sm', 'md', 'lg', 'xl', etc.
+      />
+    );
+  }
+  ```
+
+  #### Custom Avatar Shapes
+
+  Change the avatar shape:
+
+  ```tsx
+  function CustomShapes() {
+    return (
+      <ListWithAvatars 
+        items={items}
+        avatarShape="square"  // Options: 'circle', 'square', 'rounded'
+      />
+    );
+  }
+  ```
+
+  #### Without Profile Links
+
+  Disable profile links if you don't need navigation:
+
+  ```tsx
+  function WithoutLinks() {
+    return (
+      <ListWithAvatars 
+        items={items}
+        showProfileLinks={false}
+      />
+    );
+  }
+  ```
+
+  #### With Custom Click Handler
+
+  Use a custom click handler instead of profile links:
+
+  ```tsx
+  function WithCustomHandler() {
+    const handleItemClick = (item, index) => {
+      console.log('Clicked:', item.name);
+      // Custom logic here
+    };
+
+    return (
+      <ListWithAvatars 
+        items={items}
+        onItemClick={handleItemClick}
+        showProfileLinks={false}
+      />
+    );
+  }
+  ```
+
+
+  #### Variants:
+
+  #### Avatar Alignment
+
+  Avatars are consistently aligned on the left side:
+
+  <AvatarAlignment />
+
+  #### Profile Links
+
+  Profile links are functional and accessible:
+
+  <ProfileLinks />
+
+  #### Avatar Variants
+
+  Different avatar sizes and shapes:
+
+  <AvatarVariants />
+
+  #### Text Readability
+
+  Names and descriptions are clearly readable:
+
+  <TextReadability />
+
+  #### Props
+
+  | Prop | Type | Default | Description |
+  |------|------|---------|-------------|
+  | `items` | `ListItemWithAvatar[]` | **required** | Array of items, each with avatar, name, and description. |
+  | `type` | `'unordered' \| 'ordered'` | `undefined` | Type of list marker. When provided, shows bullets (`unordered`) or numbers (`ordered`). When omitted, no markers are shown. |
+  | `spacing` | `'sm' \| 'md' \| 'lg'` | `'md'` | Spacing size between list items. `'sm'` (8px), `'md'` (12px), `'lg'` (16px). |
+  | `className` | `string` | `undefined` | Additional CSS classes to apply to the list container. |
+  | `itemClassName` | `string` | `undefined` | Additional CSS classes to apply to each list row. |
+  | `avatarSize` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| ...` | `'md'` | Default size for all avatars. Can be overridden per item. |
+  | `avatarShape` | `'circle' \| 'square' \| 'rounded' \| ...` | `'circle'` | Default shape for all avatars. Can be overridden per item. |
+  | `onItemClick` | `(item: ListItemWithAvatar, index: number) => void` | `undefined` | Optional callback fired when an item is clicked. |
+  | `showProfileLinks` | `boolean` | `true` | Whether to make items clickable via profileLink. |
+
+  #### ListItemWithAvatar Interface
+
+  | Property | Type | Required | Description |
+  |----------|------|----------|-------------|
+  | `id` | `string` | **required** | Unique identifier for the item (used as React key). |
+  | `name` | `string` | **required** | Display name of the person/user. |
+  | `description` | `string` | optional | Optional description or subtitle text. |
+  | `profileLink` | `string` | optional | Optional URL to the profile page. If provided, the item becomes clickable. |
+  | `avatarSrc` | `string` | optional | Optional image source URL for the avatar. |
+  | `avatarAlt` | `string` | optional | Optional alt text for the avatar image. |
+  | `avatarLetters` | `string` | optional | Optional letters to display in avatar (e.g., initials). |
+  | `avatarIcon` | `React.ReactNode` | optional | Optional icon to display in avatar. |
+  | `avatarSize` | `AvatarProps['size']` | optional | Optional size of the avatar. Overrides default `avatarSize` prop. |
+  | `avatarShape` | `AvatarProps['shape']` | optional | Optional shape of the avatar. Overrides default `avatarShape` prop. |
+  | `customContent` | `React.ReactNode` | optional | Optional custom content to render instead of name/description. |
+
+  #### Examples:
+
+  #### Team Directory
+
+  A common use case for displaying team members:
+
+  ```tsx
+  const teamMembers = [
+    {
+      id: '1',
+      name: 'Sarah Chen',
+      description: 'Engineering Manager',
+      profileLink: '/team/sarah-chen',
+      avatarSrc: '/avatars/sarah.jpg',
+      avatarAlt: 'Sarah Chen',
+    },
+    {
+      id: '2',
+      name: 'Michael Torres',
+      description: 'Senior Frontend Developer',
+      profileLink: '/team/michael-torres',
+      avatarSrc: '/avatars/michael.jpg',
+      avatarAlt: 'Michael Torres',
+    },
+    {
+      id: '3',
+      name: 'Emily Davis',
+      description: 'Product Manager',
+      profileLink: '/team/emily-davis',
+      avatarLetters: 'ED',
+    },
+  ];
+
+  <ListWithAvatars 
+    items={teamMembers}
+    spacing="md"
+  />
+  ```
+
+  #### User List with Mixed Avatars
+
+  Using different avatar sources (images, initials, icons):
+
+  ```tsx
+  const users = [
+    {
+      id: '1',
+      name: 'John Doe',
+      description: 'Software Engineer',
+      profileLink: '/users/john-doe',
+      avatarSrc: '/avatars/john.jpg',
+      avatarAlt: 'John Doe',
+    },
+    {
+      id: '2',
+      name: 'Jane Smith',
+      description: 'Product Designer',
+      profileLink: '/users/jane-smith',
+      avatarLetters: 'JS',
+    },
+    {
+      id: '3',
+      name: 'Bob Johnson',
+      description: 'UX Researcher',
+      profileLink: '/users/bob-johnson',
+      avatarIcon: <UserIcon />,
+    },
+  ];
+
+  <ListWithAvatars 
+    items={users}
+    avatarSize="lg"
+    spacing="md"
+  />
+  ```
+
+  #### Contact List
+
+  Displaying contacts with profile links:
+
+  ```tsx
+  const contacts = [
+    {
+      id: '1',
+      name: 'Alice Williams',
+      description: 'Frontend Developer',
+      profileLink: '/contacts/alice-williams',
+      avatarSrc: '/avatars/alice.jpg',
+      avatarAlt: 'Alice Williams',
+    },
+    {
+      id: '2',
+      name: 'David Kim',
+      description: 'Backend Developer',
+      profileLink: '/contacts/david-kim',
+      avatarLetters: 'DK',
+    },
+  ];
+
+  <ListWithAvatars 
+    items={contacts}
+    spacing="md"
+    showProfileLinks={true}
+  />
+  ```
+
+  #### Accessibility
+
+  The ListWithAvatars component is designed with accessibility in mind:
+
+  - **Keyboard navigation**: Profile links are fully keyboard accessible with proper focus states
+  - **Screen reader support**: Avatar images include alt text support, and names/descriptions provide context
+  - **Semantic HTML**: Uses proper list semantics (`<ul>` or `<ol>`) inherited from `ListBasic`
+  - **Focus management**: Links have visible focus indicators for keyboard users
+  - **ARIA labels**: Avatar images use proper alt text for screen readers
+
+  #### Best Practices
+
+  1. **Provide avatar images or initials**: Always provide either `avatarSrc`, `avatarLetters`, or `avatarIcon` for better visual identification
+
+  2. **Use descriptive alt text**: When using `avatarSrc`, always provide `avatarAlt` for accessibility:
+    ```tsx
+    {
+      id: '1',
+      name: 'John Doe',
+      avatarSrc: '/avatars/john.jpg',
+      avatarAlt: 'John Doe', // Important for accessibility
+    }
+    ```
+
+  3. **Keep descriptions concise**: Descriptions should be brief and informative. Long text will be truncated automatically.
+
+  4. **Use appropriate spacing**: Choose spacing based on content density:
+    - `sm`: For compact lists or when space is limited
+    - `md`: For standard content (default)
+    - `lg`: For better readability with longer descriptions
+
+  5. **Consider avatar sizes**: 
+    - `sm` or `md`: For dense lists or sidebars
+    - `md` or `lg`: For main content areas
+    - `lg` or `xl`: For prominent displays or featured sections
+
+  6. **Profile links**: Always provide `profileLink` when items should be clickable. Use `showProfileLinks={false}` only when navigation is not needed.
+
+  7. **Memoize callbacks**: If using `onItemClick`, memoize the handler with `useCallback` to prevent unnecessary re-renders:
+    ```tsx
+    const handleItemClick = useCallback((item, index) => {
+      navigateToProfile(item.profileLink);
+    }, []);
+    ```
+
+  #### Performance
+
+  The component is optimized for performance:
+
+  - **React.memo**: Prevents re-renders when props haven't changed
+  - **useMemo**: Memoizes computed class names
+  - **useCallback**: Memoizes click handlers
+
+  To maximize performance in your application, ensure your `items` array reference remains stable between renders. Consider using `useMemo` for the items array if it's computed from other data.
+
 
   </TabItem>
 </Tabs>
