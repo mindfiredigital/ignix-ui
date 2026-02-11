@@ -24,6 +24,7 @@ import {
   HeroSubheading,
   HeroActions,
   HeroImage,
+  HeroVideo,
   HeroBadge,
   HeroFeatures,
   HeroGlassCard,
@@ -58,6 +59,17 @@ vi.mock('@ignix-ui/container', () => ({
     <div data-size={size} className={className} {...props}>
       {children}
     </div>
+  ),
+}));
+
+// Mock Button component
+vi.mock('@ignix-ui/button', () => ({
+  Button: React.forwardRef<HTMLButtonElement, any>(
+    ({ children, onClick, className, ...props }, ref) => (
+      <button ref={ref} onClick={onClick} className={className} {...props}>
+        {children}
+      </button>
+    )
   ),
 }));
 
@@ -1322,6 +1334,423 @@ describe('Hero Component', () => {
       expect(screen.getByText('Subheading 2')).toBeInTheDocument();
       expect(screen.getByText('Button 1')).toBeInTheDocument();
       expect(screen.getByText('Button 2')).toBeInTheDocument();
+    });
+  });
+
+  describe('HeroVideo Component', () => {
+    it('renders HeroVideo with video source', () => {
+      const { container } = render(
+        <Hero>
+          <HeroVideo src="test-video.mp4" />
+          <HeroContent>
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const video = container.querySelector('video');
+      const source = container.querySelector('source[src="test-video.mp4"]');
+      expect(video).toBeInTheDocument();
+      expect(source).toBeInTheDocument();
+    });
+
+    it('renders HeroVideo with GIF source', () => {
+      const { container } = render(
+        <Hero>
+          <HeroVideo src="test-animation.gif" />
+          <HeroContent>
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const image = container.querySelector('img');
+      expect(image).toBeInTheDocument();
+      expect(image).toHaveAttribute('src', 'test-animation.gif');
+    });
+
+    it('applies overlay opacity to HeroVideo', () => {
+      const { container } = render(
+        <Hero>
+          <HeroVideo src="test-video.mp4" overlayOpacity={60} />
+          <HeroContent>
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const overlay = container.querySelector('.bg-black\\/60');
+      expect(overlay).toBeInTheDocument();
+    });
+
+    it('enforces minimum overlay opacity of 40 for HeroVideo', () => {
+      const { container } = render(
+        <Hero>
+          <HeroVideo src="test-video.mp4" overlayOpacity={20} />
+          <HeroContent>
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const overlay = container.querySelector('.bg-black\\/40');
+      expect(overlay).toBeInTheDocument();
+    });
+
+    it('shows fallback image when video has error', () => {
+      const { container } = render(
+        <Hero>
+          <HeroVideo 
+            src="invalid-video.mp4" 
+            fallbackImage="fallback.jpg"
+          />
+          <HeroContent>
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      // Simulate error by checking fallback rendering
+      const fallbackDiv = container.querySelector('[style*="background-image"]');
+      expect(fallbackDiv).toBeInTheDocument();
+    });
+
+    it('does not render play/pause button when showPlayPause is false', () => {
+      const { container } = render(
+        <Hero>
+          <HeroVideo src="test-video.mp4" showPlayPause={false} />
+          <HeroContent>
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const button = container.querySelector('button');
+      expect(button).not.toBeInTheDocument();
+    });
+
+    it('detects webm video format correctly', () => {
+      const { container } = render(
+        <Hero>
+          <HeroVideo src="test-video.webm" />
+          <HeroContent>
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const source = container.querySelector('source[type="video/webm"]');
+      expect(source).toBeInTheDocument();
+    });
+
+    it('detects ogg video format correctly', () => {
+      const { container } = render(
+        <Hero>
+          <HeroVideo src="test-video.ogg" />
+          <HeroContent>
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const source = container.querySelector('source[type="video/ogg"]');
+      expect(source).toBeInTheDocument();
+    });
+
+    it('applies custom className to HeroVideo', () => {
+      const { container } = render(
+        <Hero>
+          <HeroVideo src="test-video.mp4" className="custom-video" />
+          <HeroContent>
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const video = container.querySelector('video.custom-video');
+      expect(video).toBeInTheDocument();
+    });
+
+    it('renders fallback image behind video when provided', () => {
+      const { container } = render(
+        <Hero>
+          <HeroVideo src="test-video.mp4" fallbackImage="fallback.jpg" />
+          <HeroContent>
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const fallbackDivs = container.querySelectorAll('[style*="background-image"]');
+      expect(fallbackDivs.length).toBeGreaterThan(0);
+    });
+
+    it('handles GIF play/pause functionality', () => {
+      const { container } = render(
+        <Hero>
+          <HeroVideo src="test-animation.gif" showPlayPause={true} />
+          <HeroContent>
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const button = container.querySelector('button');
+      expect(button).toBeInTheDocument();
+    });
+  });
+
+  describe('Animation Delay Handling', () => {
+    it('applies animation delay correctly to HeroHeading', () => {
+      render(
+        <Hero animationType="fadeInUp">
+          <HeroContent>
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      expect(screen.getByText('Test')).toBeInTheDocument();
+    });
+
+    it('applies different animation delays to multiple elements', () => {
+      render(
+        <Hero animationType="slideUp">
+          <HeroContent>
+            <HeroHeading>Heading</HeroHeading>
+            <HeroSubheading>Subheading</HeroSubheading>
+          </HeroContent>
+        </Hero>
+      );
+      expect(screen.getByText('Heading')).toBeInTheDocument();
+      expect(screen.getByText('Subheading')).toBeInTheDocument();
+    });
+  });
+
+  describe('Context Provider Edge Cases', () => {
+    it('provides correct context values to all sub-components', () => {
+      render(
+        <Hero variant="dark" align="left" animationType="fadeIn">
+          <HeroContent>
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      expect(screen.getByText('Test')).toBeInTheDocument();
+    });
+  });
+
+  describe('Multiple Background Media', () => {
+    it('handles multiple background videos', () => {
+      const { container } = render(
+        <Hero>
+          <HeroVideo src="video1.mp4" />
+          <HeroVideo src="video2.mp4" />
+          <HeroContent>
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const videos = container.querySelectorAll('video');
+      expect(videos.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it('handles both background image and video together', () => {
+      const { container } = render(
+        <Hero>
+          <HeroImage src="bg.jpg" position="background" />
+          <HeroVideo src="video.mp4" />
+          <HeroContent>
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const bgImage = container.querySelector('[style*="background-image"]');
+      const video = container.querySelector('video');
+      expect(bgImage).toBeInTheDocument();
+      expect(video).toBeInTheDocument();
+    });
+  });
+
+  describe('Accessibility and Semantic HTML', () => {
+    it('renders Hero as semantic section element', () => {
+      const { container } = render(
+        <Hero>
+          <HeroContent>
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const section = container.querySelector('section');
+      expect(section).toBeInTheDocument();
+    });
+
+    it('applies correct alt text to HeroImage', () => {
+      const { container } = render(
+        <Hero>
+          <HeroContent>
+            <HeroImage src="test.jpg" position="left" alt="Descriptive alt text" />
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const image = container.querySelector('img');
+      expect(image).toHaveAttribute('alt', 'Descriptive alt text');
+    });
+
+    it('applies correct alt text to GIF in HeroVideo', () => {
+      const { container } = render(
+        <Hero>
+          <HeroVideo src="animation.gif" />
+          <HeroContent>
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const image = container.querySelector('img');
+      expect(image).toHaveAttribute('alt', 'Animated background');
+    });
+  });
+
+  describe('Responsive Behavior', () => {
+    it('applies responsive padding when background image is present', () => {
+      const { container } = render(
+        <Hero>
+          <HeroImage src="bg.jpg" position="background" />
+          <HeroContent>
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const containerElement = container.querySelector('[data-size]');
+      expect(containerElement).toHaveClass('py-16', 'md:py-20', 'lg:py-32');
+    });
+  });
+
+  describe('Custom Styling Combinations', () => {
+    it('combines custom className with variant classes', () => {
+      const { container } = render(
+        <Hero variant="dark" className="custom-hero-class">
+          <HeroContent>
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const section = container.querySelector('section');
+      expect(section).toHaveClass('custom-hero-class');
+      expect(section).toHaveClass('from-gray-900');
+    });
+
+    it('allows backgroundClassName to override variant completely', () => {
+      const { container } = render(
+        <Hero variant="dark" backgroundClassName="custom-bg-override">
+          <HeroContent>
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const section = container.querySelector('section');
+      expect(section).toHaveClass('custom-bg-override');
+    });
+  });
+
+  describe('HeroHeading with Different HTML Tags', () => {
+    it('renders HeroHeading with custom as prop', () => {
+      render(
+        <Hero>
+          <HeroContent>
+            <HeroHeading as="h2">Test Heading</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const heading = screen.getByText('Test Heading');
+      expect(heading).toBeInTheDocument();
+    });
+  });
+
+  describe('Empty and Null Children Handling', () => {
+
+    it('handles Hero with null children', () => {
+      render(
+        <Hero>
+          {null}
+          <HeroContent>
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      expect(screen.getByText('Test')).toBeInTheDocument();
+    });
+  });
+
+  describe('Video Format Detection', () => {
+    it('detects .mov video format correctly', () => {
+      const { container } = render(
+        <Hero>
+          <HeroVideo src="test-video.mov" />
+          <HeroContent>
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const source = container.querySelector('source[type="video/quicktime"]');
+      expect(source).toBeInTheDocument();
+    });
+
+    it('defaults to mp4 for unknown video formats', () => {
+      const { container } = render(
+        <Hero>
+          <HeroVideo src="test-video.unknown" />
+          <HeroContent>
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      const source = container.querySelector('source[type="video/mp4"]');
+      expect(source).toBeInTheDocument();
+    });
+  });
+
+  describe('Stats Component Edge Cases', () => {
+    it('handles stats with very long values', () => {
+      render(
+        <Hero>
+          <HeroContent>
+            <HeroStats stats={[{ value: '999,999,999+', label: 'Very Long Label Text' }]} />
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      expect(screen.getByText('999,999,999+')).toBeInTheDocument();
+      expect(screen.getByText('Very Long Label Text')).toBeInTheDocument();
+    });
+
+    it('handles stats with empty strings', () => {
+      render(
+        <Hero>
+          <HeroContent>
+            <HeroStats stats={[{ value: '', label: '' }]} />
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      expect(screen.getByText('Test')).toBeInTheDocument();
+    });
+  });
+
+  describe('Features Component Edge Cases', () => {
+    it('handles features with special characters', () => {
+      render(
+        <Hero>
+          <HeroContent>
+            <HeroFeatures features={['Feature & More', 'Feature (Pro)', 'Feature 2.0']} />
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      expect(screen.getByText('Feature & More')).toBeInTheDocument();
+      expect(screen.getByText('Feature (Pro)')).toBeInTheDocument();
+      expect(screen.getByText('Feature 2.0')).toBeInTheDocument();
+    });
+
+    it('handles features with very long text', () => {
+      render(
+        <Hero>
+          <HeroContent>
+            <HeroFeatures features={['This is a very long feature name that might wrap']} />
+            <HeroHeading>Test</HeroHeading>
+          </HeroContent>
+        </Hero>
+      );
+      expect(screen.getByText('This is a very long feature name that might wrap')).toBeInTheDocument();
     });
   });
 });

@@ -1099,11 +1099,12 @@
       ],
       "componentDependencies": [
         "container",
-        "typography"
+        "typography",
+        "button"
       ],
       "files": {
         "main": {
-          "path": "components/rating/index.tsx",
+          "path": "components/hero/index.tsx",
           "type": "component"
         }
       }
