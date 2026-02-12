@@ -1,0 +1,243 @@
+---
+hide_title: true
+---
+
+import Card from '../all-components/ComponentCard';
+import {
+  Layout,
+  Box,
+  Package,
+  PanelTop,
+  Square,
+  Columns,
+  SplitSquareHorizontal,
+  Grid3x3,
+  AspectRatio,
+  Grid,
+  Layers,
+  AlignCenter,
+  GripVertical,
+  Minus,
+  Stack,
+  Monitor,
+  Loader2,
+  Smartphone,
+  Bug,
+  Pin,
+  FileText,
+  FormInput,
+  Columns3,
+  PanelLeft,
+  PanelRight,
+  Scan,
+  Crop,
+  LayoutGrid,
+  MonitorSmartphone,
+  Rows3,
+  Boxes,
+  Group,
+  Space,
+  AlignStartVertical,
+  List,
+  BetweenVerticalStart,
+  Ruler,
+  Code2
+} from 'lucide-react';
+
+## App Structure
+
+<div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+  <Card 
+    title="App Shell" 
+    href="/docs/layouts/app-shell"
+    description="AppShell provides a complete application frame."
+    icon={Layout}
+  />
+  <Card 
+    title="Box" 
+    href="/docs/layouts/box"
+    description="Box with customizable width, height, padding, and styling."
+    icon={Box}
+  />
+  <Card 
+    title="Container" 
+    href="/docs/layouts/container"
+    description="Responsive container with perfect readable content."
+    icon={Package}
+  />
+  <Card 
+    title="Header Layout" 
+    href="/docs/layouts/header-layout"
+    description="Layout for creating consistent header structures."
+    icon={PanelTop}
+  />
+  <Card 
+    title="Section" 
+    href="/docs/layouts/section"
+    description="Semantic section for organizing page content."
+    icon={Square}
+  />
+  <Card 
+    title="Split" 
+    href="/docs/layouts/split"
+    description="Split layout for dividing content into sections."
+    icon={SplitSquareHorizontal}
+  />
+</div>
+
+## Page Layout
+
+<div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+  <Card 
+    title="Full Height Sidebar" 
+    href="/docs/templates/layouts/full-height-sidebar-layout"
+    description="Full-height sidebar layout template with navigation."
+    icon={Columns}
+  />
+  <Card 
+    title="Responsive Grid Layout" 
+    href="/docs/templates/layouts/responsive-grid-layout"
+    description="Responsive grid-based page layout template."
+    icon={Grid3x3}
+  />
+  <Card 
+    title="Sidebar Left" 
+    href="/docs/templates/layouts/sidebar-left-layout"
+    description="Page layout with sidebar positioned on the left side."
+    icon={PanelLeft}
+  />
+  <Card 
+    title="Sidebar Right" 
+    href="/docs/templates/layouts/sidebar-right-layout"
+    description="Page layout with sidebar positioned on the right side."
+    icon={PanelRight}
+  />
+  <Card 
+    title="Single Column" 
+    href="/docs/templates/layouts/single-column-layout"
+    description="Simple single-column page layout template."
+    icon={Square}
+  />
+  <Card 
+    title="Three Column Sidebar" 
+    href="/docs/templates/layouts/three-column-sidebar-layout"
+    description="Three-column layout with sidebar navigation."
+    icon={Columns3}
+  />
+</div>
+
+## Grid System
+
+<div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+  <Card 
+    title="Aspect Ratio" 
+    href="/docs/layouts/aspect-ratio"
+    description="Maintain consistent aspect ratios for responsive media."
+    icon={Crop}
+  />
+  <Card 
+    title="Auto Grid" 
+    href="/docs/layouts/auto-grid"
+    description="Self-calculating grid that automatically determines columns."
+    icon={LayoutGrid}
+  />
+  <Card 
+    title="Masonry" 
+    href="/docs/layouts/masonry"
+    description="Pinterest-style layout for items of varying heights."
+    icon={Layers}
+  />
+  <Card 
+    title="Responsive Grid" 
+    href="/docs/layouts/responsive-grid"
+    description="Flexible grid layout with responsive columns and animations."
+    icon={Rows3}
+  />
+</div>
+
+## Flex Utilities
+
+<div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+  <Card 
+    title="Center" 
+    href="/docs/layouts/center"
+    description="Center content both horizontally and vertically."
+    icon={AlignCenter}
+  />
+  <Card 
+    title="Cluster" 
+    href="/docs/layouts/cluster"
+    description="Group items together with flexible spacing."
+    icon={Group}
+  />
+  <Card 
+    title="Spacer" 
+    href="/docs/layouts/spacer"
+    description="Add flexible spacing between elements."
+    icon={Space}
+  />
+  <Card 
+    title="Stack" 
+    href="/docs/layouts/stack"
+    description="Stack elements vertically with consistent spacing."
+    icon={BetweenVerticalStart}
+  />
+</div>
+
+## Responsive Utilities
+
+<div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+  <Card 
+    title="Breakpoint" 
+    href="/docs/layouts/breakpoint"
+    description="Utility for responsive breakpoint management."
+    icon={Ruler}
+  />
+  <Card 
+    title="Lazy Load" 
+    href="/docs/layouts/lazyload"
+    description="Lazy loading utility for performance optimization."
+    icon={Loader2}
+  />
+  <Card 
+    title="Responsive" 
+    href="/docs/layouts/responsive"
+    description="Responsive utility for adaptive layouts."
+    icon={Smartphone}
+  />
+</div>
+
+## Helpers
+
+<div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+  <Card 
+    title="Debug Box" 
+    href="/docs/layouts/DebugBox"
+    description="Debugging utility for visualizing layout boundaries."
+    icon={Code2}
+  />
+  <Card 
+    title="Pin" 
+    href="/docs/layouts/pin"
+    description="Pin content to specific positions in the layout."
+    icon={Pin}
+  />
+</div>
+
+## Forms
+
+<div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+  <Card 
+    title="Field Group" 
+    href="/docs/layouts/field-group"
+    description="Group form fields together with consistent spacing."
+    icon={FileText}
+  />
+  <Card 
+    title="Form" 
+    href="/docs/layouts/form"
+    description="Form layout with validation support."
+    icon={FormInput}
+  />
+</div>
+
