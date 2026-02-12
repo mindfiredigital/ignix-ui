@@ -343,6 +343,18 @@
         }
       }
     },
+    "list-with-status": {
+      "name": "List-With-Status",
+      "description": "A list component that extends ListBasic by adding status badges (success, error, warning, info, pending) to each item, with titles, descriptions, and optional click handlers. Optimized with React.memo, useMemo, and useCallback for performance.",
+      "dependencies": [],
+      "componentDependencies": ["list-basic"],
+      "files": {
+        "main": {
+          "path": "components/list-with-status/index.tsx",
+          "type": "component"
+        }
+      }
+    },
     "textarea": {
       "name": "Textarea",
       "description": "An animated textarea component with different variants",
