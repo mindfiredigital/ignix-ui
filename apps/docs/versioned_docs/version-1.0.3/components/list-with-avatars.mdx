@@ -9,72 +9,9 @@ import TabItem from '@theme/TabItem';
 import { ListWithAvatars } from '@site/src/components/UI/list-with-avatars';
 import ListWithAvatarsDemo, { AvatarAlignment, ProfileLinks, AvatarVariants, TextReadability } from '@site/src/components/Demo/ListWithAvatarsDemo';
 
-## Overview
-
 The List With Avatars component extends the basic list functionality by displaying avatars on the left side of each item, with names and descriptions on the right. Each item can optionally link to a profile page, making it perfect for user directories, team listings, contact lists, and member directories.
 
-## Preview
-
-<Tabs defaultValue="preview">
-  <TabItem value="preview" label="Preview" default>
-    <div className="p-4 border rounded-lg">
-      <ListWithAvatars 
-        items={[
-          {
-            id: '1',
-            name: 'John Doe',
-            description: 'Software Engineer',
-            profileLink: '/profile/john-doe',
-            avatarSrc: 'https://i.pravatar.cc/150?img=1',
-            avatarAlt: 'John Doe',
-          },
-          {
-            id: '2',
-            name: 'Jane Smith',
-            description: 'Product Designer',
-            profileLink: '/profile/jane-smith',
-            avatarSrc: 'https://i.pravatar.cc/150?img=2',
-            avatarAlt: 'Jane Smith',
-          },
-        ]}
-        spacing="md"
-      />
-    </div>
-  </TabItem>
-  <TabItem value="code" label="Code">
-    ```tsx
-    import { ListWithAvatars } from './components/ui/list-with-avatars';
-
-    function MyComponent() {
-      const items = [
-        {
-          id: '1',
-          name: 'John Doe',
-          description: 'Software Engineer',
-          profileLink: '/profile/john-doe',
-          avatarSrc: '/avatars/john.jpg',
-          avatarAlt: 'John Doe',
-        },
-        {
-          id: '2',
-          name: 'Jane Smith',
-          description: 'Product Designer',
-          profileLink: '/profile/jane-smith',
-          avatarSrc: '/avatars/jane.jpg',
-          avatarAlt: 'Jane Smith',
-        },
-      ];
-
-      return (
-        <ListWithAvatars 
-          items={items}
-          spacing="md"
-        />
-      );
-    }
-    ```
-  </TabItem>
-</Tabs>
+<ListWithAvatarsDemo />
 
 ## Installation
 
@@ -399,9 +336,6 @@ function WithCustomHandler() {
 }
 ```
 
-## Interactive Demo
-
-<ListWithAvatarsDemo />
 
 ## Variants
 

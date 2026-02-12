@@ -79,9 +79,7 @@
         "components/dropdown",
         "components/file-upload",
         "components/input",
-        "components/list-basic",
-        "components/list-with-actions",
-        "components/list-with-avatars",
+        "components/list",
         "components/navbar",
         "components/progress-indicator",
         "components/radio",
@@ -157,7 +155,8 @@
           "items": [
             "templates/sections/content/pricing-grid",
             "templates/sections/content/comparison-table",
-            "templates/sections/content/hero"
+            "templates/sections/content/hero",
+            "templates/sections/content/call-to-action"
           ]
         }
       ]
