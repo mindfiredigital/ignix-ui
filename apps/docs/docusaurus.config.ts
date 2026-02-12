@@ -24,7 +24,7 @@ const config: Config = {
         docs: {
           sidebarPath: './sidebars.ts',
           editUrl: undefined,
-          sidebarCollapsed: false,
+          sidebarCollapsed: true,
         },
         blog: false,
         theme: {
@@ -75,6 +75,12 @@ const config: Config = {
           sidebarId: 'tutorialSidebar',
           position: 'left',
           label: 'Documentation',
+        },
+        {
+          type: 'doc',
+          docId: 'components/all-components/index',
+          position: 'left',
+          label: 'Components',
         },
         {
           type: 'docsVersionDropdown',
