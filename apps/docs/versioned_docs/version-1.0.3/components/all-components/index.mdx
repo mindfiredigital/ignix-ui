@@ -1,0 +1,260 @@
+---
+hide_title: true
+---
+
+import { FaWindows } from 'react-icons/fa';
+import ComponentCard from './ComponentCard';
+import {
+  MousePointerClick,
+  Type,
+  CheckSquare,
+  ToggleLeft,
+  SlidersHorizontal,
+  ChevronDown,
+  Calendar,
+  Search,
+  Upload,
+  Badge,
+  Table,
+  MessageSquare,
+  Navigation,
+  Menu,
+  PanelLeft,
+  ListOrdered,
+  Layers,
+  AlertCircle,
+  Loader2,
+  Bell,
+  Layout,
+  Square,
+  Box,
+  RectangleHorizontal,
+  Group,
+  TextCursorInput,
+  Radio,
+  CircleDot,
+  Star,
+  FileText,
+  UserCircle,
+  Tags,
+  List,
+  ListChecks,
+  Text,
+  ChevronRight,
+  PanelTop,
+  ArrowRightCircle,
+  Layers2,
+  Columns,
+  AlertTriangle,
+  ChevronsLeftRight,
+  ChevronDownIcon,
+  CalendarDays,
+  Maximize2,
+  SquareChartGantt,
+} from 'lucide-react';
+
+## Inputs
+
+<div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+  <ComponentCard 
+    title="Button" 
+    href="/docs/components/button"
+    description="Trigger actions or events with customizable button variants."
+    icon={RectangleHorizontal}
+  />
+  <ComponentCard 
+    title="Checkbox" 
+    href="/docs/components/checkbox"
+    description="Allow users to select multiple options from a set."
+    icon={CheckSquare}
+  />
+  <ComponentCard 
+    title="Date Picker" 
+    href="/docs/components/date-picker"
+    description="Calendar-based date selection component."
+    icon={CalendarDays}
+  />
+  <ComponentCard 
+    title="Dropdown" 
+    href="/docs/components/dropdown"
+    description="Dropdown menu for selecting from predefined options."
+    icon={ChevronDown}
+  />
+  <ComponentCard 
+    title="File Upload" 
+    href="/docs/components/file-upload"
+    description="Drag-and-drop or click-to-upload file input."
+    icon={Upload}
+  />
+  <ComponentCard 
+    title="Input" 
+    href="/docs/components/input"
+    description="Single and multi-line text input with validation support."
+    icon={TextCursorInput}
+  />
+  <ComponentCard 
+    title="Radio" 
+    href="/docs/components/radio"
+    description="Select a single option from a group of choices."
+    icon={CircleDot}
+  />
+  <ComponentCard 
+    title="Rating" 
+    href="/docs/components/rating"
+    description="Display and collect user ratings with stars."
+    icon={Star}
+  />
+  <ComponentCard 
+    title="Slider" 
+    href="/docs/components/slider"
+    description="Select values from a continuous or discrete range."
+    icon={SlidersHorizontal}
+  />
+  <ComponentCard 
+    title="Switch" 
+    href="/docs/components/switch"
+    description="Toggle control for binary on/off settings."
+    icon={ToggleLeft}
+  />
+  <ComponentCard 
+    title="Textarea" 
+    href="/docs/components/textarea"
+    description="Multi-line text input component with auto-resize and validation."
+    icon={FileText}
+  />
+</div>
+
+## Data Display
+
+<div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+  <ComponentCard 
+    title="Accordion" 
+    href="/docs/components/accordion"
+    description="Collapsible content with smooth expand/collapse animations."
+    icon={ChevronDownIcon}
+  />
+  <ComponentCard 
+    title="Avatar" 
+    href="/docs/components/avatar"
+    description="Display user profile pictures and initials."
+    icon={UserCircle}
+  />
+  <ComponentCard 
+    title="Badge" 
+    href="/docs/components/badge"
+    description="Small status indicator for labels and notifications."
+    icon={Tags}
+  />
+  <ComponentCard 
+    title="Card" 
+    href="/docs/components/card"
+    description="Container component for grouping related content."
+    icon={Square}
+  />
+  <ComponentCard 
+    title="List" 
+    href="/docs/components/list"
+    description="Display a collection of items in a structured list format."
+    icon={ListChecks}
+  />
+  <ComponentCard 
+    title="Modal" 
+    href="/docs/components/modals"
+    description="Display a collection of items in a structured list within a modal dialog."
+    icon={SquareChartGantt}
+  />
+  <ComponentCard 
+    title="Table" 
+    href="/docs/components/advanced-table"
+    description="Data table component with sorting, filtering, and pagination."
+    icon={Table}
+  />
+  <ComponentCard 
+    title="Tooltip" 
+    href="/docs/components/tooltip"
+    description="Contextual information tooltip with positioning and animations."
+    icon={MessageSquare}
+  />
+  <ComponentCard 
+    title="Typography" 
+    href="/docs/components/typography"
+    description="Text styling components for headings, paragraphs, and more."
+    icon={Text}
+  />
+</div>
+
+## Navigation
+
+<div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+  <ComponentCard 
+    title="Breadcrumbs" 
+    href="/docs/components/breadcrumbs"
+    description="Navigation component showing current page hierarchy."
+    icon={ChevronRight}
+  />
+  <ComponentCard 
+    title="Drawer" 
+    href="/docs/components/drawer"
+    description="Slide-out panel component for navigation and content."
+    icon={PanelLeft}
+  />
+  <ComponentCard 
+    title="Navbar" 
+    href="/docs/components/navbar"
+    description="Responsive navigation bar with mobile menu support."
+    icon={PanelTop}
+  />
+  <ComponentCard 
+    title="Sidebar" 
+    href="/docs/components/sidebar"
+    description="Collapsible sidebar navigation component with animation."
+    icon={PanelLeft}
+  />
+  <ComponentCard 
+    title="Stepper" 
+    href="/docs/components/stepper"
+    description="Step indicator component for multi-step forms and processes."
+    icon={ArrowRightCircle}
+  />
+  <ComponentCard 
+    title="Tab" 
+    href="/docs/components/tab"
+    description="Tab navigation with keyboard support and animations."
+    icon={Columns}
+  />
+</div>
+
+## Feedback
+
+<div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+  <ComponentCard 
+    title="Dialog Box" 
+    href="/docs/components/dialog-box"
+    description="Modal Dialog Box with backdrop and focus management."
+    icon={AlertCircle}
+  />
+  <ComponentCard 
+    title="Modals" 
+    href="/docs/components/modals"
+    description="Modal component with overlay, header, body, footer, and customizable color schemes."
+    icon={SquareChartGantt}
+    />
+  <ComponentCard 
+    title="Progress" 
+    href="/docs/components/progress-indicator"
+    description="Displays a progress indicator to reflect the status of an ongoing task."
+    icon={SlidersHorizontal}
+  />
+  <ComponentCard 
+    title="Spinner" 
+    href="/docs/components/spinner"
+    description="Loading spinner component with multiple animation styles."
+    icon={Loader2}
+  />
+  <ComponentCard 
+    title="Toast" 
+    href="/docs/components/toast"
+    description="Toast notification for success, error, and info messages."
+    icon={AlertTriangle}
+  />
+</div>

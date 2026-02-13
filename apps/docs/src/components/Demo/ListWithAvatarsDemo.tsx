@@ -212,7 +212,7 @@ export const AvatarAlignment = () => {
 
     return (
         <div className="space-y-6 mb-8">
-            <h3 className="text-lg font-semibold">Avatar Alignment</h3>
+            {/* <h3 className="text-lg font-semibold">Avatar Alignment</h3> */}
             <Tabs>
                 <TabItem value="preview" label="Preview" default>
                     <div className="p-6 border rounded-lg">
@@ -289,7 +289,7 @@ const items = [
 
     return (
         <div className="space-y-6 mb-8">
-            <h3 className="text-lg font-semibold">Profile Links</h3>
+            {/* <h3 className="text-lg font-semibold">Profile Links</h3> */}
             <Tabs>
                 <TabItem value="preview" label="Preview" default>
                     <div className="p-6 border rounded-lg">
@@ -354,7 +354,7 @@ export const AvatarVariants = () => {
 
     return (
         <div className="space-y-6 mb-8">
-            <h3 className="text-lg font-semibold">Avatar Variants</h3>
+            {/* <h3 className="text-lg font-semibold">Avatar Variants</h3> */}
             <Tabs>
                 <TabItem value="preview" label="Preview" default>
                     <div className="space-y-8">
@@ -454,7 +454,7 @@ export const TextReadability = () => {
 
     return (
         <div className="space-y-6 mb-8">
-            <h3 className="text-lg font-semibold">Text Readability</h3>
+            {/* <h3 className="text-lg font-semibold">Text Readability</h3> */}
             <Tabs>
                 <TabItem value="preview" label="Preview" default>
                     <div className="p-6 border rounded-lg">
