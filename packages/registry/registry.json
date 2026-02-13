@@ -1202,7 +1202,7 @@
       "files": {
         "main": {
           "path": "components/testimonial-card/index.tsx",
-          "type": "template"
+          "type": "component"
         }
       }
     }

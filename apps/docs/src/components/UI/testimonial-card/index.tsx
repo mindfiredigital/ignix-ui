@@ -222,7 +222,6 @@ export const TestimonialCardQuote: React.FC<TestimonialCardQuoteProps> = memo(({
       </div>
     )}
     <Typography 
-      // variant="body" 
       className={cn(
         testimonialCardQuoteVariants({ size: size || "md" }),
         avatarPosition==="top" ? "text-center": "",
