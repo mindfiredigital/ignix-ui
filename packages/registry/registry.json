@@ -1154,6 +1154,24 @@
           "type": "component"
         }
       }
+    },
+    "faqAccordion":{
+      "name": "FAQAccordion",
+      "description": "A flexible faq accordion component with custom tags and multiple interaction modes.",
+      "dependencies": [
+        "lucide-react", 
+        "class-variance-authority", "framer-motion"
+      ],
+      "componentDependencies": [
+        "typography",
+        "button"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/sections/faq-accordion/index.tsx",
+          "type": "component"
+        }
+      }
     }
   } 
 }
