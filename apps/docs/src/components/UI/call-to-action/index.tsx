@@ -1,0 +1,1988 @@
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { cva, type VariantProps } from 'class-variance-authority';
+import {
+    ArrowRight,
+    Sparkles,
+    CheckCircle, Mail, Loader2,
+    User, Building, Phone, MessageSquare, Send, HelpCircle
+} from 'lucide-react';
+import { cn } from '@site/src/utils/cn';
+import { Button } from '@site/src/components/UI/button';
+import { Typography } from '@site/src/components/UI/typography';
+
+/* ============================================
+   TYPES & INTERFACES
+============================================ */
+
+interface CTAButton {
+    id: string;
+    label: string;
+    variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'link';
+    icon?: React.ElementType;
+    onClick?: () => void;
+    href?: string;
+    external?: boolean;
+}
+
+interface CTABannerProps {
+    // Layout & Variants
+    variant?: VariantProps<typeof bannerVariants>['variant'];
+    layout?: 'centered' | 'split' | 'compact';
+    contentAlign?: 'left' | 'center' | 'right';
+
+    // Background & Styling
+    backgroundType?: 'solid' | 'gradient' | 'image';
+    backgroundColor?: string;
+    gradientFrom?: string;
+    gradientTo?: string;
+    backgroundImage?: string;
+
+    // Image Options (for split layout)
+    imagePosition?: 'left' | 'right';
+    imageVariant?: 'light' | 'dark' | 'default';
+
+    // Theme
+    theme?: 'light' | 'dark';
+    forceTheme?: boolean;
+
+    // Animation
+    animate?: boolean;
+    animationDelay?: number;
+    animationType?: 'fade' | 'slide' | 'scale';
+
+    // Spacing
+    padding?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+
+    // Children
+    children: React.ReactNode;
+
+    // Accessibility
+    ariaLabel?: string;
+    role?: string;
+}
+
+interface CTAContextType {
+    theme: 'light' | 'dark';
+    layout: 'centered' | 'split' | 'compact';
+    contentAlign: 'left' | 'center' | 'right';
+    variant: string;
+    imagePosition: 'left' | 'right';
+    isVisible: boolean;
+    animationDelay: number;
+    animationType: 'fade' | 'slide' | 'scale';
+    handleButtonClick: (button: CTAButton) => void;
+}
+
+const CTAContext = React.createContext<CTAContextType | undefined>(undefined);
+
+const useCTA = () => {
+    const context = React.useContext(CTAContext);
+    if (!context) {
+        throw new Error('CTA components must be used within CTABanner');
+    }
+    return context;
+};
+
+/* ============================================
+   BASIC CHILD COMPONENTS
+============================================ */
+
+export const CTABannerHeading: React.FC<{
+    children: React.ReactNode;
+    className?: string;
+}> = ({ children, className }) => {
+    const { theme, layout, isVisible, animationDelay, animationType } = useCTA();
+
+    return (
+        <motion.div
+            initial={animationType === 'fade' ? { opacity: 0 } :
+                animationType === 'slide' ? { opacity: 0, y: 20 } :
+                    { opacity: 0, scale: 0.95 }}
+            animate={isVisible ? {
+                opacity: 1,
+                y: 0,
+                scale: 1
+            } : animationType === 'fade' ? { opacity: 0 } :
+                animationType === 'slide' ? { opacity: 0, y: 20 } :
+                    { opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.6, delay: animationDelay }}
+        >
+            <Typography
+                variant={layout === 'compact' ? "h3" : "h2"}
+                weight="bold"
+                className={cn(
+                    "mb-4 md:mb-6",
+                    theme === 'dark' ? 'text-white' : 'text-gray-900',
+                    layout === 'compact' && 'text-2xl md:text-3xl',
+                    className
+                )}
+            >
+                {children}
+            </Typography>
+        </motion.div>
+    );
+};
+
+export const CTABannerSubheading: React.FC<{
+    children: React.ReactNode;
+    className?: string;
+}> = ({ children, className }) => {
+    const { theme, layout, contentAlign, isVisible, animationDelay, animationType } = useCTA();
+
+    return (
+        <motion.div
+            initial={animationType === 'fade' ? { opacity: 0 } :
+                animationType === 'slide' ? { opacity: 0, y: 20 } :
+                    { opacity: 0, scale: 0.95 }}
+            animate={isVisible ? {
+                opacity: 1,
+                y: 0,
+                scale: 1
+            } : animationType === 'fade' ? { opacity: 0 } :
+                animationType === 'slide' ? { opacity: 0, y: 20 } :
+                    { opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.6, delay: animationDelay + 0.1 }}
+        >
+            <Typography
+                variant={layout === 'compact' ? "body" : "lead"}
+                className={cn(
+                    "mb-6 md:mb-8",
+                    theme === 'dark' ? 'text-gray-300' : 'text-gray-600',
+                    layout === 'compact' ? 'text-base md:text-lg' : 'text-lg md:text-xl',
+                    contentAlign === 'center' && 'mx-auto',
+                    contentAlign === 'right' && 'ml-auto',
+                    contentAlign === 'left' && 'mr-auto',
+                    className
+                )}
+            >
+                {children}
+            </Typography>
+        </motion.div>
+    );
+};
+
+export const CTABannerActions: React.FC<{
+    children: React.ReactNode;
+    className?: string;
+}> = ({ children, className }) => {
+    const { contentAlign, isVisible, animationDelay } = useCTA();
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.5, delay: animationDelay + 0.3 }}
+            className={cn(
+                "flex flex-wrap gap-3 md:gap-4",
+                contentAlign === 'center' && 'justify-center',
+                contentAlign === 'right' && 'justify-start',
+                contentAlign === 'left' && 'justify-start',
+                className
+            )}
+        >
+            {children}
+        </motion.div>
+    );
+};
+
+export const CTABannerButton: React.FC<{
+    label: string;
+    variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'link';
+    icon?: React.ElementType;
+    onClick?: () => void;
+    href?: string;
+    external?: boolean;
+    size?: 'sm' | 'md' | 'lg';
+    className?: string;
+}> = ({ label, variant = 'primary', icon: Icon, onClick, href, external, size, className }) => {
+    const { theme, layout, handleButtonClick } = useCTA();
+
+    const button: CTAButton = {
+        id: `button-${label.toLowerCase().replace(/\s+/g, '-')}`,
+        label,
+        variant,
+        icon: Icon,
+        onClick,
+        href,
+        external,
+    };
+
+    return (
+        <Button
+            variant={variant}
+            size={size || (layout === 'compact' ? "md" : "lg")}
+            onClick={() => handleButtonClick(button)}
+            className={cn(
+                "group cursor-pointer",
+                theme === 'dark' && variant === 'outline' &&
+                'border-gray-300 text-gray-300 hover:bg-gray-300 hover:text-gray-900',
+                theme === 'light' && variant === 'outline' &&
+                'border-gray-700 text-gray-700 hover:bg-gray-700 hover:text-white',
+                className
+            )}
+            animationVariant="scaleUp"
+        >
+            {Icon && <Icon className="w-4 h-4 mr-2" />}
+            {label}
+            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+        </Button>
+    );
+};
+
+export const CTABannerImage: React.FC<{
+    src: string;
+    alt?: string;
+    className?: string;
+    variant?: 'light' | 'dark' | 'default';
+}> = ({ src, alt = "CTA Visual", className, variant }) => {
+    const { layout, theme, isVisible, animationDelay, imageVariant: contextVariant } = useCTA();
+
+    if (layout !== 'split') return null;
+
+    const resolvedVariant =
+        variant || contextVariant || (theme === 'dark' ? 'dark' : 'light');
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            animate={isVisible ? { opacity: 1, x: 0 } : { opacity: 0, x: 40 }}
+            transition={{ duration: 0.7, delay: animationDelay + 0.2 }}
+            className={imageVariants({ variant: resolvedVariant })}
+        >
+            <div className={cn(
+                "w-full h-[360px] sm:h-[420px] lg:h-[480px] rounded-2xl overflow-hidden",
+                className
+            )}>
+                <img
+                    src={src}
+                    alt={alt}
+                    className="w-full h-full object-cover"
+                />
+            </div>
+        </motion.div>
+    );
+};
+
+export const CTABannerContent: React.FC<{
+    children: React.ReactNode;
+    className?: string;
+}> = ({ children, className }) => {
+    const { layout, contentAlign, isVisible, animationType, animationDelay } = useCTA();
+
+    const contentAnimation = {
+        fade: {
+            initial: { opacity: 0 },
+            animate: { opacity: 1 },
+            transition: { duration: 0.6, delay: animationDelay }
+        },
+        slide: {
+            initial: { opacity: 0, y: 40 },
+            animate: { opacity: 1, y: 0 },
+            transition: { duration: 0.8, delay: animationDelay, ease: "easeOut" }
+        },
+        scale: {
+            initial: { opacity: 0, scale: 0.95 },
+            animate: { opacity: 1, scale: 1 },
+            transition: { duration: 0.7, delay: animationDelay, ease: "backOut" }
+        }
+    }[animationType];
+
+    return (
+        <motion.div
+            {...contentAnimation}
+            animate={isVisible ? contentAnimation.animate : contentAnimation.initial}
+            className={cn(
+                layout === 'split' && 'lg:w-1/2',
+                contentVariants({ align: contentAlign, layout }),
+                className
+            )}
+        >
+            {children}
+        </motion.div>
+    );
+};
+
+/* ============================================
+   VARIANTS
+============================================ */
+
+const bannerVariants = cva(
+    "w-full overflow-hidden transition-all duration-300",
+    {
+        variants: {
+            variant: {
+                default: "bg-background text-foreground",
+                primary: "bg-primary text-primary-foreground",
+                secondary: "bg-secondary text-secondary-foreground",
+                accent: "bg-accent text-accent-foreground",
+                muted: "bg-muted text-muted-foreground",
+                gradient: "bg-gradient-to-r from-primary/90 to-accent/90 text-primary-foreground",
+                glass: "bg-background/80 backdrop-blur-md border border-border",
+                dark: "bg-gray-950 text-gray-50",
+                light: "bg-gray-50 text-gray-900",
+            },
+            padding: {
+                sm: "py-8 md:py-12",
+                md: "py-12 md:py-16",
+                lg: "py-16 md:py-20",
+                xl: "py-20 md:py-24",
+                '2xl': "py-24 md:py-32",
+            },
+            layout: {
+                centered: "text-center",
+                split: "",
+                compact: "py-8 md:py-12",
+            }
+        },
+        defaultVariants: {
+            variant: "default",
+            padding: "lg",
+            layout: "centered",
+        },
+    }
+);
+
+const containerVariants = cva(
+    "container mx-auto px-4 sm:px-6 lg:px-8",
+    {
+        variants: {
+            layout: {
+                centered: "max-w-3xl",
+                split: "max-w-7xl",
+                compact: "max-w-2xl",
+            },
+        },
+        defaultVariants: {
+            layout: "centered",
+        },
+    }
+);
+
+const contentVariants = cva(
+    "transition-all duration-300",
+    {
+        variants: {
+            align: {
+                left: "text-left",
+                center: "text-center mx-auto",
+                right: "text-right ml-auto",
+            },
+            layout: {
+                centered: "w-full",
+                split: "lg:w-1/2",
+                compact: "w-full",
+            },
+        },
+        defaultVariants: {
+            align: "center",
+            layout: "centered",
+        },
+    }
+);
+
+const imageVariants = cva(
+    "transition-all duration-500 rounded-2xl overflow-hidden shadow-2xl blur-9xl",
+    {
+        variants: {
+            variant: {
+                light: "brightness-110 contrast-90 saturate-90",
+                dark: "brightness-90 contrast-110 saturate-110",
+                default: "",
+            },
+            layout: {
+                split: "",
+                centered: "hidden",
+                compact: "hidden",
+            },
+        },
+        defaultVariants: {
+            variant: "default",
+            layout: "split",
+        },
+    }
+);
+
+/* ============================================
+   FORM-SPECIFIC CHILD COMPONENTS
+============================================ */
+
+// Form-specific heading components for better composition
+export const DemoFormHeading: React.FC<{
+    children: React.ReactNode;
+    className?: string;
+}> = ({ children, className }) => {
+    const { theme } = useCTA();
+
+    return (
+        <Typography
+            variant="h3"
+            weight="semibold"
+            className={cn(
+                "mb-3",
+                theme === 'dark' ? 'text-white' : 'text-gray-900',
+                className
+            )}
+        >
+            {children}
+        </Typography>
+    );
+};
+
+export const DemoFormSubheading: React.FC<{
+    children: React.ReactNode;
+    className?: string;
+}> = ({ children, className }) => {
+    const { theme } = useCTA();
+
+    return (
+        <Typography
+            variant="body"
+            className={cn(
+                "mb-6",
+                theme === 'dark' ? 'text-gray-300' : 'text-gray-600',
+                className
+            )}
+        >
+            {children}
+        </Typography>
+    );
+};
+
+export const ContactFormHeading: React.FC<{
+    children: React.ReactNode;
+    className?: string;
+}> = ({ children, className }) => {
+    const { theme } = useCTA();
+
+    return (
+        <Typography
+            variant="h3"
+            weight="semibold"
+            className={cn(
+                "mb-4",
+                theme === 'dark' ? 'text-white' : 'text-gray-900',
+                className
+            )}
+        >
+            {children}
+        </Typography>
+    );
+};
+
+export const ContactFormSubheading: React.FC<{
+    children: React.ReactNode;
+    className?: string;
+}> = ({ children, className }) => {
+    const { theme } = useCTA();
+
+    return (
+        <Typography
+            variant="body"
+            className={cn(
+                "mb-6",
+                theme === 'dark' ? 'text-gray-300' : 'text-gray-600',
+                className
+            )}
+        >
+            {children}
+        </Typography>
+    );
+};
+
+export const NewsletterHeading: React.FC<{
+    children: React.ReactNode;
+    className?: string;
+}> = ({ children, className }) => {
+    const { theme } = useCTA();
+
+    return (
+        <Typography
+            variant="h3"
+            weight="semibold"
+            className={cn(
+                "mb-2",
+                theme === 'dark' ? 'text-white' : 'text-gray-900',
+                className
+            )}
+        >
+            {children}
+        </Typography>
+    );
+};
+
+export const NewsletterSubheading: React.FC<{
+    children: React.ReactNode;
+    className?: string;
+}> = ({ children, className }) => {
+    const { theme } = useCTA();
+
+    return (
+        <Typography
+            variant="body"
+            className={cn(
+                "mb-4",
+                theme === 'dark' ? 'text-gray-300' : 'text-gray-600',
+                className
+            )}
+        >
+            {children}
+        </Typography>
+    );
+};
+
+/* ============================================
+   FORM DATA TYPES
+============================================ */
+
+export interface DemoRequestData {
+    name: string;
+    email: string;
+    company: string;
+    phone: string;
+}
+
+export interface ContactFormData {
+    name: string;
+    email: string;
+    subject: string;
+    message: string;
+}
+
+/* ============================================
+   DEMO REQUEST COMPONENT (Accepts Children)
+============================================ */
+
+export const CTABannerDemoRequest: React.FC<{
+    // Form configuration
+    nameLabel?: string;
+    namePlaceholder?: string;
+    emailLabel?: string;
+    emailPlaceholder?: string;
+    companyLabel?: string;
+    companyPlaceholder?: string;
+    phoneLabel?: string;
+    phonePlaceholder?: string;
+    submitText?: string;
+    successMessage?: string;
+
+    // Validation
+    requireCompany?: boolean;
+    requirePhone?: boolean;
+
+    // Layout
+    layout?: 'single' | 'two-column';
+
+    // API/Handler
+    onSubmit?: (data: DemoRequestData) => Promise<void> | void;
+
+    // Children
+    children?: React.ReactNode;
+
+    className?: string;
+}> = ({
+    nameLabel = "Full Name",
+    namePlaceholder = "Enter your full name",
+    emailLabel = "Work Email",
+    emailPlaceholder = "you@company.com",
+    companyLabel = "Company",
+    companyPlaceholder = "Your company name",
+    phoneLabel = "Phone Number",
+    phonePlaceholder = "(123) 456-7890",
+    submitText = "Request Demo",
+    successMessage = "Thank you! We've received your demo request. Our team will contact you within 24 hours.",
+    requireCompany = false,
+    requirePhone = false,
+    layout = 'single',
+    onSubmit,
+    children,
+    className
+}) => {
+        const { theme, isVisible, animationDelay, animationType } = useCTA();
+        const [formData, setFormData] = useState<DemoRequestData>({
+            name: '',
+            email: '',
+            company: '',
+            phone: ''
+        });
+        const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+        const [errors, setErrors] = useState<Partial<Record<keyof DemoRequestData, string>>>({});
+        const [touched, setTouched] = useState<Partial<Record<keyof DemoRequestData, boolean>>>({});
+
+        const validateField = (name: keyof DemoRequestData, value: string): string => {
+            switch (name) {
+                case 'name': {
+                    if (!value.trim()) return 'Name is required';
+                    if (value.length < 2) return 'Name must be at least 2 characters';
+                    return '';
+                }
+
+                case 'email': {
+                    if (!value.trim()) return 'Email is required';
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(value)) return 'Please enter a valid email address';
+                    return '';
+                }
+
+                case 'company': {
+                    if (requireCompany && !value.trim()) return 'Company is required';
+                    return '';
+                }
+
+                case 'phone': {
+                    if (requirePhone && !value.trim()) return 'Phone is required';
+                    if (value && !/^[\d\s\-+()]+$/.test(value)) return 'Please enter a valid phone number';
+                    if (value && value.replace(/\D/g, '').length < 10) return 'Phone number must be at least 10 digits';
+                    return '';
+                }
+
+                default:
+                    return '';
+            }
+        };
+
+        const validateForm = (): boolean => {
+            const newErrors: Partial<Record<keyof DemoRequestData, string>> = {};
+
+            Object.keys(formData).forEach(key => {
+                const fieldName = key as keyof DemoRequestData;
+                const error = validateField(fieldName, formData[fieldName]);
+                if (error) {
+                    newErrors[fieldName] = error;
+                }
+            });
+
+            setErrors(newErrors);
+            return Object.keys(newErrors).length === 0;
+        };
+
+        const handleChange = (field: keyof DemoRequestData, value: string) => {
+            setFormData(prev => ({ ...prev, [field]: value }));
+
+            // Clear error when user starts typing
+            if (errors[field]) {
+                const error = validateField(field, value);
+                setErrors(prev => ({
+                    ...prev,
+                    [field]: error
+                }));
+            }
+        };
+
+        const handleBlur = (field: keyof DemoRequestData) => {
+            setTouched(prev => ({ ...prev, [field]: true }));
+            const error = validateField(field, formData[field]);
+            setErrors(prev => ({
+                ...prev,
+                [field]: error
+            }));
+        };
+
+        const handleSubmit = async (e: React.FormEvent) => {
+            e.preventDefault();
+
+            // Mark all fields as touched
+            setTouched({
+                name: true,
+                email: true,
+                company: true,
+                phone: true
+            });
+
+            if (!validateForm()) {
+                return;
+            }
+
+            setStatus('loading');
+
+            try {
+                if (onSubmit) {
+                    await onSubmit(formData);
+                }
+                // Mock API call for demo
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                setStatus('success');
+                setFormData({ name: '', email: '', company: '', phone: '' });
+                setTouched({});
+            } catch (err) {
+                setStatus('error');
+                console.error('Demo request submission error:', err);
+            }
+        };
+
+        const isSubmitDisabled = status === 'loading' || status === 'success';
+
+        return (
+            <motion.div
+                initial={animationType === 'fade' ? { opacity: 0 } :
+                    animationType === 'slide' ? { opacity: 0, y: 20 } :
+                        { opacity: 0, scale: 0.95 }}
+                animate={isVisible ? {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1
+                } : animationType === 'fade' ? { opacity: 0 } :
+                    animationType === 'slide' ? { opacity: 0, y: 20 } :
+                        { opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.6, delay: animationDelay + 0.4 }}
+                className={cn("w-full", className)}
+            >
+                {/* Children content - can include headings, subheadings, etc. */}
+                {children && <div className="space-y-4 mb-8">{children}</div>}
+
+                {status === 'success' ? (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className={cn(
+                            "p-6 rounded-xl border-2",
+                            theme === 'dark'
+                                ? "bg-green-900/20 border-green-800 text-green-400"
+                                : "bg-green-50 border-green-200 text-green-800"
+                        )}
+                        role="alert"
+                    >
+                        <div className="flex items-start gap-3">
+                            <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5" />
+                            <div>
+                                <p className="font-semibold">Demo Request Submitted!</p>
+                                <p className="mt-1">{successMessage}</p>
+                                <button
+                                    onClick={() => setStatus('idle')}
+                                    className={cn(
+                                        "mt-4 text-sm font-medium underline",
+                                        theme === 'dark' ? 'text-green-300' : 'text-green-700'
+                                    )}
+                                >
+                                    Request another demo
+                                </button>
+                            </div>
+                        </div>
+                    </motion.div>
+                ) : (
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className={cn(
+                            "grid gap-4 md:gap-6",
+                            layout === 'two-column' ? 'md:grid-cols-2' : ''
+                        )}>
+                            {/* Name Field */}
+                            <div className={layout === 'two-column' ? 'md:col-span-2' : ''}>
+                                <label htmlFor="demo-name" className="block mb-2">
+                                    <Typography
+                                        variant="small"
+                                        weight="medium"
+                                        className={cn(
+                                            theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                        )}
+                                    >
+                                        {nameLabel} *
+                                    </Typography>
+                                </label>
+                                <div className="relative">
+                                    <User className={cn(
+                                        "absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5",
+                                        theme === 'dark' ? 'text-gray-400' : 'text-gray-500',
+                                        errors.name && (theme === 'dark' ? 'text-red-400' : 'text-red-500')
+                                    )} />
+                                    <input
+                                        id="demo-name"
+                                        type="text"
+                                        value={formData.name}
+                                        onChange={(e) => handleChange('name', e.target.value)}
+                                        onBlur={() => handleBlur('name')}
+                                        placeholder={namePlaceholder}
+                                        disabled={isSubmitDisabled}
+                                        aria-label={nameLabel}
+                                        aria-invalid={!!errors.name}
+                                        aria-describedby={errors.name ? "demo-name-error" : undefined}
+                                        className={cn(
+                                            "w-full pl-10 pr-4 py-3 rounded-lg border-2 transition-all duration-200",
+                                            "focus:outline-none focus:ring-2 focus:ring-offset-2",
+                                            theme === 'dark'
+                                                ? cn(
+                                                    "bg-gray-900 border-gray-700 text-white placeholder-gray-500",
+                                                    "focus:border-blue-500 focus:ring-blue-500/50",
+                                                    errors.name && "border-red-500 focus:border-red-500 focus:ring-red-500/50",
+                                                    !errors.name && touched.name && "border-green-500"
+                                                )
+                                                : cn(
+                                                    "bg-white border-gray-300 text-gray-900 placeholder-gray-500",
+                                                    "focus:border-blue-500 focus:ring-blue-500/50",
+                                                    errors.name && "border-red-500 focus:border-red-500 focus:ring-red-500/50",
+                                                    !errors.name && touched.name && "border-green-500"
+                                                ),
+                                            "disabled:opacity-50 disabled:cursor-not-allowed"
+                                        )}
+                                    />
+                                </div>
+                                {errors.name && (
+                                    <motion.p
+                                        initial={{ opacity: 0, y: -5 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="mt-1 text-sm text-red-500"
+                                        id="demo-name-error"
+                                        role="alert"
+                                    >
+                                        {errors.name}
+                                    </motion.p>
+                                )}
+                            </div>
+
+                            {/* Email Field */}
+                            <div className={layout === 'two-column' ? 'md:col-span-2' : ''}>
+                                <label htmlFor="demo-email" className="block mb-2">
+                                    <Typography
+                                        variant="small"
+                                        weight="medium"
+                                        className={cn(
+                                            theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                        )}
+                                    >
+                                        {emailLabel} *
+                                    </Typography>
+                                </label>
+                                <div className="relative">
+                                    <Mail className={cn(
+                                        "absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5",
+                                        theme === 'dark' ? 'text-gray-400' : 'text-gray-500',
+                                        errors.email && (theme === 'dark' ? 'text-red-400' : 'text-red-500')
+                                    )} />
+                                    <input
+                                        id="demo-email"
+                                        type="email"
+                                        value={formData.email}
+                                        onChange={(e) => handleChange('email', e.target.value)}
+                                        onBlur={() => handleBlur('email')}
+                                        placeholder={emailPlaceholder}
+                                        disabled={isSubmitDisabled}
+                                        aria-label={emailLabel}
+                                        aria-invalid={!!errors.email}
+                                        aria-describedby={errors.email ? "demo-email-error" : undefined}
+                                        className={cn(
+                                            "w-full pl-10 pr-4 py-3 rounded-lg border-2 transition-all duration-200",
+                                            "focus:outline-none focus:ring-2 focus:ring-offset-2",
+                                            theme === 'dark'
+                                                ? cn(
+                                                    "bg-gray-900 border-gray-700 text-white placeholder-gray-500",
+                                                    "focus:border-blue-500 focus:ring-blue-500/50",
+                                                    errors.email && "border-red-500 focus:border-red-500 focus:ring-red-500/50",
+                                                    !errors.email && touched.email && "border-green-500"
+                                                )
+                                                : cn(
+                                                    "bg-white border-gray-300 text-gray-900 placeholder-gray-500",
+                                                    "focus:border-blue-500 focus:ring-blue-500/50",
+                                                    errors.email && "border-red-500 focus:border-red-500 focus:ring-red-500/50",
+                                                    !errors.email && touched.email && "border-green-500"
+                                                ),
+                                            "disabled:opacity-50 disabled:cursor-not-allowed"
+                                        )}
+                                    />
+                                </div>
+                                {errors.email && (
+                                    <motion.p
+                                        initial={{ opacity: 0, y: -5 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="mt-1 text-sm text-red-500"
+                                        id="demo-email-error"
+                                        role="alert"
+                                    >
+                                        {errors.email}
+                                    </motion.p>
+                                )}
+                            </div>
+
+                            {/* Company Field */}
+                            <div>
+                                <label htmlFor="demo-company" className="block mb-2">
+                                    <Typography
+                                        variant="small"
+                                        weight="medium"
+                                        className={cn(
+                                            theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                        )}
+                                    >
+                                        {companyLabel} {requireCompany ? '*' : ''}
+                                    </Typography>
+                                </label>
+                                <div className="relative">
+                                    <Building className={cn(
+                                        "absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5",
+                                        theme === 'dark' ? 'text-gray-400' : 'text-gray-500',
+                                        errors.company && (theme === 'dark' ? 'text-red-400' : 'text-red-500')
+                                    )} />
+                                    <input
+                                        id="demo-company"
+                                        type="text"
+                                        value={formData.company}
+                                        onChange={(e) => handleChange('company', e.target.value)}
+                                        onBlur={() => handleBlur('company')}
+                                        placeholder={companyPlaceholder}
+                                        disabled={isSubmitDisabled}
+                                        aria-label={companyLabel}
+                                        aria-invalid={!!errors.company}
+                                        aria-describedby={errors.company ? "demo-company-error" : undefined}
+                                        className={cn(
+                                            "w-full pl-10 pr-4 py-3 rounded-lg border-2 transition-all duration-200",
+                                            "focus:outline-none focus:ring-2 focus:ring-offset-2",
+                                            theme === 'dark'
+                                                ? cn(
+                                                    "bg-gray-900 border-gray-700 text-white placeholder-gray-500",
+                                                    "focus:border-blue-500 focus:ring-blue-500/50",
+                                                    errors.company && "border-red-500 focus:border-red-500 focus:ring-red-500/50",
+                                                    !errors.company && touched.company && "border-green-500"
+                                                )
+                                                : cn(
+                                                    "bg-white border-gray-300 text-gray-900 placeholder-gray-500",
+                                                    "focus:border-blue-500 focus:ring-blue-500/50",
+                                                    errors.company && "border-red-500 focus:border-red-500 focus:ring-red-500/50",
+                                                    !errors.company && touched.company && "border-green-500"
+                                                ),
+                                            "disabled:opacity-50 disabled:cursor-not-allowed"
+                                        )}
+                                    />
+                                </div>
+                                {errors.company && (
+                                    <motion.p
+                                        initial={{ opacity: 0, y: -5 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="mt-1 text-sm text-red-500"
+                                        id="demo-company-error"
+                                        role="alert"
+                                    >
+                                        {errors.company}
+                                    </motion.p>
+                                )}
+                            </div>
+
+                            {/* Phone Field */}
+                            <div>
+                                <label htmlFor="demo-phone" className="block mb-2">
+                                    <Typography
+                                        variant="small"
+                                        weight="medium"
+                                        className={cn(
+                                            theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                        )}
+                                    >
+                                        {phoneLabel} {requirePhone ? '*' : ''}
+                                    </Typography>
+                                </label>
+                                <div className="relative">
+                                    <Phone className={cn(
+                                        "absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5",
+                                        theme === 'dark' ? 'text-gray-400' : 'text-gray-500',
+                                        errors.phone && (theme === 'dark' ? 'text-red-400' : 'text-red-500')
+                                    )} />
+                                    <input
+                                        id="demo-phone"
+                                        type="tel"
+                                        value={formData.phone}
+                                        onChange={(e) => handleChange('phone', e.target.value)}
+                                        onBlur={() => handleBlur('phone')}
+                                        placeholder={phonePlaceholder}
+                                        disabled={isSubmitDisabled}
+                                        aria-label={phoneLabel}
+                                        aria-invalid={!!errors.phone}
+                                        aria-describedby={errors.phone ? "demo-phone-error" : undefined}
+                                        className={cn(
+                                            "w-full pl-10 pr-4 py-3 rounded-lg border-2 transition-all duration-200",
+                                            "focus:outline-none focus:ring-2 focus:ring-offset-2",
+                                            theme === 'dark'
+                                                ? cn(
+                                                    "bg-gray-900 border-gray-700 text-white placeholder-gray-500",
+                                                    "focus:border-blue-500 focus:ring-blue-500/50",
+                                                    errors.phone && "border-red-500 focus:border-red-500 focus:ring-red-500/50",
+                                                    !errors.phone && touched.phone && "border-green-500"
+                                                )
+                                                : cn(
+                                                    "bg-white border-gray-300 text-gray-900 placeholder-gray-500",
+                                                    "focus:border-blue-500 focus:ring-blue-500/50",
+                                                    errors.phone && "border-red-500 focus:border-red-500 focus:ring-red-500/50",
+                                                    !errors.phone && touched.phone && "border-green-500"
+                                                ),
+                                            "disabled:opacity-50 disabled:cursor-not-allowed"
+                                        )}
+                                    />
+                                </div>
+                                {errors.phone && (
+                                    <motion.p
+                                        initial={{ opacity: 0, y: -5 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="mt-1 text-sm text-red-500"
+                                        id="demo-phone-error"
+                                        role="alert"
+                                    >
+                                        {errors.phone}
+                                    </motion.p>
+                                )}
+                            </div>
+                        </div>
+
+                        <Button
+                            type="submit"
+                            variant="primary"
+                            size="lg"
+                            disabled={isSubmitDisabled}
+                            className="w-full md:w-auto min-w-[160px]"
+                        >
+                            {status === 'loading' ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    Processing...
+                                </>
+                            ) : (
+                                <>
+                                    <HelpCircle className="w-4 h-4 mr-2" />
+                                    {submitText}
+                                </>
+                            )}
+                        </Button>
+
+                        {status === 'error' && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className={cn(
+                                    "p-4 rounded-lg border",
+                                    theme === 'dark'
+                                        ? "bg-red-900/20 border-red-800 text-red-400"
+                                        : "bg-red-50 border-red-200 text-red-800"
+                                )}
+                                role="alert"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <span className="font-medium">Submission failed</span>
+                                </div>
+                                <p className="mt-1 text-sm">Please try again or contact support if the issue persists.</p>
+                            </motion.div>
+                        )}
+                    </form>
+                )}
+            </motion.div>
+        );
+    };
+
+/* ============================================
+   CONTACT FORM COMPONENT (Accepts Children)
+============================================ */
+
+export const CTABannerContactForm: React.FC<{
+    // Form configuration
+    namePlaceholder?: string;
+    emailPlaceholder?: string;
+    subjectPlaceholder?: string;
+    messagePlaceholder?: string;
+    submitText?: string;
+    successMessage?: string;
+    requireSubject?: boolean;
+    maxMessageLength?: number;
+    layout?: 'vertical' | 'compact';
+
+    // API/Handler
+    onSubmit?: (data: ContactFormData) => Promise<void> | void;
+
+    // Children
+    children?: React.ReactNode;
+
+    className?: string;
+}> = ({
+    namePlaceholder = "Enter your name",
+    emailPlaceholder = "you@example.com",
+    subjectPlaceholder = "How can we help you?",
+    messagePlaceholder = "Tell us about your inquiry...",
+    submitText = "Send Message",
+    successMessage = "Thank you for your message! We've received your inquiry and will get back to you within 24 hours.",
+    requireSubject = true,
+    maxMessageLength = 1000,
+    layout = 'vertical',
+    onSubmit,
+    children,
+    className
+}) => {
+        const { theme, isVisible, animationDelay, animationType } = useCTA();
+        const [formData, setFormData] = useState<ContactFormData>({
+            name: '',
+            email: '',
+            subject: '',
+            message: ''
+        });
+        const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+        const [errors, setErrors] = useState<Partial<Record<keyof ContactFormData, string>>>({});
+        const [touched, setTouched] = useState<Partial<Record<keyof ContactFormData, boolean>>>({});
+        const [characterCount, setCharacterCount] = useState(0);
+
+        const validateField = (name: keyof ContactFormData, value: string): string => {
+            switch (name) {
+                case 'name': {
+                    if (!value.trim()) return 'Name is required';
+                    if (value.length < 2) return 'Name must be at least 2 characters';
+                    return '';
+                }
+
+                case 'email': {
+                    if (!value.trim()) return 'Email is required';
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(value)) return 'Please enter a valid email address';
+                    return '';
+                }
+
+                case 'subject': {
+                    if (requireSubject && !value.trim()) return 'Subject is required';
+                    return '';
+                }
+
+                case 'message': {
+                    if (!value.trim()) return 'Message is required';
+                    if (value.length < 10) return 'Message must be at least 10 characters';
+                    if (maxMessageLength && value.length > maxMessageLength) return `Message must be less than ${maxMessageLength} characters`;
+                    return '';
+                }
+
+                default:
+                    return '';
+            }
+        };
+
+        const validateForm = (): boolean => {
+            const newErrors: Partial<Record<keyof ContactFormData, string>> = {};
+
+            Object.keys(formData).forEach(key => {
+                const fieldName = key as keyof ContactFormData;
+                const error = validateField(fieldName, formData[fieldName]);
+                if (error) {
+                    newErrors[fieldName] = error;
+                }
+            });
+
+            setErrors(newErrors);
+            return Object.keys(newErrors).length === 0;
+        };
+
+        const handleChange = (field: keyof ContactFormData, value: string) => {
+            setFormData(prev => ({ ...prev, [field]: value }));
+
+            if (field === 'message') {
+                setCharacterCount(value.length);
+            }
+
+            // Clear error when user starts typing
+            if (errors[field]) {
+                const error = validateField(field, value);
+                setErrors(prev => ({
+                    ...prev,
+                    [field]: error
+                }));
+            }
+        };
+
+        const handleBlur = (field: keyof ContactFormData) => {
+            setTouched(prev => ({ ...prev, [field]: true }));
+            const error = validateField(field, formData[field]);
+            setErrors(prev => ({
+                ...prev,
+                [field]: error
+            }));
+        };
+
+        const handleSubmit = async (e: React.FormEvent) => {
+            e.preventDefault();
+
+            // Mark all fields as touched
+            setTouched({
+                name: true,
+                email: true,
+                subject: true,
+                message: true
+            });
+
+            if (!validateForm()) {
+                return;
+            }
+
+            setStatus('loading');
+
+            try {
+                if (onSubmit) {
+                    await onSubmit(formData);
+                }
+                // Mock API call for demo
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                setStatus('success');
+                setFormData({ name: '', email: '', subject: '', message: '' });
+                setCharacterCount(0);
+                setTouched({});
+            } catch (err) {
+                setStatus('error');
+                console.error('Contact form submission error:', err);
+            }
+        };
+
+        const isSubmitDisabled = status === 'loading' || status === 'success';
+
+        return (
+            <motion.div
+                initial={animationType === 'fade' ? { opacity: 0 } :
+                    animationType === 'slide' ? { opacity: 0, y: 20 } :
+                        { opacity: 0, scale: 0.95 }}
+                animate={isVisible ? {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1
+                } : animationType === 'fade' ? { opacity: 0 } :
+                    animationType === 'slide' ? { opacity: 0, y: 20 } :
+                        { opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.6, delay: animationDelay + 0.4 }}
+                className={cn("w-full", className)}
+            >
+                {/* Children content - can include headings, subheadings, etc. */}
+                {children && <div className="space-y-4 mb-8">{children}</div>}
+
+                {status === 'success' ? (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className={cn(
+                            "p-6 rounded-xl border-2",
+                            theme === 'dark'
+                                ? "bg-green-900/20 border-green-800 text-green-400"
+                                : "bg-green-50 border-green-200 text-green-800"
+                        )}
+                        role="alert"
+                    >
+                        <div className="flex items-start gap-3">
+                            <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5" />
+                            <div>
+                                <p className="font-semibold">Message Sent!</p>
+                                <p className="mt-1">{successMessage}</p>
+                                <button
+                                    onClick={() => setStatus('idle')}
+                                    className={cn(
+                                        "mt-4 text-sm font-medium underline",
+                                        theme === 'dark' ? 'text-green-300' : 'text-green-700'
+                                    )}
+                                >
+                                    Send another message
+                                </button>
+                            </div>
+                        </div>
+                    </motion.div>
+                ) : (
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className={cn(
+                            "grid gap-4 md:gap-6",
+                            layout === 'compact' ? 'md:grid-cols-2' : ''
+                        )}>
+                            {/* Name Field */}
+                            <div>
+                                <label htmlFor="contact-name" className="block mb-2">
+                                    <Typography
+                                        variant="small"
+                                        weight="medium"
+                                        className={cn(
+                                            theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                        )}
+                                    >
+                                        Name *
+                                    </Typography>
+                                </label>
+                                <div className="relative">
+                                    <User className={cn(
+                                        "absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5",
+                                        theme === 'dark' ? 'text-gray-400' : 'text-gray-500',
+                                        errors.name && (theme === 'dark' ? 'text-red-400' : 'text-red-500')
+                                    )} />
+                                    <input
+                                        id="contact-name"
+                                        type="text"
+                                        value={formData.name}
+                                        onChange={(e) => handleChange('name', e.target.value)}
+                                        onBlur={() => handleBlur('name')}
+                                        placeholder={namePlaceholder}
+                                        disabled={isSubmitDisabled}
+                                        aria-label="Name"
+                                        aria-invalid={!!errors.name}
+                                        aria-describedby={errors.name ? "contact-name-error" : undefined}
+                                        className={cn(
+                                            "w-full pl-10 pr-4 py-3 rounded-lg border-2 transition-all duration-200",
+                                            "focus:outline-none focus:ring-2 focus:ring-offset-2",
+                                            theme === 'dark'
+                                                ? cn(
+                                                    "bg-gray-900 border-gray-700 text-white placeholder-gray-500",
+                                                    "focus:border-blue-500 focus:ring-blue-500/50",
+                                                    errors.name && "border-red-500 focus:border-red-500 focus:ring-red-500/50",
+                                                    !errors.name && touched.name && "border-green-500"
+                                                )
+                                                : cn(
+                                                    "bg-white border-gray-300 text-gray-900 placeholder-gray-500",
+                                                    "focus:border-blue-500 focus:ring-blue-500/50",
+                                                    errors.name && "border-red-500 focus:border-red-500 focus:ring-red-500/50",
+                                                    !errors.name && touched.name && "border-green-500"
+                                                ),
+                                            "disabled:opacity-50 disabled:cursor-not-allowed"
+                                        )}
+                                    />
+                                </div>
+                                {errors.name && (
+                                    <motion.p
+                                        initial={{ opacity: 0, y: -5 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="mt-1 text-sm text-red-500"
+                                        id="contact-name-error"
+                                        role="alert"
+                                    >
+                                        {errors.name}
+                                    </motion.p>
+                                )}
+                            </div>
+
+                            {/* Email Field */}
+                            <div>
+                                <label htmlFor="contact-email" className="block mb-2">
+                                    <Typography
+                                        variant="small"
+                                        weight="medium"
+                                        className={cn(
+                                            theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                        )}
+                                    >
+                                        Email *
+                                    </Typography>
+                                </label>
+                                <div className="relative">
+                                    <Mail className={cn(
+                                        "absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5",
+                                        theme === 'dark' ? 'text-gray-400' : 'text-gray-500',
+                                        errors.email && (theme === 'dark' ? 'text-red-400' : 'text-red-500')
+                                    )} />
+                                    <input
+                                        id="contact-email"
+                                        type="email"
+                                        value={formData.email}
+                                        onChange={(e) => handleChange('email', e.target.value)}
+                                        onBlur={() => handleBlur('email')}
+                                        placeholder={emailPlaceholder}
+                                        disabled={isSubmitDisabled}
+                                        aria-label="Email"
+                                        aria-invalid={!!errors.email}
+                                        aria-describedby={errors.email ? "contact-email-error" : undefined}
+                                        className={cn(
+                                            "w-full pl-10 pr-4 py-3 rounded-lg border-2 transition-all duration-200",
+                                            "focus:outline-none focus:ring-2 focus:ring-offset-2",
+                                            theme === 'dark'
+                                                ? cn(
+                                                    "bg-gray-900 border-gray-700 text-white placeholder-gray-500",
+                                                    "focus:border-blue-500 focus:ring-blue-500/50",
+                                                    errors.email && "border-red-500 focus:border-red-500 focus:ring-red-500/50",
+                                                    !errors.email && touched.email && "border-green-500"
+                                                )
+                                                : cn(
+                                                    "bg-white border-gray-300 text-gray-900 placeholder-gray-500",
+                                                    "focus:border-blue-500 focus:ring-blue-500/50",
+                                                    errors.email && "border-red-500 focus:border-red-500 focus:ring-red-500/50",
+                                                    !errors.email && touched.email && "border-green-500"
+                                                ),
+                                            "disabled:opacity-50 disabled:cursor-not-allowed"
+                                        )}
+                                    />
+                                </div>
+                                {errors.email && (
+                                    <motion.p
+                                        initial={{ opacity: 0, y: -5 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="mt-1 text-sm text-red-500"
+                                        id="contact-email-error"
+                                        role="alert"
+                                    >
+                                        {errors.email}
+                                    </motion.p>
+                                )}
+                            </div>
+
+                            {/* Subject Field - Full width */}
+                            <div className={layout === 'compact' ? 'md:col-span-2' : ''}>
+                                <label htmlFor="contact-subject" className="block mb-2">
+                                    <Typography
+                                        variant="small"
+                                        weight="medium"
+                                        className={cn(
+                                            theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                        )}
+                                    >
+                                        Subject {requireSubject ? '*' : ''}
+                                    </Typography>
+                                </label>
+                                <div className="relative">
+                                    <MessageSquare className={cn(
+                                        "absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5",
+                                        theme === 'dark' ? 'text-gray-400' : 'text-gray-500',
+                                        errors.subject && (theme === 'dark' ? 'text-red-400' : 'text-red-500')
+                                    )} />
+                                    <input
+                                        id="contact-subject"
+                                        type="text"
+                                        value={formData.subject}
+                                        onChange={(e) => handleChange('subject', e.target.value)}
+                                        onBlur={() => handleBlur('subject')}
+                                        placeholder={subjectPlaceholder}
+                                        disabled={isSubmitDisabled}
+                                        aria-label="Subject"
+                                        aria-invalid={!!errors.subject}
+                                        aria-describedby={errors.subject ? "contact-subject-error" : undefined}
+                                        className={cn(
+                                            "w-full pl-10 pr-4 py-3 rounded-lg border-2 transition-all duration-200",
+                                            "focus:outline-none focus:ring-2 focus:ring-offset-2",
+                                            theme === 'dark'
+                                                ? cn(
+                                                    "bg-gray-900 border-gray-700 text-white placeholder-gray-500",
+                                                    "focus:border-blue-500 focus:ring-blue-500/50",
+                                                    errors.subject && "border-red-500 focus:border-red-500 focus:ring-red-500/50",
+                                                    !errors.subject && touched.subject && "border-green-500"
+                                                )
+                                                : cn(
+                                                    "bg-white border-gray-300 text-gray-900 placeholder-gray-500",
+                                                    "focus:border-blue-500 focus:ring-blue-500/50",
+                                                    errors.subject && "border-red-500 focus:border-red-500 focus:ring-red-500/50",
+                                                    !errors.subject && touched.subject && "border-green-500"
+                                                ),
+                                            "disabled:opacity-50 disabled:cursor-not-allowed"
+                                        )}
+                                    />
+                                </div>
+                                {errors.subject && (
+                                    <motion.p
+                                        initial={{ opacity: 0, y: -5 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="mt-1 text-sm text-red-500"
+                                        id="contact-subject-error"
+                                        role="alert"
+                                    >
+                                        {errors.subject}
+                                    </motion.p>
+                                )}
+                            </div>
+
+                            {/* Message Field - Full width */}
+                            <div className="col-span-1 md:col-span-2">
+                                <div className="flex justify-between items-center mb-2">
+                                    <label htmlFor="contact-message">
+                                        <Typography
+                                            variant="small"
+                                            weight="medium"
+                                            className={cn(
+                                                theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                            )}
+                                        >
+                                            Message *
+                                        </Typography>
+                                    </label>
+                                    {maxMessageLength && (
+                                        <Typography
+                                            variant="small"
+                                            className={cn(
+                                                characterCount > maxMessageLength ? 'text-red-500' :
+                                                    theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                                            )}
+                                        >
+                                            {characterCount} / {maxMessageLength}
+                                        </Typography>
+                                    )}
+                                </div>
+                                <div className="relative">
+                                    <textarea
+                                        id="contact-message"
+                                        value={formData.message}
+                                        onChange={(e) => handleChange('message', e.target.value)}
+                                        onBlur={() => handleBlur('message')}
+                                        placeholder={messagePlaceholder}
+                                        disabled={isSubmitDisabled}
+                                        rows={5}
+                                        aria-label="Message"
+                                        aria-invalid={!!errors.message}
+                                        aria-describedby={errors.message ? "contact-message-error" : undefined}
+                                        className={cn(
+                                            "w-full px-4 py-3 rounded-lg border-2 transition-all duration-200 resize-none",
+                                            "focus:outline-none focus:ring-2 focus:ring-offset-2",
+                                            theme === 'dark'
+                                                ? cn(
+                                                    "bg-gray-900 border-gray-700 text-white placeholder-gray-500",
+                                                    "focus:border-blue-500 focus:ring-blue-500/50",
+                                                    errors.message && "border-red-500 focus:border-red-500 focus:ring-red-500/50",
+                                                    !errors.message && touched.message && "border-green-500"
+                                                )
+                                                : cn(
+                                                    "bg-white border-gray-300 text-gray-900 placeholder-gray-500",
+                                                    "focus:border-blue-500 focus:ring-blue-500/50",
+                                                    errors.message && "border-red-500 focus:border-red-500 focus:ring-red-500/50",
+                                                    !errors.message && touched.message && "border-green-500"
+                                                ),
+                                            "disabled:opacity-50 disabled:cursor-not-allowed"
+                                        )}
+                                    />
+                                </div>
+                                {errors.message && (
+                                    <motion.p
+                                        initial={{ opacity: 0, y: -5 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="mt-1 text-sm text-red-500"
+                                        id="contact-message-error"
+                                        role="alert"
+                                    >
+                                        {errors.message}
+                                    </motion.p>
+                                )}
+                            </div>
+                        </div>
+
+                        <Button
+                            type="submit"
+                            variant="primary"
+                            size="lg"
+                            disabled={isSubmitDisabled}
+                            className="w-full md:w-auto min-w-[160px]"
+                        >
+                            {status === 'loading' ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    Sending...
+                                </>
+                            ) : (
+                                <>
+                                    <Send className="w-4 h-4 mr-2" />
+                                    {submitText}
+                                </>
+                            )}
+                        </Button>
+
+                        {status === 'error' && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className={cn(
+                                    "p-4 rounded-lg border",
+                                    theme === 'dark'
+                                        ? "bg-red-900/20 border-red-800 text-red-400"
+                                        : "bg-red-50 border-red-200 text-red-800"
+                                )}
+                                role="alert"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <span className="font-medium">Failed to send message</span>
+                                </div>
+                                <p className="mt-1 text-sm">Please try again or contact support if the issue persists.</p>
+                            </motion.div>
+                        )}
+                    </form>
+                )}
+            </motion.div>
+        );
+    };
+
+/* ============================================
+   NEWSLETTER COMPONENT (Accepts Children)
+============================================ */
+
+export const CTABannerNewsletter: React.FC<{
+    // Form configuration
+    placeholder?: string;
+    submitText?: string;
+    privacyNote?: string;
+    buttonVariant?: 'primary' | 'secondary' | 'outline';
+    layout?: 'inline' | 'stacked';
+    onSubmit?: (email: string) => Promise<void> | void;
+
+    // Children
+    children?: React.ReactNode;
+
+    className?: string;
+}> = ({
+    placeholder = "Enter your email address",
+    submitText = "Subscribe",
+    privacyNote = "By subscribing, you agree to our Privacy Policy and consent to receive updates.",
+    buttonVariant = 'primary',
+    // layout = 'inline',
+    onSubmit,
+    children,
+    className
+}) => {
+        const { theme, isVisible, animationDelay, animationType } = useCTA();
+        const [email, setEmail] = useState('');
+        const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+        const [error, setError] = useState<string>('');
+
+        // Email validation regex
+        const validateEmail = (email: string) => {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        };
+
+        const handleSubmit = async (e: React.FormEvent) => {
+            e.preventDefault();
+
+            // Validate email
+            if (!validateEmail(email)) {
+                setError('Please enter a valid email address');
+                setStatus('error');
+                return;
+            }
+
+            setStatus('loading');
+            setError('');
+
+            try {
+                if (onSubmit) {
+                    await onSubmit(email);
+                }
+                // Mock API call for demo
+                setTimeout(() => {
+                    setStatus('success');
+                    setEmail('');
+                }, 1000);
+            } catch (err) {
+                setStatus('error');
+                setError('Failed to subscribe. Please try again.');
+            }
+        };
+
+        const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            const value = e.target.value;
+            setEmail(value);
+
+            // Clear error when user starts typing
+            if (error && validateEmail(value)) {
+                setError('');
+                setStatus('idle');
+            }
+        };
+
+        const handleBlur = () => {
+            if (email && !validateEmail(email)) {
+                setError('Please enter a valid email address');
+            }
+        };
+
+        return (
+            <motion.div
+                initial={animationType === 'fade' ? { opacity: 0 } :
+                    animationType === 'slide' ? { opacity: 0, y: 20 } :
+                        { opacity: 0, scale: 0.95 }}
+                animate={isVisible ? {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1
+                } : animationType === 'fade' ? { opacity: 0 } :
+                    animationType === 'slide' ? { opacity: 0, y: 20 } :
+                        { opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.6, delay: animationDelay + 0.4 }}
+                className={cn("w-full", className)}
+            >
+                {/* Children content - can include headings, subheadings, etc. */}
+                {children && <div className="space-y-4 mb-6">{children}</div>}
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+                        <div className="flex-1">
+                            <div className="relative">
+                                <Mail className={cn(
+                                    "absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5",
+                                    theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                                )} />
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    placeholder={placeholder}
+                                    disabled={status === 'loading' || status === 'success'}
+                                    aria-label="Email address"
+                                    aria-invalid={!!error}
+                                    aria-describedby={error ? "email-error" : undefined}
+                                    className={cn(
+                                        "w-full pl-10 pr-4 py-3 md:py-4 rounded-lg border-2 transition-all duration-200",
+                                        "focus:outline-none focus:ring-2 focus:ring-offset-2",
+                                        theme === 'dark'
+                                            ? cn(
+                                                "bg-gray-900 border-gray-700 text-white placeholder-gray-500",
+                                                "focus:border-blue-500 focus:ring-blue-500/50",
+                                                error && "border-red-500 focus:border-red-500 focus:ring-red-500/50"
+                                            )
+                                            : cn(
+                                                "bg-white border-gray-300 text-gray-900 placeholder-gray-500",
+                                                "focus:border-blue-500 focus:ring-blue-500/50",
+                                                error && "border-red-500 focus:border-red-500 focus:ring-red-500/50"
+                                            ),
+                                        "disabled:opacity-50 disabled:cursor-not-allowed"
+                                    )}
+                                />
+                            </div>
+                            {error && (
+                                <motion.p
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="mt-2 text-sm text-red-500 flex items-center gap-1"
+                                    id="email-error"
+                                    role="alert"
+                                >
+                                    {error}
+                                </motion.p>
+                            )}
+                        </div>
+
+                        <Button
+                            type="submit"
+                            variant={buttonVariant}
+                            size="lg"
+                            disabled={status === 'loading' || status === 'success'}
+                            className="sm:w-auto min-w-[120px]"
+                        >
+                            {status === 'loading' ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    Subscribing...
+                                </>
+                            ) : status === 'success' ? (
+                                'Subscribed!'
+                            ) : (
+                                submitText
+                            )}
+                        </Button>
+                    </div>
+
+                    {privacyNote && (
+                        <p className={cn(
+                            "text-sm",
+                            theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                        )}>
+                            {privacyNote}
+                        </p>
+                    )}
+
+                    {status === 'success' && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className={cn(
+                                "p-4 rounded-lg border",
+                                theme === 'dark'
+                                    ? "bg-green-900/20 border-green-800 text-green-400"
+                                    : "bg-green-50 border-green-200 text-green-800"
+                            )}
+                            role="alert"
+                        >
+                            <div className="flex items-center gap-2">
+                                <CheckCircle className="w-5 h-5" />
+                                <p className="font-medium">Successfully subscribed!</p>
+                            </div>
+                            <p className="mt-1 text-sm">Thank you for joining our newsletter.</p>
+                        </motion.div>
+                    )}
+                </form>
+            </motion.div>
+        );
+    };
+
+/* ============================================
+   MAIN COMPONENT
+============================================ */
+
+export const CTABanner: React.FC<CTABannerProps> = ({
+    // Layout & Variants
+    variant = "default",
+    layout = "centered",
+    contentAlign = "center",
+
+    // Background & Styling
+    backgroundType = "solid",
+    backgroundColor,
+    gradientFrom,
+    gradientTo,
+    backgroundImage,
+
+    // Image Options
+    imagePosition = "right",
+    // imageVariant = "default",
+
+    // Theme
+    theme,
+    forceTheme = false,
+
+    // Animation
+    animate = true,
+    animationDelay = 0,
+    animationType = "fade",
+
+    // Spacing
+    padding = "lg",
+
+    // Children
+    children,
+
+    // Accessibility
+    ariaLabel = "Call to action banner",
+    role = "banner",
+}) => {
+    // State for animation
+    const [isVisible, setIsVisible] = useState(false);
+
+    // Determine theme based on props or variant
+    const resolvedTheme = theme ||
+        (variant === 'dark' ? 'dark' :
+            variant === 'light' ? 'light' :
+                variant === 'gradient' ? 'dark' : 'light');
+
+    // Handle background styling
+    const backgroundStyle: React.CSSProperties = {};
+    if (backgroundType === 'gradient' && gradientFrom && gradientTo) {
+        backgroundStyle.background = `linear-gradient(135deg, ${gradientFrom}, ${gradientTo})`;
+    } else if (backgroundType === 'solid' && backgroundColor) {
+        backgroundStyle.backgroundColor = backgroundColor;
+    } else if (backgroundType === 'image' && backgroundImage) {
+        backgroundStyle.backgroundImage = `url(${backgroundImage})`;
+        backgroundStyle.backgroundSize = 'cover';
+        backgroundStyle.backgroundPosition = 'center';
+    }
+
+    // Handle button click
+    const handleButtonClick = (button: CTAButton) => {
+        if (button.onClick) {
+            button.onClick();
+        } else if (button.href) {
+            if (button.external) {
+                window.open(button.href, '_blank', 'noopener,noreferrer');
+            } else {
+                window.location.href = button.href;
+            }
+        }
+    };
+
+    // Trigger animation on mount
+    useEffect(() => {
+        if (animate) {
+            const timer = setTimeout(() => {
+                setIsVisible(true);
+            }, 100);
+            return () => clearTimeout(timer);
+        }
+    }, [animate]);
+
+    // Context value
+    const contextValue: CTAContextType = {
+        theme: resolvedTheme,
+        layout,
+        contentAlign,
+        variant: typeof variant === 'string' ? variant : 'default',
+        imagePosition,
+        isVisible,
+        animationDelay,
+        animationType,
+        handleButtonClick,
+    };
+
+    // For split layout, handle image and content arrangement
+    if (layout === 'split') {
+        const childrenArray = React.Children.toArray(children);
+
+        // Find content and image components
+        const content = childrenArray.find(
+            (child): child is React.ReactElement =>
+                React.isValidElement(child) &&
+                child.type === CTABannerContent
+        );
+
+        const image = childrenArray.find(
+            (child): child is React.ReactElement =>
+                React.isValidElement(child) &&
+                child.type === CTABannerImage
+        );
+
+        return (
+            <CTAContext.Provider value={contextValue}>
+                <section
+                    className={cn(
+                        bannerVariants({ variant, padding, layout }),
+                        forceTheme && resolvedTheme === 'dark' && 'dark',
+                        "relative"
+                    )}
+                    style={backgroundStyle}
+                    aria-label={ariaLabel}
+                    role={role}
+                >
+                    <div className={containerVariants({ layout })}>
+                        <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+                            {imagePosition === 'left' && image}
+                            {content}
+                            {imagePosition === 'right' && image}
+                        </div>
+                    </div>
+                </section>
+            </CTAContext.Provider>
+        );
+    }
+
+    // Render centered/compact layout
+    return (
+        <CTAContext.Provider value={contextValue}>
+            <section
+                className={cn(
+                    bannerVariants({ variant, padding, layout }),
+                    forceTheme && resolvedTheme === 'dark' && 'dark',
+                    "relative"
+                )}
+                style={backgroundStyle}
+                aria-label={ariaLabel}
+                role={role}
+            >
+                {/* Background effects for gradient variant */}
+                {variant === 'gradient' && (
+                    <>
+                        <div className="absolute top-0 left-0 w-64 h-64 bg-gradient-to-r from-primary/30 to-transparent rounded-full blur-3xl" />
+                        <div className="absolute bottom-0 right-0 w-64 h-64 bg-gradient-to-l from-accent/30 to-transparent rounded-full blur-3xl" />
+                    </>
+                )}
+
+                <div className={containerVariants({ layout })}>
+                    <CTABannerContent>
+                        {/* Decorative icon for certain variants */}
+                        {(variant === 'primary' || variant === 'gradient') && layout === 'centered' && (
+                            <motion.div
+                                initial={{ scale: 0, rotate: -180 }}
+                                animate={isVisible ? { scale: 1, rotate: 0 } : { scale: 0, rotate: -180 }}
+                                transition={{ duration: 0.8, delay: animationDelay + 0.1, type: "spring" }}
+                                className="w-16 h-16 mx-auto mb-6 rounded-full bg-white/10 flex items-center justify-center"
+                            >
+                                <Sparkles className="w-8 h-8 text-white" />
+                            </motion.div>
+                        )}
+
+                        {children}
+
+                        {/* Additional info for compact layout */}
+                        {layout === 'compact' && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+                                transition={{ duration: 0.5, delay: animationDelay + 0.5 }}
+                                className="mt-6 flex items-center justify-center gap-4 text-sm"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <CheckCircle className="w-4 h-4 text-green-500" />
+                                    <span className={resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
+                                        No commitment required
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <CheckCircle className="w-4 h-4 text-green-500" />
+                                    <span className={resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
+                                        Free consultation
+                                    </span>
+                                </div>
+                            </motion.div>
+                        )}
+                    </CTABannerContent>
+                </div>
+            </section>
+        </CTAContext.Provider>
+    );
+};
+
+// Export types
+export type { CTABannerProps };
