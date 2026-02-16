@@ -1,0 +1,162 @@
+---
+hide_title: true
+---
+
+import ComponentCard from '../all-components/ComponentCard';
+import {
+  Rocket,
+  Package,
+  FileCode,
+  LogIn,
+  UserPlus,
+  KeyRound,
+  Shield,
+  Lock,
+  User,
+  Settings,
+  CreditCard,
+  Bell,
+  Table,
+  Diff,
+  Columns3,
+  Image,
+  ArrowRightCircle,
+} from 'lucide-react';
+import { FiGrid } from "react-icons/fi";
+
+## Starter
+
+<div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+  <ComponentCard 
+    title="Monorepo" 
+    href="/docs/starters/monorepo"
+    description="Complete monorepo starter template with workspace configuration."
+    icon={Package}
+  />
+  <ComponentCard 
+    title="Next.js App" 
+    href="/docs/starters/nextjs-app"
+    description="Next.js application starter with TypeScript and Tailwind CSS."
+    icon={FileCode}
+  />
+  <ComponentCard 
+    title="Vite React" 
+    href="/docs/starters/vite-react"
+    description="Vite-powered React starter template with modern tooling."
+    icon={Rocket}
+  />
+</div>
+
+## Authentication
+
+<div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+  <ComponentCard 
+    title="Forgot Password" 
+    href="/docs/templates/pages/authentication/forgot-password-page"
+    description="Password recovery page for resetting user credentials."
+    icon={KeyRound}
+  />
+  <ComponentCard 
+    title="OTP Verification" 
+    href="/docs/templates/pages/authentication/otp-verification-page"
+    description="One-time password verification page for secure authentication."
+    icon={Shield}
+  />
+  <ComponentCard 
+    title="Reset Password" 
+    href="/docs/templates/pages/authentication/reset-password-page"
+    description="Password reset page with secure token validation."
+    icon={Lock}
+  />
+  <ComponentCard 
+    title="Sign In" 
+    href="/docs/templates/pages/sign-in"
+    description="Complete sign-in page with multiple layouts and social login options."
+    icon={LogIn}
+  />
+  <ComponentCard 
+    title="Sign Up" 
+    href="/docs/templates/pages/authentication/sign-up"
+    description="User registration page with validation and social sign-up."
+    icon={UserPlus}
+  />
+  <ComponentCard 
+    title="Two Factor Auth Setup" 
+    href="/docs/templates/pages/authentication/two-factor-auth-setup-page"
+    description="Two-factor authentication setup and configuration page."
+    icon={Shield}
+  />
+</div>
+
+## Account Management
+
+<div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+  <ComponentCard 
+    title="API Keys" 
+    href="/docs/templates/pages/account-management/api-keys"
+    description="API key management page for generating and revoking access tokens."
+    icon={KeyRound}
+  />
+  <ComponentCard 
+    title="Billing" 
+    href="/docs/templates/pages/account-management/billing-page"
+    description="Billing and subscription management page with payment options."
+    icon={CreditCard}
+  />
+  <ComponentCard 
+    title="Notification Settings" 
+    href="/docs/templates/pages/account-management/notification-settings-page"
+    description="Notification preferences and settings management page."
+    icon={Bell}
+  />
+  <ComponentCard 
+    title="Profile" 
+    href="/docs/templates/pages/account-management/profile"
+    description="User profile page with editable information and avatar management."
+    icon={User}
+  />
+  <ComponentCard 
+    title="Security" 
+    href="/docs/templates/pages/account-management/security-page"
+    description="Security settings page with password and session management."
+    icon={Shield}
+  />
+  <ComponentCard 
+    title="Settings" 
+    href="/docs/templates/pages/account-management/setting-page"
+    description="Account settings page with preferences and configuration options."
+    icon={Settings}
+  />
+</div>
+
+## Sections
+
+<div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+ <ComponentCard 
+    title="Call to Action" 
+    href="/docs/templates/sections/content/call-to-action"
+    description="Highlights an action users should take next."
+    icon={ArrowRightCircle}
+  />
+  <ComponentCard 
+    title="Comparison Table" 
+    href="/docs/templates/sections/content/comparison-table"
+    description="Feature comparison table for showcasing product differences."
+    icon={Columns3}
+  />
+  <ComponentCard 
+    title="Hero" 
+    href="/docs/templates/sections/content/hero"
+    description="Hero section template with call-to-action and visual elements."
+    icon={Image}
+  />
+  <ComponentCard 
+    title="Pricing Grid" 
+    href="/docs/templates/sections/content/pricing-grid"
+    description="Pricing table section with multiple plan options."
+    icon={Table}
+  />
+</div>
+
+
+

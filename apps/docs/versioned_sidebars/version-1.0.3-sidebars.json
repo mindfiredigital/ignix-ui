@@ -3,6 +3,10 @@
     {
       "type": "category",
       "label": "Getting Started",
+      "link": {
+        "type": "doc",
+        "id": "introduction"
+      },
       "items": ["introduction", "installation"]
     },
     {
@@ -37,70 +41,170 @@
     },
     {
       "type": "category",
-      "label": "Layouts",
+      "label": "Components",
+      "link": {
+        "type": "doc",
+        "id": "components/all-components/index"
+      },
       "items": [
-        "layouts/app-shell",
-        "layouts/aspect-ratio",
-        "layouts/auto-grid",
-        "layouts/box",
-        "layouts/breakpoint",
-        "layouts/center",
-        "layouts/cluster",
-        "layouts/container",
-        "layouts/DebugBox",
-        "layouts/field-group",
-        "layouts/form",
-        "layouts/header-layout",
-        "layouts/lazyload",
-        "layouts/masonry",
-        "layouts/pin",
-        "layouts/responsive",
-        "layouts/responsive-grid",
-        "layouts/section",
-        "layouts/split",
-        "layouts/spacer",
-        "layouts/stack"
+        {
+        "type": "doc",
+        "id": "components/all-components/index",
+        "label": "All Components"
+        },
+        {
+          "type": "category",
+          "label": "Inputs",
+          "items": [
+            "components/button",
+            "components/checkbox",
+            "components/date-picker",
+            "components/dropdown",
+            "components/file-upload",
+            "components/input",
+            "components/radio",
+            "components/rating",
+            "components/slider",
+            "components/switch",
+            "components/textarea"
+          ]
+        },
+        {
+          "type": "category",
+          "label": "Data Display",
+          "items": [
+            "components/accordion",
+            "components/avatar",
+            "components/badge",
+            "components/card",
+            "components/list",
+            "components/advanced-table",
+            "components/tooltip",
+            "components/typography"
+          ]
+        },
+        {
+          "type": "category",
+          "label": "Navigation",
+          "items": [
+            "components/breadcrumbs",
+            "components/drawer",
+            "components/navbar",
+            "components/sidebar",
+            "components/stepper",
+            "components/tab"
+          ]
+        },
+        {
+          "type":"category",
+          "label": "Feedback",
+          "items": [
+            "components/dialog-box",
+            "components/progress-indicator",
+            "components/spinner",
+            "components/toast",
+            "components/modals"
+          ]
+        }
       ]
     },
     {
       "type": "category",
-      "label": "Components",
+      "label": "Layouts",
+      "link": {
+        "type": "doc",
+        "id": "components/all-layouts/index"
+      },
       "items": [
-        "components/accordion",
-        "components/avatar",
-        "components/badge",
-        "components/breadcrumbs",
-        "components/button",
-        "components/card",
-        "components/checkbox",
-        "components/date-picker",
-        "components/dialog-box",
-        "components/drawer",
-        "components/dropdown",
-        "components/file-upload",
-        "components/input",
-        "components/list",
-        "components/navbar",
-        "components/progress-indicator",
-        "components/radio",
-        "components/rating",
-        "components/sidebar",
-        "components/slider",
-        "components/spinner",
-        "components/stepper",
-        "components/switch",
-        "components/tab",
-        "components/advanced-table",
-        "components/textarea",
-        "components/toast",
-        "components/tooltip",
-        "components/typography"
+        {
+        "type": "doc",
+        "id": "components/all-layouts/index",
+        "label": "All Layouts"
+        },
+        {
+          "type": "category",
+          "label": "App Structure",
+          "items": [
+            "layouts/app-shell",
+            "layouts/box",
+            "layouts/container",
+            "layouts/header-layout",
+            "layouts/section"
+          ]
+        },
+        {
+          "type": "category",
+          "label": "Page Layout",
+          "items": [
+            "templates/layouts/full-height-sidebar-layout",
+            "templates/layouts/responsive-grid-layout",
+            "templates/layouts/sidebar-left-layout",
+            "templates/layouts/sidebar-right-layout",
+            "templates/layouts/single-column-layout", 
+            "templates/layouts/three-column-sidebar-layout"
+          ]
+        },
+        {
+          "type": "category",
+          "label": "Grid System",
+          "items": [
+            "layouts/aspect-ratio",
+            "layouts/auto-grid",
+            "layouts/masonry",
+            "layouts/responsive-grid"
+          ]
+        },
+        {
+          "type": "category",
+          "label": "Flex Utilities",
+          "items": [
+            "layouts/center",
+            "layouts/cluster",
+            "layouts/spacer",
+            "layouts/split",
+            "layouts/stack"
+          ]
+        },
+        {
+          "type": "category",
+          "label": "Responsive Utilities",
+          "items": [
+            "layouts/breakpoint",
+            "layouts/lazyload",
+            "layouts/responsive"
+          ]
+        },
+        {
+          "type": "category",
+          "label": "Helpers",
+          "items": [
+            "layouts/DebugBox",
+            "layouts/pin"
+          ]
+        },
+        {
+          "type": "category",
+          "label": "Forms",
+          "items": [
+            "layouts/field-group",
+            "layouts/form"
+          ]
+        }
       ]
     },
     {
       "type": "category",
       "label": "Templates",
+      "link": {
+        "type": "doc",
+        "id": "components/all-templates/index"
+      },
       "items":[
+        {
+          "type": "doc",
+          "id": "components/all-templates/index",
+          "label": "All Templates"
+        },
         {
           "type": "category",
           "label": "Starter",
@@ -112,40 +216,28 @@
         },
         {
           "type": "category",
-          "label": "Layouts",
-          "items": [
-            "templates/layouts/single-column-layout", 
-            "templates/layouts/sidebar-left-layout",
-            "templates/layouts/sidebar-right-layout",
-            "templates/layouts/full-height-sidebar-layout",
-            "templates/layouts/responsive-grid-layout",
-            "templates/layouts/three-column-sidebar-layout"
-          ]
-        },
-        {
-          "type": "category",
           "label": "Pages",
           "items": [{
             "type": "category",
             "label": "Authentication",
             "items": [
-              "templates/pages/sign-in",
-              "templates/pages/authentication/sign-up",
               "templates/pages/authentication/forgot-password-page",
               "templates/pages/authentication/otp-verification-page",
               "templates/pages/authentication/reset-password-page",
+              "templates/pages/sign-in",
+              "templates/pages/authentication/sign-up",
               "templates/pages/authentication/two-factor-auth-setup-page"
             ]},
             {
               "type": "category",
               "label": "Account Management",
               "items": [
-                "templates/pages/account-management/profile",
                 "templates/pages/account-management/api-keys",
-                "templates/pages/account-management/setting-page",
-                "templates/pages/account-management/security-page",
                 "templates/pages/account-management/billing-page",
-                "templates/pages/account-management/notification-settings-page"
+                "templates/pages/account-management/notification-settings-page",
+                "templates/pages/account-management/profile",
+                "templates/pages/account-management/security-page",
+                "templates/pages/account-management/setting-page"
               ]
             }]
         },
@@ -153,10 +245,10 @@
           "type": "category",
           "label": "Sections",
           "items": [
-            "templates/sections/content/pricing-grid",
+            "templates/sections/content/call-to-action",
             "templates/sections/content/comparison-table",
             "templates/sections/content/hero",
-            "templates/sections/content/call-to-action"
+            "templates/sections/content/pricing-grid"
           ]
         }
       ]
