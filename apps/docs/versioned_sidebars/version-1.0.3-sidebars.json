@@ -102,7 +102,8 @@
             "components/dialog-box",
             "components/progress-indicator",
             "components/spinner",
-            "components/toast"
+            "components/toast",
+            "components/modals"
           ]
         }
       ]
