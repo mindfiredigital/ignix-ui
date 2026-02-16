@@ -924,7 +924,7 @@
       ],
       "files": {
         "main": {
-          "path": "components//pricing-grid/index.tsx",
+          "path": "components/pricing-grid/index.tsx",
           "type" : "component"
         }
       }
@@ -1182,6 +1182,26 @@
       "files": {
         "main": {
           "path": "templates/sections/call-to-action/index.tsx",
+          "type": "template"
+        }
+      }
+    },
+    "testimonialCard" :{
+      "name": "TestimonialCard",
+      "description": "Testimonial Card component showcases customer feedback in a clear and engaging format. It supports flexible layouts with features such as quotes, author details (name, title, avatar), ratings, social links.",
+      "dependencies": [
+        "class-variance-authority",
+        "framer-motion"
+      ],
+      "componentDependencies": [
+        "rating",
+        "avatar",
+        "card",
+        "typography"
+      ],
+      "files": {
+        "main": {
+          "path": "components/testimonial-card/index.tsx",
           "type": "template"
         }
       }
