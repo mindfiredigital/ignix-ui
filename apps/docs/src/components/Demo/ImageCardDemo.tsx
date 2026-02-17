@@ -15,9 +15,9 @@ const sizes = ["sm", "md", "lg", "xl"] as const;
 const positions = ["top", "left", "right"] as const;
 
 const ImageCardBasicDemo = () => {
-  const [layout, setLayout] = useState<ImageCardLayout>("overlay");
+  const [layout, setLayout] = useState<ImageCardLayout>("below");
   const [size, setSize] = useState<ImageCardSizes>("md");
-  const [position, setPosition] = useState<ImageCardPosition>("left");
+  const [position, setPosition] = useState<ImageCardPosition>("top");
 
   const codeString = `
   <ImageCard
