@@ -355,6 +355,21 @@
         }
       }
     },
+    "modal": {
+      "name": "Modal",
+      "description": "A modern, animated modal component with overlay, header, body, footer, color schemes, and optional header icon support. Includes Escape and overlay close behavior plus customizable color overrides.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react"
+      ],
+      "componentDependencies": [],
+      "files": {
+        "main": {
+          "path": "components/modals/index.tsx",
+          "type": "component"
+        }
+      }
+    },
     "textarea": {
       "name": "Textarea",
       "description": "An animated textarea component with different variants",
@@ -924,7 +939,7 @@
       ],
       "files": {
         "main": {
-          "path": "components//pricing-grid/index.tsx",
+          "path": "components/pricing-grid/index.tsx",
           "type" : "component"
         }
       }
@@ -1147,6 +1162,22 @@
         }
       }
     },
+    "mega-menu-multi-column-dropdown": {
+      "name": "mega-menu-multi-column-dropdown",
+      "description": "A header mega menu section with a multi-column dropdown, category headers, icons/images per link, nested submenus, and an optional CTA button.",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "componentDependencies": [
+        "button"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/sections/mega-menu-multi-column-dropdown/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "productCard":{
       "name": "ProductCard",
       "description": "A flexible product card component with custom tags and multiple interaction modes.",
@@ -1186,18 +1217,22 @@
         }
       }
     },
-    "mega-menu-multi-column-dropdown": {
-      "name": "mega-menu-multi-column-dropdown",
-      "description": "A header mega menu section with a multi-column dropdown, category headers, icons/images per link, nested submenus, and an optional CTA button.",
+    "testimonialCard" :{
+      "name": "TestimonialCard",
+      "description": "Testimonial Card component showcases customer feedback in a clear and engaging format. It supports flexible layouts with features such as quotes, author details (name, title, avatar), ratings, social links.",
       "dependencies": [
-        "lucide-react"
+        "class-variance-authority",
+        "framer-motion"
       ],
       "componentDependencies": [
-        "button"
+        "rating",
+        "avatar",
+        "card",
+        "typography"
       ],
       "files": {
         "main": {
-          "path": "templates/sections/mega-menu-multi-column-dropdown/index.tsx",
+          "path": "components/testimonial-card/index.tsx",
           "type": "template"
         }
       }
