@@ -18,10 +18,16 @@ import {
     MemberCardOverlay,
     TeamFooter,
     type TeamMember,
+    TeamModal,
 } from ".";
 import { Users, Award, MapPin } from "lucide-react";
+import { User, UserCircle, UserRound, UserCircle2, Sparkles } from 'lucide-react';
+
 import { Button } from "../../../../components/button";
 import { Typography } from "../../../../components/typography";
+import React from "react";
+import { cn } from '../../../../../utils/cn';
+
 
 const meta: Meta<typeof TeamProfiles> = {
     title: "Templates/Section/Content/Team Profiles",
@@ -1085,6 +1091,158 @@ export const WithCustomClickHandlers: Story = {
     name: "7.2 With Custom Click Handlers",
 };
 
+export const DarkThemeModal: Story = {
+    render: () => {
+        const [selectedMember, setSelectedMember] = React.useState<TeamMember | null>(null);
+
+        return (
+            <>
+                <TeamProfiles
+                    variant="dark"
+                    cardVariant="elevated"
+                    enableModal={true}
+                    theme="dark"
+                >
+                    <TeamHeader
+                        title="Dark Theme Modal"
+                        subtitle="Click any card to view the profile in dark mode"
+                    />
+                    <TeamGrid columns={{ mobile: 1, tablet: 2, desktop: 3 }}>
+                        {sampleTeamMembers.slice(0, 3).map((member) => (
+                            <MemberCard
+                                key={member.id}
+                                member={member}
+                                onClick={() => setSelectedMember(member)}
+                            >
+                                <MemberPhoto
+                                    src={member.photo}
+                                    alt={member.photoAlt || member.name}
+                                    initials={member.name.split(' ').map(n => n[0]).join('')}
+                                />
+                                <MemberContent>
+                                    <MemberName className="text-white">{member.name}</MemberName>
+                                    <MemberRole className="text-gray-300">{member.role}</MemberRole>
+                                    <MemberBio className="text-gray-300">{member.bio}</MemberBio>
+                                    {member.expertise && (
+                                        <MemberExpertise items={member.expertise} />
+                                    )}
+                                </MemberContent>
+                                <MemberCardOverlay />
+                            </MemberCard>
+                        ))}
+                    </TeamGrid>
+                </TeamProfiles>
+
+                {/* Dark Theme Modal */}
+                {selectedMember && (
+                    <TeamModal
+                        isOpen={!!selectedMember}
+                        onClose={() => setSelectedMember(null)}
+                        member={selectedMember}
+                    >
+                        <div className="flex flex-col md:flex-row bg-gray-900 text-white">
+                            <div className="md:w-2/5">
+                                {selectedMember.photo ? (
+                                    <img
+                                        src={selectedMember.photo}
+                                        alt={selectedMember.photoAlt || selectedMember.name}
+                                        className="w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-secondary/20">
+                                        <Typography variant="h1" weight="bold" className="text-primary">
+                                            {selectedMember.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
+                                        </Typography>
+                                    </div>
+                                )}
+                            </div>
+                            <div className="md:w-3/5 p-6">
+                                <Typography variant="h2" weight="bold" className="mb-1 text-white">
+                                    {selectedMember.name}
+                                </Typography>
+                                <Typography variant="h4" className="mb-4 text-gray-300">
+                                    {selectedMember.role}
+                                </Typography>
+
+                                {selectedMember.department && (
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <Award className="w-4 h-4 text-gray-400" />
+                                        <Typography variant="body" className="text-gray-300">
+                                            {selectedMember.department}
+                                        </Typography>
+                                    </div>
+                                )}
+
+                                {selectedMember.location && (
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <MapPin className="w-4 h-4 text-gray-400" />
+                                        <Typography variant="body" className="text-gray-300">
+                                            {selectedMember.location}
+                                        </Typography>
+                                    </div>
+                                )}
+
+                                <Typography variant="body" className="mb-6 leading-relaxed text-gray-300">
+                                    {selectedMember.bio}
+                                </Typography>
+
+                                {selectedMember.expertise && selectedMember.expertise.length > 0 && (
+                                    <div className="mb-6">
+                                        <Typography variant="small" weight="bold" className="mb-2 text-gray-200">
+                                            Expertise
+                                        </Typography>
+                                        <div className="flex flex-wrap gap-2">
+                                            {selectedMember.expertise.map((skill, idx) => (
+                                                <span
+                                                    key={idx}
+                                                    className="px-3 py-1 text-sm rounded-full bg-gray-700 text-gray-200"
+                                                >
+                                                    {skill}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {selectedMember.awards && selectedMember.awards.length > 0 && (
+                                    <div className="mb-6">
+                                        <Typography variant="small" weight="bold" className="mb-2 text-gray-200">
+                                            Awards
+                                        </Typography>
+                                        <div className="space-y-1">
+                                            {selectedMember.awards.map((award, idx) => (
+                                                <Typography key={idx} variant="small" className="text-gray-300">
+                                                    🏆 {award}
+                                                </Typography>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {selectedMember.socialLinks && selectedMember.socialLinks.length > 0 && (
+                                    <div className="flex items-center gap-3">
+                                        {selectedMember.socialLinks.map((link, idx) => (
+                                            <button
+                                                key={idx}
+                                                onClick={() => window.open(link.url, '_blank')}
+                                                className="p-3 rounded-full transition-colors hover:bg-gray-600 text-gray-400 hover:text-white"
+                                                aria-label={link.label || `Social link`}
+                                            >
+                                                <SocialIcon platform={link.platform} className="w-5 h-5" />
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </TeamModal>
+                )}
+            </>
+        );
+    },
+    name: "7.3 Dark Theme Modal",
+};
+
 /* ============================================
    8. RESPONSIVE DEMOS
 ============================================ */
@@ -1473,15 +1631,398 @@ export const NoPhotosPlaceholder: Story = {
         return (
             <TeamProfiles variant="light" cardVariant="elevated">
                 <TeamHeader
-                    title="Initials Placeholder"
-                    subtitle="Automatic initials when photos are missing"
+                    title="Elegant Placeholders"
+                    subtitle="Beautiful initials-based avatars when photos are missing"
+                />
+                <TeamGrid columns={{ mobile: 1, tablet: 2, desktop: 3 }}>
+                    {teamWithoutPhotos.map((member) => {
+                        const initials = member.name
+                            .split(' ')
+                            .map(n => n[0])
+                            .join('')
+                            .toUpperCase()
+                            .slice(0, 2);
+
+                        // Generate a consistent color based on the member's name
+                        const colors = [
+                            'from-blue-500 to-cyan-500',
+                            'from-purple-500 to-pink-500',
+                            'from-green-500 to-emerald-500',
+                            'from-orange-500 to-red-500',
+                            'from-indigo-500 to-purple-500',
+                            'from-pink-500 to-rose-500',
+                        ];
+
+                        const colorIndex = member.name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % colors.length;
+                        const gradientColor = colors[colorIndex];
+
+                        return (
+                            <MemberCard key={member.id} member={member}>
+                                <div className={cn(
+                                    "relative aspect-square overflow-hidden",
+                                    "bg-gradient-to-br",
+                                    gradientColor
+                                )}>
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <Typography
+                                            variant="h1"
+                                            weight="bold"
+                                            className="text-white text-4xl md:text-5xl opacity-90"
+                                        >
+                                            {initials}
+                                        </Typography>
+                                    </div>
+                                    {/* Decorative pattern overlay */}
+                                    <div className="absolute inset-0 opacity-10">
+                                        <div className="w-full h-full" style={{
+                                            backgroundImage: `radial-gradient(circle at 30% 50%, white 1px, transparent 1px)`,
+                                            backgroundSize: '20px 20px'
+                                        }} />
+                                    </div>
+                                </div>
+                                <MemberContent>
+                                    <MemberName>{member.name}</MemberName>
+                                    <MemberRole>{member.role}</MemberRole>
+                                    <MemberBio>{member.bio}</MemberBio>
+                                    {member.expertise && (
+                                        <MemberExpertise items={member.expertise} />
+                                    )}
+                                    <MemberSocialLinks
+                                        links={member.socialLinks || []}
+                                        memberId={member.id}
+                                        memberName={member.name}
+                                    />
+                                </MemberContent>
+                            </MemberCard>
+                        );
+                    })}
+                </TeamGrid>
+            </TeamProfiles>
+        );
+    },
+    name: "10.4 No Photos - Beautiful Placeholders",
+};
+
+export const MinimalistPlaceholders: Story = {
+    render: () => {
+        const teamWithoutPhotos = sampleTeamMembers.slice(0, 3).map(member => ({
+            ...member,
+            photo: undefined,
+        }));
+
+        return (
+            <TeamProfiles variant="light" cardVariant="minimal">
+                <TeamHeader
+                    title="Minimalist Placeholders"
+                    subtitle="Clean and subtle avatar placeholders"
+                />
+                <TeamGrid columns={{ mobile: 1, tablet: 2, desktop: 3 }}>
+                    {teamWithoutPhotos.map((member) => {
+                        const initials = member.name
+                            .split(' ')
+                            .map(n => n[0])
+                            .join('')
+                            .toUpperCase()
+                            .slice(0, 2);
+
+                        return (
+                            <MemberCard key={member.id} member={member}>
+                                <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                                    <Typography
+                                        variant="h2"
+                                        weight="semibold"
+                                        className="text-gray-400 dark:text-gray-500"
+                                    >
+                                        {initials}
+                                    </Typography>
+                                </div>
+                                <MemberContent>
+                                    <MemberName>{member.name}</MemberName>
+                                    <MemberRole>{member.role}</MemberRole>
+                                </MemberContent>
+                            </MemberCard>
+                        );
+                    })}
+                </TeamGrid>
+            </TeamProfiles>
+        );
+    },
+    name: "10.5 No Photos - Minimalist Placeholders",
+};
+
+export const PatternPlaceholders: Story = {
+    render: () => {
+        const teamWithoutPhotos = sampleTeamMembers.slice(0, 3).map(member => ({
+            ...member,
+            photo: undefined,
+        }));
+
+        const patterns = [
+            'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.05) 10px, rgba(0,0,0,0.05) 20px)',
+            'repeating-linear-gradient(90deg, transparent, transparent 15px, rgba(0,0,0,0.03) 15px, rgba(0,0,0,0.03) 30px)',
+            'radial-gradient(circle at 20px 20px, rgba(0,0,0,0.03) 2px, transparent 2px), radial-gradient(circle at 40px 40px, rgba(0,0,0,0.03) 2px, transparent 2px)',
+            'repeating-linear-gradient(135deg, transparent, transparent 8px, rgba(0,0,0,0.04) 8px, rgba(0,0,0,0.04) 16px)',
+        ];
+
+        return (
+            <TeamProfiles variant="light" cardVariant="bordered">
+                <TeamHeader
+                    title="Pattern Placeholders"
+                    subtitle="Subtle patterns add visual interest"
+                />
+                <TeamGrid columns={{ mobile: 1, tablet: 2, desktop: 3 }}>
+                    {teamWithoutPhotos.map((member, index) => {
+                        const initials = member.name
+                            .split(' ')
+                            .map(n => n[0])
+                            .join('')
+                            .toUpperCase()
+                            .slice(0, 2);
+
+                        const bgColors = [
+                            'bg-blue-50',
+                            'bg-purple-50',
+                            'bg-green-50',
+                            'bg-orange-50',
+                        ];
+
+                        return (
+                            <MemberCard key={member.id} member={member}>
+                                <div className={cn(
+                                    "relative aspect-square overflow-hidden flex items-center justify-center",
+                                    bgColors[index % bgColors.length]
+                                )}>
+                                    <div
+                                        className="absolute inset-0 opacity-30"
+                                        style={{ backgroundImage: patterns[index % patterns.length] }}
+                                    />
+                                    <Typography
+                                        variant="h2"
+                                        weight="bold"
+                                        className="relative z-10 text-gray-700"
+                                    >
+                                        {initials}
+                                    </Typography>
+                                </div>
+                                <MemberContent>
+                                    <MemberName>{member.name}</MemberName>
+                                    <MemberRole>{member.role}</MemberRole>
+                                    {member.expertise && (
+                                        <MemberExpertise items={member.expertise} />
+                                    )}
+                                </MemberContent>
+                            </MemberCard>
+                        );
+                    })}
+                </TeamGrid>
+            </TeamProfiles>
+        );
+    },
+    name: "10.6 No Photos - Pattern Placeholders",
+};
+
+export const AvatarPlaceholders: Story = {
+    render: () => {
+        const teamWithoutPhotos = sampleTeamMembers.slice(0, 4).map(member => ({
+            ...member,
+            photo: undefined,
+        }));
+
+        return (
+            <TeamProfiles variant="light" cardVariant="default">
+                <TeamHeader
+                    title="Avatar Style Placeholders"
+                    subtitle="Circular avatars with professional look"
+                />
+                <TeamGrid columns={{ mobile: 1, tablet: 2, desktop: 4 }}>
+                    {teamWithoutPhotos.map((member) => {
+                        const initials = member.name
+                            .split(' ')
+                            .map(n => n[0])
+                            .join('')
+                            .toUpperCase()
+                            .slice(0, 2);
+
+                        // Professional color palette
+                        const avatarColors = [
+                            'bg-indigo-100 text-indigo-700 border-indigo-200',
+                            'bg-emerald-100 text-emerald-700 border-emerald-200',
+                            'bg-amber-100 text-amber-700 border-amber-200',
+                            'bg-rose-100 text-rose-700 border-rose-200',
+                            'bg-cyan-100 text-cyan-700 border-cyan-200',
+                            'bg-violet-100 text-violet-700 border-violet-200',
+                        ];
+
+                        const colorIndex = member.name.length % avatarColors.length;
+
+                        return (
+                            <MemberCard key={member.id} member={member}>
+                                <div className="p-6 flex flex-col items-center">
+                                    <div className={cn(
+                                        "w-32 h-32 rounded-full flex items-center justify-center border-4 mb-4",
+                                        avatarColors[colorIndex]
+                                    )}>
+                                        <Typography variant="h2" weight="bold">
+                                            {initials}
+                                        </Typography>
+                                    </div>
+                                    <MemberName className="text-center">{member.name}</MemberName>
+                                    <MemberRole className="text-center">{member.role}</MemberRole>
+                                </div>
+                            </MemberCard>
+                        );
+                    })}
+                </TeamGrid>
+            </TeamProfiles>
+        );
+    },
+    name: "10.7 No Photos - Avatar Style Placeholders",
+};
+
+
+/* ============================================
+   10. NO PHOTOS - ICON PLACEHOLDERS
+============================================ */
+
+export const SimpleUserIconPlaceholders: Story = {
+    render: () => {
+        const teamWithoutPhotos = sampleTeamMembers.slice(0, 3).map(member => ({
+            ...member,
+            photo: undefined,
+        }));
+
+        return (
+            <TeamProfiles variant="light" cardVariant="elevated">
+                <TeamHeader
+                    title="Simple User Icons"
+                    subtitle="Clean and minimal user icon placeholders"
                 />
                 <TeamGrid columns={{ mobile: 1, tablet: 2, desktop: 3 }}>
                     {teamWithoutPhotos.map((member) => (
                         <MemberCard key={member.id} member={member}>
-                            <MemberPhoto
-                                initials={member.name.split(' ').map(n => n[0]).join('')}
-                            />
+                            <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 flex items-center justify-center">
+                                <User className="w-16 h-16 text-gray-400 dark:text-gray-500" />
+                            </div>
+                            <MemberContent>
+                                <MemberName>{member.name}</MemberName>
+                                <MemberRole>{member.role}</MemberRole>
+                                <MemberBio>{member.bio}</MemberBio>
+                                <MemberSocialLinks
+                                    links={member.socialLinks || []}
+                                    memberId={member.id}
+                                    memberName={member.name}
+                                />
+                            </MemberContent>
+                        </MemberCard>
+                    ))}
+                </TeamGrid>
+            </TeamProfiles>
+        );
+    },
+    name: "10.4 Simple User Icons",
+};
+
+export const RoundedUserIcons: Story = {
+    render: () => {
+        const teamWithoutPhotos = sampleTeamMembers.slice(0, 3).map(member => ({
+            ...member,
+            photo: undefined,
+        }));
+
+        return (
+            <TeamProfiles variant="light" cardVariant="minimal">
+                <TeamHeader
+                    title="Rounded User Icons"
+                    subtitle="Friendly circular user icons"
+                />
+                <TeamGrid columns={{ mobile: 1, tablet: 2, desktop: 3 }}>
+                    {teamWithoutPhotos.map((member) => (
+                        <MemberCard key={member.id} member={member}>
+                            <div className="p-6 flex flex-col items-center">
+                                <div className="w-28 h-28 rounded-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center mb-4 border-2 border-primary/20">
+                                    <UserCircle className="w-16 h-16 text-primary/60" />
+                                </div>
+                                <MemberName>{member.name}</MemberName>
+                                <MemberRole>{member.role}</MemberRole>
+                            </div>
+                        </MemberCard>
+                    ))}
+                </TeamGrid>
+            </TeamProfiles>
+        );
+    },
+    name: "10.5 Rounded User Icons",
+};
+
+export const UserRoundIcons: Story = {
+    render: () => {
+        const teamWithoutPhotos = sampleTeamMembers.slice(0, 3).map(member => ({
+            ...member,
+            photo: undefined,
+        }));
+
+        return (
+            <TeamProfiles variant="light" cardVariant="bordered">
+                <TeamHeader
+                    title="User Round Icons"
+                    subtitle="Modern circular silhouette icons"
+                />
+                <TeamGrid columns={{ mobile: 1, tablet: 2, desktop: 3 }}>
+                    {teamWithoutPhotos.map((member, index) => {
+                        const colors = [
+                            'from-blue-400 to-blue-600',
+                            'from-purple-400 to-purple-600',
+                            'from-green-400 to-green-600',
+                            'from-orange-400 to-orange-600',
+                        ];
+
+                        return (
+                            <MemberCard key={member.id} member={member}>
+                                <div className="relative aspect-square overflow-hidden flex items-center justify-center">
+                                    <div className={cn(
+                                        "absolute inset-0 bg-gradient-to-br",
+                                        colors[index % colors.length],
+                                        "opacity-90"
+                                    )} />
+                                    <UserRound className="w-20 h-20 text-white relative z-10" />
+                                </div>
+                                <MemberContent>
+                                    <MemberName>{member.name}</MemberName>
+                                    <MemberRole>{member.role}</MemberRole>
+                                    {member.expertise && (
+                                        <MemberExpertise items={member.expertise} />
+                                    )}
+                                </MemberContent>
+                            </MemberCard>
+                        );
+                    })}
+                </TeamGrid>
+            </TeamProfiles>
+        );
+    },
+    name: "10.6 User Round Icons",
+};
+
+export const GroupIconPlaceholders: Story = {
+    render: () => {
+        const teamWithoutPhotos = sampleTeamMembers.slice(0, 3).map(member => ({
+            ...member,
+            photo: undefined,
+        }));
+
+        return (
+            <TeamProfiles variant="light" cardVariant="elevated">
+                <TeamHeader
+                    title="Team Group Icons"
+                    subtitle="Abstract team representation"
+                />
+                <TeamGrid columns={{ mobile: 1, tablet: 2, desktop: 3 }}>
+                    {teamWithoutPhotos.map((member) => (
+                        <MemberCard key={member.id} member={member}>
+                            <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/30 flex items-center justify-center">
+                                <Users className="w-16 h-16 text-indigo-300 dark:text-indigo-700" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent" />
+                            </div>
                             <MemberContent>
                                 <MemberName>{member.name}</MemberName>
                                 <MemberRole>{member.role}</MemberRole>
@@ -1493,7 +2034,133 @@ export const NoPhotosPlaceholder: Story = {
             </TeamProfiles>
         );
     },
-    name: "10.4 No Photos - Initials Placeholder",
+    name: "10.7 Team Group Icons",
+};
+
+export const AnimatedIconPlaceholders: Story = {
+    render: () => {
+        const teamWithoutPhotos = sampleTeamMembers.slice(0, 3).map(member => ({
+            ...member,
+            photo: undefined,
+        }));
+
+        return (
+            <TeamProfiles variant="light" cardVariant="elevated" animate={true}>
+                <TeamHeader
+                    title="Animated Icon Placeholders"
+                    subtitle="Subtle hover animations on icons"
+                />
+                <TeamGrid columns={{ mobile: 1, tablet: 2, desktop: 3 }}>
+                    {teamWithoutPhotos.map((member) => (
+                        <MemberCard key={member.id} member={member}>
+                            <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 flex items-center justify-center group">
+                                <UserCircle2 className="w-20 h-20 text-amber-300 dark:text-amber-700 transition-all duration-300 group-hover:scale-110 group-hover:text-amber-400" />
+                                <Sparkles className="absolute w-6 h-6 text-amber-200 dark:text-amber-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 top-4 right-4" />
+                            </div>
+                            <MemberContent>
+                                <MemberName>{member.name}</MemberName>
+                                <MemberRole>{member.role}</MemberRole>
+                                <MemberBio>{member.bio}</MemberBio>
+                            </MemberContent>
+                        </MemberCard>
+                    ))}
+                </TeamGrid>
+            </TeamProfiles>
+        );
+    },
+    name: "10.8 Animated Icon Placeholders",
+};
+
+export const IconWithInitials: Story = {
+    render: () => {
+        const teamWithoutPhotos = sampleTeamMembers.slice(0, 4).map(member => ({
+            ...member,
+            photo: undefined,
+        }));
+
+        return (
+            <TeamProfiles variant="light" cardVariant="minimal">
+                <TeamHeader
+                    title="Icon + Initials Combo"
+                    subtitle="Combine icons with initials for clarity"
+                />
+                <TeamGrid columns={{ mobile: 1, tablet: 2, desktop: 4 }}>
+                    {teamWithoutPhotos.map((member) => {
+                        const initials = member.name
+                            .split(' ')
+                            .map(n => n[0])
+                            .join('')
+                            .toUpperCase()
+                            .slice(0, 2);
+
+                        return (
+                            <MemberCard key={member.id} member={member}>
+                                <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center">
+                                    <div className="relative">
+                                        <User className="w-16 h-16 text-gray-300 dark:text-gray-600" />
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <Typography variant="small" weight="bold" className="text-gray-500 dark:text-gray-400 text-sm">
+                                                {initials}
+                                            </Typography>
+                                        </div>
+                                    </div>
+                                </div>
+                                <MemberContent>
+                                    <MemberName>{member.name}</MemberName>
+                                    <MemberRole>{member.role}</MemberRole>
+                                </MemberContent>
+                            </MemberCard>
+                        );
+                    })}
+                </TeamGrid>
+            </TeamProfiles>
+        );
+    },
+    name: "10.9 Icon with Initials",
+};
+
+export const AllIconVariants: Story = {
+    render: () => {
+        const iconStyles = [
+            { icon: User, label: "Simple User", gradient: "from-gray-100 to-gray-200", iconColor: "text-gray-400" },
+            { icon: UserCircle, label: "User Circle", gradient: "from-blue-100 to-blue-200", iconColor: "text-blue-400" },
+            { icon: UserRound, label: "User Round", gradient: "from-purple-100 to-purple-200", iconColor: "text-purple-400" },
+            { icon: Users, label: "Team", gradient: "from-green-100 to-green-200", iconColor: "text-green-400" },
+            { icon: UserCircle2, label: "User Circle 2", gradient: "from-orange-100 to-orange-200", iconColor: "text-orange-400" },
+        ];
+
+        return (
+            <TeamProfiles variant="light" cardVariant="elevated">
+                <TeamHeader
+                    title="Icon Placeholder Gallery"
+                    subtitle="Various icon styles for different aesthetics"
+                />
+                <TeamGrid columns={{ mobile: 1, tablet: 2, desktop: 3, wide: 5 }}>
+                    {iconStyles.map((style, index) => {
+                        const IconComponent = style.icon;
+                        return (
+                            <MemberCard key={index} member={sampleTeamMembers[index % sampleTeamMembers.length]}>
+                                <div className={cn(
+                                    "relative aspect-square overflow-hidden bg-gradient-to-br flex items-center justify-center",
+                                    style.gradient
+                                )}>
+                                    <IconComponent className={cn("w-20 h-20", style.iconColor)} />
+                                </div>
+                                <MemberContent>
+                                    <MemberName>{style.label}</MemberName>
+                                    <MemberRole>Placeholder Style</MemberRole>
+                                    <Typography variant="small" className="text-center text-gray-500">
+                                        Using {style.label} icon
+                                    </Typography>
+                                </MemberContent>
+                            </MemberCard>
+                        );
+                    })}
+                </TeamGrid>
+            </TeamProfiles>
+        );
+    },
+    name: "10.10 All Icon Variants",
 };
 
 /* ============================================

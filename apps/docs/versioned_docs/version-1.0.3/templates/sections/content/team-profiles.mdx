@@ -1,4 +1,38 @@
-import React, { useState } from 'react';
+---
+sidebar_position: 12
+title: Team Profiles
+description: A flexible team profiles section with multiple card variants, grid layouts, and theme options for showcasing team members.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import {
+    BasicTeamDemo,
+    AdvancedTeamDemo,
+} from '@site/src/components/Demo/TeamProfilesDemo';
+import { TeamProfiles, TeamHeader, TeamGrid, MemberCard, MemberPhoto, MemberContent, MemberName, MemberRole, MemberBio, MemberSocialLinks } from '@site/src/components/UI/team-profiles';
+import { Users, Award, MapPin, User, UserCircle } from 'lucide-react';
+
+The TeamProfiles component is a comprehensive, customizable team showcase section that displays team members in a professional grid layout. It features multiple card styles, flexible grid configurations, theme variants, and advanced features like modal views and animations.
+
+## Basic Usage
+<BasicTeamDemo />
+
+## Advanced Variants
+<AdvancedTeamDemo />
+
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component team-profiles
+    ```
+  </TabItem>
+  <TabItem value="manual" label="Manual">
+    ```tsx
+    import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { cva, type VariantProps } from 'class-variance-authority';
 import {
@@ -112,15 +146,12 @@ export const MemberCard: React.FC<{
         cardVariant,
         enableHover,
         isVisible,
-        // animationType,
         animationDelay,
         onMemberClick,
         setSelectedMember
     } = useTeam();
 
     const getAnimationProps = () => {
-        // In a real scenario, index would come from context or parent
-        // Using a simple fade animation as default
         return {
             initial: { opacity: 0, y: 20 },
             animate: isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 },
@@ -144,12 +175,10 @@ export const MemberCard: React.FC<{
                 },
             },
             compoundVariants: [
-                // Light theme variants
                 { theme: "light", variant: "default", className: "bg-white" },
                 { theme: "light", variant: "minimal", className: "bg-transparent" },
                 { theme: "light", variant: "elevated", className: "bg-white" },
                 { theme: "light", variant: "bordered", className: "bg-white border-gray-200" },
-                // Dark theme variants
                 { theme: "dark", variant: "default", className: "bg-gray-800" },
                 { theme: "dark", variant: "minimal", className: "bg-transparent" },
                 { theme: "dark", variant: "elevated", className: "bg-gray-800" },
@@ -513,7 +542,7 @@ export const MemberCardOverlay: React.FC<{
 }> = ({ children, className }) => {
     return (
         <div className={cn(
-            "absolute inset-0 bg-black/50 opacity-0  transition-opacity duration-300 flex items-center justify-center",
+            "absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center",
             className
         )}>
             {children || (
@@ -577,7 +606,6 @@ export const TeamGrid: React.FC<{
                 if (React.isValidElement(child)) {
                     return React.cloneElement(child, {
                         ...child.props,
-                        // Pass index for animation if needed
                         'data-index': index
                     });
                 }
@@ -805,7 +833,7 @@ const sectionVariants = cva(
                 muted: "bg-muted text-muted-foreground",
                 gradient: "bg-gradient-to-r from-primary/90 to-accent/90 text-primary-foreground",
                 glass: "bg-background/80 backdrop-blur-md border border-border",
-                dark: "bg-gray-950 text-gray-50",
+                dark: "bg-gray-900 text-gray-50",
                 light: "bg-gray-50 text-gray-900",
             },
             padding: {
@@ -1005,3 +1033,314 @@ export const TeamProfiles: React.FC<TeamProfilesProps> = ({
         </TeamContext.Provider>
     );
 };
+    ```
+  </TabItem>
+</Tabs>
+
+## Props
+
+### TeamProfiles Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'muted' \| 'gradient' \| 'glass' \| 'dark' \| 'light'` | `'default'` | Visual variant of the section background |
+| `cardVariant` | `'default' \| 'minimal' \| 'elevated' \| 'bordered'` | `'default'` | Visual style of team cards |
+| `showBio` | `boolean` | `true` | Show member biography |
+| `showSocialLinks` | `boolean` | `true` | Show social media links |
+| `showDepartment` | `boolean` | `false` | Show member department |
+| `showLocation` | `boolean` | `false` | Show member location |
+| `showExpertise` | `boolean` | `false` | Show expertise tags |
+| `showAwards` | `boolean` | `false` | Show awards and recognition |
+| `showJoinDate` | `boolean` | `false` | Show join date |
+| `enableModal` | `boolean` | `false` | Enable modal popup for member details |
+| `enableHover` | `boolean` | `true` | Enable hover effects on cards |
+| `theme` | `'light' \| 'dark'` | `-` | Force a specific theme (overrides variant-based theme) |
+| `forceTheme` | `boolean` | `false` | Force theme CSS classes |
+| `backgroundType` | `'solid' \| 'gradient' \| 'image'` | `'solid'` | Type of background styling |
+| `backgroundColor` | `string` | `-` | Custom background color (for solid background) |
+| `gradientFrom` | `string` | `-` | Start color for gradient background |
+| `gradientTo` | `string` | `-` | End color for gradient background |
+| `backgroundImage` | `string` | `-` | URL for background image |
+| `animate` | `boolean` | `true` | Enable/disable entrance animations |
+| `animationDelay` | `number` | `0` | Initial animation delay in seconds |
+| `animationType` | `'fade' \| 'slide' \| 'scale' \| 'stagger'` | `'fade'` | Type of entrance animation |
+| `padding` | `'none' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'` | `'lg'` | Vertical padding size |
+| `onMemberClick` | `(member: TeamMember) => void` | `-` | Callback when a member card is clicked |
+| `onSocialClick` | `(member: TeamMember, platform: string, url: string) => void` | `-` | Callback when a social link is clicked |
+| `ariaLabel` | `string` | `'Team profiles section'` | Accessibility label |
+| `children` | `React.ReactNode` | `required` | Team components (TeamHeader, TeamGrid, TeamFooter) |
+
+### TeamHeader Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | `-` | Custom header content (overrides title/subtitle) |
+| `title` | `string` | `-` | Section title |
+| `subtitle` | `string` | `-` | Section subtitle |
+| `className` | `string` | `-` | Additional CSS classes |
+
+### TeamGrid Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | `required` | MemberCard components |
+| `columns` | `{ mobile?: number; tablet?: number; desktop?: number; wide?: number; }` | `{ mobile: 1, tablet: 2, desktop: 3, wide: 4 }` | Responsive column configuration |
+| `gap` | `'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | Gap between cards |
+| `className` | `string` | `-` | Additional CSS classes |
+
+### MemberCard Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `member` | `TeamMember` | `required` | Team member data object |
+| `children` | `React.ReactNode` | `required` | Member photo and content components |
+| `className` | `string` | `-` | Additional CSS classes |
+
+### MemberPhoto Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `src` | `string` | `-` | Image source URL |
+| `alt` | `string` | `-` | Image alt text |
+| `initials` | `string` | `-` | Initials to display when no image is provided |
+| `className` | `string` | `-` | Additional CSS classes |
+
+### MemberContent Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | `required` | Member information components |
+| `className` | `string` | `-` | Additional CSS classes |
+
+### MemberName Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | `required` | Member name text |
+| `className` | `string` | `-` | Additional CSS classes |
+
+### MemberRole Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | `required` | Member role/title text |
+| `className` | `string` | `-` | Additional CSS classes |
+
+### MemberDepartment Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | `required` | Department name |
+| `className` | `string` | `-` | Additional CSS classes |
+
+### MemberLocation Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | `required` | Location text |
+| `className` | `string` | `-` | Additional CSS classes |
+
+### MemberBio Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | `required` | Biography text |
+| `lines` | `number` | `2` | Number of lines to show before truncating |
+| `className` | `string` | `-` | Additional CSS classes |
+
+### MemberJoinDate Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | `required` | Join date text |
+| `className` | `string` | `-` | Additional CSS classes |
+
+### MemberExpertise Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `string[]` | `required` | Array of expertise/skills |
+| `limit` | `number` | `3` | Maximum number of items to show |
+| `className` | `string` | `-` | Additional CSS classes |
+
+### MemberAwards Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `string[]` | `required` | Array of awards |
+| `limit` | `number` | `1` | Maximum number of items to show |
+| `className` | `string` | `-` | Additional CSS classes |
+
+### MemberSocialLinks Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `links` | `SocialLink[]` | `required` | Array of social links |
+| `memberId` | `string` | `-` | Member ID for tracking |
+| `memberName` | `string` | `-` | Member name for tracking |
+| `className` | `string` | `-` | Additional CSS classes |
+
+### MemberCardOverlay Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | `-` | Custom overlay content |
+| `className` | `string` | `-` | Additional CSS classes |
+
+### TeamFooter Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | `required` | Footer content |
+| `className` | `string` | `-` | Additional CSS classes |
+
+### TeamModal Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `isOpen` | `boolean` | `required` | Modal open state |
+| `onClose` | `() => void` | `required` | Close handler |
+| `member` | `TeamMember \| null` | `required` | Selected team member |
+| `children` | `React.ReactNode` | `-` | Custom modal content |
+
+## Types
+
+```typescript
+interface SocialLink {
+    platform: 'linkedin' | 'github' | 'twitter' | 'website' | 'email' | 'other';
+    url: string;
+    label?: string;
+}
+
+interface TeamMember {
+    id: string;                    // Unique identifier
+    name: string;                   // Member's full name
+    role: string;                   // Job title/role
+    bio: string;                    // Biography/description
+    photo?: string;                  // Photo URL
+    photoAlt?: string;               // Alt text for photo
+    socialLinks?: SocialLink[];      // Social media links
+    department?: string;             // Department name
+    location?: string;               // Location (city, country)
+    expertise?: string[];            // Areas of expertise
+    awards?: string[];               // Awards and recognition
+    joinDate?: string;               // Join date (any format)
+    email?: string;                  // Email address
+}
+
+```
+
+## Base Usage
+
+```tsx
+import {
+    TeamProfiles,
+    TeamHeader,
+    TeamGrid,
+    MemberCard,
+    MemberPhoto,
+    MemberContent,
+    MemberName,
+    MemberRole,
+    MemberBio,
+    MemberSocialLinks
+} from '../UI/team-profiles';
+
+const teamMembers = [
+    {
+        id: '1',
+        name: 'Alex Chen',
+        role: 'CEO & Co-Founder',
+        bio: 'Former tech lead with 10+ years of experience.',
+        photo: '/images/alex.jpg',
+        socialLinks: [
+            { platform: 'linkedin', url: 'https://linkedin.com/in/alexchen' },
+            { platform: 'twitter', url: 'https://twitter.com/alexchen' }
+        ]
+    },
+    // ... more members
+];
+
+<TeamProfiles variant="light" cardVariant="default">
+    <TeamHeader
+        title="Our Team"
+        subtitle="Meet the experts behind our success"
+    />
+    <TeamGrid columns={{ mobile: 1, tablet: 2, desktop: 3 }}>
+        {teamMembers.map((member) => (
+            <MemberCard key={member.id} member={member}>
+                <MemberPhoto
+                    src={member.photo}
+                    initials={member.name.split(' ').map(n => n[0]).join('')}
+                />
+                <MemberContent>
+                    <MemberName>{member.name}</MemberName>
+                    <MemberRole>{member.role}</MemberRole>
+                    <MemberBio>{member.bio}</MemberBio>
+                    <MemberSocialLinks links={member.socialLinks} />
+                </MemberContent>
+            </MemberCard>
+        ))}
+    </TeamGrid>
+</TeamProfiles>
+```
+
+### With all features
+
+```tsx
+<TeamProfiles
+    variant="light"
+    cardVariant="elevated"
+    enableModal={true}
+    enableHover={true}
+    animate={true}
+    animationType="stagger"
+>
+    <TeamHeader>
+        <div className="flex items-center gap-2 mb-4">
+            <Users className="w-8 h-8 text-primary" />
+            <Typography variant="h2">Our Leadership Team</Typography>
+        </div>
+        <Typography variant="lead">Experienced professionals driving our vision</Typography>
+    </TeamHeader>
+
+    <TeamGrid columns={{ mobile: 1, tablet: 2, desktop: 3, wide: 4 }}>
+        {teamMembers.map((member) => (
+            <MemberCard key={member.id} member={member}>
+                <MemberPhoto
+                    src={member.photo}
+                    initials={member.name.split(' ').map(n => n[0]).join('')}
+                />
+                <MemberContent>
+                    <MemberName>{member.name}</MemberName>
+                    <MemberRole>{member.role}</MemberRole>
+                    <MemberDepartment>{member.department}</MemberDepartment>
+                    <MemberLocation>{member.location}</MemberLocation>
+                    <MemberBio>{member.bio}</MemberBio>
+                    <MemberExpertise items={member.expertise} />
+                    <MemberAwards items={member.awards} />
+                    <MemberJoinDate>{member.joinDate}</MemberJoinDate>
+                    <MemberSocialLinks links={member.socialLinks} />
+                </MemberContent>
+                <MemberCardOverlay />
+            </MemberCard>
+        ))}
+    </TeamGrid>
+
+    <TeamFooter>
+        <Button variant="primary" size="lg">
+            View All Team Members
+        </Button>
+    </TeamFooter>
+</TeamProfiles>
+```
+
+
+## Accessibility
+The Team Profiles component follows WAI-ARIA guidelines:
+- Each MemberCard has role="article" and appropriate aria-label
+- Social links have aria-label for screen readers
+- The TeamModal has proper ARIA attributes (role="dialog", aria-modal="true", aria-label)
+- Images have alt text support
+- Focus management is handled for modal interactions
+- Color contrast meets WCAG standards in all variants

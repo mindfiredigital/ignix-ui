@@ -12,9 +12,9 @@ import {
     ChevronRight,
     X
 } from 'lucide-react';
-import { cn } from '../../../../../utils/cn';
-import { Typography } from '../../../../components/typography';
-import { Button } from '../../../../components/button';
+import { cn } from '../../../utils/cn';
+import { Typography } from '@ignix-ui/typography';
+import { Button } from '@ignix-ui/button';
 
 /* ============================================
    TYPES & INTERFACES
