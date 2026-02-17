@@ -1185,6 +1185,22 @@
           "type": "template"
         }
       }
+    },
+    "mega-menu-multi-column-dropdown": {
+      "name": "mega-menu-multi-column-dropdown",
+      "description": "A header mega menu section with a multi-column dropdown, category headers, icons/images per link, nested submenus, and an optional CTA button.",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "componentDependencies": [
+        "button"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/sections/mega-menu-multi-column-dropdown/index.tsx",
+          "type": "template"
+        }
+      }
     }
   } 
 }
