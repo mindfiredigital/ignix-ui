@@ -63,7 +63,7 @@ interface TeamContextType {
 
 const TeamContext = React.createContext<TeamContextType | undefined>(undefined);
 
-export const useTeam = () => {
+const useTeam = () => {
     const context = React.useContext(TeamContext);
     if (!context) {
         throw new Error('Team components must be used within TeamProfiles');
@@ -106,7 +106,8 @@ export const MemberCard: React.FC<{
     member: TeamMember;
     children?: React.ReactNode;
     className?: string;
-}> = ({ member, children, className }) => {
+    onClick?: () => void;
+}> = ({ member, children, className, onClick }) => {
     const {
         theme,
         cardVariant,
@@ -163,6 +164,9 @@ export const MemberCard: React.FC<{
     );
 
     const handleClick = () => {
+        if (onClick) {
+            onClick();
+        }
         if (onMemberClick) {
             onMemberClick(member);
         }
@@ -574,11 +578,11 @@ export const TeamGrid: React.FC<{
     return (
         <div className={cn(getColumnsClass(), gridVariants({ gap }), className)}>
             {React.Children.map(children, (child, index) => {
-                if (React.isValidElement(child)) {
+                if (React.isValidElement<Record<string, unknown>>(child)) {
                     return React.cloneElement(child, {
                         ...child.props,
                         // Pass index for animation if needed
-                        'data-index': index
+                        ['data-index']: index
                     });
                 }
                 return child;

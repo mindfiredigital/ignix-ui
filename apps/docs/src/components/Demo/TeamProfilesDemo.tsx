@@ -605,12 +605,12 @@ import { Button } from '../../components/button';
                         selectedVariant={animationType}
                         onSelectVariant={(value) => setAnimationType(value as AnimationType)}
                         type="Animation"
-                        variantLabels={{
-                            'fade': 'Fade',
-                            'slide': 'Slide',
-                            'scale': 'Scale',
-                            'stagger': 'Stagger'
-                        }}
+                    // variantLabels={{
+                    //     'fade': 'Fade',
+                    //     'slide': 'Slide',
+                    //     'scale': 'Scale',
+                    //     'stagger': 'Stagger'
+                    // }}
                     />
                 </div>
 

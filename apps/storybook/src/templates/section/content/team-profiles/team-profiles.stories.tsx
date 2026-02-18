@@ -19,6 +19,7 @@ import {
     TeamFooter,
     type TeamMember,
     TeamModal,
+    SocialIcon,
 } from ".";
 import { Users, Award, MapPin } from "lucide-react";
 import { User, UserCircle, UserRound, UserCircle2, Sparkles } from 'lucide-react';
