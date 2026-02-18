@@ -928,14 +928,10 @@
       "description": "A pricing grid template with responsive design.",
       "dependencies": [
         "framer-motion",
-        "lucide-react",
-        "class-variance-authority"
+        "lucide-react"
       ],
       "componentDependencies": [
-        "button",
-        "switch",
-        "card",
-        "typography"
+        "button"
       ],
       "files": {
         "main": {
@@ -1217,7 +1213,7 @@
       "files": {
         "main": {
           "path": "components/testimonial-card/index.tsx",
-          "type": "template"
+          "type": "component"
         }
       }
     },

@@ -603,9 +603,9 @@ h1 {
   scrollbar-width: thin;
 }
 
-.change-color {
+/* .change-color {
   color: inherit;
-}
+} */
 
 .change-color:hover {
   text-decoration: none;

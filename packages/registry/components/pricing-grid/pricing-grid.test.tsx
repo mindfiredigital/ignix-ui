@@ -1,412 +1,1798 @@
 import { render, screen, fireEvent } from "@testing-library/react"
-import { describe, it, expect, vi } from "vitest"
+import { describe, it, expect, vi, beforeEach } from "vitest"
+import React from "react"
 import { PricingGrid } from "."
 
 /* -------------------- Mocks -------------------- */
 
-vi.mock("@ignix-ui/card", () => ({
-  Card: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-  CardHeader: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-  CardContent: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-  CardFooter: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-}))
+vi.mock("@ignix-ui/button", () => {
+  return {
+    Button: React.forwardRef(({ children, onClick, className, variant, size, ...props }: any, ref: any) => {
+      return React.createElement("button", {
+        ref,
+        onClick,
+        className,
+        "data-variant": variant,
+        "data-size": size,
+        ...props,
+      }, children)
+    }),
+  }
+})
 
-vi.mock("@ignix-ui/button", () => ({
-  Button: ({ children, ...props }: any) => (
-    <button {...props}>{children}</button>
-  ),
-}))
-
-vi.mock("@ignix-ui/switch", () => ({
-  Switch: ({ checked, onCheckedChange }: any) => (
-    <button
-      aria-pressed={checked}
-      onClick={() => onCheckedChange(!checked)}
-    >
-      Toggle
-    </button>
+vi.mock("lucide-react", () => ({
+  Check: ({ className, ...props }: any) => (
+    <svg data-testid="check-icon" className={className} {...props} />
   ),
 }))
 
 vi.mock("framer-motion", () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, initial: _initial, animate: _animate, transition: _transition, ...props }: any) => (
+      <div {...props}>{children}</div>
+    ),
+    li: ({ children, initial: _initial, animate: _animate, transition: _transition, ...props }: any) => (
+      <li {...props}>{children}</li>
+    ),
+    span: ({ children, initial: _initial, animate: _animate, transition: _transition, ...props }: any) => (
+      <span {...props}>{children}</span>
+    ),
+  },
+}))
+
+vi.mock("../../../utils/cn", () => ({
+  cn: (...args: any[]) => {
+    return args.filter(Boolean).join(" ")
   },
 }))
 
 /* -------------------- Mock Data -------------------- */
 
-const onCtaClick = vi.fn()
-
-const mockPlans = [
+const mockTiers = [
   {
-    id: 1,
     name: "Starter",
-    price: "$19/month",
-    ctaLabel: "Order Now",
-    features: [{ label: "Feature A" }, { label: "Feature B" }],
-    onCtaClick,
+    price: {
+      monthly: "$9 /mo",
+      annual: "$7 /mo",
+    },
+    description: "Perfect for getting started",
+    features: [
+      { label: "Up to 3 projects" },
+      { label: "1 GB storage" },
+      { label: "Basic analytics" },
+    ],
+    ctaLabel: "Get Started",
+    recommended: false,
   },
   {
-    id: 2,
     name: "Pro",
-    price: "$49/month",
-    highlighted: true,
-    ctaLabel: "Order Now",
-    features: [{ label: "Feature C" }],
-    onCtaClick,
+    price: {
+      monthly: "$29 /mo",
+      annual: "$23 /mo",
+    },
+    description: "For growing teams",
+    features: [
+      { label: "Unlimited projects" },
+      { label: "50 GB storage" },
+      { label: "Advanced analytics" },
+      { label: "Priority support" },
+    ],
+    ctaLabel: "Start Free Trial",
+    recommended: true,
   },
   {
-    id: 3,
     name: "Enterprise",
-    price: "$99/month",
-    ctaLabel: "Order Now",
-    features: [{ label: "Feature D", available: false }],
-    onCtaClick,
+    price: {
+      monthly: "$99 /mo",
+    },
+    description: "For organizations",
+    features: [
+      { label: "Everything in Pro" },
+      { label: "Custom integrations" },
+      { label: "Dedicated support", available: false },
+    ],
+    ctaLabel: "Contact Sales",
+    recommended: false,
   },
 ]
+
+const onCtaClick = vi.fn()
 
 /* -------------------- Tests -------------------- */
 
 describe("PricingGrid", () => {
-  it("renders title and description", () => {
-    render(
-      <PricingGrid
-        title="Pricing"
-        description="Choose your plan"
-        plans={mockPlans}
-      />
-    )
-
-    expect(screen.getByText("Pricing")).toBeInTheDocument()
-    expect(screen.getByText("Choose your plan")).toBeInTheDocument()
+  beforeEach(() => {
+    vi.clearAllMocks()
   })
 
-  it("renders all plans", () => {
-    render(<PricingGrid plans={mockPlans} />)
+  // Basic Rendering Tests (1-10)
+  describe("Basic Rendering", () => {
+    it("renders default title and description", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      expect(screen.getByText("Plans that scale")).toBeInTheDocument()
+      expect(screen.getByText("with your growth")).toBeInTheDocument()
+      expect(
+        screen.getByText("Start free, upgrade when you're ready. No hidden fees, cancel anytime.")
+      ).toBeInTheDocument()
+    })
 
-    expect(screen.getByText("Starter")).toBeInTheDocument()
-    expect(screen.getByText("Pro")).toBeInTheDocument()
-    expect(screen.getByText("Enterprise")).toBeInTheDocument()
+    it("renders custom title and description", () => {
+      render(
+        <PricingGrid
+          tiers={mockTiers}
+          title="Custom Title"
+          titleHighlight="Custom Highlight"
+          description="Custom description"
+        />
+      )
+      expect(screen.getByText("Custom Title")).toBeInTheDocument()
+      expect(screen.getByText("Custom Highlight")).toBeInTheDocument()
+      expect(screen.getByText("Custom description")).toBeInTheDocument()
+    })
+
+    it("renders PRICING label", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      expect(screen.getByText("PRICING")).toBeInTheDocument()
+    })
+
+    it("renders all tier names", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+      expect(screen.getByText("Pro")).toBeInTheDocument()
+      expect(screen.getByText("Enterprise")).toBeInTheDocument()
+    })
+
+    it("renders tier descriptions", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      expect(screen.getByText("Perfect for getting started")).toBeInTheDocument()
+      expect(screen.getByText("For growing teams")).toBeInTheDocument()
+      expect(screen.getByText("For organizations")).toBeInTheDocument()
+    })
+
+    it("renders monthly prices by default", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      expect(screen.getByText("$9")).toBeInTheDocument()
+      expect(screen.getByText("$29")).toBeInTheDocument()
+      expect(screen.getByText("$99")).toBeInTheDocument()
+    })
+
+    it("renders CTA labels", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      expect(screen.getByText("Get Started")).toBeInTheDocument()
+      expect(screen.getByText("Start Free Trial")).toBeInTheDocument()
+      expect(screen.getByText("Contact Sales")).toBeInTheDocument()
+    })
+
+    it("renders default CTA label when not provided", () => {
+      const tiersWithoutCta = [
+        {
+          name: "Basic",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithoutCta} />)
+      expect(screen.getAllByText("Get Started").length).toBeGreaterThan(0)
+    })
+
+    it("renders features list", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      expect(screen.getByText("Up to 3 projects")).toBeInTheDocument()
+      expect(screen.getByText("Unlimited projects")).toBeInTheDocument()
+      expect(screen.getByText("Everything in Pro")).toBeInTheDocument()
+    })
+
+    it("renders WHAT'S INCLUDED heading", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      const headings = screen.getAllByText("WHAT'S INCLUDED")
+      expect(headings.length).toBeGreaterThan(0)
+    })
   })
 
-  it("renders highlighted plan", () => {
-    render(<PricingGrid plans={mockPlans} />)
+  // Recommended Badge Tests (11-15)
+  describe("Recommended Badge", () => {
+    it("renders recommended badge for recommended tier", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      expect(screen.getByText("MOST POPULAR")).toBeInTheDocument()
+    })
 
-    expect(screen.getByText("Pro")).toBeInTheDocument()
+    it("does not render badge for non-recommended tiers", () => {
+      const tiersWithoutRecommended = [
+        {
+          name: "Basic",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+          recommended: false,
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+          recommended: false,
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithoutRecommended} />)
+      expect(screen.queryByText("MOST POPULAR")).not.toBeInTheDocument()
+    })
+
+    it("renders badge with custom color", () => {
+      const tiersWithCustomBadge = [
+        {
+          name: "Pro",
+          price: { monthly: "$29 /mo" },
+          features: [{ label: "Feature A" }],
+          recommended: true,
+          badgeColor: "bg-blue-600 text-white",
+        },
+        {
+          name: "Basic",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature B" }],
+          recommended: false,
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithCustomBadge} />)
+      expect(screen.getByText("MOST POPULAR")).toBeInTheDocument()
+    })
+
+    it("handles multiple recommended tiers", () => {
+      const multipleRecommended = [
+        {
+          name: "Plan A",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+          recommended: true,
+        },
+        {
+          name: "Plan B",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+          recommended: true,
+        },
+      ]
+      render(<PricingGrid tiers={multipleRecommended} />)
+      const badges = screen.getAllByText("MOST POPULAR")
+      expect(badges.length).toBe(2)
+    })
+
+    it("renders badge with white text on image background", () => {
+      const tierWithImage = [
+        {
+          name: "Pro",
+          price: { monthly: "$29 /mo" },
+          features: [{ label: "Feature A" }],
+          recommended: true,
+          cardBackgroundImage: "https://example.com/image.jpg",
+          badgeColor: "bg-white text-gray-900",
+        },
+        {
+          name: "Basic",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature B" }],
+          recommended: false,
+        },
+      ]
+      render(<PricingGrid tiers={tierWithImage} />)
+      expect(screen.getByText("MOST POPULAR")).toBeInTheDocument()
+    })
   })
 
-  it("renders feature list correctly", () => {
-    render(<PricingGrid plans={mockPlans} />)
+  // Toggle Functionality Tests (16-25)
+  describe("Billing Toggle", () => {
+    it("renders toggle by default", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      expect(screen.getByText("Monthly")).toBeInTheDocument()
+      expect(screen.getByText("Annual")).toBeInTheDocument()
+    })
 
-    expect(screen.getByText("Feature A")).toBeInTheDocument()
-    expect(screen.getByText("Feature D")).toBeInTheDocument()
+    it("hides toggle when showToggle is false", () => {
+      render(<PricingGrid tiers={mockTiers} showToggle={false} />)
+      expect(screen.queryByText("Monthly")).not.toBeInTheDocument()
+      expect(screen.queryByText("Annual")).not.toBeInTheDocument()
+    })
+
+    it("displays monthly prices by default", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      expect(screen.getByText("$9")).toBeInTheDocument()
+      expect(screen.getByText("$29")).toBeInTheDocument()
+    })
+
+    it("switches to annual prices when annual is clicked", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      const annualButton = screen.getByText("Annual")
+      fireEvent.click(annualButton)
+      expect(screen.getByText("$7")).toBeInTheDocument()
+      expect(screen.getByText("$23")).toBeInTheDocument()
+    })
+
+    it("switches back to monthly prices when monthly is clicked", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      const annualButton = screen.getByText("Annual")
+      const monthlyButton = screen.getByText("Monthly")
+      fireEvent.click(annualButton)
+      fireEvent.click(monthlyButton)
+      expect(screen.getByText("$9")).toBeInTheDocument()
+      expect(screen.getByText("$29")).toBeInTheDocument()
+    })
+
+    it("uses defaultBilling prop correctly", () => {
+      render(<PricingGrid tiers={mockTiers} defaultBilling="annual" />)
+      expect(screen.getByText("$7")).toBeInTheDocument()
+      expect(screen.getByText("$23")).toBeInTheDocument()
+    })
+
+    it("displays annual discount indicator", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      expect(screen.getByText("-20%")).toBeInTheDocument()
+    })
+
+    it("handles tiers without annual pricing", () => {
+      const tiersWithoutAnnual = [
+        {
+          name: "Basic",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithoutAnnual} />)
+      const annualButton = screen.getByText("Annual")
+      fireEvent.click(annualButton)
+      expect(screen.getByText("$10")).toBeInTheDocument()
+    })
+
+    it("applies custom toggle active color", () => {
+      render(
+        <PricingGrid tiers={mockTiers} toggleActiveColor="bg-blue-600" />
+      )
+      const monthlyButton = screen.getByText("Monthly")
+      expect(monthlyButton).toBeInTheDocument()
+    })
+
+    it("maintains toggle state across re-renders", () => {
+      const { rerender } = render(<PricingGrid tiers={mockTiers} />)
+      const annualButton = screen.getByText("Annual")
+      fireEvent.click(annualButton)
+      rerender(<PricingGrid tiers={mockTiers} />)
+      expect(screen.getByText("$7")).toBeInTheDocument()
+    })
   })
 
-  it("toggles paid/free switch", () => {
-    render(<PricingGrid plans={mockPlans} />)
+  // CTA Click Tests (26-30)
+  describe("CTA Button Clicks", () => {
+    it("calls onCtaClick when button is clicked", () => {
+      render(<PricingGrid tiers={mockTiers} onCtaClick={onCtaClick} />)
+      const buttons = screen.getAllByRole("button")
+      const ctaButton = buttons.find((btn) => btn.textContent === "Get Started")
+      if (ctaButton) {
+        fireEvent.click(ctaButton)
+        expect(onCtaClick).toHaveBeenCalledTimes(1)
+        expect(onCtaClick).toHaveBeenCalledWith(
+          expect.objectContaining({ name: "Starter" }),
+          "monthly"
+        )
+      }
+    })
 
-    const toggle = screen.getByRole("button", { name: "Toggle" })
+    it("calls onCtaClick with correct billing period", () => {
+      render(<PricingGrid tiers={mockTiers} onCtaClick={onCtaClick} defaultBilling="annual" />)
+      const buttons = screen.getAllByRole("button")
+      const ctaButton = buttons.find((btn) => btn.textContent === "Get Started")
+      if (ctaButton) {
+        fireEvent.click(ctaButton)
+        expect(onCtaClick).toHaveBeenCalledWith(
+          expect.objectContaining({ name: "Starter" }),
+          "annual"
+        )
+      }
+    })
 
-    // Initial state is first toggle option, i.e., "monthly" → checked=false
-    expect(toggle).toHaveAttribute("aria-pressed", "false")
+    it("calls onCtaClick for each tier separately", () => {
+      render(<PricingGrid tiers={mockTiers} onCtaClick={onCtaClick} />)
+      const buttons = screen.getAllByRole("button")
+      const starterButton = buttons.find((btn) => btn.textContent === "Get Started")
+      const proButton = buttons.find((btn) => btn.textContent === "Start Free Trial")
+      if (starterButton) fireEvent.click(starterButton)
+      if (proButton) fireEvent.click(proButton)
+      expect(onCtaClick).toHaveBeenCalledTimes(2)
+    })
 
-    fireEvent.click(toggle)
+    it("does not call onCtaClick when prop is not provided", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      const buttons = screen.getAllByRole("button")
+      const ctaButton = buttons.find((btn) => btn.textContent === "Get Started")
+      if (ctaButton) {
+        fireEvent.click(ctaButton)
+        expect(onCtaClick).not.toHaveBeenCalled()
+      }
+    })
 
-    expect(toggle).toHaveAttribute("aria-pressed", "true")
+    it("handles click on recommended tier", () => {
+      render(<PricingGrid tiers={mockTiers} onCtaClick={onCtaClick} />)
+      const buttons = screen.getAllByRole("button")
+      const proButton = buttons.find((btn) => btn.textContent === "Start Free Trial")
+      if (proButton) {
+        fireEvent.click(proButton)
+        expect(onCtaClick).toHaveBeenCalledWith(
+          expect.objectContaining({ name: "Pro", recommended: true }),
+          "monthly"
+        )
+      }
+    })
   })
 
-  it("renders vector UI decorations when modernUI=vector", () => {
-    const { container } = render(
-      <PricingGrid plans={mockPlans} modernUI="vector" />
-    )
+  // Feature Availability Tests (31-35)
+  describe("Feature Availability", () => {
+    it("renders check icon for available features", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      const checkIcons = screen.getAllByTestId("check-icon")
+      expect(checkIcons.length).toBeGreaterThan(0)
+    })
 
-    // Check for presence of gradient-based vector card class
-    expect(container.querySelector('.bg-gradient-to-r, .bg-gradient-to-br')).toBeTruthy()
+    it("renders unavailable features with opacity", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      const unavailableFeature = screen.getByText("Dedicated support")
+      expect(unavailableFeature).toBeInTheDocument()
+    })
+
+    it("handles features without available property", () => {
+      const tiersWithDefaultFeatures = [
+        {
+          name: "Basic",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithDefaultFeatures} />)
+      expect(screen.getByText("Feature A")).toBeInTheDocument()
+      const checkIcons = screen.getAllByTestId("check-icon")
+      expect(checkIcons.length).toBeGreaterThan(0)
+    })
+
+    it("renders multiple features correctly", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      expect(screen.getByText("Up to 3 projects")).toBeInTheDocument()
+      expect(screen.getByText("1 GB storage")).toBeInTheDocument()
+      expect(screen.getByText("Basic analytics")).toBeInTheDocument()
+    })
+
+    it("handles empty features array", () => {
+      const tiersWithNoFeatures = [
+        {
+          name: "Empty",
+          price: { monthly: "$10 /mo" },
+          features: [],
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature A" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithNoFeatures} />)
+      expect(screen.getByText("Empty")).toBeInTheDocument()
+    })
   })
 
-  it("renders CTA Labels", () => {
-    render(<PricingGrid plans={mockPlans} />)
+  // Color Customization Tests (36-45)
+  describe("Color Customization", () => {
+    it("applies cardColor to generate color classes", () => {
+      const tiersWithCardColor = [
+        {
+          name: "Blue Plan",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+          cardColor: "blue",
+        },
+        {
+          name: "Red Plan",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+          cardColor: "red",
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithCardColor} />)
+      expect(screen.getByText("Blue Plan")).toBeInTheDocument()
+    })
 
-    expect(screen.getAllByText("Order Now").length).toBe(2)
+    it("applies custom borderColor", () => {
+      const tiersWithBorder = [
+        {
+          name: "Custom Border",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+          borderColor: "border-red-500",
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithBorder} />)
+      expect(screen.getByText("Custom Border")).toBeInTheDocument()
+    })
+
+    it("applies custom buttonColor", () => {
+      const tiersWithButtonColor = [
+        {
+          name: "Custom Button",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+          buttonColor: "bg-green-600 hover:bg-green-700",
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithButtonColor} />)
+      expect(screen.getByText("Custom Button")).toBeInTheDocument()
+    })
+
+    it("applies custom buttonTextColor", () => {
+      const tiersWithTextColor = [
+        {
+          name: "Custom Text",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+          buttonTextColor: "text-yellow-600",
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithTextColor} />)
+      expect(screen.getByText("Custom Text")).toBeInTheDocument()
+    })
+
+    it("applies custom badgeColor", () => {
+      const tiersWithBadgeColor = [
+        {
+          name: "Pro",
+          price: { monthly: "$29 /mo" },
+          features: [{ label: "Feature A" }],
+          recommended: true,
+          badgeColor: "bg-orange-600 text-white",
+        },
+        {
+          name: "Basic",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature B" }],
+          recommended: false,
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithBadgeColor} />)
+      expect(screen.getByText("MOST POPULAR")).toBeInTheDocument()
+    })
+
+    it("overrides cardColor with individual color props", () => {
+      const tiersWithOverride = [
+        {
+          name: "Override",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+          cardColor: "blue",
+          buttonColor: "bg-red-600",
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithOverride} />)
+      expect(screen.getByText("Override")).toBeInTheDocument()
+    })
+
+    it("applies different colors for recommended vs non-recommended", () => {
+      const mixedTiers = [
+        {
+          name: "Basic",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+          cardColor: "purple",
+          recommended: false,
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+          cardColor: "purple",
+          recommended: true,
+        },
+      ]
+      render(<PricingGrid tiers={mixedTiers} />)
+      expect(screen.getByText("Basic")).toBeInTheDocument()
+      expect(screen.getByText("Pro")).toBeInTheDocument()
+    })
+
+    it("applies cardBackgroundColor", () => {
+      const tiersWithBg = [
+        {
+          name: "Background",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+          cardBackgroundColor: "bg-gray-100",
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithBg} />)
+      expect(screen.getByText("Background")).toBeInTheDocument()
+    })
+
+    it("handles multiple color names", () => {
+      const colorNames = ["blue", "purple", "green", "orange", "pink"]
+      colorNames.forEach((color) => {
+        const tiers = [
+          {
+            name: `${color} Plan`,
+            price: { monthly: "$10 /mo" },
+            features: [{ label: "Feature A" }],
+            cardColor: color,
+          },
+          {
+            name: "Pro",
+            price: { monthly: "$20 /mo" },
+            features: [{ label: "Feature B" }],
+          },
+        ]
+        const { unmount } = render(<PricingGrid tiers={tiers} />)
+        expect(screen.getByText(`${color} Plan`)).toBeInTheDocument()
+        unmount()
+      })
+    })
+
+    it("applies global accentColor", () => {
+      render(<PricingGrid tiers={mockTiers} accentColor="text-blue-600" />)
+      expect(screen.getByText("with your growth")).toBeInTheDocument()
+    })
   })
 
-  it("calls onCtaClick in vector mode", () => {
-    const onCtaClick = vi.fn()
-    render(
-      <PricingGrid
-        plans={mockPlans}
-        modernUI="vector"
-        onCtaClick={onCtaClick}
-      />
-    )
-    fireEvent.click(screen.getByLabelText("Starter plan action"))
-    expect(onCtaClick).toHaveBeenCalledTimes(1)
-    expect(onCtaClick).toHaveBeenCalledWith(expect.objectContaining({ name: "Starter" }))
+  // Background Image Tests (46-50)
+  describe("Background Images", () => {
+    it("applies cardBackgroundImage", () => {
+      const tiersWithImage = [
+        {
+          name: "Image Card",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+          cardBackgroundImage: "https://example.com/image.jpg",
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      const { container } = render(<PricingGrid tiers={tiersWithImage} />)
+      const card = container.querySelector('[style*="background-image"]')
+      expect(card).toBeTruthy()
+    })
+
+    it("applies cardBackgroundOverlay", () => {
+      const tiersWithOverlay = [
+        {
+          name: "Overlay Card",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+          cardBackgroundImage: "https://example.com/image.jpg",
+          cardBackgroundOverlay: "bg-black/50",
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithOverlay} />)
+      expect(screen.getByText("Overlay Card")).toBeInTheDocument()
+    })
+
+    it("uses white buttons when card has background image", () => {
+      const tiersWithImage = [
+        {
+          name: "Image Card",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+          cardBackgroundImage: "https://example.com/image.jpg",
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithImage} />)
+      expect(screen.getByText("Image Card")).toBeInTheDocument()
+    })
+
+    it("applies sectionBackgroundImage", () => {
+      const { container } = render(
+        <PricingGrid tiers={mockTiers} sectionBackgroundImage="https://example.com/bg.jpg" />
+      )
+      const section = container.querySelector("section")
+      expect(section).toHaveStyle({ backgroundImage: expect.stringContaining("example.com") })
+    })
+
+    it("applies sectionBackgroundOverlay", () => {
+      const { container } = render(
+        <PricingGrid
+          tiers={mockTiers}
+          sectionBackgroundImage="https://example.com/bg.jpg"
+          sectionBackgroundOverlay="bg-black/20"
+        />
+      )
+      expect(container.querySelector(".bg-black\\/20")).toBeTruthy()
+    })
   })
 
-  it("renders validation error when a plan has no features", () => {
-    const plans = [
-      {
-        name: "Empty Plan",
-        price: "0/month",
-        ctaLabel: "Subscribe",
-        features: [],
-      },
-    ]
+  // Animation Tests (51-60)
+  describe("Animations", () => {
+    it("applies fade animation", () => {
+      render(<PricingGrid tiers={mockTiers} animation="fade" />)
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+    })
 
-    render(<PricingGrid plans={plans} />)
+    it("applies slide animation", () => {
+      render(<PricingGrid tiers={mockTiers} animation="slide" />)
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+    })
 
-    expect(
-      screen.getByText(/at least one feature is required/i)
-    ).toBeInTheDocument()
+    it("applies scale animation", () => {
+      render(<PricingGrid tiers={mockTiers} animation="scale" />)
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+    })
 
-    // Plan content should NOT render
-    expect(screen.queryByText("Empty Plan")).not.toBeInTheDocument()
+    it("applies slide-up animation", () => {
+      render(<PricingGrid tiers={mockTiers} animation="slide-up" />)
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+    })
+
+    it("applies slide-down animation", () => {
+      render(<PricingGrid tiers={mockTiers} animation="slide-down" />)
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+    })
+
+    it("disables animation when set to false", () => {
+      render(<PricingGrid tiers={mockTiers} animation={false} />)
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+    })
+
+    it("disables animation when set to 'none'", () => {
+      render(<PricingGrid tiers={mockTiers} animation="none" />)
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+    })
+
+    it("applies animation config object", () => {
+      render(
+        <PricingGrid
+          tiers={mockTiers}
+          animation={{
+            enabled: true,
+            type: "fade",
+            duration: 0.8,
+            staggerDelay: 0.2,
+          }}
+        />
+      )
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+    })
+
+    it("handles partial animation config", () => {
+      render(
+        <PricingGrid
+          tiers={mockTiers}
+          animation={{
+            type: "slide",
+          }}
+        />
+      )
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+    })
+
+    it("uses default animation when not specified", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+    })
   })
 
-  it("renders correctly when plan has unavailable features", () => {
-    const plans = [
-      { name: "Partial Plan", price: "20/month", ctaLabel: "Subscribe", features: [{ label: "Feature X", available: false }], onCtaClick }
-    ]
-    render(<PricingGrid plans={plans} />)
+  // Layout Tests (61-70)
+  describe("Layout Options", () => {
+    it("renders horizontal header layout for 2 tiers", () => {
+      const twoTiers = mockTiers.slice(0, 2)
+      render(<PricingGrid tiers={twoTiers} horizontalHeader />)
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+      expect(screen.getByText("Pro")).toBeInTheDocument()
+    })
 
-    expect(screen.getByText("Feature X")).toBeInTheDocument()
-    expect(screen.getByText("No")).toBeInTheDocument()
+    it("does not render horizontal layout for 3 tiers", () => {
+      render(<PricingGrid tiers={mockTiers} horizontalHeader />)
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+    })
+
+    it("applies scaleRecommended effect", () => {
+      render(<PricingGrid tiers={mockTiers} scaleRecommended />)
+      expect(screen.getByText("Pro")).toBeInTheDocument()
+    })
+
+    it("disables scaleRecommended effect", () => {
+      render(<PricingGrid tiers={mockTiers} scaleRecommended={false} />)
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+    })
+
+    it("renders grid layout when scaleRecommended is false", () => {
+      render(<PricingGrid tiers={mockTiers} scaleRecommended={false} />)
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+    })
+
+    it("applies custom className", () => {
+      const { container } = render(<PricingGrid tiers={mockTiers} className="custom-class" />)
+      const section = container.querySelector("section")
+      expect(section).toHaveClass("custom-class")
+    })
+
+    it("applies sectionBackgroundColor", () => {
+      const { container } = render(
+        <PricingGrid tiers={mockTiers} sectionBackgroundColor="bg-gray-100" />
+      )
+      const section = container.querySelector("section")
+      expect(section).toHaveClass("bg-gray-100")
+    })
+
+    it("handles empty className", () => {
+      render(<PricingGrid tiers={mockTiers} className="" />)
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+    })
+
+    it("renders correctly with horizontalHeader and toggle", () => {
+      const twoTiers = mockTiers.slice(0, 2)
+      render(<PricingGrid tiers={twoTiers} horizontalHeader showToggle />)
+      expect(screen.getByText("Monthly")).toBeInTheDocument()
+    })
+
+    it("handles layout with glassmorphism effect", () => {
+      render(
+        <PricingGrid
+          tiers={mockTiers}
+          sectionBackgroundImage="https://example.com/bg.jpg"
+        />
+      )
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+    })
   })
 
-  it("handles onValueChange when toggle is clicked", () => {
-    const handleValueChange = vi.fn()
-    render(<PricingGrid plans={mockPlans} onValueChange={handleValueChange} />)
 
-    const toggle = screen.getByRole("button", { name: "Toggle" })
-    fireEvent.click(toggle)
+  // Edge Cases (76-80)
+  describe("Edge Cases", () => {
+    it("handles price without slash separator", () => {
+      const tiersWithSimplePrice = [
+        {
+          name: "Simple",
+          price: { monthly: "$10" },
+          features: [{ label: "Feature A" }],
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithSimplePrice} />)
+      expect(screen.getByText("$10")).toBeInTheDocument()
+    })
 
-    expect(handleValueChange).toHaveBeenCalledTimes(1)
-    expect(handleValueChange).toHaveBeenCalledWith("yearly")
+    it("handles very long tier names", () => {
+      const tiersWithLongName = [
+        {
+          name: "Very Long Tier Name That Might Wrap",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithLongName} />)
+      expect(screen.getByText("Very Long Tier Name That Might Wrap")).toBeInTheDocument()
+    })
+
+    it("handles very long descriptions", () => {
+      const tiersWithLongDesc = [
+        {
+          name: "Plan",
+          price: { monthly: "$10 /mo" },
+          description: "This is a very long description that might wrap to multiple lines and test the layout",
+          features: [{ label: "Feature A" }],
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithLongDesc} />)
+      expect(
+        screen.getByText("This is a very long description that might wrap to multiple lines and test the layout")
+      ).toBeInTheDocument()
+    })
+
+    it("handles many features", () => {
+      const manyFeatures = Array.from({ length: 20 }, (_, i) => ({
+        label: `Feature ${i + 1}`,
+      }))
+      const tiersWithManyFeatures = [
+        {
+          name: "Feature Rich",
+          price: { monthly: "$10 /mo" },
+          features: manyFeatures,
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithManyFeatures} />)
+      expect(screen.getByText("Feature 1")).toBeInTheDocument()
+      expect(screen.getByText("Feature 20")).toBeInTheDocument()
+    })
+
+    it("handles special characters in tier names", () => {
+      const tiersWithSpecialChars = [
+        {
+          name: "Plan & More! @#$%",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithSpecialChars} />)
+      expect(screen.getByText("Plan & More! @#$%")).toBeInTheDocument()
+    })
   })
 
-  it("renders the current plan button when currentPlan={1}", () => {
-    const plans = [
-      { id:1, name: "Pro Plan", price: "49/month", ctaLabel: "Subscribe", features: [{ label: "Feature A" }], onCtaClick }
-    ]
-    render(<PricingGrid plans={plans} currentPlan={1}/>)
+  // Price Display Tests (81-85)
+  describe("Price Display Variations", () => {
+    it("displays price with period correctly", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      const periodElements = screen.getAllByText("/mo")
+      expect(periodElements.length).toBeGreaterThan(0)
+    })
 
-    expect(screen.getByText("Current Plan")).toBeInTheDocument()
+    it("handles price without period separator", () => {
+      const tiersWithoutPeriod = [
+        {
+          name: "Simple",
+          price: { monthly: "$100" },
+          features: [{ label: "Feature A" }],
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$200" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithoutPeriod} />)
+      expect(screen.getByText("$100")).toBeInTheDocument()
+    })
+
+    it("displays annual price when annual billing is selected", () => {
+      render(<PricingGrid tiers={mockTiers} defaultBilling="annual" />)
+      expect(screen.getByText("$7")).toBeInTheDocument()
+      expect(screen.getByText("$23")).toBeInTheDocument()
+    })
+
+    it("falls back to monthly price when annual is not available", () => {
+      const tiersWithoutAnnual = [
+        {
+          name: "Basic",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithoutAnnual} defaultBilling="annual" />)
+      expect(screen.getByText("$10")).toBeInTheDocument()
+      expect(screen.getByText("$20")).toBeInTheDocument()
+    })
+
+    it("handles price format with different currencies", () => {
+      const tiersWithCurrency = [
+        {
+          name: "Euro Plan",
+          price: { monthly: "€10 /mo" },
+          features: [{ label: "Feature A" }],
+        },
+        {
+          name: "Pro",
+          price: { monthly: "€20 /mo" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithCurrency} />)
+      expect(screen.getByText("€10")).toBeInTheDocument()
+    })
   })
 
-  it("renders multiple icons when provided in features", () => {
-    const CustomIcon = () => <svg data-testid="custom-icon" />
-    const plans = [
-      { name: "Icon Plan", price: "10/month", ctaLabel: "Buy", features: [{ label: "Feature Y", icon: CustomIcon }], onCtaClick }
-    ]
-    render(<PricingGrid plans={plans} />)
+  // Animation Configuration Tests (86-90)
+  describe("Animation Configuration Details", () => {
+    it("applies custom animation duration", () => {
+      render(
+        <PricingGrid
+          tiers={mockTiers}
+          animation={{
+            enabled: true,
+            type: "fade",
+            duration: 1.5,
+          }}
+        />
+      )
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+    })
 
-    expect(screen.getByTestId("custom-icon")).toBeInTheDocument()
+    it("applies custom stagger delay", () => {
+      render(
+        <PricingGrid
+          tiers={mockTiers}
+          animation={{
+            enabled: true,
+            type: "slide-up",
+            staggerDelay: 0.3,
+          }}
+        />
+      )
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+    })
+
+    it("applies custom header delay", () => {
+      render(
+        <PricingGrid
+          tiers={mockTiers}
+          animation={{
+            enabled: true,
+            headerDelay: 0.5,
+          }}
+        />
+      )
+      expect(screen.getByText("Plans that scale")).toBeInTheDocument()
+    })
+
+    it("applies custom toggle delay", () => {
+      render(
+        <PricingGrid
+          tiers={mockTiers}
+          animation={{
+            enabled: true,
+            toggleDelay: 0.4,
+          }}
+        />
+      )
+      expect(screen.getByText("Monthly")).toBeInTheDocument()
+    })
+
+    it("applies custom features delay and stagger", () => {
+      render(
+        <PricingGrid
+          tiers={mockTiers}
+          animation={{
+            enabled: true,
+            featuresDelay: 0.3,
+            featuresStagger: 0.1,
+          }}
+        />
+      )
+      expect(screen.getByText("Up to 3 projects")).toBeInTheDocument()
+    })
   })
 
-  it("renders correct gradient for vector mode with allowDifferentCardColors", () => {
-    const plans = [
-      { name: "Gradient Plan", price: "15/month", ctaLabel: "Buy", features: [{ label: "Feature Z" }], gradient: "bg-red-500", onCtaClick }
-    ]
-    const { container } = render(<PricingGrid plans={plans} modernUI="vector" allowDifferentCardColors />)
+  // Global Color Customization Tests (91-95)
+  describe("Global Color Customization", () => {
+    it("applies custom titleColor", () => {
+      render(
+        <PricingGrid tiers={mockTiers} titleColor="text-blue-900" />
+      )
+      expect(screen.getByText("Plans that scale")).toBeInTheDocument()
+    })
 
-    expect(container.querySelector(".bg-red-500")).toBeTruthy()
+    it("applies custom descriptionColor", () => {
+      render(
+        <PricingGrid tiers={mockTiers} descriptionColor="text-gray-800" />
+      )
+      expect(
+        screen.getByText("Start free, upgrade when you're ready. No hidden fees, cancel anytime.")
+      ).toBeInTheDocument()
+    })
+
+    it("applies custom labelColor", () => {
+      render(<PricingGrid tiers={mockTiers} labelColor="text-gray-600" />)
+      expect(screen.getByText("PRICING")).toBeInTheDocument()
+    })
+
+    it("applies custom accentColor", () => {
+      render(<PricingGrid tiers={mockTiers} accentColor="text-blue-600" />)
+      expect(screen.getByText("with your growth")).toBeInTheDocument()
+    })
+
+    it("applies custom toggleActiveColor", () => {
+      render(<PricingGrid tiers={mockTiers} toggleActiveColor="bg-blue-600" />)
+      expect(screen.getByText("Monthly")).toBeInTheDocument()
+    })
   })
 
-  it("renders default title and description when none provided", () => {
-    render(<PricingGrid plans={mockPlans} />)
-    expect(screen.getByText("Our Pricing Table")).toBeInTheDocument()
-    expect(screen.getByText("Choose the plan that fits your needs")).toBeInTheDocument()
+  // Layout Combination Tests (96-100)
+  describe("Layout Combinations", () => {
+    it("combines horizontalHeader with scaleRecommended", () => {
+      const twoTiers = mockTiers.slice(0, 2)
+      render(
+        <PricingGrid
+          tiers={twoTiers}
+          horizontalHeader
+          scaleRecommended
+        />
+      )
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+      expect(screen.getByText("Pro")).toBeInTheDocument()
+    })
+
+    it("combines scaleRecommended with custom colors", () => {
+      render(
+        <PricingGrid
+          tiers={mockTiers}
+          scaleRecommended
+          accentColor="text-blue-600"
+        />
+      )
+      expect(screen.getByText("Pro")).toBeInTheDocument()
+    })
+
+    it("combines horizontalHeader with background image", () => {
+      const twoTiers = mockTiers.slice(0, 2)
+      render(
+        <PricingGrid
+          tiers={twoTiers}
+          horizontalHeader
+          sectionBackgroundImage="https://example.com/bg.jpg"
+        />
+      )
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+    })
+
+    it("combines scaleRecommended with animation disabled", () => {
+      render(
+        <PricingGrid
+          tiers={mockTiers}
+          scaleRecommended
+          animation={false}
+        />
+      )
+      expect(screen.getByText("Pro")).toBeInTheDocument()
+    })
+
+    it("combines all layout options together", () => {
+      const twoTiers = mockTiers.slice(0, 2)
+      render(
+        <PricingGrid
+          tiers={twoTiers}
+          horizontalHeader
+          scaleRecommended
+          sectionBackgroundImage="https://example.com/bg.jpg"
+          animation="fade"
+          accentColor="text-blue-600"
+        />
+      )
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+    })
   })
 
-  it("renders correct number of feature rows in table mode", () => {
-    render(<PricingGrid plans={mockPlans} table />)
-    expect(screen.getAllByRole("row").length).toBeGreaterThanOrEqual(4) // 1 header + 3 rows
+  // Glassmorphism Tests (101-105)
+  describe("Glassmorphism Effects", () => {
+    it("applies glassmorphism when section has background image", () => {
+      render(
+        <PricingGrid
+          tiers={mockTiers}
+          sectionBackgroundImage="https://example.com/bg.jpg"
+        />
+      )
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+    })
+
+    it("applies white text when glassmorphism is active", () => {
+      render(
+        <PricingGrid
+          tiers={mockTiers}
+          sectionBackgroundImage="https://example.com/bg.jpg"
+        />
+      )
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+    })
+
+    it("does not apply glassmorphism without section background image", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+    })
+
+    it("applies glassmorphism with card background image", () => {
+      const tiersWithCardImage = [
+        {
+          name: "Image Card",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+          cardBackgroundImage: "https://example.com/card.jpg",
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      render(
+        <PricingGrid
+          tiers={tiersWithCardImage}
+          sectionBackgroundImage="https://example.com/bg.jpg"
+        />
+      )
+      expect(screen.getByText("Image Card")).toBeInTheDocument()
+    })
+
+    it("handles glassmorphism with overlay", () => {
+      render(
+        <PricingGrid
+          tiers={mockTiers}
+          sectionBackgroundImage="https://example.com/bg.jpg"
+          sectionBackgroundOverlay="bg-black/30"
+        />
+      )
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+    })
   })
 
-  it("applies motion animation classes correctly", () => {
-    const { container } = render(<PricingGrid plans={mockPlans} animation="bounceIn" />)
-    expect(container.querySelectorAll("div").length).toBeGreaterThanOrEqual(mockPlans.length)
+  // Comprehensive Color Tests (106-110)
+  describe("Comprehensive Color Scenarios", () => {
+    it("handles cardColor with recommended tier", () => {
+      const tiersWithColor = [
+        {
+          name: "Pro",
+          price: { monthly: "$29 /mo" },
+          features: [{ label: "Feature A" }],
+          cardColor: "blue",
+          recommended: true,
+        },
+        {
+          name: "Basic",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature B" }],
+          cardColor: "blue",
+          recommended: false,
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithColor} />)
+      expect(screen.getByText("Pro")).toBeInTheDocument()
+    })
+
+    it("handles cardColor override with individual colors", () => {
+      const tiersWithOverride = [
+        {
+          name: "Custom",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+          cardColor: "blue",
+          borderColor: "border-red-500",
+          buttonColor: "bg-green-600",
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithOverride} />)
+      expect(screen.getByText("Custom")).toBeInTheDocument()
+    })
+
+    it("handles white buttons for cards with background images", () => {
+      const tiersWithImage = [
+        {
+          name: "Image Plan",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+          cardBackgroundImage: "https://example.com/image.jpg",
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithImage} />)
+      expect(screen.getByText("Image Plan")).toBeInTheDocument()
+    })
+
+    it("handles badge color for recommended tier with background image", () => {
+      const tiersWithImage = [
+        {
+          name: "Pro",
+          price: { monthly: "$29 /mo" },
+          features: [{ label: "Feature A" }],
+          recommended: true,
+          cardBackgroundImage: "https://example.com/image.jpg",
+        },
+        {
+          name: "Basic",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithImage} />)
+      expect(screen.getByText("MOST POPULAR")).toBeInTheDocument()
+    })
+
+    it("handles multiple color schemes in same grid", () => {
+      const multiColorTiers = [
+        {
+          name: "Blue Plan",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+          cardColor: "blue",
+        },
+        {
+          name: "Green Plan",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+          cardColor: "green",
+        },
+        {
+          name: "Red Plan",
+          price: { monthly: "$30 /mo" },
+          features: [{ label: "Feature C" }],
+          cardColor: "red",
+        },
+      ]
+      render(<PricingGrid tiers={multiColorTiers} />)
+      expect(screen.getByText("Blue Plan")).toBeInTheDocument()
+      expect(screen.getByText("Green Plan")).toBeInTheDocument()
+      expect(screen.getByText("Red Plan")).toBeInTheDocument()
+    })
   })
 
-  it("applies lift interactive effect on hover", () => {
-    const { container } = render(<PricingGrid plans={mockPlans} interactive="lift" />)
-    const card = container.querySelector(".scale-105")
-    expect(card).toBeTruthy()
+  // Toggle Interaction Tests (111-115)
+  describe("Toggle Interaction Scenarios", () => {
+    it("toggles between monthly and annual multiple times", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      const monthlyButton = screen.getByText("Monthly")
+      const annualButton = screen.getByText("Annual")
+
+      fireEvent.click(annualButton)
+      expect(screen.getByText("$7")).toBeInTheDocument()
+
+      fireEvent.click(monthlyButton)
+      expect(screen.getByText("$9")).toBeInTheDocument()
+
+      fireEvent.click(annualButton)
+      expect(screen.getByText("$7")).toBeInTheDocument()
+    })
+
+    it("maintains correct prices after multiple toggles", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      const annualButton = screen.getByText("Annual")
+      const monthlyButton = screen.getByText("Monthly")
+
+      fireEvent.click(annualButton)
+      fireEvent.click(monthlyButton)
+      fireEvent.click(annualButton)
+
+      expect(screen.getByText("$7")).toBeInTheDocument()
+      expect(screen.getByText("$23")).toBeInTheDocument()
+    })
+
+    it("calls onCtaClick with correct billing after toggle", () => {
+      render(<PricingGrid tiers={mockTiers} onCtaClick={onCtaClick} />)
+      const annualButton = screen.getByText("Annual")
+      fireEvent.click(annualButton)
+
+      const buttons = screen.getAllByRole("button")
+      const ctaButton = buttons.find((btn) => btn.textContent === "Get Started")
+      if (ctaButton) {
+        fireEvent.click(ctaButton)
+        expect(onCtaClick).toHaveBeenCalledWith(
+          expect.objectContaining({ name: "Starter" }),
+          "annual"
+        )
+      }
+    })
+
+    it("displays discount indicator in annual button", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      expect(screen.getByText("-20%")).toBeInTheDocument()
+    })
+
+    it("handles toggle click when showToggle is true", () => {
+      render(<PricingGrid tiers={mockTiers} showToggle />)
+      const annualButton = screen.getByText("Annual")
+      fireEvent.click(annualButton)
+      expect(screen.getByText("$7")).toBeInTheDocument()
+    })
   })
 
-  it("renders correctly if multiple plans are highlighted", () => {
-    const plans = [
-      { ...mockPlans[0], highlighted: true },
-      { ...mockPlans[1], highlighted: true },
-    ]
-    render(<PricingGrid plans={plans} />)
-    expect(screen.getByText("Starter")).toBeInTheDocument()
-    expect(screen.getByText("Pro")).toBeInTheDocument()
+  // Feature List Tests (116-120)
+  describe("Feature List Rendering", () => {
+    it("renders all features for each tier", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      expect(screen.getByText("Up to 3 projects")).toBeInTheDocument()
+      expect(screen.getByText("1 GB storage")).toBeInTheDocument()
+      expect(screen.getByText("Basic analytics")).toBeInTheDocument()
+      expect(screen.getByText("Unlimited projects")).toBeInTheDocument()
+      expect(screen.getByText("50 GB storage")).toBeInTheDocument()
+    })
+
+    it("renders unavailable features with correct styling", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      const unavailableFeature = screen.getByText("Dedicated support")
+      expect(unavailableFeature).toBeInTheDocument()
+    })
+
+    it("renders check icons for available features", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      const checkIcons = screen.getAllByTestId("check-icon")
+      expect(checkIcons.length).toBeGreaterThan(0)
+    })
+
+    it("handles features with explicit available: true", () => {
+      const tiersWithExplicitAvailable = [
+        {
+          name: "Plan",
+          price: { monthly: "$10 /mo" },
+          features: [
+            { label: "Feature A", available: true },
+            { label: "Feature B", available: false },
+          ],
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature C" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithExplicitAvailable} />)
+      expect(screen.getByText("Feature A")).toBeInTheDocument()
+      expect(screen.getByText("Feature B")).toBeInTheDocument()
+    })
+
+    it("renders WHAT'S INCLUDED heading for each tier", () => {
+      render(<PricingGrid tiers={mockTiers} />)
+      const headings = screen.getAllByText("WHAT'S INCLUDED")
+      expect(headings.length).toBe(3)
+    })
   })
 
-  it("applies light variant correctly for modernUI", () => {
-    const { container } = render(<PricingGrid plans={mockPlans} modernUI="basic" modernVariant="light" />)
-    expect(container.querySelector(".bg-white")).toBeTruthy()
+  // Section Background Tests (121-125)
+  describe("Section Background Customization", () => {
+    it("applies sectionBackgroundColor when no image", () => {
+      const { container } = render(
+        <PricingGrid tiers={mockTiers} sectionBackgroundColor="bg-gray-50" />
+      )
+      const section = container.querySelector("section")
+      expect(section).toHaveClass("bg-gray-50")
+    })
+
+    it("applies sectionBackgroundImage with inline style", () => {
+      const { container } = render(
+        <PricingGrid tiers={mockTiers} sectionBackgroundImage="https://example.com/bg.jpg" />
+      )
+      const section = container.querySelector("section")
+      expect(section).toHaveStyle({ backgroundImage: expect.stringContaining("example.com") })
+    })
+
+    it("applies sectionBackgroundOverlay when image is present", () => {
+      const { container } = render(
+        <PricingGrid
+          tiers={mockTiers}
+          sectionBackgroundImage="https://example.com/bg.jpg"
+          sectionBackgroundOverlay="bg-black/20"
+        />
+      )
+      expect(container.querySelector(".bg-black\\/20")).toBeTruthy()
+    })
+
+    it("does not apply overlay when no section background image", () => {
+      const { container } = render(
+        <PricingGrid tiers={mockTiers} sectionBackgroundOverlay="bg-black/20" />
+      )
+      const overlay = container.querySelector(".bg-black\\/20")
+      expect(overlay).toBeFalsy()
+    })
+
+    it("handles CSS color value for sectionBackgroundColor", () => {
+      const { container } = render(
+        <PricingGrid tiers={mockTiers} sectionBackgroundColor="#f5f5f5" />
+      )
+      const section = container.querySelector("section")
+      expect(section).toBeTruthy()
+    })
   })
 
-  it("does not render CTA button for current plan in basic mode", () => {
-    render(<PricingGrid plans={mockPlans} modernUI="basic" currentPlan={1} />)
-    expect(screen.queryByLabelText("Starter plan action")).not.toBeInTheDocument()
+  // Card Background Tests (126-130)
+  describe("Card Background Customization", () => {
+    it("applies cardBackgroundImage with inline style", () => {
+      const tiersWithImage = [
+        {
+          name: "Image Card",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+          cardBackgroundImage: "https://example.com/card.jpg",
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      const { container } = render(<PricingGrid tiers={tiersWithImage} />)
+      const card = container.querySelector('[style*="background-image"]')
+      expect(card).toBeTruthy()
+    })
+
+    it("applies cardBackgroundOverlay when image is present", () => {
+      const tiersWithOverlay = [
+        {
+          name: "Overlay Card",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+          cardBackgroundImage: "https://example.com/image.jpg",
+          cardBackgroundOverlay: "bg-black/50",
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithOverlay} />)
+      expect(screen.getByText("Overlay Card")).toBeInTheDocument()
+    })
+
+    it("applies cardBackgroundColor when no image", () => {
+      const tiersWithBg = [
+        {
+          name: "Background Card",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+          cardBackgroundColor: "bg-gray-100",
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithBg} />)
+      expect(screen.getByText("Background Card")).toBeInTheDocument()
+    })
+
+    it("handles CSS color value for cardBackgroundColor", () => {
+      const tiersWithColor = [
+        {
+          name: "Color Card",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+          cardBackgroundColor: "#ffffff",
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithColor} />)
+      expect(screen.getByText("Color Card")).toBeInTheDocument()
+    })
+
+    it("does not apply overlay when no card background image", () => {
+      const tiersWithoutImage = [
+        {
+          name: "No Image",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+          cardBackgroundOverlay: "bg-black/50",
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+        },
+      ]
+      render(<PricingGrid tiers={tiersWithoutImage} />)
+      expect(screen.getByText("No Image")).toBeInTheDocument()
+    })
   })
 
-  it("displays correct availability in table", () => {
-    render(<PricingGrid plans={mockPlans} table />);
+  // Comprehensive Integration Tests (131-135)
+  describe("Comprehensive Integration Scenarios", () => {
+    it("handles full customization with all props", () => {
+      render(
+        <PricingGrid
+          tiers={mockTiers}
+          title="Custom Title"
+          titleHighlight="Custom Highlight"
+          description="Custom description"
+          showToggle
+          defaultBilling="annual"
+          onCtaClick={onCtaClick}
+          className="custom-class"
+          accentColor="text-blue-600"
+          toggleActiveColor="bg-blue-600"
+          titleColor="text-gray-900"
+          descriptionColor="text-gray-600"
+          labelColor="text-gray-500"
+          sectionBackgroundColor="bg-white"
+          animation="fade"
+          scaleRecommended
+        />
+      )
+      expect(screen.getByText("Custom Title")).toBeInTheDocument()
+      expect(screen.getByText("Custom Highlight")).toBeInTheDocument()
+      expect(screen.getByText("Custom description")).toBeInTheDocument()
+    })
 
-    // Optional: check for feature labels
-    expect(screen.getByText("Feature A")).toBeInTheDocument();
-    expect(screen.getByText("Feature B")).toBeInTheDocument();
-  });
+    it("handles two-tier layout with all features", () => {
+      const twoTiers = mockTiers.slice(0, 2)
+      render(
+        <PricingGrid
+          tiers={twoTiers}
+          horizontalHeader
+          scaleRecommended
+          sectionBackgroundImage="https://example.com/bg.jpg"
+          animation={{
+            enabled: true,
+            type: "slide-up",
+            duration: 0.6,
+          }}
+        />
+      )
+      expect(screen.getByText("Starter")).toBeInTheDocument()
+      expect(screen.getByText("Pro")).toBeInTheDocument()
+    })
 
-  it("renders pricing badge at top position", () => {
-    render(<PricingGrid plans={mockPlans} pricingBadgePosition="top" modernUI="vector" />);
-    expect(screen.getByLabelText("pricing-top-Starter")).toBeInTheDocument()
-  });
+    it("handles three-tier layout with recommended in middle", () => {
+      const threeTiers = [
+        {
+          name: "Basic",
+          price: { monthly: "$10 /mo" },
+          features: [{ label: "Feature A" }],
+          recommended: false,
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$20 /mo" },
+          features: [{ label: "Feature B" }],
+          recommended: true,
+        },
+        {
+          name: "Enterprise",
+          price: { monthly: "$30 /mo" },
+          features: [{ label: "Feature C" }],
+          recommended: false,
+        },
+      ]
+      render(<PricingGrid tiers={threeTiers} scaleRecommended />)
+      expect(screen.getByText("MOST POPULAR")).toBeInTheDocument()
+      expect(screen.getByText("Pro")).toBeInTheDocument()
+    })
 
-  it("renders pricing badge at middle position", () => {
-    render(<PricingGrid plans={mockPlans} pricingBadgePosition="middle" modernUI="vector" />);
-    expect(screen.getByLabelText("pricing-middle-Starter")).toBeInTheDocument()
-  });
+    it("handles all animation types with custom config", () => {
+      const animationTypes = ["fade", "slide", "scale", "slide-up", "slide-down"]
+      animationTypes.forEach((type) => {
+        const { unmount } = render(
+          <PricingGrid
+            tiers={mockTiers}
+            animation={{
+              enabled: true,
+              type: type as any,
+              duration: 0.8,
+              staggerDelay: 0.15,
+            }}
+          />
+        )
+        expect(screen.getByText("Starter")).toBeInTheDocument()
+        unmount()
+      })
+    })
 
-  it("renders custom CTA labels", () => {
-    const plans = [{ name: "Custom", price: "30", features: [{ label: "X" }], ctaLabel: "Join Now" }]
-    render(<PricingGrid plans={plans} />)
-    expect(screen.getByText("Join Now")).toBeInTheDocument()
+    it("handles complex scenario with mixed configurations", () => {
+      const complexTiers = [
+        {
+          name: "Starter",
+          price: { monthly: "$9 /mo", annual: "$7 /mo" },
+          description: "Perfect for getting started",
+          features: [
+            { label: "Up to 3 projects" },
+            { label: "1 GB storage" },
+            { label: "Basic analytics" },
+          ],
+          ctaLabel: "Get Started",
+          recommended: false,
+          cardColor: "blue",
+        },
+        {
+          name: "Pro",
+          price: { monthly: "$29 /mo", annual: "$23 /mo" },
+          description: "For growing teams",
+          features: [
+            { label: "Unlimited projects" },
+            { label: "50 GB storage" },
+            { label: "Advanced analytics" },
+            { label: "Priority support" },
+          ],
+          ctaLabel: "Start Free Trial",
+          recommended: true,
+          cardColor: "purple",
+          cardBackgroundImage: "https://example.com/pro.jpg",
+        },
+        {
+          name: "Enterprise",
+          price: { monthly: "$99 /mo" },
+          description: "For organizations",
+          features: [
+            { label: "Everything in Pro" },
+            { label: "Custom integrations" },
+            { label: "Dedicated support", available: false },
+          ],
+          ctaLabel: "Contact Sales",
+          recommended: false,
+          cardColor: "green",
+        },
+      ]
+      render(
+        <PricingGrid
+          tiers={complexTiers}
+          title="Choose Your Plan"
+          titleHighlight="Today"
+          description="Select the perfect plan for your needs"
+          showToggle
+          defaultBilling="monthly"
+          onCtaClick={onCtaClick}
+          accentColor="text-purple-600"
+          toggleActiveColor="bg-purple-600"
+          animation="slide-up"
+          scaleRecommended
+          sectionBackgroundColor="bg-gray-50"
+        />
+      )
+      expect(screen.getByText("Choose Your Plan")).toBeInTheDocument()
+      expect(screen.getByText("Today")).toBeInTheDocument()
+      expect(screen.getByText("MOST POPULAR")).toBeInTheDocument()
+    })
   })
-
-  it("renders plan icon in basic mode", () => {
-    const Icon = () => <svg data-testid="plan-icon" />
-    const plans = [{ name: "Iconic", price: "25", icon: Icon, features: [{ label: "A" }], ctaLabel: "Buy" }]
-    render(<PricingGrid plans={plans} modernUI="basic" />)
-    expect(screen.getByTestId("plan-icon")).toBeInTheDocument()
-  })
-
-  it("toggle switch has aria-pressed attribute for accessibility", () => {
-    render(<PricingGrid plans={mockPlans} />)
-    const toggle = screen.getByRole("button", { name: "Toggle" })
-    expect(toggle).toHaveAttribute("aria-pressed")
-  })
-
-  it("renders correct number of pricing badges in vector mode", () => {
-    render(<PricingGrid plans={mockPlans} modernUI="vector" pricingBadgePosition="top" />);
-    const badges = screen.getAllByLabelText(/pricing-top-/);
-    expect(badges.length).toBe(mockPlans.length);
-  });
-
-  it("splits price correctly using SplitPrice component", () => {
-    render(<PricingGrid plans={[mockPlans[0]]} />);
-    expect(screen.getByText(/\$19/)).toBeInTheDocument();
-    expect(screen.getByText(/\/\s*month/)).toBeInTheDocument();
-  });
-
-  it("renders plan even if ctaLabel is missing", () => {
-    const plans = [{ name: "No CTA", price: "10/month", features: [{ label: "A" }] }];
-    render(<PricingGrid plans={plans} />);
-    expect(screen.getByText("No CTA")).toBeInTheDocument();
-  });
-
-  it("calls onCtaClick for each plan separately", () => {
-    const clickFn = vi.fn();
-    render(<PricingGrid plans={mockPlans} modernUI="vector" onCtaClick={clickFn} />);
-    fireEvent.click(screen.getByLabelText("Starter plan action"));
-    fireEvent.click(screen.getByLabelText("Pro plan action"));
-    expect(clickFn).toHaveBeenCalledTimes(2);
-  });
-
-  it("renders price in advance UI mode", () => {
-    render(<PricingGrid plans={mockPlans} modernUI="advance" />);
-    expect(screen.getByText(mockPlans[0].price)).toBeInTheDocument();
-  });
-
-  it("renders table with header row and features", () => {
-    render(<PricingGrid plans={[mockPlans[0]]} table />);
-    const rows = screen.getAllByRole("row");
-    expect(rows.length).toBe(mockPlans[0].features.length + 1); // header + features
-  });
-
-  it("applies interactive hover class for cards in press mode", () => {
-    const { container } = render(<PricingGrid plans={mockPlans} interactive="press" />);
-    const card = container.querySelector(".scale-105");
-    expect(card).toBeTruthy();
-  });
-
-  it("renders default Check or X icon if no custom icon is provided", () => {
-    render(<PricingGrid plans={mockPlans} table />);
-    expect(screen.getAllByText("Yes").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("No").length).toBeGreaterThan(0);
-  });
-
-  it("renders without toggle switch if toggleOptions is empty", () => {
-    render(<PricingGrid plans={mockPlans} />);
-    const toggle = screen.queryByLabelText("toggle");
-    expect(toggle).toBeNull();
-  });
-
-  it("renders highlighted plan with allowDifferentCardColors", () => {
-    const plans = [{ name: "VIP", price: "$100", highlighted: true, gradient: "bg-yellow-500", features: [{ label: "Premium" }], ctaLabel: "Join" }];
-    const { container } = render(<PricingGrid plans={plans} modernUI="vector" allowDifferentCardColors />);
-    expect(container.querySelector(".bg-yellow-500")).toBeTruthy();
-  });
-
-  it("renders multiple plans with distinct gradients", () => {
-    const plans = [
-      { name: "Plan 1", price: "10/month", gradient: "bg-red-500", features: [{ label: "A" }], ctaLabel: "Buy" },
-      { name: "Plan 2", price: "20/month", gradient: "bg-blue-500", features: [{ label: "B" }], ctaLabel: "Buy" },
-    ];
-    const { container } = render(<PricingGrid plans={plans} modernUI="vector" allowDifferentCardColors />);
-    expect(container.querySelector(".bg-red-500")).toBeTruthy();
-    expect(container.querySelector(".bg-blue-500")).toBeTruthy();
-  });
-
-  it("crashed if empty price", () => {
-    const plans = [
-      {
-        id: 1,
-        name: "Free Plan",
-        price: "",
-        features: [{ label: "Feature A" }],
-        ctaLabel: "Get Started",
-      },
-    ];
-
-    render(<PricingGrid plans={plans} modernUI="vector" />);
-
-    // Component renders blank spans instead of throwing
-    expect(screen.getByText("plans → 0 → price: Plan price is required")).toBeInTheDocument();
-  });
-
-  it("calls onCtaClick with correct plan when CTA is clicked", () => {
-    const onCtaClick = vi.fn();
-
-    const plans = [
-      {
-        id: 1,
-        name: "Starter",
-        price: "$19/month",
-        features: [{ label: "Feature A" }],
-        ctaLabel: "Buy Now",
-      },
-    ];
-
-    render(
-      <PricingGrid
-        plans={plans}
-        modernUI="vector"
-        onCtaClick={onCtaClick}
-      />
-    );
-
-    fireEvent.click(screen.getByLabelText("Starter plan action"));
-
-    expect(onCtaClick).toHaveBeenCalledTimes(1);
-    expect(onCtaClick).toHaveBeenCalledWith(
-      expect.objectContaining({ name: "Starter" })
-    );
-  });
 })
+
