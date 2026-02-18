@@ -248,7 +248,8 @@
             "templates/sections/content/call-to-action",
             "templates/sections/content/comparison-table",
             "templates/sections/content/hero",
-            "templates/sections/content/pricing-grid"
+            "templates/sections/content/pricing-grid",
+            "templates/sections/content/team-profiles"
           ]
         }
       ]
