@@ -84,20 +84,126 @@ export interface PricingGridProps {
 
 /**
  * Generate color classes from a color name
+ * Using static mapping to ensure Tailwind can detect classes at build time
  */
 const getColorClasses = (colorName: string, isRecommended: boolean) => {
   const color = colorName.toLowerCase();
   
+  // Static color mappings - Tailwind can detect these at build time
+  const colorMap: Record<string, {
+    border: string;
+    buttonRecommended: string;
+    buttonDefault: string;
+    buttonTextRecommended: string;
+    buttonTextDefault: string;
+    badge: string;
+    background: string;
+  }> = {
+    blue: {
+      border: 'border-blue-200/60',
+      buttonRecommended: 'bg-blue-600 hover:bg-blue-700',
+      buttonDefault: 'bg-blue-100 hover:bg-blue-200',
+      buttonTextRecommended: 'text-white',
+      buttonTextDefault: 'text-blue-700',
+      badge: 'bg-blue-600 text-white',
+      background: 'bg-blue-50',
+    },
+    purple: {
+      border: 'border-purple-200/60',
+      buttonRecommended: 'bg-purple-600 hover:bg-purple-700',
+      buttonDefault: 'bg-purple-100 hover:bg-purple-200',
+      buttonTextRecommended: 'text-white',
+      buttonTextDefault: 'text-purple-700',
+      badge: 'bg-purple-600 text-white',
+      background: 'bg-purple-50',
+    },
+    green: {
+      border: 'border-green-200/60',
+      buttonRecommended: 'bg-green-600 hover:bg-green-700',
+      buttonDefault: 'bg-green-100 hover:bg-green-200',
+      buttonTextRecommended: 'text-white',
+      buttonTextDefault: 'text-green-700',
+      badge: 'bg-green-600 text-white',
+      background: 'bg-green-50',
+    },
+    red: {
+      border: 'border-red-200/60',
+      buttonRecommended: 'bg-red-600 hover:bg-red-700',
+      buttonDefault: 'bg-red-100 hover:bg-red-200',
+      buttonTextRecommended: 'text-white',
+      buttonTextDefault: 'text-red-700',
+      badge: 'bg-red-600 text-white',
+      background: 'bg-red-50',
+    },
+    orange: {
+      border: 'border-orange-200/60',
+      buttonRecommended: 'bg-orange-600 hover:bg-orange-700',
+      buttonDefault: 'bg-orange-100 hover:bg-orange-200',
+      buttonTextRecommended: 'text-white',
+      buttonTextDefault: 'text-orange-700',
+      badge: 'bg-orange-600 text-white',
+      background: 'bg-orange-50',
+    },
+    yellow: {
+      border: 'border-yellow-200/60',
+      buttonRecommended: 'bg-yellow-600 hover:bg-yellow-700',
+      buttonDefault: 'bg-yellow-100 hover:bg-yellow-200',
+      buttonTextRecommended: 'text-white',
+      buttonTextDefault: 'text-yellow-700',
+      badge: 'bg-yellow-600 text-white',
+      background: 'bg-yellow-50',
+    },
+    indigo: {
+      border: 'border-indigo-200/60',
+      buttonRecommended: 'bg-indigo-600 hover:bg-indigo-700',
+      buttonDefault: 'bg-indigo-100 hover:bg-indigo-200',
+      buttonTextRecommended: 'text-white',
+      buttonTextDefault: 'text-indigo-700',
+      badge: 'bg-indigo-600 text-white',
+      background: 'bg-indigo-50',
+    },
+    pink: {
+      border: 'border-pink-200/60',
+      buttonRecommended: 'bg-pink-600 hover:bg-pink-700',
+      buttonDefault: 'bg-pink-100 hover:bg-pink-200',
+      buttonTextRecommended: 'text-white',
+      buttonTextDefault: 'text-pink-700',
+      badge: 'bg-pink-600 text-white',
+      background: 'bg-pink-50',
+    },
+    teal: {
+      border: 'border-teal-200/60',
+      buttonRecommended: 'bg-teal-600 hover:bg-teal-700',
+      buttonDefault: 'bg-teal-100 hover:bg-teal-200',
+      buttonTextRecommended: 'text-white',
+      buttonTextDefault: 'text-teal-700',
+      badge: 'bg-teal-600 text-white',
+      background: 'bg-teal-50',
+    },
+    cyan: {
+      border: 'border-cyan-200/60',
+      buttonRecommended: 'bg-cyan-600 hover:bg-cyan-700',
+      buttonDefault: 'bg-cyan-100 hover:bg-cyan-200',
+      buttonTextRecommended: 'text-white',
+      buttonTextDefault: 'text-cyan-700',
+      badge: 'bg-cyan-600 text-white',
+      background: 'bg-cyan-50',
+    },
+  };
+  
+  // Default to purple if color not found
+  const colorConfig = colorMap[color] || colorMap.purple;
+  
   return {
-    borderColor: `border-${color}-200/60`,
+    borderColor: colorConfig.border,
     buttonColor: isRecommended 
-      ? `bg-${color}-600 hover:bg-${color}-700`
-      : `bg-${color}-100 hover:bg-${color}-200`,
+      ? colorConfig.buttonRecommended
+      : colorConfig.buttonDefault,
     buttonTextColor: isRecommended 
-      ? 'text-white'
-      : `text-${color}-700`,
-    badgeColor: `bg-${color}-600 text-white`,
-    cardBackgroundColor: `bg-${color}-50`,
+      ? colorConfig.buttonTextRecommended
+      : colorConfig.buttonTextDefault,
+    badgeColor: colorConfig.badge,
+    cardBackgroundColor: colorConfig.background,
   };
 };
 
@@ -562,7 +668,7 @@ const PricingTierCard: React.FC<PricingTierCardProps> = ({
                     )}>×</span>
                   )}
                   <span className={cn(
-                    'text-sm leading-relaxed',
+                    'text-md font-medium leading-relaxed',
                     hasImageBackground ? 'text-white/90' : 'text-gray-700'
                   )}>
                     {feature.label}

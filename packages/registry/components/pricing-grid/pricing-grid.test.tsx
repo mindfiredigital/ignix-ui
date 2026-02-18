@@ -1,5 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react"
 import { describe, it, expect, vi, beforeEach } from "vitest"
+import React from "react"
+import { PricingGrid } from "."
 
 /* -------------------- Mocks -------------------- */
 
@@ -17,9 +19,6 @@ vi.mock("@ignix-ui/button", () => {
     }),
   }
 })
-
-import { PricingGrid } from "."
-import React from "react"
 
 vi.mock("lucide-react", () => ({
   Check: ({ className, ...props }: any) => (

@@ -219,9 +219,6 @@ const PricingGridHorizontalDisplay = () => {
         { label: "Disk Space 128 GB" },
         { label: "Bandwidth 15 GB" },
         { label: "Databases 1" },
-        { label: "License", available: false },
-        { label: "Email Accounts", available: false },
-        { label: "24 Hours Support", available: false },
       ],
       ctaLabel: "Sign Up",
       recommended: false,
@@ -237,9 +234,6 @@ const PricingGridHorizontalDisplay = () => {
         { label: "Storage 20GB" },
         { label: "Databases 20" },
         { label: "License" },
-        { label: "Email Accounts" },
-        { label: "24/7 Support" },
-        { label: "Agent Support", available: false },
       ],
       ctaLabel: "Subscribe",
       recommended: true,
@@ -260,9 +254,6 @@ const PricingGridHorizontalDisplay = () => {
         { label: "Disk Space 128 GB" },
         { label: "Bandwidth 15 GB" },
         { label: "Databases 1" },
-        { label: "License", available: false },
-        { label: "Email Accounts", available: false },
-        { label: "24 Hours Support", available: false },
       ],
       ctaLabel: "Sign Up",
       recommended: false,
@@ -278,9 +269,6 @@ const PricingGridHorizontalDisplay = () => {
         { label: "Storage 20GB" },
         { label: "Databases 20" },
         { label: "License" },
-        { label: "Email Accounts" },
-        { label: "24/7 Support" },
-        { label: "Agent Support", available: false },
       ],
       ctaLabel: "Subscribe",
       recommended: true,
@@ -358,8 +346,6 @@ const PricingGridWithCardImages = () => {
           { label: 'Up to 3 projects' },
           { label: '1 GB storage' },
           { label: 'Basic analytics' },
-          { label: 'Community support' },
-          { label: 'API access' },
         ],
         ctaLabel: 'Get Started',
         recommended: false,
@@ -379,9 +365,6 @@ const PricingGridWithCardImages = () => {
           { label: '50 GB storage' },
           { label: 'Advanced analytics' },
           { label: 'Priority email support' },
-          { label: 'API access' },
-          { label: 'Custom integrations' },
-          { label: 'Team collaboration' },
         ],
         ctaLabel: 'Start Free Trial',
         recommended: true,
@@ -405,8 +388,6 @@ const PricingGridWithCardImages = () => {
         { label: 'Up to 3 projects' },
         { label: '1 GB storage' },
         { label: 'Basic analytics' },
-        { label: 'Community support' },
-        { label: 'API access' },
       ],
       ctaLabel: 'Get Started',
       recommended: false,
@@ -426,9 +407,6 @@ const PricingGridWithCardImages = () => {
         { label: '50 GB storage' },
         { label: 'Advanced analytics' },
         { label: 'Priority email support' },
-        { label: 'API access' },
-        { label: 'Custom integrations' },
-        { label: 'Team collaboration' },
       ],
       ctaLabel: 'Start Free Trial',
       recommended: true,
@@ -457,7 +435,6 @@ const PricingGridWithCardImages = () => {
       <Tabs>
         <TabItem value="preview" label="Preview">
           <div className="border border-gray-300 rounded-lg overflow-hidden">
-            <div className="p-4">
               <PricingGrid 
                 title="Plans that scale"
                 titleHighlight="with your growth"
@@ -469,7 +446,6 @@ const PricingGridWithCardImages = () => {
                 scaleRecommended={true}
               />
             </div>
-          </div>
         </TabItem>
 
         <TabItem value="code" label="Code">
