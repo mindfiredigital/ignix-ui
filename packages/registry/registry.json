@@ -1201,6 +1201,20 @@
         }
       }
     },
+    "tabNavigation": {
+      "name": "TabNavigation",
+      "description": "A horizontal tab navigation template with active indicator, optional icons and badges, and full keyboard support.",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "componentDependencies": [],
+      "files": {
+        "main": {
+          "path": "templates/sections/tab-navigation/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "testimonialCard" :{
       "name": "TestimonialCard",
       "description": "Testimonial Card component showcases customer feedback in a clear and engaging format. It supports flexible layouts with features such as quotes, author details (name, title, avatar), ratings, social links.",
