@@ -213,7 +213,10 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
 
   return (
     <div className={cn("w-full", className)}>
+      {/* Root container: full width + optional custom className */}
+      {/* Wrapper for tab list and active indicator (positioned relative for indicator) */}
       <div className="relative">
+        {/* Tab list: horizontal list of tab buttons, keyboard nav via onKeyDown */}
         <div
           ref={listRef}
           role="tablist"
@@ -240,6 +243,7 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
               : tab.badge?.label;
 
             return (
+              /* Tab button: roving tabindex, aria-selected, optional icon + badge */
               <button
                 key={tab.id}
                 ref={(element) => {
@@ -320,6 +324,7 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
           })}
         </div>
 
+        {/* Active indicator: underline bar (position/size from useLayoutEffect) */}
         {indicatorVariant === "underline" && (
           <div
             className={cn(
@@ -335,6 +340,7 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
         )}
       </div>
 
+      {/* Tab panel: content for the active tab, linked via aria-labelledby */}
       <div
         id={`panel-${activeId}`}
         role="tabpanel"
