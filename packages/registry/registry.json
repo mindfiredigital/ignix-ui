@@ -1201,8 +1201,8 @@
         }
       }
     },
-    "tabNavigation": {
-      "name": "TabNavigation",
+    "tab-navigation": {
+      "name": "tab-navigation",
       "description": "A horizontal tab navigation template with active indicator, optional icons and badges, and full keyboard support.",
       "dependencies": [
         "lucide-react"
