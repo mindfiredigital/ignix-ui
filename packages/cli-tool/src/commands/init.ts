@@ -138,6 +138,10 @@ export const initCommand = new Command()
         spinner.text = 'Setting up theming system...';
         const themeService = new ThemeService();
 
+        if (ctx.isJson) {
+          themeService.setSilent(true);
+        }
+
         // 1. Ask user to select a preset
         spinner.text = 'Fetching theme presets...';
         const availableThemes = await themeService.getAvailableThemes();
@@ -169,8 +173,8 @@ export const initCommand = new Command()
       // 2. Install dependencies
       spinner.text = 'Installing required dependencies...';
       const depService = new DependencyService();
-      await depService.install(['@mindfiredigital/ignix-ui'], false);
-      await depService.install(['tailwindcss', 'postcss', 'autoprefixer'], true);
+      await depService.install(['@mindfiredigital/ignix-ui'], false, ctx.isJson);
+      await depService.install(['tailwindcss', 'postcss', 'autoprefixer'], true, ctx.isJson);
 
       spinner.succeed(chalk.green('Ignix UI initialized successfully!'));
       logger.info('\nNext steps:');
