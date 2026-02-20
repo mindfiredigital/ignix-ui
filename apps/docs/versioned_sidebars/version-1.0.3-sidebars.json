@@ -248,7 +248,8 @@
             "templates/sections/content/comparison-table",
             "templates/sections/content/hero",
             "templates/sections/content/pricing-grid",
-            "templates/sections/content/tab-navigation"
+            "templates/sections/content/tab-navigation",
+            "templates/sections/content/team-profiles"
           ]
         }
       ]
