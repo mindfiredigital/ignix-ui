@@ -109,6 +109,18 @@
         }
       }
     },
+    "errorPage": {
+      "name": "ErrorPage",
+      "description": "A customizable error page template with multiple animation variants, designed to display clear messaging, illustration/icons.",
+      "dependencies": ["lucide-react", "framer-motion", "class-variance-authority"],
+      "componentDependencies": ["button", "typography"],
+      "files": {
+        "main": {
+          "path": "templates/pages/error-page/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "pin": {
       "name": "Pin",
       "description": "A layout utility component for Pin content",
@@ -643,7 +655,7 @@
         }
       }
     },
-     "singleColumnLayout": {
+    "singleColumnLayout": {
       "name": "SingleColumnLayout",
       "description": "A clean, responsive single-column layout with header, constrained content area, and footer. Supports multiple theme variants and animations.",
       "dependencies": ["framer-motion", "lucide-react", "class-variance-authority"],
