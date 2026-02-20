@@ -1,0 +1,66 @@
+{
+  "name": "ignix-ui",
+  "version": "0.1.0",
+  "description": "MCP tool definitions for Ignix UI CLI",
+  "tools": [
+    {
+      "name": "install_component",
+      "description": "Install one or more Ignix UI components into a project",
+      "inputSchema": {
+        "type": "object",
+        "required": ["components"],
+        "properties": {
+          "components": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of component names to install"
+          },
+          "cwd": {
+            "type": "string",
+            "description": "Working directory to install into",
+            "default": "."
+          }
+        }
+      },
+      "command": "npx ignix add component {{join components}} --yes {{#if cwd}}--cwd {{cwd}}{{/if}}"
+    },
+    {
+      "name": "list_components",
+      "description": "List available components",
+      "command": "npx ignix list --json"
+    },
+    {
+      "name": "get_component",
+      "description": "Get component metadata",
+      "inputSchema": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "command": "npx ignix info {{name}} --json"
+    }
+  ],
+  "resources": [
+    {
+      "name": "component_registry",
+      "uri": "file://./packages/registry/registry.json",
+      "description": "Machine-readable component registry"
+    },
+    {
+      "name": "documentation",
+      "uri": "file://./llms.txt",
+      "description": "AI-readable project documentation"
+    }
+  ],
+  "capabilities": {
+    "supportsNonInteractive": true,
+    "requiresNetwork": true,
+    "outputFormats": ["json"]
+  }
+}

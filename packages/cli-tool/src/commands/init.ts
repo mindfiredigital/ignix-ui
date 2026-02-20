@@ -13,8 +13,53 @@ const DEFAULT_CONFIG_PATH = 'ignix.config.js';
 export const initCommand = new Command()
   .name('init')
   .description(chalk.bold(chalk.hex('#FF7A3D')('Initialize Ignix UI in your project.')))
-  .action(async () => {
-    const spinner = ora('Initializing Ignix UI...').start();
+  .option('-y, --yes', 'Skip prompts')
+  .option('-s, --silent', 'Silent mode')
+  .option('--json', 'Machine output')
+  .option('--cwd <path>', 'Working directory', '.')
+  .action(async (opts) => {
+    const ctx = {
+      isYes: !!opts.yes,
+      isJson: !!opts.json,
+      cwd: path.resolve(opts.cwd || '.'),
+      silent: !!opts.silent,
+    };
+
+    const originalCwd = process.cwd();
+    process.chdir(ctx.cwd);
+
+    type NoopSpinner = {
+      start: () => void;
+      stop: () => void;
+      succeed: (msg?: string) => void;
+      fail: (msg?: string) => void;
+      text: string;
+    };
+
+    const noop = (): void => {
+      return;
+    };
+
+    const spinner: ReturnType<typeof ora> | NoopSpinner = ctx.isJson
+      ? {
+          start: noop,
+          stop: noop,
+          succeed: noop,
+          fail: noop,
+          text: '',
+        }
+      : ora('Initializing Ignix UI...').start();
+
+    if (ctx.isJson) {
+      const silent = (_msg?: unknown): void => {
+        return;
+      };
+
+      logger.info = silent;
+      logger.success = silent;
+      logger.warn = silent;
+      logger.error = silent;
+    }
 
     try {
       // 1. Validate environment
@@ -73,17 +118,23 @@ export const initCommand = new Command()
       logger.success('Created required directories.');
 
       // Ask about theming setup
-      const themingResponse = await prompts({
-        type: 'select',
-        name: 'setupTheming',
-        message: 'Do you want to set up the Ignix theming system? (Recommended)',
-        choices: [
-          { title: 'Yes', value: true },
-          { title: 'No', value: false },
-        ],
-      });
+      let setupTheming = true;
 
-      if (themingResponse.setupTheming === true) {
+      if (!ctx.isYes) {
+        const themingResponse = await prompts({
+          type: 'select',
+          name: 'setupTheming',
+          message: 'Do you want to set up the Ignix theming system? (Recommended)',
+          choices: [
+            { title: 'Yes', value: true },
+            { title: 'No', value: false },
+          ],
+        });
+
+        setupTheming = themingResponse.setupTheming;
+      }
+
+      if (setupTheming === true) {
         spinner.text = 'Setting up theming system...';
         const themeService = new ThemeService();
 
@@ -93,19 +144,24 @@ export const initCommand = new Command()
         spinner.stop();
 
         if (availableThemes.length > 0) {
-          const presetResponse = await prompts({
-            type: 'select',
-            name: 'themeId',
-            message: 'Select a default theme preset to install:',
-            choices: [
-              ...availableThemes.map((t) => ({ title: t.name, value: t.id })),
-              { title: 'None for now', value: null },
-            ],
-          });
+          let themeId = null;
 
-          if (presetResponse.themeId) {
-            spinner.start('Installing selected theme preset...');
-            await themeService.install(presetResponse.themeId);
+          if (!ctx.isYes) {
+            const presetResponse = await prompts({
+              type: 'select',
+              name: 'themeId',
+              message: 'Select a default theme preset to install:',
+              choices: [
+                ...availableThemes.map((t) => ({ title: t.name, value: t.id })),
+                { title: 'None for now', value: null },
+              ],
+            });
+
+            themeId = presetResponse?.themeId;
+            if (themeId) {
+              spinner.start('Installing selected theme preset...');
+              await themeService.install(presetResponse.themeId);
+            }
           }
         }
       }
@@ -125,13 +181,40 @@ export const initCommand = new Command()
         `2. Add components with ${chalk.cyan('npx ignix add component <component-name>')}`
       );
       logger.info(`3. Explore themes with ${chalk.cyan('npx ignix themes list')}`);
-    } catch (error) {
-      spinner.fail('Initialization failed.');
-      if (error instanceof Error) {
-        logger.error(error.message);
+
+      if (ctx.isJson) {
+        process.stdout.write(
+          JSON.stringify(
+            {
+              success: true,
+              initialized: true,
+            },
+            null,
+            2
+          )
+        );
       }
+    } catch (error) {
+      spinner.fail?.('Initialization failed.');
+
+      if (ctx.isJson) {
+        process.stdout.write(
+          JSON.stringify(
+            {
+              success: false,
+              error: error instanceof Error ? error.message : 'Unknown error',
+            },
+            null,
+            2
+          )
+        );
+      } else {
+        if (error instanceof Error) logger.error(error.message);
+      }
+
       process.exit(1);
     }
+    process.chdir(originalCwd);
   });
 
 // Helper functions
