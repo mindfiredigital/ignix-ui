@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback, type ComponentType } from "react"
 import { ImageIcon, Tag, type LucideProps } from "lucide-react"
 import { cva, type VariantProps } from "class-variance-authority"
-import { Typography } from "../typography"
-import { LazyLoad } from "../lazyload"
-import { AspectRatio } from "../aspect-ratio"
+import { Typography } from "@site/src/components/UI/typography"
+import { LazyLoad } from "@site/src/components/UI/lazyload"
+import { AspectRatio } from "@site/src/components/UI/aspect-ratio"
 import { cn } from "@site/src/utils/cn"
 
 
@@ -351,9 +351,8 @@ export const CardContentAction: React.FC<ImageCardProps> = React.memo(({
       </span>
     )}
     <Typography 
-      variant={isOverlay ? "h3" : "h2"} 
       className={cn(
-        "mb-2 transition-colors duration-300",
+        "mb-2 transition-colors duration-300 ",
         ImageCardTitleSizeVariant({ size }),
         isOverlay
           ? error
@@ -364,10 +363,12 @@ export const CardContentAction: React.FC<ImageCardProps> = React.memo(({
     >
       {title}
     </Typography>
-    <Typography variant="body-small" className={cn(
-      "leading-relaxed",
-      ImageCardDescriptionSizeVariant({ size }),
-      isOverlay 
+    <Typography 
+      variant="body-small"
+      className={cn(
+        "leading-relaxed",
+        ImageCardDescriptionSizeVariant({ size }),
+        isOverlay 
         ? error
           ? "opacity-100 transition-opacity duration-500 delay-150 line-clamp-2 mb-3 text-slate-900"
         :"text-white/90 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-150 line-clamp-2 mb-3"
@@ -565,7 +566,7 @@ const ImageCardContent: React.FC<ImageCardProps> = ({
 
     const mediaContent = (
       <div className="flex-1 gap-6">
-        <Typography variant="h3" className="mb-1">
+        <Typography variant="body-large" className="text-slate-900 mb-1">
           {title}
         </Typography>
 
@@ -590,7 +591,7 @@ const ImageCardContent: React.FC<ImageCardProps> = ({
                   aria-label={link.ariaLabel}
                   role="button"
                   className={cn(
-                    "group p-2 rounded-full transition",
+                    "group p-2 rounded-full transition text-primary",
                     "hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   )}
                 >
