@@ -1236,6 +1236,25 @@
           "type": "template"
         }
       }
-    }
-  } 
+    },
+    "teamProfiles": {
+      "name": "TeamProfiles",
+      "description": "",
+      "dependencies": [
+        "lucide-react", 
+        "class-variance-authority",
+        "framer-motion"
+      ],
+      "componentDependencies": [
+        "typography",
+        "button"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/sections/team-profiles/index.tsx",
+          "type": "template"
+        }
+      }
+    } 
+  }
 }
