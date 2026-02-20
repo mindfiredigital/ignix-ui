@@ -1,6 +1,5 @@
 import React, {
   useCallback,
-  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -111,9 +110,19 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
     return tabs[0]?.id ?? "";
   });
 
-  const activeId = isControlled ? controlledActiveId! : internalActiveId;
-
   const tabIds = useMemo(() => tabs.map((tab) => tab.id), [tabs]);
+
+  /** Resolved active tab id: valid within current tabs, or first tab when stale. */
+  const activeId = useMemo(() => {
+    const baseId = isControlled ? controlledActiveId! : internalActiveId;
+
+    if (tabs.length === 0) return "";
+
+    if (tabIds.includes(baseId)) return baseId;
+
+    return tabs[0].id;
+  }, [isControlled, controlledActiveId, internalActiveId, tabIds, tabs]);
+
   const tabRefsMap = useRef<Record<string, HTMLButtonElement | null>>({});
   const listRef = useRef<HTMLDivElement | null>(null);
 
@@ -174,15 +183,6 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
     },
     [activeId, tabIds, setActiveId]
   );
-
-  /**
-   * Ensure the active id always points to an existing tab in uncontrolled mode.
-   */
-  useEffect(() => {
-    if (!isControlled && tabs.length > 0 && !tabIds.includes(internalActiveId)) {
-      setInternalActiveId(tabs[0].id);
-    }
-  }, [isControlled, tabs, tabIds, internalActiveId]);
 
   /**
    * Measure the active tab's DOM position to drive the animated underline indicator.
