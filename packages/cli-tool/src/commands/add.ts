@@ -196,10 +196,23 @@ export const addCommand = new Command()
         case 'theme':
         case 'themes': {
           const themeService = new ThemeService();
-          const availableThemes = await themeService.getAvailableThemes();
-          const themeIds = availableThemes.map((t) => t.id.toLowerCase());
 
-          if (identifiers.length === 0) {
+          if (ctx.isJson) {
+            themeService.setSilent(true);
+          }
+
+          const availableThemes = await themeService.getAvailableThemes();
+          const themeMap = new Map<string, string>();
+
+          for (const t of availableThemes) {
+            themeMap.set(t.id.toLowerCase(), t.id.toLowerCase());
+          }
+
+          const installed: string[] = [];
+          const skipped: string[] = [];
+
+          // interactive only in human mode
+          if (identifiers.length === 0 && !ctx.isYes) {
             const response = await prompts({
               type: 'multiselect',
               name: 'themes',
@@ -209,61 +222,169 @@ export const addCommand = new Command()
                 value: t.id.toLowerCase(),
               })),
             });
+
             identifiers = response.themes || [];
           }
 
+          // no selection
           if (!identifiers || identifiers.length === 0) {
+            if (ctx.isJson) {
+              process.stdout.write(
+                JSON.stringify(
+                  {
+                    success: true,
+                    requested: [],
+                    installed: [],
+                    skipped: [],
+                  },
+                  null,
+                  2
+                )
+              );
+              break;
+            }
+
             logger.warn('No themes selected. Exiting.');
-            return;
+            break;
           }
 
-          for (const id of identifiers) {
-            if (themeIds.includes(id.toLowerCase())) {
-              await themeService.install(id.toLowerCase());
-            } else {
-              logger.error(`Theme '${id}' not found in the registry.`);
+          const normalized = identifiers.map((i: string) => i.toLowerCase());
+
+          for (const id of normalized) {
+            const match = themeMap.get(id);
+
+            if (!match) {
+              skipped.push(id);
+              continue;
             }
+
+            await themeService.install(match);
+            installed.push(match);
           }
+
+          // deterministic sort
+          installed.sort((a, b) => a.localeCompare(b));
+          skipped.sort((a, b) => a.localeCompare(b));
+
+          if (ctx.isJson) {
+            process.stdout.write(
+              JSON.stringify(
+                {
+                  success: true,
+                  requested: normalized,
+                  installed,
+                  skipped,
+                },
+                null,
+                2
+              )
+            );
+          }
+
           break;
         }
+
         case 'template':
         case 'templates': {
           const registryService = new RegistryService();
-          if (ctx.isJson) {
-            registryService.setSilent(true);
-          }
           const templateService = new TemplateService();
 
-          logger.info('Adding components...');
-          const availabletemplates = await registryService.getAvailableTemplates();
-          const componentNames = availabletemplates.map((c) => c.id);
+          if (ctx.isJson) {
+            registryService.setSilent(true);
+            templateService.setSilent?.(true);
+          }
 
-          if (identifiers.length === 0) {
+          const availableTemplates = await registryService.getAvailableTemplates();
+
+          const templateMap = new Map<string, string>();
+          // for (const t of availableTemplates) {
+          //   templateMap.set(t.id.toLowerCase(), t.id.toLowerCase());
+          // }
+          for (const t of availableTemplates) {
+            if (!t.id) continue;
+            const id = t.id.toLowerCase();
+            templateMap.set(id, id);
+          }
+
+          const installed: string[] = [];
+          const skipped: string[] = [];
+
+          // interactive only in human mode
+          if (identifiers.length === 0 && !ctx.isYes) {
             const installResponse = await prompts({
               type: 'select',
               name: 'template',
               message: chalk.green('Select a template to add:'),
-              choices: availabletemplates.map((c) => ({
-                title: c.name,
-                value: c.id,
-              })),
+              // choices: availableTemplates.map((c) => ({
+              //   title: c.name,
+              //   value: c.id.toLowerCase(),
+              // })),
+              choices: availableTemplates
+                .filter((c) => c.id)
+                .map((c) => ({
+                  title: c.name,
+                  value: c.id!.toLowerCase(),
+                })),
             });
-            // Convert the single selected component to an array
+
             identifiers = installResponse.template ? [installResponse.template] : [];
           }
 
+          // nothing selected
           if (!identifiers || identifiers.length === 0) {
+            if (ctx.isJson) {
+              process.stdout.write(
+                JSON.stringify(
+                  {
+                    success: true,
+                    requested: [],
+                    installed: [],
+                    skipped: [],
+                  },
+                  null,
+                  2
+                )
+              );
+              break;
+            }
+
             logger.warn('No template selected. Exiting.');
-            return;
+            break;
           }
 
-          for (const id of identifiers) {
-            if (componentNames.includes(id.toLowerCase())) {
-              await templateService.install(id.toLowerCase());
-            } else {
-              logger.error(`Component '${id}' not found in the registry.`);
+          const normalized = identifiers.map((i: string) => i.toLowerCase());
+
+          for (const id of normalized) {
+            const match = templateMap.get(id);
+
+            if (!match) {
+              skipped.push(id);
+              continue;
             }
+
+            await templateService.install(match);
+            installed.push(match);
           }
+
+          // deterministic sort
+          installed.sort((a, b) => a.localeCompare(b));
+          skipped.sort((a, b) => a.localeCompare(b));
+
+          if (ctx.isJson) {
+            process.stdout.write(
+              JSON.stringify(
+                {
+                  success: true,
+                  requested: normalized,
+                  installed,
+                  skipped,
+                },
+                null,
+                2
+              )
+            );
+          }
+
           break;
         }
 

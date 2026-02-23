@@ -15,43 +15,60 @@ export class TemplateService {
   private componentService = new ComponentService();
   private config = loadConfig();
 
+  private silent = false;
+
+  public setSilent(value: boolean): void {
+    this.silent = value;
+    this.registryService.setSilent?.(value);
+    this.componentService.setSilent?.(value);
+  }
+
   private async safeWriteFile(filePath: string, content: string) {
     if (await fs.pathExists(filePath)) {
-      logger.warn(`Skipping existing file (template): ${filePath}`);
+      if (!this.silent) {
+        logger.warn(`Skipping existing file (template): ${filePath}`);
+      }
       return;
     }
     await fs.writeFile(filePath, content);
   }
 
   public async install(name: string): Promise<void> {
-    const spinner = ora(`Installing template layout: ${name}...`).start();
+    const noop = (): void => {
+      return;
+    };
+
+    const spinner = this.silent
+      ? { start: noop, succeed: noop, fail: noop, text: '' }
+      : ora(`Installing template layout: ${name}...`).start();
 
     try {
       const config = await this.config;
-      const templateConfig = await this.registryService.getComponentConfig(name);
+
+      // IMPORTANT: template uses template registry
+      const templateConfig = await this.registryService.getTemplateConfig(name);
+
       if (!templateConfig) {
         throw new Error(`Template '${name}' not found.`);
       }
-      // 1. Install package dependencies
-      if (templateConfig.dependencies && templateConfig.dependencies?.length > 0) {
-        spinner.text = `Installing dependencies for ${name}...`;
-        await this.dependencyService.install(templateConfig.dependencies, false);
+
+      // 1️⃣ Install dependencies
+      if (templateConfig.dependencies?.length) {
+        if (!this.silent) spinner.text = `Installing dependencies...`;
+        await this.dependencyService.install(templateConfig.dependencies, false, this.silent);
       }
 
-      // 2. Install component dependencies (sidebar, header, etc.)
-      if (
-        templateConfig.componentDependencies &&
-        templateConfig.componentDependencies?.length > 0
-      ) {
-        spinner.text = `Installing internal component dependencies...`;
+      // 2️⃣ Install internal components
+      if (templateConfig.componentDependencies?.length) {
+        if (!this.silent) spinner.text = `Installing internal components...`;
 
         for (const dep of templateConfig.componentDependencies) {
           await this.componentService.install(dep);
         }
       }
 
-      // 3. Download template layout files
-      spinner.text = `Downloading template layout files...`;
+      // 3️⃣ Download files
+      if (!this.silent) spinner.text = `Downloading template files...`;
 
       const templateDir = path.resolve(config.templateDir, name.toLowerCase());
       await fs.ensureDir(templateDir);
@@ -72,12 +89,18 @@ export class TemplateService {
         await this.safeWriteFile(filePath, content);
       }
 
-      spinner.succeed(chalk.green(`Template layout installed: ${chalk.cyan(name)}`));
-      logger.info(`Template saved at: ${chalk.yellow(templateDir)}`);
+      if (!this.silent) {
+        spinner.succeed(chalk.green(`Template layout installed: ${chalk.cyan(name)}`));
+        logger.info(`Template saved at: ${chalk.yellow(templateDir)}`);
+      }
     } catch (err) {
-      spinner.fail(`Failed to install template: ${name}`);
-      if (err instanceof Error) logger.error(err.message);
-      process.exit(1);
+      if (!this.silent) {
+        spinner.fail(`Failed to install template: ${name}`);
+        if (err instanceof Error) logger.error(err.message);
+      }
+
+      // 🔥 DO NOT exit here
+      throw err;
     }
   }
 }

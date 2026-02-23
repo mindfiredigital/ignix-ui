@@ -48,7 +48,7 @@ export class ThemeService {
         spinner.fail('Failed to fetch themes');
         logger.error('Could not connect to the theme registry. Please check your connection.');
       }
-      process.exit(1);
+      throw new Error('Failed to fetch themes');
     }
   }
 
