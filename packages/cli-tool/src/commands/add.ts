@@ -40,6 +40,9 @@ export const addCommand = new Command()
       const installed: string[] = [];
       const skipped: string[] = [];
       const registryService = new RegistryService();
+      if (ctx.isJson) {
+        registryService.setSilent(true);
+      }
 
       switch (namespace) {
         case 'component':
@@ -83,11 +86,17 @@ export const addCommand = new Command()
           } else {
             // If identifiers were passed directly from CLI args
             const normalized = identifiers.map((i: string) => i.toLowerCase());
+            const foundNames = new Set<string>();
             selectedItems = availableComponents
               .filter((c) => {
                 const name = c.name?.toLowerCase();
                 const id = c.id?.toLowerCase();
-                return normalized.includes(name) || normalized.includes(id);
+                const match = normalized.includes(name) || normalized.includes(id);
+                if (match) {
+                  foundNames.add(name);
+                  if (id) foundNames.add(id);
+                }
+                return match;
               })
               .map((c) => ({
                 name: (c.id || c.name).toLowerCase(),
@@ -186,6 +195,9 @@ export const addCommand = new Command()
         case 'template':
         case 'templates': {
           const registryService = new RegistryService();
+          if (ctx.isJson) {
+            registryService.setSilent(true);
+          }
           const templateService = new TemplateService();
 
           logger.info('Adding components...');

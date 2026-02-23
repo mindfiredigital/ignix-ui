@@ -16,6 +16,7 @@ export class ComponentService {
   private silent = false;
   public setSilent(value: boolean): void {
     this.silent = value;
+    this.registryService.setSilent(value);
   }
 
   public async install(name: string): Promise<void> {
