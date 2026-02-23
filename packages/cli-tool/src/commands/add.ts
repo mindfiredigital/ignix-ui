@@ -47,15 +47,12 @@ export const addCommand = new Command()
       switch (namespace) {
         case 'component':
         case 'components': {
+          const dependencySet = new Set<string>();
           const componentService = new ComponentService();
           if (ctx.isJson) {
             componentService.setSilent(true);
           }
           const templateService = new TemplateService();
-
-          if (ctx.isJson && componentService.setSilent) {
-            componentService.setSilent(true);
-          }
           logger.info('Adding components...');
           const availableComponents = await registryService.getAvailableComponents();
 
@@ -85,23 +82,49 @@ export const addCommand = new Command()
             }
           } else {
             // If identifiers were passed directly from CLI args
+            // const normalized = identifiers.map((i: string) => i.toLowerCase());
+            // const foundNames = new Set<string>();
+            // selectedItems = availableComponents
+            //   .filter((c) => {
+            //     const name = c.name?.toLowerCase();
+            //     const id = c.id?.toLowerCase();
+            //     const match = normalized.includes(name) || normalized.includes(id);
+            //     if (match) {
+            //       foundNames.add(name);
+            //       if (id) foundNames.add(id);
+            //     }
+            //     return match;
+            //   })
+            //   .map((c) => ({
+            //     name: (c.id || c.name).toLowerCase(),
+            //     type: c.files.main.type,
+            //   }));
+
+            // Deterministic processing based on user input
             const normalized = identifiers.map((i: string) => i.toLowerCase());
-            const foundNames = new Set<string>();
-            selectedItems = availableComponents
-              .filter((c) => {
-                const name = c.name?.toLowerCase();
-                const id = c.id?.toLowerCase();
-                const match = normalized.includes(name) || normalized.includes(id);
-                if (match) {
-                  foundNames.add(name);
-                  if (id) foundNames.add(id);
-                }
-                return match;
-              })
-              .map((c) => ({
-                name: (c.id || c.name).toLowerCase(),
-                type: c.files.main.type,
-              }));
+
+            // Build lookup map
+            const componentMap = new Map<string, any>();
+            for (const c of availableComponents) {
+              if (c.name) componentMap.set(c.name.toLowerCase(), c);
+              if (c.id) componentMap.set(c.id.toLowerCase(), c);
+            }
+
+            selectedItems = [];
+
+            for (const id of normalized) {
+              const component = componentMap.get(id);
+
+              if (!component) {
+                skipped.push(id);
+                continue;
+              }
+
+              selectedItems.push({
+                name: (component.id || component.name).toLowerCase(),
+                type: component.files.main.type,
+              });
+            }
           }
           if (!selectedItems || selectedItems.length === 0) {
             if (ctx.isJson) {
@@ -109,7 +132,9 @@ export const addCommand = new Command()
                 JSON.stringify(
                   {
                     success: true,
+                    requested: identifiers,
                     installed: [],
+                    dependencies: Array.from(dependencySet),
                     skipped: identifiers || [],
                   },
                   null,
@@ -129,8 +154,15 @@ export const addCommand = new Command()
             }
 
             if (item.type === 'component') {
-              await componentService.install(item.name);
+              // await componentService.install(item.name);
+              // installed.push(item.name);
+              const deps = await componentService.install(item.name);
+
               installed.push(item.name);
+
+              deps?.forEach((d) => {
+                if (d !== item.name) dependencySet.add(d);
+              });
             } else if (item.type === 'template') {
               await templateService.install(item.name);
               installed.push(item.name);
@@ -147,7 +179,9 @@ export const addCommand = new Command()
               JSON.stringify(
                 {
                   success: true,
+                  requested: identifiers,
                   installed,
+                  dependencies: Array.from(dependencySet),
                   skipped,
                 },
                 null,

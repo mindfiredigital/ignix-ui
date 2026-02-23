@@ -19,7 +19,8 @@ export class ComponentService {
     this.registryService.setSilent(value);
   }
 
-  public async install(name: string): Promise<void> {
+  public async install(name: string, collected = new Set<string>()): Promise<Set<string>> {
+    collected.add(name);
     const noop = (): void => {
       return;
     };
@@ -49,8 +50,13 @@ export class ComponentService {
       ) {
         spinner.text = `Installing internal component dependencies...`;
 
+        // for (const dep of componentConfig.componentDependencies) {
+        //   await this.install(dep);
+        // }
         for (const dep of componentConfig.componentDependencies) {
-          await this.install(dep);
+          if (!collected.has(dep)) {
+            await this.install(dep, collected);
+          }
         }
       }
 
@@ -93,5 +99,6 @@ export class ComponentService {
 
       throw error;
     }
+    return collected;
   }
 }
