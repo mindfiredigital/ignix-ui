@@ -77,6 +77,7 @@
             "components/avatar",
             "components/badge",
             "components/card",
+            "components/carousel",
             "components/list",
             "components/advanced-table",
             "components/tooltip",
@@ -91,8 +92,7 @@
             "components/drawer",
             "components/navbar",
             "components/sidebar",
-            "components/stepper",
-            "components/tab"
+            "components/stepper"            
           ]
         },
         {
@@ -239,7 +239,15 @@
                 "templates/pages/account-management/security-page",
                 "templates/pages/account-management/setting-page"
               ]
-            }]
+            },
+            {
+              "type": "category",
+              "label": "Error Pages",
+              "items": [
+                "templates/pages/error-page"
+              ]
+            }
+          ]
         },
         {
           "type": "category",
@@ -248,7 +256,9 @@
             "templates/sections/content/call-to-action",
             "templates/sections/content/comparison-table",
             "templates/sections/content/hero",
+            "templates/sections/content/mega-menu-multi-column-dropdown",
             "templates/sections/content/pricing-grid",
+            "templates/sections/content/tab-navigation",
             "templates/sections/content/team-profiles"
           ]
         }
