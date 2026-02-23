@@ -13,8 +13,19 @@ export class ComponentService {
   private dependencyService = new DependencyService();
   private config = loadConfig();
 
+  private silent = false;
+  public setSilent(value: boolean): void {
+    this.silent = value;
+  }
+
   public async install(name: string): Promise<void> {
-    const spinner = ora(`Installing component: ${name}...`).start();
+    const noop = (): void => {
+      return;
+    };
+
+    const spinner = this.silent
+      ? { start: noop, succeed: noop, fail: noop, text: '' }
+      : ora(`Installing component: ${name}...`).start();
 
     try {
       const config = await this.config;
@@ -27,7 +38,7 @@ export class ComponentService {
       // 1. Install dependencies
       if (componentConfig.dependencies && componentConfig.dependencies.length > 0) {
         spinner.text = `Installing dependencies for ${name}...`;
-        await this.dependencyService.install(componentConfig.dependencies, false);
+        await this.dependencyService.install(componentConfig.dependencies, false, this.silent);
       }
 
       // 1.a To Install internal component dependencies
@@ -67,14 +78,19 @@ export class ComponentService {
         installedFiles.push(filePath);
       }
 
-      spinner.succeed(chalk.green(`Successfully installed component: ${chalk.cyan(name)}`));
-      logger.info(`Component files written to ${chalk.yellow(componentDir)}`);
-    } catch (error) {
-      spinner.fail(`Failed to install component: ${name}.`);
-      if (error instanceof Error) {
-        logger.error(error.message);
+      if (!this.silent) {
+        spinner.succeed(chalk.green(`Successfully installed component: ${chalk.cyan(name)}`));
+        logger.info(`Component files written to ${chalk.yellow(componentDir)}`);
       }
-      process.exit(1);
+    } catch (error) {
+      if (!this.silent) {
+        spinner.fail(`Failed to install component: ${name}.`);
+        if (error instanceof Error) {
+          logger.error(error.message);
+        }
+      }
+
+      throw error;
     }
   }
 }
