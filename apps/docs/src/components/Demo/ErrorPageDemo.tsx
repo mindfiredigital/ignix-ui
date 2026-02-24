@@ -13,67 +13,101 @@ import {
   ErrorPageSearch,
   ErrorPageFooter,
   ErrorPageLinks,
+  ErrorPageIcons,
+  ErrorPageErrorReference,
 } from '@site/src/components/UI/error-page';
 import { ButtonWithIcon } from '@site/src/components/UI/button-with-icon';
-import { Home, ArrowLeft } from 'lucide-react';
+import { Home, ArrowLeft, RefreshCw, Bug, MessageCircle, AlertTriangle, Wrench, Zap, Rocket, Settings } from 'lucide-react';
 
 type ErrorPageVariant = 'default' | 'minimal' | 'gradient' | 'dark';
 type AnimationType = 'none' | 'pulse' | 'bounce' | 'glow' | 'shake' | 'rotate';
-type IllustrationPosition = 'left' | 'right';
+type IllustrationPosition = 'left' | 'right' | 'topCenter';
+type ErrorType = '404' | '500';
 
 const variants: ErrorPageVariant[] = ['default', 'minimal', 'gradient', 'dark'];
+const errorTypes: ErrorType[] = ['404', '500'];
 
 const animationTypes: AnimationType[] = ['none', 'pulse', 'bounce', 'glow', 'shake', 'rotate'];
 
-const illustrationPositions: IllustrationPosition[] = ['left', 'right'];
+const illustrationPositions: IllustrationPosition[] = ['left', 'right', 'topCenter'];
 
 const ErrorPageDemo = () => {
+  const [errorType, setErrorType] = useState<ErrorType>('404');
   const [variant, setVariant] = useState<ErrorPageVariant>('default');
   const [animationType, setAnimationType] = useState<AnimationType>('none');
-  const [illustrationPosition, setIllustrationPosition] = useState<IllustrationPosition>('left');
-  const [showSearch, setShowSearch] = useState(true);
-  const [showIllustration, setShowIllustration] = useState(true);
-  const [showBackgroundImage, setShowBackgroundImage] = useState(false);
+  const [illustrationPosition, setIllustrationPosition] = useState<IllustrationPosition>('topCenter');
+  const [showSearch, setShowSearch] = useState<boolean>(true);
+  const [showIllustration, setShowIllustration] = useState<boolean>(false);
+  const [showBackgroundImage, setShowBackgroundImage] = useState<boolean>(false);
+  
+  // Generate a mock error reference ID for 500 errors
+  const errorReferenceId = React.useMemo(() => {
+    return `ERR-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+  }, []);
+
+  const handleCopyReferenceId = (referenceId: string) => {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(referenceId).then(() => {
+        alert(`Error Reference ID copied: ${referenceId}`);
+      }).catch(() => {
+        alert(`Error Reference ID copied: ${referenceId}`);
+      });
+    } else {
+      alert(`Error Reference ID copied: ${referenceId}`);
+    }
+  };
+
+  // Tuple format: [iconComponent, colorClass] (custom colors per icon) for 500 errors
+  const icons: [typeof AlertTriangle, typeof Wrench, typeof Zap, typeof Rocket] = [
+    AlertTriangle,
+    Wrench,
+    Zap,
+    Rocket,
+  ];
 
   const generateCodeString = () => {
-    let code = `<ErrorPage variant="${variant}"${showBackgroundImage ? '\n  backgroundImage="https://images.unsplash.com/photo-1557683316-973673baf926?w=1600&h=900&fit=crop&q=90"' : ''}>`;
+    let code = `<ErrorPage\n  variant="${variant}"\n  icon={Settings}${showBackgroundImage ? '\n  backgroundImage="https://images.unsplash.com/photo-1557683316-973673baf926?w=1600&h=900&fit=crop&q=90"' : ''}\n>`;
     
-    if (showIllustration) {
-      code += `\n  <ErrorPageIllustration\n    position="${illustrationPosition}"\n    illustration="404-1.svg"\n  />`;
+    if (showIllustration && errorType === '404') {
+      code += `\n  <ErrorPageIllustration\n    position="${illustrationPosition}"\n    illustration="/ignix-ui/img/404-1.svg"\n    className="w-90 h-90 mx-auto"\n  />`;
+    } else if (showIllustration && errorType === '500') {
+      code += `\n  <ErrorPageIllustration\n    position="${illustrationPosition}"\n    illustration="/ignix-ui/img/500-1.svg"\n    className="w-90 h-90 mx-auto"\n  />`;
     }
     
     code += `\n  <ErrorPageContent>`;
-    code += `\n    <ErrorPageErrorCode animationType="${animationType}">404</ErrorPageErrorCode>`;
-    code += `\n    <ErrorPageHeading>Page Not Found</ErrorPageHeading>`;
-    code += `\n    <ErrorPageDesc>The page you're looking for doesn't exist. It might have been moved, deleted, or the URL might be incorrect.</ErrorPageDesc>`;
     
-    if (showSearch) {
-      code += `\n    <ErrorPageSearch\n      showSearch={true}\n      searchPlaceholder="Search for something else..."\n    />`;
+    if (!showIllustration) {
+      code += `\n    <ErrorPageIcons\n      icons={[AlertTriangle, Wrench, Zap, Rocket]}\n    >`;
+      code += `\n      <ErrorPageErrorCode\n        errorCode="${errorType}"\n        animationType="${errorType === '500' ? 'rotate' : animationType}"\n      />`;
+      code += `\n    </ErrorPageIcons>`;
     }
     
-    code += `\n    <ErrorPageLinks direction="row">`;
-    code += `\n      <ButtonWithIcon`;
-    code += `\n        variant="outline"`;
-    code += `\n        size="lg"`;
-    code += `\n        icon={<ArrowLeft className="h-4 w-4" />}`;
-    code += `\n        iconPosition="left"`;
-    code += `\n        onClick={() => window.history.back()}`;
-    code += `\n      >`;
-    code += `\n        Go back`;
-    code += `\n      </ButtonWithIcon>`;
-    code += `\n      <ButtonWithIcon`;
-    code += `\n        variant="default"`;
-    code += `\n        size="lg"`;
-    code += `\n        icon={<Home className="h-4 w-4" />}`;
-    code += `\n        iconPosition="left"`;
-    code += `\n        onClick={() => (window.location.href = "/")}`;
-    code += `\n      >`;
-    code += `\n        Take me home`;
-    code += `\n      </ButtonWithIcon>`;
-    code += `\n    </ErrorPageLinks>`;
+    if (errorType === '500') {
+      code += `\n    <ErrorPageHeading>Server Error</ErrorPageHeading>`;
+      code += `\n    <ErrorPageDesc>\n      We apologize for the inconvenience. Something unexpected happened on our server.\n      Our technical team has been automatically notified and is investigating the issue.\n    </ErrorPageDesc>`;
+      code += `\n    <ErrorPageErrorReference\n      errorReferenceId="${errorReferenceId}"\n      onCopy={handleCopyReferenceId}\n    />`;
+      code += `\n    <ErrorPageLinks>`;
+      code += `\n      <ButtonWithIcon\n        variant="default"\n        size="lg"\n        icon={<RefreshCw/>}\n        iconPosition="left"\n        onClick={handleRetry}\n      >\n        Retry\n      </ButtonWithIcon>`;
+      code += `\n      <ButtonWithIcon\n        variant="default"\n        size="lg"\n        icon={<Bug/>}\n        iconPosition="left"\n        onClick={handleReportBug}\n      >\n        Report a Bug\n      </ButtonWithIcon>`;
+      code += `\n      <ButtonWithIcon\n        variant="default"\n        size="lg"\n        icon={<MessageCircle/>}\n        iconPosition="left"\n        onClick={handleContactSupport}\n      >\n        Contact Support\n      </ButtonWithIcon>`;
+      code += `\n    </ErrorPageLinks>`;
+    } else {
+      code += `\n    <ErrorPageHeading>Page Not Found</ErrorPageHeading>`;
+      code += `\n    <ErrorPageDesc>\n      The page you're looking for doesn't exist. It might have been moved, deleted, or the URL might be incorrect.\n    </ErrorPageDesc>`;
+      
+      if (showSearch) {
+        code += `\n    <ErrorPageSearch\n      showSearch={true}\n      searchPlaceholder="Search for something else..."\n    />`;
+      }
+      
+      code += `\n    <ErrorPageLinks>`;
+      code += `\n      <ButtonWithIcon\n        variant="default"\n        size="lg"\n        icon={<ArrowLeft/>}\n        iconPosition="left"\n        onClick={() => window.history.back()}\n      >\n        Go back\n      </ButtonWithIcon>`;
+      code += `\n      <ButtonWithIcon\n        variant="default"\n        size="lg"\n        icon={<Home/>}\n        iconPosition="left"\n        onClick={() => (window.location.href = "/")}\n      >\n        Take me home\n      </ButtonWithIcon>`;
+      code += `\n    </ErrorPageLinks>`;
+    }
+    
     code += `\n  </ErrorPageContent>`;
     code += `\n  <ErrorPageFooter>`;
-    code += `\n    <p className="text-sm text-slate-500">ERROR 404 · PAGE NOT FOUND</p>`;
+    code += `\n    ${errorType === '500' ? `ERROR 500 · SERVER ERROR · REF: ${errorReferenceId}` : 'ERROR 404 · PAGE NOT FOUND'}`;
     code += `\n  </ErrorPageFooter>`;
     code += `\n</ErrorPage>`;
     
@@ -83,34 +117,46 @@ const ErrorPageDemo = () => {
   return (
     <div className="space-y-6 mb-8">
       <div className="flex flex-wrap gap-4 justify-start sm:justify-end">
+        <VariantSelector
+          variants={[...errorTypes]}
+          selectedVariant={errorType}
+          onSelectVariant={(v) => setErrorType(v as ErrorType)}
+          type="Error Type"
+        />
         {!showBackgroundImage && <VariantSelector
           variants={[...variants]}
           selectedVariant={variant}
           onSelectVariant={(v) => setVariant(v as ErrorPageVariant)}
           type="Variant"
         />}
-        {!showIllustration && <VariantSelector
-          variants={[...animationTypes]}
-          selectedVariant={animationType}
-          onSelectVariant={(v) =>setAnimationType(v as AnimationType)}
-          type="Error Code Animation"
-        />}
-        {showIllustration && <VariantSelector
-          variants={[...illustrationPositions]}
-          selectedVariant={illustrationPosition}
-          onSelectVariant={(v) => setIllustrationPosition(v as IllustrationPosition)}
-          type="Illustration Position"
-        />}
+        {!showIllustration && (
+          <VariantSelector
+            variants={[...animationTypes]}
+            selectedVariant={animationType}
+            onSelectVariant={(v) =>setAnimationType(v as AnimationType)}
+            type="Error Code Animation"
+          />
+        )}
+        {showIllustration && (
+          <VariantSelector
+            variants={[...illustrationPositions]}
+            selectedVariant={illustrationPosition}
+            onSelectVariant={(v) => setIllustrationPosition(v as IllustrationPosition)}
+            type="Illustration Position"
+          />
+        )}
         <div className="flex items-center gap-2">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={showSearch}
-              onChange={(e) => setShowSearch(e.target.checked)}
-              className="rounded"
-            />
-            <span className="text-sm">Show Search</span>
-          </label>
+          {errorType === '404' && (
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={showSearch}
+                onChange={(e) => setShowSearch(e.target.checked)}
+                className="rounded"
+              />
+              <span className="text-sm">Show Search</span>
+            </label>
+          )}
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
@@ -134,10 +180,11 @@ const ErrorPageDemo = () => {
 
       <Tabs>
         <TabItem value="preview" label="Preview">
-          <div className="border border-gray-300 rounded-lg overflow-hidden max-h-[600px] overflow-y-auto">
+          <div className="border border-gray-300 rounded-lg overflow-hidden">
           <div className="p-3">
             <ErrorPage
               variant={variant}
+              icon={Settings}
               className="min-h-0"
               {...(showBackgroundImage && {
                 backgroundImage:
@@ -145,50 +192,110 @@ const ErrorPageDemo = () => {
 
               })}
             >
-              {showIllustration && (
+              {showIllustration && errorType === '404' && (
                 <ErrorPageIllustration
                   position={illustrationPosition}
                   illustration="/ignix-ui/img/404-1.svg"
                   className="w-90 h-90 mx-auto"
                 />
               )}
+              {showIllustration && errorType === '500' && (
+                <ErrorPageIllustration
+                  position={illustrationPosition}
+                  illustration="/ignix-ui/img/500-1.svg"
+                  className="w-90 h-90 mx-auto"
+                />
+              )}
               <ErrorPageContent>
-                {!showIllustration && <ErrorPageErrorCode animationType={animationType}>
-                  404
-                </ErrorPageErrorCode>}
-                <ErrorPageHeading>Page Not Found</ErrorPageHeading>
-                <ErrorPageDesc>
-                  The page you're looking for doesn't exist. It might have been moved, deleted, or the URL might be incorrect.
-                </ErrorPageDesc>
-                {showSearch && (
-                  <ErrorPageSearch
-                    showSearch={true}
-                    searchPlaceholder="Search for something else..."
-                  />
+                {!showIllustration && (
+                  <ErrorPageIcons
+                    icons={icons}
+                  >
+                    <ErrorPageErrorCode 
+                      errorCode={errorType}
+                      animationType={animationType} 
+                    />
+                  </ErrorPageIcons>)
+                }
+                {errorType === '500' ? (
+                  <>
+                    <ErrorPageHeading>Server Error</ErrorPageHeading>
+                    <ErrorPageDesc>
+                      We apologize for the inconvenience. Something unexpected happened on our server. 
+                      Our technical team has been automatically notified and is investigating the issue.
+                    </ErrorPageDesc>
+                    <ErrorPageErrorReference
+                      errorReferenceId={errorReferenceId}
+                      onCopy={handleCopyReferenceId}
+                    />
+                    <ErrorPageLinks>
+                      <ButtonWithIcon
+                        variant="default"
+                        size="lg"
+                        icon={<RefreshCw/>}
+                        iconPosition="left"
+                      >
+                        Retry
+                      </ButtonWithIcon>
+                      <ButtonWithIcon
+                        variant="default"
+                        size="lg"
+                        icon={<Bug/>}
+                        iconPosition="left"
+                      >
+                        Report a Bug
+                      </ButtonWithIcon>
+                      <ButtonWithIcon
+                        variant="default"
+                        size="lg"
+                        icon={<MessageCircle/>}
+                        iconPosition="left"
+                      >
+                        Contact Support
+                      </ButtonWithIcon>
+                    </ErrorPageLinks>
+                  </>
+                ) : (
+                  <>
+                    
+                    <ErrorPageHeading>Page Not Found</ErrorPageHeading>
+                    <ErrorPageDesc>
+                      The page you're looking for doesn't exist. It might have been moved, deleted, or the URL might be incorrect.
+                    </ErrorPageDesc>
+                    {showSearch && (
+                      <ErrorPageSearch
+                        showSearch={true}
+                        searchPlaceholder="Search for something else..."
+                      />
+                    )}
+                    <ErrorPageLinks>
+                      <ButtonWithIcon
+                        variant="default"
+                        size="lg"
+                        icon={<ArrowLeft/>}
+                        iconPosition="left"
+                        onClick={() => window.history.back()}
+                      >
+                        Go back
+                      </ButtonWithIcon>
+                      <ButtonWithIcon
+                        variant="default"
+                        size="lg"
+                        icon={<Home/>}
+                        iconPosition="left"
+                        onClick={() => (window.location.href = "/")}
+                      >
+                        Take me home
+                      </ButtonWithIcon>
+                    </ErrorPageLinks>
+                  </>
                 )}
-                <ErrorPageLinks direction="row">
-                  <ButtonWithIcon
-                    variant="primary"
-                    size="lg"
-                    icon={<ArrowLeft className="h-4 w-4" />}
-                    iconPosition="left"
-                    onClick={() => window.history.back()}
-                  >
-                    Go back
-                  </ButtonWithIcon>
-                  <ButtonWithIcon
-                    variant="default"
-                    size="lg"
-                    icon={<Home className="h-4 w-4" />}
-                    iconPosition="left"
-                    onClick={() => (window.location.href = "/")}
-                  >
-                    Take me home
-                  </ButtonWithIcon>
-                </ErrorPageLinks>
               </ErrorPageContent>
               <ErrorPageFooter>
-                <p className="text-sm text-slate-500">ERROR 404 · PAGE NOT FOUND</p>
+                {errorType === '500' 
+                  ? `ERROR 500 · SERVER ERROR · REF: ${errorReferenceId}`
+                  : 'ERROR 404 · PAGE NOT FOUND'
+                }
               </ErrorPageFooter>
             </ErrorPage>
             </div>
@@ -208,13 +315,9 @@ const CustomDesignDemo = () => {
   return (
     <div className="space-y-6 mb-8">
       <div>
-        <h3 className="text-2xl font-bold mb-4">Custom Design Example</h3>
-        <p className="text-muted-foreground mb-6">
-          A custom space-themed error page with animated stars background and custom styling.
-        </p>
         <Tabs>
           <TabItem value="custom-preview" label="Preview">
-            <div className="border border-gray-300 rounded-lg overflow-hidden max-h-[600px] overflow-y-auto">
+            <div className="border border-gray-300 rounded-lg">
               <ErrorPage variant="default" className="bg-slate-950 relative overflow-hidden min-h-0">
                 {/* Space background with stars */}
                 <div className="absolute inset-0 bg-slate-950">
@@ -239,7 +342,7 @@ const CustomDesignDemo = () => {
                   <ErrorPageErrorCode
                     errorCode="404"
                     animationType="bounce"
-                    className="text-center text-8xl sm:text-9xl lg:text-[12rem] font-bold text-cyan-400 mb-6 tracking-tight [text-shadow:0_0_20px_rgba(34,211,238,0.5),0_0_40px_rgba(34,211,238,0.3)]"
+                    className="text-center text-8xl sm:text-9xl lg:text-[12rem] font-bold text-primary mb-6 tracking-tight [text-shadow:0_0_20px_rgba(75,85,99,0.6),0_0_40px_rgba(75,85,99,0.35)] [filter:drop-shadow(0_10px_25px_rgba(0,0,0,0.3))]"
                   />
                   
                   {/* Illustration - Astronaut GIF */}
@@ -267,24 +370,22 @@ const CustomDesignDemo = () => {
                   />
                   
                   {/* Navigation Links */}
-                  <ErrorPageLinks direction="row">
+                  <ErrorPageLinks>
                     <ButtonWithIcon
-                      variant="outline"
+                      variant="default"
                       size="lg"
-                      icon={<ArrowLeft className="h-4 w-4" />}
+                      icon={<ArrowLeft/>}
                       iconPosition="left"
                       onClick={() => window.history.back()}
-                      className="bg-slate-800 text-white border-slate-700 hover:bg-slate-700"
                     >
                       Go back
                     </ButtonWithIcon>
                     <ButtonWithIcon
                       variant="default"
                       size="lg"
-                      icon={<Home className="h-4 w-4" />}
+                      icon={<Home/>}
                       iconPosition="left"
                       onClick={() => (window.location.href = "/")}
-                      className="bg-cyan-400 hover:bg-cyan-500 text-slate-950"
                     >
                       Take me home
                     </ButtonWithIcon>
@@ -324,12 +425,12 @@ const CustomDesignDemo = () => {
     <ErrorPageErrorCode
       errorCode="404"
       animationType="bounce"
-      className="text-center text-8xl sm:text-9xl lg:text-[12rem] font-bold text-cyan-400 mb-6 tracking-tight [text-shadow:0_0_20px_rgba(34,211,238,0.5),0_0_40px_rgba(34,211,238,0.3)]"
+      className="text-center text-8xl sm:text-9xl lg:text-[12rem] font-bold text-primary mb-6 tracking-tight [text-shadow:0_0_20px_rgba(75,85,99,0.6),0_0_40px_rgba(75,85,99,0.35)] [filter:drop-shadow(0_10px_25px_rgba(0,0,0,0.3))]"
     />
     
     {/* Illustration - Astronaut GIF */}
     <ErrorPageIllustration
-      illustration="error-astranaut.gif"
+      illustration="/ignix-ui/img/error-astranaut.gif"
       className="w-64 h-64 mx-auto"
     />
     
@@ -352,24 +453,22 @@ const CustomDesignDemo = () => {
     />
     
     {/* Navigation Links */}
-    <ErrorPageLinks direction="row">
+    <ErrorPageLinks>
       <ButtonWithIcon
-        variant="outline"
+        variant="default"
         size="lg"
-        icon={<ArrowLeft className="h-4 w-4" />}
+        icon={<ArrowLeft/>}
         iconPosition="left"
         onClick={() => window.history.back()}
-        className="bg-slate-800 text-white border-slate-700 hover:bg-slate-700"
       >
         Go back
       </ButtonWithIcon>
       <ButtonWithIcon
         variant="default"
         size="lg"
-        icon={<Home className="h-4 w-4" />}
+        icon={<Home/>}
         iconPosition="left"
         onClick={() => (window.location.href = "/")}
-        className="bg-cyan-400 hover:bg-cyan-500 text-slate-950"
       >
         Take me home
       </ButtonWithIcon>

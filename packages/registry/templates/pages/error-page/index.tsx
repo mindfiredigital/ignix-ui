@@ -292,6 +292,7 @@ export const ErrorPage: React.FC<ErrorPageProps> = React.memo(({
   );
   const isRight = illustrationPosition === "right";
   const isTopCenter = illustrationPosition === "topCenter";
+  const isDark = variant === "dark";
 
   const backgroundStyle = React.useMemo(() => 
     backgroundImage ? {
@@ -336,7 +337,7 @@ export const ErrorPage: React.FC<ErrorPageProps> = React.memo(({
         
         {/* Animated icons throughout the page */}
         {Icon && iconInstances.map((instance, index) => {
-          const iconColorClass = iconColor ? iconColor : (backgroundImage ? "text-white" : "");
+          const iconColorClass = iconColor ? iconColor : (backgroundImage || isDark ? "text-white" : "");
           const opacityRange = iconColor ? [0.2, 0.5, 0.2] : [0.1, 0.3, 0.1];
           
           return (
