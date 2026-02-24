@@ -77,6 +77,7 @@
             "components/avatar",
             "components/badge",
             "components/card",
+            "components/carousel",
             "components/list",
             "components/advanced-table",
             "components/tooltip",
@@ -91,8 +92,7 @@
             "components/drawer",
             "components/navbar",
             "components/sidebar",
-            "components/stepper",
-            "components/tab"
+            "components/stepper"            
           ]
         },
         {
@@ -217,17 +217,19 @@
         {
           "type": "category",
           "label": "Pages",
-          "items": [{
-            "type": "category",
-            "label": "Authentication",
-            "items": [
-              "templates/pages/authentication/forgot-password-page",
-              "templates/pages/authentication/otp-verification-page",
-              "templates/pages/authentication/reset-password-page",
-              "templates/pages/sign-in",
-              "templates/pages/authentication/sign-up",
-              "templates/pages/authentication/two-factor-auth-setup-page"
-            ]},
+          "items": [
+            {
+              "type": "category",
+              "label": "Authentication",
+              "items": [
+                "templates/pages/authentication/forgot-password-page",
+                "templates/pages/authentication/otp-verification-page",
+                "templates/pages/authentication/reset-password-page",
+                "templates/pages/sign-in",
+                "templates/pages/authentication/sign-up",
+                "templates/pages/authentication/two-factor-auth-setup-page"
+              ]
+            },
             {
               "type": "category",
               "label": "Account Management",
@@ -239,13 +241,22 @@
                 "templates/pages/account-management/security-page",
                 "templates/pages/account-management/setting-page"
               ]
-            },{
+            },
+            {
               "type": "category",
               "label": "Dashboard",
               "items": [
                 "templates/pages/dashboard/dashboard-overview-page"
               ]
-            }]
+            },
+            {
+              "type": "category",
+              "label": "Error Pages",
+              "items": [
+                "templates/pages/error-page"
+              ]
+            }
+          ]                      
         },
         {
           "type": "category",
@@ -254,7 +265,9 @@
             "templates/sections/content/call-to-action",
             "templates/sections/content/comparison-table",
             "templates/sections/content/hero",
+            "templates/sections/content/mega-menu-multi-column-dropdown",
             "templates/sections/content/pricing-grid",
+            "templates/sections/content/tab-navigation",
             "templates/sections/content/team-profiles"
           ]
         }

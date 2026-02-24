@@ -109,6 +109,18 @@
         }
       }
     },
+    "errorPage": {
+      "name": "ErrorPage",
+      "description": "A customizable error page template with multiple animation variants, designed to display clear messaging, illustration/icons.",
+      "dependencies": ["lucide-react", "framer-motion", "class-variance-authority"],
+      "componentDependencies": ["button", "typography"],
+      "files": {
+        "main": {
+          "path": "templates/pages/error-page/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "pin": {
       "name": "Pin",
       "description": "A layout utility component for Pin content",
@@ -658,7 +670,7 @@
         }
       }
     },
-     "singleColumnLayout": {
+    "singleColumnLayout": {
       "name": "SingleColumnLayout",
       "description": "A clean, responsive single-column layout with header, constrained content area, and footer. Supports multiple theme variants and animations.",
       "dependencies": ["framer-motion", "lucide-react", "class-variance-authority"],
@@ -928,14 +940,10 @@
       "description": "A pricing grid template with responsive design.",
       "dependencies": [
         "framer-motion",
-        "lucide-react",
-        "class-variance-authority"
+        "lucide-react"
       ],
       "componentDependencies": [
-        "button",
-        "switch",
-        "card",
-        "typography"
+        "button"
       ],
       "files": {
         "main": {
@@ -1162,6 +1170,22 @@
         }
       }
     },
+    "mega-menu-multi-column-dropdown": {
+      "name": "mega-menu-multi-column-dropdown",
+      "description": "A header mega menu section with a multi-column dropdown, category headers, icons/images per link, nested submenus, and an optional CTA button.",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "componentDependencies": [
+        "button"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/sections/mega-menu-multi-column-dropdown/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "productCard":{
       "name": "ProductCard",
       "description": "A flexible product card component with custom tags and multiple interaction modes.",
@@ -1201,6 +1225,20 @@
         }
       }
     },
+    "tab-navigation": {
+      "name": "tab-navigation",
+      "description": "A horizontal tab navigation template with active indicator, optional icons and badges, and full keyboard support.",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "componentDependencies": [],
+      "files": {
+        "main": {
+          "path": "templates/sections/tab-navigation/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "testimonialCard" :{
       "name": "TestimonialCard",
       "description": "Testimonial Card component showcases customer feedback in a clear and engaging format. It supports flexible layouts with features such as quotes, author details (name, title, avatar), ratings, social links.",
@@ -1217,7 +1255,7 @@
       "files": {
         "main": {
           "path": "components/testimonial-card/index.tsx",
-          "type": "template"
+          "type": "component"
         }
       }
     },
