@@ -1,0 +1,435 @@
+---
+sidebar_position: 13
+title: Dashboard Overview Page
+description: A modern analytics dashboard overview page with KPI cards, key metrics with trend indicators, latest activity list with pagination, date range filter, and call-to-action buttons – built with gradient-enhanced UI for a polished look.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import DashboardOverviewPageDemo from '@site/src/components/Demo/DashboardOverviewPageDemo';
+
+## Overview
+
+The **Dashboard Overview Page** provides a high-level snapshot of your product or business KPIs. It combines:
+
+- Top-level **KPI cards** (revenue, users, conversion, orders, etc.)
+- A **Key metrics** grid with clear up/down trend indicators (↑/↓)
+- A **latest activity / transactions** list with built-in pagination
+- A **date range filter** that can drive KPI and metric updates
+- Primary and secondary **call-to-action buttons** for key flows (e.g. “Export report”, “View details”)
+
+The page is fully responsive, uses gradient-enhanced visuals (background, cards, and borders), and exposes composable building blocks so you can assemble your own dashboard layouts.
+
+## Preview
+
+<DashboardOverviewPageDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add template dashboard-overview-page
+    ```
+  </TabItem>
+  <TabItem value="manual" label="Manual">
+    ```tsx
+    "use client";
+
+    import React, { useCallback, useMemo, useState } from "react";
+    import { FiTrendingUp, FiTrendingDown } from "react-icons/fi";
+    import { cn } from "../../../utils/cn";
+    import { Button } from "@ignix-ui/button";
+    import {
+      Card,
+      CardContent,
+      CardDescription,
+      CardHeader,
+      CardTitle,
+    } from "@ignix-ui/card";
+    import DatePicker, { type DateRange } from "@ignix-ui/date-picker";
+    import { Pagination } from "@ignix-ui/table";
+
+    type TrendDirection = "up" | "down" | "neutral";
+
+    interface KPICard {
+      id: string;
+      label: string;
+      value: string;
+      rawValue?: number;
+      trend: TrendDirection;
+      trendLabel: string;
+    }
+
+    interface KeyMetric {
+      id: string;
+      label: string;
+      value: string;
+      trend: TrendDirection;
+      trendValue: string;
+    }
+
+    interface ActivityItem {
+      id: string;
+      title: string;
+      subtitle?: string;
+      timestamp: string;
+      status?: string;
+      amount?: string;
+    }
+
+    interface DashboardDateRange {
+      start: Date | null;
+      end: Date | null;
+    }
+
+    interface DashboardOverviewPageProps {
+      kpiCards?: KPICard[];
+      keyMetrics?: KeyMetric[];
+      activityItems?: ActivityItem[];
+      activityPageSize?: number;
+      onDateRangeChange?: (range: DashboardDateRange) => void;
+      onExportReport?: () => void;
+      onViewDetails?: () => void;
+      dateRange?: DashboardDateRange;
+      className?: string;
+    }
+
+    const DEFAULT_ACTIVITY_PAGE_SIZE = 5;
+
+    const DEFAULT_KPI_CARDS: KPICard[] = [
+      { id: "revenue", label: "Revenue", value: "$124.5k", rawValue: 124500, trend: "up", trendLabel: "+12.5% vs last period" },
+      { id: "users", label: "Active Users", value: "12,345", rawValue: 12345, trend: "up", trendLabel: "+8.2% vs last period" },
+      { id: "conversion", label: "Conversion Rate", value: "3.24%", rawValue: 3.24, trend: "down", trendLabel: "-0.4% vs last period" },
+      { id: "orders", label: "Orders", value: "1,892", rawValue: 1892, trend: "up", trendLabel: "+15.1% vs last period" },
+    ];
+
+    const DEFAULT_KEY_METRICS: KeyMetric[] = [
+      { id: "m1", label: "Page Views", value: "48.2k", trend: "up", trendValue: "+5.2%" },
+      { id: "m2", label: "Avg. Session", value: "4m 32s", trend: "down", trendValue: "-2.1%" },
+      { id: "m3", label: "Bounce Rate", value: "42%", trend: "down", trendValue: "-1.8%" },
+      { id: "m4", label: "Sign-ups", value: "892", trend: "up", trendValue: "+12%" },
+      { id: "m5", label: "Support Tickets", value: "24", trend: "neutral", trendValue: "0%" },
+      { id: "m6", label: "NPS Score", value: "72", trend: "up", trendValue: "+3" },
+    ];
+
+    const DEFAULT_ACTIVITY_ITEMS: ActivityItem[] = [
+      { id: "a1", title: "Payment received", subtitle: "Invoice #1024", timestamp: "2 min ago", status: "completed", amount: "+$1,250" },
+      { id: "a2", title: "New user sign-up", subtitle: "john@example.com", timestamp: "15 min ago", status: "completed" },
+      { id: "a3", title: "Order shipped", subtitle: "Order #8821", timestamp: "1 hour ago", status: "completed", amount: "$89.00" },
+      { id: "a4", title: "Support ticket closed", subtitle: "#4421", timestamp: "2 hours ago", status: "completed" },
+      { id: "a5", title: "Subscription renewed", subtitle: "Premium plan", timestamp: "3 hours ago", status: "completed", amount: "$29/mo" },
+    ];
+
+    function toDashboardDateRange(value: Date | DateRange | null): DashboardDateRange {
+      if (value == null) return { start: null, end: null };
+      if (value instanceof Date) return { start: value, end: null };
+      return { start: value.start ?? null, end: value.end ?? null };
+    }
+
+    function toPickerValue(range: DashboardDateRange | undefined): DateRange | null {
+      if (!range?.start && !range?.end) return null;
+      return { start: range.start ?? null, end: range.end ?? null };
+    }
+
+    function TrendIndicator({
+      trend,
+      trendValue,
+      className,
+    }: {
+      trend: TrendDirection;
+      trendValue: string;
+      className?: string;
+    }) {
+      const isUp = trend === "up";
+      const isDown = trend === "down";
+      const trendClass = isUp
+        ? "text-success"
+        : isDown
+        ? "text-destructive"
+        : "text-muted-foreground";
+
+      return (
+        <span className={cn("inline-flex items-center gap-1 text-sm font-medium", trendClass, className)}>
+          {isUp && <FiTrendingUp className="w-4 h-4 shrink-0" aria-hidden />}
+          {isDown && <FiTrendingDown className="w-4 h-4 shrink-0" aria-hidden />}
+          <span>{trendValue}</span>
+        </span>
+      );
+    }
+
+    function DashboardOverviewPage({
+      kpiCards = DEFAULT_KPI_CARDS,
+      keyMetrics = DEFAULT_KEY_METRICS,
+      activityItems = DEFAULT_ACTIVITY_ITEMS,
+      activityPageSize = DEFAULT_ACTIVITY_PAGE_SIZE,
+      onDateRangeChange,
+      onExportReport,
+      onViewDetails,
+      dateRange: controlledDateRange,
+      className,
+    }: DashboardOverviewPageProps) {
+      const [internalDateRange, setInternalDateRange] = useState<DashboardDateRange | undefined>(
+        controlledDateRange ?? undefined
+      );
+      const [activityPage, setActivityPage] = useState(1);
+
+      const dateRange = controlledDateRange ?? internalDateRange;
+
+      const handleDateRangeChange = useCallback(
+        (value: Date | DateRange | null) => {
+          const next = toDashboardDateRange(value);
+          setInternalDateRange(next);
+          onDateRangeChange?.(next);
+        },
+        [onDateRangeChange]
+      );
+
+      const totalActivityPages = useMemo(
+        () => Math.max(1, Math.ceil(activityItems.length / activityPageSize)),
+        [activityItems.length, activityPageSize]
+      );
+
+      const paginatedActivity = useMemo(() => {
+        const start = (activityPage - 1) * activityPageSize;
+        return activityItems.slice(start, start + activityPageSize);
+      }, [activityItems, activityPage, activityPageSize]);
+
+      const handleActivityPageChange = useCallback((page: number) => {
+        setActivityPage(page);
+      }, []);
+
+      return (
+        <div
+          className={cn(
+            "relative min-h-screen overflow-hidden",
+            "bg-gradient-to-br from-background via-background to-muted/40",
+            "text-foreground p-4 md:p-6",
+            className
+          )}
+        >
+          <div className="pointer-events-none absolute inset-0 opacity-60">
+            <div className="absolute -top-32 -left-24 h-64 w-64 rounded-full bg-gradient-to-br from-primary/25 via-cyan-400/15 to-transparent blur-3xl" />
+            <div className="absolute -bottom-32 -right-20 h-72 w-72 rounded-full bg-gradient-to-tr from-purple-500/20 via-pink-500/10 to-transparent blur-3xl" />
+          </div>
+
+          <div className="relative z-10 max-w-7xl mx-auto space-y-6">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+              <div>
+                <h1 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-primary via-cyan-400 to-purple-500 bg-clip-text text-transparent">
+                  Dashboard Overview
+                </h1>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Monitor key metrics and recent activity
+                </p>
+              </div>
+              <div className="flex flex-col xs:flex-row items-stretch sm:items-center gap-3">
+                <div className="w-full sm:w-auto min-w-[200px]">
+                  <DatePicker
+                    variant="range"
+                    value={toPickerValue(dateRange)}
+                    onChange={handleDateRangeChange}
+                    placeholder={["Start date", "End date"]}
+                    size="md"
+                    showIcon={true}
+                    label="Date range"
+                  />
+                </div>
+                <div className="flex gap-2 flex-wrap">
+                  <Button variant="default" size="md" onClick={onExportReport}>
+                    Export Report
+                  </Button>
+                  <Button variant="outline" size="md" onClick={onViewDetails}>
+                    View Details
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* KPI cards */}
+            <section aria-label="Key performance indicators">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {kpiCards.map((kpi) => (
+                  <Card key={kpi.id} variant="gradient" className="flex flex-col">
+                    <CardHeader variant="compact">
+                      <CardTitle size="sm" className="font-medium text-sm text-white/90">
+                        {kpi.label}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent variant="compact" className="pt-0">
+                      <p className="text-2xl font-bold text-white">{kpi.value}</p>
+                      <TrendIndicator trend={kpi.trend} trendValue={kpi.trendLabel} className="mt-1" />
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </section>
+
+            {/* Key metrics */}
+            <section aria-label="Key metrics">
+              <Card variant="premium">
+                <CardHeader variant="compact">
+                  <CardTitle size="md">Key metrics</CardTitle>
+                  <CardDescription>Overview for selected period</CardDescription>
+                </CardHeader>
+                <CardContent variant="compact" className="pt-0">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    {keyMetrics.map((metric) => (
+                      <div
+                        key={metric.id}
+                        className="rounded-xl bg-gradient-to-tr from-primary/40 via-cyan-400/30 to-purple-500/40 p-[1px]"
+                      >
+                        <div className="p-4 rounded-[0.9rem] bg-muted/80 dark:bg-background/80 backdrop-blur-sm flex flex-col gap-1">
+                          <p className="text-sm text-muted-foreground truncate">{metric.label}</p>
+                          <p className="text-lg font-semibold text-foreground">{metric.value}</p>
+                          <TrendIndicator trend={metric.trend} trendValue={metric.trendValue} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </section>
+
+            {/* Latest activity */}
+            <section aria-label="Latest activity">
+              <Card variant="default">
+                <CardHeader variant="compact" className="flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle size="md">Latest activity</CardTitle>
+                    <CardDescription>Recent transactions and events</CardDescription>
+                  </div>
+                </CardHeader>
+                <CardContent variant="compact" className="pt-0">
+                  <div className="divide-y-0 rounded-lg border border-border/60 overflow-hidden">
+                    {paginatedActivity.length === 0 ? (
+                      <p className="py-8 text-center text-muted-foreground">No activity in this period.</p>
+                    ) : (
+                      paginatedActivity.map((item) => (
+                        <div
+                          key={item.id}
+                          className="flex flex-wrap items-center justify-between gap-2 py-3 px-4 rounded-lg hover:bg-muted/50 transition-colors border-b border-border/60 last:border-0"
+                        >
+                          <div className="min-w-0 flex-1">
+                            <p className="font-medium text-foreground truncate">{item.title}</p>
+                            {item.subtitle && (
+                              <p className="text-sm text-muted-foreground truncate">{item.subtitle}</p>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-3 shrink-0">
+                            {item.amount && (
+                              <span
+                                className={cn(
+                                  "text-sm font-medium",
+                                  item.amount.startsWith("-") ? "text-destructive" : "text-foreground"
+                                )}
+                              >
+                                {item.amount}
+                              </span>
+                            )}
+                            <span className="text-sm text-muted-foreground">{item.timestamp}</span>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  {totalActivityPages > 1 && (
+                    <Pagination
+                      currentPage={activityPage}
+                      totalPages={totalActivityPages}
+                      onPageChange={handleActivityPageChange}
+                    />
+                  )}
+                </CardContent>
+              </Card>
+            </section>
+          </div>
+        </div>
+      );
+    }
+
+    export { DashboardOverviewPage };
+    export default DashboardOverviewPage;
+    ```
+  </TabItem>
+</Tabs>
+
+## Features
+
+- **KPI cards** for top-level metrics like revenue, active users, conversion, and orders  
+- **Key metrics grid** with clear trend indicators (↑ for up, ↓ for down, neutral state)  
+- **Gradient-enhanced UI**: background, KPI cards, and metric borders for a modern analytic look  
+- **Latest activity list** with built-in pagination  
+- **Date range filter** that can drive KPI and metric updates via callback  
+- **Composable API** (in code) that lets you build your own layouts from smaller building blocks  
+
+## Props
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `kpiCards` | `KPICard[]` | `DEFAULT_KPI_CARDS` | Top-level KPI cards (revenue, users, conversion, etc.) |
+| `keyMetrics` | `KeyMetric[]` | `DEFAULT_KEY_METRICS` | Quick stats grid metrics with trend indicators |
+| `activityItems` | `ActivityItem[]` | `DEFAULT_ACTIVITY_ITEMS` | Latest activity / transactions list data |
+| `activityPageSize` | `number` | `5` | Items per page for the activity list |
+| `onDateRangeChange` | `(range: DashboardDateRange) => void` | `undefined` | Called when the date range changes |
+| `onExportReport` | `() => void` | `undefined` | Called when the primary CTA (Export Report) is clicked |
+| `onViewDetails` | `() => void` | `undefined` | Called when the secondary CTA (View Details) is clicked |
+| `dateRange` | `DashboardDateRange` | `undefined` | Controlled date range for the filter |
+| `className` | `string` | `undefined` | Additional CSS classes applied to the root container |
+
+## Usage Examples
+
+### Basic usage
+
+```tsx
+import { DashboardOverviewPage } from "@ignix-ui/dashboard-overview-page";
+
+export function DashboardScreen() {
+  return (
+    <DashboardOverviewPage
+      onExportReport={() => console.log("Export report")}
+      onViewDetails={() => console.log("View details")}
+    />
+  );
+}
+```
+
+### With custom data and date range callback
+
+```tsx
+const kpiCards = [
+  { id: "rev", label: "Revenue", value: "$89.2k", trend: "up", trendLabel: "+18% vs last month" },
+  { id: "subs", label: "Subscriptions", value: "2,104", trend: "up", trendLabel: "+6% vs last month" },
+  { id: "churn", label: "Churn Rate", value: "1.2%", trend: "down", trendLabel: "-0.3% vs last month" },
+  { id: "mrr", label: "MRR", value: "$45.1k", trend: "up", trendLabel: "+9% vs last month" },
+];
+
+export function DashboardScreen() {
+  const [range, setRange] = useState<DashboardDateRange | undefined>();
+
+  return (
+    <DashboardOverviewPage
+      kpiCards={kpiCards}
+      dateRange={range}
+      onDateRangeChange={setRange}
+      onExportReport={() => console.log("Export report for range", range)}
+    />
+  );
+}
+```
+
+### Gradient theme container
+
+```tsx
+<DashboardOverviewPage
+  className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
+/>;
+```
+
+## Notes
+
+- The dashboard is designed to be a **starting point** for analytic pages — you can add additional sections like charts, tables, and filters around or between the existing sections.
+- Trend indicators are intentionally simple (↑ / ↓ / neutral) to keep the UI readable at a glance.
+- For more advanced composition, you can expose and use the underlying building blocks (Dashboard, DashboardHeader, DashboardKPICards, DashboardMetrics, DashboardLastActivity) as demonstrated in your Storybook stories.
+

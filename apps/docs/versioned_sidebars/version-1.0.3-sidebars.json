@@ -239,6 +239,12 @@
                 "templates/pages/account-management/security-page",
                 "templates/pages/account-management/setting-page"
               ]
+            },{
+              "type": "category",
+              "label": "Dashboard",
+              "items": [
+                "templates/pages/dashboard/dashboard-overview-page"
+              ]
             }]
         },
         {
