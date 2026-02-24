@@ -8,21 +8,21 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import DashboardOverviewPageDemo from '@site/src/components/Demo/DashboardOverviewPageDemo';
 
-## Overview
+**Dashboard Overview Page** is a high-level analytics template that surfaces key KPIs, trends, and recent activity in a single view.
 
-The **Dashboard Overview Page** provides a high-level snapshot of your product or business KPIs. It combines:
-
+Features:
 - Top-level **KPI cards** (revenue, users, conversion, orders, etc.)
-- A **Key metrics** grid with clear up/down trend indicators (↑/↓)
-- A **latest activity / transactions** list with built-in pagination
-- A **date range filter** that can drive KPI and metric updates
+- **Key metrics** grid with clear up/down trend indicators (↑/↓)
+- **Latest activity / transactions** list with built-in pagination
+- **Date range filter** that can drive KPI and metric updates
 - Primary and secondary **call-to-action buttons** for key flows (e.g. “Export report”, “View details”)
+- Gradient-enhanced background and cards for a modern, polished UI
 
-The page is fully responsive, uses gradient-enhanced visuals (background, cards, and borders), and exposes composable building blocks so you can assemble your own dashboard layouts.
-
-## Preview
+---
 
 <DashboardOverviewPageDemo />
+
+---
 
 ## Installation
 
@@ -33,45 +33,12 @@ The page is fully responsive, uses gradient-enhanced visuals (background, cards,
     ```
   </TabItem>
   <TabItem value="manual" label="Manual">
-    ```tsx
-    import {
-      Dashboard,
-      DashboardHeader,
-      DashboardKPICards,
-      DashboardMetrics,
-      DashboardLastActivity,
-      type KPICard,
-      type KeyMetric,
-      type ActivityItem,
-      type DashboardDateRange,
-    } from "@ignix-ui/dashboard-overview-page";
-
-    const kpiCards: KPICard[] = [/* ... */];
-    const keyMetrics: KeyMetric[] = [/* ... */];
-    const activityItems: ActivityItem[] = [/* ... */];
-
-    export function DashboardScreen() {
-      const [range, setRange] = useState<DashboardDateRange | undefined>();
-
-      return (
-        <Dashboard>
-          <DashboardHeader
-            title="Dashboard Overview"
-            description="Monitor key metrics and recent activity"
-            dateRange={range}
-            onDateRangeChange={setRange}
-            onExportReport={() => console.log("Export for range", range)}
-            onViewDetails={() => console.log("View details")}
-          />
-          <DashboardKPICards cards={kpiCards} />
-          <DashboardMetrics metrics={keyMetrics} />
-          <DashboardLastActivity items={activityItems} pageSize={5} />
-        </Dashboard>
-      );
-    }
-    ```
+    Install the template and use the same **composable API** shown in the demo.  
+    Import `Dashboard`, `DashboardHeader`, `DashboardKPICards`, `DashboardMetrics`, and `DashboardLastActivity` from your design system (or copy the implementation from `apps/docs/src/components/UI/dashboard-overview`) and wire them up with your own KPI, metrics, and activity data.
   </TabItem>
 </Tabs>
+
+---
 
 ## Features
 
@@ -82,23 +49,9 @@ The page is fully responsive, uses gradient-enhanced visuals (background, cards,
 - **Date range filter** that can drive KPI and metric updates via callback  
 - **Composable API** that lets you build your own layouts from smaller building blocks  
 
-## Props
+---
 
-The underlying building blocks expose the following key types:
-
-- `KPICard` – for the KPI cards row
-- `KeyMetric` – for the key metrics quick stats grid
-- `ActivityItem` – for the latest activity list
-- `DashboardDateRange` – for the date range filter
-
-You typically pass these to the composable components; for example:
-
-- `DashboardKPICards` expects `cards: KPICard[]`
-- `DashboardMetrics` expects `metrics: KeyMetric[]`
-- `DashboardLastActivity` expects `items: ActivityItem[]` and `pageSize`
-- `DashboardHeader` can use `dateRange` and `onDateRangeChange(range: DashboardDateRange)`
-
-## Usage Examples
+## Usage
 
 ### Basic usage
 
@@ -165,6 +118,70 @@ export function DashboardScreen() {
   {/* ...header, KPICards, metrics, last activity */} 
 </Dashboard>;
 ```
+
+---
+
+## Props
+
+### Dashboard
+
+| Prop        | Type      | Default | Description                                                |
+| ----------- | --------- | ------- | ---------------------------------------------------------- |
+| `children`  | `ReactNode` | **required** | Composed sections (header, KPI cards, metrics, activity). |
+| `className` | `string`  | `-`     | Optional root container class (e.g. for themes/spacing).  |
+
+### DashboardHeader
+
+| Prop                | Type                                  | Default                          | Description                                                                 |
+| ------------------- | ------------------------------------- | -------------------------------- | --------------------------------------------------------------------------- |
+| `title`             | `string`                             | `"Dashboard Overview"`           | Main heading text.                                                          |
+| `description`       | `string`                             | `"Monitor key metrics and recent activity"` | Short subheading under the title.                               |
+| `dateRange`         | `DashboardDateRange`                 | `undefined`                      | Controlled date range value (start/end).                                    |
+| `onDateRangeChange` | `(range: DashboardDateRange) => void` | `undefined`                      | Called when the user selects a new date range.                              |
+| `exportLabel`       | `string`                             | `"Export Report"`                | Label for the primary CTA button.                                           |
+| `onExportReport`    | `() => void`                         | `undefined`                      | Called when the primary CTA is clicked.                                     |
+| `viewDetailsLabel`  | `string`                             | `"View Details"`                 | Label for the secondary CTA button.                                         |
+| `onViewDetails`     | `() => void`                         | `undefined`                      | Called when the secondary CTA is clicked.                                   |
+| `actions`           | `ReactNode`                          | `undefined`                      | Custom actions node (replaces default buttons when provided).               |
+| `className`         | `string`                             | `-`                              | Optional wrapper class for the header row.                                  |
+
+### DashboardKPICards
+
+| Prop       | Type         | Default | Description                                         |
+| ---------- | ------------ | ------- | --------------------------------------------------- |
+| `cards`    | `KPICard[]`  | `[]`    | Array of KPI card definitions to render in the row.|
+| `className`| `string`     | `-`     | Optional wrapper class for the KPI cards section.  |
+
+### DashboardMetrics
+
+| Prop         | Type          | Default                    | Description                                           |
+| ------------ | ------------- | -------------------------- | ----------------------------------------------------- |
+| `metrics`    | `KeyMetric[]` | `[]`                       | Metrics to render in the quick stats grid.           |
+| `title`      | `string`      | `"Key metrics"`            | Section title.                                       |
+| `description`| `string`      | `"Overview for selected period"` | Section description.                           |
+| `className`  | `string`      | `-`                        | Optional wrapper class for the metrics section.      |
+
+### DashboardLastActivity
+
+| Prop          | Type            | Default                          | Description                                                |
+| ------------- | --------------- | -------------------------------- | ---------------------------------------------------------- |
+| `items`       | `ActivityItem[]`| `[]`                             | Activity / transactions to display (paginated).           |
+| `pageSize`    | `number`        | `5`                              | Items per page.                                            |
+| `title`       | `string`        | `"Latest activity"`             | Section title.                                             |
+| `description` | `string`        | `"Recent transactions and events"` | Section description.                                   |
+| `emptyMessage`| `string`        | `"No activity in this period."` | Message shown when there are no items.                    |
+| `className`   | `string`        | `-`                              | Optional wrapper class for the activity section.          |
+
+### Data types
+
+| Type                | Shape                                              | Description                                      |
+| ------------------- | -------------------------------------------------- | ------------------------------------------------ |
+| `KPICard`           | `{ id, label, value, rawValue?, trend, trendLabel }` | KPI card config (revenue, users, conversion…). |
+| `KeyMetric`         | `{ id, label, value, trend, trendValue }`         | Quick stat metric with trend indicator.          |
+| `ActivityItem`      | `{ id, title, subtitle?, timestamp, status?, amount? }` | Latest activity / transaction item.       |
+| `DashboardDateRange`| `{ start: Date \| null; end: Date \| null }`      | Selected date range for filtering.               |
+
+---
 
 ## Notes
 
