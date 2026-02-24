@@ -34,6 +34,8 @@ import {
   ErrorPageSearch,
   ErrorPageFooter,
   ErrorPageLinks,
+  ErrorPageIcons,
+  ErrorPageErrorReference,
 } from './index';
 
 // Type definitions for mock components
@@ -110,10 +112,83 @@ vi.mock('lucide-react', () => {
     </svg>
   );
 
+  const MockCopy = ({ className, 'data-testid': testId, ...props }: MockIconProps) => (
+    <svg
+      data-testid={testId || 'copy-icon'}
+      className={className}
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      {...props}
+    >
+      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+    </svg>
+  );
+
+  const MockAlertTriangle = ({ className, 'data-testid': testId, ...props }: MockIconProps) => (
+    <svg
+      data-testid={testId || 'alert-triangle-icon'}
+      className={className}
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      {...props}
+    >
+      <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+      <path d="M12 9v4" />
+      <path d="M12 17h.01" />
+    </svg>
+  );
+
+  const MockWrench = ({ className, 'data-testid': testId, ...props }: MockIconProps) => (
+    <svg
+      data-testid={testId || 'wrench-icon'}
+      className={className}
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      {...props}
+    >
+      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+    </svg>
+  );
+
+  const MockSettings = ({ className, 'data-testid': testId, ...props }: MockIconProps) => (
+    <svg
+      data-testid={testId || 'settings-icon'}
+      className={className}
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      {...props}
+    >
+      <path d="M12.22 2h-.44a2 2 0 0 0-2 2v18.84a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z" />
+      <path d="M18.22 6h-.44a2 2 0 0 0-2 2v12.84a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2z" />
+      <path d="M6.22 10h-.44a2 2 0 0 0-2 2v8.84a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2V12a2 2 0 0 0-2-2z" />
+    </svg>
+  );
+
   return {
     Search: MockSearch,
     Home: MockHome,
     ArrowLeft: MockArrowLeft,
+    Copy: MockCopy,
+    AlertTriangle: MockAlertTriangle,
+    Wrench: MockWrench,
+    Settings: MockSettings,
   };
 });
 
@@ -139,6 +214,23 @@ vi.mock('@ignix-ui/button', () => ({
       data-size={size}
       {...props}
     >
+      {children}
+    </button>
+  ),
+}));
+
+// Mock ButtonWithIcon component
+vi.mock('@ignix-ui/buttonwithicon', () => ({
+  ButtonWithIcon: ({ children, onClick, className, variant, size, icon, iconPosition, ...props }: any) => (
+    <button
+      className={className}
+      onClick={onClick}
+      data-variant={variant}
+      data-size={size}
+      data-icon-position={iconPosition}
+      {...props}
+    >
+      {icon && <span data-testid="button-icon">{icon}</span>}
       {children}
     </button>
   ),
@@ -261,7 +353,7 @@ describe('ErrorPage', () => {
           </ErrorPageContent>
         </ErrorPage>
       );
-      expect(container.querySelector('.absolute.inset-0')).toBeInTheDocument();
+      expect(container.querySelector('.relative.inset-0')).toBeInTheDocument();
     });
   });
 
@@ -791,7 +883,7 @@ describe('ErrorPage', () => {
       const { container } = render(
         <ErrorPage>
           <ErrorPageContent>
-            <ErrorPageLinks direction="column">
+            <ErrorPageLinks>
               <button>Link 1</button>
               <button>Link 2</button>
             </ErrorPageLinks>
@@ -947,6 +1039,502 @@ describe('ErrorPage', () => {
       );
       expect(screen.getByText('404')).toBeInTheDocument();
       expect(screen.getByText('Test')).toBeInTheDocument();
+    });
+  });
+
+  // Test 61-65: ErrorPageIcons
+  describe('ErrorPageIcons', () => {
+    it('should render ErrorPageIcons with basic icon array', () => {
+      const MockIcon1 = () => <svg data-testid="icon-1" />;
+      const MockIcon2 = () => <svg data-testid="icon-2" />;
+      render(
+        <ErrorPage>
+          <ErrorPageContent>
+            <ErrorPageIcons icons={[MockIcon1 as any, MockIcon2 as any, MockIcon1 as any, MockIcon2 as any]}>
+              <ErrorPageErrorCode errorCode="500" />
+            </ErrorPageIcons>
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      expect(screen.getByText('500')).toBeInTheDocument();
+    });
+
+    it('should render ErrorPageIcons with tuple icon array (custom colors)', () => {
+      const MockIcon1 = () => <svg data-testid="icon-1" />;
+      const MockIcon2 = () => <svg data-testid="icon-2" />;
+      render(
+        <ErrorPage>
+          <ErrorPageContent>
+            <ErrorPageIcons
+              icons={[
+                [MockIcon1 as any, "text-red-500"],
+                [MockIcon2 as any, "text-blue-500"],
+                [MockIcon1 as any, "text-purple-500"],
+                [MockIcon2 as any, "text-orange-500"],
+              ]}
+            >
+              <ErrorPageErrorCode errorCode="500" />
+            </ErrorPageIcons>
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      expect(screen.getByText('500')).toBeInTheDocument();
+    });
+
+    it('should render children when icons array has less than 4 items', () => {
+      const MockIcon = () => <svg data-testid="icon-1" />;
+      render(
+        <ErrorPage>
+          <ErrorPageContent>
+            <ErrorPageIcons icons={[MockIcon as any]}>
+              <ErrorPageErrorCode errorCode="500" />
+            </ErrorPageIcons>
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      expect(screen.getByText('500')).toBeInTheDocument();
+    });
+
+    it('should render children when icons prop is not provided', () => {
+      render(
+        <ErrorPage>
+          <ErrorPageContent>
+            <ErrorPageIcons>
+              <ErrorPageErrorCode errorCode="500" />
+            </ErrorPageIcons>
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      expect(screen.getByText('500')).toBeInTheDocument();
+    });
+
+    it('should apply custom className to ErrorPageIcons', () => {
+      const MockIcon1 = () => <svg data-testid="icon-1" />;
+      const MockIcon2 = () => <svg data-testid="icon-2" />;
+      const { container } = render(
+        <ErrorPage>
+          <ErrorPageContent>
+            <ErrorPageIcons
+              icons={[MockIcon1 as any, MockIcon2 as any, MockIcon1 as any, MockIcon2 as any]}
+              className="custom-icons"
+            >
+              <ErrorPageErrorCode errorCode="500" />
+            </ErrorPageIcons>
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      expect(container.querySelector('.custom-icons')).toBeInTheDocument();
+    });
+  });
+
+  // Test 66-75: ErrorPageErrorReference
+  describe('ErrorPageErrorReference', () => {
+    it('should render error reference ID', () => {
+      const referenceId = 'ERR-ABC123-XYZ789';
+      render(
+        <ErrorPage>
+          <ErrorPageContent>
+            <ErrorPageErrorReference errorReferenceId={referenceId} />
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      expect(screen.getByText(referenceId)).toBeInTheDocument();
+    });
+
+    it('should render with custom label', () => {
+      const referenceId = 'ERR-ABC123-XYZ789';
+      render(
+        <ErrorPage>
+          <ErrorPageContent>
+            <ErrorPageErrorReference
+              errorReferenceId={referenceId}
+              label="Custom Label"
+            />
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      expect(screen.getByText('Custom Label')).toBeInTheDocument();
+      expect(screen.getByText(referenceId)).toBeInTheDocument();
+    });
+
+    it('should render with custom helper text', () => {
+      const referenceId = 'ERR-ABC123-XYZ789';
+      render(
+        <ErrorPage>
+          <ErrorPageContent>
+            <ErrorPageErrorReference
+              errorReferenceId={referenceId}
+              helperText="Custom helper text"
+            />
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      expect(screen.getByText('Custom helper text')).toBeInTheDocument();
+    });
+
+    it('should call onCopy when copy button is clicked', async () => {
+      const referenceId = 'ERR-ABC123-XYZ789';
+      const handleCopy = vi.fn();
+      const user = userEvent.setup();
+      // Mock clipboard API
+      const mockWriteText = vi.fn().mockResolvedValue(undefined);
+      Object.defineProperty(navigator, 'clipboard', {
+        value: {
+          writeText: mockWriteText,
+        },
+        writable: true,
+        configurable: true,
+      });
+      render(
+        <ErrorPage>
+          <ErrorPageContent>
+            <ErrorPageErrorReference
+              errorReferenceId={referenceId}
+              onCopy={handleCopy}
+            />
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      const copyButton = screen.getByText('Copy');
+      await user.click(copyButton);
+      expect(handleCopy).toHaveBeenCalledWith(referenceId);
+    });
+
+    it('should not render when errorReferenceId is not provided', () => {
+      const { container } = render(
+        <ErrorPage>
+          <ErrorPageContent>
+            <ErrorPageErrorReference />
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      expect(container.querySelector('.mb-6')).not.toBeInTheDocument();
+    });
+
+    it('should hide copy button when showCopyButton is false', () => {
+      const referenceId = 'ERR-ABC123-XYZ789';
+      render(
+        <ErrorPage>
+          <ErrorPageContent>
+            <ErrorPageErrorReference
+              errorReferenceId={referenceId}
+              showCopyButton={false}
+            />
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      expect(screen.queryByText('Copy')).not.toBeInTheDocument();
+    });
+
+    it('should use custom copy button text', () => {
+      const referenceId = 'ERR-ABC123-XYZ789';
+      render(
+        <ErrorPage>
+          <ErrorPageContent>
+            <ErrorPageErrorReference
+              errorReferenceId={referenceId}
+              copyButtonText="Copy ID"
+            />
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      expect(screen.getByText('Copy ID')).toBeInTheDocument();
+    });
+
+    it('should render custom children when provided', () => {
+      const referenceId = 'ERR-ABC123-XYZ789';
+      render(
+        <ErrorPage>
+          <ErrorPageContent>
+            <ErrorPageErrorReference errorReferenceId={referenceId}>
+              <div data-testid="custom-reference">Custom Reference</div>
+            </ErrorPageErrorReference>
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      expect(screen.getByTestId('custom-reference')).toBeInTheDocument();
+    });
+
+    it('should apply custom className', () => {
+      const referenceId = 'ERR-ABC123-XYZ789';
+      const { container } = render(
+        <ErrorPage>
+          <ErrorPageContent>
+            <ErrorPageErrorReference
+              errorReferenceId={referenceId}
+              className="custom-reference"
+            />
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      expect(container.querySelector('.custom-reference')).toBeInTheDocument();
+    });
+
+    it('should handle clipboard API failure gracefully', async () => {
+      const referenceId = 'ERR-ABC123-XYZ789';
+      const handleCopy = vi.fn();
+      const user = userEvent.setup();
+      // Mock clipboard API with rejection
+      const mockWriteText = vi.fn().mockRejectedValue(new Error('Clipboard error'));
+      Object.defineProperty(navigator, 'clipboard', {
+        value: {
+          writeText: mockWriteText,
+        },
+        writable: true,
+        configurable: true,
+      });
+      render(
+        <ErrorPage>
+          <ErrorPageContent>
+            <ErrorPageErrorReference
+              errorReferenceId={referenceId}
+              onCopy={handleCopy}
+            />
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      const copyButton = screen.getByText('Copy');
+      await user.click(copyButton);
+      expect(handleCopy).toHaveBeenCalledWith(referenceId);
+    });
+  });
+
+  // Test 76-80: Icon prop functionality
+  describe('Icon Prop Functionality', () => {
+    it('should render icon instances when icon prop is provided', () => {
+      const MockSettings = () => <svg data-testid="settings-icon" />;
+      const { container } = render(
+        <ErrorPage icon={MockSettings as any}>
+          <ErrorPageContent>
+            <ErrorPageErrorCode>404</ErrorPageErrorCode>
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      const icons = container.querySelectorAll('svg[data-testid="settings-icon"]');
+      expect(icons.length).toBeGreaterThan(0);
+    });
+
+    it('should apply custom iconColor when provided', () => {
+      const MockSettings = () => <svg data-testid="settings-icon" />;
+      const { container } = render(
+        <ErrorPage icon={MockSettings as any} iconColor="text-blue-500">
+          <ErrorPageContent>
+            <ErrorPageErrorCode>404</ErrorPageErrorCode>
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      const iconContainer = container.querySelector('.absolute.pointer-events-none');
+      expect(iconContainer?.className).toContain('text-blue-500');
+    });
+
+    it('should use white color for icons when backgroundImage is present', () => {
+      const MockSettings = () => <svg data-testid="settings-icon" />;
+      const { container } = render(
+        <ErrorPage
+          icon={MockSettings as any}
+          backgroundImage="https://example.com/bg.jpg"
+        >
+          <ErrorPageContent>
+            <ErrorPageErrorCode>404</ErrorPageErrorCode>
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      const iconContainer = container.querySelector('.absolute.pointer-events-none');
+      expect(iconContainer?.className).toContain('text-white');
+    });
+
+    it('should prioritize iconColor over backgroundImage default', () => {
+      const MockSettings = () => <svg data-testid="settings-icon" />;
+      const { container } = render(
+        <ErrorPage
+          icon={MockSettings as any}
+          iconColor="text-red-500"
+          backgroundImage="https://example.com/bg.jpg"
+        >
+          <ErrorPageContent>
+            <ErrorPageErrorCode>404</ErrorPageErrorCode>
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      const iconContainer = container.querySelector('.absolute.pointer-events-none');
+      expect(iconContainer?.className).toContain('text-red-500');
+    });
+
+    it('should not render icons when icon prop is not provided', () => {
+      const { container } = render(
+        <ErrorPage>
+          <ErrorPageContent>
+            <ErrorPageErrorCode>404</ErrorPageErrorCode>
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      const icons = container.querySelectorAll('.absolute.pointer-events-none');
+      expect(icons.length).toBe(0);
+    });
+  });
+
+  // Test 81-85: Illustration topCenter position
+  describe('Illustration topCenter Position', () => {
+    it('should position illustration at topCenter when position="topCenter"', () => {
+      const { container } = render(
+        <ErrorPage>
+          <ErrorPageIllustration
+            illustration="https://example.com/image.jpg"
+            position="topCenter"
+          />
+          <ErrorPageContent>
+            <ErrorPageErrorCode>404</ErrorPageErrorCode>
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      const illustrationContainer = container.querySelector('.flex.items-center.justify-center.mb-8');
+      expect(illustrationContainer).toBeInTheDocument();
+    });
+
+    it('should render illustration above content when position is topCenter', () => {
+      render(
+        <ErrorPage>
+          <ErrorPageIllustration
+            illustration="https://example.com/image.jpg"
+            position="topCenter"
+          />
+          <ErrorPageContent>
+            <ErrorPageErrorCode>404</ErrorPageErrorCode>
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      expect(screen.getByAltText('Error illustration')).toBeInTheDocument();
+      expect(screen.getByText('404')).toBeInTheDocument();
+    });
+
+    it('should not affect flex direction when position is topCenter', () => {
+      const { container } = render(
+        <ErrorPage>
+          <ErrorPageIllustration
+            illustration="https://example.com/image.jpg"
+            position="topCenter"
+          />
+          <ErrorPageContent>
+            <ErrorPageErrorCode>404</ErrorPageErrorCode>
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      const flexContainer = container.querySelector('.flex.flex-col');
+      expect(flexContainer).toBeInTheDocument();
+    });
+
+    it('should handle topCenter position with React node illustration', () => {
+      const CustomIllustration = () => <div data-testid="top-center-illustration">Top Center</div>;
+      render(
+        <ErrorPage>
+          <ErrorPageIllustration
+            illustration={<CustomIllustration />}
+            position="topCenter"
+          />
+          <ErrorPageContent>
+            <ErrorPageErrorCode>404</ErrorPageErrorCode>
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      expect(screen.getByTestId('top-center-illustration')).toBeInTheDocument();
+    });
+
+    it('should apply className to topCenter illustration container', () => {
+      const { container } = render(
+        <ErrorPage>
+          <ErrorPageIllustration
+            illustration="https://example.com/image.jpg"
+            position="topCenter"
+            className="custom-top-center"
+          />
+          <ErrorPageContent>
+            <ErrorPageErrorCode>404</ErrorPageErrorCode>
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      expect(container.querySelector('.custom-top-center')).toBeInTheDocument();
+    });
+  });
+
+  // Test 86-90: Error code with illustration prop
+  describe('ErrorPageErrorCode with Illustration', () => {
+    it('should render illustration above error code when illustration prop is provided', () => {
+      render(
+        <ErrorPage>
+          <ErrorPageContent>
+            <ErrorPageErrorCode
+              errorCode="404"
+              illustration="https://example.com/illustration.jpg"
+            />
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      expect(screen.getByAltText('Error illustration')).toBeInTheDocument();
+      expect(screen.getByText('404')).toBeInTheDocument();
+    });
+
+    it('should render React node illustration above error code', () => {
+      const CustomIllustration = () => <div data-testid="error-code-illustration">Illustration</div>;
+      render(
+        <ErrorPage>
+          <ErrorPageContent>
+            <ErrorPageErrorCode
+              errorCode="404"
+              illustration={<CustomIllustration />}
+            />
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      expect(screen.getByTestId('error-code-illustration')).toBeInTheDocument();
+      expect(screen.getByText('404')).toBeInTheDocument();
+    });
+
+    it('should apply animation when illustration is provided', () => {
+      render(
+        <ErrorPage>
+          <ErrorPageContent>
+            <ErrorPageErrorCode
+              errorCode="404"
+              animationType="pulse"
+              illustration="https://example.com/illustration.jpg"
+            />
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      expect(screen.getByText('404')).toBeInTheDocument();
+    });
+
+    it('should render illustration in flex column layout', () => {
+      const { container } = render(
+        <ErrorPage>
+          <ErrorPageContent>
+            <ErrorPageErrorCode
+              errorCode="404"
+              illustration="https://example.com/illustration.jpg"
+            />
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      const flexColumn = container.querySelector('.flex.flex-col.items-center');
+      expect(flexColumn).toBeInTheDocument();
+    });
+
+    it('should prioritize children over errorCode prop when both are provided', () => {
+      render(
+        <ErrorPage>
+          <ErrorPageContent>
+            <ErrorPageErrorCode
+              errorCode="404"
+              illustration="https://example.com/illustration.jpg"
+            >
+              500
+            </ErrorPageErrorCode>
+          </ErrorPageContent>
+        </ErrorPage>
+      );
+      // Children take precedence over errorCode prop
+      expect(screen.getByText('500')).toBeInTheDocument();
+      expect(screen.queryByText('404')).not.toBeInTheDocument();
     });
   });
 });

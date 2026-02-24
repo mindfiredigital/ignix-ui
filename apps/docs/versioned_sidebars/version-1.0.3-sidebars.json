@@ -217,17 +217,19 @@
         {
           "type": "category",
           "label": "Pages",
-          "items": [{
-            "type": "category",
-            "label": "Authentication",
-            "items": [
-              "templates/pages/authentication/forgot-password-page",
-              "templates/pages/authentication/otp-verification-page",
-              "templates/pages/authentication/reset-password-page",
-              "templates/pages/sign-in",
-              "templates/pages/authentication/sign-up",
-              "templates/pages/authentication/two-factor-auth-setup-page"
-            ]},
+          "items": 
+            [{
+              "type": "category",
+              "label": "Authentication",
+              "items": [
+                "templates/pages/authentication/forgot-password-page",
+                "templates/pages/authentication/otp-verification-page",
+                "templates/pages/authentication/reset-password-page",
+                "templates/pages/sign-in",
+                "templates/pages/authentication/sign-up",
+                "templates/pages/authentication/two-factor-auth-setup-page"
+              ]
+            }, 
             {
               "type": "category",
               "label": "Account Management",
@@ -240,13 +242,7 @@
                 "templates/pages/account-management/setting-page"
               ]
             },
-            {
-              "type": "category",
-              "label": "Error Pages",
-              "items": [
-                "templates/pages/error-page"
-              ]
-            }
+            "templates/pages/error-page"
           ]
         },
         {
