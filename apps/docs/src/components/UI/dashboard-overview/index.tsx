@@ -139,64 +139,6 @@ export interface DashboardLastActivityProps {
 /** Default number of activity items per page */
 const DEFAULT_ACTIVITY_PAGE_SIZE = 5;
 
-/** Default KPI cards when none provided */
-const DEFAULT_KPI_CARDS: KPICard[] = [
-  {
-    id: "revenue",
-    label: "Revenue",
-    value: "$124.5k",
-    rawValue: 124500,
-    trend: "up",
-    trendLabel: "+12.5% vs last period",
-  },
-  {
-    id: "users",
-    label: "Active Users",
-    value: "12,345",
-    rawValue: 12345,
-    trend: "up",
-    trendLabel: "+8.2% vs last period",
-  },
-  {
-    id: "conversion",
-    label: "Conversion Rate",
-    value: "3.24%",
-    rawValue: 3.24,
-    trend: "down",
-    trendLabel: "-0.4% vs last period",
-  },
-  {
-    id: "orders",
-    label: "Orders",
-    value: "1,892",
-    rawValue: 1892,
-    trend: "up",
-    trendLabel: "+15.1% vs last period",
-  },
-];
-
-/** Default key metrics for quick stats grid */
-const DEFAULT_KEY_METRICS: KeyMetric[] = [
-  { id: "m1", label: "Page Views", value: "48.2k", trend: "up", trendValue: "+5.2%" },
-  { id: "m2", label: "Avg. Session", value: "4m 32s", trend: "down", trendValue: "-2.1%" },
-  { id: "m3", label: "Bounce Rate", value: "42%", trend: "down", trendValue: "-1.8%" },
-  { id: "m4", label: "Sign-ups", value: "892", trend: "up", trendValue: "+12%" },
-  { id: "m5", label: "Support Tickets", value: "24", trend: "neutral", trendValue: "0%" },
-  { id: "m6", label: "NPS Score", value: "72", trend: "up", trendValue: "+3" },
-];
-
-/** Default activity items when none provided */
-const DEFAULT_ACTIVITY_ITEMS: ActivityItem[] = [
-  { id: "a1", title: "Payment received", subtitle: "Invoice #1024", timestamp: "2 min ago", status: "completed", amount: "+$1,250" },
-  { id: "a2", title: "New user sign-up", subtitle: "john@example.com", timestamp: "15 min ago", status: "completed" },
-  { id: "a3", title: "Order shipped", subtitle: "Order #8821", timestamp: "1 hour ago", status: "completed", amount: "$89.00" },
-  { id: "a4", title: "Support ticket closed", subtitle: "#4421", timestamp: "2 hours ago", status: "completed" },
-  { id: "a5", title: "Subscription renewed", subtitle: "Premium plan", timestamp: "3 hours ago", status: "completed", amount: "$29/mo" },
-  { id: "a6", title: "Failed payment retry", subtitle: "Customer #221", timestamp: "5 hours ago", status: "pending", amount: "$99.00" },
-  { id: "a7", title: "Refund processed", subtitle: "Order #8801", timestamp: "6 hours ago", status: "completed", amount: "-$45.00" },
-  { id: "a8", title: "API key generated", subtitle: "Project Alpha", timestamp: "Yesterday", status: "completed" },
-];
-
 function toDashboardDateRange(value: Date | DateRange | null): DashboardDateRange {
   if (value == null) return { start: null, end: null };
   if (value instanceof Date) return { start: value, end: null };
@@ -481,9 +423,9 @@ function DashboardLastActivity({
 }
 
 const DashboardOverviewPage: React.FC<DashboardOverviewPageProps> = ({
-  kpiCards = DEFAULT_KPI_CARDS,
-  keyMetrics = DEFAULT_KEY_METRICS,
-  activityItems = DEFAULT_ACTIVITY_ITEMS,
+  kpiCards,
+  keyMetrics,
+  activityItems,
   activityPageSize = DEFAULT_ACTIVITY_PAGE_SIZE,
   onDateRangeChange,
   onExportReport,
@@ -514,9 +456,9 @@ const DashboardOverviewPage: React.FC<DashboardOverviewPageProps> = ({
         onExportReport={onExportReport}
         onViewDetails={onViewDetails}
       />
-      <DashboardKPICards cards={kpiCards} />
-      <DashboardMetrics metrics={keyMetrics} />
-      <DashboardLastActivity items={activityItems} pageSize={activityPageSize} />
+      <DashboardKPICards cards={kpiCards ?? []} />
+      <DashboardMetrics metrics={keyMetrics ?? []} />
+      <DashboardLastActivity items={activityItems ?? []} pageSize={activityPageSize} />
     </Dashboard>
   );
 };
