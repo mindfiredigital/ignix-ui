@@ -1,5 +1,6 @@
 import { Command } from 'commander';
 import ora from 'ora';
+import path from 'path';
 import chalk from 'chalk';
 import { logger } from '../utils/logger';
 import { getPackageManager } from '../utils/getPackageManager';
@@ -54,38 +55,73 @@ export const startersCommandMonorepo = new Command()
   .name('monorepo-starters')
   .description(chalk.hex('#33A06F')('Starter generators for monorepo.'))
   .command('monorepo')
+  .option('-y, --yes', 'Skip prompts')
+  .option('--json', 'Machine output')
+  .option('--cwd <path>', 'Working directory', '.')
   .description('Scaffold a Turborepo + pnpm workspaces monorepo')
-  .action(async () => {
-    const spinner = ora('Scaffolding monorepo...').start();
+  .action(async (opts) => {
+    const ctx = {
+      isYes: !!opts.yes,
+      isJson: !!opts.json,
+      cwd: path.resolve(opts.cwd || '.'),
+    };
+
+    const originalCwd = process.cwd();
+
     try {
-      // Scaffold monorepo structure
+      process.chdir(ctx.cwd);
+
+      if (ctx.isJson) {
+        const silent = (): void => {
+          return;
+        };
+        logger.info = silent;
+        logger.warn = silent;
+        logger.error = silent;
+        logger.success = silent;
+      }
+
+      const noop = () => {
+        return;
+      };
+      const spinner = ctx.isJson
+        ? { start: noop, succeed: noop, fail: noop, text: '' }
+        : ora('Scaffolding monorepo...').start();
+
       const root = process.cwd();
 
-      // 1. Ensure root files
       await ensureRootFiles(root);
-      // 2. Ensure root tsconfig
       await ensureRootTsconfig(root);
-      // 3. Scaffold packages and apps
       await scaffoldConfigPackage(root);
-      // 4. Scaffold components package
       await scaffoldComponentsPackage(root);
-      // 5. Ensure tsconfig under packages
       await ensureTsconfigPackage(root);
-      // 6. Scaffold Next.js app
       await scaffoldNextApp(root);
 
-      // 7. pnpm install
-      await execa('pnpm', ['install'], { cwd: root, stdio: 'inherit' });
-      // Final message
-      spinner.succeed(chalk.green('Monorepo scaffolded successfully.'));
-      spinner.succeed(chalk.green('Dependencies installed successfully.'));
-      logger.info('\nNext steps:');
-      logger.info(`2. Dev all: ${chalk.cyan('pnpm dev')}`);
-      logger.info(`3. Build all: ${chalk.cyan('pnpm build')}`);
+      await execa('pnpm', ['install'], { cwd: root, stdio: ctx.isJson ? 'ignore' : 'inherit' });
+
+      spinner.succeed('Monorepo scaffolded successfully.');
+
+      if (ctx.isJson) {
+        process.stdout.write(JSON.stringify({ success: true }, null, 2));
+      }
     } catch (e) {
-      spinner.fail('Failed to scaffold monorepo');
-      if (e instanceof Error) logger.error(e.message);
+      if (ctx.isJson) {
+        process.stdout.write(
+          JSON.stringify(
+            {
+              success: false,
+              error: e instanceof Error ? e.message : 'Unknown error',
+            },
+            null,
+            2
+          )
+        );
+      } else {
+        logger.error(e instanceof Error ? e.message : String(e));
+      }
       process.exit(1);
+    } finally {
+      process.chdir(originalCwd);
     }
   });
 
@@ -93,12 +129,43 @@ export const startersCommandNextjsApp = new Command()
   .name('nextjs-starters')
   .description(chalk.hex('#33A06F')('Starter generators for nextjs-app.'))
   .command('nextjs-app')
+  .option('-y, --yes')
+  .option('--json')
+  .option('--cwd <path>', '.')
   .description(
     'Scaffold a blank Next.js 14+ app with App Router, TypeScript, Tailwind CSS, and Ignix UI'
   )
-  .action(async () => {
-    const spinner = ora('Scaffolding Next.js app...').start();
+  .action(async (opts) => {
+    const ctx = {
+      isYes: !!opts?.yes,
+      isJson: !!opts?.json,
+      cwd: path.resolve(opts?.cwd || '.'),
+    };
+
+    const originalCwd = process.cwd();
+
     try {
+      process.chdir(ctx.cwd);
+
+      if (ctx.isJson) {
+        const silent = (): void => {
+          return;
+        };
+        logger.info = silent;
+        logger.warn = silent;
+        logger.error = silent;
+        logger.success = silent;
+      }
+
+      // 🔽 existing logic continues here
+      // const spinner = ora('Scaffolding Next.js app...').start();
+      const noop = () => {
+        return;
+      };
+      const spinner = ctx.isJson
+        ? { start: noop, succeed: noop, fail: noop, text: '' }
+        : ora('Scaffolding Next.js app...').start();
+      // try {
       const root = process.cwd();
 
       // 1. Validate that we're in an empty directory or prompt
@@ -145,24 +212,59 @@ export const startersCommandNextjsApp = new Command()
 
       // 15. Initialize Git repository
       spinner.text = 'Initializing Git repository...';
-      await execa('git', ['init'], { cwd: root, stdio: 'inherit' }).catch(() => {
-        logger.warn('Git initialization failed, but continuing...');
-      });
+      await execa('git', ['init'], { cwd: root, stdio: ctx.isJson ? 'ignore' : 'inherit' }).catch(
+        () => {
+          logger.warn('Git initialization failed, but continuing...');
+        }
+      );
 
       // 16. Install dependencies
       spinner.text = 'Installing dependencies...';
       const packageManager = await getPackageManager();
-      await execa(packageManager, ['install'], { cwd: root, stdio: 'inherit' });
+      await execa(packageManager, ['install'], {
+        cwd: root,
+        stdio: ctx.isJson ? 'ignore' : 'inherit',
+      });
 
       spinner.succeed(chalk.green('Next.js app scaffolded successfully!'));
-      logger.info('\nNext steps:');
-      logger.info(`1. Start dev server: ${chalk.cyan(`${packageManager} run dev`)}`);
-      logger.info(`2. Open ${chalk.cyan('http://localhost:3000')} in your browser`);
-      logger.info(`3. Add components: ${chalk.cyan('npx ignix add <component-name>')}`);
+      if (ctx.isJson) {
+        process.stdout.write(JSON.stringify({ success: true }, null, 2));
+      }
+
+      if (!ctx.isJson) {
+        logger.info('\nNext steps:');
+        logger.info(`1. Start dev server: ${chalk.cyan(`${packageManager} run dev`)}`);
+        logger.info(`2. Open ${chalk.cyan('http://localhost:3000')} in your browser`);
+        logger.info(`3. Add components: ${chalk.cyan('npx ignix add <component-name>')}`);
+      }
+      // logger.info('\nNext steps:');
+      // logger.info(`1. Start dev server: ${chalk.cyan(`${packageManager} run dev`)}`);
+      // logger.info(`2. Open ${chalk.cyan('http://localhost:3000')} in your browser`);
+      // logger.info(`3. Add components: ${chalk.cyan('npx ignix add <component-name>')}`);
+      // }
+      // catch (e) {
+      //   spinner.fail('Failed to scaffold Next.js app');
+      //   if (e instanceof Error) logger.error(e.message);
+      //   process.exit(1);
+      // }
     } catch (e) {
-      spinner.fail('Failed to scaffold Next.js app');
-      if (e instanceof Error) logger.error(e.message);
+      if (ctx.isJson) {
+        process.stdout.write(
+          JSON.stringify(
+            {
+              success: false,
+              error: e instanceof Error ? e.message : 'Unknown error',
+            },
+            null,
+            2
+          )
+        );
+      } else {
+        logger.error(e instanceof Error ? e.message : String(e));
+      }
       process.exit(1);
+    } finally {
+      process.chdir(originalCwd);
     }
   });
 
@@ -170,10 +272,43 @@ export const startersCommandViteReact = new Command()
   .name('vite-react-starters')
   .description(chalk.hex('#33A06F')('Starter generators for vite-react.'))
   .command('vite-react')
+  .option('-y, --yes')
+  .option('--json')
+  .option('--cwd <path>', '.')
   .description('Scaffold a blank Vite + React app with TypeScript, Tailwind CSS, and Ignix UI')
-  .action(async () => {
-    const spinner = ora('Scaffolding Vite + React app...').start();
+  .action(async (opts) => {
+    const ctx = {
+      isYes: !!opts?.yes,
+      isJson: !!opts?.json,
+      cwd: path.resolve(opts?.cwd || '.'),
+    };
+
+    const originalCwd = process.cwd();
+
     try {
+      process.chdir(ctx.cwd);
+
+      if (ctx.isJson) {
+        const silent = (): void => {
+          return;
+        };
+        logger.info = silent;
+        logger.warn = silent;
+        logger.error = silent;
+        logger.success = silent;
+      }
+
+      // 🔽 existing logic continues here
+
+      // const spinner = ora('Scaffolding Vite + React app...').start();
+      const noop = () => {
+        return;
+      };
+      const spinner = ctx.isJson
+        ? { start: noop, succeed: noop, fail: noop, text: '' }
+        : ora('Scaffolding Vite + React app...').start();
+
+      // try {
       const root = process.cwd();
 
       // 1. Validate that we're in an empty directory or prompt
@@ -220,23 +355,58 @@ export const startersCommandViteReact = new Command()
 
       // 16. Initialize Git repository
       spinner.text = 'Initializing Git repository...';
-      await execa('git', ['init'], { cwd: root, stdio: 'inherit' }).catch(() => {
-        logger.warn('Git initialization failed, but continuing...');
-      });
+      await execa('git', ['init'], { cwd: root, stdio: ctx.isJson ? 'ignore' : 'inherit' }).catch(
+        () => {
+          logger.warn('Git initialization failed, but continuing...');
+        }
+      );
 
       // 17. Install dependencies
       spinner.text = 'Installing dependencies...';
       const packageManager = await getPackageManager();
-      await execa(packageManager, ['install'], { cwd: root, stdio: 'inherit' });
+      await execa(packageManager, ['install'], {
+        cwd: root,
+        stdio: ctx.isJson ? 'ignore' : 'inherit',
+      });
 
       spinner.succeed(chalk.green('Vite + React app scaffolded successfully!'));
-      logger.info('\nNext steps:');
-      logger.info(`1. Start dev server: ${chalk.cyan(`${packageManager} run dev`)}`);
-      logger.info(`2. Open ${chalk.cyan('http://localhost:5173')} in your browser`);
-      logger.info(`3. Add components: ${chalk.cyan('npx ignix add <component-name>')}`);
+      if (ctx.isJson) {
+        process.stdout.write(JSON.stringify({ success: true }, null, 2));
+      }
+
+      if (!ctx.isJson) {
+        logger.info('\nNext steps:');
+        logger.info(`1. Start dev server: ${chalk.cyan(`${packageManager} run dev`)}`);
+        logger.info(`2. Open ${chalk.cyan('http://localhost:5173')} in your browser`);
+        logger.info(`3. Add components: ${chalk.cyan('npx ignix add <component-name>')}`);
+      }
+      // logger.info('\nNext steps:');
+      // logger.info(`1. Start dev server: ${chalk.cyan(`${packageManager} run dev`)}`);
+      // logger.info(`2. Open ${chalk.cyan('http://localhost:5173')} in your browser`);
+      // logger.info(`3. Add components: ${chalk.cyan('npx ignix add <component-name>')}`);
+
+      // } catch (e) {
+      //   spinner.fail('Failed to scaffold Vite + React app');
+      //   if (e instanceof Error) logger.error(e.message);
+      //   process.exit(1);
+      // }
     } catch (e) {
-      spinner.fail('Failed to scaffold Vite + React app');
-      if (e instanceof Error) logger.error(e.message);
+      if (ctx.isJson) {
+        process.stdout.write(
+          JSON.stringify(
+            {
+              success: false,
+              error: e instanceof Error ? e.message : 'Unknown error',
+            },
+            null,
+            2
+          )
+        );
+      } else {
+        logger.error(e instanceof Error ? e.message : String(e));
+      }
       process.exit(1);
+    } finally {
+      process.chdir(originalCwd);
     }
   });

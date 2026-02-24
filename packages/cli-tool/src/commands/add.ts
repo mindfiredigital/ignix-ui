@@ -81,25 +81,6 @@ export const addCommand = new Command()
               selectedItems = [installResponse.component];
             }
           } else {
-            // If identifiers were passed directly from CLI args
-            // const normalized = identifiers.map((i: string) => i.toLowerCase());
-            // const foundNames = new Set<string>();
-            // selectedItems = availableComponents
-            //   .filter((c) => {
-            //     const name = c.name?.toLowerCase();
-            //     const id = c.id?.toLowerCase();
-            //     const match = normalized.includes(name) || normalized.includes(id);
-            //     if (match) {
-            //       foundNames.add(name);
-            //       if (id) foundNames.add(id);
-            //     }
-            //     return match;
-            //   })
-            //   .map((c) => ({
-            //     name: (c.id || c.name).toLowerCase(),
-            //     type: c.files.main.type,
-            //   }));
-
             // Deterministic processing based on user input
             const normalized = identifiers.map((i: string) => i.toLowerCase());
 
@@ -128,19 +109,19 @@ export const addCommand = new Command()
           }
           if (!selectedItems || selectedItems.length === 0) {
             if (ctx.isJson) {
-              process.stdout.write(
-                JSON.stringify(
-                  {
-                    success: true,
-                    requested: identifiers,
-                    installed: [],
-                    dependencies: Array.from(dependencySet),
-                    skipped: identifiers || [],
-                  },
-                  null,
-                  2
-                )
-              );
+              const result = {
+                success: installed.length > 0,
+                requested: identifiers,
+                installed,
+                dependencies: Array.from(dependencySet),
+                skipped,
+              };
+
+              process.stdout.write(JSON.stringify(result, null, 2));
+
+              // 🔥 EXIT CODE LOGIC
+              const nothingInstalled = installed.length === 0;
+              process.exit(nothingInstalled ? 1 : 0);
             } else {
               logger.warn('No component selected. Exiting.');
             }
@@ -175,21 +156,18 @@ export const addCommand = new Command()
           }
 
           if (ctx.isJson) {
-            process.stdout.write(
-              JSON.stringify(
-                {
-                  success: true,
-                  requested: identifiers,
-                  installed,
-                  dependencies: Array.from(dependencySet),
-                  skipped,
-                },
-                null,
-                2
-              )
-            );
-          }
+            const result = {
+              success: installed.length > 0,
+              requested: identifiers,
+              installed,
+              dependencies: Array.from(dependencySet),
+              skipped,
+            };
 
+            process.stdout.write(JSON.stringify(result, null, 2));
+
+            process.exit(installed.length === 0 ? 1 : 0);
+          }
           break;
         }
 
@@ -229,19 +207,15 @@ export const addCommand = new Command()
           // no selection
           if (!identifiers || identifiers.length === 0) {
             if (ctx.isJson) {
-              process.stdout.write(
-                JSON.stringify(
-                  {
-                    success: true,
-                    requested: [],
-                    installed: [],
-                    skipped: [],
-                  },
-                  null,
-                  2
-                )
-              );
-              break;
+              const result = {
+                success: false,
+                requested: [],
+                installed: [],
+                skipped: [],
+              };
+
+              process.stdout.write(JSON.stringify(result, null, 2));
+              process.exit(1);
             }
 
             logger.warn('No themes selected. Exiting.');
@@ -267,18 +241,15 @@ export const addCommand = new Command()
           skipped.sort((a, b) => a.localeCompare(b));
 
           if (ctx.isJson) {
-            process.stdout.write(
-              JSON.stringify(
-                {
-                  success: true,
-                  requested: normalized,
-                  installed,
-                  skipped,
-                },
-                null,
-                2
-              )
-            );
+            const result = {
+              success: installed.length > 0,
+              requested: normalized,
+              installed,
+              skipped,
+            };
+
+            process.stdout.write(JSON.stringify(result, null, 2));
+            process.exit(installed.length === 0 ? 1 : 0);
           }
 
           break;
@@ -333,19 +304,15 @@ export const addCommand = new Command()
           // nothing selected
           if (!identifiers || identifiers.length === 0) {
             if (ctx.isJson) {
-              process.stdout.write(
-                JSON.stringify(
-                  {
-                    success: true,
-                    requested: [],
-                    installed: [],
-                    skipped: [],
-                  },
-                  null,
-                  2
-                )
-              );
-              break;
+              const result = {
+                success: false,
+                requested: [],
+                installed: [],
+                skipped: [],
+              };
+
+              process.stdout.write(JSON.stringify(result, null, 2));
+              process.exit(1);
             }
 
             logger.warn('No template selected. Exiting.');
@@ -371,18 +338,15 @@ export const addCommand = new Command()
           skipped.sort((a, b) => a.localeCompare(b));
 
           if (ctx.isJson) {
-            process.stdout.write(
-              JSON.stringify(
-                {
-                  success: true,
-                  requested: normalized,
-                  installed,
-                  skipped,
-                },
-                null,
-                2
-              )
-            );
+            const result = {
+              success: installed.length > 0,
+              requested: normalized,
+              installed,
+              skipped,
+            };
+
+            process.stdout.write(JSON.stringify(result, null, 2));
+            process.exit(installed.length === 0 ? 1 : 0);
           }
 
           break;

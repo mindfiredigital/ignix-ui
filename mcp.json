@@ -24,7 +24,7 @@
           }
         }
       },
-      "command": "npx ignix add component {{join components}} --yes {{#if cwd}}--cwd {{cwd}}{{/if}}"
+      "command": "npx ignix add component {{join components}} --yes --json {{#if cwd}}--cwd {{cwd}}{{/if}}"
     },
     {
       "name": "list_components",
