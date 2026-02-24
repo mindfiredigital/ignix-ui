@@ -363,12 +363,26 @@ function TrendIndicator({
 
 /**
  * Root Dashboard layout. Wraps composable sections with consistent spacing and max width.
+ * Includes a subtle gradient background for a modern look.
  * Use with DashboardHeader, DashboardKPICards, DashboardMetrics, DashboardLastActivity.
  */
 function Dashboard({ children, className }: DashboardProps) {
   return (
-    <div className={cn("min-h-screen bg-background text-foreground p-4 md:p-6", className)}>
-      <div className="max-w-7xl mx-auto space-y-6">{children}</div>
+    <div
+      className={cn(
+        "relative min-h-screen overflow-hidden",
+        "bg-gradient-to-br from-background via-background to-muted/40",
+        "text-foreground p-4 md:p-6",
+        className
+      )}
+    >
+      {/* Soft gradient accents */}
+      <div className="pointer-events-none absolute inset-0 opacity-60">
+        <div className="absolute -top-32 -left-24 h-64 w-64 rounded-full bg-gradient-to-br from-primary/25 via-cyan-400/15 to-transparent blur-3xl" />
+        <div className="absolute -bottom-32 -right-20 h-72 w-72 rounded-full bg-gradient-to-tr from-purple-500/20 via-pink-500/10 to-transparent blur-3xl" />
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto space-y-6">{children}</div>
     </div>
   );
 }
@@ -405,9 +419,15 @@ function DashboardHeader({
 
   return (
     <div className={cn("flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4", className)}>
-      <div className="">
-        <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
-        {description && <p className="text-muted-foreground mt-1">{description}</p>}
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-primary via-cyan-400 to-purple-500 bg-clip-text text-transparent">
+          {title}
+        </h1>
+        {description && (
+          <p className="text-sm text-muted-foreground mt-1">
+            {description}
+          </p>
+        )}
       </div>
       <div className="flex flex-col xs:flex-row items-stretch sm:items-center gap-3">
         {(onDateRangeChange != null || dateRange != null) && (
@@ -449,14 +469,17 @@ function DashboardHeader({
  */
 function DashboardKPICard({ card, className }: DashboardKPICardProps) {
   return (
-    <Card variant="default" className={cn("flex flex-col", className)}>
+    <Card variant="gradient" className={cn("flex flex-col", className)}>
       <CardHeader variant="compact">
-        <CardTitle size="sm" className="text-muted-foreground font-medium">
+        <CardTitle
+          size="sm"
+          className="font-medium text-sm text-white/90"
+        >
           {card.label}
         </CardTitle>
       </CardHeader>
       <CardContent variant="compact" className="pt-0">
-        <p className="text-2xl font-bold text-foreground">{card.value}</p>
+        <p className="text-2xl font-bold text-white">{card.value}</p>
         <TrendIndicator trend={card.trend} trendValue={card.trendLabel} className="mt-1" />
       </CardContent>
     </Card>
@@ -489,7 +512,7 @@ function DashboardMetrics({
 }: DashboardMetricsProps) {
   return (
     <section aria-label="Key metrics" className={className}>
-      <Card variant="default">
+      <Card variant="premium">
         <CardHeader variant="compact">
           <CardTitle size="md">{title}</CardTitle>
           <CardDescription>{description}</CardDescription>
@@ -499,14 +522,18 @@ function DashboardMetrics({
             {metrics.map((metric) => (
               <div
                 key={metric.id}
-                className={cn(
-                  "p-4 rounded-lg border border-border/60 bg-muted/20",
-                  "flex flex-col gap-1"
-                )}
+                className="rounded-xl bg-gradient-to-tr from-primary/40 via-cyan-400/30 to-purple-500/40 p-[1px]"
               >
-                <p className="text-sm text-muted-foreground truncate">{metric.label}</p>
-                <p className="text-lg font-semibold text-foreground">{metric.value}</p>
-                <TrendIndicator trend={metric.trend} trendValue={metric.trendValue} />
+                <div
+                  className={cn(
+                    "p-4 rounded-[0.9rem] bg-muted/80 dark:bg-background/80 backdrop-blur-sm",
+                    "flex flex-col gap-1"
+                  )}
+                >
+                  <p className="text-sm text-muted-foreground truncate">{metric.label}</p>
+                  <p className="text-lg font-semibold text-foreground">{metric.value}</p>
+                  <TrendIndicator trend={metric.trend} trendValue={metric.trendValue} />
+                </div>
               </div>
             ))}
           </div>

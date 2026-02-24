@@ -70,6 +70,27 @@ export const Default: Story = {
 };
 
 /**
+ * Gradient themed variant of the dashboard overview page.
+ */
+export const GradientTheme: Story = {
+  render: (args) => (
+    <DashboardOverviewPage
+      {...args}
+      className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
+    />
+  ),
+  name: "Gradient theme",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Dashboard overview page with enhanced gradient background and card styling for a more visually rich UI.",
+      },
+    },
+  },
+};
+
+/**
  * Composable usage: build the page from Dashboard + Header, KPICards, Metrics, LastActivity.
  * You can reorder, omit, or add custom sections.
  */
