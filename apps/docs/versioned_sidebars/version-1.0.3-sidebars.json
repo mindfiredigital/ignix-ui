@@ -92,8 +92,7 @@
             "components/drawer",
             "components/navbar",
             "components/sidebar",
-            "components/stepper",
-            "components/tab"
+            "components/stepper"            
           ]
         },
         {
@@ -103,7 +102,8 @@
             "components/dialog-box",
             "components/progress-indicator",
             "components/spinner",
-            "components/toast"
+            "components/toast",
+            "components/modals"
           ]
         }
       ]
@@ -252,7 +252,10 @@
             "templates/sections/content/call-to-action",
             "templates/sections/content/comparison-table",
             "templates/sections/content/hero",
-            "templates/sections/content/pricing-grid"
+            "templates/sections/content/mega-menu-multi-column-dropdown",
+            "templates/sections/content/pricing-grid",
+            "templates/sections/content/tab-navigation",
+            "templates/sections/content/team-profiles"
           ]
         }
       ]
