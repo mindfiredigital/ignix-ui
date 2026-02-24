@@ -187,7 +187,7 @@ export const initCommand = new Command()
       logger.info(`3. Explore themes with ${chalk.cyan('npx ignix themes list')}`);
 
       if (ctx.isJson) {
-        process.stdout.write(
+        console.log(
           JSON.stringify(
             {
               success: true,
@@ -202,7 +202,7 @@ export const initCommand = new Command()
       spinner.fail?.('Initialization failed.');
 
       if (ctx.isJson) {
-        process.stdout.write(
+        console.log(
           JSON.stringify(
             {
               success: false,

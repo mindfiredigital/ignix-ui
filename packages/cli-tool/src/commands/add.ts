@@ -117,7 +117,7 @@ export const addCommand = new Command()
                 skipped,
               };
 
-              process.stdout.write(JSON.stringify(result, null, 2));
+              console.log(JSON.stringify(result, null, 2));
 
               // 🔥 EXIT CODE LOGIC
               const nothingInstalled = installed.length === 0;
@@ -164,7 +164,7 @@ export const addCommand = new Command()
               skipped,
             };
 
-            process.stdout.write(JSON.stringify(result, null, 2));
+            console.log(JSON.stringify(result, null, 2));
 
             process.exit(installed.length === 0 ? 1 : 0);
           }
@@ -214,7 +214,7 @@ export const addCommand = new Command()
                 skipped: [],
               };
 
-              process.stdout.write(JSON.stringify(result, null, 2));
+              console.log(JSON.stringify(result, null, 2));
               process.exit(1);
             }
 
@@ -248,7 +248,7 @@ export const addCommand = new Command()
               skipped,
             };
 
-            process.stdout.write(JSON.stringify(result, null, 2));
+            console.log(JSON.stringify(result, null, 2));
             process.exit(installed.length === 0 ? 1 : 0);
           }
 
@@ -311,7 +311,7 @@ export const addCommand = new Command()
                 skipped: [],
               };
 
-              process.stdout.write(JSON.stringify(result, null, 2));
+              console.log(JSON.stringify(result, null, 2));
               process.exit(1);
             }
 
@@ -345,7 +345,7 @@ export const addCommand = new Command()
               skipped,
             };
 
-            process.stdout.write(JSON.stringify(result, null, 2));
+            console.log(JSON.stringify(result, null, 2));
             process.exit(installed.length === 0 ? 1 : 0);
           }
 
@@ -358,7 +358,7 @@ export const addCommand = new Command()
       }
     } catch (error) {
       if (ctx.isJson) {
-        process.stdout.write(
+        console.log(
           JSON.stringify(
             {
               success: false,

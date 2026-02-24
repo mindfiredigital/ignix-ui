@@ -161,7 +161,7 @@ export const themesCommand = new Command()
           .map((t) => t.id.toLowerCase())
           .sort((a, b) => a.localeCompare(b));
 
-        process.stdout.write(
+        console.log(
           JSON.stringify(
             {
               success: true,
@@ -179,7 +179,7 @@ export const themesCommand = new Command()
       await showThemeMenu();
     } catch (error) {
       if (ctx.isJson) {
-        process.stdout.write(
+        console.log(
           JSON.stringify(
             {
               success: false,

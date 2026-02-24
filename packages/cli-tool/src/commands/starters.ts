@@ -102,11 +102,11 @@ export const startersCommandMonorepo = new Command()
       spinner.succeed('Monorepo scaffolded successfully.');
 
       if (ctx.isJson) {
-        process.stdout.write(JSON.stringify({ success: true }, null, 2));
+        console.log(JSON.stringify({ success: true }, null, 2));
       }
     } catch (e) {
       if (ctx.isJson) {
-        process.stdout.write(
+        console.log(
           JSON.stringify(
             {
               success: false,
@@ -220,15 +220,24 @@ export const startersCommandNextjsApp = new Command()
 
       // 16. Install dependencies
       spinner.text = 'Installing dependencies...';
+      // const packageManager = await getPackageManager();
+      // await execa(packageManager, ['install'], {
+      //   cwd: root,
+      //   stdio: ctx.isJson ? 'ignore' : 'inherit',
+      // });
       const packageManager = await getPackageManager();
-      await execa(packageManager, ['install'], {
+
+      const installArgs =
+        packageManager === 'npm' ? ['install', '--legacy-peer-deps'] : ['install'];
+
+      await execa(packageManager, installArgs, {
         cwd: root,
         stdio: ctx.isJson ? 'ignore' : 'inherit',
       });
 
       spinner.succeed(chalk.green('Next.js app scaffolded successfully!'));
       if (ctx.isJson) {
-        process.stdout.write(JSON.stringify({ success: true }, null, 2));
+        console.log(JSON.stringify({ success: true }, null, 2));
       }
 
       if (!ctx.isJson) {
@@ -249,7 +258,7 @@ export const startersCommandNextjsApp = new Command()
       // }
     } catch (e) {
       if (ctx.isJson) {
-        process.stdout.write(
+        console.log(
           JSON.stringify(
             {
               success: false,
@@ -363,15 +372,24 @@ export const startersCommandViteReact = new Command()
 
       // 17. Install dependencies
       spinner.text = 'Installing dependencies...';
+      // const packageManager = await getPackageManager();
+      // await execa(packageManager, ['install'], {
+      //   cwd: root,
+      //   stdio: ctx.isJson ? 'ignore' : 'inherit',
+      // });
       const packageManager = await getPackageManager();
-      await execa(packageManager, ['install'], {
+
+      const installArgs =
+        packageManager === 'npm' ? ['install', '--legacy-peer-deps'] : ['install'];
+
+      await execa(packageManager, installArgs, {
         cwd: root,
         stdio: ctx.isJson ? 'ignore' : 'inherit',
       });
 
       spinner.succeed(chalk.green('Vite + React app scaffolded successfully!'));
       if (ctx.isJson) {
-        process.stdout.write(JSON.stringify({ success: true }, null, 2));
+        console.log(JSON.stringify({ success: true }, null, 2));
       }
 
       if (!ctx.isJson) {
@@ -392,7 +410,7 @@ export const startersCommandViteReact = new Command()
       // }
     } catch (e) {
       if (ctx.isJson) {
-        process.stdout.write(
+        console.log(
           JSON.stringify(
             {
               success: false,

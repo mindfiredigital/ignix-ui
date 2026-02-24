@@ -53,7 +53,7 @@ export const listCommand = new Command()
             .sort((a, b) => a.localeCompare(b));
 
           if (ctx.isJson) {
-            process.stdout.write(
+            console.log(
               JSON.stringify(
                 {
                   success: true,
@@ -85,7 +85,7 @@ export const listCommand = new Command()
           const sorted = themes.map((t) => t.id.toLowerCase()).sort((a, b) => a.localeCompare(b));
 
           if (ctx.isJson) {
-            process.stdout.write(
+            console.log(
               JSON.stringify(
                 {
                   success: true,
@@ -120,7 +120,7 @@ export const listCommand = new Command()
             .sort((a, b) => a.localeCompare(b));
 
           if (ctx.isJson) {
-            process.stdout.write(
+            console.log(
               JSON.stringify(
                 {
                   success: true,
@@ -149,7 +149,7 @@ export const listCommand = new Command()
 
         default:
           if (ctx.isJson) {
-            process.stdout.write(
+            console.log(
               JSON.stringify(
                 {
                   success: false,
@@ -167,7 +167,7 @@ export const listCommand = new Command()
       }
     } catch (error) {
       if (ctx.isJson) {
-        process.stdout.write(
+        console.log(
           JSON.stringify(
             {
               success: false,
