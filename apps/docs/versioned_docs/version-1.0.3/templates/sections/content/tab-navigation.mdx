@@ -1,0 +1,137 @@
+---
+sidebar_position: 12
+title: Tab Navigation
+description: A horizontal tab list with active indicator, content switching, optional icons and badges, and full keyboard support.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { TabNavigationDemo } from '@site/src/components/Demo/TabNavigationDemo';
+
+
+**Tab Navigation** is a section content template that provides a horizontal tab list with a clear active indicator, content switching, optional icons (with positions: left, right, top), optional badges (with or without counter, and shapes: pill, circle, square), and custom active/inactive colors. It supports full keyboard navigation (Arrow Left/Right, Enter/Space, Home/End) and is built for minimal re-renders using callbacks and stable refs.
+
+Features:
+- Horizontal tab list with **underline** or **pill** active indicator
+- Tab content switching
+- Optional icons with positions: **left**, **right**, **top**
+- Optional badges: counter or label, shapes **pill** / **circle** / **square**
+- Custom **active** and **inactive** colors via class names
+- Keyboard support: Arrow keys, Enter, Space, Home, End
+
+---
+
+
+<TabNavigationDemo />
+
+---
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component tab-navigation
+    ```
+  </TabItem>
+  <TabItem value="manual" label="Manual">
+    Install the template and use the same API as in the demo. Import from your design system or copy the component from `apps/docs/src/components/UI/tab-navigation`.
+  </TabItem>
+</Tabs>
+
+---
+
+## Usage
+
+Import the component and define tabs with `id`, `label`, `content`, and optional `icon`, `iconPosition`, and `badge`:
+
+```tsx
+import { TabNavigation } from '@ignix-ui/tab-navigation'; // or your path
+import { FileText, Settings } from 'lucide-react';
+
+const tabs = [
+  {
+    id: 'overview',
+    label: 'Overview',
+    icon: FileText,
+    iconPosition: 'left',
+    badge: { count: 3, shape: 'pill' },
+    content: <div>Overview content...</div>,
+  },
+  {
+    id: 'settings',
+    label: 'Settings',
+    icon: Settings,
+    iconPosition: 'right',
+    content: <div>Settings content...</div>,
+  },
+];
+
+function MyTabs() {
+  return (
+    <TabNavigation
+      tabs={tabs}
+      indicatorVariant="underline"
+      defaultActiveId="overview"
+      onChange={(activeId) => console.log(activeId)}
+    />
+  );
+}
+```
+
+### Controlled mode
+
+```tsx
+const [activeId, setActiveId] = useState('overview');
+
+<TabNavigation
+  tabs={tabs}
+  activeId={activeId}
+  onChange={setActiveId}
+  indicatorVariant="pill"
+/>
+```
+
+### Custom colors
+
+```tsx
+<TabNavigation
+  tabs={tabs}
+  activeTabClassName="text-emerald-600"
+  inactiveTabClassName="text-slate-500 hover:text-slate-700"
+  activeIndicatorClassName="bg-emerald-600"
+/>
+```
+
+---
+
+## Props
+
+### TabNavigation
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `tabs` | `TabItem[]` | **required** | Array of tab definitions (id, label, content, optional icon, iconPosition, badge). |
+| `defaultActiveId` | `string` | first tab id | Initial active tab id (uncontrolled). |
+| `activeId` | `string` | - | Controlled active tab id. |
+| `onChange` | `(activeId: string) => void` | - | Callback when the active tab changes. |
+| `className` | `string` | - | Root container class. |
+| `tabListClassName` | `string` | - | Horizontal tab list class. |
+| `panelClassName` | `string` | - | Content panel class. |
+| `indicatorVariant` | `'underline' \| 'pill'` | `'underline'` | Style of the active indicator. |
+| `activeTabClassName` | `string` | - | Class for active tab (e.g. text/background color). |
+| `inactiveTabClassName` | `string` | - | Class for inactive tabs. |
+| `activeIndicatorClassName` | `string` | - | Class for the underline indicator bar. |
+
+### TabItem
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `id` | `string` | **required** – Unique tab id. |
+| `label` | `string` | **required** – Tab label. |
+| `content` | `React.ReactNode` | **required** – Panel content when active. |
+| `icon` | `LucideIcon` | Optional icon component. |
+| `iconPosition` | `'left' \| 'right' \| 'top'` | Icon position (default `'left'`). |
+| `badge` | `{ label?: string; count?: number; showZero?: boolean; shape?: 'pill' \| 'circle' \| 'square' }` | Optional badge (counter or label, shape). |
+
+**Keyboard:** Arrow Left/Right (or Up/Down) move focus and active tab; Enter or Space activate; Home/End go to first/last tab.
