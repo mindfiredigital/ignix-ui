@@ -255,6 +255,7 @@
           "items": [
             "templates/sections/content/call-to-action",
             "templates/sections/content/comparison-table",
+            "templates/sections/content/faq-accordion",
             "templates/sections/content/hero",
             "templates/sections/content/mega-menu-multi-column-dropdown",
             "templates/sections/content/pricing-grid",
