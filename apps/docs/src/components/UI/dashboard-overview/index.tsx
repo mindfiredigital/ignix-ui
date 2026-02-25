@@ -8,7 +8,7 @@
 "use client";
 
 import React, { useCallback, useMemo, useState } from "react";
-import { FiTrendingUp, FiTrendingDown } from "react-icons/fi";
+import {ArrowTopRightIcon, ArrowBottomRightIcon} from "@radix-ui/react-icons"
 import { cn } from "@site/src/utils/cn";
 import { Button } from "../button";
 import {
@@ -200,8 +200,8 @@ function TrendIndicator({
 
   return (
     <span className={cn("inline-flex items-center gap-1 text-sm font-medium", trendClass, className)}>
-      {isUp && <FiTrendingUp className="w-4 h-4 shrink-0" aria-hidden />}
-      {isDown && <FiTrendingDown className="w-4 h-4 shrink-0" aria-hidden />}
+      {isUp && <ArrowTopRightIcon className="w-4 h-4 shrink-0" aria-hidden />}
+      {isDown && <ArrowBottomRightIcon className="w-4 h-4 shrink-0" aria-hidden />}
       <span>{trendValue}</span>
     </span>
   );
