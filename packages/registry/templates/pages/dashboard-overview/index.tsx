@@ -304,7 +304,7 @@ function DashboardHeader({
         ) : (
           <div className="flex gap-2 flex-wrap w-full justify-end">
             {onExportReport && (
-              <Button variant="default" size="md" onClick={onExportReport}>
+              <Button variant="outline" size="md" onClick={onExportReport}>
                 {exportLabel}
               </Button>
             )}
