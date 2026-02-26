@@ -109,6 +109,17 @@
         }
       }
     },
+    "carousel": {
+      "name": "Carousel",
+      "description": " A flexible carousel component with navigation controls, dots indicators, thumbnails, animations, and responsive support.",
+      "dependencies": ["framer-motion", "lucide-react"],
+      "files": {
+        "main": {
+          "path": "components/carousel/index.tsx",
+          "type": "component"
+        }
+      }
+    },
     "errorPage": {
       "name": "ErrorPage",
       "description": "A customizable error page template with multiple animation variants, designed to display clear messaging, illustration/icons.",
