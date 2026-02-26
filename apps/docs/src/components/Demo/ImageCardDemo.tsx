@@ -3,7 +3,7 @@ import VariantSelector from "./VariantSelector";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 import CodeBlock from "@theme/CodeBlock";
-import { ImageCard } from "../UI/image-card";
+import { ImageCard } from "@site/src/components/UI/image-card";
 import { Play, SkipBack, SkipForward, Star } from "lucide-react";
 
 type ImageCardPosition = typeof positions[number];
