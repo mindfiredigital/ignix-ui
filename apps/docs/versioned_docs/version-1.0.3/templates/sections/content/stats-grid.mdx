@@ -1,10 +1,48 @@
+---
+sidebar_position: 11
+title: Stats Grid
+description: A responsive grid of statistics cards with customizable layouts, themes, and animations.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import {
+    StatsGridSimpleDemo,
+    StatsGridCustomizableDemo,
+    VibrantExamplesDemo,
+} from '@site/src/components/Demo/StatsGridDemo';
+import { StatsGrid, StatsGridTitle, StatsGridDescription, StatsGridCard, StatsGridContainer, StatValue, StatLabel, StatSubtext, StatIcon } from '@site/src/components/UI/stats-grid';
+import { Users, DollarSign, Download, Clock, Star, Shield, Globe, Award, Rocket, Heart, Activity, BarChart3, ShoppingCart, Mail, TrendingUp, Zap, CheckCircle, Target, Crown, HeartHandshake, CreditCard, CircleDollarSign, Package, Eye, Smile, Circle, Database, Server, Network, Timer, Banknote, Calendar, Calculator, TrendingDown, PieChart, Percent } from 'lucide-react';
+
+The StatsGrid component provides a flexible and customizable way to display statistical data with beautiful animations, multiple themes, and intelligent number formatting.
+
+### Simple Demo
+<StatsGridSimpleDemo />
+
+### Customizable Demo
+{/* <StatsGridCustomizableDemo /> */}
+
+### Advanced Examples
+<VibrantExamplesDemo />
+
+
+### Installation
+
+<Tabs>
+    <TabItem value="npm" label="NPM">
+    ```bash 
+    ignix add component statsGrid
+    ```
+    </TabItem>
+    <TabItem value="manual" label="Manual">
+    ```tsx
 "use client";
 
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
-import { cn } from "../../../../../utils/cn";
+import { cn } from '../../../utils/cn';
 
 /* ============================================
    TYPES & INTERFACES
@@ -256,7 +294,7 @@ const vibrantAccentStyles: Record<StatAccent, { iconBg: string; iconFg: string; 
 function formatNumber(
     value: number,
     format: NumberFormat = "compact",
-    decimals = 1
+    decimals: number = 1
 ): string {
     if (format === "raw") {
         return value.toString();
@@ -994,3 +1032,160 @@ export const StatsGrid = Object.assign(StatsGridRoot, {
 });
 
 export default StatsGrid;
+    ```
+    </TabItem>
+</Tabs>
+
+## Props
+
+### StatsGrid Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `'default' \| 'dark' \| 'light'` | `'default'` | Visual variant of the stats grid |
+| `columns` | `2 \| 3 \| 4 \| 5 \| 6` | `4` | Number of columns in the grid |
+| `contentAlign` | `'left' \| 'center' \| 'right'` | `'center'` | Content alignment within the section |
+| `animated` | `boolean` | `true` | Enable/disable counting animations |
+| `animationDelay` | `number` | `0` | Initial animation delay in seconds |
+| `animationType` | `'fade' \| 'slide' \| 'scale' \| 'none'` | `'slide'` | Type of entrance animation |
+| `staggerDelay` | `number` | `0.1` | Delay between each card's animation |
+| `padding` | `'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'` | `'lg'` | Vertical padding of the section |
+| `gap` | `'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | Gap between grid items |
+| `containerSize` | `'small' \| 'normal' \| 'large' \| 'full' \| 'readable'` | `'normal'` | Container max width |
+| `bgColor` | `string` | `-` | Custom background color class for the section |
+| `textColor` | `string` | `-` | Custom text color class for the section |
+| `cardBgColor` | `string` | `-` | Custom background color class for cards |
+| `cardBorderColor` | `string` | `-` | Custom border color class for cards |
+| `cardBorderWidth` | `string` | `-` | Custom border width for cards |
+| `iconBgColor` | `string` | `-` | Custom background color class for icons |
+| `iconColor` | `string` | `-` | Custom icon color class |
+| `title` | `string` | `-` | Section title (when using default rendering) |
+| `description` | `string` | `-` | Section description (when using default rendering) |
+| `stats` | `StatItem[]` | `[]` | Statistics array (when using default rendering) |
+| `ariaLabel` | `string` | `-` | Accessibility label |
+| `role` | `string` | `'region'` | ARIA role |
+| `children` | `React.ReactNode` | `-` | Child components for custom layouts |
+
+### StatsGridTitle
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | `required` | Title content |
+| `className` | `string` | `-` | Additional CSS classes |
+| `as` | `'h1' \| 'h2' \| 'h3' \| 'h4' \| 'h5' \| 'h6'` | `'h2'` | HTML heading element |
+| `color` | `string` | `-` | Custom text color class |
+
+### StatsGridDescription
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | `required` | Description content |
+| `className` | `string` | `-` | Additional CSS classes |
+| `color` | `string` | `-` | Custom text color class |
+
+### StatsGridCard
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `stat` | `StatItem` | `required` | Statistic data |
+| `index` | `number` | `0` | Card index (for staggered animations) |
+| `className` | `string` | `-` | Additional CSS classes |
+| `bgColor` | `string` | `-` | Custom background color for this card |
+| `borderColor` | `string` | `-` | Custom border color for this card |
+| `borderWidth` | `string` | `-` | Custom border width for this card |
+| `textColor` | `string` | `-` | Custom text color for this card |
+| `iconBgColor` | `string` | `-` | Custom icon background for this card |
+| `iconColor` | `string` | `-` | Custom icon color for this card |
+| `iconSolid` | `boolean` | `false` | Use solid vibrant icon style |
+
+### StatsGridContainer
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | `required` | Grid items (usually StatsGridCard components) |
+| `className` | `string` | `-` | Additional CSS classes |
+
+### StatsGridHeader
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `title` | `string` | `-` | Section title |
+| `description` | `string` | `-` | Section description |
+| `className` | `string` | `-` | Additional CSS classes |
+
+### StatValue
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `number` | `required` | Numeric value to display |
+| `format` | `'raw' \| 'compact' \| 'currency' \| 'percentage'` | `'compact'` | Number formatting style |
+| `prefix` | `string` | `''` | Text before the value |
+| `suffix` | `string` | `''` | Text after the value |
+| `decimals` | `number` | `1` | Number of decimal places |
+| `animated` | `boolean` | `true` | Enable counting animation |
+| `delay` | `number` | `0` | Animation delay in seconds |
+| `className` | `string` | `-` | Additional CSS classes |
+| `as` | `'p' \| 'span' \| 'div'` | `'p'` | HTML element |
+| `color` | `string` | `-` | Custom text color class |
+
+### StatLabel
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | `required` | Label content |
+| `className` | `string` | `-` | Additional CSS classes |
+| `as` | `'p' \| 'span' \| 'div' \| 'h3' \| 'h4'` | `'p'` | HTML element |
+| `color` | `string` | `-` | Custom text color class |
+
+### StatSubtext
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | `required` | Subtext content |
+| `className` | `string` | `-` | Additional CSS classes |
+| `as` | `'p' \| 'span' \| 'div'` | `'p'` | HTML element |
+| `color` | `string` | `-` | Custom text color class |
+
+### StatIcon
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `icon` | `LucideIcon` | `required` | Icon component from lucide-react |
+| `accent` | `'default' \| 'blue' \| 'emerald' \| 'amber' \| 'rose' \| 'violet' \| 'purple' \| 'pink' \| 'indigo' \| 'cyan' \| 'orange' \| 'yellow' \| 'teal' \| 'red' \| 'green'` | `'default'` | Accent color variant |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Icon size |
+| `bgColor` | `string` | `-` | Custom background color class |
+| `iconColor` | `string` | `-` | Custom icon color class |
+| `solid` | `boolean` | `false` | Use solid vibrant colors instead of light backgrounds |
+| `className` | `string` | `-` | Additional CSS classes |
+
+### StatItem Interface
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `id` | `string` | `-` | Unique identifier |
+| `value` | `number` | `required` | Numeric value |
+| `label` | `string` | `required` | Statistic label |
+| `subtext` | `string` | `-` | Additional description |
+| `icon` | `LucideIcon` | `-` | Icon component |
+| `format` | `NumberFormat` | `'compact'` | Number formatting style |
+| `prefix` | `string` | `''` | Text before the value |
+| `suffix` | `string` | `''` | Text after the value |
+| `decimals` | `number` | `1` | Number of decimal places |
+| `accent` | `StatAccent` | `'default'` | Accent color for the icon |
+
+### Type Definitions
+```typescript
+type NumberFormat = 'raw' | 'compact' | 'currency' | 'percentage';
+type AnimationType = 'fade' | 'slide' | 'scale' | 'none';
+type StatAccent = 'default' | 'blue' | 'emerald' | 'amber' | 'rose' | 'violet' | 
+                  'purple' | 'pink' | 'indigo' | 'cyan' | 'orange' | 'yellow' | 
+                  'teal' | 'red' | 'green';
+```
+                  
+## Component Hierarchy
+```tsx
+StatsGrid (Root Provider)
+├── StatsGrid.Header (Optional)
+│   ├── StatsGrid.Title
+│   └── StatsGrid.Description
+├── StatsGrid.Container (Grid layout)
+│   ├── StatsGrid.Card (Pre-built)
+│   │   ├── StatsGrid.Label (internal)
+│   │   ├── StatsGrid.Value (internal)
+│   │   ├── StatsGrid.Icon (internal)
+│   │   └── StatsGrid.Subtext (internal)
+│   └── Custom Card Layouts
+│       ├── StatsGrid.Label
+│       ├── StatsGrid.Value
+│       ├── StatsGrid.Icon
+│       └── StatsGrid.Subtext
+```

@@ -4,7 +4,7 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
-import { cn } from "../../../../../utils/cn";
+import { cn } from "@site/src/utils/cn";
 
 /* ============================================
    TYPES & INTERFACES
