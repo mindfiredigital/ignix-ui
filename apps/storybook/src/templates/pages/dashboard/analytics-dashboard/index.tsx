@@ -462,6 +462,7 @@ const AnalyticsLegend = React.memo(function AnalyticsLegendInner({
  * @param props - Line chart props including data and active series.
  * @returns Rendered line chart card.
  */
+
 function AnalyticsLineChart({
   data,
   seriesConfig,
@@ -612,7 +613,7 @@ function AnalyticsLineChart({
                     key={series.id}
                     d={paths[series.id]}
                     className={cn(series.strokeClass, "fill-none")}
-                    strokeWidth={1.5}
+                    strokeWidth={0.3}
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
@@ -632,7 +633,7 @@ function AnalyticsLineChart({
                         key={`${series.id}-${index}`}
                         cx={point.x}
                         cy={point.y}
-                        r={1.4}
+                        r={1}
                         className={series.dotClass}
                         onMouseEnter={() =>
                           handlePointEnter(series.id, point.value, point.dateLabel)

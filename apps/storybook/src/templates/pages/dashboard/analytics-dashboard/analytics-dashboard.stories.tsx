@@ -89,7 +89,7 @@ const DEMO_SERIES_CONFIG: LineSeriesConfig[] = [
 
 const today = new Date();
 
-const DEMO_TIME_SERIES: TimeSeriesPoint[] = Array.from({ length: 14 }).map(
+const DEMO_TIME_SERIES: TimeSeriesPoint[] = Array.from({ length: 30 }).map(
   (_, idx) => {
     const date = new Date(today);
     date.setDate(today.getDate() - (13 - idx));
@@ -98,8 +98,9 @@ const DEMO_TIME_SERIES: TimeSeriesPoint[] = Array.from({ length: 14 }).map(
     const weeklySeasonality = (idx % 7) * 600;
     const promoSpike = idx === 10 ? 12000 : 0;
 
-    const signupsBase = 4000 + idx * 6;
-    const signupsSeasonality = (idx % 5) * 10;
+    const signupsBase = 4000 + idx * 60;
+    const signupsSeasonality = (idx % 5) * 500;
+    const signupsSpike = idx === 10 ? 12000 : 0;
 
     const churnBase = 1000 + (idx % 4) * 3;
 
@@ -107,7 +108,7 @@ const DEMO_TIME_SERIES: TimeSeriesPoint[] = Array.from({ length: 14 }).map(
       date,
       values: {
         revenue: baseRevenue + weeklySeasonality + promoSpike,
-        signups: signupsBase + signupsSeasonality,
+        signups: signupsBase + signupsSeasonality + signupsSpike,
         churn: churnBase,
       },
     };
