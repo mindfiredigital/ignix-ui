@@ -10,24 +10,32 @@ Language: TypeScript
 
 ## Initialize
 
-npx ignix init
+ignix init
 
 Creates:
 ignix.config.js
 
 ## Install Component (human)
 
-npx ignix add component <name>
+ignix add component <name>
 
 Example:
-npx ignix add component button
+ignix add component button
 
 ## Install Component (AI / non-interactive)
 
-npx ignix add component <name> --yes --json
+The ONLY valid non-interactive machine command is:
+
+ignix add component <name> --yes --json
+
+Do NOT use:
+- npx ignix-ui
+- ignix-ui
+- --machine
+- add <name> without "component"
 
 Example:
-npx ignix add component button --yes --json
+ignix add component button --yes --json
 
 Returns:
 {"success":true,"installed":["button"]}
@@ -41,7 +49,7 @@ Exit codes:
 
 ## Install into specific project
 
-npx ignix add component <name> --yes --json --cwd <path>
+ignix add component <name> --yes --json --cwd <path>
 
 ## Registry
 
@@ -57,3 +65,41 @@ Contains:
 ## Philosophy
 
 Components are copied into the project and fully owned by the developer.
+
+## IMPORTANT FOR AI AGENTS
+
+Never manually create or modify component files.
+
+Always use the MCP tool or CLI in machine mode:
+
+ignix add component <name> --yes --json
+
+If installing inside a monorepo, use:
+
+ignix add component <name> --yes --json --cwd <path>
+
+## STRICT COMMAND CONTRACT
+
+The Ignix CLI commands are deterministic.
+
+Correct format:
+
+ignix add component <name> --yes --json
+
+Incorrect formats (do NOT use):
+
+- npx ignix-ui
+- ignix-ui add
+- ignix add <name>
+- ignix add button
+- ignix add component <name> --machine
+- Any variation without "--yes --json"
+
+AI agents must not infer or invent flags.
+
+IMPORTANT:
+Ignix components MUST only be installed via the MCP tool `install_component`.
+
+Do NOT use shell.
+Do NOT run npx.
+Do NOT manually edit files.

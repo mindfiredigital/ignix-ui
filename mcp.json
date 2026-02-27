@@ -5,7 +5,7 @@
   "tools": [
     {
       "name": "install_component",
-      "description": "Install one or more Ignix UI components into a project",
+      "description": "Use this tool instead of manually editing files to install Ignix UI components. Always use this tool for adding components.",
       "inputSchema": {
         "type": "object",
         "required": ["components"],
@@ -24,12 +24,12 @@
           }
         }
       },
-      "command": "npx ignix add component {{join components}} --yes --json {{#if cwd}}--cwd {{cwd}}{{/if}}"
+      "command": "ignix add component {{join components}} --yes --json {{#if cwd}}--cwd {{cwd}}{{/if}}"
     },
     {
       "name": "list_components",
       "description": "List available components",
-      "command": "npx ignix list --json"
+      "command": "ignix list --json"
     },
     {
       "name": "get_component",
@@ -43,7 +43,7 @@
           }
         }
       },
-      "command": "npx ignix info {{name}} --json"
+      "command": "ignix info {{name}} --json"
     }
   ],
   "resources": [
