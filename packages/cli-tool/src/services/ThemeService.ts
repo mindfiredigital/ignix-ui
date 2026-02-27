@@ -15,6 +15,11 @@ interface ThemePresetConfig {
 }
 export class ThemeService {
   private themes: Record<string, ThemePresetConfig> | null = null;
+  private silent = false;
+
+  public setSilent(value: boolean): void {
+    this.silent = value;
+  }
 
   private async fetchThemes(): Promise<Record<string, ThemePresetConfig>> {
     if (this.themes) {
@@ -22,17 +27,28 @@ export class ThemeService {
     }
 
     const config = await loadConfig();
-    const spinner = ora('Fetching themes...').start();
+
+    const noop = (): void => {
+      return;
+    };
+
+    const spinner = this.silent
+      ? { start: noop, succeed: noop, fail: noop }
+      : ora('Fetching themes...').start();
 
     try {
       const response = await axios.get<Record<string, ThemePresetConfig>>(config.themeUrl);
-      spinner.succeed('Themes fetched successfully');
+      if (!this.silent) {
+        spinner.succeed('Themes fetched successfully');
+      }
       this.themes = response.data;
       return this.themes;
     } catch (error) {
-      spinner.fail('Failed to fetch themes');
-      logger.error('Could not connect to the theme registry. Please check your connection.');
-      process.exit(1);
+      if (!this.silent) {
+        spinner.fail('Failed to fetch themes');
+        logger.error('Could not connect to the theme registry. Please check your connection.');
+      }
+      throw new Error('Failed to fetch themes');
     }
   }
 
@@ -62,7 +78,14 @@ export class ThemeService {
    * Fetches a theme preset from the theme registry and writes it to a file.
    */
   public async install(id: string): Promise<void> {
-    const spinner = ora(`Installing theme preset: ${id}...`).start();
+    const noop = (): void => {
+      return;
+    };
+
+    const spinner = this.silent
+      ? { start: noop, succeed: noop, fail: noop }
+      : ora(`Installing theme preset: ${id}...`).start();
+
     try {
       const config = await loadConfig();
       const themeConfig = await this.getThemeConfig(id);
@@ -86,13 +109,19 @@ export const ${variableName}Theme: ThemeConfig = ${JSON.stringify(themeConfig.th
 
       await fs.writeFile(destFile, fileContent);
 
-      spinner.succeed(chalk.green(`Successfully installed theme: ${chalk.cyan(themeConfig.name)}`));
-      logger.info(`Preset file created at: ${chalk.yellow(destFile)}`);
-      logger.info(`You can now import it and pass to your <ThemeProvider>.`);
+      if (!this.silent) {
+        spinner.succeed(
+          chalk.green(`Successfully installed theme: ${chalk.cyan(themeConfig.name)}`)
+        );
+        logger.info(`Preset file created at: ${chalk.yellow(destFile)}`);
+        logger.info(`You can now import it and pass to your <ThemeProvider>.`);
+      }
     } catch (error) {
-      spinner.fail(`Failed to install theme preset: ${id}.`);
-      if (error instanceof Error) {
-        logger.error(error.message);
+      if (!this.silent) {
+        spinner.fail(`Failed to install theme preset: ${id}.`);
+        if (error instanceof Error) {
+          logger.error(error.message);
+        }
       }
     }
   }
