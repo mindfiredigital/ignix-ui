@@ -1,40 +1,39 @@
 import { getPackageManager } from '../utils/getPackageManager';
 import { logger } from '../utils/logger';
 
-const execa = async (...args: any[]): Promise<any> => {
-  const { execa: execaImport } = await import('execa');
-  return (execaImport as any)(...args);
+const run = async (command: string, args: readonly string[], cwd: string) => {
+  const { execa } = await import('execa');
+  return execa(command, args, { stdio: 'inherit', cwd });
 };
 
 export class DependencyService {
   public async install(packages: string[], isDev: boolean): Promise<void> {
-    if (packages.length === 0) return;
+    if (!packages.length) return;
 
-    const packageManager = await getPackageManager();
+    const pm = await getPackageManager();
+    let args: string[] = [];
 
-    const args: string[] = [];
-
-    // npm uses 'install', while yarn and pnpm use 'add'
-    if (packageManager === 'npm') {
-      args.push('install');
-      if (isDev) {
-        args.push('--save-dev');
-      }
+    if (pm === 'npm') {
+      args = ['install', ...packages];
+      if (isDev) args.push('--save-dev');
     } else {
-      args.push('add');
-      if (isDev) {
-        args.push('-D');
-      }
+      args = ['add', ...packages];
+      if (isDev) args.push('-D');
     }
 
-    args.push(...packages);
-
     try {
-      logger.info(`Installing dependencies: ${packageManager} ${args.join(' ')}`);
-      await execa(packageManager, args, { stdio: 'inherit', cwd: process.cwd() });
-      logger.success(`Successfully installed: ${packages.join(', ')}`);
-    } catch (error) {
-      logger.error(error as string);
+      logger.info(`Installing dependencies: ${pm} ${args.join(' ')}`);
+      await run(pm, args, process.cwd());
+      logger.success(`Installed: ${packages.join(', ')}`);
+    } catch (err) {
+      if (pm === 'npm') {
+        logger.warn('Retrying with --legacy-peer-deps...');
+        await run('npm', ['install', ...packages, '--legacy-peer-deps'], process.cwd());
+        logger.success(`Installed with fallback`);
+        return;
+      }
+
+      logger.error(String(err));
       throw new Error(`Failed to install dependencies: ${packages.join(', ')}`);
     }
   }

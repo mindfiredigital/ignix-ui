@@ -28,21 +28,24 @@ export class TemplateService {
 
     try {
       const config = await this.config;
+
       const templateConfig = await this.registryService.getComponentConfig(name);
       if (!templateConfig) {
         throw new Error(`Template '${name}' not found.`);
       }
-      // 1. Install package dependencies
-      if (templateConfig.dependencies && templateConfig.dependencies?.length > 0) {
+
+      // -------------------------------
+      // 1. Install NPM dependencies
+      // -------------------------------
+      if (templateConfig.dependencies?.length) {
         spinner.text = `Installing dependencies for ${name}...`;
         await this.dependencyService.install(templateConfig.dependencies, false);
       }
 
-      // 2. Install component dependencies (sidebar, header, etc.)
-      if (
-        templateConfig.componentDependencies &&
-        templateConfig.componentDependencies?.length > 0
-      ) {
+      // -------------------------------
+      // 2. Install internal components
+      // -------------------------------
+      if (templateConfig.componentDependencies?.length) {
         spinner.text = `Installing internal component dependencies...`;
 
         for (const dep of templateConfig.componentDependencies) {
@@ -50,16 +53,37 @@ export class TemplateService {
         }
       }
 
-      // 3. Download template layout files
+      // -------------------------------
+      // 3. Resolve template directory SAFELY
+      // -------------------------------
+      const templateBaseDir =
+        config.templateDir ||
+        config.componentsDir || // fallback
+        'src/templates';
+
+      const templateDir = path.resolve(process.cwd(), templateBaseDir, name.toLowerCase());
+
+      await fs.ensureDir(templateDir);
+
+      // -------------------------------
+      // 4. Download template files
+      // -------------------------------
       spinner.text = `Downloading template layout files...`;
 
-      const templateDir = path.resolve(config.templateDir, name.toLowerCase());
-      await fs.ensureDir(templateDir);
+      if (!templateConfig.files || Object.keys(templateConfig.files).length === 0) {
+        throw new Error(`Template '${name}' has no files defined in registry.`);
+      }
 
       const baseUrl = config.registryUrl.substring(0, config.registryUrl.lastIndexOf('/'));
 
       for (const fileKey in templateConfig.files) {
         const fileInfo = templateConfig.files[fileKey];
+
+        if (!fileInfo?.path) {
+          logger.warn(`Skipping file with missing path in template '${name}'`);
+          continue;
+        }
+
         const fileUrl = `${baseUrl}/${fileInfo.path}`;
 
         const { data: content } = await axios.get(fileUrl, {
