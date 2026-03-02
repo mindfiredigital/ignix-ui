@@ -1,0 +1,1364 @@
+import React, { useState, useEffect } from 'react';
+import {
+    MultiStepForm,
+    // MultiStepHeader,
+    // MultiStepStepIndicator,
+    // MultiStepContent,
+    // MultiStepNavigation,
+    // MultiStepReview,
+    // MultiStepField,
+    type FormStep,
+} from '../UI/multi-step-form';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+import VariantSelector from './VariantSelector';
+import { useColorMode } from '@docusaurus/theme-common';
+import {
+    User,
+    Mail,
+    Briefcase,
+    MapPin,
+    Phone,
+    Lock,
+    Calendar,
+    CreditCard,
+    Home,
+    Bell,
+    Globe,
+    Github,
+    Linkedin,
+    Building,
+    Heart,
+    FileText,
+    BookOpen,
+    Code,
+    BarChart,
+    Users,
+    Hash,
+} from 'lucide-react';
+import { cn } from '@site/src/utils/cn';
+// import { Typography } from '@site/src/components/UI/typography';
+import { Button } from '@site/src/components/UI/button';
+
+// Types for our variant selectors
+type ThemeVariant = 'default' | 'gradient' | 'card' | 'glass' | 'dark';
+type AnimationVariant = 'fadeUp' | 'scaleIn' | 'slideUp' | 'slideLeft' | 'slideRight';
+type InputVariant = 'clean' | 'borderGlow' | 'glassmorphism' | 'shimmer' | 'borderBeam';
+type ButtonVariant = 'default' | 'primary' | 'secondary' | 'outline' | 'ghost' | 'success' | 'danger' | 'warning' | 'glass';
+type FormType = 'onboarding' | 'registration' | 'payment' | 'job' | 'event' | 'profile';
+
+// Animation options
+const animationTypes = [
+    'fadeUp',
+    'scaleIn',
+    'slideUp',
+    'slideLeft',
+    'slideRight'
+] as const;
+
+// Theme options
+const themeOptions = [
+    { value: 'default', label: 'Default' },
+    { value: 'gradient', label: 'Gradient' },
+    { value: 'card', label: 'Card' },
+    { value: 'glass', label: 'Glass' },
+    { value: 'dark', label: 'Dark' },
+];
+
+// Input variant options
+const inputVariantOptions = [
+    { value: 'clean', label: 'Clean' },
+    { value: 'borderGlow', label: 'Border Glow' },
+    { value: 'glassmorphism', label: 'Glass' },
+    { value: 'shimmer', label: 'Shimmer' },
+    { value: 'borderBeam', label: 'Border Beam' },
+];
+
+// Button variant options
+const buttonVariantOptions = [
+    { value: 'default', label: 'Default' },
+    { value: 'primary', label: 'Primary' },
+    { value: 'secondary', label: 'Secondary' },
+    { value: 'outline', label: 'Outline' },
+    { value: 'ghost', label: 'Ghost' },
+    { value: 'success', label: 'Success' },
+    { value: 'danger', label: 'Danger' },
+    { value: 'warning', label: 'Warning' },
+    { value: 'glass', label: 'Glass' },
+];
+
+// Form type options (for VariantSelector)
+const formTypeOptions = [
+    { value: 'onboarding', label: 'Onboarding' },
+    { value: 'registration', label: 'Registration' },
+    { value: 'payment', label: 'Payment' },
+    { value: 'job', label: 'Job Application' },
+    { value: 'event', label: 'Event' },
+    { value: 'profile', label: 'Profile' },
+];
+
+// Form icons mapping
+const formIcons = {
+    onboarding: User,
+    registration: Lock,
+    payment: CreditCard,
+    job: Briefcase,
+    event: Calendar,
+    profile: User,
+};
+
+// ==============================
+// FORM TYPE CONFIGURATIONS
+// ==============================
+
+// 1. Onboarding Form
+const onboardingSteps: FormStep[] = [
+    {
+        id: 'personal',
+        title: 'Personal Information',
+        description: 'Tell us a bit about yourself',
+        fields: [
+            {
+                id: 'first-name',
+                name: 'firstName',
+                label: 'First Name',
+                type: 'text',
+                placeholder: 'John',
+                required: true,
+                icon: User,
+                colSpan: 'half',
+            },
+            {
+                id: 'last-name',
+                name: 'lastName',
+                label: 'Last Name',
+                type: 'text',
+                placeholder: 'Doe',
+                required: true,
+                icon: User,
+                colSpan: 'half',
+            },
+            {
+                id: 'email',
+                name: 'email',
+                label: 'Email Address',
+                type: 'email',
+                placeholder: 'john@example.com',
+                required: true,
+                icon: Mail,
+                colSpan: 'full',
+            },
+        ],
+    },
+    {
+        id: 'professional',
+        title: 'Professional Details',
+        description: 'Tell us about your work',
+        fields: [
+            {
+                id: 'role',
+                name: 'role',
+                label: 'Your Role',
+                type: 'select',
+                placeholder: 'Select your role',
+                required: true,
+                options: [
+                    { value: 'developer', label: 'Developer' },
+                    { value: 'designer', label: 'Designer' },
+                    { value: 'manager', label: 'Manager' },
+                    { value: 'other', label: 'Other' },
+                ],
+                icon: Briefcase,
+                colSpan: 'full',
+            },
+            {
+                id: 'experience',
+                name: 'experience',
+                label: 'Experience Level',
+                type: 'radio',
+                required: true,
+                options: [
+                    { value: 'beginner', label: 'Beginner (0-2 years)' },
+                    { value: 'intermediate', label: 'Intermediate (3-5 years)' },
+                    { value: 'senior', label: 'Senior (5+ years)' },
+                ],
+                colSpan: 'full',
+            },
+            {
+                id: 'bio',
+                name: 'bio',
+                label: 'Short Bio',
+                type: 'textarea',
+                placeholder: 'Tell us about yourself in a few sentences...',
+                required: false,
+                colSpan: 'full',
+            },
+        ],
+    },
+    {
+        id: 'preferences',
+        title: 'Preferences',
+        description: 'Set your preferences',
+        fields: [
+            {
+                id: 'newsletter',
+                name: 'newsletter',
+                label: 'Subscribe to newsletter',
+                type: 'checkbox',
+                placeholder: 'Subscribe to our newsletter',
+                required: false,
+                defaultValue: true,
+                colSpan: 'full',
+            },
+            {
+                id: 'contact-method',
+                name: 'contactMethod',
+                label: 'Preferred Contact Method',
+                type: 'select',
+                placeholder: 'How should we reach you?',
+                required: true,
+                options: [
+                    { value: 'email', label: 'Email' },
+                    { value: 'phone', label: 'Phone' },
+                    { value: 'sms', label: 'SMS' },
+                ],
+                icon: Bell,
+                colSpan: 'full',
+            },
+        ],
+    },
+];
+
+// 2. Registration Form
+const registrationSteps: FormStep[] = [
+    {
+        id: 'account',
+        title: 'Account Details',
+        description: 'Create your account credentials',
+        fields: [
+            {
+                id: 'username',
+                name: 'username',
+                label: 'Username',
+                type: 'text',
+                placeholder: 'johndoe',
+                required: true,
+                icon: User,
+                colSpan: 'full',
+            },
+            {
+                id: 'email',
+                name: 'email',
+                label: 'Email Address',
+                type: 'email',
+                placeholder: 'john@example.com',
+                required: true,
+                icon: Mail,
+                colSpan: 'full',
+            },
+            {
+                id: 'password',
+                name: 'password',
+                label: 'Password',
+                type: 'password',
+                placeholder: '••••••••',
+                required: true,
+                icon: Lock,
+                colSpan: 'half',
+                validation: (value) => {
+                    if (value.length < 8) return 'Password must be at least 8 characters';
+                    return undefined;
+                },
+            },
+            {
+                id: 'confirm-password',
+                name: 'confirmPassword',
+                label: 'Confirm Password',
+                type: 'password',
+                placeholder: '••••••••',
+                required: true,
+                icon: Lock,
+                colSpan: 'half',
+            },
+        ],
+        validation: (values) => {
+            const errors: Record<string, string> = {};
+            if (values.password !== values.confirmPassword) {
+                errors.confirmPassword = 'Passwords do not match';
+            }
+            return errors;
+        },
+    },
+    {
+        id: 'personal',
+        title: 'Personal Information',
+        description: 'Tell us about yourself',
+        fields: [
+            {
+                id: 'first-name',
+                name: 'firstName',
+                label: 'First Name',
+                type: 'text',
+                placeholder: 'John',
+                required: true,
+                icon: User,
+                colSpan: 'half',
+            },
+            {
+                id: 'last-name',
+                name: 'lastName',
+                label: 'Last Name',
+                type: 'text',
+                placeholder: 'Doe',
+                required: true,
+                icon: User,
+                colSpan: 'half',
+            },
+            {
+                id: 'phone',
+                name: 'phone',
+                label: 'Phone Number',
+                type: 'tel',
+                placeholder: '+1 (555) 123-4567',
+                required: false,
+                icon: Phone,
+                colSpan: 'half',
+            },
+            {
+                id: 'location',
+                name: 'location',
+                label: 'Location',
+                type: 'text',
+                placeholder: 'City, Country',
+                required: false,
+                icon: MapPin,
+                colSpan: 'half',
+            },
+        ],
+    },
+    {
+        id: 'preferences',
+        title: 'Preferences',
+        description: 'Set your preferences',
+        fields: [
+            {
+                id: 'newsletter',
+                name: 'newsletter',
+                label: 'Subscribe to newsletter',
+                type: 'checkbox',
+                placeholder: 'Subscribe to our newsletter for updates',
+                required: false,
+                defaultValue: true,
+                colSpan: 'full',
+            },
+            {
+                id: 'notifications',
+                name: 'notifications',
+                label: 'Notification Preferences',
+                type: 'select',
+                placeholder: 'Select notification type',
+                required: true,
+                options: [
+                    { value: 'all', label: 'All notifications' },
+                    { value: 'important', label: 'Important only' },
+                    { value: 'none', label: 'No notifications' },
+                ],
+                icon: Bell,
+                colSpan: 'full',
+            },
+        ],
+    },
+];
+
+// 3. Payment Form
+const paymentSteps: FormStep[] = [
+    {
+        id: 'billing',
+        title: 'Billing Address',
+        description: 'Enter your billing information',
+        fields: [
+            {
+                id: 'full-name',
+                name: 'fullName',
+                label: 'Full Name',
+                type: 'text',
+                placeholder: 'John Doe',
+                required: true,
+                icon: User,
+                colSpan: 'full',
+            },
+            {
+                id: 'address',
+                name: 'address',
+                label: 'Street Address',
+                type: 'text',
+                placeholder: '123 Main St',
+                required: true,
+                icon: Home,
+                colSpan: 'full',
+            },
+            {
+                id: 'city',
+                name: 'city',
+                label: 'City',
+                type: 'text',
+                placeholder: 'San Francisco',
+                required: true,
+                colSpan: 'half',
+            },
+            {
+                id: 'state',
+                name: 'state',
+                label: 'State',
+                type: 'text',
+                placeholder: 'CA',
+                required: true,
+                colSpan: 'half',
+            },
+            {
+                id: 'zip',
+                name: 'zip',
+                label: 'ZIP Code',
+                type: 'text',
+                placeholder: '94105',
+                required: true,
+                icon: Hash,
+                colSpan: 'half',
+            },
+            {
+                id: 'country',
+                name: 'country',
+                label: 'Country',
+                type: 'text',
+                placeholder: 'USA',
+                required: true,
+                colSpan: 'half',
+            },
+        ],
+    },
+    {
+        id: 'payment',
+        title: 'Payment Details',
+        description: 'Enter your payment information',
+        fields: [
+            {
+                id: 'card-number',
+                name: 'cardNumber',
+                label: 'Card Number',
+                type: 'text',
+                placeholder: '4242 4242 4242 4242',
+                required: true,
+                icon: CreditCard,
+                colSpan: 'full',
+            },
+            {
+                id: 'card-name',
+                name: 'cardName',
+                label: 'Name on Card',
+                type: 'text',
+                placeholder: 'John Doe',
+                required: true,
+                icon: User,
+                colSpan: 'full',
+            },
+            {
+                id: 'expiry',
+                name: 'expiry',
+                label: 'Expiry Date',
+                type: 'text',
+                placeholder: 'MM/YY',
+                required: true,
+                icon: Calendar,
+                colSpan: 'half',
+            },
+            {
+                id: 'cvv',
+                name: 'cvv',
+                label: 'CVV',
+                type: 'password',
+                placeholder: '123',
+                required: true,
+                icon: Lock,
+                colSpan: 'half',
+            },
+        ],
+    },
+    {
+        id: 'confirm',
+        title: 'Confirmation',
+        description: 'Review and confirm',
+        fields: [
+            {
+                id: 'terms',
+                name: 'terms',
+                label: 'I agree to the terms and conditions',
+                type: 'checkbox',
+                placeholder: 'I agree to the terms and conditions',
+                required: true,
+                defaultValue: false,
+                colSpan: 'full',
+            },
+            {
+                id: 'save-info',
+                name: 'saveInfo',
+                label: 'Save payment information for future purchases',
+                type: 'checkbox',
+                placeholder: 'Save payment information',
+                required: false,
+                defaultValue: false,
+                colSpan: 'full',
+            },
+        ],
+    },
+];
+
+// 4. Job Application Form
+const jobSteps: FormStep[] = [
+    {
+        id: 'personal',
+        title: 'Personal Information',
+        description: 'Tell us about yourself',
+        fields: [
+            {
+                id: 'full-name',
+                name: 'fullName',
+                label: 'Full Name',
+                type: 'text',
+                placeholder: 'John Doe',
+                required: true,
+                icon: User,
+                colSpan: 'full',
+            },
+            {
+                id: 'email',
+                name: 'email',
+                label: 'Email Address',
+                type: 'email',
+                placeholder: 'john@example.com',
+                required: true,
+                icon: Mail,
+                colSpan: 'half',
+            },
+            {
+                id: 'phone',
+                name: 'phone',
+                label: 'Phone Number',
+                type: 'tel',
+                placeholder: '+1 (555) 123-4567',
+                required: true,
+                icon: Phone,
+                colSpan: 'half',
+            },
+            {
+                id: 'location',
+                name: 'location',
+                label: 'Location',
+                type: 'text',
+                placeholder: 'City, Country',
+                required: true,
+                icon: MapPin,
+                colSpan: 'full',
+            },
+        ],
+    },
+    {
+        id: 'professional',
+        title: 'Professional Details',
+        description: 'Tell us about your experience',
+        fields: [
+            {
+                id: 'position',
+                name: 'position',
+                label: 'Position Applied For',
+                type: 'select',
+                placeholder: 'Select position',
+                required: true,
+                options: [
+                    { value: 'frontend', label: 'Frontend Developer' },
+                    { value: 'backend', label: 'Backend Developer' },
+                    { value: 'fullstack', label: 'Full Stack Developer' },
+                    { value: 'devops', label: 'DevOps Engineer' },
+                    { value: 'designer', label: 'UI/UX Designer' },
+                ],
+                icon: Briefcase,
+                colSpan: 'full',
+            },
+            {
+                id: 'experience-years',
+                name: 'experienceYears',
+                label: 'Years of Experience',
+                type: 'select',
+                placeholder: 'Select years',
+                required: true,
+                options: [
+                    { value: '0-2', label: '0-2 years' },
+                    { value: '3-5', label: '3-5 years' },
+                    { value: '5-8', label: '5-8 years' },
+                    { value: '8+', label: '8+ years' },
+                ],
+                icon: BarChart,
+                colSpan: 'half',
+            },
+            {
+                id: 'education',
+                name: 'education',
+                label: 'Highest Education',
+                type: 'select',
+                placeholder: 'Select education',
+                required: true,
+                options: [
+                    { value: 'highschool', label: 'High School' },
+                    { value: 'bachelors', label: 'Bachelor\'s Degree' },
+                    { value: 'masters', label: 'Master\'s Degree' },
+                    { value: 'phd', label: 'PhD' },
+                ],
+                icon: BookOpen,
+                colSpan: 'half',
+            },
+            {
+                id: 'skills',
+                name: 'skills',
+                label: 'Key Skills',
+                type: 'textarea',
+                placeholder: 'List your key skills (e.g., React, Node.js, TypeScript)',
+                required: true,
+                icon: Code,
+                colSpan: 'full',
+            },
+        ],
+    },
+    {
+        id: 'links',
+        title: 'Professional Links',
+        description: 'Add your professional profiles',
+        fields: [
+            {
+                id: 'portfolio',
+                name: 'portfolio',
+                label: 'Portfolio URL',
+                type: 'url',
+                placeholder: 'https://yourportfolio.com',
+                required: false,
+                icon: Globe,
+                colSpan: 'full',
+            },
+            {
+                id: 'github',
+                name: 'github',
+                label: 'GitHub Profile',
+                type: 'url',
+                placeholder: 'https://github.com/username',
+                required: false,
+                icon: Github,
+                colSpan: 'full',
+            },
+            {
+                id: 'linkedin',
+                name: 'linkedin',
+                label: 'LinkedIn Profile',
+                type: 'url',
+                placeholder: 'https://linkedin.com/in/username',
+                required: false,
+                icon: Linkedin,
+                colSpan: 'full',
+            },
+        ],
+    },
+    {
+        id: 'additional',
+        title: 'Additional Information',
+        description: 'Almost done!',
+        fields: [
+            {
+                id: 'cover-letter',
+                name: 'coverLetter',
+                label: 'Cover Letter',
+                type: 'textarea',
+                placeholder: 'Write a brief cover letter...',
+                required: true,
+                icon: FileText,
+                colSpan: 'full',
+            },
+            {
+                id: 'relocate',
+                name: 'relocate',
+                label: 'Willing to relocate',
+                type: 'checkbox',
+                placeholder: 'I am willing to relocate',
+                required: false,
+                defaultValue: false,
+                colSpan: 'full',
+            },
+            {
+                id: 'start-date',
+                name: 'startDate',
+                label: 'Available Start Date',
+                type: 'date',
+                placeholder: 'Select date',
+                required: true,
+                icon: Calendar,
+                colSpan: 'full',
+            },
+        ],
+    },
+];
+
+// 5. Event Registration Form
+const eventSteps: FormStep[] = [
+    {
+        id: 'attendee',
+        title: 'Attendee Information',
+        description: 'Tell us about yourself',
+        fields: [
+            {
+                id: 'full-name',
+                name: 'fullName',
+                label: 'Full Name',
+                type: 'text',
+                placeholder: 'John Doe',
+                required: true,
+                icon: User,
+                colSpan: 'full',
+            },
+            {
+                id: 'email',
+                name: 'email',
+                label: 'Email Address',
+                type: 'email',
+                placeholder: 'john@example.com',
+                required: true,
+                icon: Mail,
+                colSpan: 'full',
+            },
+            {
+                id: 'company',
+                name: 'company',
+                label: 'Company/Organization',
+                type: 'text',
+                placeholder: 'Acme Inc.',
+                required: false,
+                icon: Building,
+                colSpan: 'half',
+            },
+            {
+                id: 'job-title',
+                name: 'jobTitle',
+                label: 'Job Title',
+                type: 'text',
+                placeholder: 'Software Engineer',
+                required: false,
+                icon: Briefcase,
+                colSpan: 'half',
+            },
+        ],
+    },
+    {
+        id: 'ticket',
+        title: 'Ticket Selection',
+        description: 'Choose your ticket type',
+        fields: [
+            {
+                id: 'ticket-type',
+                name: 'ticketType',
+                label: 'Ticket Type',
+                type: 'radio',
+                required: true,
+                options: [
+                    { value: 'general', label: 'General Admission - $99' },
+                    { value: 'vip', label: 'VIP - $249 (Includes meet & greet)' },
+                    { value: 'student', label: 'Student - $49 (Valid ID required)' },
+                    { value: 'group', label: 'Group (5+) - $79 per person' },
+                ],
+                colSpan: 'full',
+            },
+            {
+                id: 'quantity',
+                name: 'quantity',
+                label: 'Number of Tickets',
+                type: 'select',
+                placeholder: 'Select quantity',
+                required: true,
+                options: [
+                    { value: '1', label: '1' },
+                    { value: '2', label: '2' },
+                    { value: '3', label: '3' },
+                    { value: '4', label: '4' },
+                    { value: '5', label: '5' },
+                    { value: '6', label: '6+' },
+                ],
+                icon: Hash,
+                colSpan: 'half',
+            },
+            {
+                id: 'dietary',
+                name: 'dietary',
+                label: 'Dietary Restrictions',
+                type: 'select',
+                placeholder: 'Select if any',
+                required: false,
+                options: [
+                    { value: 'none', label: 'None' },
+                    { value: 'vegetarian', label: 'Vegetarian' },
+                    { value: 'vegan', label: 'Vegan' },
+                    { value: 'gluten-free', label: 'Gluten-Free' },
+                ],
+                icon: Heart,
+                colSpan: 'half',
+            },
+        ],
+    },
+    {
+        id: 'workshops',
+        title: 'Workshop Selection',
+        description: 'Choose your preferred workshops',
+        fields: [
+            {
+                id: 'workshop1',
+                name: 'workshop1',
+                label: 'Morning Workshop (10 AM - 12 PM)',
+                type: 'checkbox',
+                placeholder: 'React Advanced Patterns',
+                required: false,
+                defaultValue: false,
+                colSpan: 'full',
+            },
+            {
+                id: 'workshop2',
+                name: 'workshop2',
+                label: 'Afternoon Workshop (2 PM - 4 PM)',
+                type: 'checkbox',
+                placeholder: 'TypeScript Best Practices',
+                required: false,
+                defaultValue: false,
+                colSpan: 'full',
+            },
+            {
+                id: 'workshop3',
+                name: 'workshop3',
+                label: 'Evening Workshop (5 PM - 7 PM)',
+                type: 'checkbox',
+                placeholder: 'UI/UX Design Principles',
+                required: false,
+                defaultValue: false,
+                colSpan: 'full',
+            },
+        ],
+    },
+];
+
+// 6. Profile Setup Form
+const profileSteps: FormStep[] = [
+    {
+        id: 'basic',
+        title: 'Basic Information',
+        description: 'Tell us about yourself',
+        fields: [
+            {
+                id: 'display-name',
+                name: 'displayName',
+                label: 'Display Name',
+                type: 'text',
+                placeholder: 'Alex Thompson',
+                required: true,
+                icon: User,
+                colSpan: 'full',
+            },
+            {
+                id: 'bio',
+                name: 'bio',
+                label: 'Bio',
+                type: 'textarea',
+                placeholder: 'Tell us about yourself...',
+                required: false,
+                icon: FileText,
+                colSpan: 'full',
+            },
+            {
+                id: 'location',
+                name: 'location',
+                label: 'Location',
+                type: 'text',
+                placeholder: 'San Francisco, CA',
+                required: false,
+                icon: MapPin,
+                colSpan: 'half',
+            },
+            {
+                id: 'website',
+                name: 'website',
+                label: 'Website',
+                type: 'url',
+                placeholder: 'https://yourwebsite.com',
+                required: false,
+                icon: Globe,
+                colSpan: 'half',
+            },
+        ],
+    },
+    {
+        id: 'social',
+        title: 'Social Links',
+        description: 'Connect your social profiles',
+        fields: [
+            {
+                id: 'twitter',
+                name: 'twitter',
+                label: 'Twitter',
+                type: 'url',
+                placeholder: 'https://twitter.com/username',
+                required: false,
+                icon: Users,
+                colSpan: 'full',
+            },
+            {
+                id: 'github',
+                name: 'github',
+                label: 'GitHub',
+                type: 'url',
+                placeholder: 'https://github.com/username',
+                required: false,
+                icon: Github,
+                colSpan: 'full',
+            },
+            {
+                id: 'linkedin',
+                name: 'linkedin',
+                label: 'LinkedIn',
+                type: 'url',
+                placeholder: 'https://linkedin.com/in/username',
+                required: false,
+                icon: Linkedin,
+                colSpan: 'full',
+            },
+        ],
+    },
+    {
+        id: 'preferences',
+        title: 'Preferences',
+        description: 'Set your preferences',
+        fields: [
+            {
+                id: 'theme',
+                name: 'theme',
+                label: 'Theme Preference',
+                type: 'radio',
+                required: true,
+                options: [
+                    { value: 'light', label: 'Light' },
+                    { value: 'dark', label: 'Dark' },
+                    { value: 'system', label: 'System' },
+                ],
+                colSpan: 'full',
+            },
+            {
+                id: 'email-notifications',
+                name: 'emailNotifications',
+                label: 'Email Notifications',
+                type: 'checkbox',
+                placeholder: 'Receive email notifications',
+                required: false,
+                defaultValue: true,
+                colSpan: 'full',
+            },
+        ],
+    },
+];
+
+// Helper component
+const Step = ({ _step, children }: { step: number; children: React.ReactNode }) => {
+    return <>{children}</>;
+};
+
+// Handle submit
+const handleSubmit = async (data: any) => {
+    console.log('Form submitted:', data);
+    await new Promise(resolve => setTimeout(resolve, 1500));
+};
+
+// ==============================
+// MAIN COMPREHENSIVE DEMO
+// ==============================
+
+export const MultiStepFormDemo = () => {
+    const { colorMode } = useColorMode();
+
+    // Core state
+    const [formType, setFormType] = useState<FormType>('onboarding');
+    const [themeVariant, setThemeVariant] = useState<ThemeVariant>(
+        colorMode === 'dark' ? 'dark' : 'default'
+    );
+    const [animationVariant, setAnimationVariant] = useState<AnimationVariant>('fadeUp');
+    const [inputVariant, setInputVariant] = useState<InputVariant>('clean');
+    const [buttonVariant, setButtonVariant] = useState<ButtonVariant>('primary');
+
+    // Feature toggles
+    const [showReviewStep, setShowReviewStep] = useState<boolean>(true);
+    const [showStepIndicator, setShowStepIndicator] = useState<boolean>(true);
+    const [showCancelButton, setShowCancelButton] = useState<boolean>(true);
+    const [showSuccessNotification, setShowSuccessNotification] = useState<boolean>(true);
+    const [darkMode, setDarkMode] = useState<boolean>(colorMode === 'dark');
+
+    // Loading states
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+    // Track user changes
+    const [userChangedTheme, setUserChangedTheme] = useState<boolean>(false);
+    const [animationKey, setAnimationKey] = useState<number>(0);
+
+    // Update theme when color mode changes, but only if user hasn't manually changed it
+    useEffect(() => {
+        if (!userChangedTheme) {
+            setThemeVariant(colorMode === 'dark' ? 'dark' : 'default');
+            setDarkMode(colorMode === 'dark');
+        }
+    }, [colorMode, userChangedTheme]);
+
+    // Force remount when key settings change
+    useEffect(() => {
+        setAnimationKey((k) => k + 1);
+    }, [formType, themeVariant, animationVariant, inputVariant, buttonVariant]);
+
+    // Handle theme change
+    const handleThemeChange = (value: string) => {
+        setThemeVariant(value as ThemeVariant);
+        setDarkMode(value === 'dark');
+        setUserChangedTheme(true);
+    };
+
+    // Get current form steps
+    const getCurrentSteps = (): FormStep[] => {
+        switch (formType) {
+            case 'onboarding': return onboardingSteps;
+            case 'registration': return registrationSteps;
+            case 'payment': return paymentSteps;
+            case 'job': return jobSteps;
+            case 'event': return eventSteps;
+            case 'profile': return profileSteps;
+            default: return onboardingSteps;
+        }
+    };
+
+    const steps = getCurrentSteps();
+    const CurrentIcon = formIcons[formType];
+
+    // Build code string
+    const buildCodeString = () => {
+        const props = [
+            `steps={${formType}Steps}`,
+            `onSubmit={handleSubmit}`,
+            `variant="${themeVariant}"`,
+            `animationVariant="${animationVariant}"`,
+            `inputVariant="${inputVariant}"`,
+            `buttonVariant="${buttonVariant}"`,
+            `showReviewStep={${showReviewStep}}`,
+            `showStepIndicator={${showStepIndicator}}`,
+            `showCancelButton={${showCancelButton}}`,
+            `showSuccessNotification={${showSuccessNotification}}`,
+            `darkMode={${darkMode}}`,
+        ];
+
+        return `import {
+    MultiStepForm,
+    MultiStepHeader,
+    MultiStepStepIndicator,
+    MultiStepContent,
+    MultiStepNavigation,
+    MultiStepReview,
+    MultiStepField,
+} from '../UI/multi-step-form';
+import { ${CurrentIcon.name} } from 'lucide-react';
+
+// Steps configuration (${formType} form)
+const steps = [ ... ]; // Your step configuration
+
+<MultiStepForm
+    ${props.join('\n    ')}
+>
+    <MultiStepForm.Header 
+        title="${formType.charAt(0).toUpperCase() + formType.slice(1)} Form" 
+        icon={<${CurrentIcon.name} />} 
+    />
+    {${showStepIndicator} && <MultiStepForm.StepIndicator />}
+    
+    <MultiStepForm.Content>
+        {steps.map((step, index) => (
+            <Step key={step.id} step={index + 1}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {step.fields.map(field => (
+                        <div key={field.id} className={field.colSpan === 'full' ? 'md:col-span-2' : ''}>
+                            <MultiStepForm.Field field={field} />
+                        </div>
+                    ))}
+                </div>
+            </Step>
+        ))}
+        
+        {${showReviewStep} && <MultiStepForm.Review />}
+    </MultiStepForm.Content>
+    
+    <MultiStepForm.Navigation 
+        showCancelButton={${showCancelButton}}
+        submitButtonLabel="${formType === 'payment' ? 'Pay Now' : formType === 'registration' ? 'Create Account' : formType === 'job' ? 'Submit Application' : formType === 'event' ? 'Register Now' : 'Submit'}"
+    />
+</MultiStepForm>`;
+    };
+
+    return (
+        <div className="space-y-6">
+
+
+            {/* Theme Controls - First Row */}
+            <div className="flex items-center justify-end">
+                {/* Form Type Selector - Now using VariantSelector */}
+                <div className="space-y-2 mx-2">
+                    <VariantSelector
+                        variants={formTypeOptions.map(o => o.value)}
+                        selectedVariant={formType}
+                        onSelectVariant={(value) => setFormType(value as FormType)}
+                        type="Form Type"
+                        variantLabels={Object.fromEntries(formTypeOptions.map(o => [o.value, o.label]))}
+                    />
+                </div>
+
+                <div className="space-y-2 mx-2">
+                    <VariantSelector
+                        variants={themeOptions.map(o => o.value)}
+                        selectedVariant={themeVariant}
+                        onSelectVariant={handleThemeChange}
+                        type="Theme"
+                        variantLabels={Object.fromEntries(themeOptions.map(o => [o.value, o.label]))}
+                    />
+                </div>
+
+                <div className="space-y-2 mx-2">
+                    <VariantSelector
+                        variants={animationTypes as unknown as string[]}
+                        selectedVariant={animationVariant}
+                        onSelectVariant={(value) => setAnimationVariant(value as AnimationVariant)}
+                        type="Animation"
+                        variantLabels={{
+                            fadeUp: 'Fade Up',
+                            scaleIn: 'Scale In',
+                            slideUp: 'Slide Up',
+                            slideLeft: 'Slide Left',
+                            slideRight: 'Slide Right'
+                        }}
+                    />
+                </div>
+
+                <div className="space-y-2 mx-2">
+                    <VariantSelector
+                        variants={inputVariantOptions.map(o => o.value)}
+                        selectedVariant={inputVariant}
+                        onSelectVariant={(value) => setInputVariant(value as InputVariant)}
+                        type="Input"
+                        variantLabels={Object.fromEntries(inputVariantOptions.map(o => [o.value, o.label]))}
+                    />
+                </div>
+
+                <div className="space-y-2 mx-2">
+                    <VariantSelector
+                        variants={buttonVariantOptions.map(o => o.value)}
+                        selectedVariant={buttonVariant}
+                        onSelectVariant={(value) => setButtonVariant(value as ButtonVariant)}
+                        type="Button"
+                        variantLabels={Object.fromEntries(buttonVariantOptions.map(o => [o.value, o.label]))}
+                    />
+                </div>
+            </div>
+
+            {/* Feature Toggles */}
+            <div className={cn(
+                "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 p-4 rounded-lg",
+                darkMode
+                    ? "bg-gray-800"
+                    : "bg-gray-50 border border-gray-200"
+            )}>
+                <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                        type="checkbox"
+                        checked={showReviewStep}
+                        onChange={(e) => setShowReviewStep(e.target.checked)}
+                        className="rounded text-primary"
+                    />
+                    <span className={cn(
+                        "text-sm",
+                        darkMode ? "text-gray-200" : "text-gray-700"
+                    )}>Review Step</span>
+                </label>
+
+                <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                        type="checkbox"
+                        checked={showStepIndicator}
+                        onChange={(e) => setShowStepIndicator(e.target.checked)}
+                        className="rounded text-primary"
+                    />
+                    <span className={cn(
+                        "text-sm",
+                        darkMode ? "text-gray-200" : "text-gray-700"
+                    )}>Step Indicator</span>
+                </label>
+
+                <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                        type="checkbox"
+                        checked={showCancelButton}
+                        onChange={(e) => setShowCancelButton(e.target.checked)}
+                        className="rounded text-primary"
+                    />
+                    <span className={cn(
+                        "text-sm",
+                        darkMode ? "text-gray-200" : "text-gray-700"
+                    )}>Cancel Button</span>
+                </label>
+
+                <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                        type="checkbox"
+                        checked={showSuccessNotification}
+                        onChange={(e) => setShowSuccessNotification(e.target.checked)}
+                        className="rounded text-primary"
+                    />
+                    <span className={cn(
+                        "text-sm",
+                        darkMode ? "text-gray-200" : "text-gray-700"
+                    )}>Success Notification</span>
+                </label>
+
+                <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                        type="checkbox"
+                        checked={darkMode}
+                        onChange={(e) => {
+                            setDarkMode(e.target.checked);
+                            setThemeVariant(e.target.checked ? 'dark' : 'default');
+                            setUserChangedTheme(true);
+                        }}
+                        className="rounded text-primary"
+                    />
+                    <span className={cn(
+                        "text-sm",
+                        darkMode ? "text-gray-200" : "text-gray-700"
+                    )}>Dark Mode</span>
+                </label>
+            </div>
+
+            {/* Loading State Controls */}
+            <div className="flex items-center justify-end">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsLoading(!isLoading)}
+                    className="cursor-pointer mx-2"
+                >
+                    {isLoading ? 'Stop Loading' : 'Show Loading State'}
+                </Button>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsSubmitting(!isSubmitting)}
+                    className="cursor-pointer mx-2"
+                >
+                    {isSubmitting ? 'Stop Submitting' : 'Show Submitting State'}
+                </Button>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                        setFormType('onboarding');
+                        setThemeVariant('default');
+                        setAnimationVariant('fadeUp');
+                        setInputVariant('clean');
+                        setButtonVariant('primary');
+                        setShowReviewStep(true);
+                        setShowStepIndicator(true);
+                        setShowCancelButton(true);
+                        setShowSuccessNotification(true);
+                        setDarkMode(colorMode === 'dark');
+                        setIsLoading(false);
+                        setIsSubmitting(false);
+                        setUserChangedTheme(false);
+                    }}
+                    className="cursor-pointer mx-2"
+                >
+                    Reset All
+                </Button>
+            </div>
+
+            {/* Preview and Code Tabs */}
+            <Tabs>
+                <TabItem value="preview" label="Preview">
+                    <div className="border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden mt-4">
+                        <MultiStepForm
+                            key={`demo-${animationKey}`}
+                            steps={steps}
+                            onSubmit={handleSubmit}
+                            variant={themeVariant}
+                            animationVariant={animationVariant}
+                            inputVariant={inputVariant}
+                            buttonVariant={buttonVariant}
+                            buttonAnimationVariant={buttonVariant !== 'default' ? 'scaleHeartBeat' : undefined}
+                            showReviewStep={showReviewStep}
+                            showStepIndicator={showStepIndicator}
+                            showCancelButton={showCancelButton}
+                            showSuccessNotification={showSuccessNotification}
+                            isLoading={isLoading}
+                            isSubmitting={isSubmitting}
+                            darkMode={darkMode}
+                        >
+                            <MultiStepForm.Header
+                                title={`${formType.charAt(0).toUpperCase() + formType.slice(1)} Form`}
+                                icon={<CurrentIcon className="w-4 h-4" />}
+                            />
+
+                            {showStepIndicator && <MultiStepForm.StepIndicator />}
+
+                            <MultiStepForm.Content>
+                                {steps.map((step, index) => (
+                                    <Step key={step.id} step={index + 1}>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            {step.fields.map(field => (
+                                                <div
+                                                    key={field.id}
+                                                    className={field.colSpan === 'full' ? 'md:col-span-2' : ''}
+                                                >
+                                                    <MultiStepForm.Field field={field} />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </Step>
+                                ))}
+
+                                {showReviewStep && <MultiStepForm.Review />}
+                            </MultiStepForm.Content>
+
+                            <MultiStepForm.Navigation
+                                showCancelButton={showCancelButton}
+                                submitButtonLabel={
+                                    formType === 'payment' ? 'Pay Now' :
+                                        formType === 'registration' ? 'Create Account' :
+                                            formType === 'job' ? 'Submit Application' :
+                                                formType === 'event' ? 'Register Now' :
+                                                    'Submit'
+                                }
+                            />
+                        </MultiStepForm>
+                    </div>
+                </TabItem>
+
+                <TabItem value="code" label="Code">
+                    <div className="mt-4">
+                        <CodeBlock language="tsx" className="text-sm">
+                            {buildCodeString()}
+                        </CodeBlock>
+                    </div>
+                </TabItem>
+            </Tabs>
+        </div>
+    );
+};
+
+export default MultiStepFormDemo;

@@ -16,10 +16,10 @@ export interface RadioOption {
 
 export interface RadioGroupProps
   extends Omit<
-      React.InputHTMLAttributes<HTMLInputElement>,
-      "size" | "onChange" | "defaultValue"
-    >,
-    VariantProps<typeof radioItemVariants> {
+    React.InputHTMLAttributes<HTMLInputElement>,
+    "size" | "onChange" | "defaultValue"
+  >,
+  VariantProps<typeof radioItemVariants> {
   name?: string;
   options: RadioOption[];
   value?: string;                // 👈 optional now
@@ -257,9 +257,9 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
 
   const [internalValue, setInternalValue] = React.useState<string>(
     value ??
-      defaultValue ??
-      options.find((o) => !o.disabled)?.value ??
-      ""
+    defaultValue ??
+    options.find((o) => !o.disabled)?.value ??
+    ""
   );
 
   React.useEffect(() => {
@@ -307,15 +307,15 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
               disabled={disabled || opt.disabled}
               className={cn(
                 checkedVariant !== "default" ?
-                radioItemVariants({
-                  variant,
-                  size,
-                  disabled: disabled || opt.disabled,
-                }) : radioOppositeItemVariants({
-                  variant,
-                  size,
-                  disabled: disabled || opt.disabled,
-                })
+                  radioItemVariants({
+                    variant,
+                    size,
+                    disabled: disabled || opt.disabled,
+                  }) : radioOppositeItemVariants({
+                    variant,
+                    size,
+                    disabled: disabled || opt.disabled,
+                  })
               )}
             >
               {checkedVariant === "surface" && (

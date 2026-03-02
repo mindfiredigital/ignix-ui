@@ -1,0 +1,249 @@
+---
+sidebar_position: 8
+title: Multi-Step Form
+description: A fully-featured, customizable multi-step form component with progress tracking, validation, and theme support.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import {
+    MultiStepFormDemo
+} from '@site/src/components/Demo/MultiStepFormDemo';
+
+A comprehensive multi-step form wizard that guides users through complex data collection processes. Features include step-by-step navigation, field validation, progress tracking, review screen, and multiple visual themes. Perfect for onboarding flows, registration processes, checkout forms, and any multi-stage data collection.
+
+## Installation
+
+<Tabs>
+    <TabItem value="cli" label="CLI" default>
+        ```bash
+        ignix add component multi-step-form
+        ```
+    </TabItem>
+    <TabItem value="manual" label="Manual">
+        ```tsx
+        ```
+    </TabItem>
+</Tabs>
+
+## Example Usage
+<MultiStepFormDemo />
+
+## interfaces
+```tsx
+interface FormField {
+    /** Unique identifier for the field */
+    id: string;
+    
+    /** Field name used in form data object */
+    name: string;
+    
+    /** Display label for the field */
+    label: string;
+    
+    /** Input type */
+    type: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 
+           'textarea' | 'select' | 'checkbox' | 'radio' | 'date';
+    
+    /** Placeholder text for the input */
+    placeholder?: string;
+    
+    /** Whether the field is required */
+    required?: boolean;
+    
+    /** Options for select, radio, or checkbox fields */
+    options?: FieldOption[];
+    
+    /** Custom validation function */
+    validation?: (value: any) => string | undefined;
+    
+    /** Default value for the field */
+    defaultValue?: any;
+    
+    /** Column span for grid layout ('full' or 'half') */
+    colSpan?: 'full' | 'half';
+    
+    /** Icon component to display with the field */
+    icon?: React.ElementType;
+}
+
+interface FieldOption {
+    /** Option value (stored in form data) */
+    value: string;
+    
+    /** Display label for the option */
+    label: string;
+}
+
+interface FormStep {
+    /** Unique identifier for the step */
+    id: string;
+    
+    /** Title displayed at the top of the step */
+    title: string;
+    
+    /** Description text below the title */
+    description?: string;
+    
+    /** Array of fields in this step */
+    fields: FormField[];
+    
+    /** Custom validation function for the entire step */
+    validation?: (values: Record<string, any>) => Record<string, string>;
+}
+
+type FormData = Record<string, any>;
+
+interface Notification {
+    /** Unique identifier for the notification */
+    id: string;
+    
+    /** Type of notification affecting styling */
+    type: 'success' | 'error' | 'info' | 'warning';
+    
+    /** Message to display */
+    message: string;
+    
+    /** Duration in milliseconds before auto-dismiss */
+    duration?: number;
+}
+
+interface MultiStepFormContextType {
+    // State
+    currentStep: number;
+    formData: FormData;
+    errors: Record<string, string>;
+    touchedFields: Set<string>;
+    completedSteps: number[];
+    isSubmitting: boolean;
+    isReviewStep: boolean;
+    allSteps: FormStep[];
+    steps: FormStep[];
+
+    // Actions
+    goToStep: (step: number) => void;
+    goToNext: () => void;
+    goToPrevious: () => void;
+    updateField: (name: string, value: any) => void;
+    validateCurrentStep: () => boolean;
+    submitForm: () => Promise<void>;
+
+    // Configuration
+    animationVariant: 'fadeUp' | 'scaleIn' | 'slideUp' | 'slideLeft' | 'slideRight';
+    inputVariant: string;
+    buttonVariant: string;
+    buttonAnimationVariant?: string;
+    showReviewStep: boolean;
+    reviewStepTitle: string;
+
+    // Theme
+    theme?: 'light' | 'dark';
+}
+```
+
+
+## Props
+### MultiStepForm Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `steps` |	`FormStep[]` |	`Required` |	Array of step configurations defining the form structure
+| `initialData` |	`FormData` |	`{}` |	Initial data to pre-populate the form fields
+| `onSubmit` |	`"(data: FormData) => Promise<void>" \| void` |	`-` |	Callback function called when form is successfully submitted
+| `onStepChange` |	`(step: number, data: FormData) => void` |	`-` |	Callback triggered when user navigates to a different step
+| `onCancel` |	`() => void` |	`-` |	Callback when cancel button is clicked
+| `variant` |	"`default" | "gradient" | "card" | "glass" | "dark"`	'default'	Visual theme variant for the form container
+| `animationVariant` |	"`fadeUp" \| "scaleIn" \| "slideUp" \| "slideLeft" \| "slideRight"` |	`'fadeUp'` |	Animation style for step transitions
+| `inputVariant` |	"`clean" \| "borderGlow" \| "glassmorphism" \| "shimmer" \| "borderBeam"` |	`'clean'` |	Visual variant for input fields (clean, borderGlow, glassmorphism, shimmer, borderBeam)
+| `buttonVariant` |	"`default" \| "primary" \| "secondary" \| "ghost"` |	`'default'` |	Visual variant for navigation buttons
+| `buttonAnimationVariant` |	"`scaleHeartBeat" \| "press3DSoft" \| "spinSlow"` |	`-` |	Animation variant for buttons (scaleHeartBeat, press3DSoft, spinSlow, etc.)
+| `backButtonLabel` |	`string` |	`'← Back'` |	Custom label for the back navigation button
+| `nextButtonLabel` |	`string` |	`'Next →'` |	Custom label for the next navigation button
+| `submitButtonLabel` |	`string` |	`'Submit'` |	Custom label for the submit button on review step
+| `cancelButtonLabel` |	`string` |	`'Cancel'` |	Custom label for the cancel button
+| `reviewStepTitle` |	`string` |	`'Review'` |	Title displayed for the review step
+| `isLoading` |	`boolean`	| `false` |	Shows a loading spinner while initial data is being fetched
+| `isSubmitting` |	`boolean` |	`false` |	Controls the submitting state (useful for external submission control)
+| `showStepIndicator` |	`boolean` |	`true` |	Whether to show the step progress indicator
+| `showReviewStep` |	`boolean` |	`true` |	Whether to include a review step before submission
+| `showCancelButton` |	`boolean` |	`true` |	Whether to show the cancel button in navigation
+| `showSuccessNotification` |	`boolean` |	`true` |	Whether to show a success notification after submission
+| `successNotificationDuration` |	`number` |	`3000` |	Duration in milliseconds for the success notification
+| `successNotificationMessage` |	`string` |	`'Form submitted successfully!'` |	Message displayed in success notification
+| `darkMode` |	`boolean` |	`false` |	Enables dark mode styling
+
+### MultiStepHeader Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `title` |	`string` |	`'Multi-Step Form'` |	Title displayed in the header
+| `icon` |	`React.ReactNode` |	`<Zap />` |	Icon displayed next to the title
+| `children` |	`React.ReactNode` |	`-` |	Custom header content (overrides title and icon)
+| `className` |	`string` |	`-` |	Additional CSS classes for the header
+
+### MultiStepStepIndicator Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` |	`'default' \| 'pills' \| 'tabs'` |	`'default'` |	Visual style for the step indicator
+| `completedColor` |	`string` |	`'bg-green-900 dark:bg-green-600'` |	Background color for completed steps
+| `completedTextColor` |	`string` |	`'text-green-900 dark:text-green-600'` |	Text color for completed step labels
+| `className` |	`string` |	`-` |	Additional CSS classes
+
+### MultiStepContent Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` |	`React.ReactNode` |	`-` |	Content for each step (should be wrapped in Step components)
+| `className` |	`string` |	`-` |	Additional CSS classes for the content container
+
+### MultiStepField Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `field` |	`FormField` |	`Required` |	Field configuration object defining the input behavior
+| `className` |	`string` |	`-` |	Additional CSS classes for the field container
+
+### MultiStepReview Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `onEditStep` |	`(step: number) => void` |	`-` |	Callback when edit button is clicked for a step
+| `children` |	`React.ReactNode` |	`-` |	Custom review content (overrides default review display)
+| `className` |	`string` |	`-` |	Additional CSS classes
+
+### MultiStepNavigation Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `backButtonLabel` |	`string` |	`'← Back'` |	Custom label for the back navigation button
+| `nextButtonLabel` |	`string` |	`'Next →'` |	Custom label for the next navigation button
+| `submitButtonLabel` |	`string` |	`'Submit'` |	Custom label for the submit button on review step
+| `cancelButtonLabel` |	`string` |	`'Cancel'` |	Custom label for the cancel button
+| `showCancelButton` |	`boolean` |	`true` |	Whether to show the cancel button in navigation
+| `onCancel` |	`() => void` |	`-` |	Callback when cancel button is clicked
+| `className` |	`string` |	`-` |	Additional CSS classes
+
+### MultiStepNotification Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `type` |	`'success' | 'error' | 'info' | 'warning'` |	`Required` |	Type of notification to display
+| `message` |	`string` |	`Required` |	Message to display in the notification
+| `onClose` |	`() => void` |	`Required` |	Callback when notification is closed
+| `duration` |	`number` |	`3000` |	Duration in milliseconds before auto-closing
+| `className` |	`string` |	`-` |	Additional CSS classes
+
+
+## Features
+- **Multi-Step Navigation:** Guide users through complex forms with intuitive step-by-step progression
+- **Field Validation:** Built-in validation with support for custom validation functions per field
+- **Step Validation:** Validate entire steps with custom validation logic
+- **Progress Tracking:** Visual step indicator showing completion status and progress
+- **Review Screen:** Comprehensive review step to verify all information before submission
+- **Multiple Field Types:** Support for text, email, password, number, tel, url, textarea, select, checkbox, radio, and date fields
+- **Compound Components:** Flexible composition with Header, StepIndicator, Content, Navigation, Review, and Field components
+- **Responsive Design:** Fully responsive layout that works seamlessly across all screen sizes
+- **Accessibility:** ARIA labels, keyboard navigation, and screen reader support
+- **Animations:** Smooth step transitions with 5 animation variants (fadeUp, scaleIn, slideUp, slideLeft, slideRight)
+- **Theme Support:** 5 visual variants including default, gradient, card, glass, and dark
+- **Input Variants:** Multiple input styling options (clean, borderGlow, glassmorphism, shimmer, borderBeam)
+- **Button Variants:** Various button styles with animation support
+- **State Management:** Built-in form state management with error handling and touched fields
+- **Notifications:** Success and error notifications with customizable duration and messages
+- **Loading States:** Built-in loading and submitting states with spinners
+- **Initial Data:** Support for pre-populating form data
+- **Customizable Labels:** All button and header labels can be customized
+- **TypeScript Support:** Fully typed with comprehensive interfaces
