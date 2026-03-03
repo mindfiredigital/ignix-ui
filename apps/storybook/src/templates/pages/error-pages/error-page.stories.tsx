@@ -1,12 +1,21 @@
 // error-page.stories.tsx
 
-import { ErrorPage, ErrorPageHead, ErrorPageErrorCode, ErrorPageHeading, ErrorPageDesc, ErrorPageIllustration, ErrorPageContent, ErrorPageSearch, ErrorPageFooter, ErrorPageLinks } from "./";
+import React from "react";
+import { ErrorPage, ErrorPageHead, ErrorPageErrorCode, ErrorPageHeading, ErrorPageDesc, ErrorPageIllustration, ErrorPageContent, ErrorPageSearch, ErrorPageFooter, ErrorPageLinks, ErrorPageErrorReference, ErrorPageIcons } from "./";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ButtonWithIcon } from "../../../components/button-with-icon";
 import {
   Home,
   FileQuestion,
   ArrowLeft,
+  RefreshCw,
+  Bug,
+  MessageCircle,
+  Zap,
+  AlertTriangle,
+  Wrench,
+  Rocket,
+  Settings,
 } from "lucide-react";
 
 const meta: Meta<typeof ErrorPage> = {
@@ -36,48 +45,53 @@ type Story = StoryObj<typeof ErrorPage>;
  * Use ErrorPageHead, ErrorPageIllustration, and ErrorPageContent.
  */
 export const Basic: Story = {
-  render: () => (
-    <ErrorPage variant="default">
-      <ErrorPageContent>
-        <ErrorPageErrorCode>404</ErrorPageErrorCode>
-        <ErrorPageHeading>Lost in Space</ErrorPageHeading>
-        <ErrorPageDesc>The page you're looking for drifted off into the void. Let's get you back on course.</ErrorPageDesc>
-      
-        {/* Search */}
-        <ErrorPageSearch
-          showSearch={true}
-          searchPlaceholder="Search for something else..."
-        />
-        
-        {/* Navigation Links */}
-        <ErrorPageLinks direction="row">
-          <ButtonWithIcon
-            variant="outline"
-            size="lg"
-            icon={<ArrowLeft className="h-4 w-4" />}
-            iconPosition="left"
-            onClick={() => window.history.back()}
-          >
-            Go back
-          </ButtonWithIcon>
-          <ButtonWithIcon
-            variant="default"
-            size="lg"
-            icon={<Home className="h-4 w-4" />}
-            iconPosition="left"
-            onClick={() => (window.location.href = "/")}
-          >
-            Take me home
-          </ButtonWithIcon>
-        </ErrorPageLinks>
-      </ErrorPageContent>
-      
-      {/* Footer */}
-      <ErrorPageFooter>
-        <p className="text-sm text-slate-500">ERROR 404 · PAGE NOT FOUND</p>
-      </ErrorPageFooter>
-    </ErrorPage>
-  ),
+  render: () => {
+    // Basic format: icon components only (uses default colors)
+    return (
+      <ErrorPage variant="default">
+        <ErrorPageContent>
+          <ErrorPageIcons>
+            <ErrorPageErrorCode>404</ErrorPageErrorCode>
+          </ErrorPageIcons>
+          <ErrorPageHeading>Lost in Space</ErrorPageHeading>
+          <ErrorPageDesc>The page you're looking for drifted off into the void. Let's get you back on course.</ErrorPageDesc>
+
+          {/* Search */}
+          <ErrorPageSearch
+            showSearch={true}
+            searchPlaceholder="Search for something else..."
+          />
+
+          {/* Navigation Links */}
+          <ErrorPageLinks>
+            <ButtonWithIcon
+              variant="outline"
+              size="lg"
+              icon={<ArrowLeft className="h-4 w-4" />}
+              iconPosition="left"
+              onClick={() => window.history.back()}
+            >
+              Go back
+            </ButtonWithIcon>
+            <ButtonWithIcon
+              variant="default"
+              size="lg"
+              icon={<Home className="h-4 w-4" />}
+              iconPosition="left"
+              onClick={() => (window.location.href = "/")}
+            >
+              Take me home
+            </ButtonWithIcon>
+          </ErrorPageLinks>
+        </ErrorPageContent>
+
+        {/* Footer */}
+        <ErrorPageFooter>
+          ERROR 404 · PAGE NOT FOUND
+        </ErrorPageFooter>
+      </ErrorPage>
+    );
+  },
 };
 
 export const CustomDesign: Story = {
@@ -134,7 +148,7 @@ export const CustomDesign: Story = {
         />
         
         {/* Navigation Links */}
-        <ErrorPageLinks direction="row">
+        <ErrorPageLinks>
           <ButtonWithIcon
             variant="outline"
             size="lg"
@@ -160,7 +174,7 @@ export const CustomDesign: Story = {
       
       {/* Footer */}
       <ErrorPageFooter>
-        <p className="text-sm text-slate-400">ERROR 404 • PAGE NOT FOUND</p>
+        ERROR 404 • PAGE NOT FOUND
       </ErrorPageFooter>
     </ErrorPage>
   ),
@@ -171,7 +185,7 @@ export const CustomDesign: Story = {
  */
 export const WithBackgroundImage: Story = {
   render: () => (
-    <ErrorPage backgroundImage="https://images.unsplash.com/photo-1557683316-973673baf926?w=1600&h=900&fit=crop&q=90">
+    <ErrorPage icon={Settings} iconColor="text-white" backgroundImage="https://images.unsplash.com/photo-1557683316-973673baf926?w=1600&h=900&fit=crop&q=90">
       <ErrorPageContent>
         <ErrorPageHead>
           <ErrorPageErrorCode>404</ErrorPageErrorCode>
@@ -179,7 +193,7 @@ export const WithBackgroundImage: Story = {
           <ErrorPageDesc>The page /this-page-does-not-exist doesn't exist or has been moved. Let's get you back on track.</ErrorPageDesc>
         </ErrorPageHead>
         <ErrorPageSearch />
-        <ErrorPageLinks direction="row">
+        <ErrorPageLinks>
           <ButtonWithIcon
             variant="default"
             size="lg"
@@ -200,6 +214,9 @@ export const WithBackgroundImage: Story = {
           </ButtonWithIcon>
         </ErrorPageLinks>
       </ErrorPageContent>
+      <ErrorPageFooter>
+        ERROR 404 • PAGE NOT FOUND
+      </ErrorPageFooter>
     </ErrorPage>
   ),
 };
@@ -211,7 +228,7 @@ export const WithIllustration: Story = {
   render: () => (
     <ErrorPage variant="default">
       <ErrorPageIllustration
-        position="left"
+        position="topCenter"
         illustration="404-1.svg"
       />
       <ErrorPageContent>
@@ -221,7 +238,7 @@ export const WithIllustration: Story = {
           showSearch={true}
           searchPlaceholder="Search for something else..."
         />
-        <ErrorPageLinks direction="row">
+        <ErrorPageLinks>
           <ButtonWithIcon
             variant="outline"
             size="lg"
@@ -264,7 +281,7 @@ export const IllustrationRight: Story = {
           showSearch={true}
           searchPlaceholder="Search for something else..."
         />
-        <ErrorPageLinks direction="row">
+        <ErrorPageLinks>
           <ButtonWithIcon
             variant="outline"
             size="lg"
@@ -307,7 +324,7 @@ export const DarkVariant: Story = {
           showSearch={true}
           searchPlaceholder="Search for something else..."
         />
-        <ErrorPageLinks direction="row">
+        <ErrorPageLinks>
           <ButtonWithIcon
             variant="default"
             size="lg"
@@ -332,7 +349,6 @@ export const DarkVariant: Story = {
   ),
 };
 
-
 /**
  * Completely custom using children in all components.
  */
@@ -350,7 +366,7 @@ export const WithCustomIcon: Story = {
           </ErrorPageDesc>
       </ErrorPageHead>
       <ErrorPageContent>
-        <ErrorPageLinks direction="row">
+        <ErrorPageLinks>
           <ButtonWithIcon
             variant="primary"
             size="lg"
@@ -450,3 +466,283 @@ export const ErrorCodeAnimations: Story = {
   ),
 };
 
+// ============================================================================
+// 500 SERVER ERROR PAGE STORIES
+// ============================================================================
+
+/**
+ * 500 Server Error page with Error Reference ID for support tracking.
+ * Includes a unique error reference ID that users can provide to support teams.
+ */
+export const ServerError500WithReferenceId: Story = {
+  name: "500 - Basic",
+  render: () => {
+    // Generate a mock error reference ID
+    const errorReferenceId = React.useMemo(() => {
+      return `ERR-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+    }, []);
+
+    const handleRetry = () => {
+      window.location.reload();
+    };
+
+    const handleReportBug = () => {
+      alert(`Bug report would include reference ID: ${errorReferenceId}`);
+    };
+
+    const handleContactSupport = () => {
+      alert(`Support ticket would include reference ID: ${errorReferenceId}`);
+    };
+
+    const handleCopyReferenceId = (referenceId: string) => {
+      alert(`Error Reference ID copied: ${referenceId}`);
+    };
+    // Tuple format: [iconComponent, colorClass] (custom colors per icon)
+    const icons: [typeof AlertTriangle, string][] = [
+      [AlertTriangle, "text-red-500"],
+      [Wrench, "text-blue-500"],
+      [Zap, "text-purple-500"],
+      [Rocket, "text-orange-500"],
+    ];
+    return (
+      <ErrorPage variant="dark">
+        <ErrorPageContent>
+          <ErrorPageIcons
+            icons={icons}
+          >
+            
+            <ErrorPageErrorCode errorCode="500" animationType="rotate" className=" text-cyan-400 mb-6 tracking-tight [text-shadow:0_0_20px_rgba(34,211,238,0.5),0_0_40px_rgba(34,211,238,0.3)]"/>
+          </ErrorPageIcons>
+          <ErrorPageHeading>500 - Server Error</ErrorPageHeading>
+          <ErrorPageDesc>
+            We apologize for the inconvenience. Something unexpected happened on our server. 
+            Our technical team has been automatically notified and is investigating the issue.
+          </ErrorPageDesc>
+          
+          {/* Error Reference ID */}
+          <ErrorPageErrorReference
+            errorReferenceId={errorReferenceId}
+            onCopy={handleCopyReferenceId}
+          />
+          
+          {/* Action Buttons */}
+          <ErrorPageLinks>
+            <ButtonWithIcon
+              variant="default"
+              size="lg"
+              icon={<RefreshCw className="h-4 w-4" />}
+              iconPosition="left"
+              onClick={handleRetry}
+            >
+              Retry
+            </ButtonWithIcon>
+            <ButtonWithIcon
+              variant="default"
+              size="lg"
+              icon={<Bug className="h-4 w-4" />}
+              iconPosition="left"
+              onClick={handleReportBug}
+            >
+              Report a Bug
+            </ButtonWithIcon>
+            <ButtonWithIcon
+              variant="default"
+              size="lg"
+              icon={<MessageCircle className="h-4 w-4" />}
+              iconPosition="left"
+              onClick={handleContactSupport}
+            >
+              Contact Support
+            </ButtonWithIcon>
+          </ErrorPageLinks>
+        </ErrorPageContent>
+        
+        {/* Footer */}
+        <ErrorPageFooter>
+          ERROR 500 · SERVER ERROR · REF: {errorReferenceId}
+        </ErrorPageFooter>
+      </ErrorPage>
+    );
+  },
+};
+
+/**
+ * 500 Server Error page with illustration and enhanced visual design.
+ * Includes an illustration to make the error page more engaging and user-friendly.
+ */
+export const ServerError500DarkWithIllustration: Story = {
+  name: "500 - Dark & Illustration",
+  render: () => {
+    // Generate a mock error reference ID
+    const errorReferenceId = React.useMemo(() => {
+      return `ERR-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+    }, []);
+
+    const handleRetry = () => {
+      window.location.reload();
+    };
+
+    const handleReportBug = () => {
+      alert("Thank you for reporting! This would open a bug report form.");
+    };
+
+    const handleContactSupport = () => {
+      alert("This would open a support contact form.");
+    };
+
+    const handleCopyReferenceId = (referenceId: string) => {
+      alert(`Error Reference ID copied: ${referenceId}`);
+    };
+
+    return (
+      <ErrorPage variant="dark" icon={Settings} iconColor="text-white">
+        <ErrorPageIllustration position="left" illustration="500-1.svg"/>
+        <ErrorPageContent>
+          <ErrorPageHeading>500 – Server Error</ErrorPageHeading>
+          <ErrorPageDesc>
+            Oops! Something went wrong on our end. We've been automatically notified about this issue 
+            and our team is working to resolve it as quickly as possible. We apologize for any inconvenience this may cause.
+          </ErrorPageDesc>
+          
+          {/* Error Reference ID */}
+          <ErrorPageErrorReference
+            errorReferenceId={errorReferenceId}
+            onCopy={handleCopyReferenceId}
+          />
+          
+          {/* Action Buttons */}
+          <ErrorPageLinks>
+            <ButtonWithIcon
+              variant="default"
+              size="lg"
+              icon={<RefreshCw className="h-4 w-4" />}
+              iconPosition="left"
+              onClick={handleRetry}
+            >
+              Retry
+            </ButtonWithIcon>
+            <ButtonWithIcon
+              variant="default"
+              size="lg"
+              icon={<Bug className="h-4 w-4" />}
+              iconPosition="left"
+              onClick={handleReportBug}
+            >
+              Report a Bug
+            </ButtonWithIcon>
+            <ButtonWithIcon
+              variant="default"
+              size="lg"
+              icon={<MessageCircle className="h-4 w-4" />}
+              iconPosition="left"
+              onClick={handleContactSupport}
+            >
+              Contact Support
+            </ButtonWithIcon>
+          </ErrorPageLinks>
+        </ErrorPageContent>
+        
+        {/* Footer */}
+        <ErrorPageFooter>
+          ERROR 500 · SERVER ERROR
+        </ErrorPageFooter>
+      </ErrorPage>
+    );
+  },
+};
+
+/**
+ * Modern 500 Server Error page with compact design.
+ * Features a friendly "We hit a snag" message, purple primary button, and bottom-positioned reference ID and support link.
+ */
+export const WithBackgroundIcons: Story = {
+  name: "500 - BackgroundIcons",
+  render: () => {
+    // Generate a mock error reference ID
+    const errorReferenceId = React.useMemo(() => {
+      return `ERR-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+    }, []);
+
+    const handleRetry = () => {
+      window.location.reload();
+    };
+
+    const handleReportBug = () => {
+      alert(`Bug report would include reference ID: ${errorReferenceId}`);
+    };
+
+    const handleContactSupport = () => {
+      alert(`Support ticket would include reference ID: ${errorReferenceId}`);
+    };
+
+    const handleCopyReferenceId = (referenceId: string) => {
+      alert(`Error Reference ID copied: ${referenceId}`);
+    };
+    // Tuple format: [iconComponent, colorClass] (custom colors per icon)
+    const icons: [typeof AlertTriangle, string][] = [
+      [AlertTriangle, "text-red-500"],
+      [Wrench, "text-blue-500"],
+      [Zap, "text-purple-500"],
+      [Rocket, "text-orange-500"],
+    ];
+    return (
+      <ErrorPage variant="dark" icon={Settings} iconColor="text-white">
+        <ErrorPageContent>
+          <ErrorPageIcons
+            icons={icons}
+          >
+            
+            <ErrorPageErrorCode errorCode="500" animationType="rotate" className=" text-cyan-400 mb-6 tracking-tight [text-shadow:0_0_20px_rgba(34,211,238,0.5),0_0_40px_rgba(34,211,238,0.3)]"/>
+          </ErrorPageIcons>
+          <ErrorPageHeading>500 - Server Error</ErrorPageHeading>
+          <ErrorPageDesc>
+            We apologize for the inconvenience. Something unexpected happened on our server. 
+            Our technical team has been automatically notified and is investigating the issue.
+          </ErrorPageDesc>
+          
+          {/* Error Reference ID */}
+          <ErrorPageErrorReference
+            errorReferenceId={errorReferenceId}
+            onCopy={handleCopyReferenceId}
+          />
+          
+          {/* Action Buttons */}
+          <ErrorPageLinks>
+            <ButtonWithIcon
+              variant="default"
+              size="lg"
+              icon={<RefreshCw className="h-4 w-4" />}
+              iconPosition="left"
+              onClick={handleRetry}
+            >
+              Retry
+            </ButtonWithIcon>
+            <ButtonWithIcon
+              variant="default"
+              size="lg"
+              icon={<Bug className="h-4 w-4" />}
+              iconPosition="left"
+              onClick={handleReportBug}
+            >
+              Report a Bug
+            </ButtonWithIcon>
+            <ButtonWithIcon
+              variant="default"
+              size="lg"
+              icon={<MessageCircle className="h-4 w-4" />}
+              iconPosition="left"
+              onClick={handleContactSupport}
+            >
+              Contact Support
+            </ButtonWithIcon>
+          </ErrorPageLinks>
+        </ErrorPageContent>
+        
+        {/* Footer */}
+        <ErrorPageFooter>
+          ERROR 500 · SERVER ERROR · REF: {errorReferenceId}
+        </ErrorPageFooter>
+      </ErrorPage>
+    );
+  },
+};
