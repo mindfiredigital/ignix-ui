@@ -24,6 +24,10 @@ interface ComponentRegistry {
 
 export class RegistryService {
   private componentRegistry: ComponentRegistry | null = null;
+  private silent = false;
+  public setSilent(value: boolean): void {
+    this.silent = value;
+  }
 
   //------------------------------------------------------------
   // Fetch Component Registry
@@ -32,17 +36,27 @@ export class RegistryService {
     if (this.componentRegistry) return this.componentRegistry;
 
     const config = await loadConfig();
-    const spinner = ora('Fetching registry...').start();
+    const noop = (): void => {
+      return;
+    };
+
+    const spinner = this.silent
+      ? { start: noop, succeed: noop, fail: noop, text: '' }
+      : ora('Fetching registry...').start();
 
     try {
       const response = await axios.get<ComponentRegistry>(config.registryUrl);
-      spinner.succeed('Component registry fetched.');
+      if (!this.silent) {
+        spinner.succeed('Component registry fetched.');
+      }
       this.componentRegistry = response.data;
       return this.componentRegistry;
     } catch (error) {
-      spinner.fail('Failed to fetch registry.');
-      logger.error('Could not connect to the component registry. Please check your connection.');
-      process.exit(1);
+      if (!this.silent) {
+        spinner.fail('Failed to fetch registry.');
+        logger.error('Could not connect to the component registry. Please check your connection.');
+      }
+      throw new Error('Failed to fetch component registry');
     }
   }
 
@@ -53,17 +67,27 @@ export class RegistryService {
     if (this.componentRegistry) return this.componentRegistry;
 
     const config = await loadConfig();
-    const spinner = ora('Fetching Template Layout...').start();
+    const noop = (): void => {
+      return;
+    };
+
+    const spinner = this.silent
+      ? { start: noop, succeed: noop, fail: noop, text: '' }
+      : ora('Fetching Template Layout...').start();
 
     try {
       const response = await axios.get<ComponentRegistry>(config.templateLayoutUrl);
-      spinner.succeed('Template layout fetched.');
+      if (!this.silent) {
+        spinner.succeed('Template layout fetched.');
+      }
       this.componentRegistry = response.data;
       return this.componentRegistry;
     } catch (error) {
-      spinner.fail('Failed to fetch template layout.');
-      logger.error('Could not connect to the template registry. Please check your connection.');
-      process.exit(1);
+      if (!this.silent) {
+        spinner.fail('Failed to fetch template layout.');
+        logger.error('Could not connect to the template registry. Please check your connection.');
+      }
+      throw new Error('Failed to fetch template registry');
     }
   }
 

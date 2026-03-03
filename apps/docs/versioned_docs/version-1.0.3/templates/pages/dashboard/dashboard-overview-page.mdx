@@ -1,0 +1,191 @@
+---
+sidebar_position: 13
+title: Dashboard Overview Page
+description: A modern analytics dashboard overview page with KPI cards, key metrics with trend indicators, latest activity list with pagination, date range filter, and call-to-action buttons – built with gradient-enhanced UI for a polished look.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import DashboardOverviewPageDemo from '@site/src/components/Demo/DashboardOverviewPageDemo';
+
+**Dashboard Overview Page** is a high-level analytics template that surfaces key KPIs, trends, and recent activity in a single view.
+
+Features:
+- Top-level **KPI cards** (revenue, users, conversion, orders, etc.)
+- **Key metrics** grid with clear up/down trend indicators (↑/↓)
+- **Latest activity / transactions** list with built-in pagination
+- **Date range filter** that can drive KPI and metric updates
+- Primary and secondary **call-to-action buttons** for key flows (e.g. “Export report”, “View details”)
+- Gradient-enhanced background and cards for a modern, polished UI
+
+---
+
+<DashboardOverviewPageDemo />
+
+---
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add template dashboard-overview-page
+    ```
+  </TabItem>
+  <TabItem value="manual" label="Manual">
+    Install the template and use the same **composable API** shown in the demo.  
+    Import `Dashboard`, `DashboardHeader`, `DashboardKPICards`, `DashboardMetrics`, and `DashboardLastActivity` from your design system (or copy the implementation from `apps/docs/src/components/UI/dashboard-overview`) and wire them up with your own KPI, metrics, and activity data.
+  </TabItem>
+</Tabs>
+
+---
+
+## Features
+
+- **KPI cards** for top-level metrics like revenue, active users, conversion, and orders  
+- **Key metrics grid** with clear trend indicators (↑ for up, ↓ for down, neutral state)  
+- **Gradient-enhanced UI**: background, KPI cards, and metric borders for a modern analytic look  
+- **Latest activity list** with built-in pagination  
+- **Date range filter** that can drive KPI and metric updates via callback  
+- **Composable API** that lets you build your own layouts from smaller building blocks  
+
+---
+
+## Usage
+
+### Basic usage
+
+```tsx
+import {
+  Dashboard,
+  DashboardHeader,
+  DashboardKPICards,
+  DashboardMetrics,
+  DashboardLastActivity,
+} from "@ignix-ui/dashboard-overview-page";
+
+export function DashboardScreen() {
+  return (
+    <Dashboard>
+      <DashboardHeader
+        title="Dashboard Overview"
+        description="Monitor key metrics and recent activity"
+        onExportReport={() => console.log("Export report")}
+        onViewDetails={() => console.log("View details")}
+      />
+      <DashboardKPICards cards={kpiCards} />
+      <DashboardMetrics metrics={keyMetrics} />
+      <DashboardLastActivity items={activityItems} pageSize={5} />
+    </Dashboard>
+  );
+}
+```
+
+### With custom data and date range callback
+
+```tsx
+const kpiCards = [
+  { id: "rev", label: "Revenue", value: "$89.2k", trend: "up", trendLabel: "+18% vs last month" },
+  { id: "subs", label: "Subscriptions", value: "2,104", trend: "up", trendLabel: "+6% vs last month" },
+  { id: "churn", label: "Churn Rate", value: "1.2%", trend: "down", trendLabel: "-0.3% vs last month" },
+  { id: "mrr", label: "MRR", value: "$45.1k", trend: "up", trendLabel: "+9% vs last month" },
+];
+
+export function DashboardScreen() {
+  const [range, setRange] = useState<DashboardDateRange | undefined>();
+
+  return (
+    <Dashboard>
+      <DashboardHeader
+        title="Dashboard Overview"
+        description="Monitor key metrics and recent activity"
+        dateRange={range}
+        onDateRangeChange={setRange}
+        onExportReport={() => console.log("Export report for range", range)}
+      />
+      <DashboardKPICards cards={kpiCards} />
+      <DashboardMetrics metrics={keyMetrics} />
+      <DashboardLastActivity items={activityItems} pageSize={5} />
+    </Dashboard>
+  );
+}
+```
+
+### Gradient theme container
+
+```tsx
+<Dashboard className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+  {/* ...header, KPICards, metrics, last activity */} 
+</Dashboard>;
+```
+
+---
+
+## Props
+
+### Dashboard
+
+| Prop        | Type      | Default | Description                                                |
+| ----------- | --------- | ------- | ---------------------------------------------------------- |
+| `children`  | `ReactNode` | **required** | Composed sections (header, KPI cards, metrics, activity). |
+| `className` | `string`  | `-`     | Optional root container class (e.g. for themes/spacing).  |
+
+### DashboardHeader
+
+| Prop                | Type                                  | Default                          | Description                                                                 |
+| ------------------- | ------------------------------------- | -------------------------------- | --------------------------------------------------------------------------- |
+| `title`             | `string`                             | `"Dashboard Overview"`           | Main heading text.                                                          |
+| `description`       | `string`                             | `"Monitor key metrics and recent activity"` | Short subheading under the title.                               |
+| `dateRange`         | `DashboardDateRange`                 | `undefined`                      | Controlled date range value (start/end).                                    |
+| `onDateRangeChange` | `(range: DashboardDateRange) => void` | `undefined`                      | Called when the user selects a new date range.                              |
+| `exportLabel`       | `string`                             | `"Export Report"`                | Label for the primary CTA button.                                           |
+| `onExportReport`    | `() => void`                         | `undefined`                      | Called when the primary CTA is clicked.                                     |
+| `viewDetailsLabel`  | `string`                             | `"View Details"`                 | Label for the secondary CTA button.                                         |
+| `onViewDetails`     | `() => void`                         | `undefined`                      | Called when the secondary CTA is clicked.                                   |
+| `actions`           | `ReactNode`                          | `undefined`                      | Custom actions node (replaces default buttons when provided).               |
+| `className`         | `string`                             | `-`                              | Optional wrapper class for the header row.                                  |
+
+### DashboardKPICards
+
+| Prop       | Type         | Default | Description                                         |
+| ---------- | ------------ | ------- | --------------------------------------------------- |
+| `cards`    | `KPICard[]`  | `[]`    | Array of KPI card definitions to render in the row.|
+| `className`| `string`     | `-`     | Optional wrapper class for the KPI cards section.  |
+
+### DashboardMetrics
+
+| Prop         | Type          | Default                    | Description                                           |
+| ------------ | ------------- | -------------------------- | ----------------------------------------------------- |
+| `metrics`    | `KeyMetric[]` | `[]`                       | Metrics to render in the quick stats grid.           |
+| `title`      | `string`      | `"Key metrics"`            | Section title.                                       |
+| `description`| `string`      | `"Overview for selected period"` | Section description.                           |
+| `className`  | `string`      | `-`                        | Optional wrapper class for the metrics section.      |
+
+### DashboardLastActivity
+
+| Prop          | Type            | Default                          | Description                                                |
+| ------------- | --------------- | -------------------------------- | ---------------------------------------------------------- |
+| `items`       | `ActivityItem[]`| `[]`                             | Activity / transactions to display (paginated).           |
+| `pageSize`    | `number`        | `5`                              | Items per page.                                            |
+| `title`       | `string`        | `"Latest activity"`             | Section title.                                             |
+| `description` | `string`        | `"Recent transactions and events"` | Section description.                                   |
+| `emptyMessage`| `string`        | `"No activity in this period."` | Message shown when there are no items.                    |
+| `className`   | `string`        | `-`                              | Optional wrapper class for the activity section.          |
+
+### Data types
+
+| Type                | Shape                                              | Description                                      |
+| ------------------- | -------------------------------------------------- | ------------------------------------------------ |
+| `KPICard`           | `{ id, label, value, rawValue?, trend, trendLabel }` | KPI card config (revenue, users, conversion…). |
+| `KeyMetric`         | `{ id, label, value, trend, trendValue }`         | Quick stat metric with trend indicator.          |
+| `ActivityItem`      | `{ id, title, subtitle?, timestamp, status?, amount? }` | Latest activity / transaction item.       |
+| `DashboardDateRange`| `{ start: Date \| null; end: Date \| null }`      | Selected date range for filtering.               |
+
+---
+
+## Notes
+
+- The dashboard is designed to be a **starting point** for analytic pages — you can add additional sections like charts, tables, and filters around or between the existing sections.
+- Trend indicators are intentionally simple (↑ / ↓ / neutral) to keep the UI readable at a glance.
+- The composable primitives (`Dashboard`, `DashboardHeader`, `DashboardKPICards`, `DashboardMetrics`, `DashboardLastActivity`) give you full control over layout and data. You can mirror the Storybook examples or build your own custom dashboard layout on top.
+
