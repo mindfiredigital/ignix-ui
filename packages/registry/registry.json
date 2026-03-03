@@ -176,6 +176,18 @@
         }
       }
     },
+    "maintenance-page": {
+      "name": "MaintenancePage ",
+      "description": "A customizable maintenance page template with multiple animation variants, designed to display clear messaging, ETA.",
+      "dependencies": ["lucide-react", "framer-motion", "class-variance-authority"],
+      "componentDependencies": ["button", "typography"],
+      "files": {
+        "main": {
+          "path": "templates/pages/maintenance-page/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "app-shell": {
       "name": "AppShell",
       "description": "A high-level layout component that structures the entire application frame, providing responsive navigation (side, top, or drawer), brand placement, user profile integration, and optional footer support.",
