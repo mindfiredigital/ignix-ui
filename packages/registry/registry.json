@@ -176,7 +176,7 @@
         }
       }
     },
-    "maintenance-page": {
+    "maintenancePage": {
       "name": "MaintenancePage ",
       "description": "A customizable maintenance page template with multiple animation variants, designed to display clear messaging, ETA.",
       "dependencies": ["lucide-react", "framer-motion", "class-variance-authority"],
