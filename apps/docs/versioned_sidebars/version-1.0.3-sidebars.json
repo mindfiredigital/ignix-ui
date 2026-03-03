@@ -242,7 +242,14 @@
                 "templates/pages/account-management/setting-page"
               ]
             },
-            "templates/pages/error-page"
+            {
+              "type": "category",
+              "label": "Error Pages",
+              "items": [
+                "templates/pages/error-page",
+                "templates/pages/maintenance-page"
+              ]
+            }
           ]
         },
         {
