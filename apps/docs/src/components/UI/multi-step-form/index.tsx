@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cva, type VariantProps } from 'class-variance-authority';
@@ -45,6 +44,13 @@ export interface FormField {
     defaultValue?: FieldValue;
     colSpan?: 'full' | 'half';
     icon?: React.ElementType;
+
+    emailValidation?: {
+        pattern?: boolean;  // Use default email pattern
+        customPattern?: RegExp;  // Custom regex pattern
+        domain?: string[];  // Allowed domains
+        message?: string;  // Custom error message
+    };
 }
 
 export interface FormStep {
@@ -240,7 +246,7 @@ const MultiStepForm: React.FC<MultiStepFormProps> & {
     reviewStepTitle = "Review",
     isLoading = false,
     isSubmitting: externalIsSubmitting = false,
-    showStepIndicator = true,
+    // showStepIndicator = true,
     showReviewStep = true,
     showCancelButton = true,
     showSuccessNotification = true,
@@ -281,6 +287,33 @@ const MultiStepForm: React.FC<MultiStepFormProps> & {
             if (field.required && (value === undefined || value === null || value === '')) {
                 return `${field.label} is required`;
             }
+
+            if (field.type === 'email' && value && typeof value === 'string' && value.trim() !== '') {
+                // Default email regex pattern
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+                // Check if it's a valid email format
+                if (!emailRegex.test(value)) {
+                    return 'Please enter a valid email address';
+                }
+
+                // Check domain restrictions if specified
+                if (field.emailValidation?.domain && field.emailValidation.domain.length > 0) {
+                    const domain = value.split('@')[1];
+                    if (!field.emailValidation.domain.includes(domain)) {
+                        return field.emailValidation.message ||
+                            `Email must be from: ${field.emailValidation.domain.join(', ')}`;
+                    }
+                }
+
+                // Use custom pattern if provided
+                if (field.emailValidation?.customPattern) {
+                    if (!field.emailValidation.customPattern.test(value)) {
+                        return field.emailValidation.message || 'Email format is invalid';
+                    }
+                }
+            }
+
             if (field.validation) {
                 return field.validation(value);
             }
@@ -514,9 +547,9 @@ const MultiStepForm: React.FC<MultiStepFormProps> & {
                             className="space-y-8"
                         >
                             {/* Conditionally render step indicator */}
-                            {showStepIndicator && (
+                            {/* {showStepIndicator && (
                                 <MultiStepStepIndicator />
-                            )}
+                            )} */}
 
                             {children}
                         </motion.div>
@@ -839,10 +872,48 @@ const MultiStepField: React.FC<MultiStepFieldProps> = ({
 }) => {
     const { formData, errors, touchedFields, updateField, inputVariant } = useMultiStepForm();
     const [showPassword, setShowPassword] = useState(false);
+    const [localError, setLocalError] = useState<string | undefined>();
     const Icon = field.icon;
     const value = formData[field.name];
     const error = touchedFields.has(field.name) ? errors[field.name] : undefined;
     const fieldId = `field-${field.id}`;
+
+    // Email validation function
+    const validateEmail = (email: string): string | undefined => {
+        if (!email) return undefined;
+
+        // Basic email regex
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+        if (!emailRegex.test(email)) {
+            return 'Please enter a valid email address';
+        }
+
+        // Check for common typos in domain
+        // const commonDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com'];
+        const domain = email.split('@')[1];
+
+        if (domain && !domain.includes('.')) {
+            return 'Email domain seems invalid';
+        }
+
+        // Check domain restrictions if specified
+        if (field.emailValidation?.domain && field.emailValidation.domain.length > 0) {
+            if (!field.emailValidation.domain.includes(domain)) {
+                return field.emailValidation.message ||
+                    `Email must be from: ${field.emailValidation.domain.join(', ')}`;
+            }
+        }
+
+        // Use custom pattern if provided
+        if (field.emailValidation?.customPattern) {
+            if (!field.emailValidation.customPattern.test(email)) {
+                return field.emailValidation.message || 'Email format is invalid';
+            }
+        }
+
+        return undefined;
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         let val: FieldValue;
@@ -854,7 +925,27 @@ const MultiStepField: React.FC<MultiStepFieldProps> = ({
         }
 
         updateField(field.name, val);
+
+        // Real-time email validation
+        if (field.type === 'email' && typeof val === 'string') {
+            const emailError = validateEmail(val);
+            setLocalError(emailError);
+        } else {
+            // Clear local error for non-email fields
+            setLocalError(undefined);
+        }
     };
+
+    // Handle blur for validation
+    const handleBlur = () => {
+        if (field.type === 'email' && typeof value === 'string') {
+            const emailError = validateEmail(value);
+            setLocalError(emailError);
+        }
+    };
+
+    // Show either context error or local validation error
+    const displayError = error || localError;
 
     return (
         <div className={cn("space-y-2", className)}>
@@ -864,12 +955,6 @@ const MultiStepField: React.FC<MultiStepFieldProps> = ({
                     {field.label}
                     {field.required && <span className="text-destructive">*</span>}
                 </label>
-                {error && (
-                    <Typography variant="caption" color="warning" className="flex items-center gap-1">
-                        <AlertCircle className="w-3 h-3" />
-                        {error}
-                    </Typography>
-                )}
             </div>
 
             {field.type === 'textarea' ? (
@@ -878,13 +963,14 @@ const MultiStepField: React.FC<MultiStepFieldProps> = ({
                     name={field.name}
                     value={typeof value === 'string' ? value : ''}
                     onChange={handleChange}
+                    onBlur={handleBlur}
                     placeholder={field.placeholder}
                     required={field.required}
                     rows={4}
                     className={cn(
                         "w-full px-4 py-3 rounded-lg transition-all duration-300",
                         "bg-background border",
-                        error ? "border-destructive focus:ring-destructive/20" : "border-input focus:ring-primary/20",
+                        displayError ? "border-destructive focus:ring-destructive/20" : "border-input focus:ring-primary/20",
                         "focus:outline-none focus:ring-2 focus:border-primary",
                         "resize-none",
                         "text-foreground",
@@ -897,11 +983,12 @@ const MultiStepField: React.FC<MultiStepFieldProps> = ({
                     name={field.name}
                     value={typeof value === 'string' ? value : ''}
                     onChange={handleChange}
+                    onBlur={handleBlur}
                     required={field.required}
                     className={cn(
                         "w-full px-4 py-3 rounded-lg transition-all duration-300",
                         "bg-background border",
-                        error ? "border-destructive focus:ring-destructive/20" : "border-input focus:ring-primary/20",
+                        displayError ? "border-destructive focus:ring-destructive/20" : "border-input focus:ring-primary/20",
                         "focus:outline-none focus:ring-2 focus:border-primary",
                         "text-foreground",
                         "appearance-none"
@@ -922,6 +1009,7 @@ const MultiStepField: React.FC<MultiStepFieldProps> = ({
                         name={field.name}
                         checked={typeof value === 'boolean' ? value : false}
                         onChange={handleChange}
+                        onBlur={handleBlur}
                         className="w-5 h-5 rounded border-input text-primary focus:ring-primary/20"
                     />
                     <Typography variant="body-small" color="muted">
@@ -939,6 +1027,7 @@ const MultiStepField: React.FC<MultiStepFieldProps> = ({
                                 value={option.value}
                                 checked={value === option.value}
                                 onChange={handleChange}
+                                onBlur={handleBlur}
                                 className="w-5 h-5 border-input text-primary focus:ring-primary/20"
                             />
                             <label
@@ -950,14 +1039,6 @@ const MultiStepField: React.FC<MultiStepFieldProps> = ({
                             >
                                 {option.label}
                             </label>
-                            {/* <Typography
-                                variant="body-small"
-                                color="muted"
-                                as="label"
-                                htmlFor={`${fieldId}-${option.value}`}
-                            >
-                                {option.label}
-                            </Typography> */}
                         </div>
                     ))}
                 </div>
@@ -968,12 +1049,19 @@ const MultiStepField: React.FC<MultiStepFieldProps> = ({
                         placeholder={field.placeholder || field.label}
                         variant={inputVariant}
                         value={typeof value === 'string' ? value : ''}
-                        onChange={(val: string) => updateField(field.name, val)}
+                        onChange={(val: string) => {
+                            updateField(field.name, val);
+                            // Real-time email validation
+                            if (field.type === 'email') {
+                                const emailError = validateEmail(val);
+                                setLocalError(emailError);
+                            }
+                        }}
+                        onBlur={handleBlur}
                         type={field.type === 'password' && showPassword ? 'text' : field.type}
                         icon={Icon}
-                        // required={field.required}
-                        error={error}
-                        inputClassName={error ? "border-destructive" : ""}
+                        error={displayError}
+                        inputClassName={`pl-10 ${displayError ? "border-destructive" : ""}`}
                     />
                     {field.type === 'password' && (
                         <button
@@ -984,6 +1072,22 @@ const MultiStepField: React.FC<MultiStepFieldProps> = ({
                             {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         </button>
                     )}
+
+                    {/* Email format hint - only show when typing and no error */}
+                    {field.type === 'email' &&
+                        !displayError &&
+                        value &&
+                        typeof value === 'string' &&
+                        value.length > 3 && (
+                            <Typography
+                                variant="caption"
+                                color="muted"
+                                className="absolute -bottom-5 left-0 flex items-center gap-1"
+                            >
+                                <CheckCircle className="w-3 h-3 text-green-500" />
+                                Valid email format
+                            </Typography>
+                        )}
                 </div>
             )}
         </div>

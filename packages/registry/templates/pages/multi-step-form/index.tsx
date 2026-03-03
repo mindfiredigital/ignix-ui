@@ -13,10 +13,11 @@ import {
     Zap,
     AlertCircle,
 } from 'lucide-react';
-import { cn } from '../../../../../utils/cn';
-import { Button } from '../../../../components/button';
-import { AnimatedInput } from '../../../../components/input';
-import { Typography } from '../../../../components/typography';
+import { cn } from '../../../utils/cn';
+import { Button } from '@ignix-ui/button';
+import { AnimatedInput } from '@ignix-ui/input';
+import { Typography } from '@ignix-ui/typography';
+
 
 /* ============================================
    TYPES & INTERFACES

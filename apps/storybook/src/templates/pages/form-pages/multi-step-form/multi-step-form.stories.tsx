@@ -97,6 +97,12 @@ const onboardingSteps = [
                 required: true,
                 icon: Mail,
                 colSpan: 'full' as const,
+                emailValidation: {
+                    pattern: true,  // Use default pattern
+                    // Optional: Restrict to specific domains
+                    // domain: ['gmail.com', 'yahoo.com', 'outlook.com'],
+                    // message: 'Please use a personal email address'
+                }
             },
         ],
     },
@@ -213,6 +219,11 @@ const registrationSteps = [
                 required: true,
                 icon: Mail,
                 colSpan: 'full' as const,
+                emailValidation: {
+                    pattern: true,
+                    // Example: Custom error message
+                    message: 'Please enter a valid email address'
+                }
             },
             {
                 id: 'password',
@@ -336,13 +347,18 @@ export const Default: Story = {
             animationVariant="fadeUp"
         >
             <MultiStepHeader
+                titleVariant="h3"
                 title="Onboarding Wizard"
                 icon={<Zap className="text-white" />}
                 titleClassName="text-4xl font-bold text-foreground"
-                titleVariant="h3"
                 iconSize={32}
                 iconClassName="w-14 h-14"
             />
+
+            <div className="container max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <MultiStepStepIndicator />
+            </div>
+
             <MultiStepContent>
                 {/* Step 1 Fields */}
                 <Step step={1}>
@@ -407,12 +423,18 @@ export const RegistrationForm: Story = {
             buttonAnimationVariant="scaleHeartBeat"
         >
             <MultiStepHeader
+                titleVariant="h3"
                 title="Create Account"
                 icon={<User className="text-white" />}
                 titleClassName="text-3xl font-bold text-foreground"
                 iconSize={28}
                 iconClassName="w-12 h-12"
             />
+
+            <div className="container max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <MultiStepStepIndicator />
+            </div>
+
             <MultiStepContent>
                 {/* Step 1 Fields */}
                 <Step step={1}>
@@ -478,12 +500,18 @@ export const GlassTheme: Story = {
             buttonVariant="glass"
         >
             <MultiStepHeader
+                titleVariant="h3"
                 title="Glass Theme"
                 icon={<Zap className="text-white" />}
                 titleClassName="text-4xl font-bold text-foreground/90"
                 iconSize={30}
                 iconClassName="w-13 h-13 bg-white/20 backdrop-blur-sm"
             />
+
+            <div className="container max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <MultiStepStepIndicator />
+            </div>
+
             <MultiStepContent>
                 <Step step={1}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -541,12 +569,19 @@ export const DarkTheme: Story = {
             darkMode
         >
             <MultiStepHeader
+                titleVariant="h3"
                 title="Dark Theme"
                 icon={<Zap className="text-yellow-400" />}
                 titleClassName="text-4xl font-bold text-white"
                 iconSize={30}
                 iconClassName="w-13 h-13 bg-gray-800"
             />
+
+            <div className="container max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <MultiStepStepIndicator />
+            </div>
+
+
             <MultiStepContent>
                 <Step step={1}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -644,10 +679,16 @@ export const MinimalForm: Story = {
                 buttonVariant="primary"
             >
                 <MultiStepHeader
+                    titleVariant="h3"
                     title="Quick Survey"
                     titleClassName="text-3xl font-bold"
                     iconSize={24}
                 />
+
+                <div className="container max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                    <MultiStepStepIndicator />
+                </div>
+
                 <MultiStepContent>
                     <Step step={1}>
                         <div className="grid grid-cols-1 gap-6">
@@ -672,12 +713,17 @@ export const WithoutReviewStep: Story = {
             showReviewStep={false}
         >
             <MultiStepHeader
+                titleVariant="h3"
                 title="Quick Onboarding"
                 icon={<Zap className="text-white" />}
                 titleClassName="text-3xl font-bold"
                 iconSize={24}
                 iconClassName="w-12 h-12"
             />
+
+            <div className="container max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <MultiStepStepIndicator />
+            </div>
             <MultiStepContent>
                 <Step step={1}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -736,12 +782,16 @@ export const SlideAnimation: Story = {
             animationVariant="slideUp"
         >
             <MultiStepHeader
+                titleVariant="h3"
                 title="Slide Animation"
                 icon={<Zap className="text-white" />}
                 titleClassName="text-4xl font-bold"
                 iconSize={28}
                 iconClassName="w-12 h-12"
             />
+            <div className="container max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <MultiStepStepIndicator />
+            </div>
             <MultiStepContent>
                 <Step step={1}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -798,12 +848,16 @@ export const ScaleAnimation: Story = {
             animationVariant="scaleIn"
         >
             <MultiStepHeader
+                titleVariant="h3"
                 title="Scale Animation"
                 icon={<Zap className="text-white" />}
                 titleClassName="text-4xl font-bold"
                 iconSize={28}
                 iconClassName="w-12 h-12"
             />
+            <div className="container max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <MultiStepStepIndicator />
+            </div>
             <MultiStepContent>
                 <Step step={1}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1008,12 +1062,16 @@ export const PaymentForm: Story = {
                 buttonVariant="success"
             >
                 <MultiStepHeader
+                    titleVariant="h3"
                     title="Checkout"
                     icon={<CreditCard className="text-white" />}
                     titleClassName="text-4xl font-bold"
                     iconSize={30}
                     iconClassName="w-13 h-13"
                 />
+                <div className="container max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                    <MultiStepStepIndicator />
+                </div>
                 <MultiStepContent>
                     <Step step={1}>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1174,12 +1232,16 @@ export const PremiumMembership: Story = {
                 buttonAnimationVariant="nina"
             >
                 <MultiStepHeader
+                    titleVariant="h3"
                     title="Premium Membership"
                     icon={<Award className="text-white" />}
                     titleClassName="text-4xl font-bold"
                     iconSize={30}
                     iconClassName="w-13 h-13"
                 />
+                <div className="container max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                    <MultiStepStepIndicator />
+                </div>
                 <MultiStepContent>
                     <Step step={1}>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1241,12 +1303,16 @@ export const LoadingState: Story = {
             isLoading={true}
         >
             <MultiStepHeader
+                titleVariant="h3"
                 title="Onboarding Wizard"
                 icon={<Zap className="text-white" />}
                 titleClassName="text-3xl font-bold"
                 iconSize={24}
                 iconClassName="w-12 h-12"
             />
+            <div className="container max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <MultiStepStepIndicator />
+            </div>
             <MultiStepContent>
                 <Step step={1}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1303,12 +1369,16 @@ export const SubmittingState: Story = {
             isSubmitting={true}
         >
             <MultiStepHeader
+                titleVariant="h3"
                 title="Onboarding Wizard"
                 icon={<Zap className="text-white" />}
                 titleClassName="text-3xl font-bold"
                 iconSize={24}
                 iconClassName="w-12 h-12"
             />
+            <div className="container max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <MultiStepStepIndicator />
+            </div>
             <MultiStepContent>
                 <Step step={1}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1367,7 +1437,8 @@ export const CustomHeader: Story = {
             steps={onboardingSteps}
             onSubmit={(data) => console.log('Form submitted:', data)}
         >
-            <MultiStepHeader>
+            <MultiStepHeader
+                titleVariant="h3">
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
                         <Award className="w-5 h-5 text-white" />
@@ -1378,7 +1449,10 @@ export const CustomHeader: Story = {
                     </div>
                 </div>
             </MultiStepHeader>
-            <MultiStepStepIndicator variant="pills" />
+            {/* <MultiStepStepIndicator variant="pills" /> */}
+            <div className="container max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <MultiStepStepIndicator />
+            </div>
             <MultiStepContent>
                 <Step step={1}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1444,12 +1518,16 @@ export const CustomReview: Story = {
             }}
         >
             <MultiStepHeader
+                titleVariant="h3"
                 title="Onboarding Wizard"
                 icon={<Zap className="text-white" />}
                 titleClassName="text-3xl font-bold"
                 iconSize={24}
                 iconClassName="w-12 h-12"
             />
+            <div className="container max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <MultiStepStepIndicator />
+            </div>
             <MultiStepContent>
                 <Step step={1}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1537,12 +1615,16 @@ export const MobileView: Story = {
             onSubmit={(data) => console.log('Form submitted:', data)}
         >
             <MultiStepHeader
+                titleVariant="h3"
                 title="Mobile View"
                 icon={<Zap className="text-white" />}
                 titleClassName="text-2xl font-bold"
                 iconSize={20}
                 iconClassName="w-10 h-10"
             />
+            <div className="container max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <MultiStepStepIndicator />
+            </div>
             <MultiStepContent>
                 <Step step={1}>
                     <div className="grid grid-cols-1 gap-6">
@@ -1588,12 +1670,16 @@ export const TabletView: Story = {
             onSubmit={(data) => console.log('Form submitted:', data)}
         >
             <MultiStepHeader
+                titleVariant="h3"
                 title="Tablet View"
                 icon={<Zap className="text-white" />}
                 titleClassName="text-3xl font-bold"
                 iconSize={24}
                 iconClassName="w-12 h-12"
             />
+            <div className="container max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <MultiStepStepIndicator />
+            </div>
             <MultiStepContent>
                 <Step step={1}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
     MultiStepForm,
-    // MultiStepHeader,
-    // MultiStepStepIndicator,
-    // MultiStepContent,
-    // MultiStepNavigation,
-    // MultiStepReview,
-    // MultiStepField,
     type FormStep,
+    // type FormValues,
 } from '../UI/multi-step-form';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -38,7 +33,6 @@ import {
     Hash,
 } from 'lucide-react';
 import { cn } from '@site/src/utils/cn';
-// import { Typography } from '@site/src/components/UI/typography';
 import { Button } from '@site/src/components/UI/button';
 
 // Types for our variant selectors
@@ -88,7 +82,7 @@ const buttonVariantOptions = [
     { value: 'glass', label: 'Glass' },
 ];
 
-// Form type options (for VariantSelector)
+// Form type options
 const formTypeOptions = [
     { value: 'onboarding', label: 'Onboarding' },
     { value: 'registration', label: 'Registration' },
@@ -108,11 +102,121 @@ const formIcons = {
     profile: User,
 };
 
+// Icon names for code generation
+const iconNames = {
+    onboarding: 'User',
+    registration: 'Lock',
+    payment: 'CreditCard',
+    job: 'Briefcase',
+    event: 'Calendar',
+    profile: 'User',
+};
+
 // ==============================
-// FORM TYPE CONFIGURATIONS
+// VALIDATION UTILITIES
 // ==============================
 
-// 1. Onboarding Form
+const validateEmail = (email: string): string | undefined => {
+    if (!email) return undefined;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+        return 'Please enter a valid email address';
+    }
+    return undefined;
+};
+
+const validatePhone = (phone: string): string | undefined => {
+    if (!phone) return undefined;
+    const phoneRegex = /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/;
+    if (!phoneRegex.test(phone.replace(/\s/g, ''))) {
+        return 'Please enter a valid phone number';
+    }
+    return undefined;
+};
+
+const validateUrl = (url: string): string | undefined => {
+    if (!url) return undefined;
+    try {
+        new URL(url);
+        return undefined;
+    } catch {
+        return 'Please enter a valid URL (include https://)';
+    }
+};
+
+const validatePassword = (password: string): string | undefined => {
+    if (!password) return undefined;
+    if (password.length < 8) {
+        return 'Password must be at least 8 characters';
+    }
+    if (!/[A-Z]/.test(password)) {
+        return 'Password must contain at least one uppercase letter';
+    }
+    if (!/[a-z]/.test(password)) {
+        return 'Password must contain at least one lowercase letter';
+    }
+    if (!/[0-9]/.test(password)) {
+        return 'Password must contain at least one number';
+    }
+    return undefined;
+};
+
+const validateCreditCard = (cardNumber: string): string | undefined => {
+    if (!cardNumber) return undefined;
+    const cleaned = cardNumber.replace(/\s/g, '');
+    if (!/^\d{16}$/.test(cleaned)) {
+        return 'Card number must be 16 digits';
+    }
+    // Luhn algorithm check
+    let sum = 0;
+    let isEven = false;
+    for (let i = cleaned.length - 1; i >= 0; i--) {
+        let digit = parseInt(cleaned.charAt(i), 10);
+        if (isEven) {
+            digit *= 2;
+            if (digit > 9) digit -= 9;
+        }
+        sum += digit;
+        isEven = !isEven;
+    }
+    if (sum % 10 !== 0) {
+        return 'Invalid card number';
+    }
+    return undefined;
+};
+
+const validateExpiry = (expiry: string): string | undefined => {
+    if (!expiry) return undefined;
+    const expiryRegex = /^(0[1-9]|1[0-2])\/([0-9]{2})$/;
+    if (!expiryRegex.test(expiry)) {
+        return 'Use MM/YY format';
+    }
+    const [month, year] = expiry.split('/');
+    const now = new Date();
+    const currentYear = now.getFullYear() % 100;
+    const currentMonth = now.getMonth() + 1;
+    const expYear = parseInt(year, 10);
+    const expMonth = parseInt(month, 10);
+
+    if (expYear < currentYear || (expYear === currentYear && expMonth < currentMonth)) {
+        return 'Card has expired';
+    }
+    return undefined;
+};
+
+const validateCVV = (cvv: string): string | undefined => {
+    if (!cvv) return undefined;
+    if (!/^\d{3,4}$/.test(cvv)) {
+        return 'CVV must be 3 or 4 digits';
+    }
+    return undefined;
+};
+
+// ==============================
+// FORM TYPE CONFIGURATIONS WITH VALIDATION
+// ==============================
+
+// 1. Onboarding Form with Validation
 const onboardingSteps: FormStep[] = [
     {
         id: 'personal',
@@ -128,6 +232,12 @@ const onboardingSteps: FormStep[] = [
                 required: true,
                 icon: User,
                 colSpan: 'half',
+                validation: (value) => {
+                    if (typeof value === 'string' && value.length < 2) {
+                        return 'First name must be at least 2 characters';
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'last-name',
@@ -138,6 +248,12 @@ const onboardingSteps: FormStep[] = [
                 required: true,
                 icon: User,
                 colSpan: 'half',
+                validation: (value) => {
+                    if (typeof value === 'string' && value.length < 2) {
+                        return 'Last name must be at least 2 characters';
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'email',
@@ -148,6 +264,12 @@ const onboardingSteps: FormStep[] = [
                 required: true,
                 icon: Mail,
                 colSpan: 'full',
+                validation: (value) => {
+                    if (typeof value === 'string') {
+                        return validateEmail(value);
+                    }
+                    return undefined;
+                },
             },
         ],
     },
@@ -193,6 +315,12 @@ const onboardingSteps: FormStep[] = [
                 placeholder: 'Tell us about yourself in a few sentences...',
                 required: false,
                 colSpan: 'full',
+                validation: (value) => {
+                    if (typeof value === 'string' && value.length > 500) {
+                        return 'Bio must be less than 500 characters';
+                    }
+                    return undefined;
+                },
             },
         ],
     },
@@ -230,7 +358,7 @@ const onboardingSteps: FormStep[] = [
     },
 ];
 
-// 2. Registration Form
+// 2. Registration Form with Validation
 const registrationSteps: FormStep[] = [
     {
         id: 'account',
@@ -246,6 +374,17 @@ const registrationSteps: FormStep[] = [
                 required: true,
                 icon: User,
                 colSpan: 'full',
+                validation: (value) => {
+                    if (typeof value === 'string') {
+                        if (value.length < 3) {
+                            return 'Username must be at least 3 characters';
+                        }
+                        if (!/^[a-zA-Z0-9_]+$/.test(value)) {
+                            return 'Username can only contain letters, numbers, and underscores';
+                        }
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'email',
@@ -256,6 +395,16 @@ const registrationSteps: FormStep[] = [
                 required: true,
                 icon: Mail,
                 colSpan: 'full',
+                validation: (value) => {
+                    if (typeof value === 'string') {
+                        return validateEmail(value);
+                    }
+                    return undefined;
+                },
+                emailValidation: {
+                    domain: ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com'],
+                    message: 'Please use a personal email address',
+                },
             },
             {
                 id: 'password',
@@ -267,7 +416,9 @@ const registrationSteps: FormStep[] = [
                 icon: Lock,
                 colSpan: 'half',
                 validation: (value) => {
-                    if (value.length < 8) return 'Password must be at least 8 characters';
+                    if (typeof value === 'string') {
+                        return validatePassword(value);
+                    }
                     return undefined;
                 },
             },
@@ -304,6 +455,12 @@ const registrationSteps: FormStep[] = [
                 required: true,
                 icon: User,
                 colSpan: 'half',
+                validation: (value) => {
+                    if (typeof value === 'string' && value.length < 2) {
+                        return 'First name must be at least 2 characters';
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'last-name',
@@ -314,6 +471,12 @@ const registrationSteps: FormStep[] = [
                 required: true,
                 icon: User,
                 colSpan: 'half',
+                validation: (value) => {
+                    if (typeof value === 'string' && value.length < 2) {
+                        return 'Last name must be at least 2 characters';
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'phone',
@@ -324,6 +487,12 @@ const registrationSteps: FormStep[] = [
                 required: false,
                 icon: Phone,
                 colSpan: 'half',
+                validation: (value) => {
+                    if (typeof value === 'string' && value) {
+                        return validatePhone(value);
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'location',
@@ -371,7 +540,7 @@ const registrationSteps: FormStep[] = [
     },
 ];
 
-// 3. Payment Form
+// 3. Payment Form with Validation
 const paymentSteps: FormStep[] = [
     {
         id: 'billing',
@@ -387,6 +556,12 @@ const paymentSteps: FormStep[] = [
                 required: true,
                 icon: User,
                 colSpan: 'full',
+                validation: (value) => {
+                    if (typeof value === 'string' && value.length < 3) {
+                        return 'Please enter your full name';
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'address',
@@ -397,6 +572,12 @@ const paymentSteps: FormStep[] = [
                 required: true,
                 icon: Home,
                 colSpan: 'full',
+                validation: (value) => {
+                    if (typeof value === 'string' && value.length < 5) {
+                        return 'Please enter a valid address';
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'city',
@@ -406,6 +587,12 @@ const paymentSteps: FormStep[] = [
                 placeholder: 'San Francisco',
                 required: true,
                 colSpan: 'half',
+                validation: (value) => {
+                    if (typeof value === 'string' && value.length < 2) {
+                        return 'Please enter a valid city';
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'state',
@@ -415,6 +602,12 @@ const paymentSteps: FormStep[] = [
                 placeholder: 'CA',
                 required: true,
                 colSpan: 'half',
+                validation: (value) => {
+                    if (typeof value === 'string' && value.length < 2) {
+                        return 'Please enter a valid state';
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'zip',
@@ -425,6 +618,12 @@ const paymentSteps: FormStep[] = [
                 required: true,
                 icon: Hash,
                 colSpan: 'half',
+                validation: (value) => {
+                    if (typeof value === 'string' && !/^\d{5}(-\d{4})?$/.test(value)) {
+                        return 'Please enter a valid ZIP code';
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'country',
@@ -434,6 +633,12 @@ const paymentSteps: FormStep[] = [
                 placeholder: 'USA',
                 required: true,
                 colSpan: 'half',
+                validation: (value) => {
+                    if (typeof value === 'string' && value.length < 2) {
+                        return 'Please enter a valid country';
+                    }
+                    return undefined;
+                },
             },
         ],
     },
@@ -451,6 +656,12 @@ const paymentSteps: FormStep[] = [
                 required: true,
                 icon: CreditCard,
                 colSpan: 'full',
+                validation: (value) => {
+                    if (typeof value === 'string') {
+                        return validateCreditCard(value);
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'card-name',
@@ -461,6 +672,12 @@ const paymentSteps: FormStep[] = [
                 required: true,
                 icon: User,
                 colSpan: 'full',
+                validation: (value) => {
+                    if (typeof value === 'string' && value.length < 3) {
+                        return 'Please enter the name on card';
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'expiry',
@@ -471,6 +688,12 @@ const paymentSteps: FormStep[] = [
                 required: true,
                 icon: Calendar,
                 colSpan: 'half',
+                validation: (value) => {
+                    if (typeof value === 'string') {
+                        return validateExpiry(value);
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'cvv',
@@ -481,6 +704,12 @@ const paymentSteps: FormStep[] = [
                 required: true,
                 icon: Lock,
                 colSpan: 'half',
+                validation: (value) => {
+                    if (typeof value === 'string') {
+                        return validateCVV(value);
+                    }
+                    return undefined;
+                },
             },
         ],
     },
@@ -498,6 +727,12 @@ const paymentSteps: FormStep[] = [
                 required: true,
                 defaultValue: false,
                 colSpan: 'full',
+                validation: (value) => {
+                    if (!value) {
+                        return 'You must agree to the terms';
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'save-info',
@@ -513,7 +748,7 @@ const paymentSteps: FormStep[] = [
     },
 ];
 
-// 4. Job Application Form
+// 4. Job Application Form with Validation
 const jobSteps: FormStep[] = [
     {
         id: 'personal',
@@ -529,6 +764,12 @@ const jobSteps: FormStep[] = [
                 required: true,
                 icon: User,
                 colSpan: 'full',
+                validation: (value) => {
+                    if (typeof value === 'string' && value.length < 3) {
+                        return 'Please enter your full name';
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'email',
@@ -539,6 +780,12 @@ const jobSteps: FormStep[] = [
                 required: true,
                 icon: Mail,
                 colSpan: 'half',
+                validation: (value) => {
+                    if (typeof value === 'string') {
+                        return validateEmail(value);
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'phone',
@@ -549,6 +796,12 @@ const jobSteps: FormStep[] = [
                 required: true,
                 icon: Phone,
                 colSpan: 'half',
+                validation: (value) => {
+                    if (typeof value === 'string') {
+                        return validatePhone(value);
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'location',
@@ -559,6 +812,12 @@ const jobSteps: FormStep[] = [
                 required: true,
                 icon: MapPin,
                 colSpan: 'full',
+                validation: (value) => {
+                    if (typeof value === 'string' && value.length < 3) {
+                        return 'Please enter your location';
+                    }
+                    return undefined;
+                },
             },
         ],
     },
@@ -625,6 +884,15 @@ const jobSteps: FormStep[] = [
                 required: true,
                 icon: Code,
                 colSpan: 'full',
+                validation: (value) => {
+                    if (typeof value === 'string') {
+                        const skills = value.split(',').filter(s => s.trim().length > 0);
+                        if (skills.length < 3) {
+                            return 'Please list at least 3 skills';
+                        }
+                    }
+                    return undefined;
+                },
             },
         ],
     },
@@ -642,6 +910,12 @@ const jobSteps: FormStep[] = [
                 required: false,
                 icon: Globe,
                 colSpan: 'full',
+                validation: (value) => {
+                    if (typeof value === 'string' && value) {
+                        return validateUrl(value);
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'github',
@@ -652,6 +926,12 @@ const jobSteps: FormStep[] = [
                 required: false,
                 icon: Github,
                 colSpan: 'full',
+                validation: (value) => {
+                    if (typeof value === 'string' && value) {
+                        return validateUrl(value);
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'linkedin',
@@ -662,6 +942,12 @@ const jobSteps: FormStep[] = [
                 required: false,
                 icon: Linkedin,
                 colSpan: 'full',
+                validation: (value) => {
+                    if (typeof value === 'string' && value) {
+                        return validateUrl(value);
+                    }
+                    return undefined;
+                },
             },
         ],
     },
@@ -679,6 +965,17 @@ const jobSteps: FormStep[] = [
                 required: true,
                 icon: FileText,
                 colSpan: 'full',
+                validation: (value) => {
+                    if (typeof value === 'string') {
+                        if (value.length < 50) {
+                            return 'Cover letter must be at least 50 characters';
+                        }
+                        if (value.length > 2000) {
+                            return 'Cover letter must be less than 2000 characters';
+                        }
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'relocate',
@@ -699,12 +996,22 @@ const jobSteps: FormStep[] = [
                 required: true,
                 icon: Calendar,
                 colSpan: 'full',
+                validation: (value) => {
+                    if (typeof value === 'string' && value) {
+                        const startDate = new Date(value);
+                        const today = new Date();
+                        if (startDate < today) {
+                            return 'Start date cannot be in the past';
+                        }
+                    }
+                    return undefined;
+                },
             },
         ],
     },
 ];
 
-// 5. Event Registration Form
+// 5. Event Registration Form with Validation
 const eventSteps: FormStep[] = [
     {
         id: 'attendee',
@@ -720,6 +1027,12 @@ const eventSteps: FormStep[] = [
                 required: true,
                 icon: User,
                 colSpan: 'full',
+                validation: (value) => {
+                    if (typeof value === 'string' && value.length < 3) {
+                        return 'Please enter your full name';
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'email',
@@ -730,6 +1043,12 @@ const eventSteps: FormStep[] = [
                 required: true,
                 icon: Mail,
                 colSpan: 'full',
+                validation: (value) => {
+                    if (typeof value === 'string') {
+                        return validateEmail(value);
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'company',
@@ -844,10 +1163,18 @@ const eventSteps: FormStep[] = [
                 colSpan: 'full',
             },
         ],
+        validation: (values) => {
+            const errors: Record<string, string> = {};
+            const selectedWorkshops = ['workshop1', 'workshop2', 'workshop3'].filter(w => values[w]);
+            if (selectedWorkshops.length === 0) {
+                errors.workshops = 'Please select at least one workshop';
+            }
+            return errors;
+        },
     },
 ];
 
-// 6. Profile Setup Form
+// 6. Profile Setup Form with Validation
 const profileSteps: FormStep[] = [
     {
         id: 'basic',
@@ -863,6 +1190,17 @@ const profileSteps: FormStep[] = [
                 required: true,
                 icon: User,
                 colSpan: 'full',
+                validation: (value) => {
+                    if (typeof value === 'string') {
+                        if (value.length < 3) {
+                            return 'Display name must be at least 3 characters';
+                        }
+                        if (value.length > 30) {
+                            return 'Display name must be less than 30 characters';
+                        }
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'bio',
@@ -873,6 +1211,12 @@ const profileSteps: FormStep[] = [
                 required: false,
                 icon: FileText,
                 colSpan: 'full',
+                validation: (value) => {
+                    if (typeof value === 'string' && value.length > 500) {
+                        return 'Bio must be less than 500 characters';
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'location',
@@ -893,6 +1237,12 @@ const profileSteps: FormStep[] = [
                 required: false,
                 icon: Globe,
                 colSpan: 'half',
+                validation: (value) => {
+                    if (typeof value === 'string' && value) {
+                        return validateUrl(value);
+                    }
+                    return undefined;
+                },
             },
         ],
     },
@@ -910,6 +1260,12 @@ const profileSteps: FormStep[] = [
                 required: false,
                 icon: Users,
                 colSpan: 'full',
+                validation: (value) => {
+                    if (typeof value === 'string' && value) {
+                        return validateUrl(value);
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'github',
@@ -920,6 +1276,12 @@ const profileSteps: FormStep[] = [
                 required: false,
                 icon: Github,
                 colSpan: 'full',
+                validation: (value) => {
+                    if (typeof value === 'string' && value) {
+                        return validateUrl(value);
+                    }
+                    return undefined;
+                },
             },
             {
                 id: 'linkedin',
@@ -930,6 +1292,12 @@ const profileSteps: FormStep[] = [
                 required: false,
                 icon: Linkedin,
                 colSpan: 'full',
+                validation: (value) => {
+                    if (typeof value === 'string' && value) {
+                        return validateUrl(value);
+                    }
+                    return undefined;
+                },
             },
         ],
     },
@@ -982,6 +1350,7 @@ const handleSubmit = async (data: any) => {
 
 export const MultiStepFormDemo = () => {
     const { colorMode } = useColorMode();
+
 
     // Core state
     const [formType, setFormType] = useState<FormType>('onboarding');
@@ -1043,8 +1412,24 @@ export const MultiStepFormDemo = () => {
     const steps = getCurrentSteps();
     const CurrentIcon = formIcons[formType];
 
-    // Build code string
     const buildCodeString = () => {
+        const iconName = iconNames[formType];
+        const currentSteps = getCurrentSteps();
+
+        // Create a simplified example based on the first step
+        const firstStep = currentSteps[0];
+        const exampleFields = firstStep.fields.slice(0, 2).map(field => ({
+            id: field.id,
+            name: field.name,
+            label: field.label,
+            type: field.type,
+            required: field.required,
+            ...(field.options ? { options: field.options.slice(0, 2) } : {}),
+            ...(field.colSpan ? { colSpan: field.colSpan } : {}),
+            ...(field.icon ? { icon: field.icon } : {}),
+            ...(field.validation ? { validation: '(value) => { /* validation logic */ }' } : {})
+        }));
+
         const props = [
             `steps={${formType}Steps}`,
             `onSubmit={handleSubmit}`,
@@ -1053,11 +1438,16 @@ export const MultiStepFormDemo = () => {
             `inputVariant="${inputVariant}"`,
             `buttonVariant="${buttonVariant}"`,
             `showReviewStep={${showReviewStep}}`,
-            `showStepIndicator={${showStepIndicator}}`,
             `showCancelButton={${showCancelButton}}`,
             `showSuccessNotification={${showSuccessNotification}}`,
             `darkMode={${darkMode}}`,
         ];
+
+        const submitLabel = formType === 'payment' ? 'Pay Now' :
+            formType === 'registration' ? 'Create Account' :
+                formType === 'job' ? 'Submit Application' :
+                    formType === 'event' ? 'Register Now' :
+                        'Submit';
 
         return `import {
     MultiStepForm,
@@ -1067,52 +1457,79 @@ export const MultiStepFormDemo = () => {
     MultiStepNavigation,
     MultiStepReview,
     MultiStepField,
+    type FormStep,
+    type FormField,
 } from '../UI/multi-step-form';
-import { ${CurrentIcon.name} } from 'lucide-react';
+import { ${iconName}, User, Mail, Briefcase, Lock } from 'lucide-react';
 
-// Steps configuration (${formType} form)
-const steps = [ ... ]; // Your step configuration
+// Steps configuration (${formType} form example)
+const ${formType}Steps: FormStep[] = [
+    {
+        id: 'step-1',
+        title: '${firstStep.title}',
+        description: '${firstStep.description || 'Enter your information'}',
+        fields: [
+            ${exampleFields.map(field => `{
+                id: '${field.id}',
+                name: '${field.name}',
+                label: '${field.label}',
+                type: '${field.type}',
+                required: ${field.required},
+                ${field.colSpan ? `colSpan: '${field.colSpan}',` : ''}
+                ${field.icon ? `icon: ${field.icon},` : ''}
+                ${field.options ? `options: ${JSON.stringify(field.options, null, 8).replace(/"([^"]+)":/g, '$1:')},` : ''}
+                ${field.validation ? `validation: (value) => {
+                    // Add your validation logic here
+                    if (!value) return 'This field is required';
+                    return undefined;
+                },` : ''}
+            },`).join('\n            ')}
+            // Add more fields as needed
+        ],
+    },
+    // Add more steps as needed
+];
 
 <MultiStepForm
     ${props.join('\n    ')}
 >
-    <MultiStepForm.Header 
+    <MultiStepHeader 
         title="${formType.charAt(0).toUpperCase() + formType.slice(1)} Form" 
-        icon={<${CurrentIcon.name} />} 
+        icon={<${iconName} className="w-4 h-4" />}
+        titleVariant="h1"
+        titleClassName="text-4xl font-bold"
     />
-    {${showStepIndicator} && <MultiStepForm.StepIndicator />}
+    ${showStepIndicator ? '<MultiStepStepIndicator />' : ''}
     
-    <MultiStepForm.Content>
-        {steps.map((step, index) => (
+    <MultiStepContent>
+        {${formType}Steps.map((step, index) => (
             <Step key={step.id} step={index + 1}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {step.fields.map(field => (
                         <div key={field.id} className={field.colSpan === 'full' ? 'md:col-span-2' : ''}>
-                            <MultiStepForm.Field field={field} />
+                            <MultiStepField field={field} />
                         </div>
                     ))}
                 </div>
             </Step>
         ))}
         
-        {${showReviewStep} && <MultiStepForm.Review />}
-    </MultiStepForm.Content>
+        ${showReviewStep ? '<MultiStepReview />' : ''}
+    </MultiStepContent>
     
-    <MultiStepForm.Navigation 
+    <MultiStepNavigation 
         showCancelButton={${showCancelButton}}
-        submitButtonLabel="${formType === 'payment' ? 'Pay Now' : formType === 'registration' ? 'Create Account' : formType === 'job' ? 'Submit Application' : formType === 'event' ? 'Register Now' : 'Submit'}"
+        submitButtonLabel="${submitLabel}"
     />
 </MultiStepForm>`;
     };
 
     return (
         <div className="space-y-6">
-
-
             {/* Theme Controls - First Row */}
-            <div className="flex items-center justify-end">
-                {/* Form Type Selector - Now using VariantSelector */}
-                <div className="space-y-2 mx-2">
+            <div className="flex items-center justify-end flex-wrap gap-2">
+                {/* Form Type Selector */}
+                <div className="space-y-2 mx-1">
                     <VariantSelector
                         variants={formTypeOptions.map(o => o.value)}
                         selectedVariant={formType}
@@ -1122,7 +1539,7 @@ const steps = [ ... ]; // Your step configuration
                     />
                 </div>
 
-                <div className="space-y-2 mx-2">
+                <div className="space-y-2 mx-1">
                     <VariantSelector
                         variants={themeOptions.map(o => o.value)}
                         selectedVariant={themeVariant}
@@ -1132,7 +1549,7 @@ const steps = [ ... ]; // Your step configuration
                     />
                 </div>
 
-                <div className="space-y-2 mx-2">
+                <div className="space-y-2 mx-1">
                     <VariantSelector
                         variants={animationTypes as unknown as string[]}
                         selectedVariant={animationVariant}
@@ -1148,7 +1565,7 @@ const steps = [ ... ]; // Your step configuration
                     />
                 </div>
 
-                <div className="space-y-2 mx-2">
+                <div className="space-y-2 mx-1">
                     <VariantSelector
                         variants={inputVariantOptions.map(o => o.value)}
                         selectedVariant={inputVariant}
@@ -1158,7 +1575,7 @@ const steps = [ ... ]; // Your step configuration
                     />
                 </div>
 
-                <div className="space-y-2 mx-2">
+                <div className="space-y-2 mx-1">
                     <VariantSelector
                         variants={buttonVariantOptions.map(o => o.value)}
                         selectedVariant={buttonVariant}
@@ -1171,10 +1588,7 @@ const steps = [ ... ]; // Your step configuration
 
             {/* Feature Toggles */}
             <div className={cn(
-                "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 p-4 rounded-lg",
-                darkMode
-                    ? "bg-gray-800"
-                    : "bg-gray-50 border border-gray-200"
+                "flex flex-row items-center justify-end gap-2 px-2",
             )}>
                 <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -1247,20 +1661,12 @@ const steps = [ ... ]; // Your step configuration
             </div>
 
             {/* Loading State Controls */}
-            <div className="flex items-center justify-end">
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setIsLoading(!isLoading)}
-                    className="cursor-pointer mx-2"
-                >
-                    {isLoading ? 'Stop Loading' : 'Show Loading State'}
-                </Button>
+            <div className="flex items-center justify-end flex-wrap gap-1">
                 <Button
                     variant="outline"
                     size="sm"
                     onClick={() => setIsSubmitting(!isSubmitting)}
-                    className="cursor-pointer mx-2"
+                    className="cursor-pointer mx-1"
                 >
                     {isSubmitting ? 'Stop Submitting' : 'Show Submitting State'}
                 </Button>
@@ -1291,7 +1697,7 @@ const steps = [ ... ]; // Your step configuration
             {/* Preview and Code Tabs */}
             <Tabs>
                 <TabItem value="preview" label="Preview">
-                    <div className="border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden mt-4">
+                    <div className="border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden">
                         <MultiStepForm
                             key={`demo-${animationKey}`}
                             steps={steps}
@@ -1302,7 +1708,6 @@ const steps = [ ... ]; // Your step configuration
                             buttonVariant={buttonVariant}
                             buttonAnimationVariant={buttonVariant !== 'default' ? 'scaleHeartBeat' : undefined}
                             showReviewStep={showReviewStep}
-                            showStepIndicator={showStepIndicator}
                             showCancelButton={showCancelButton}
                             showSuccessNotification={showSuccessNotification}
                             isLoading={isLoading}
@@ -1312,9 +1717,17 @@ const steps = [ ... ]; // Your step configuration
                             <MultiStepForm.Header
                                 title={`${formType.charAt(0).toUpperCase() + formType.slice(1)} Form`}
                                 icon={<CurrentIcon className="w-4 h-4" />}
+                                titleVariant="h1"
+                                titleClassName="text-4xl font-bold"
+                                iconSize={32}
+                                iconClassName="w-12 h-12"
                             />
 
-                            {showStepIndicator && <MultiStepForm.StepIndicator />}
+                            {showStepIndicator && (
+                                <div className="container max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                                    <MultiStepForm.StepIndicator className='my-8' />
+                                </div>
+                            )}
 
                             <MultiStepForm.Content>
                                 {steps.map((step, index) => (
