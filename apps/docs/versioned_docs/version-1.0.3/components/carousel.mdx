@@ -1,3 +1,51 @@
+---
+sidebar_position: 1
+title: Carousel
+description: A flexible carousel component with navigation controls, dots indicators, thumbnails, animations, and responsive support.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  CarouselDots,
+  CarouselThumbnails,
+} from '@site/src/components/UI/carousel';
+
+import {
+  BasicCarouselDemo,
+  ThumbnailsDemo,
+  ResponsiveCarouselDemo,
+} from '@site/src/components/Demo/CarouselDemo';
+
+The Carousel component is a flexible, feature-rich carousel/slider component that supports navigation controls, dot indicators, thumbnails, multiple animation types, auto-play, looping, and responsive design. It's built with React, TypeScript, and Framer Motion for smooth animations.
+
+## Basic Carousel
+
+<BasicCarouselDemo />
+
+## Thumbnails
+
+<ThumbnailsDemo />
+
+## Split Carousel
+
+<ResponsiveCarouselDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component carousel
+    ```
+  </TabItem>
+  <TabItem value="manual" label="MANUAL">
+    ```tsx
 "use client";
 
 import * as React from "react";
@@ -748,10 +796,10 @@ export const CarouselPrevious: React.FC<CarouselNavigationProps> = ({
   variant = "default",
   size = "md",
 }) => {
-  const { index, goToPrevious, dotsPosition, split = false, isMobile = false, loop = true } = useCarousel();
+  const { index, goToPrevious, dotsPosition, split = false, isMobile = false } = useCarousel();
 
-  // Disable Previous button at first slide only when loop is false
-  const isDisabled = !loop && index === 0;
+  // Disable Previous button at first slide (regardless of loop setting)
+  const isDisabled = index === 0;
   const isVertical = dotsPosition === "left" || dotsPosition === "right";
 
   const sizeClasses = {
@@ -1156,3 +1204,209 @@ export const CarouselThumbnails: React.FC<CarouselThumbnailsProps> = ({
     </div>
   );
 }
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+### Basic Example
+
+```tsx
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  CarouselDots,
+} from '@ignix-ui/carousel';
+
+function MyCarousel() {
+  return (
+    <Carousel>
+      <CarouselContent>
+        <CarouselItem>
+          <div className="flex h-64 items-center justify-center bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+            Slide One
+          </div>
+        </CarouselItem>
+        <CarouselItem>
+          <div className="flex h-64 items-center justify-center bg-gradient-to-r from-emerald-500 to-teal-600 text-white">
+            Slide Two
+          </div>
+        </CarouselItem>
+        <CarouselItem>
+          <div className="flex h-64 items-center justify-center bg-gradient-to-r from-orange-500 to-red-600 text-white">
+            Slide Three
+          </div>
+        </CarouselItem>
+      </CarouselContent>
+      <CarouselPrevious />
+      <CarouselNext />
+      <CarouselDots />
+    </Carousel>
+  );
+}
+```
+
+### With Auto-Play
+
+```tsx
+<Carousel autoPlay interval={3000}>
+  <CarouselContent>
+    {/* Carousel items */}
+  </CarouselContent>
+  <CarouselPrevious />
+  <CarouselNext />
+  <CarouselDots />
+</Carousel>
+```
+
+### With Animations
+
+```tsx
+<Carousel animation="fade" transitionDuration={500}>
+  <CarouselContent>
+    {/* Carousel items */}
+  </CarouselContent>
+  <CarouselPrevious />
+  <CarouselNext />
+  <CarouselDots />
+</Carousel>
+```
+
+### With Thumbnails
+
+```tsx
+const thumbnails = [
+  'https://example.com/thumb1.jpg',
+  'https://example.com/thumb2.jpg',
+  'https://example.com/thumb3.jpg',
+];
+
+<Carousel>
+  <CarouselContent>
+    {thumbnails.map((thumbnail, index) => (
+      <CarouselItem key={index}>
+        <img src={thumbnail} alt={`Slide ${index + 1}`} />
+      </CarouselItem>
+    ))}
+  </CarouselContent>
+  <CarouselPrevious />
+  <CarouselNext />
+  <CarouselThumbnails thumbnails={thumbnails} />
+</Carousel>
+```
+
+
+## Props
+
+The main carousel container component.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | - | Carousel content and controls |
+| `className` | `string` | - | Additional CSS classes |
+| `autoPlay` | `boolean` | `false` | Enable auto-play |
+| `interval` | `number` | `4000` | Auto-play interval in milliseconds |
+| `pauseOnHover` | `boolean` | `true` | Pause auto-play on hover |
+| `loop` | `boolean` | `true` | Enable infinite loop |
+| `animation` | `"none" \| "fade" \| "slide" \| "scale" \| "slideUp" \| "slideDown" \| "slideLeft" \| "slideRight"` | `"none"` | Animation type |
+| `transitionDuration` | `number` | `500` | Animation duration in milliseconds |
+
+### CarouselContent
+
+Container for carousel items.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | - | Carousel items |
+| `className` | `string` | - | Additional CSS classes |
+| `split` | `boolean` | `false` | Enable split mode to show multiple items (3 on desktop, 1 on mobile) |
+
+### CarouselItem
+
+Individual carousel slide/item.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | - | Item content |
+| `className` | `string` | - | Additional CSS classes |
+
+### CarouselPrevious
+
+Previous navigation button.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | - | Additional CSS classes |
+| `variant` | `"default" \| "outline" \| "ghost"` | `"default"` | Button variant |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Button size |
+
+### CarouselNext
+
+Next navigation button.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | - | Additional CSS classes |
+| `variant` | `"default" \| "outline" \| "ghost"` | `"default"` | Button variant |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Button size |
+
+### CarouselDots
+
+Dot indicators for carousel navigation.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | - | Additional CSS classes |
+| `variant` | `"dots" \| "lines"` | `"dots"` | Dots variant |
+| `position` | `"top" \| "bottom" \| "left" \| "right"` | `"bottom"` | Dots position (left/right creates vertical carousel) |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Dots size |
+
+### CarouselThumbnails
+
+Thumbnail navigation for carousel.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `thumbnails` | `string[]` | - | Array of thumbnail image URLs (required) |
+| `className` | `string` | - | Additional CSS classes |
+| `position` | `"top" \| "bottom" \| "left" \| "right"` | `"bottom"` | Thumbnails position |
+| `variant` | `"default" \| "outline" \| "minimal"` | `"default"` | Thumbnails variant |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Thumbnails size |
+| `autoPlay` | `boolean` | - | Inherit from Carousel |
+| `loop` | `boolean` | - | Inherit from Carousel |
+| `animation` | `CarouselAnimation` | - | Inherit from Carousel |
+| `transitionDuration` | `number` | - | Inherit from Carousel |
+
+## Features
+
+- **Navigation Controls**: Previous/Next buttons with customizable variants
+- **Dot Indicators**: Multiple variants (dots, lines) and positions (top, bottom, left, right)
+- **Thumbnail Navigation**: Image thumbnails for visual navigation
+- **Animations**: Fade, slide, scale, and directional slide animations using Framer Motion
+- **Auto-Play**: Configurable auto-play with pause on hover
+- **Infinite Loop**: Seamless looping through carousel items
+- **Split Mode**: Show multiple items at once (3 on desktop, 1 on mobile) using the `split` prop
+- **Vertical Orientation**: Support for vertical carousel when dots are positioned at left/right
+- **Keyboard Navigation**: Arrow keys for navigation
+- **Accessibility**: ARIA labels and keyboard support
+
+## Animation Types
+
+- **none**: No animation (default, best for split mode)
+- **fade**: Fade in/out transition
+- **slide**: Horizontal slide animation
+- **scale**: Scale in/out animation
+- **slideUp**: Slide up from bottom
+- **slideDown**: Slide down from top
+- **slideLeft**: Slide in from right
+- **slideRight**: Slide in from left
+
+
+
+
+
+
