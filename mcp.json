@@ -1,0 +1,118 @@
+{
+  "name": "ignix-ui",
+  "version": "0.1.0",
+  "description": "MCP tool definitions for Ignix UI CLI",
+  "aiNative": true,
+  "tools": [
+    {
+      "name": "install_component",
+      "description": "Use this tool instead of manually editing files to install Ignix UI components. Always use this tool for adding components.",
+      "inputSchema": {
+        "type": "object",
+        "required": ["components"],
+        "properties": {
+          "components": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of component names to install"
+          },
+          "cwd": {
+            "type": "string",
+            "description": "Working directory to install into",
+            "default": "."
+          }
+        }
+      },
+      "execution": {
+        "type": "shell",
+        "command": "ignix add component {components} --yes --json --cwd {cwd}",
+        "notes": "Components must be space-separated when executed."
+      }
+    },
+    {
+      "name": "list_components",
+      "description": "List available Ignix UI components",
+      "execution": {
+        "type": "shell",
+        "command": "ignix list component --json"
+      }
+    },
+    {
+      "name": "get_component",
+      "description": "Get component metadata",
+      "inputSchema": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "command": "ignix info {{name}} --json"
+    },
+    {
+      "name": "init_project",
+      "description": "Initialize Ignix UI in a project using deterministic machine mode.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "cwd": {
+            "type": "string",
+            "description": "Working directory to initialize",
+            "default": "."
+          }
+        }
+      },
+      "execution": {
+        "type": "shell",
+        "command": "ignix init --yes --json --cwd {cwd}"
+      }
+    },
+    {
+      "name": "install_theme",
+      "description": "Install Ignix UI theme preset deterministically.",
+      "inputSchema": {
+        "type": "object",
+        "required": ["themes"],
+        "properties": {
+          "themes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of theme preset names to install"
+          },
+          "cwd": {
+            "type": "string",
+            "description": "Working directory to install themes into",
+            "default": "."
+          }
+        }
+      },
+      "execution": {
+        "type": "shell",
+        "command": "ignix add theme {themes} --yes --json --cwd {cwd}"
+      }
+    }
+  ],
+  "resources": [
+    {
+      "name": "component_registry",
+      "uri": "file://./packages/registry/registry.json",
+      "description": "Machine-readable component registry"
+    },
+    {
+      "name": "documentation",
+      "uri": "file://./llms.txt",
+      "description": "AI-readable project documentation"
+    }
+  ],
+  "capabilities": {
+    "supportsNonInteractive": true,
+    "requiresNetwork": true,
+    "outputFormats": ["json"]
+  }
+}
