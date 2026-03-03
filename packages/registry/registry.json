@@ -1060,6 +1060,25 @@
         }
       }
     },
+    "dashboard-overview-page": {
+      "name": "dashboard-overview-page",
+      "description": "A composable analytics dashboard template with KPI cards, key metrics grid, paginated activity list, CTA actions, and date-range filtering.",
+      "dependencies": [
+        "react-icons"
+      ],
+      "componentDependencies": [
+        "button",
+        "card",
+        "datePicker",
+        "pagination"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/dashboard-overview/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "imageCard": {
       "name": "ImageCard",
       "description": "An image card component with different variants",

@@ -16,6 +16,8 @@ import { templateCommand } from './commands/template';
 
 const program = new Command();
 
+const isMachineMode = process.argv.includes('--json');
+
 program.version(chalk.red('1.0.0'));
 // Register Commands
 program.addCommand(initCommand);
@@ -25,8 +27,10 @@ program.addCommand(themesCommand);
 program.addCommand(startersCommandMonorepo);
 program.addCommand(startersCommandNextjsApp);
 program.addCommand(startersCommandViteReact);
+program.addCommand(templateCommand);
 // Display welcome message
 function showWelcome(): void {
+  if (isMachineMode) return;
   console.log(`
 ${chalk.hex('#FF0000').bold('  ██╗ ██████╗ ███╗   ██╗██╗███ ███╗    ██╗   ██╗██╗')}
 ${chalk.hex('#FF2A2A').bold('  ██║██╔════╝ ████╗  ██║██║╚██ ██╝║    ██║   ██║██║')}
@@ -154,7 +158,7 @@ async function startInteractiveCLI(): Promise<void> {
 }
 
 // Check if running in interactive mode or with arguments
-if (process.argv.length <= 2) {
+if (process.argv.length <= 2 && !isMachineMode) {
   // No arguments provided - start interactive mode
   startInteractiveCLI().catch((error) => {
     console.error(chalk.red('Fatal error:'), error);
@@ -162,6 +166,8 @@ if (process.argv.length <= 2) {
   });
 } else {
   // Arguments provided - run as normal CLI
-  showWelcome();
+  if (!isMachineMode) {
+    showWelcome();
+  }
   program.parse();
 }
