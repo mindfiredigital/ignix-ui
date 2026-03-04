@@ -228,7 +228,7 @@
                 "templates/pages/authentication/sign-up",
                 "templates/pages/authentication/two-factor-auth-setup-page"
               ]
-            },
+            }, 
             {
               "type": "category",
               "label": "Account Management",
