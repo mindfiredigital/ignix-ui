@@ -221,6 +221,29 @@ export interface MultiStepFormProps {
     darkMode?: boolean;
 }
 
+/**
+ * MultiStepForm - A comprehensive multi-step form component with validation, navigation, and review capabilities
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <MultiStepForm steps={steps} onSubmit={handleSubmit}>
+ *   <MultiStepForm.Header title="Registration Form" />
+ *   <MultiStepForm.StepIndicator />
+ *   <MultiStepForm.Content>
+ *     {steps.map(step => (
+ *       <div key={step.id}>
+ *         {step.fields.map(field => (
+ *           <MultiStepForm.Field key={field.id} field={field} />
+ *         ))}
+ *       </div>
+ *     ))}
+ *   </MultiStepForm.Content>
+ *   <MultiStepForm.Navigation />
+ *   <MultiStepForm.Review />
+ * </MultiStepForm>
+ * ```
+ */
 const MultiStepForm: React.FC<MultiStepFormProps> & {
     Header: typeof MultiStepHeader;
     StepIndicator: typeof MultiStepStepIndicator;
@@ -579,6 +602,20 @@ export interface MultiStepHeaderProps {
     iconSize?: number;
 }
 
+/**
+ * MultiStepHeader - Sticky header component for the multi-step form
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <MultiStepForm.Header 
+ *   title="Registration Form"
+ *   icon={<UserIcon />}
+ *   titleVariant="h4"
+ *   titleWeight="bold"
+ * />
+ * ```
+ */
 const MultiStepHeader: React.FC<MultiStepHeaderProps> = ({
     title,
     icon = <LightningBoltIcon className="w-4 h-4" />,
@@ -655,6 +692,19 @@ export interface MultiStepStepIndicatorProps {
     completedTextColor?: string; // Add this
 }
 
+/**
+ * MultiStepStepIndicator - Visual indicator showing progress through form steps
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <MultiStepForm.StepIndicator 
+ *   variant="pills"
+ *   completedColor="bg-green-600"
+ *   completedTextColor="text-green-600"
+ * />
+ * ```
+ */
 const MultiStepStepIndicator: React.FC<MultiStepStepIndicatorProps> = ({
     variant = 'default',
     className,
@@ -760,6 +810,23 @@ export interface MultiStepContentProps {
     className?: string;
 }
 
+/**
+ * MultiStepContent - Container for form step content with animations
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <MultiStepForm.Content className="p-6">
+ *   {steps.map(step => (
+ *     <div key={step.id}>
+ *       {step.fields.map(field => (
+ *         <MultiStepForm.Field key={field.id} field={field} />
+ *       ))}
+ *     </div>
+ *   ))}
+ * </MultiStepForm.Content>
+ * ```
+ */
 const MultiStepContent: React.FC<MultiStepContentProps> = ({
     children,
     className
@@ -863,6 +930,24 @@ export interface MultiStepFieldProps {
     className?: string;
 }
 
+/**
+ * MultiStepField - Renders an individual form field with validation and error handling
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <MultiStepForm.Field 
+ *   field={{
+ *     id: 'email',
+ *     name: 'email',
+ *     label: 'Email Address',
+ *     type: 'email',
+ *     required: true
+ *   }}
+ *   className="mb-4"
+ * />
+ * ```
+ */
 const MultiStepField: React.FC<MultiStepFieldProps> = ({
     field,
     className
@@ -1131,6 +1216,18 @@ export interface MultiStepReviewProps {
     children?: React.ReactNode;
 }
 
+/**
+ * MultiStepReview - Review step showing all form data before submission
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <MultiStepForm.Review 
+ *   onEditStep={(step) => console.log(`Edit step ${step}`)}
+ *   className="mt-4"
+ * />
+ * ```
+ */
 const MultiStepReview: React.FC<MultiStepReviewProps> = ({
     onEditStep,
     className,
@@ -1251,6 +1348,21 @@ export interface MultiStepNavigationProps {
 // Add this type alias near your other types
 export type ButtonVariant = "default" | "link" | "primary" | "secondary" | "success" | "warning" | "none" | "danger" | "outline" | "ghost" | "subtle" | "elevated" | "glass" | "neon" | "pill";
 
+/**
+ * MultiStepNavigation - Navigation controls for moving between form steps
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <MultiStepForm.Navigation 
+ *   backButtonLabel="← Previous"
+ *   nextButtonLabel="Continue →"
+ *   submitButtonLabel="Complete"
+ *   showCancelButton={true}
+ *   onCancel={handleCancel}
+ * />
+ * ```
+ */
 const MultiStepNavigation: React.FC<MultiStepNavigationProps> = ({
     backButtonLabel: customBackLabel,
     nextButtonLabel: customNextLabel,
@@ -1386,6 +1498,20 @@ export interface MultiStepNotificationProps {
     className?: string;
 }
 
+/**
+ * MultiStepNotification - Toast notification for form submission feedback
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <MultiStepForm.Notification 
+ *   type="success"
+ *   message="Form submitted successfully!"
+ *   onClose={() => setShowNotification(false)}
+ *   duration={3000}
+ * />
+ * ```
+ */
 const MultiStepNotification: React.FC<MultiStepNotificationProps> = ({
     type = 'success',
     message,
