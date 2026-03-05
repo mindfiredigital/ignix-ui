@@ -1,39 +1,49 @@
 import { getPackageManager } from '../utils/getPackageManager';
 import { logger } from '../utils/logger';
 
-const run = async (command: string, args: readonly string[], cwd: string) => {
-  const { execa } = await import('execa');
-  return execa(command, args, { stdio: 'inherit', cwd });
+const execa = async (...args: any[]): Promise<any> => {
+  const { execa: execaImport } = await import('execa');
+  return (execaImport as any)(...args);
 };
 
 export class DependencyService {
-  public async install(packages: string[], isDev: boolean): Promise<void> {
-    if (!packages.length) return;
+  public async install(packages: string[], isDev: boolean, silent = false): Promise<void> {
+    if (packages.length === 0) return;
 
-    const pm = await getPackageManager();
-    let args: string[] = [];
+    const packageManager = await getPackageManager();
 
-    if (pm === 'npm') {
-      args = ['install', ...packages];
-      if (isDev) args.push('--save-dev');
+    const args: string[] = [];
+
+    // npm uses 'install', while yarn and pnpm use 'add'
+    if (packageManager === 'npm') {
+      args.push('install');
+      if (isDev) {
+        args.push('--save-dev');
+      }
     } else {
-      args = ['add', ...packages];
-      if (isDev) args.push('-D');
+      args.push('add');
+      if (isDev) {
+        args.push('-D');
+      }
     }
 
-    try {
-      logger.info(`Installing dependencies: ${pm} ${args.join(' ')}`);
-      await run(pm, args, process.cwd());
-      logger.success(`Installed: ${packages.join(', ')}`);
-    } catch (err) {
-      if (pm === 'npm') {
-        logger.warn('Retrying with --legacy-peer-deps...');
-        await run('npm', ['install', ...packages, '--legacy-peer-deps'], process.cwd());
-        logger.success(`Installed with fallback`);
-        return;
-      }
+    args.push(...packages);
 
-      logger.error(String(err));
+    try {
+      if (!silent) {
+        logger.info(`Installing dependencies: ${packageManager} ${args.join(' ')}`);
+      }
+      await execa(packageManager, args, {
+        stdio: silent ? 'ignore' : 'inherit',
+        cwd: process.cwd(),
+      });
+      if (!silent) {
+        logger.success(`Successfully installed: ${packages.join(', ')}`);
+      }
+    } catch (error) {
+      if (!silent) {
+        logger.error(error as string);
+      }
       throw new Error(`Failed to install dependencies: ${packages.join(', ')}`);
     }
   }
