@@ -143,6 +143,22 @@
         }
       }
     },
+    "statsGrid" :{
+      "name": "StatsGrid",
+      "description": "A responsive grid layout for displaying statistics with animated count-up and staggered entrance effects.",
+      "dependencies": [
+        "lucide-react", 
+        "class-variance-authority",
+        "framer-motion"
+      ],
+      "componentDependencies": [      ],
+      "files": {
+        "main": {
+          "path": "templates/sections/stats-grid/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "auto-grid": {
       "name": "AutoGrid",
       "description": "A self-calculating grid layout that automatically determines columns based on available space and minimum item width, with support for max columns, gap, and balanced heights.",
