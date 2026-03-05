@@ -389,6 +389,21 @@ export interface StatValueProps {
     color?: string; // Custom color
 }
 
+/**
+ * Renders a formatted statistic value with optional count-up animation
+ * @component
+ * @param {Object} props - Component props
+ * @param {number} props.value - The numeric value to display
+ * @param {NumberFormat} [props.format="compact"] - Format style (raw, compact, currency, percentage)
+ * @param {string} [props.prefix=""] - Text to display before the value
+ * @param {string} [props.suffix=""] - Text to display after the value
+ * @param {number} [props.decimals=1] - Number of decimal places to show
+ * @param {boolean} [props.animated=true] - Whether to animate the count-up
+ * @param {number} [props.delay=0] - Delay before animation starts (in seconds)
+ * @param {string} [props.className] - Additional CSS classes
+ * @param {'p' | 'span' | 'div'} [props.as="p"] - HTML element to render
+ * @param {string} [props.color] - Custom text color class
+ */
 export const StatValue: React.FC<StatValueProps> = ({
     value,
     format = "compact",
@@ -435,6 +450,15 @@ export interface StatLabelProps {
     color?: string;
 }
 
+/**
+ * Renders a label for a statistic
+ * @component
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Label content
+ * @param {string} [props.className] - Additional CSS classes
+ * @param {'p' | 'span' | 'div' | 'h3' | 'h4'} [props.as="p"] - HTML element to render
+ * @param {string} [props.color] - Custom text color class
+ */
 export const StatLabel: React.FC<StatLabelProps> = ({
     children,
     className,
@@ -463,6 +487,15 @@ export interface StatSubtextProps {
     color?: string;
 }
 
+/**
+ * Renders additional descriptive text for a statistic
+ * @component
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Subtext content
+ * @param {string} [props.className] - Additional CSS classes
+ * @param {'p' | 'span' | 'div'} [props.as="p"] - HTML element to render
+ * @param {string} [props.color] - Custom text color class
+ */
 export const StatSubtext: React.FC<StatSubtextProps> = ({
     children,
     className,
@@ -494,6 +527,18 @@ export interface StatIconProps {
     solid?: boolean; // Use solid vibrant colors instead of light backgrounds
 }
 
+/**
+ * Renders an icon with accent colors for a statistic
+ * @component
+ * @param {Object} props - Component props
+ * @param {IconComponent} props.icon - Icon component to render
+ * @param {StatAccent} [props.accent="default"] - Color accent for the icon
+ * @param {string} [props.className] - Additional CSS classes
+ * @param {'sm' | 'md' | 'lg'} [props.size="md"] - Size of the icon container
+ * @param {string} [props.bgColor] - Custom background color class
+ * @param {string} [props.iconColor] - Custom icon color class
+ * @param {boolean} [props.solid=false] - Whether to use solid vibrant colors
+ */
 export const StatIcon: React.FC<StatIconProps> = ({
     icon: Icon,
     accent = "default",
@@ -556,6 +601,15 @@ StatIcon.displayName = "StatIcon";
    BASIC CHILD COMPONENTS
 ============================================ */
 
+/**
+ * Renders the title for the stats grid
+ * @component
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Title content
+ * @param {string} [props.className] - Additional CSS classes
+ * @param {"h1" | "h2" | "h3" | "h4" | "h5" | "h6"} [props.as="h2"] - Heading level to render
+ * @param {string} [props.color] - Custom text color class
+ */
 export const StatsGridTitle: React.FC<{
     children: React.ReactNode;
     className?: string;
@@ -597,6 +651,14 @@ export const StatsGridTitle: React.FC<{
 
 StatsGridTitle.displayName = "StatsGridTitle";
 
+/**
+ * Renders the description for the stats grid
+ * @component
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Description content
+ * @param {string} [props.className] - Additional CSS classes
+ * @param {string} [props.color] - Custom text color class
+ */
 export const StatsGridDescription: React.FC<{
     children: React.ReactNode;
     className?: string;
@@ -655,6 +717,21 @@ export interface StatsGridCardProps {
     iconSolid?: boolean;
 }
 
+/**
+ * Renders an individual statistic card
+ * @component
+ * @param {Object} props - Component props
+ * @param {StatItem} props.stat - Statistic data object
+ * @param {number} [props.index=0] - Index for animation staggering
+ * @param {string} [props.className] - Additional CSS classes
+ * @param {string} [props.bgColor] - Custom background color class
+ * @param {string} [props.borderColor] - Custom border color class
+ * @param {string} [props.borderWidth] - Custom border width
+ * @param {string} [props.textColor] - Custom text color class
+ * @param {string} [props.iconBgColor] - Custom icon background color class
+ * @param {string} [props.iconColor] - Custom icon color class
+ * @param {boolean} [props.iconSolid=false] - Whether to use solid icon colors
+ */
 export const StatsGridCard: React.FC<StatsGridCardProps> = ({
     stat,
     index = 0,
@@ -796,6 +873,13 @@ StatsGridCard.displayName = "StatsGridCard";
    GRID CONTAINER COMPONENT
 ============================================ */
 
+/**
+ * Container component that renders the grid layout for statistic cards
+ * @component
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Statistic card components
+ * @param {string} [props.className] - Additional CSS classes
+ */
 export const StatsGridContainer: React.FC<{
     children: React.ReactNode;
     className?: string;
@@ -822,6 +906,14 @@ StatsGridContainer.displayName = "StatsGridContainer";
    HEADER COMPONENT
 ============================================ */
 
+/**
+ * Header component that combines title and description
+ * @component
+ * @param {Object} props - Component props
+ * @param {string} [props.title] - Title text
+ * @param {string} [props.description] - Description text
+ * @param {string} [props.className] - Additional CSS classes
+ */
 export const StatsGridHeader: React.FC<{
     title?: string;
     description?: string;
@@ -850,6 +942,34 @@ StatsGridHeader.displayName = "StatsGridHeader";
    MAIN COMPONENT
 ============================================ */
 
+/**
+ * Root component for the statistics grid system. Provides context and layout for all stat components.
+ * @component
+ * @param {Object} props - Component props
+ * @param {"default" | "dark" | "light"} [props.variant="default"] - Visual theme variant
+ * @param {2 | 3 | 4 | 5 | 6} [props.columns=4] - Number of columns in the grid
+ * @param {"left" | "center" | "right"} [props.contentAlign="center"] - Content alignment
+ * @param {boolean} [props.animated=true] - Whether to enable animations
+ * @param {number} [props.animationDelay=0] - Delay before animations start (in seconds)
+ * @param {AnimationType} [props.animationType="slide"] - Type of animation
+ * @param {number} [props.staggerDelay=0.1] - Delay between each item's animation
+ * @param {"sm" | "md" | "lg" | "xl" | "2xl"} [props.padding="lg"] - Section padding
+ * @param {"sm" | "md" | "lg" | "xl"} [props.gap="md"] - Gap between grid items
+ * @param {"small" | "normal" | "large" | "full" | "readable"} [props.containerSize="normal"] - Container max-width
+ * @param {string} [props.bgColor] - Custom background color class
+ * @param {string} [props.textColor] - Custom text color class
+ * @param {string} [props.cardBgColor] - Custom card background color class
+ * @param {string} [props.cardBorderColor] - Custom card border color class
+ * @param {string} [props.cardBorderWidth] - Custom card border width
+ * @param {string} [props.iconBgColor] - Custom icon background color class
+ * @param {string} [props.iconColor] - Custom icon color class
+ * @param {string} [props.title] - Section title
+ * @param {string} [props.description] - Section description
+ * @param {StatItem[]} [props.stats] - Array of statistic items to display
+ * @param {string} [props.ariaLabel] - Custom ARIA label for accessibility
+ * @param {string} [props.role="region"] - ARIA role
+ * @param {React.ReactNode} [props.children] - Child components (for compound component pattern)
+ */
 export const StatsGridRoot: React.FC<StatsGridProps> = ({
     // Layout & Variants
     variant = "default",
