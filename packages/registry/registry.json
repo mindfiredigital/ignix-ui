@@ -382,6 +382,22 @@
         }
       }
     },
+    "multiStepForm": {
+      "name": "MultiStepForm",
+      "description": "A multi-step form component to guide users through complex processes with step indicators, navigation controls, validation, and review screens. Supports linear and non-linear flows, customizable button labels, and optional cancel functionality.",
+      "dependencies": ["framer-motion", "lucide-react", "class-variance-authority"],
+      "componentDependencies": [
+        "button",
+        "input",
+        "typography"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/multi-step-form/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "textarea": {
       "name": "Textarea",
       "description": "An animated textarea component with different variants",
