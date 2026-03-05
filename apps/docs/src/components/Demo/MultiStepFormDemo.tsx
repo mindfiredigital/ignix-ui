@@ -10,28 +10,32 @@ import CodeBlock from '@theme/CodeBlock';
 import VariantSelector from './VariantSelector';
 import { useColorMode } from '@docusaurus/theme-common';
 import {
-    User,
-    Mail,
-    Briefcase,
-    MapPin,
-    Phone,
-    Lock,
-    Calendar,
-    CreditCard,
-    Home,
-    Bell,
-    Globe,
-    Github,
-    Linkedin,
-    Building,
-    Heart,
-    FileText,
-    BookOpen,
-    Code,
-    BarChart,
-    Users,
-    Hash,
-} from 'lucide-react';
+    PersonIcon,
+    EnvelopeClosedIcon,
+    ReaderIcon,           // Replaces BriefcaseIcon (for documents/role)
+    LapTimerIcon,         // Replaces BarChartIcon (for experience/time)
+    ChatBubbleIcon,       // Replaces PhoneIcon (for messages/contact)
+    LockClosedIcon,
+    CalendarIcon,
+    CardStackIcon,
+    HomeIcon,
+    BellIcon,
+    GlobeIcon,
+    GitHubLogoIcon,
+    LinkedInLogoIcon,
+    RocketIcon,
+    HeartIcon,
+    FileTextIcon,
+    CodeIcon,
+    DrawingPinIcon,       // Replaces MapPinIcon
+    CrumpledPaperIcon,    // Replaces BuildingIcon (for location/building)
+    BookmarkIcon,         // Replaces BookOpenIcon (for education)
+    PlusIcon,             // Replaces HashIcon (for quantity/count)
+    CheckCircledIcon,
+    CheckIcon,
+    LightningBoltIcon,
+    LayersIcon,
+} from '@radix-ui/react-icons';
 import { cn } from '@site/src/utils/cn';
 import { Button } from '@site/src/components/UI/button';
 
@@ -94,22 +98,22 @@ const formTypeOptions = [
 
 // Form icons mapping
 const formIcons = {
-    onboarding: User,
-    registration: Lock,
-    payment: CreditCard,
-    job: Briefcase,
-    event: Calendar,
-    profile: User,
+    onboarding: PersonIcon,
+    registration: LockClosedIcon,
+    payment: CardStackIcon,
+    job: ReaderIcon,
+    event: CalendarIcon,
+    profile: PersonIcon,
 };
 
 // Icon names for code generation
 const iconNames = {
-    onboarding: 'User',
-    registration: 'Lock',
-    payment: 'CreditCard',
-    job: 'Briefcase',
-    event: 'Calendar',
-    profile: 'User',
+    onboarding: 'PersonIcon',
+    registration: 'LockClosedIcon',
+    payment: 'CardStackIcon',
+    job: 'BriefcaseIcon',
+    event: 'CalendarIcon',
+    profile: 'PersonIcon',
 };
 
 // ==============================
@@ -230,7 +234,7 @@ const onboardingSteps: FormStep[] = [
                 type: 'text',
                 placeholder: 'John',
                 required: true,
-                icon: User,
+                icon: PersonIcon,
                 colSpan: 'half',
                 validation: (value) => {
                     if (typeof value === 'string' && value.length < 2) {
@@ -246,7 +250,7 @@ const onboardingSteps: FormStep[] = [
                 type: 'text',
                 placeholder: 'Doe',
                 required: true,
-                icon: User,
+                icon: PersonIcon,
                 colSpan: 'half',
                 validation: (value) => {
                     if (typeof value === 'string' && value.length < 2) {
@@ -262,7 +266,7 @@ const onboardingSteps: FormStep[] = [
                 type: 'email',
                 placeholder: 'john@example.com',
                 required: true,
-                icon: Mail,
+                icon: EnvelopeClosedIcon,
                 colSpan: 'full',
                 validation: (value) => {
                     if (typeof value === 'string') {
@@ -291,7 +295,7 @@ const onboardingSteps: FormStep[] = [
                     { value: 'manager', label: 'Manager' },
                     { value: 'other', label: 'Other' },
                 ],
-                icon: Briefcase,
+                icon: ReaderIcon,
                 colSpan: 'full',
             },
             {
@@ -305,6 +309,7 @@ const onboardingSteps: FormStep[] = [
                     { value: 'intermediate', label: 'Intermediate (3-5 years)' },
                     { value: 'senior', label: 'Senior (5+ years)' },
                 ],
+                icon: LapTimerIcon,
                 colSpan: 'full',
             },
             {
@@ -314,6 +319,7 @@ const onboardingSteps: FormStep[] = [
                 type: 'textarea',
                 placeholder: 'Tell us about yourself in a few sentences...',
                 required: false,
+                icon: FileTextIcon,
                 colSpan: 'full',
                 validation: (value) => {
                     if (typeof value === 'string' && value.length > 500) {
@@ -337,6 +343,7 @@ const onboardingSteps: FormStep[] = [
                 placeholder: 'Subscribe to our newsletter',
                 required: false,
                 defaultValue: true,
+                icon: HeartIcon,
                 colSpan: 'full',
             },
             {
@@ -351,7 +358,7 @@ const onboardingSteps: FormStep[] = [
                     { value: 'phone', label: 'Phone' },
                     { value: 'sms', label: 'SMS' },
                 ],
-                icon: Bell,
+                icon: BellIcon,
                 colSpan: 'full',
             },
         ],
@@ -372,7 +379,7 @@ const registrationSteps: FormStep[] = [
                 type: 'text',
                 placeholder: 'johndoe',
                 required: true,
-                icon: User,
+                icon: PersonIcon,
                 colSpan: 'full',
                 validation: (value) => {
                     if (typeof value === 'string') {
@@ -393,7 +400,7 @@ const registrationSteps: FormStep[] = [
                 type: 'email',
                 placeholder: 'john@example.com',
                 required: true,
-                icon: Mail,
+                icon: EnvelopeClosedIcon,
                 colSpan: 'full',
                 validation: (value) => {
                     if (typeof value === 'string') {
@@ -413,7 +420,7 @@ const registrationSteps: FormStep[] = [
                 type: 'password',
                 placeholder: '••••••••',
                 required: true,
-                icon: Lock,
+                icon: LockClosedIcon,
                 colSpan: 'half',
                 validation: (value) => {
                     if (typeof value === 'string') {
@@ -429,7 +436,7 @@ const registrationSteps: FormStep[] = [
                 type: 'password',
                 placeholder: '••••••••',
                 required: true,
-                icon: Lock,
+                icon: LockClosedIcon,
                 colSpan: 'half',
             },
         ],
@@ -453,7 +460,7 @@ const registrationSteps: FormStep[] = [
                 type: 'text',
                 placeholder: 'John',
                 required: true,
-                icon: User,
+                icon: PersonIcon,
                 colSpan: 'half',
                 validation: (value) => {
                     if (typeof value === 'string' && value.length < 2) {
@@ -469,7 +476,7 @@ const registrationSteps: FormStep[] = [
                 type: 'text',
                 placeholder: 'Doe',
                 required: true,
-                icon: User,
+                icon: PersonIcon,
                 colSpan: 'half',
                 validation: (value) => {
                     if (typeof value === 'string' && value.length < 2) {
@@ -485,7 +492,7 @@ const registrationSteps: FormStep[] = [
                 type: 'tel',
                 placeholder: '+1 (555) 123-4567',
                 required: false,
-                icon: Phone,
+                icon: ChatBubbleIcon,
                 colSpan: 'half',
                 validation: (value) => {
                     if (typeof value === 'string' && value) {
@@ -501,7 +508,7 @@ const registrationSteps: FormStep[] = [
                 type: 'text',
                 placeholder: 'City, Country',
                 required: false,
-                icon: MapPin,
+                icon: DrawingPinIcon,
                 colSpan: 'half',
             },
         ],
@@ -519,6 +526,7 @@ const registrationSteps: FormStep[] = [
                 placeholder: 'Subscribe to our newsletter for updates',
                 required: false,
                 defaultValue: true,
+                icon: HeartIcon,
                 colSpan: 'full',
             },
             {
@@ -533,7 +541,7 @@ const registrationSteps: FormStep[] = [
                     { value: 'important', label: 'Important only' },
                     { value: 'none', label: 'No notifications' },
                 ],
-                icon: Bell,
+                icon: BellIcon,
                 colSpan: 'full',
             },
         ],
@@ -554,7 +562,7 @@ const paymentSteps: FormStep[] = [
                 type: 'text',
                 placeholder: 'John Doe',
                 required: true,
-                icon: User,
+                icon: PersonIcon,
                 colSpan: 'full',
                 validation: (value) => {
                     if (typeof value === 'string' && value.length < 3) {
@@ -570,7 +578,7 @@ const paymentSteps: FormStep[] = [
                 type: 'text',
                 placeholder: '123 Main St',
                 required: true,
-                icon: Home,
+                icon: HomeIcon,
                 colSpan: 'full',
                 validation: (value) => {
                     if (typeof value === 'string' && value.length < 5) {
@@ -586,6 +594,7 @@ const paymentSteps: FormStep[] = [
                 type: 'text',
                 placeholder: 'San Francisco',
                 required: true,
+                icon: CrumpledPaperIcon,
                 colSpan: 'half',
                 validation: (value) => {
                     if (typeof value === 'string' && value.length < 2) {
@@ -601,6 +610,7 @@ const paymentSteps: FormStep[] = [
                 type: 'text',
                 placeholder: 'CA',
                 required: true,
+                icon: DrawingPinIcon,
                 colSpan: 'half',
                 validation: (value) => {
                     if (typeof value === 'string' && value.length < 2) {
@@ -616,7 +626,7 @@ const paymentSteps: FormStep[] = [
                 type: 'text',
                 placeholder: '94105',
                 required: true,
-                icon: Hash,
+                icon: LayersIcon,
                 colSpan: 'half',
                 validation: (value) => {
                     if (typeof value === 'string' && !/^\d{5}(-\d{4})?$/.test(value)) {
@@ -632,6 +642,7 @@ const paymentSteps: FormStep[] = [
                 type: 'text',
                 placeholder: 'USA',
                 required: true,
+                icon: GlobeIcon,
                 colSpan: 'half',
                 validation: (value) => {
                     if (typeof value === 'string' && value.length < 2) {
@@ -654,7 +665,7 @@ const paymentSteps: FormStep[] = [
                 type: 'text',
                 placeholder: '4242 4242 4242 4242',
                 required: true,
-                icon: CreditCard,
+                icon: CardStackIcon,
                 colSpan: 'full',
                 validation: (value) => {
                     if (typeof value === 'string') {
@@ -670,7 +681,7 @@ const paymentSteps: FormStep[] = [
                 type: 'text',
                 placeholder: 'John Doe',
                 required: true,
-                icon: User,
+                icon: PersonIcon,
                 colSpan: 'full',
                 validation: (value) => {
                     if (typeof value === 'string' && value.length < 3) {
@@ -686,7 +697,7 @@ const paymentSteps: FormStep[] = [
                 type: 'text',
                 placeholder: 'MM/YY',
                 required: true,
-                icon: Calendar,
+                icon: CalendarIcon,
                 colSpan: 'half',
                 validation: (value) => {
                     if (typeof value === 'string') {
@@ -702,7 +713,7 @@ const paymentSteps: FormStep[] = [
                 type: 'password',
                 placeholder: '123',
                 required: true,
-                icon: Lock,
+                icon: LockClosedIcon,
                 colSpan: 'half',
                 validation: (value) => {
                     if (typeof value === 'string') {
@@ -726,6 +737,7 @@ const paymentSteps: FormStep[] = [
                 placeholder: 'I agree to the terms and conditions',
                 required: true,
                 defaultValue: false,
+                icon: CheckIcon,
                 colSpan: 'full',
                 validation: (value) => {
                     if (!value) {
@@ -742,6 +754,7 @@ const paymentSteps: FormStep[] = [
                 placeholder: 'Save payment information',
                 required: false,
                 defaultValue: false,
+                icon: HeartIcon,
                 colSpan: 'full',
             },
         ],
@@ -762,7 +775,7 @@ const jobSteps: FormStep[] = [
                 type: 'text',
                 placeholder: 'John Doe',
                 required: true,
-                icon: User,
+                icon: PersonIcon,
                 colSpan: 'full',
                 validation: (value) => {
                     if (typeof value === 'string' && value.length < 3) {
@@ -778,7 +791,7 @@ const jobSteps: FormStep[] = [
                 type: 'email',
                 placeholder: 'john@example.com',
                 required: true,
-                icon: Mail,
+                icon: EnvelopeClosedIcon,
                 colSpan: 'half',
                 validation: (value) => {
                     if (typeof value === 'string') {
@@ -794,7 +807,7 @@ const jobSteps: FormStep[] = [
                 type: 'tel',
                 placeholder: '+1 (555) 123-4567',
                 required: true,
-                icon: Phone,
+                icon: ChatBubbleIcon,
                 colSpan: 'half',
                 validation: (value) => {
                     if (typeof value === 'string') {
@@ -810,7 +823,7 @@ const jobSteps: FormStep[] = [
                 type: 'text',
                 placeholder: 'City, Country',
                 required: true,
-                icon: MapPin,
+                icon: DrawingPinIcon,
                 colSpan: 'full',
                 validation: (value) => {
                     if (typeof value === 'string' && value.length < 3) {
@@ -840,7 +853,7 @@ const jobSteps: FormStep[] = [
                     { value: 'devops', label: 'DevOps Engineer' },
                     { value: 'designer', label: 'UI/UX Designer' },
                 ],
-                icon: Briefcase,
+                icon: ReaderIcon,
                 colSpan: 'full',
             },
             {
@@ -856,7 +869,7 @@ const jobSteps: FormStep[] = [
                     { value: '5-8', label: '5-8 years' },
                     { value: '8+', label: '8+ years' },
                 ],
-                icon: BarChart,
+                icon: LapTimerIcon,
                 colSpan: 'half',
             },
             {
@@ -872,7 +885,7 @@ const jobSteps: FormStep[] = [
                     { value: 'masters', label: 'Master\'s Degree' },
                     { value: 'phd', label: 'PhD' },
                 ],
-                icon: BookOpen,
+                icon: BookmarkIcon,
                 colSpan: 'half',
             },
             {
@@ -882,7 +895,7 @@ const jobSteps: FormStep[] = [
                 type: 'textarea',
                 placeholder: 'List your key skills (e.g., React, Node.js, TypeScript)',
                 required: true,
-                icon: Code,
+                icon: CodeIcon,
                 colSpan: 'full',
                 validation: (value) => {
                     if (typeof value === 'string') {
@@ -908,7 +921,7 @@ const jobSteps: FormStep[] = [
                 type: 'url',
                 placeholder: 'https://yourportfolio.com',
                 required: false,
-                icon: Globe,
+                icon: GlobeIcon,
                 colSpan: 'full',
                 validation: (value) => {
                     if (typeof value === 'string' && value) {
@@ -924,7 +937,7 @@ const jobSteps: FormStep[] = [
                 type: 'url',
                 placeholder: 'https://github.com/username',
                 required: false,
-                icon: Github,
+                icon: GitHubLogoIcon,
                 colSpan: 'full',
                 validation: (value) => {
                     if (typeof value === 'string' && value) {
@@ -940,7 +953,7 @@ const jobSteps: FormStep[] = [
                 type: 'url',
                 placeholder: 'https://linkedin.com/in/username',
                 required: false,
-                icon: Linkedin,
+                icon: LinkedInLogoIcon,
                 colSpan: 'full',
                 validation: (value) => {
                     if (typeof value === 'string' && value) {
@@ -963,7 +976,7 @@ const jobSteps: FormStep[] = [
                 type: 'textarea',
                 placeholder: 'Write a brief cover letter...',
                 required: true,
-                icon: FileText,
+                icon: FileTextIcon,
                 colSpan: 'full',
                 validation: (value) => {
                     if (typeof value === 'string') {
@@ -985,6 +998,7 @@ const jobSteps: FormStep[] = [
                 placeholder: 'I am willing to relocate',
                 required: false,
                 defaultValue: false,
+                icon: RocketIcon,
                 colSpan: 'full',
             },
             {
@@ -994,7 +1008,7 @@ const jobSteps: FormStep[] = [
                 type: 'date',
                 placeholder: 'Select date',
                 required: true,
-                icon: Calendar,
+                icon: CalendarIcon,
                 colSpan: 'full',
                 validation: (value) => {
                     if (typeof value === 'string' && value) {
@@ -1025,7 +1039,7 @@ const eventSteps: FormStep[] = [
                 type: 'text',
                 placeholder: 'John Doe',
                 required: true,
-                icon: User,
+                icon: PersonIcon,
                 colSpan: 'full',
                 validation: (value) => {
                     if (typeof value === 'string' && value.length < 3) {
@@ -1041,7 +1055,7 @@ const eventSteps: FormStep[] = [
                 type: 'email',
                 placeholder: 'john@example.com',
                 required: true,
-                icon: Mail,
+                icon: EnvelopeClosedIcon,
                 colSpan: 'full',
                 validation: (value) => {
                     if (typeof value === 'string') {
@@ -1057,7 +1071,7 @@ const eventSteps: FormStep[] = [
                 type: 'text',
                 placeholder: 'Acme Inc.',
                 required: false,
-                icon: Building,
+                icon: CrumpledPaperIcon,
                 colSpan: 'half',
             },
             {
@@ -1067,7 +1081,7 @@ const eventSteps: FormStep[] = [
                 type: 'text',
                 placeholder: 'Software Engineer',
                 required: false,
-                icon: Briefcase,
+                icon: ReaderIcon,
                 colSpan: 'half',
             },
         ],
@@ -1089,6 +1103,7 @@ const eventSteps: FormStep[] = [
                     { value: 'student', label: 'Student - $49 (Valid ID required)' },
                     { value: 'group', label: 'Group (5+) - $79 per person' },
                 ],
+                icon: CheckCircledIcon,
                 colSpan: 'full',
             },
             {
@@ -1106,7 +1121,7 @@ const eventSteps: FormStep[] = [
                     { value: '5', label: '5' },
                     { value: '6', label: '6+' },
                 ],
-                icon: Hash,
+                icon: PlusIcon,
                 colSpan: 'half',
             },
             {
@@ -1122,7 +1137,7 @@ const eventSteps: FormStep[] = [
                     { value: 'vegan', label: 'Vegan' },
                     { value: 'gluten-free', label: 'Gluten-Free' },
                 ],
-                icon: Heart,
+                icon: HeartIcon,
                 colSpan: 'half',
             },
         ],
@@ -1140,6 +1155,7 @@ const eventSteps: FormStep[] = [
                 placeholder: 'React Advanced Patterns',
                 required: false,
                 defaultValue: false,
+                icon: CodeIcon,
                 colSpan: 'full',
             },
             {
@@ -1150,6 +1166,7 @@ const eventSteps: FormStep[] = [
                 placeholder: 'TypeScript Best Practices',
                 required: false,
                 defaultValue: false,
+                icon: CodeIcon,
                 colSpan: 'full',
             },
             {
@@ -1160,6 +1177,7 @@ const eventSteps: FormStep[] = [
                 placeholder: 'UI/UX Design Principles',
                 required: false,
                 defaultValue: false,
+                icon: CodeIcon,
                 colSpan: 'full',
             },
         ],
@@ -1188,7 +1206,7 @@ const profileSteps: FormStep[] = [
                 type: 'text',
                 placeholder: 'Alex Thompson',
                 required: true,
-                icon: User,
+                icon: PersonIcon,
                 colSpan: 'full',
                 validation: (value) => {
                     if (typeof value === 'string') {
@@ -1209,7 +1227,7 @@ const profileSteps: FormStep[] = [
                 type: 'textarea',
                 placeholder: 'Tell us about yourself...',
                 required: false,
-                icon: FileText,
+                icon: FileTextIcon,
                 colSpan: 'full',
                 validation: (value) => {
                     if (typeof value === 'string' && value.length > 500) {
@@ -1225,7 +1243,7 @@ const profileSteps: FormStep[] = [
                 type: 'text',
                 placeholder: 'San Francisco, CA',
                 required: false,
-                icon: MapPin,
+                icon: DrawingPinIcon,
                 colSpan: 'half',
             },
             {
@@ -1235,7 +1253,7 @@ const profileSteps: FormStep[] = [
                 type: 'url',
                 placeholder: 'https://yourwebsite.com',
                 required: false,
-                icon: Globe,
+                icon: GlobeIcon,
                 colSpan: 'half',
                 validation: (value) => {
                     if (typeof value === 'string' && value) {
@@ -1258,7 +1276,7 @@ const profileSteps: FormStep[] = [
                 type: 'url',
                 placeholder: 'https://twitter.com/username',
                 required: false,
-                icon: Users,
+                icon: LinkedInLogoIcon,
                 colSpan: 'full',
                 validation: (value) => {
                     if (typeof value === 'string' && value) {
@@ -1274,7 +1292,7 @@ const profileSteps: FormStep[] = [
                 type: 'url',
                 placeholder: 'https://github.com/username',
                 required: false,
-                icon: Github,
+                icon: GitHubLogoIcon,
                 colSpan: 'full',
                 validation: (value) => {
                     if (typeof value === 'string' && value) {
@@ -1290,7 +1308,7 @@ const profileSteps: FormStep[] = [
                 type: 'url',
                 placeholder: 'https://linkedin.com/in/username',
                 required: false,
-                icon: Linkedin,
+                icon: LinkedInLogoIcon,
                 colSpan: 'full',
                 validation: (value) => {
                     if (typeof value === 'string' && value) {
@@ -1317,6 +1335,7 @@ const profileSteps: FormStep[] = [
                     { value: 'dark', label: 'Dark' },
                     { value: 'system', label: 'System' },
                 ],
+                icon: LightningBoltIcon,
                 colSpan: 'full',
             },
             {
@@ -1327,6 +1346,7 @@ const profileSteps: FormStep[] = [
                 placeholder: 'Receive email notifications',
                 required: false,
                 defaultValue: true,
+                icon: BellIcon,
                 colSpan: 'full',
             },
         ],
@@ -1350,7 +1370,6 @@ const handleSubmit = async (data: any) => {
 
 export const MultiStepFormDemo = () => {
     const { colorMode } = useColorMode();
-
 
     // Core state
     const [formType, setFormType] = useState<FormType>('onboarding');
@@ -1458,9 +1477,14 @@ export const MultiStepFormDemo = () => {
     MultiStepReview,
     MultiStepField,
     type FormStep,
-    type FormField,
 } from '../UI/multi-step-form';
-import { ${iconName}, User, Mail, Briefcase, Lock } from 'lucide-react';
+import {
+    ${iconName},
+    PersonIcon,
+    EnvelopeClosedIcon,
+    BriefcaseIcon,
+    LockClosedIcon,
+} from '@radix-ui/react-icons';
 
 // Steps configuration (${formType} form example)
 const ${formType}Steps: FormStep[] = [

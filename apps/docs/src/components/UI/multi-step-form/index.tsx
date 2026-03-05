@@ -2,17 +2,19 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cva, type VariantProps } from 'class-variance-authority';
 import {
-    ChevronLeft,
-    ChevronRight,
-    Check,
-    CheckCircle,
-    X,
-    Loader2,
-    Eye,
-    EyeOff,
-    Zap,
-    AlertCircle,
-} from 'lucide-react';
+    ChevronLeftIcon,
+    ChevronRightIcon,
+    CheckIcon,
+    Cross2Icon,
+    ReloadIcon,
+    EyeOpenIcon,
+    EyeClosedIcon,
+    LightningBoltIcon,
+    ExclamationTriangleIcon,
+    CheckCircledIcon,
+    CrossCircledIcon,
+    InfoCircledIcon
+} from '@radix-ui/react-icons';
 import { cn } from '@site/src/utils/cn';
 import { Button } from '@site/src/components/UI/button';
 import { AnimatedInput } from '@site/src/components/UI/input';
@@ -520,7 +522,7 @@ const MultiStepForm: React.FC<MultiStepFormProps> & {
         if (isLoading) {
             return (
                 <div className="min-h-screen flex items-center justify-center">
-                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                    <ReloadIcon className="w-8 h-8 animate-spin text-primary" />
                 </div>
             );
         }
@@ -579,7 +581,7 @@ export interface MultiStepHeaderProps {
 
 const MultiStepHeader: React.FC<MultiStepHeaderProps> = ({
     title,
-    icon = <Zap className="w-4 h-4" />,
+    icon = <LightningBoltIcon className="w-4 h-4" />,
     children,
     className,
     titleClassName,
@@ -645,11 +647,6 @@ const MultiStepHeader: React.FC<MultiStepHeaderProps> = ({
 /* ============================================
    STEP INDICATOR COMPONENT
 ============================================ */
-
-export interface MultiStepStepIndicatorProps {
-    variant?: 'default' | 'pills' | 'tabs';
-    className?: string;
-}
 
 export interface MultiStepStepIndicatorProps {
     variant?: 'default' | 'pills' | 'tabs';
@@ -728,7 +725,7 @@ const MultiStepStepIndicator: React.FC<MultiStepStepIndicatorProps> = ({
                                     )}
                                 >
                                     {isCompleted ? (
-                                        <Check className="w-5 h-5 stroke-[3]" />
+                                        <CheckIcon className="w-5 h-5" />
                                     ) : (
                                         stepNumber
                                     )}
@@ -882,22 +879,18 @@ const MultiStepField: React.FC<MultiStepFieldProps> = ({
     const validateEmail = (email: string): string | undefined => {
         if (!email) return undefined;
 
-        // Basic email regex
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
         if (!emailRegex.test(email)) {
             return 'Please enter a valid email address';
         }
 
-        // Check for common typos in domain
-        // const commonDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com'];
         const domain = email.split('@')[1];
 
         if (domain && !domain.includes('.')) {
             return 'Email domain seems invalid';
         }
 
-        // Check domain restrictions if specified
         if (field.emailValidation?.domain && field.emailValidation.domain.length > 0) {
             if (!field.emailValidation.domain.includes(domain)) {
                 return field.emailValidation.message ||
@@ -905,7 +898,6 @@ const MultiStepField: React.FC<MultiStepFieldProps> = ({
             }
         }
 
-        // Use custom pattern if provided
         if (field.emailValidation?.customPattern) {
             if (!field.emailValidation.customPattern.test(email)) {
                 return field.emailValidation.message || 'Email format is invalid';
@@ -926,17 +918,14 @@ const MultiStepField: React.FC<MultiStepFieldProps> = ({
 
         updateField(field.name, val);
 
-        // Real-time email validation
         if (field.type === 'email' && typeof val === 'string') {
             const emailError = validateEmail(val);
             setLocalError(emailError);
         } else {
-            // Clear local error for non-email fields
             setLocalError(undefined);
         }
     };
 
-    // Handle blur for validation
     const handleBlur = () => {
         if (field.type === 'email' && typeof value === 'string') {
             const emailError = validateEmail(value);
@@ -944,7 +933,6 @@ const MultiStepField: React.FC<MultiStepFieldProps> = ({
         }
     };
 
-    // Show either context error or local validation error
     const displayError = error || localError;
 
     return (
@@ -1042,38 +1030,77 @@ const MultiStepField: React.FC<MultiStepFieldProps> = ({
                         </div>
                     ))}
                 </div>
+            ) : field.type === 'password' ? (
+                // Special handling for password fields - bypass AnimatedInput
+                <div className="relative">
+                    <input
+                        id={fieldId}
+                        type={showPassword ? "text" : "password"}
+                        value={typeof value === 'string' ? value : ''}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        placeholder={field.placeholder || field.label}
+                        required={field.required}
+                        className={cn(
+                            "w-full px-4 py-3 rounded-lg transition-all duration-300",
+                            "bg-background border",
+                            "pl-10 pr-10", // Padding for icon on left and toggle on right
+                            displayError ? "border-destructive focus:ring-destructive/20" : "border-input focus:ring-primary/20",
+                            "focus:outline-none focus:ring-2 focus:border-primary",
+                            "text-foreground",
+                            "placeholder:text-muted-foreground"
+                        )}
+                    />
+                    {/* Icon on the left */}
+                    {Icon && (
+                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                            <Icon className="w-4 h-4" />
+                        </div>
+                    )}
+                    {/* Password toggle button */}
+                    <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className={cn(
+                            "absolute right-3 top-1/2 -translate-y-1/2",
+                            "text-muted-foreground hover:text-foreground transition-colors",
+                            "focus:outline-none focus:ring-2 focus:ring-primary/20 rounded-sm",
+                            "p-1"
+                        )}
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                        {showPassword ? (
+                            <EyeClosedIcon className="w-4 h-4" />
+                        ) : (
+                            <EyeOpenIcon className="w-4 h-4" />
+                        )}
+                    </button>
+                </div>
             ) : (
+                // For other input types, use AnimatedInput
                 <div className="relative">
                     <AnimatedInput
-                        // id={fieldId}
                         placeholder={field.placeholder || field.label}
                         variant={inputVariant}
                         value={typeof value === 'string' ? value : ''}
                         onChange={(val: string) => {
                             updateField(field.name, val);
-                            // Real-time email validation
                             if (field.type === 'email') {
                                 const emailError = validateEmail(val);
                                 setLocalError(emailError);
                             }
                         }}
                         onBlur={handleBlur}
-                        type={field.type === 'password' && showPassword ? 'text' : field.type}
+                        type={field.type}
                         icon={Icon}
                         error={displayError}
-                        inputClassName={`pl-10 ${displayError ? "border-destructive" : ""}`}
+                        inputClassName={cn(
+                            "pl-10",
+                            displayError ? "border-destructive" : ""
+                        )}
                     />
-                    {field.type === 'password' && (
-                        <button
-                            type="button"
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                        >
-                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </button>
-                    )}
 
-                    {/* Email format hint - only show when typing and no error */}
+                    {/* Email format hint */}
                     {field.type === 'email' &&
                         !displayError &&
                         value &&
@@ -1084,7 +1111,7 @@ const MultiStepField: React.FC<MultiStepFieldProps> = ({
                                 color="muted"
                                 className="absolute -bottom-5 left-0 flex items-center gap-1"
                             >
-                                <CheckCircle className="w-3 h-3 text-green-500" />
+                                <CheckCircledIcon className="w-3 h-3 text-green-500" />
                                 Valid email format
                             </Typography>
                         )}
@@ -1126,7 +1153,7 @@ const MultiStepReview: React.FC<MultiStepReviewProps> = ({
     return (
         <div className={cn("space-y-8", className)}>
             <div className="text-center">
-                <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                <CheckCircledIcon className="w-16 h-16 text-green-500 mx-auto mb-4" />
                 <Typography variant="h3" weight="bold" className="mb-2">
                     Review Your Information
                 </Typography>
@@ -1193,7 +1220,7 @@ const MultiStepReview: React.FC<MultiStepReviewProps> = ({
 
 const ReviewFieldValue: React.FC<{ field: FormField; value: FieldValue }> = ({ field, value }) => {
     if (field.type === 'checkbox') {
-        return value ? <CheckCircle className="w-5 h-5 text-green-500" /> : <X className="w-5 h-5 text-red-400" />;
+        return value ? <CheckCircledIcon className="w-5 h-5 text-green-500" /> : <Cross2Icon className="w-5 h-5 text-red-400" />;
     }
 
     if (value === undefined || value === null || value === '') {
@@ -1241,7 +1268,8 @@ const MultiStepNavigation: React.FC<MultiStepNavigationProps> = ({
         goToNext,
         submitForm,
         buttonVariant,
-        buttonAnimationVariant
+        buttonAnimationVariant,
+        theme  // Add this from context
     } = useMultiStepForm();
 
     const backLabel = customBackLabel || "← Back";
@@ -1250,6 +1278,24 @@ const MultiStepNavigation: React.FC<MultiStepNavigationProps> = ({
     const cancelLabel = customCancelLabel || "Cancel";
     const showCancel = customShowCancel !== undefined ? customShowCancel : true;
     const handleCancel = customOnCancel;
+
+    // Determine button variant based on theme
+    const getButtonVariant = () => {
+        if (theme === 'dark') {
+            if (isReviewStep) {
+                return 'primary'; // Use primary variant for submit in dark mode
+            }
+            return 'outline'; // Use outline for next in dark mode
+        }
+        return buttonVariant;
+    };
+
+    const getSubmitButtonVariant = () => {
+        if (theme === 'dark') {
+            return 'primary'; // Primary has proper contrast in dark mode
+        }
+        return buttonVariant;
+    };
 
     return (
         <div className={cn(
@@ -1260,13 +1306,16 @@ const MultiStepNavigation: React.FC<MultiStepNavigationProps> = ({
             <div>
                 {currentStep > 1 && (
                     <Button
-                        variant="outline"
+                        variant={theme === 'dark' ? "outline" : "outline"}
                         onClick={goToPrevious}
                         disabled={isSubmitting}
-                        className="cursor-pointer"
+                        className={cn(
+                            "cursor-pointer",
+                            theme === 'dark' && "text-foreground border-gray-600 hover:bg-gray-800"
+                        )}
                         animationVariant="press3DSoft"
                     >
-                        <ChevronLeft className="w-4 h-4 mr-2" />
+                        <ChevronLeftIcon className="w-4 h-4 mr-2" />
                         {backLabel}
                     </Button>
                 )}
@@ -1275,10 +1324,13 @@ const MultiStepNavigation: React.FC<MultiStepNavigationProps> = ({
             <div className="flex items-center gap-3">
                 {showCancel && handleCancel && (
                     <Button
-                        variant="ghost"
+                        variant={theme === 'dark' ? "ghost" : "ghost"}
                         onClick={handleCancel}
                         disabled={isSubmitting}
-                        className="cursor-pointer"
+                        className={cn(
+                            "cursor-pointer",
+                            theme === 'dark' && "text-gray-300 hover:text-white hover:bg-gray-800"
+                        )}
                     >
                         {cancelLabel}
                     </Button>
@@ -1286,29 +1338,35 @@ const MultiStepNavigation: React.FC<MultiStepNavigationProps> = ({
 
                 {isReviewStep ? (
                     <Button
-                        variant={buttonVariant as ButtonVariant}
+                        variant={getSubmitButtonVariant() as ButtonVariant}
                         onClick={submitForm}
                         disabled={isSubmitting}
-                        className="min-w-[120px] cursor-pointer"
+                        className={cn(
+                            "min-w-[120px] cursor-pointer",
+                            theme === 'dark' && "bg-primary text-primary-foreground hover:bg-primary/90"
+                        )}
                         animationVariant={isSubmitting ? "spinSlow" : "scaleHeartbeat"}
                     >
                         {isSubmitting ? (
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            <ReloadIcon className="w-4 h-4 mr-2 animate-spin" />
                         ) : (
-                            <Check className="w-4 h-4 mr-2" />
+                            <CheckIcon className="w-4 h-4 mr-2" />
                         )}
                         {isSubmitting ? 'Submitting...' : submitLabel}
                     </Button>
                 ) : (
                     <Button
-                        variant={buttonVariant as ButtonVariant}
+                        variant={getButtonVariant() as ButtonVariant}
                         onClick={goToNext}
                         disabled={isSubmitting}
-                        className="min-w-[120px] cursor-pointer"
+                        className={cn(
+                            "min-w-[120px] cursor-pointer",
+                            theme === 'dark' && "bg-primary text-primary-foreground hover:bg-primary/90"
+                        )}
                         animationVariant={buttonAnimationVariant}
                     >
                         {nextLabel}
-                        <ChevronRight className="w-4 h-4 ml-2" />
+                        <ChevronRightIcon className="w-4 h-4 ml-2" />
                     </Button>
                 )}
             </div>
@@ -1344,10 +1402,10 @@ const MultiStepNotification: React.FC<MultiStepNotificationProps> = ({
     }, [duration, onClose]);
 
     const icons = {
-        success: <CheckCircle className="w-5 h-5" />,
-        error: <X className="w-5 h-5" />,
-        info: <AlertCircle className="w-5 h-5" />,
-        warning: <AlertCircle className="w-5 h-5" />
+        success: <CheckCircledIcon className="w-5 h-5" />,
+        error: <CrossCircledIcon className="w-5 h-5" />,
+        info: <InfoCircledIcon className="w-5 h-5" />,
+        warning: <ExclamationTriangleIcon className="w-5 h-5" />
     };
 
     return (
@@ -1369,7 +1427,7 @@ const MultiStepNotification: React.FC<MultiStepNotificationProps> = ({
                 onClick={onClose}
                 className="ml-4 text-current hover:opacity-70 transition-opacity"
             >
-                <X className="w-4 h-4" />
+                <Cross2Icon className="w-4 h-4" />
             </button>
         </motion.div>
     );

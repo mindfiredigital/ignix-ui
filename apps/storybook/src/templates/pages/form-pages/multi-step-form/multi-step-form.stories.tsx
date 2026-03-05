@@ -7,24 +7,33 @@ import {
     MultiStepField,
     MultiStepReview,
     MultiStepNavigation,
-    // MultiStepNotification
 } from "./";
 import {
-    User,
-    Mail,
-    Briefcase,
-    MapPin,
-    Phone,
-    Lock,
-    Calendar,
-    CreditCard,
-    Home,
-    Award,
-    Shield,
-    Bell,
-    Zap,
-    CheckCircle
-} from "lucide-react";
+    PersonIcon,
+    EnvelopeClosedIcon,
+    ReaderIcon,
+    LapTimerIcon,
+    ChatBubbleIcon,
+    EnvelopeOpenIcon,
+    HeartIcon,
+    BellIcon,
+    LockClosedIcon,
+    HomeIcon,
+    RocketIcon,
+    LightningBoltIcon,
+    CheckCircledIcon,
+    MobileIcon,
+    ClockIcon,
+    CardStackIcon,
+    StarIcon,
+    CalendarIcon,
+    DrawingPinIcon,
+    CrumpledPaperIcon,
+    GlobeIcon,
+    CheckboxIcon,
+    RadiobuttonIcon,
+    LayersIcon,
+} from "@radix-ui/react-icons";
 import { Typography } from "../../../../components/typography";
 
 const meta: Meta<typeof MultiStepForm> = {
@@ -75,7 +84,7 @@ const onboardingSteps = [
                 type: 'text' as const,
                 placeholder: 'John',
                 required: true,
-                icon: User,
+                icon: PersonIcon,
                 colSpan: 'half' as const,
             },
             {
@@ -85,7 +94,7 @@ const onboardingSteps = [
                 type: 'text' as const,
                 placeholder: 'Doe',
                 required: true,
-                icon: User,
+                icon: PersonIcon,
                 colSpan: 'half' as const,
             },
             {
@@ -95,13 +104,10 @@ const onboardingSteps = [
                 type: 'email' as const,
                 placeholder: 'john@example.com',
                 required: true,
-                icon: Mail,
+                icon: EnvelopeClosedIcon,
                 colSpan: 'full' as const,
                 emailValidation: {
-                    pattern: true,  // Use default pattern
-                    // Optional: Restrict to specific domains
-                    // domain: ['gmail.com', 'yahoo.com', 'outlook.com'],
-                    // message: 'Please use a personal email address'
+                    pattern: true,
                 }
             },
         ],
@@ -124,7 +130,7 @@ const onboardingSteps = [
                     { value: 'manager', label: 'Manager' },
                     { value: 'other', label: 'Other' },
                 ],
-                icon: Briefcase,
+                icon: ReaderIcon,
                 colSpan: 'full' as const,
             },
             {
@@ -138,6 +144,7 @@ const onboardingSteps = [
                     { value: 'intermediate', label: 'Intermediate (3–5 years)' },
                     { value: 'senior', label: 'Senior (5+ years)' },
                 ],
+                icon: LapTimerIcon,
                 colSpan: 'full' as const,
             },
             {
@@ -147,6 +154,7 @@ const onboardingSteps = [
                 type: 'textarea' as const,
                 placeholder: 'Tell us about yourself in a few sentences...',
                 required: false,
+                icon: ChatBubbleIcon,
                 colSpan: 'full' as const,
             },
         ],
@@ -164,6 +172,7 @@ const onboardingSteps = [
                 placeholder: 'Receive email notifications',
                 required: false,
                 defaultValue: false,
+                icon: EnvelopeOpenIcon,
                 colSpan: 'full' as const,
             },
             {
@@ -174,6 +183,7 @@ const onboardingSteps = [
                 placeholder: 'Subscribe to our newsletter',
                 required: false,
                 defaultValue: false,
+                icon: HeartIcon,
                 colSpan: 'full' as const,
             },
             {
@@ -188,6 +198,7 @@ const onboardingSteps = [
                     { value: 'phone', label: 'Phone' },
                     { value: 'sms', label: 'SMS' },
                 ],
+                icon: ChatBubbleIcon,
                 colSpan: 'full' as const,
             },
         ],
@@ -207,7 +218,7 @@ const registrationSteps = [
                 type: 'text' as const,
                 placeholder: 'johndoe',
                 required: true,
-                icon: User,
+                icon: PersonIcon,
                 colSpan: 'full' as const,
             },
             {
@@ -217,11 +228,10 @@ const registrationSteps = [
                 type: 'email' as const,
                 placeholder: 'john@example.com',
                 required: true,
-                icon: Mail,
+                icon: EnvelopeClosedIcon,
                 colSpan: 'full' as const,
                 emailValidation: {
                     pattern: true,
-                    // Example: Custom error message
                     message: 'Please enter a valid email address'
                 }
             },
@@ -232,7 +242,7 @@ const registrationSteps = [
                 type: 'password' as const,
                 placeholder: '••••••••',
                 required: true,
-                icon: Lock,
+                icon: LockClosedIcon,
                 colSpan: 'half' as const,
             },
             {
@@ -242,7 +252,7 @@ const registrationSteps = [
                 type: 'password' as const,
                 placeholder: '••••••••',
                 required: true,
-                icon: Lock,
+                icon: LockClosedIcon,
                 colSpan: 'half' as const,
             },
         ],
@@ -259,7 +269,7 @@ const registrationSteps = [
                 type: 'text' as const,
                 placeholder: 'John',
                 required: true,
-                icon: User,
+                icon: PersonIcon,
                 colSpan: 'half' as const,
             },
             {
@@ -269,7 +279,7 @@ const registrationSteps = [
                 type: 'text' as const,
                 placeholder: 'Doe',
                 required: true,
-                icon: User,
+                icon: PersonIcon,
                 colSpan: 'half' as const,
             },
             {
@@ -279,7 +289,7 @@ const registrationSteps = [
                 type: 'tel' as const,
                 placeholder: '+1 (555) 123-4567',
                 required: false,
-                icon: Phone,
+                icon: MobileIcon,
                 colSpan: 'half' as const,
             },
             {
@@ -289,7 +299,7 @@ const registrationSteps = [
                 type: 'text' as const,
                 placeholder: 'City, Country',
                 required: false,
-                icon: MapPin,
+                icon: DrawingPinIcon,
                 colSpan: 'half' as const,
             },
         ],
@@ -307,6 +317,7 @@ const registrationSteps = [
                 placeholder: 'Subscribe to our newsletter for updates',
                 required: false,
                 defaultValue: true,
+                icon: HeartIcon,
                 colSpan: 'full' as const,
             },
             {
@@ -321,7 +332,7 @@ const registrationSteps = [
                     { value: 'important', label: 'Important only' },
                     { value: 'none', label: 'No notifications' },
                 ],
-                icon: Bell,
+                icon: BellIcon,
                 colSpan: 'full' as const,
             },
         ],
@@ -349,7 +360,7 @@ export const Default: Story = {
             <MultiStepHeader
                 titleVariant="h3"
                 title="Onboarding Wizard"
-                icon={<Zap className="text-white" />}
+                icon={<LightningBoltIcon className="text-white" />}
                 titleClassName="text-4xl font-bold text-foreground"
                 iconSize={32}
                 iconClassName="w-14 h-14"
@@ -425,7 +436,7 @@ export const RegistrationForm: Story = {
             <MultiStepHeader
                 titleVariant="h3"
                 title="Create Account"
-                icon={<User className="text-white" />}
+                icon={<PersonIcon className="text-white" />}
                 titleClassName="text-3xl font-bold text-foreground"
                 iconSize={28}
                 iconClassName="w-12 h-12"
@@ -502,7 +513,7 @@ export const GlassTheme: Story = {
             <MultiStepHeader
                 titleVariant="h3"
                 title="Glass Theme"
-                icon={<Zap className="text-white" />}
+                icon={<LightningBoltIcon className="text-white" />}
                 titleClassName="text-4xl font-bold text-foreground/90"
                 iconSize={30}
                 iconClassName="w-13 h-13 bg-white/20 backdrop-blur-sm"
@@ -571,7 +582,7 @@ export const DarkTheme: Story = {
             <MultiStepHeader
                 titleVariant="h3"
                 title="Dark Theme"
-                icon={<Zap className="text-yellow-400" />}
+                icon={<LightningBoltIcon className="text-yellow-400" />}
                 titleClassName="text-4xl font-bold text-white"
                 iconSize={30}
                 iconClassName="w-13 h-13 bg-gray-800"
@@ -648,6 +659,7 @@ export const MinimalForm: Story = {
                     type: 'text' as const,
                     placeholder: 'Your name',
                     required: true,
+                    icon: PersonIcon,
                     colSpan: 'full' as const,
                 },
                 {
@@ -657,6 +669,7 @@ export const MinimalForm: Story = {
                     type: 'email' as const,
                     placeholder: 'your@email.com',
                     required: true,
+                    icon: EnvelopeClosedIcon,
                     colSpan: 'full' as const,
                 },
                 {
@@ -666,6 +679,7 @@ export const MinimalForm: Story = {
                     type: 'textarea' as const,
                     placeholder: 'Your feedback',
                     required: true,
+                    icon: ChatBubbleIcon,
                     colSpan: 'full' as const,
                 },
             ],
@@ -715,7 +729,7 @@ export const WithoutReviewStep: Story = {
             <MultiStepHeader
                 titleVariant="h3"
                 title="Quick Onboarding"
-                icon={<Zap className="text-white" />}
+                icon={<LightningBoltIcon className="text-white" />}
                 titleClassName="text-3xl font-bold"
                 iconSize={24}
                 iconClassName="w-12 h-12"
@@ -784,7 +798,7 @@ export const SlideAnimation: Story = {
             <MultiStepHeader
                 titleVariant="h3"
                 title="Slide Animation"
-                icon={<Zap className="text-white" />}
+                icon={<LightningBoltIcon className="text-white" />}
                 titleClassName="text-4xl font-bold"
                 iconSize={28}
                 iconClassName="w-12 h-12"
@@ -850,7 +864,7 @@ export const ScaleAnimation: Story = {
             <MultiStepHeader
                 titleVariant="h3"
                 title="Scale Animation"
-                icon={<Zap className="text-white" />}
+                icon={<LightningBoltIcon className="text-white" />}
                 titleClassName="text-4xl font-bold"
                 iconSize={28}
                 iconClassName="w-12 h-12"
@@ -925,7 +939,7 @@ export const PaymentForm: Story = {
                         type: 'text' as const,
                         placeholder: 'John Doe',
                         required: true,
-                        icon: User,
+                        icon: PersonIcon,
                         colSpan: 'full' as const,
                     },
                     {
@@ -935,7 +949,7 @@ export const PaymentForm: Story = {
                         type: 'text' as const,
                         placeholder: '123 Main St',
                         required: true,
-                        icon: Home,
+                        icon: HomeIcon,
                         colSpan: 'full' as const,
                     },
                     {
@@ -945,6 +959,7 @@ export const PaymentForm: Story = {
                         type: 'text' as const,
                         placeholder: 'San Francisco',
                         required: true,
+                        icon: CrumpledPaperIcon,
                         colSpan: 'half' as const,
                     },
                     {
@@ -954,6 +969,7 @@ export const PaymentForm: Story = {
                         type: 'text' as const,
                         placeholder: 'CA',
                         required: true,
+                        icon: LayersIcon,
                         colSpan: 'half' as const,
                     },
                     {
@@ -963,6 +979,7 @@ export const PaymentForm: Story = {
                         type: 'text' as const,
                         placeholder: '94105',
                         required: true,
+                        icon: LayersIcon,
                         colSpan: 'half' as const,
                     },
                     {
@@ -972,6 +989,7 @@ export const PaymentForm: Story = {
                         type: 'text' as const,
                         placeholder: 'USA',
                         required: true,
+                        icon: GlobeIcon,
                         colSpan: 'half' as const,
                     },
                 ],
@@ -988,7 +1006,7 @@ export const PaymentForm: Story = {
                         type: 'text' as const,
                         placeholder: '4242 4242 4242 4242',
                         required: true,
-                        icon: CreditCard,
+                        icon: CardStackIcon,
                         colSpan: 'full' as const,
                     },
                     {
@@ -998,7 +1016,7 @@ export const PaymentForm: Story = {
                         type: 'text' as const,
                         placeholder: 'John Doe',
                         required: true,
-                        icon: User,
+                        icon: PersonIcon,
                         colSpan: 'full' as const,
                     },
                     {
@@ -1008,7 +1026,7 @@ export const PaymentForm: Story = {
                         type: 'text' as const,
                         placeholder: 'MM/YY',
                         required: true,
-                        icon: Calendar,
+                        icon: CalendarIcon,
                         colSpan: 'half' as const,
                     },
                     {
@@ -1018,7 +1036,7 @@ export const PaymentForm: Story = {
                         type: 'password' as const,
                         placeholder: '123',
                         required: true,
-                        icon: Lock,
+                        icon: LockClosedIcon,
                         colSpan: 'half' as const,
                     },
                 ],
@@ -1036,6 +1054,7 @@ export const PaymentForm: Story = {
                         placeholder: 'I agree to the terms and conditions',
                         required: true,
                         defaultValue: false,
+                        icon: CheckboxIcon,
                         colSpan: 'full' as const,
                     },
                     {
@@ -1046,6 +1065,7 @@ export const PaymentForm: Story = {
                         placeholder: 'Save payment information',
                         required: false,
                         defaultValue: false,
+                        icon: StarIcon,
                         colSpan: 'full' as const,
                     },
                 ],
@@ -1064,7 +1084,7 @@ export const PaymentForm: Story = {
                 <MultiStepHeader
                     titleVariant="h3"
                     title="Checkout"
-                    icon={<CreditCard className="text-white" />}
+                    icon={<CardStackIcon className="text-white" />}
                     titleClassName="text-4xl font-bold"
                     iconSize={30}
                     iconClassName="w-13 h-13"
@@ -1136,7 +1156,7 @@ export const PremiumMembership: Story = {
                         type: 'email' as const,
                         placeholder: 'your@email.com',
                         required: true,
-                        icon: Mail,
+                        icon: EnvelopeClosedIcon,
                         colSpan: 'full' as const,
                     },
                     {
@@ -1146,7 +1166,7 @@ export const PremiumMembership: Story = {
                         type: 'password' as const,
                         placeholder: 'Create a strong password',
                         required: true,
-                        icon: Lock,
+                        icon: LockClosedIcon,
                         colSpan: 'full' as const,
                     },
                 ],
@@ -1167,6 +1187,7 @@ export const PremiumMembership: Story = {
                             { value: 'pro', label: 'Pro - $19.99/month' },
                             { value: 'enterprise', label: 'Enterprise - $49.99/month' },
                         ],
+                        icon: RadiobuttonIcon,
                         colSpan: 'full' as const,
                     },
                     {
@@ -1179,6 +1200,7 @@ export const PremiumMembership: Story = {
                             { value: 'monthly', label: 'Monthly' },
                             { value: 'yearly', label: 'Yearly (Save 20%)' },
                         ],
+                        icon: ClockIcon,
                         colSpan: 'full' as const,
                     },
                 ],
@@ -1195,7 +1217,7 @@ export const PremiumMembership: Story = {
                         type: 'text' as const,
                         placeholder: '4242 4242 4242 4242',
                         required: true,
-                        icon: CreditCard,
+                        icon: CardStackIcon,
                         colSpan: 'full' as const,
                     },
                     {
@@ -1205,7 +1227,7 @@ export const PremiumMembership: Story = {
                         type: 'text' as const,
                         placeholder: 'MM/YY',
                         required: true,
-                        icon: Calendar,
+                        icon: CalendarIcon,
                         colSpan: 'half' as const,
                     },
                     {
@@ -1215,7 +1237,7 @@ export const PremiumMembership: Story = {
                         type: 'password' as const,
                         placeholder: '123',
                         required: true,
-                        icon: Shield,
+                        icon: LockClosedIcon,
                         colSpan: 'half' as const,
                     },
                 ],
@@ -1234,7 +1256,7 @@ export const PremiumMembership: Story = {
                 <MultiStepHeader
                     titleVariant="h3"
                     title="Premium Membership"
-                    icon={<Award className="text-white" />}
+                    icon={<RocketIcon className="text-white" />}
                     titleClassName="text-4xl font-bold"
                     iconSize={30}
                     iconClassName="w-13 h-13"
@@ -1305,7 +1327,7 @@ export const LoadingState: Story = {
             <MultiStepHeader
                 titleVariant="h3"
                 title="Onboarding Wizard"
-                icon={<Zap className="text-white" />}
+                icon={<LightningBoltIcon className="text-white" />}
                 titleClassName="text-3xl font-bold"
                 iconSize={24}
                 iconClassName="w-12 h-12"
@@ -1371,7 +1393,7 @@ export const SubmittingState: Story = {
             <MultiStepHeader
                 titleVariant="h3"
                 title="Onboarding Wizard"
-                icon={<Zap className="text-white" />}
+                icon={<LightningBoltIcon className="text-white" />}
                 titleClassName="text-3xl font-bold"
                 iconSize={24}
                 iconClassName="w-12 h-12"
@@ -1437,11 +1459,10 @@ export const CustomHeader: Story = {
             steps={onboardingSteps}
             onSubmit={(data) => console.log('Form submitted:', data)}
         >
-            <MultiStepHeader
-                titleVariant="h3">
+            <MultiStepHeader>
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
-                        <Award className="w-5 h-5 text-white" />
+                        <RocketIcon className="w-5 h-5 text-white" />
                     </div>
                     <div>
                         <Typography variant="h6" weight="bold">Custom Header</Typography>
@@ -1449,7 +1470,6 @@ export const CustomHeader: Story = {
                     </div>
                 </div>
             </MultiStepHeader>
-            {/* <MultiStepStepIndicator variant="pills" /> */}
             <div className="container max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                 <MultiStepStepIndicator />
             </div>
@@ -1520,7 +1540,7 @@ export const CustomReview: Story = {
             <MultiStepHeader
                 titleVariant="h3"
                 title="Onboarding Wizard"
-                icon={<Zap className="text-white" />}
+                icon={<LightningBoltIcon className="text-white" />}
                 titleClassName="text-3xl font-bold"
                 iconSize={24}
                 iconClassName="w-12 h-12"
@@ -1571,7 +1591,7 @@ export const CustomReview: Story = {
                 <MultiStepReview>
                     <div className="space-y-4">
                         <div className="text-center">
-                            <CheckCircle className="w-16 h-16 text-green-500 mx-auto" />
+                            <CheckCircledIcon className="w-16 h-16 text-green-500 mx-auto" />
                             <Typography variant="h3" weight="bold" className="mt-4">
                                 Almost There!
                             </Typography>
@@ -1617,7 +1637,7 @@ export const MobileView: Story = {
             <MultiStepHeader
                 titleVariant="h3"
                 title="Mobile View"
-                icon={<Zap className="text-white" />}
+                icon={<LightningBoltIcon className="text-white" />}
                 titleClassName="text-2xl font-bold"
                 iconSize={20}
                 iconClassName="w-10 h-10"
@@ -1672,7 +1692,7 @@ export const TabletView: Story = {
             <MultiStepHeader
                 titleVariant="h3"
                 title="Tablet View"
-                icon={<Zap className="text-white" />}
+                icon={<LightningBoltIcon className="text-white" />}
                 titleClassName="text-3xl font-bold"
                 iconSize={24}
                 iconClassName="w-12 h-12"
