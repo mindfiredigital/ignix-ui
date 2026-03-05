@@ -441,6 +441,7 @@ describe("StatsGrid - Core Components", () => {
             expect(screen.queryByText("Stat 6")).not.toBeInTheDocument()
         })
 
+
         it("handles invalid number formats gracefully", () => {
             const stats: StatItem[] = [
                 { value: NaN, label: "Invalid", format: "raw" },

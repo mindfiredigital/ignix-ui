@@ -11,50 +11,38 @@ import {
     StatIcon,
 } from ".";
 import {
-    Users,
-    DollarSign,
-    Download,
-    Clock,
-    Star,
-    Shield,
-    Globe,
-    Award,
-    Rocket,
-    Heart,
-    Activity,
-    ShoppingCart,
-    Mail,
-    TrendingUp,
-    Zap,
-    CheckCircle,
-    Target,
-    Crown,
-    HeartHandshake,
-    CreditCard,
-    CircleDollarSign,
-    Package,
-    FileText,
-    Flag,
-    UserPlus,
-    Building,
-    Network,
-    Database,
-    Server,
-    HeartPulse,
-    Timer,
-    Banknote,
-    Calendar,
-    Calculator,
-    TrendingDown,
-    PieChart,
-    Eye,
-    Smile,
-    Circle,
-    Sparkles,
-    Wand2,
-    Palette,
-    Brush,
-} from "lucide-react";
+    PersonIcon,
+    StarIcon,
+    LockClosedIcon,
+    DownloadIcon,
+    ClockIcon,
+    GlobeIcon,
+    HeartIcon,
+    ActivityLogIcon,
+    EnvelopeClosedIcon,
+    BarChartIcon,
+    LightningBoltIcon,
+    CheckCircledIcon,
+    TargetIcon,
+    FaceIcon,
+    CircleIcon,
+    EyeOpenIcon,
+    CalendarIcon,
+    DoubleArrowUpIcon,
+    DoubleArrowDownIcon,
+    CardStackIcon,
+    CubeIcon,
+    CrumpledPaperIcon,
+    FileTextIcon,
+    HomeIcon,
+    Link2Icon,
+    Pencil2Icon,
+    PieChartIcon,
+    RocketIcon as RocketIconRadix,
+    StackIcon,
+    StarFilledIcon,
+    TimerIcon as TimerIconRadix,
+} from "@radix-ui/react-icons";
 import { cn } from "../../../../../utils/cn";
 import React from "react";
 
@@ -124,140 +112,6 @@ const meta: Meta<typeof StatsGrid> = {
 export default meta;
 type Story = StoryObj<typeof StatsGrid>;
 
-/* ============================================
-   0. BASIC VARIANTS WITH DIFFERENT THEMES
-============================================ */
-
-// Light theme stories
-// export const CenteredStatsLight: Story = {
-//     render: () => (
-//         <StatsGrid
-//             variant="light"
-//             columns={4}
-//             contentAlign="center"
-//             padding="lg"
-//             animated={true}
-//             animationType="slide"
-//         >
-//             <StatsGridTitle>Key Performance Indicators</StatsGridTitle>
-//             <StatsGridDescription>
-//                 Track our growth and success metrics in real-time. All numbers are updated daily.
-//             </StatsGridDescription>
-//             <StatsGridContainer>
-//                 <StatsGridCard
-//                     stat={{
-//                         value: 10000000,
-//                         label: "Active Users",
-//                         subtext: "Growing 20% month over month",
-//                         icon: Users,
-//                         format: "compact",
-//                         accent: "blue",
-//                     }}
-//                 />
-//                 <StatsGridCard
-//                     stat={{
-//                         value: 99.9,
-//                         label: "Uptime SLA",
-//                         subtext: "Enterprise-grade reliability",
-//                         icon: Shield,
-//                         format: "percentage",
-//                         suffix: "%",
-//                         accent: "emerald",
-//                     }}
-//                 />
-//                 <StatsGridCard
-//                     stat={{
-//                         value: 2500000000,
-//                         label: "Revenue",
-//                         subtext: "Annual recurring revenue",
-//                         icon: DollarSign,
-//                         format: "currency",
-//                         accent: "amber",
-//                     }}
-//                 />
-//                 <StatsGridCard
-//                     stat={{
-//                         value: 50000000,
-//                         label: "Downloads",
-//                         subtext: "Across all platforms",
-//                         icon: Download,
-//                         format: "compact",
-//                         suffix: "+",
-//                         accent: "violet",
-//                     }}
-//                 />
-//             </StatsGridContainer>
-//         </StatsGrid>
-//     ),
-//     name: "0.1 Centered Stats - Light Theme",
-// };
-
-/* ============================================
-   0.2 Centered Stats - Dark Theme (Enhanced)
-============================================ */
-// export const CenteredStatsDark: Story = {
-//     render: () => (
-//         <StatsGrid
-//             variant="dark"
-//             columns={4}
-//             contentAlign="center"
-//             padding="lg"
-//             animated={true}
-//             animationType="slide"
-//         >
-//             <StatsGridTitle>Performance Metrics</StatsGridTitle>
-//             <StatsGridDescription>
-//                 Dark theme with optimized contrast for better visibility.
-//             </StatsGridDescription>
-//             <StatsGridContainer>
-//                 <StatsGridCard
-//                     stat={{
-//                         value: 10000000,
-//                         label: "Active Users",
-//                         subtext: "Growing 20% month over month",
-//                         icon: Users,
-//                         format: "compact",
-//                         accent: "blue",
-//                     }}
-//                 />
-//                 <StatsGridCard
-//                     stat={{
-//                         value: 99.9,
-//                         label: "Uptime SLA",
-//                         subtext: "Enterprise-grade reliability",
-//                         icon: Shield,
-//                         format: "percentage",
-//                         suffix: "%",
-//                         accent: "emerald",
-//                     }}
-//                 />
-//                 <StatsGridCard
-//                     stat={{
-//                         value: 2500000000,
-//                         label: "Revenue",
-//                         subtext: "Annual recurring revenue",
-//                         icon: DollarSign,
-//                         format: "currency",
-//                         accent: "amber",
-//                     }}
-//                 />
-//                 <StatsGridCard
-//                     stat={{
-//                         value: 50000000,
-//                         label: "Downloads",
-//                         subtext: "Across all platforms",
-//                         icon: Download,
-//                         format: "compact",
-//                         suffix: "+",
-//                         accent: "violet",
-//                     }}
-//                 />
-//             </StatsGridContainer>
-//         </StatsGrid>
-//     ),
-//     name: "0.2 Centered Stats - Dark Theme",
-// };
-
 export const CenteredStatsPrimary: Story = {
     render: () => (
         <StatsGrid
@@ -276,7 +130,7 @@ export const CenteredStatsPrimary: Story = {
                     stat={{
                         value: 10000000,
                         label: "Active Users",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -285,7 +139,7 @@ export const CenteredStatsPrimary: Story = {
                     stat={{
                         value: 99.9,
                         label: "Uptime SLA",
-                        icon: Shield,
+                        icon: LockClosedIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "emerald",
@@ -295,7 +149,7 @@ export const CenteredStatsPrimary: Story = {
                     stat={{
                         value: 2500000000,
                         label: "Revenue",
-                        icon: DollarSign,
+                        icon: CardStackIcon,
                         format: "currency",
                         accent: "amber",
                     }}
@@ -304,7 +158,7 @@ export const CenteredStatsPrimary: Story = {
                     stat={{
                         value: 50000000,
                         label: "Downloads",
-                        icon: Download,
+                        icon: DownloadIcon,
                         format: "compact",
                         suffix: "+",
                         accent: "violet",
@@ -334,7 +188,7 @@ export const CenteredStatsSecondary: Story = {
                     stat={{
                         value: 10000000,
                         label: "Active Users",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -343,7 +197,7 @@ export const CenteredStatsSecondary: Story = {
                     stat={{
                         value: 99.9,
                         label: "Uptime SLA",
-                        icon: Shield,
+                        icon: LockClosedIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "emerald",
@@ -353,7 +207,7 @@ export const CenteredStatsSecondary: Story = {
                     stat={{
                         value: 2500000000,
                         label: "Revenue",
-                        icon: DollarSign,
+                        icon: CardStackIcon,
                         format: "currency",
                         accent: "amber",
                     }}
@@ -362,7 +216,7 @@ export const CenteredStatsSecondary: Story = {
                     stat={{
                         value: 50000000,
                         label: "Downloads",
-                        icon: Download,
+                        icon: DownloadIcon,
                         format: "compact",
                         suffix: "+",
                         accent: "violet",
@@ -396,7 +250,7 @@ export const AlignLeftStats: Story = {
                     stat={{
                         value: 10000000,
                         label: "Active Users",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -405,7 +259,7 @@ export const AlignLeftStats: Story = {
                     stat={{
                         value: 99.9,
                         label: "Uptime SLA",
-                        icon: Shield,
+                        icon: LockClosedIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "emerald",
@@ -415,7 +269,7 @@ export const AlignLeftStats: Story = {
                     stat={{
                         value: 2500000000,
                         label: "Revenue",
-                        icon: DollarSign,
+                        icon: CardStackIcon,
                         format: "currency",
                         accent: "amber",
                     }}
@@ -424,7 +278,7 @@ export const AlignLeftStats: Story = {
                     stat={{
                         value: 50000000,
                         label: "Downloads",
-                        icon: Download,
+                        icon: DownloadIcon,
                         format: "compact",
                         suffix: "+",
                         accent: "violet",
@@ -454,7 +308,7 @@ export const AlignCenterStats: Story = {
                     stat={{
                         value: 10000000,
                         label: "Active Users",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -463,7 +317,7 @@ export const AlignCenterStats: Story = {
                     stat={{
                         value: 99.9,
                         label: "Uptime SLA",
-                        icon: Shield,
+                        icon: LockClosedIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "emerald",
@@ -473,7 +327,7 @@ export const AlignCenterStats: Story = {
                     stat={{
                         value: 2500000000,
                         label: "Revenue",
-                        icon: DollarSign,
+                        icon: CardStackIcon,
                         format: "currency",
                         accent: "amber",
                     }}
@@ -482,7 +336,7 @@ export const AlignCenterStats: Story = {
                     stat={{
                         value: 50000000,
                         label: "Downloads",
-                        icon: Download,
+                        icon: DownloadIcon,
                         format: "compact",
                         suffix: "+",
                         accent: "violet",
@@ -512,7 +366,7 @@ export const AlignRightStats: Story = {
                     stat={{
                         value: 10000000,
                         label: "Active Users",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -521,7 +375,7 @@ export const AlignRightStats: Story = {
                     stat={{
                         value: 99.9,
                         label: "Uptime SLA",
-                        icon: Shield,
+                        icon: LockClosedIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "emerald",
@@ -531,7 +385,7 @@ export const AlignRightStats: Story = {
                     stat={{
                         value: 2500000000,
                         label: "Revenue",
-                        icon: DollarSign,
+                        icon: CardStackIcon,
                         format: "currency",
                         accent: "amber",
                     }}
@@ -540,7 +394,7 @@ export const AlignRightStats: Story = {
                     stat={{
                         value: 50000000,
                         label: "Downloads",
-                        icon: Download,
+                        icon: DownloadIcon,
                         format: "compact",
                         suffix: "+",
                         accent: "violet",
@@ -575,7 +429,7 @@ export const TwoColumnStats: Story = {
                         value: 10000000,
                         label: "Active Users",
                         subtext: "Growing 20% month over month across all platforms",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -585,7 +439,7 @@ export const TwoColumnStats: Story = {
                         value: 2500000000,
                         label: "Annual Revenue",
                         subtext: "Record growth with 45% increase from previous year",
-                        icon: DollarSign,
+                        icon: CardStackIcon,
                         format: "currency",
                         accent: "amber",
                     }}
@@ -614,7 +468,7 @@ export const ThreeColumnStats: Story = {
                     stat={{
                         value: 10000000,
                         label: "Active Users",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -623,7 +477,7 @@ export const ThreeColumnStats: Story = {
                     stat={{
                         value: 99.9,
                         label: "Uptime SLA",
-                        icon: Shield,
+                        icon: LockClosedIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "emerald",
@@ -633,7 +487,7 @@ export const ThreeColumnStats: Story = {
                     stat={{
                         value: 2500000000,
                         label: "Revenue",
-                        icon: DollarSign,
+                        icon: CardStackIcon,
                         format: "currency",
                         accent: "amber",
                     }}
@@ -662,7 +516,7 @@ export const FourColumnStats: Story = {
                     stat={{
                         value: 10000000,
                         label: "Active Users",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -671,7 +525,7 @@ export const FourColumnStats: Story = {
                     stat={{
                         value: 99.9,
                         label: "Uptime SLA",
-                        icon: Shield,
+                        icon: LockClosedIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "emerald",
@@ -681,7 +535,7 @@ export const FourColumnStats: Story = {
                     stat={{
                         value: 2500000000,
                         label: "Revenue",
-                        icon: DollarSign,
+                        icon: CardStackIcon,
                         format: "currency",
                         accent: "amber",
                     }}
@@ -690,7 +544,7 @@ export const FourColumnStats: Story = {
                     stat={{
                         value: 50000000,
                         label: "Downloads",
-                        icon: Download,
+                        icon: DownloadIcon,
                         format: "compact",
                         suffix: "+",
                         accent: "violet",
@@ -720,7 +574,7 @@ export const SixColumnStats: Story = {
                     stat={{
                         value: 10000000,
                         label: "Users",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -729,7 +583,7 @@ export const SixColumnStats: Story = {
                     stat={{
                         value: 99.9,
                         label: "Uptime",
-                        icon: Shield,
+                        icon: LockClosedIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "emerald",
@@ -739,7 +593,7 @@ export const SixColumnStats: Story = {
                     stat={{
                         value: 2.5,
                         label: "Revenue",
-                        icon: DollarSign,
+                        icon: CardStackIcon,
                         format: "currency",
                         accent: "amber",
                     }}
@@ -748,7 +602,7 @@ export const SixColumnStats: Story = {
                     stat={{
                         value: 50,
                         label: "Downloads",
-                        icon: Download,
+                        icon: DownloadIcon,
                         format: "compact",
                         suffix: "M+",
                         accent: "violet",
@@ -758,7 +612,7 @@ export const SixColumnStats: Story = {
                     stat={{
                         value: 4.9,
                         label: "Rating",
-                        icon: Star,
+                        icon: StarIcon,
                         format: "raw",
                         decimals: 1,
                         accent: "purple",
@@ -768,7 +622,7 @@ export const SixColumnStats: Story = {
                     stat={{
                         value: 24,
                         label: "Support",
-                        icon: Clock,
+                        icon: ClockIcon,
                         format: "raw",
                         suffix: "/7",
                         accent: "rose",
@@ -804,7 +658,7 @@ export const FadeAnimationStats: Story = {
                     stat={{
                         value: 10000000,
                         label: "Active Users",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -813,7 +667,7 @@ export const FadeAnimationStats: Story = {
                     stat={{
                         value: 99.9,
                         label: "Uptime SLA",
-                        icon: Shield,
+                        icon: LockClosedIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "emerald",
@@ -823,7 +677,7 @@ export const FadeAnimationStats: Story = {
                     stat={{
                         value: 2500000000,
                         label: "Revenue",
-                        icon: DollarSign,
+                        icon: CardStackIcon,
                         format: "currency",
                         accent: "amber",
                     }}
@@ -832,7 +686,7 @@ export const FadeAnimationStats: Story = {
                     stat={{
                         value: 50000000,
                         label: "Downloads",
-                        icon: Download,
+                        icon: DownloadIcon,
                         format: "compact",
                         suffix: "+",
                         accent: "violet",
@@ -864,7 +718,7 @@ export const SlideAnimationStats: Story = {
                     stat={{
                         value: 10000000,
                         label: "Active Users",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -873,7 +727,7 @@ export const SlideAnimationStats: Story = {
                     stat={{
                         value: 99.9,
                         label: "Uptime SLA",
-                        icon: Shield,
+                        icon: LockClosedIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "emerald",
@@ -883,7 +737,7 @@ export const SlideAnimationStats: Story = {
                     stat={{
                         value: 2500000000,
                         label: "Revenue",
-                        icon: DollarSign,
+                        icon: CardStackIcon,
                         format: "currency",
                         accent: "amber",
                     }}
@@ -892,7 +746,7 @@ export const SlideAnimationStats: Story = {
                     stat={{
                         value: 50000000,
                         label: "Downloads",
-                        icon: Download,
+                        icon: DownloadIcon,
                         format: "compact",
                         suffix: "+",
                         accent: "violet",
@@ -924,7 +778,7 @@ export const ScaleAnimationStats: Story = {
                     stat={{
                         value: 10000000,
                         label: "Active Users",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -933,7 +787,7 @@ export const ScaleAnimationStats: Story = {
                     stat={{
                         value: 99.9,
                         label: "Uptime SLA",
-                        icon: Shield,
+                        icon: LockClosedIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "emerald",
@@ -943,7 +797,7 @@ export const ScaleAnimationStats: Story = {
                     stat={{
                         value: 2500000000,
                         label: "Revenue",
-                        icon: DollarSign,
+                        icon: CardStackIcon,
                         format: "currency",
                         accent: "amber",
                     }}
@@ -952,7 +806,7 @@ export const ScaleAnimationStats: Story = {
                     stat={{
                         value: 50000000,
                         label: "Downloads",
-                        icon: Download,
+                        icon: DownloadIcon,
                         format: "compact",
                         suffix: "+",
                         accent: "violet",
@@ -982,7 +836,7 @@ export const NoAnimationStats: Story = {
                     stat={{
                         value: 10000000,
                         label: "Active Users",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -991,7 +845,7 @@ export const NoAnimationStats: Story = {
                     stat={{
                         value: 99.9,
                         label: "Uptime SLA",
-                        icon: Shield,
+                        icon: LockClosedIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "emerald",
@@ -1001,7 +855,7 @@ export const NoAnimationStats: Story = {
                     stat={{
                         value: 2500000000,
                         label: "Revenue",
-                        icon: DollarSign,
+                        icon: CardStackIcon,
                         format: "currency",
                         accent: "amber",
                     }}
@@ -1010,7 +864,7 @@ export const NoAnimationStats: Story = {
                     stat={{
                         value: 50000000,
                         label: "Downloads",
-                        icon: Download,
+                        icon: DownloadIcon,
                         format: "compact",
                         suffix: "+",
                         accent: "violet",
@@ -1044,7 +898,7 @@ export const AccentColorShowcase: Story = {
                     stat={{
                         value: 1000000,
                         label: "Blue Accent",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -1053,7 +907,7 @@ export const AccentColorShowcase: Story = {
                     stat={{
                         value: 99.9,
                         label: "Emerald Accent",
-                        icon: Shield,
+                        icon: LockClosedIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "emerald",
@@ -1063,7 +917,7 @@ export const AccentColorShowcase: Story = {
                     stat={{
                         value: 50000000,
                         label: "Amber Accent",
-                        icon: DollarSign,
+                        icon: CardStackIcon,
                         format: "currency",
                         accent: "amber",
                     }}
@@ -1072,7 +926,7 @@ export const AccentColorShowcase: Story = {
                     stat={{
                         value: 1000000,
                         label: "Rose Accent",
-                        icon: Heart,
+                        icon: HeartIcon,
                         format: "compact",
                         accent: "rose",
                     }}
@@ -1081,7 +935,7 @@ export const AccentColorShowcase: Story = {
                     stat={{
                         value: 99.9,
                         label: "Violet Accent",
-                        icon: Star,
+                        icon: StarIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "violet",
@@ -1091,7 +945,7 @@ export const AccentColorShowcase: Story = {
                     stat={{
                         value: 50000000,
                         label: "Purple Accent",
-                        icon: Crown,
+                        icon: StarFilledIcon,
                         format: "currency",
                         accent: "purple",
                     }}
@@ -1101,6 +955,7 @@ export const AccentColorShowcase: Story = {
     ),
     name: "4.1 Accent Colors - Showcase",
 };
+
 export const AccentColorsOnDark: Story = {
     render: () => (
         <StatsGrid
@@ -1119,7 +974,7 @@ export const AccentColorsOnDark: Story = {
                     stat={{
                         value: 1000000,
                         label: "Blue Accent",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -1128,7 +983,7 @@ export const AccentColorsOnDark: Story = {
                     stat={{
                         value: 99.9,
                         label: "Emerald Accent",
-                        icon: Shield,
+                        icon: LockClosedIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "emerald",
@@ -1138,7 +993,7 @@ export const AccentColorsOnDark: Story = {
                     stat={{
                         value: 50000000,
                         label: "Amber Accent",
-                        icon: DollarSign,
+                        icon: CardStackIcon,
                         format: "currency",
                         accent: "amber",
                     }}
@@ -1147,7 +1002,7 @@ export const AccentColorsOnDark: Story = {
                     stat={{
                         value: 1000000,
                         label: "Rose Accent",
-                        icon: Heart,
+                        icon: HeartIcon,
                         format: "compact",
                         accent: "rose",
                     }}
@@ -1156,7 +1011,7 @@ export const AccentColorsOnDark: Story = {
                     stat={{
                         value: 99.9,
                         label: "Violet Accent",
-                        icon: Star,
+                        icon: StarIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "violet",
@@ -1166,7 +1021,7 @@ export const AccentColorsOnDark: Story = {
                     stat={{
                         value: 50000000,
                         label: "Purple Accent",
-                        icon: Crown,
+                        icon: StarFilledIcon,
                         format: "currency",
                         accent: "purple",
                     }}
@@ -1202,7 +1057,7 @@ export const DarkThemeGradient: Story = {
                             value: 10000000,
                             label: "Active Users",
                             subtext: "Growing 20% month over month",
-                            icon: Users,
+                            icon: PersonIcon,
                             format: "compact",
                             accent: "blue",
                         }}
@@ -1212,7 +1067,7 @@ export const DarkThemeGradient: Story = {
                             value: 99.99,
                             label: "Uptime SLA",
                             subtext: "Enterprise-grade reliability",
-                            icon: Shield,
+                            icon: LockClosedIcon,
                             format: "percentage",
                             suffix: "%",
                             accent: "emerald",
@@ -1223,7 +1078,7 @@ export const DarkThemeGradient: Story = {
                             value: 2500000000,
                             label: "Annual Revenue",
                             subtext: "Record growth this quarter",
-                            icon: DollarSign,
+                            icon: CardStackIcon,
                             format: "currency",
                             accent: "amber",
                         }}
@@ -1233,7 +1088,7 @@ export const DarkThemeGradient: Story = {
                             value: 50000000,
                             label: "Downloads",
                             subtext: "Across all platforms",
-                            icon: Download,
+                            icon: DownloadIcon,
                             format: "compact",
                             suffix: "+",
                             accent: "violet",
@@ -1266,7 +1121,7 @@ export const DarkThemeMinimal: Story = {
                         stat={{
                             value: 15000000,
                             label: "Total Users",
-                            icon: Users,
+                            icon: PersonIcon,
                             format: "compact",
                             accent: "blue",
                         }}
@@ -1275,7 +1130,7 @@ export const DarkThemeMinimal: Story = {
                         stat={{
                             value: 98.5,
                             label: "Satisfaction Rate",
-                            icon: Star,
+                            icon: StarIcon,
                             format: "percentage",
                             suffix: "%",
                             accent: "emerald",
@@ -1285,7 +1140,7 @@ export const DarkThemeMinimal: Story = {
                         stat={{
                             value: 3500000000,
                             label: "Revenue",
-                            icon: DollarSign,
+                            icon: CardStackIcon,
                             format: "currency",
                             accent: "amber",
                         }}
@@ -1294,7 +1149,7 @@ export const DarkThemeMinimal: Story = {
                         stat={{
                             value: 75000000,
                             label: "Downloads",
-                            icon: Download,
+                            icon: DownloadIcon,
                             format: "compact",
                             accent: "violet",
                         }}
@@ -1327,7 +1182,7 @@ export const DarkThemeWithIcons: Story = {
                             value: 99.9,
                             label: "System Uptime",
                             subtext: "99.9% availability guaranteed",
-                            icon: Zap,
+                            icon: LightningBoltIcon,
                             format: "percentage",
                             suffix: "%",
                             accent: "amber",
@@ -1338,7 +1193,7 @@ export const DarkThemeWithIcons: Story = {
                             value: 1000000,
                             label: "API Calls/Day",
                             subtext: "Average daily volume",
-                            icon: Activity,
+                            icon: ActivityLogIcon,
                             format: "compact",
                             accent: "blue",
                         }}
@@ -1348,7 +1203,7 @@ export const DarkThemeWithIcons: Story = {
                             value: 250,
                             label: "Team Members",
                             subtext: "Across 15 countries",
-                            icon: Users,
+                            icon: PersonIcon,
                             format: "raw",
                             accent: "emerald",
                         }}
@@ -1358,7 +1213,7 @@ export const DarkThemeWithIcons: Story = {
                             value: 50000,
                             label: "GitHub Stars",
                             subtext: "Open source community",
-                            icon: Star,
+                            icon: StarIcon,
                             format: "compact",
                             accent: "violet",
                         }}
@@ -1368,7 +1223,7 @@ export const DarkThemeWithIcons: Story = {
                             value: 98,
                             label: "Customer Retention",
                             subtext: "Annual retention rate",
-                            icon: Heart,
+                            icon: HeartIcon,
                             format: "percentage",
                             suffix: "%",
                             accent: "rose",
@@ -1379,7 +1234,7 @@ export const DarkThemeWithIcons: Story = {
                             value: 45,
                             label: "Countries Served",
                             subtext: "Global presence",
-                            icon: Globe,
+                            icon: GlobeIcon,
                             format: "raw",
                             accent: "purple",
                         }}
@@ -1408,10 +1263,10 @@ export const DarkThemeNoBorders: Story = {
                 </StatsGridDescription>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {[
-                        { value: 10000000, label: "Active Users", icon: Users, color: "blue", format: "compact" },
-                        { value: 99.99, label: "Uptime", icon: Shield, color: "emerald", format: "percentage", suffix: "%" },
-                        { value: 2500000000, label: "Revenue", icon: DollarSign, color: "amber", format: "currency" },
-                        { value: 50000000, label: "Downloads", icon: Download, color: "violet", format: "compact", suffix: "+" },
+                        { value: 10000000, label: "Active Users", icon: PersonIcon, color: "blue", format: "compact" },
+                        { value: 99.99, label: "Uptime", icon: LockClosedIcon, color: "emerald", format: "percentage", suffix: "%" },
+                        { value: 2500000000, label: "Revenue", icon: CardStackIcon, color: "amber", format: "currency" },
+                        { value: 50000000, label: "Downloads", icon: DownloadIcon, color: "violet", format: "compact", suffix: "+" },
                     ].map((stat, i) => (
                         <div key={i} className="bg-gradient-to-br from-gray-800/10 via-gray-800/5 to-transparent backdrop-blur-sm rounded-2xl p-6 border border-gray-700/20">
                             <div className="flex items-start justify-between">
@@ -1456,10 +1311,10 @@ export const DarkThemeGlassy: Story = {
                 </StatsGridDescription>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
                     {[
-                        { value: 10000000, label: "Users", icon: Users, color: "blue" },
-                        { value: 99.99, label: "Uptime", icon: Shield, color: "emerald", suffix: "%" },
-                        { value: 2500000000, label: "Revenue", icon: DollarSign, color: "amber" },
-                        { value: 50000000, label: "Downloads", icon: Download, color: "violet", suffix: "+" },
+                        { value: 10000000, label: "Users", icon: PersonIcon, color: "blue" },
+                        { value: 99.99, label: "Uptime", icon: LockClosedIcon, color: "emerald", suffix: "%" },
+                        { value: 2500000000, label: "Revenue", icon: CardStackIcon, color: "amber" },
+                        { value: 50000000, label: "Downloads", icon: DownloadIcon, color: "violet", suffix: "+" },
                     ].map((stat, i) => (
                         <div key={i} className="backdrop-blur-xl bg-white/5 rounded-2xl p-6 border border-white/10 shadow-2xl">
                             <div className="flex items-start justify-between">
@@ -1498,7 +1353,6 @@ export const DarkThemeGlassy: Story = {
     name: "5.5 Dark Theme - Glass Morphism",
 };
 
-
 /* ============================================
    6. USE CASE EXAMPLES
 ============================================ */
@@ -1522,7 +1376,7 @@ export const SaaSExample: Story = {
                         value: 2500000,
                         label: "Monthly Recurring Revenue",
                         subtext: "Up 32% from last quarter",
-                        icon: CircleDollarSign,
+                        icon: CardStackIcon,
                         format: "currency",
                         accent: "amber",
                     }}
@@ -1532,7 +1386,7 @@ export const SaaSExample: Story = {
                         value: 15000,
                         label: "Active Subscribers",
                         subtext: "Paying customers",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -1542,7 +1396,7 @@ export const SaaSExample: Story = {
                         value: 98.5,
                         label: "Retention Rate",
                         subtext: "Monthly customer retention",
-                        icon: HeartHandshake,
+                        icon: HeartIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "emerald",
@@ -1553,7 +1407,7 @@ export const SaaSExample: Story = {
                         value: 45000,
                         label: "Trial Signups",
                         subtext: "Last 30 days",
-                        icon: UserPlus,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "violet",
                     }}
@@ -1583,7 +1437,7 @@ export const EcommerceExample: Story = {
                         value: 1500000,
                         label: "Monthly Revenue",
                         subtext: "Gross merchandise value",
-                        icon: CreditCard,
+                        icon: CardStackIcon,
                         format: "currency",
                         accent: "amber",
                     }}
@@ -1593,7 +1447,7 @@ export const EcommerceExample: Story = {
                         value: 25000,
                         label: "Orders Processed",
                         subtext: "This month, up 15%",
-                        icon: ShoppingCart,
+                        icon: ShoppingCartIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -1603,7 +1457,7 @@ export const EcommerceExample: Story = {
                         value: 85.5,
                         label: "Conversion Rate",
                         subtext: "Visitors to customers",
-                        icon: TrendingUp,
+                        icon: DoubleArrowUpIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "emerald",
@@ -1614,7 +1468,7 @@ export const EcommerceExample: Story = {
                         value: 4.8,
                         label: "Average Rating",
                         subtext: "From 50K+ reviews",
-                        icon: Star,
+                        icon: StarIcon,
                         format: "raw",
                         decimals: 1,
                         accent: "violet",
@@ -1625,7 +1479,7 @@ export const EcommerceExample: Story = {
                         value: 35000,
                         label: "Returning Customers",
                         subtext: "Loyalty members",
-                        icon: Heart,
+                        icon: HeartIcon,
                         format: "compact",
                         accent: "rose",
                     }}
@@ -1635,7 +1489,7 @@ export const EcommerceExample: Story = {
                         value: 1250,
                         label: "Products Sold",
                         subtext: "Unique items",
-                        icon: Package,
+                        icon: CubeIcon,
                         format: "raw",
                         accent: "purple",
                     }}
@@ -1665,7 +1519,7 @@ export const MarketingExample: Story = {
                         value: 2500000,
                         label: "Email Subscribers",
                         subtext: "32% open rate",
-                        icon: Mail,
+                        icon: EnvelopeClosedIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -1675,7 +1529,7 @@ export const MarketingExample: Story = {
                         value: 750000,
                         label: "Social Followers",
                         subtext: "Across all platforms",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "emerald",
                     }}
@@ -1685,7 +1539,7 @@ export const MarketingExample: Story = {
                         value: 150000,
                         label: "Monthly Visitors",
                         subtext: "Organic + Paid",
-                        icon: Globe,
+                        icon: GlobeIcon,
                         format: "compact",
                         accent: "amber",
                     }}
@@ -1695,7 +1549,7 @@ export const MarketingExample: Story = {
                         value: 1250,
                         label: "Blog Posts",
                         subtext: "Published to date",
-                        icon: FileText,
+                        icon: FileTextIcon,
                         format: "raw",
                         accent: "violet",
                     }}
@@ -1705,7 +1559,7 @@ export const MarketingExample: Story = {
                         value: 45,
                         label: "Live Campaigns",
                         subtext: "Across channels",
-                        icon: Flag,
+                        icon: FlagIcon,
                         format: "raw",
                         accent: "rose",
                     }}
@@ -1715,7 +1569,7 @@ export const MarketingExample: Story = {
                         value: 12.5,
                         label: "Conversion Rate",
                         subtext: "Marketing qualified leads",
-                        icon: Target,
+                        icon: TargetIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "purple",
@@ -1746,7 +1600,7 @@ export const StartupExample: Story = {
                         value: 5000000,
                         label: "Funding Raised",
                         subtext: "Series A led by Top VC Partners",
-                        icon: Rocket,
+                        icon: RocketIconRadix,
                         format: "currency",
                         accent: "violet",
                     }}
@@ -1756,7 +1610,7 @@ export const StartupExample: Story = {
                         value: 50,
                         label: "Team Members",
                         subtext: "Across 4 countries",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "raw",
                         accent: "blue",
                     }}
@@ -1766,7 +1620,7 @@ export const StartupExample: Story = {
                         value: 100000,
                         label: "Active Users",
                         subtext: "Growing 200% month over month",
-                        icon: Heart,
+                        icon: HeartIcon,
                         format: "compact",
                         accent: "rose",
                     }}
@@ -1776,7 +1630,7 @@ export const StartupExample: Story = {
                         value: 97,
                         label: "NPS Score",
                         subtext: "Customer satisfaction",
-                        icon: Star,
+                        icon: StarIcon,
                         format: "raw",
                         accent: "amber",
                     }}
@@ -1786,7 +1640,7 @@ export const StartupExample: Story = {
                         value: 3,
                         label: "Years in Business",
                         subtext: "Bootstrapped to Series A",
-                        icon: Calendar,
+                        icon: CalendarIcon,
                         format: "raw",
                         accent: "emerald",
                     }}
@@ -1796,7 +1650,7 @@ export const StartupExample: Story = {
                         value: 15,
                         label: "Enterprise Clients",
                         subtext: "Fortune 500 companies",
-                        icon: Building,
+                        icon: HomeIcon,
                         format: "raw",
                         accent: "purple",
                     }}
@@ -1826,7 +1680,7 @@ export const TechExample: Story = {
                         value: 1000000000,
                         label: "API Calls",
                         subtext: "Processed monthly",
-                        icon: Zap,
+                        icon: LightningBoltIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -1836,7 +1690,7 @@ export const TechExample: Story = {
                         value: 99.99,
                         label: "Uptime",
                         subtext: "Last 30 days",
-                        icon: Shield,
+                        icon: LockClosedIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "emerald",
@@ -1847,7 +1701,7 @@ export const TechExample: Story = {
                         value: 5000000,
                         label: "Data Points",
                         subtext: "Per second",
-                        icon: Database,
+                        icon: CubeIcon,
                         format: "compact",
                         accent: "amber",
                     }}
@@ -1857,7 +1711,7 @@ export const TechExample: Story = {
                         value: 1000,
                         label: "Servers",
                         subtext: "Global infrastructure",
-                        icon: Server,
+                        icon: StackIcon,
                         format: "raw",
                         accent: "violet",
                     }}
@@ -1867,7 +1721,7 @@ export const TechExample: Story = {
                         value: 50,
                         label: "Edge Locations",
                         subtext: "Worldwide CDN",
-                        icon: Network,
+                        icon: Link2Icon,
                         format: "raw",
                         accent: "purple",
                     }}
@@ -1877,7 +1731,7 @@ export const TechExample: Story = {
                         value: 99.95,
                         label: "Success Rate",
                         subtext: "Request success",
-                        icon: CheckCircle,
+                        icon: CheckCircledIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "rose",
@@ -1908,7 +1762,7 @@ export const HealthcareExample: Story = {
                         value: 50000,
                         label: "Patients Treated",
                         subtext: "Last 12 months",
-                        icon: HeartPulse,
+                        icon: HeartIcon,
                         format: "compact",
                         accent: "rose",
                     }}
@@ -1918,7 +1772,7 @@ export const HealthcareExample: Story = {
                         value: 98.5,
                         label: "Satisfaction Rate",
                         subtext: "Patient feedback",
-                        icon: Smile,
+                        icon: FaceIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "emerald",
@@ -1929,7 +1783,7 @@ export const HealthcareExample: Story = {
                         value: 250,
                         label: "Medical Staff",
                         subtext: "Qualified professionals",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "raw",
                         accent: "blue",
                     }}
@@ -1939,7 +1793,7 @@ export const HealthcareExample: Story = {
                         value: 15,
                         label: "Locations",
                         subtext: "Nationwide clinics",
-                        icon: Building,
+                        icon: HomeIcon,
                         format: "raw",
                         accent: "amber",
                     }}
@@ -1949,7 +1803,7 @@ export const HealthcareExample: Story = {
                         value: 99.9,
                         label: "Success Rate",
                         subtext: "Treatment success",
-                        icon: CheckCircle,
+                        icon: CheckCircledIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "violet",
@@ -1960,7 +1814,7 @@ export const HealthcareExample: Story = {
                         value: 24,
                         label: "Emergency Response",
                         subtext: "Average response time",
-                        icon: Timer,
+                        icon: TimerIconRadix,
                         format: "raw",
                         suffix: "min",
                         accent: "purple",
@@ -1991,7 +1845,7 @@ export const FinancialExample: Story = {
                         value: 15000000000,
                         label: "Assets Under Management",
                         subtext: "Total AUM across funds",
-                        icon: Banknote,
+                        icon: CardStackIcon,
                         format: "currency",
                         accent: "amber",
                     }}
@@ -2001,7 +1855,7 @@ export const FinancialExample: Story = {
                         value: 2500000,
                         label: "Daily Transactions",
                         subtext: "Average daily volume",
-                        icon: CreditCard,
+                        icon: CardStackIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -2011,7 +1865,7 @@ export const FinancialExample: Story = {
                         value: 99.97,
                         label: "Transaction Success",
                         subtext: "Success rate",
-                        icon: CheckCircle,
+                        icon: CheckCircledIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "emerald",
@@ -2022,7 +1876,7 @@ export const FinancialExample: Story = {
                         value: 500000,
                         label: "Active Accounts",
                         subtext: "Retail + institutional",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "violet",
                     }}
@@ -2032,7 +1886,7 @@ export const FinancialExample: Story = {
                         value: 150,
                         label: "Countries Served",
                         subtext: "Global presence",
-                        icon: Globe,
+                        icon: GlobeIcon,
                         format: "raw",
                         accent: "purple",
                     }}
@@ -2042,7 +1896,7 @@ export const FinancialExample: Story = {
                         value: 25,
                         label: "Years in Business",
                         subtext: "Since founding",
-                        icon: Calendar,
+                        icon: CalendarIcon,
                         format: "raw",
                         accent: "rose",
                     }}
@@ -2073,7 +1927,7 @@ export const StatSubComponentsShowcase: Story = {
             <StatsGridContainer>
                 {/* Custom Card 1 - Horizontal Layout */}
                 <div className="flex items-center gap-4 p-6 border rounded-lg bg-card">
-                    <StatIcon icon={Users} accent="blue" size="lg" />
+                    <StatIcon icon={PersonIcon} accent="blue" size="lg" />
                     <div className="flex-1">
                         <StatLabel>Total Users</StatLabel>
                         <StatValue value={1500000} format="compact" className="text-3xl" />
@@ -2083,7 +1937,7 @@ export const StatSubComponentsShowcase: Story = {
 
                 {/* Custom Card 2 - Vertical Centered */}
                 <div className="flex flex-col items-center text-center p-6 border rounded-lg bg-card">
-                    <StatIcon icon={DollarSign} accent="amber" size="lg" className="mb-3" />
+                    <StatIcon icon={CardStackIcon} accent="amber" size="lg" className="mb-3" />
                     <StatLabel>Revenue</StatLabel>
                     <StatValue value={2500000} format="currency" className="text-3xl mt-1" />
                     <StatSubtext>Quarterly earnings</StatSubtext>
@@ -2179,7 +2033,7 @@ export const EdgeCases: Story = {
                         value: 0,
                         label: "Zero Value",
                         subtext: "Handles zero correctly",
-                        icon: Activity,
+                        icon: ActivityLogIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -2189,7 +2043,7 @@ export const EdgeCases: Story = {
                         value: 999999999999,
                         label: "Very Large Number",
                         subtext: "999.9B",
-                        icon: TrendingUp,
+                        icon: BarChartIcon,
                         format: "compact",
                         accent: "amber",
                     }}
@@ -2199,7 +2053,7 @@ export const EdgeCases: Story = {
                         value: 0.0001,
                         label: "Very Small Number",
                         subtext: "4 decimal places",
-                        icon: Target,
+                        icon: TargetIcon,
                         format: "raw",
                         decimals: 4,
                         accent: "emerald",
@@ -2210,7 +2064,7 @@ export const EdgeCases: Story = {
                         value: -1000000,
                         label: "Negative Number",
                         subtext: "Shows with minus sign",
-                        icon: TrendingDown,
+                        icon: DoubleArrowDownIcon,
                         format: "compact",
                         accent: "rose",
                     }}
@@ -2220,7 +2074,7 @@ export const EdgeCases: Story = {
                         value: 1234.5678,
                         label: "Custom Decimals",
                         subtext: "3 decimal places",
-                        icon: Calculator,
+                        icon: CrumpledPaperIcon,
                         format: "raw",
                         decimals: 3,
                         accent: "violet",
@@ -2231,7 +2085,7 @@ export const EdgeCases: Story = {
                         value: 1000,
                         label: "Custom Prefix/Suffix",
                         subtext: "€1,000/mo",
-                        icon: CircleDollarSign,
+                        icon: CardStackIcon,
                         format: "raw",
                         prefix: "€",
                         suffix: "/mo",
@@ -2263,7 +2117,7 @@ export const SingleStat: Story = {
                         value: 10000000,
                         label: "Total Users",
                         subtext: "Across all platforms",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -2328,9 +2182,8 @@ export const NoIconsNoSubtext: Story = {
     name: "8.3 Edge Cases - No Icons, No Subtext",
 };
 
-
 /* ============================================
-   6. ACCENT COLOR COMBINATIONS
+   9. ACCENT COLOR COMBINATIONS
 ============================================ */
 
 export const AllAccentColors: Story = {
@@ -2351,7 +2204,7 @@ export const AllAccentColors: Story = {
                     stat={{
                         value: 1000000,
                         label: "Default Accent",
-                        icon: Circle,
+                        icon: CircleIcon,
                         format: "compact",
                         accent: "default",
                     }}
@@ -2360,7 +2213,7 @@ export const AllAccentColors: Story = {
                     stat={{
                         value: 1000000,
                         label: "Blue Accent",
-                        icon: Circle,
+                        icon: CircleIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -2369,7 +2222,7 @@ export const AllAccentColors: Story = {
                     stat={{
                         value: 1000000,
                         label: "Emerald Accent",
-                        icon: Circle,
+                        icon: CircleIcon,
                         format: "compact",
                         accent: "emerald",
                     }}
@@ -2378,7 +2231,7 @@ export const AllAccentColors: Story = {
                     stat={{
                         value: 1000000,
                         label: "Amber Accent",
-                        icon: Circle,
+                        icon: CircleIcon,
                         format: "compact",
                         accent: "amber",
                     }}
@@ -2387,7 +2240,7 @@ export const AllAccentColors: Story = {
                     stat={{
                         value: 1000000,
                         label: "Rose Accent",
-                        icon: Circle,
+                        icon: CircleIcon,
                         format: "compact",
                         accent: "rose",
                     }}
@@ -2396,7 +2249,7 @@ export const AllAccentColors: Story = {
                     stat={{
                         value: 1000000,
                         label: "Violet Accent",
-                        icon: Circle,
+                        icon: CircleIcon,
                         format: "compact",
                         accent: "violet",
                     }}
@@ -2405,7 +2258,7 @@ export const AllAccentColors: Story = {
                     stat={{
                         value: 1000000,
                         label: "Purple Accent",
-                        icon: Circle,
+                        icon: CircleIcon,
                         format: "compact",
                         accent: "purple",
                     }}
@@ -2413,7 +2266,7 @@ export const AllAccentColors: Story = {
             </StatsGridContainer>
         </StatsGrid>
     ),
-    name: "6.1 Accent Colors - All Variants",
+    name: "9.1 Accent Colors - All Variants",
 };
 
 export const AccentColorsMixed: Story = {
@@ -2435,7 +2288,7 @@ export const AccentColorsMixed: Story = {
                         value: 99.9,
                         label: "Performance",
                         subtext: "System uptime",
-                        icon: Zap,
+                        icon: LightningBoltIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "amber",
@@ -2446,7 +2299,7 @@ export const AccentColorsMixed: Story = {
                         value: 1000000,
                         label: "Users",
                         subtext: "Active monthly",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -2456,7 +2309,7 @@ export const AccentColorsMixed: Story = {
                         value: 98.5,
                         label: "Satisfaction",
                         subtext: "Customer rating",
-                        icon: Star,
+                        icon: StarIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "emerald",
@@ -2467,7 +2320,7 @@ export const AccentColorsMixed: Story = {
                         value: 2500000,
                         label: "Revenue",
                         subtext: "Monthly recurring",
-                        icon: DollarSign,
+                        icon: CardStackIcon,
                         format: "currency",
                         accent: "violet",
                     }}
@@ -2477,7 +2330,7 @@ export const AccentColorsMixed: Story = {
                         value: 50000,
                         label: "Support Tickets",
                         subtext: "Resolved this month",
-                        icon: HeartHandshake,
+                        icon: HeartIcon,
                         format: "compact",
                         accent: "rose",
                     }}
@@ -2487,7 +2340,7 @@ export const AccentColorsMixed: Story = {
                         value: 15,
                         label: "New Features",
                         subtext: "Released in Q2",
-                        icon: Rocket,
+                        icon: RocketIconRadix,
                         format: "raw",
                         accent: "purple",
                     }}
@@ -2495,7 +2348,7 @@ export const AccentColorsMixed: Story = {
             </StatsGridContainer>
         </StatsGrid>
     ),
-    name: "6.2 Accent Colors - Mixed",
+    name: "9.2 Accent Colors - Mixed",
 };
 
 export const AccentColorsOnDarkMixed: Story = {
@@ -2518,7 +2371,7 @@ export const AccentColorsOnDarkMixed: Story = {
                             value: 99.99,
                             label: "Uptime SLA",
                             subtext: "Enterprise grade",
-                            icon: Shield,
+                            icon: LockClosedIcon,
                             format: "percentage",
                             suffix: "%",
                             accent: "emerald",
@@ -2529,7 +2382,7 @@ export const AccentColorsOnDarkMixed: Story = {
                             value: 15000000,
                             label: "Active Users",
                             subtext: "Global audience",
-                            icon: Users,
+                            icon: PersonIcon,
                             format: "compact",
                             accent: "blue",
                         }}
@@ -2539,7 +2392,7 @@ export const AccentColorsOnDarkMixed: Story = {
                             value: 5000000000,
                             label: "Total Revenue",
                             subtext: "Annual run rate",
-                            icon: DollarSign,
+                            icon: CardStackIcon,
                             format: "currency",
                             accent: "amber",
                         }}
@@ -2549,7 +2402,7 @@ export const AccentColorsOnDarkMixed: Story = {
                             value: 98,
                             label: "NPS Score",
                             subtext: "Customer loyalty",
-                            icon: Heart,
+                            icon: HeartIcon,
                             format: "raw",
                             accent: "rose",
                         }}
@@ -2559,7 +2412,7 @@ export const AccentColorsOnDarkMixed: Story = {
                             value: 75000000,
                             label: "Downloads",
                             subtext: "All time",
-                            icon: Download,
+                            icon: DownloadIcon,
                             format: "compact",
                             suffix: "+",
                             accent: "violet",
@@ -2570,7 +2423,7 @@ export const AccentColorsOnDarkMixed: Story = {
                             value: 4.9,
                             label: "App Store Rating",
                             subtext: "Based on 50K reviews",
-                            icon: Star,
+                            icon: StarIcon,
                             format: "raw",
                             decimals: 1,
                             accent: "purple",
@@ -2580,11 +2433,11 @@ export const AccentColorsOnDarkMixed: Story = {
             </StatsGrid>
         </div>
     ),
-    name: "6.3 Accent Colors - Dark Theme Mixed",
+    name: "9.3 Accent Colors - Dark Theme Mixed",
 };
 
 /* ============================================
-   7. CUSTOM COLOR SCHEMES
+   10. CUSTOM COLOR SCHEMES
 ============================================ */
 
 export const MonochromeScheme: Story = {
@@ -2605,7 +2458,7 @@ export const MonochromeScheme: Story = {
                     stat={{
                         value: 10000000,
                         label: "Active Users",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "default",
                     }}
@@ -2614,7 +2467,7 @@ export const MonochromeScheme: Story = {
                     stat={{
                         value: 99.9,
                         label: "Uptime",
-                        icon: Shield,
+                        icon: LockClosedIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "default",
@@ -2624,7 +2477,7 @@ export const MonochromeScheme: Story = {
                     stat={{
                         value: 2500000000,
                         label: "Revenue",
-                        icon: DollarSign,
+                        icon: CardStackIcon,
                         format: "currency",
                         accent: "default",
                     }}
@@ -2633,7 +2486,7 @@ export const MonochromeScheme: Story = {
                     stat={{
                         value: 50000000,
                         label: "Downloads",
-                        icon: Download,
+                        icon: DownloadIcon,
                         format: "compact",
                         suffix: "+",
                         accent: "default",
@@ -2642,7 +2495,7 @@ export const MonochromeScheme: Story = {
             </StatsGridContainer>
         </StatsGrid>
     ),
-    name: "7.1 Custom Schemes - Monochrome",
+    name: "10.1 Custom Schemes - Monochrome",
 };
 
 export const WarmTones: Story = {
@@ -2663,7 +2516,7 @@ export const WarmTones: Story = {
                     stat={{
                         value: 99.9,
                         label: "Customer Satisfaction",
-                        icon: Heart,
+                        icon: HeartIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "rose",
@@ -2673,7 +2526,7 @@ export const WarmTones: Story = {
                     stat={{
                         value: 15000000,
                         label: "Happy Users",
-                        icon: Smile,
+                        icon: FaceIcon,
                         format: "compact",
                         accent: "amber",
                     }}
@@ -2682,7 +2535,7 @@ export const WarmTones: Story = {
                     stat={{
                         value: 98.5,
                         label: "Retention Rate",
-                        icon: HeartHandshake,
+                        icon: HeartIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "emerald",
@@ -2692,7 +2545,7 @@ export const WarmTones: Story = {
                     stat={{
                         value: 2500000,
                         label: "Monthly Active",
-                        icon: Activity,
+                        icon: ActivityLogIcon,
                         format: "compact",
                         accent: "amber",
                     }}
@@ -2701,7 +2554,7 @@ export const WarmTones: Story = {
                     stat={{
                         value: 4.9,
                         label: "App Rating",
-                        icon: Star,
+                        icon: StarIcon,
                         format: "raw",
                         decimals: 1,
                         accent: "rose",
@@ -2711,7 +2564,7 @@ export const WarmTones: Story = {
                     stat={{
                         value: 50000,
                         label: "Support Tickets",
-                        icon: Timer,
+                        icon: TimerIconRadix,
                         format: "compact",
                         accent: "emerald",
                     }}
@@ -2719,7 +2572,7 @@ export const WarmTones: Story = {
             </StatsGridContainer>
         </StatsGrid>
     ),
-    name: "7.2 Custom Schemes - Warm Tones",
+    name: "10.2 Custom Schemes - Warm Tones",
 };
 
 export const CoolTones: Story = {
@@ -2741,7 +2594,7 @@ export const CoolTones: Story = {
                         stat={{
                             value: 99.99,
                             label: "System Uptime",
-                            icon: Shield,
+                            icon: LockClosedIcon,
                             format: "percentage",
                             suffix: "%",
                             accent: "blue",
@@ -2751,7 +2604,7 @@ export const CoolTones: Story = {
                         stat={{
                             value: 5000000,
                             label: "API Calls/Day",
-                            icon: Zap,
+                            icon: LightningBoltIcon,
                             format: "compact",
                             accent: "violet",
                         }}
@@ -2760,7 +2613,7 @@ export const CoolTones: Story = {
                         stat={{
                             value: 250,
                             label: "Team Size",
-                            icon: Users,
+                            icon: PersonIcon,
                             format: "raw",
                             accent: "purple",
                         }}
@@ -2769,7 +2622,7 @@ export const CoolTones: Story = {
                         stat={{
                             value: 1000000,
                             label: "Data Points",
-                            icon: Database,
+                            icon: CubeIcon,
                             format: "compact",
                             accent: "blue",
                         }}
@@ -2778,7 +2631,7 @@ export const CoolTones: Story = {
                         stat={{
                             value: 50,
                             label: "Edge Locations",
-                            icon: Network,
+                            icon: Link2Icon,
                             format: "raw",
                             accent: "violet",
                         }}
@@ -2787,7 +2640,7 @@ export const CoolTones: Story = {
                         stat={{
                             value: 99.95,
                             label: "Success Rate",
-                            icon: CheckCircle,
+                            icon: CheckCircledIcon,
                             format: "percentage",
                             suffix: "%",
                             accent: "purple",
@@ -2797,7 +2650,7 @@ export const CoolTones: Story = {
             </StatsGrid>
         </div>
     ),
-    name: "7.3 Custom Schemes - Arctic Dark",
+    name: "10.3 Custom Schemes - Arctic Dark",
 };
 
 export const VibrantPalette: Story = {
@@ -2818,7 +2671,7 @@ export const VibrantPalette: Story = {
                     stat={{
                         value: 10000000,
                         label: "Active Users",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -2827,7 +2680,7 @@ export const VibrantPalette: Story = {
                     stat={{
                         value: 2500000000,
                         label: "Revenue",
-                        icon: DollarSign,
+                        icon: CardStackIcon,
                         format: "currency",
                         accent: "amber",
                     }}
@@ -2836,7 +2689,7 @@ export const VibrantPalette: Story = {
                     stat={{
                         value: 99.9,
                         label: "Satisfaction",
-                        icon: Star,
+                        icon: StarIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "emerald",
@@ -2846,7 +2699,7 @@ export const VibrantPalette: Story = {
                     stat={{
                         value: 50000000,
                         label: "Downloads",
-                        icon: Download,
+                        icon: DownloadIcon,
                         format: "compact",
                         accent: "violet",
                     }}
@@ -2855,7 +2708,7 @@ export const VibrantPalette: Story = {
                     stat={{
                         value: 98.5,
                         label: "Retention",
-                        icon: Heart,
+                        icon: HeartIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "rose",
@@ -2865,7 +2718,7 @@ export const VibrantPalette: Story = {
                     stat={{
                         value: 4.9,
                         label: "Rating",
-                        icon: Award,
+                        icon: StarFilledIcon,
                         format: "raw",
                         decimals: 1,
                         accent: "purple",
@@ -2874,11 +2727,11 @@ export const VibrantPalette: Story = {
             </StatsGridContainer>
         </StatsGrid>
     ),
-    name: "7.4 Custom Schemes - Vibrant",
+    name: "10.4 Custom Schemes - Vibrant",
 };
 
 /* ============================================
-   8. GRADIENT BACKGROUND VARIANTS
+   11. GRADIENT BACKGROUND VARIANTS
 ============================================ */
 
 export const GradientLight: Story = {
@@ -2900,7 +2753,7 @@ export const GradientLight: Story = {
                         stat={{
                             value: 10000000,
                             label: "Active Users",
-                            icon: Users,
+                            icon: PersonIcon,
                             format: "compact",
                             accent: "blue",
                         }}
@@ -2909,7 +2762,7 @@ export const GradientLight: Story = {
                         stat={{
                             value: 99.9,
                             label: "Uptime",
-                            icon: Shield,
+                            icon: LockClosedIcon,
                             format: "percentage",
                             suffix: "%",
                             accent: "emerald",
@@ -2919,7 +2772,7 @@ export const GradientLight: Story = {
                         stat={{
                             value: 2500000000,
                             label: "Revenue",
-                            icon: DollarSign,
+                            icon: CardStackIcon,
                             format: "currency",
                             accent: "amber",
                         }}
@@ -2928,7 +2781,7 @@ export const GradientLight: Story = {
                         stat={{
                             value: 50000000,
                             label: "Downloads",
-                            icon: Download,
+                            icon: DownloadIcon,
                             format: "compact",
                             suffix: "+",
                             accent: "violet",
@@ -2938,7 +2791,7 @@ export const GradientLight: Story = {
             </StatsGrid>
         </div>
     ),
-    name: "8.1 Gradients - Light Background",
+    name: "11.1 Gradients - Light Background",
 };
 
 export const GradientDark: Story = {
@@ -2960,7 +2813,7 @@ export const GradientDark: Story = {
                         stat={{
                             value: 10000000,
                             label: "Active Users",
-                            icon: Users,
+                            icon: PersonIcon,
                             format: "compact",
                             accent: "blue",
                         }}
@@ -2969,7 +2822,7 @@ export const GradientDark: Story = {
                         stat={{
                             value: 99.9,
                             label: "Uptime",
-                            icon: Shield,
+                            icon: LockClosedIcon,
                             format: "percentage",
                             suffix: "%",
                             accent: "emerald",
@@ -2979,7 +2832,7 @@ export const GradientDark: Story = {
                         stat={{
                             value: 2500000000,
                             label: "Revenue",
-                            icon: DollarSign,
+                            icon: CardStackIcon,
                             format: "currency",
                             accent: "amber",
                         }}
@@ -2988,7 +2841,7 @@ export const GradientDark: Story = {
                         stat={{
                             value: 50000000,
                             label: "Downloads",
-                            icon: Download,
+                            icon: DownloadIcon,
                             format: "compact",
                             suffix: "+",
                             accent: "violet",
@@ -2998,7 +2851,7 @@ export const GradientDark: Story = {
             </StatsGrid>
         </div>
     ),
-    name: "8.2 Gradients - Dark Background",
+    name: "11.2 Gradients - Dark Background",
 };
 
 export const GradientMesh: Story = {
@@ -3020,7 +2873,7 @@ export const GradientMesh: Story = {
                         stat={{
                             value: 10000000,
                             label: "Active Users",
-                            icon: Users,
+                            icon: PersonIcon,
                             format: "compact",
                             accent: "blue",
                         }}
@@ -3029,7 +2882,7 @@ export const GradientMesh: Story = {
                         stat={{
                             value: 99.9,
                             label: "Uptime",
-                            icon: Shield,
+                            icon: LockClosedIcon,
                             format: "percentage",
                             suffix: "%",
                             accent: "emerald",
@@ -3039,7 +2892,7 @@ export const GradientMesh: Story = {
                         stat={{
                             value: 2500000000,
                             label: "Revenue",
-                            icon: DollarSign,
+                            icon: CardStackIcon,
                             format: "currency",
                             accent: "amber",
                         }}
@@ -3048,7 +2901,7 @@ export const GradientMesh: Story = {
                         stat={{
                             value: 50000000,
                             label: "Downloads",
-                            icon: Download,
+                            icon: DownloadIcon,
                             format: "compact",
                             suffix: "+",
                             accent: "violet",
@@ -3058,12 +2911,13 @@ export const GradientMesh: Story = {
             </StatsGrid>
         </div>
     ),
-    name: "8.3 Gradients - Mesh",
+    name: "11.3 Gradients - Mesh",
 };
 
 /* ============================================
-   9. INDUSTRY-SPECIFIC DARK THEMES
+   12. INDUSTRY-SPECIFIC DARK THEMES
 ============================================ */
+
 export const DarkThemeTech: Story = {
     render: () => (
         <div className="bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 relative overflow-hidden">
@@ -3092,7 +2946,7 @@ export const DarkThemeTech: Story = {
                             value: 99.99,
                             label: "API Uptime",
                             subtext: "Last 30 days",
-                            icon: Zap,
+                            icon: LightningBoltIcon,
                             format: "percentage",
                             suffix: "%",
                             accent: "blue",
@@ -3103,7 +2957,7 @@ export const DarkThemeTech: Story = {
                             value: 1500000,
                             label: "Requests/Min",
                             subtext: "Peak load",
-                            icon: Activity,
+                            icon: ActivityLogIcon,
                             format: "compact",
                             accent: "violet",
                         }}
@@ -3113,7 +2967,7 @@ export const DarkThemeTech: Story = {
                             value: 45,
                             label: "Avg Latency",
                             subtext: "Milliseconds",
-                            icon: Timer,
+                            icon: TimerIconRadix,
                             format: "raw",
                             suffix: "ms",
                             accent: "emerald",
@@ -3124,7 +2978,7 @@ export const DarkThemeTech: Story = {
                             value: 1000000000,
                             label: "Data Processed",
                             subtext: "Daily",
-                            icon: Database,
+                            icon: CubeIcon,
                             format: "compact",
                             suffix: "GB",
                             accent: "amber",
@@ -3135,7 +2989,7 @@ export const DarkThemeTech: Story = {
                             value: 25000,
                             label: "Active Containers",
                             subtext: "Kubernetes cluster",
-                            icon: Server,
+                            icon: StackIcon,
                             format: "compact",
                             accent: "purple",
                         }}
@@ -3145,7 +2999,7 @@ export const DarkThemeTech: Story = {
                             value: 100,
                             label: "Edge Locations",
                             subtext: "Worldwide",
-                            icon: Network,
+                            icon: Link2Icon,
                             format: "raw",
                             accent: "rose",
                         }}
@@ -3154,7 +3008,7 @@ export const DarkThemeTech: Story = {
             </StatsGrid>
         </div>
     ),
-    name: "9.1 Industry Dark - Tech",
+    name: "12.1 Industry Dark - Tech",
 };
 
 export const DarkThemeGaming: Story = {
@@ -3185,7 +3039,7 @@ export const DarkThemeGaming: Story = {
                             value: 5000000,
                             label: "Active Players",
                             subtext: "Monthly active users",
-                            icon: Users,
+                            icon: PersonIcon,
                             format: "compact",
                             accent: "violet",
                         }}
@@ -3195,7 +3049,7 @@ export const DarkThemeGaming: Story = {
                             value: 1500000,
                             label: "Peak Concurrent",
                             subtext: "All-time record",
-                            icon: Activity,
+                            icon: ActivityLogIcon,
                             format: "compact",
                             accent: "purple",
                         }}
@@ -3205,7 +3059,7 @@ export const DarkThemeGaming: Story = {
                             value: 250000000,
                             label: "Matches Played",
                             subtext: "Total to date",
-                            icon: Target,
+                            icon: TargetIcon,
                             format: "compact",
                             accent: "amber",
                         }}
@@ -3215,7 +3069,7 @@ export const DarkThemeGaming: Story = {
                             value: 4.8,
                             label: "Avg Rating",
                             subtext: "From 2M+ reviews",
-                            icon: Star,
+                            icon: StarIcon,
                             format: "raw",
                             decimals: 1,
                             accent: "emerald",
@@ -3226,7 +3080,7 @@ export const DarkThemeGaming: Story = {
                             value: 50,
                             label: "Tournaments",
                             subtext: "Running this month",
-                            icon: Crown,
+                            icon: StarFilledIcon,
                             format: "raw",
                             accent: "rose",
                         }}
@@ -3236,7 +3090,7 @@ export const DarkThemeGaming: Story = {
                             value: 1000000,
                             label: "Twitch Viewers",
                             subtext: "Monthly watch hours",
-                            icon: Eye,
+                            icon: EyeOpenIcon,
                             format: "compact",
                             accent: "blue",
                         }}
@@ -3245,7 +3099,7 @@ export const DarkThemeGaming: Story = {
             </StatsGrid>
         </div>
     ),
-    name: "9.2 Industry Dark - Gaming",
+    name: "12.2 Industry Dark - Gaming",
 };
 
 export const DarkThemeFinance: Story = {
@@ -3275,7 +3129,7 @@ export const DarkThemeFinance: Story = {
                             value: 2500000000000,
                             label: "Trading Volume",
                             subtext: "24h volume",
-                            icon: Banknote,
+                            icon: CardStackIcon,
                             format: "currency",
                             accent: "emerald",
                         }}
@@ -3285,7 +3139,7 @@ export const DarkThemeFinance: Story = {
                             value: 1500000,
                             label: "Daily Transactions",
                             subtext: "Average",
-                            icon: CreditCard,
+                            icon: CardStackIcon,
                             format: "compact",
                             accent: "blue",
                         }}
@@ -3295,7 +3149,7 @@ export const DarkThemeFinance: Story = {
                             value: 500000,
                             label: "Active Traders",
                             subtext: "Daily active",
-                            icon: Users,
+                            icon: PersonIcon,
                             format: "compact",
                             accent: "amber",
                         }}
@@ -3305,7 +3159,7 @@ export const DarkThemeFinance: Story = {
                             value: 99.97,
                             label: "Execution Rate",
                             subtext: "Success rate",
-                            icon: CheckCircle,
+                            icon: CheckCircledIcon,
                             format: "percentage",
                             suffix: "%",
                             accent: "emerald",
@@ -3316,7 +3170,7 @@ export const DarkThemeFinance: Story = {
                             value: 0.001,
                             label: "Avg Spread",
                             subtext: "Major pairs",
-                            icon: TrendingDown,
+                            icon: DoubleArrowDownIcon,
                             format: "raw",
                             decimals: 3,
                             accent: "rose",
@@ -3327,7 +3181,7 @@ export const DarkThemeFinance: Story = {
                             value: 150,
                             label: "Markets",
                             subtext: "Global exchanges",
-                            icon: Globe,
+                            icon: GlobeIcon,
                             format: "raw",
                             accent: "purple",
                         }}
@@ -3336,7 +3190,7 @@ export const DarkThemeFinance: Story = {
             </StatsGrid>
         </div>
     ),
-    name: "9.3 Industry Dark - Finance",
+    name: "12.3 Industry Dark - Finance",
 };
 
 export const DarkThemeCyberpunk: Story = {
@@ -3374,7 +3228,7 @@ export const DarkThemeCyberpunk: Story = {
                             value: 25000000,
                             label: "Eddies Spent",
                             subtext: "Weekly transactions",
-                            icon: Banknote,
+                            icon: CardStackIcon,
                             format: "currency",
                             accent: "amber",
                         }}
@@ -3384,7 +3238,7 @@ export const DarkThemeCyberpunk: Story = {
                             value: 5000000,
                             label: "Cyberware Users",
                             subtext: "Enhanced citizens",
-                            icon: Zap,
+                            icon: LightningBoltIcon,
                             format: "compact",
                             accent: "blue",
                         }}
@@ -3394,7 +3248,7 @@ export const DarkThemeCyberpunk: Story = {
                             value: 99.9,
                             label: "Network Uptime",
                             subtext: "City net reliability",
-                            icon: Network,
+                            icon: Link2Icon,
                             format: "percentage",
                             suffix: "%",
                             accent: "violet",
@@ -3405,7 +3259,7 @@ export const DarkThemeCyberpunk: Story = {
                             value: 15000,
                             label: "Active Mercs",
                             subtext: "Available for hire",
-                            icon: Users,
+                            icon: PersonIcon,
                             format: "compact",
                             accent: "rose",
                         }}
@@ -3415,7 +3269,7 @@ export const DarkThemeCyberpunk: Story = {
                             value: 85,
                             label: "Gangs Active",
                             subtext: "Across districts",
-                            icon: Flag,
+                            icon: FlagIcon,
                             format: "raw",
                             accent: "purple",
                         }}
@@ -3425,7 +3279,7 @@ export const DarkThemeCyberpunk: Story = {
                             value: 99.97,
                             label: "Mission Success",
                             subtext: "Completion rate",
-                            icon: Target,
+                            icon: TargetIcon,
                             format: "percentage",
                             suffix: "%",
                             accent: "emerald",
@@ -3436,7 +3290,7 @@ export const DarkThemeCyberpunk: Story = {
                             value: 5000000,
                             label: "Data Traffic",
                             subtext: "TB per day",
-                            icon: Database,
+                            icon: CubeIcon,
                             format: "compact",
                             suffix: "TB",
                             accent: "blue",
@@ -3447,7 +3301,7 @@ export const DarkThemeCyberpunk: Story = {
                             value: 24,
                             label: "Security Level",
                             subtext: "Threat index",
-                            icon: Shield,
+                            icon: LockClosedIcon,
                             format: "raw",
                             accent: "amber",
                         }}
@@ -3456,11 +3310,11 @@ export const DarkThemeCyberpunk: Story = {
             </StatsGrid>
         </div>
     ),
-    name: "9.4 Industry Dark - Cyberpunk",
+    name: "12.4 Industry Dark - Cyberpunk",
 };
 
 /* ============================================
-   10. ANIMATION COMBINATIONS
+   13. ANIMATION COMBINATIONS
 ============================================ */
 
 export const DarkThemeWithGlow: Story = {
@@ -3480,10 +3334,10 @@ export const DarkThemeWithGlow: Story = {
                 </StatsGridDescription>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {[
-                        { value: 10000000, label: "Users", icon: Users, color: "blue", format: "compact" },
-                        { value: 99.99, label: "Uptime", icon: Shield, color: "emerald", format: "percentage", suffix: "%" },
-                        { value: 2500000000, label: "Revenue", icon: DollarSign, color: "amber", format: "currency" },
-                        { value: 50000000, label: "Downloads", icon: Download, color: "violet", format: "compact" },
+                        { value: 10000000, label: "Users", icon: PersonIcon, color: "blue", format: "compact" },
+                        { value: 99.99, label: "Uptime", icon: LockClosedIcon, color: "emerald", format: "percentage", suffix: "%" },
+                        { value: 2500000000, label: "Revenue", icon: CardStackIcon, color: "amber", format: "currency" },
+                        { value: 50000000, label: "Downloads", icon: DownloadIcon, color: "violet", format: "compact" },
                     ].map((stat, i) => (
                         <div
                             key={i}
@@ -3527,7 +3381,7 @@ export const DarkThemeWithGlow: Story = {
             </StatsGrid>
         </div>
     ),
-    name: "10.1 Dark Theme - Neon Glow",
+    name: "13.1 Dark Theme - Neon Glow",
 };
 
 export const DarkThemeWithPulse: Story = {
@@ -3550,7 +3404,7 @@ export const DarkThemeWithPulse: Story = {
                         stat={{
                             value: 10000000,
                             label: "Active Users",
-                            icon: Users,
+                            icon: PersonIcon,
                             format: "compact",
                             accent: "blue",
                         }}
@@ -3559,7 +3413,7 @@ export const DarkThemeWithPulse: Story = {
                         stat={{
                             value: 99.99,
                             label: "Uptime",
-                            icon: Shield,
+                            icon: LockClosedIcon,
                             format: "percentage",
                             suffix: "%",
                             accent: "emerald",
@@ -3569,7 +3423,7 @@ export const DarkThemeWithPulse: Story = {
                         stat={{
                             value: 2500000000,
                             label: "Revenue",
-                            icon: DollarSign,
+                            icon: CardStackIcon,
                             format: "currency",
                             accent: "amber",
                         }}
@@ -3578,7 +3432,7 @@ export const DarkThemeWithPulse: Story = {
                         stat={{
                             value: 50000000,
                             label: "Downloads",
-                            icon: Download,
+                            icon: DownloadIcon,
                             format: "compact",
                             suffix: "+",
                             accent: "violet",
@@ -3588,11 +3442,11 @@ export const DarkThemeWithPulse: Story = {
             </StatsGrid>
         </div>
     ),
-    name: "10.2 Dark Theme - Pulse",
+    name: "13.2 Dark Theme - Pulse",
 };
 
 /* ============================================
-   11. ACCESSIBILITY & CONTRAST
+   14. ACCESSIBILITY & CONTRAST
 ============================================ */
 
 export const HighContrastDark: Story = {
@@ -3627,7 +3481,7 @@ export const HighContrastDark: Story = {
             </StatsGrid>
         </div>
     ),
-    name: "11.1 Accessibility - High Contrast Dark",
+    name: "14.1 Accessibility - High Contrast Dark",
 };
 
 export const SoftDarkTheme: Story = {
@@ -3650,7 +3504,7 @@ export const SoftDarkTheme: Story = {
                             stat={{
                                 value: 10000000,
                                 label: "Active Users",
-                                icon: Users,
+                                icon: PersonIcon,
                                 format: "compact",
                                 accent: "blue",
                             }}
@@ -3659,7 +3513,7 @@ export const SoftDarkTheme: Story = {
                             stat={{
                                 value: 99.9,
                                 label: "Uptime",
-                                icon: Shield,
+                                icon: LockClosedIcon,
                                 format: "percentage",
                                 suffix: "%",
                                 accent: "emerald",
@@ -3669,7 +3523,7 @@ export const SoftDarkTheme: Story = {
                             stat={{
                                 value: 2500000000,
                                 label: "Revenue",
-                                icon: DollarSign,
+                                icon: CardStackIcon,
                                 format: "currency",
                                 accent: "amber",
                             }}
@@ -3678,7 +3532,7 @@ export const SoftDarkTheme: Story = {
                             stat={{
                                 value: 50000000,
                                 label: "Downloads",
-                                icon: Download,
+                                icon: DownloadIcon,
                                 format: "compact",
                                 suffix: "+",
                                 accent: "violet",
@@ -3689,11 +3543,11 @@ export const SoftDarkTheme: Story = {
             </StatsGrid>
         </div>
     ),
-    name: "11.2 Accessibility - Soft Dark",
+    name: "14.2 Accessibility - Soft Dark",
 };
 
 /* ============================================
-   9. RESPONSIVE BEHAVIOR
+   15. RESPONSIVE BEHAVIOR
 ============================================ */
 
 export const MobileView: Story = {
@@ -3719,7 +3573,7 @@ export const MobileView: Story = {
                     stat={{
                         value: 10000000,
                         label: "Active Users",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -3728,7 +3582,7 @@ export const MobileView: Story = {
                     stat={{
                         value: 99.9,
                         label: "Uptime SLA",
-                        icon: Shield,
+                        icon: LockClosedIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "emerald",
@@ -3738,7 +3592,7 @@ export const MobileView: Story = {
                     stat={{
                         value: 2500000000,
                         label: "Revenue",
-                        icon: DollarSign,
+                        icon: CardStackIcon,
                         format: "currency",
                         accent: "amber",
                     }}
@@ -3747,7 +3601,7 @@ export const MobileView: Story = {
                     stat={{
                         value: 50000000,
                         label: "Downloads",
-                        icon: Download,
+                        icon: DownloadIcon,
                         format: "compact",
                         suffix: "+",
                         accent: "violet",
@@ -3757,7 +3611,7 @@ export const MobileView: Story = {
                     stat={{
                         value: 4.9,
                         label: "App Rating",
-                        icon: Star,
+                        icon: StarIcon,
                         format: "raw",
                         decimals: 1,
                         accent: "purple",
@@ -3767,7 +3621,7 @@ export const MobileView: Story = {
                     stat={{
                         value: 24,
                         label: "Support",
-                        icon: Clock,
+                        icon: ClockIcon,
                         format: "raw",
                         suffix: "/7",
                         accent: "rose",
@@ -3776,7 +3630,7 @@ export const MobileView: Story = {
             </StatsGridContainer>
         </StatsGrid>
     ),
-    name: "9.1 Responsive - Mobile",
+    name: "15.1 Responsive - Mobile",
 };
 
 export const TabletView: Story = {
@@ -3802,7 +3656,7 @@ export const TabletView: Story = {
                     stat={{
                         value: 10000000,
                         label: "Active Users",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -3811,7 +3665,7 @@ export const TabletView: Story = {
                     stat={{
                         value: 99.9,
                         label: "Uptime SLA",
-                        icon: Shield,
+                        icon: LockClosedIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "emerald",
@@ -3821,7 +3675,7 @@ export const TabletView: Story = {
                     stat={{
                         value: 2500000000,
                         label: "Revenue",
-                        icon: DollarSign,
+                        icon: CardStackIcon,
                         format: "currency",
                         accent: "amber",
                     }}
@@ -3830,7 +3684,7 @@ export const TabletView: Story = {
                     stat={{
                         value: 50000000,
                         label: "Downloads",
-                        icon: Download,
+                        icon: DownloadIcon,
                         format: "compact",
                         suffix: "+",
                         accent: "violet",
@@ -3839,13 +3693,11 @@ export const TabletView: Story = {
             </StatsGridContainer>
         </StatsGrid>
     ),
-    name: "9.2 Responsive - Tablet",
+    name: "15.2 Responsive - Tablet",
 };
 
-
-
 /* ============================================
-   0. BASIC VARIANTS WITH DIFFERENT THEMES
+   16. BASIC VARIANTS WITH DIFFERENT THEMES
 ============================================ */
 
 // Light theme stories
@@ -3869,7 +3721,7 @@ export const CenteredStatsLight: Story = {
                         value: 10000000,
                         label: "Active Users",
                         subtext: "Growing 20% month over month",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -3879,7 +3731,7 @@ export const CenteredStatsLight: Story = {
                         value: 99.9,
                         label: "Uptime SLA",
                         subtext: "Enterprise-grade reliability",
-                        icon: Shield,
+                        icon: LockClosedIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "emerald",
@@ -3890,7 +3742,7 @@ export const CenteredStatsLight: Story = {
                         value: 2500000000,
                         label: "Revenue",
                         subtext: "Annual recurring revenue",
-                        icon: DollarSign,
+                        icon: CardStackIcon,
                         format: "currency",
                         accent: "amber",
                     }}
@@ -3900,7 +3752,7 @@ export const CenteredStatsLight: Story = {
                         value: 50000000,
                         label: "Downloads",
                         subtext: "Across all platforms",
-                        icon: Download,
+                        icon: DownloadIcon,
                         format: "compact",
                         suffix: "+",
                         accent: "violet",
@@ -3909,11 +3761,11 @@ export const CenteredStatsLight: Story = {
             </StatsGridContainer>
         </StatsGrid>
     ),
-    name: "0.1 Centered Stats - Light Theme",
+    name: "16.1 Centered Stats - Light Theme",
 };
 
 /* ============================================
-   0.2 Centered Stats - Dark Theme (Enhanced)
+   16.2 Centered Stats - Dark Theme (Enhanced)
 ============================================ */
 export const CenteredStatsDark: Story = {
     render: () => (
@@ -3935,7 +3787,7 @@ export const CenteredStatsDark: Story = {
                         value: 10000000,
                         label: "Active Users",
                         subtext: "Growing 20% month over month",
-                        icon: Users,
+                        icon: PersonIcon,
                         format: "compact",
                         accent: "blue",
                     }}
@@ -3945,7 +3797,7 @@ export const CenteredStatsDark: Story = {
                         value: 99.9,
                         label: "Uptime SLA",
                         subtext: "Enterprise-grade reliability",
-                        icon: Shield,
+                        icon: LockClosedIcon,
                         format: "percentage",
                         suffix: "%",
                         accent: "emerald",
@@ -3956,7 +3808,7 @@ export const CenteredStatsDark: Story = {
                         value: 2500000000,
                         label: "Revenue",
                         subtext: "Annual recurring revenue",
-                        icon: DollarSign,
+                        icon: CardStackIcon,
                         format: "currency",
                         accent: "amber",
                     }}
@@ -3966,7 +3818,7 @@ export const CenteredStatsDark: Story = {
                         value: 50000000,
                         label: "Downloads",
                         subtext: "Across all platforms",
-                        icon: Download,
+                        icon: DownloadIcon,
                         format: "compact",
                         suffix: "+",
                         accent: "violet",
@@ -3975,11 +3827,11 @@ export const CenteredStatsDark: Story = {
             </StatsGridContainer>
         </StatsGrid>
     ),
-    name: "0.2 Centered Stats - Dark Theme",
+    name: "16.2 Centered Stats - Dark Theme",
 };
 
 /* ============================================
-   12. CUSTOM ICON COLORS SHOWCASE
+   17. CUSTOM ICON COLORS SHOWCASE
 ============================================ */
 
 export const CustomIconColorsLight: Story = {
@@ -3999,7 +3851,7 @@ export const CustomIconColorsLight: Story = {
                 {/* Using built-in accent */}
                 <div className="p-6 border rounded-lg bg-card">
                     <div className="flex items-center gap-4">
-                        <StatIcon icon={Users} accent="blue" size="lg" />
+                        <StatIcon icon={PersonIcon} accent="blue" size="lg" />
                         <div>
                             <StatLabel>Built-in Blue</StatLabel>
                             <StatValue value={1000000} format="compact" />
@@ -4011,7 +3863,7 @@ export const CustomIconColorsLight: Story = {
                 <div className="p-6 border rounded-lg bg-card">
                     <div className="flex items-center gap-4">
                         <StatIcon
-                            icon={DollarSign}
+                            icon={CardStackIcon}
                             iconBg="bg-gradient-to-br from-purple-600 to-pink-600"
                             iconFg="text-white"
                             size="lg"
@@ -4028,7 +3880,7 @@ export const CustomIconColorsLight: Story = {
                 <div className="p-6 border rounded-lg bg-card">
                     <div className="flex items-center gap-4">
                         <StatIcon
-                            icon={Star}
+                            icon={StarIcon}
                             iconBg="bg-amber-100"
                             iconFg="text-amber-600"
                             darkIconBg="bg-purple-900/30"
@@ -4046,7 +3898,7 @@ export const CustomIconColorsLight: Story = {
                 <div className="p-6 border rounded-lg bg-card">
                     <div className="flex items-center gap-4">
                         <StatIcon
-                            icon={Heart}
+                            icon={HeartIcon}
                             iconBg="bg-transparent border-2 border-rose-300"
                             iconFg="text-rose-500"
                             darkIconBg="bg-transparent border-2 border-rose-800"
@@ -4064,7 +3916,7 @@ export const CustomIconColorsLight: Story = {
                 <div className="p-6 border rounded-lg bg-card">
                     <div className="flex items-center gap-4">
                         <StatIcon
-                            icon={Sparkles}
+                            icon={StarIcon}
                             iconBg="bg-pink-100"
                             iconFg="text-pink-500"
                             darkIconBg="bg-pink-900/20"
@@ -4082,7 +3934,7 @@ export const CustomIconColorsLight: Story = {
                 <div className="p-6 border rounded-lg bg-card">
                     <div className="flex items-center gap-4">
                         <StatIcon
-                            icon={Globe}
+                            icon={GlobeIcon}
                             iconBg="bg-emerald-100"
                             iconFg="text-emerald-700"
                             darkIconBg="bg-emerald-900/30"
@@ -4098,7 +3950,7 @@ export const CustomIconColorsLight: Story = {
             </StatsGridContainer>
         </StatsGrid>
     ),
-    name: "12.1 Custom Icons - Light Theme",
+    name: "17.1 Custom Icons - Light Theme",
 };
 
 export const CustomIconColorsDark: Story = {
@@ -4120,7 +3972,7 @@ export const CustomIconColorsDark: Story = {
                     <div className="p-6 border border-gray-800 rounded-lg bg-gray-900/50">
                         <div className="flex items-center gap-4">
                             <StatIcon
-                                icon={Zap}
+                                icon={LightningBoltIcon}
                                 iconBg="bg-yellow-100"
                                 iconFg="text-yellow-600"
                                 darkIconBg="bg-yellow-500/20"
@@ -4138,7 +3990,7 @@ export const CustomIconColorsDark: Story = {
                     <div className="p-6 border border-gray-800 rounded-lg bg-gray-900/50">
                         <div className="flex items-center gap-4">
                             <StatIcon
-                                icon={Wand2}
+                                icon={StarFilledIcon}
                                 iconBg="bg-purple-100"
                                 iconFg="text-purple-600"
                                 darkIconBg="bg-purple-500/20"
@@ -4156,7 +4008,7 @@ export const CustomIconColorsDark: Story = {
                     <div className="p-6 border border-gray-800 rounded-lg bg-gray-900/50">
                         <div className="flex items-center gap-4">
                             <StatIcon
-                                icon={Activity}
+                                icon={ActivityLogIcon}
                                 iconBg="bg-blue-100"
                                 iconFg="text-blue-600"
                                 darkIconBg="bg-blue-500/20"
@@ -4174,7 +4026,7 @@ export const CustomIconColorsDark: Story = {
                     <div className="p-6 border border-gray-800 rounded-lg bg-gray-900/50">
                         <div className="flex items-center gap-4">
                             <StatIcon
-                                icon={Crown}
+                                icon={StarFilledIcon}
                                 iconBg="bg-pink-100"
                                 iconFg="text-pink-600"
                                 darkIconBg="bg-pink-500/20"
@@ -4192,7 +4044,7 @@ export const CustomIconColorsDark: Story = {
                     <div className="p-6 border border-gray-800 rounded-lg bg-gray-900/50">
                         <div className="flex items-center gap-4">
                             <StatIcon
-                                icon={Database}
+                                icon={CubeIcon}
                                 iconBg="bg-cyan-100"
                                 iconFg="text-cyan-600"
                                 darkIconBg="bg-cyan-500/20"
@@ -4210,7 +4062,7 @@ export const CustomIconColorsDark: Story = {
                     <div className="p-6 border border-gray-800 rounded-lg bg-gray-900/50">
                         <div className="flex items-center gap-4">
                             <StatIcon
-                                icon={Timer}
+                                icon={TimerIconRadix}
                                 iconBg="bg-orange-100"
                                 iconFg="text-orange-600"
                                 darkIconBg="bg-orange-500/20"
@@ -4227,7 +4079,7 @@ export const CustomIconColorsDark: Story = {
             </StatsGrid>
         </div>
     ),
-    name: "12.2 Custom Icons - Dark Theme",
+    name: "17.2 Custom Icons - Dark Theme",
 };
 
 export const IconColorPalette: Story = {
@@ -4247,7 +4099,7 @@ export const IconColorPalette: Story = {
                 {/* Solid colors */}
                 <div className="p-4 border rounded-lg bg-card text-center">
                     <StatIcon
-                        icon={Palette}
+                        icon={Pencil2Icon}
                         iconBg="bg-red-500"
                         iconFg="text-white"
                         size="lg"
@@ -4260,7 +4112,7 @@ export const IconColorPalette: Story = {
                 {/* Gradient */}
                 <div className="p-4 border rounded-lg bg-card text-center">
                     <StatIcon
-                        icon={Brush}
+                        icon={StarFilledIcon}
                         iconBg="bg-gradient-to-br from-purple-500 to-pink-500"
                         iconFg="text-white"
                         size="lg"
@@ -4273,7 +4125,7 @@ export const IconColorPalette: Story = {
                 {/* Outline */}
                 <div className="p-4 border rounded-lg bg-card text-center">
                     <StatIcon
-                        icon={Sparkles}
+                        icon={StarIcon}
                         iconBg="bg-transparent border-2 border-blue-300"
                         iconFg="text-blue-500"
                         darkIconBg="bg-transparent border-2 border-blue-700"
@@ -4288,11 +4140,11 @@ export const IconColorPalette: Story = {
                 {/* Pastel */}
                 <div className="p-4 border rounded-lg bg-card text-center">
                     <StatIcon
-                        icon={Wand2}
-                        iconBg="bg-lavender-100"
-                        iconFg="text-lavender-600"
-                        darkIconBg="bg-lavender-900/30"
-                        darkIconFg="text-lavender-400"
+                        icon={StarFilledIcon}
+                        iconBg="bg-purple-100"
+                        iconFg="text-purple-600"
+                        darkIconBg="bg-purple-900/30"
+                        darkIconFg="text-purple-400"
                         overrideAccent={true}
                         size="lg"
                         className="mx-auto mb-2"
@@ -4303,7 +4155,7 @@ export const IconColorPalette: Story = {
                 {/* Metallic */}
                 <div className="p-4 border rounded-lg bg-card text-center">
                     <StatIcon
-                        icon={Award}
+                        icon={StarFilledIcon}
                         iconBg="bg-gradient-to-br from-amber-200 to-yellow-400"
                         iconFg="text-amber-900"
                         darkIconBg="bg-gradient-to-br from-amber-800 to-yellow-700"
@@ -4318,7 +4170,7 @@ export const IconColorPalette: Story = {
                 {/* Glass morphism */}
                 <div className="p-4 border rounded-lg bg-card text-center">
                     <StatIcon
-                        icon={Eye}
+                        icon={EyeOpenIcon}
                         iconBg="backdrop-blur-sm bg-white/30"
                         iconFg="text-gray-700"
                         darkIconBg="backdrop-blur-sm bg-white/10"
@@ -4335,7 +4187,7 @@ export const IconColorPalette: Story = {
                     <div className="relative mx-auto mb-2 w-12 h-12">
                         <div className="absolute inset-0 bg-blue-500 rounded-lg opacity-20"></div>
                         <StatIcon
-                            icon={Target}
+                            icon={TargetIcon}
                             iconBg="bg-transparent"
                             iconFg="text-blue-600"
                             darkIconFg="text-blue-400"
@@ -4350,7 +4202,7 @@ export const IconColorPalette: Story = {
                 {/* Rainbow */}
                 <div className="p-4 border rounded-lg bg-card text-center">
                     <StatIcon
-                        icon={Heart}
+                        icon={HeartIcon}
                         iconBg="bg-gradient-to-r from-red-400 via-purple-400 to-blue-400"
                         iconFg="text-white"
                         darkIconBg="bg-gradient-to-r from-red-600 via-purple-600 to-blue-600"
@@ -4364,7 +4216,7 @@ export const IconColorPalette: Story = {
             </StatsGridContainer>
         </StatsGrid>
     ),
-    name: "12.3 Custom Icons - Color Palette",
+    name: "17.3 Custom Icons - Color Palette",
 };
 
 export const RealWorldIconExamples: Story = {
@@ -4387,7 +4239,7 @@ export const RealWorldIconExamples: Story = {
                     <div className="space-y-4">
                         <div className="flex items-center gap-3">
                             <StatIcon
-                                icon={Users}
+                                icon={PersonIcon}
                                 iconBg="bg-blue-100"
                                 iconFg="text-blue-600"
                                 darkIconBg="bg-blue-900/30"
@@ -4401,7 +4253,7 @@ export const RealWorldIconExamples: Story = {
                         </div>
                         <div className="flex items-center gap-3">
                             <StatIcon
-                                icon={Heart}
+                                icon={HeartIcon}
                                 iconBg="bg-pink-100"
                                 iconFg="text-pink-600"
                                 darkIconBg="bg-pink-900/30"
@@ -4415,7 +4267,7 @@ export const RealWorldIconExamples: Story = {
                         </div>
                         <div className="flex items-center gap-3">
                             <StatIcon
-                                icon={Activity}
+                                icon={ActivityLogIcon}
                                 iconBg="bg-sky-100"
                                 iconFg="text-sky-600"
                                 darkIconBg="bg-sky-900/30"
@@ -4436,7 +4288,7 @@ export const RealWorldIconExamples: Story = {
                     <div className="space-y-4">
                         <div className="flex items-center gap-3">
                             <StatIcon
-                                icon={DollarSign}
+                                icon={CardStackIcon}
                                 iconBg="bg-emerald-100"
                                 iconFg="text-emerald-600"
                                 darkIconBg="bg-emerald-900/30"
@@ -4450,7 +4302,7 @@ export const RealWorldIconExamples: Story = {
                         </div>
                         <div className="flex items-center gap-3">
                             <StatIcon
-                                icon={TrendingUp}
+                                icon={DoubleArrowUpIcon}
                                 iconBg="bg-amber-100"
                                 iconFg="text-amber-600"
                                 darkIconBg="bg-amber-900/30"
@@ -4464,7 +4316,7 @@ export const RealWorldIconExamples: Story = {
                         </div>
                         <div className="flex items-center gap-3">
                             <StatIcon
-                                icon={PieChart}
+                                icon={PieChartIcon}
                                 iconBg="bg-violet-100"
                                 iconFg="text-violet-600"
                                 darkIconBg="bg-violet-900/30"
@@ -4485,7 +4337,7 @@ export const RealWorldIconExamples: Story = {
                     <div className="space-y-4">
                         <div className="flex items-center gap-3">
                             <StatIcon
-                                icon={HeartPulse}
+                                icon={HeartIcon}
                                 iconBg="bg-rose-100"
                                 iconFg="text-rose-600"
                                 darkIconBg="bg-rose-900/30"
@@ -4499,7 +4351,7 @@ export const RealWorldIconExamples: Story = {
                         </div>
                         <div className="flex items-center gap-3">
                             <StatIcon
-                                icon={Activity}
+                                icon={ActivityLogIcon}
                                 iconBg="bg-green-100"
                                 iconFg="text-green-600"
                                 darkIconBg="bg-green-900/30"
@@ -4513,7 +4365,7 @@ export const RealWorldIconExamples: Story = {
                         </div>
                         <div className="flex items-center gap-3">
                             <StatIcon
-                                icon={Timer}
+                                icon={TimerIconRadix}
                                 iconBg="bg-blue-100"
                                 iconFg="text-blue-600"
                                 darkIconBg="bg-blue-900/30"
@@ -4534,7 +4386,7 @@ export const RealWorldIconExamples: Story = {
                     <div className="space-y-4">
                         <div className="flex items-center gap-3">
                             <StatIcon
-                                icon={ShoppingCart}
+                                icon={ShoppingCartIcon}
                                 iconBg="bg-orange-100"
                                 iconFg="text-orange-600"
                                 darkIconBg="bg-orange-900/30"
@@ -4548,7 +4400,7 @@ export const RealWorldIconExamples: Story = {
                         </div>
                         <div className="flex items-center gap-3">
                             <StatIcon
-                                icon={Package}
+                                icon={CubeIcon}
                                 iconBg="bg-indigo-100"
                                 iconFg="text-indigo-600"
                                 darkIconBg="bg-indigo-900/30"
@@ -4562,7 +4414,7 @@ export const RealWorldIconExamples: Story = {
                         </div>
                         <div className="flex items-center gap-3">
                             <StatIcon
-                                icon={Star}
+                                icon={StarIcon}
                                 iconBg="bg-yellow-100"
                                 iconFg="text-yellow-600"
                                 darkIconBg="bg-yellow-900/30"
@@ -4579,5 +4431,5 @@ export const RealWorldIconExamples: Story = {
             </StatsGridContainer>
         </StatsGrid>
     ),
-    name: "12.4 Custom Icons - Real World Examples",
+    name: "17.4 Custom Icons - Real World Examples",
 };

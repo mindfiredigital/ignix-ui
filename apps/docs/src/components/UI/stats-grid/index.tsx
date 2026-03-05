@@ -3,12 +3,15 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { motion } from "framer-motion";
-import type { LucideIcon } from "lucide-react";
+// import type { LucideIcon } from "lucide-react";
 import { cn } from "@site/src/utils/cn";
 
 /* ============================================
    TYPES & INTERFACES
 ============================================ */
+
+// Define a generic Icon type that works with both Lucide and Radix
+export type IconComponent = React.ComponentType<{ className?: string }>;
 
 export type StatAccent = "default" | "emerald" | "amber" | "rose" | "violet" | "blue" | "purple" | "pink" | "indigo" | "cyan" | "orange" | "yellow" | "teal" | "red" | "green";
 export type NumberFormat = "raw" | "compact" | "currency" | "percentage";
@@ -19,7 +22,7 @@ export interface StatItem {
     value: number;
     label: string;
     subtext?: string;
-    icon?: LucideIcon;
+    icon?: IconComponent;
     format?: NumberFormat;
     prefix?: string;
     suffix?: string;
@@ -482,7 +485,7 @@ export const StatSubtext: React.FC<StatSubtextProps> = ({
 StatSubtext.displayName = "StatSubtext";
 
 export interface StatIconProps {
-    icon: LucideIcon;
+    icon: IconComponent;
     accent?: StatAccent;
     className?: string;
     size?: 'sm' | 'md' | 'lg';
