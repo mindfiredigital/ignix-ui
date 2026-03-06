@@ -87,7 +87,6 @@ const SideBarLeftLayoutContent: React.FC<SideBarLeftLayoutProps> = ({
 }) => {
   const { isOpen, setIsOpen } = useSidebar();
   const [isMobile, setIsMobile] = React.useState(false);
-  console.log(sidebarPosition);
   // Map user-friendly widths to pixel values
   const sidebarWidths: Record<string, number> = {
     compact: 250,
