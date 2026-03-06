@@ -10,23 +10,20 @@ import {
   AccordionLink,
 } from ".";
 import {
-  Shield,
-  Users,
-  Settings,
-  Globe,
-  Lock,
-  Mail,
-  Calendar,
-  Briefcase,
-  Rocket,
-  Award,
-  Cpu,
-  TrendingUp,
-  Zap,
-  Sparkles,
-  Sun,
-  Moon,
-} from "lucide-react";
+  // LockClosedIcon,
+  PersonIcon,
+  GearIcon,
+  GlobeIcon,
+  LockClosedIcon,
+  EnvelopeClosedIcon,
+  CalendarIcon,
+  ReaderIcon,
+  RocketIcon,
+  StarFilledIcon,
+  LightningBoltIcon,
+  SunIcon,
+  MoonIcon,
+} from "@radix-ui/react-icons";
 import { Typography } from '../../../../components/typography';
 import { Button } from "../../../../components/button";
 
@@ -84,14 +81,14 @@ const sampleFAQItems = [
     question: "What is Web3 Africa?",
     answer: "Web3 Africa is a community-driven initiative focused on educating and empowering African developers, entrepreneurs, and creators to build and participate in the decentralized web. We offer training programs, hackathons, and networking events across the continent.",
     category: "general",
-    icon: <Globe className="w-5 h-5" />,
+    icon: <GlobeIcon className="w-5 h-5" />,
   },
   {
     id: "2",
     question: "Who can join the SkillChain Program?",
     answer: "The SkillChain Program is open to anyone with a passion for blockchain technology and Web3 development. Whether you're a complete beginner or an experienced developer, we have tracks tailored to your skill level. Basic programming knowledge is recommended but not required.",
     category: "programs",
-    icon: <Users className="w-5 h-5" />,
+    icon: <PersonIcon className="w-5 h-5" />,
   },
   {
     id: "3",
@@ -109,62 +106,62 @@ const sampleFAQItems = [
     question: "How does blockchain work?",
     answer: "Think of blockchain as a digital ledger that records every transaction across a network — transparent, decentralized, and tamper-proof. Each block contains a cryptographic hash of the previous block, a timestamp, and transaction data. This creates an immutable chain that everyone can verify but no single entity controls.",
     category: "technology",
-    icon: <Cpu className="w-5 h-5" />,
+    icon: <LightningBoltIcon className="w-5 h-5" />,
   },
   {
     id: "5",
     question: "How do I start investing in crypto?",
     answer: "To start investing in cryptocurrency: 1) Choose a reputable exchange (Coinbase, Binance, Kraken), 2) Complete identity verification, 3) Fund your account with fiat currency, 4) Start with small amounts of established coins like Bitcoin or Ethereum, 5) Store your assets in a secure wallet - hardware wallets recommended for larger amounts.",
     category: "investing",
-    icon: <TrendingUp className="w-5 h-5" />,
+    icon: <LightningBoltIcon className="w-5 h-5" />,
   },
   {
     id: "6",
     question: "Is investing in crypto safe?",
     answer: "Cryptocurrency investments carry significant risk due to market volatility, regulatory uncertainty, and security concerns. However, you can mitigate risks by: diversifying your portfolio, using reputable exchanges, enabling 2FA, storing assets in cold wallets, and never investing more than you can afford to lose.",
     category: "investing",
-    icon: <Shield className="w-5 h-5" />,
+    icon: <LockClosedIcon className="w-5 h-5" />,
   },
   {
     id: "7",
     question: "How do I keep my crypto safe?",
     answer: "To keep your crypto secure: Use hardware wallets for long-term storage, enable two-factor authentication on all accounts, never share your private keys, use unique strong passwords, beware of phishing scams, keep software updated, and consider using a multi-signature wallet for large amounts.",
     category: "security",
-    icon: <Lock className="w-5 h-5" />,
+    icon: <LockClosedIcon className="w-5 h-5" />,
   },
   {
     id: "8",
     question: "What services does Altra offer?",
     answer: "Altra offers comprehensive design services including brand identity, UI/UX design, web development, mobile app design, and product strategy. We specialize in creating bespoke digital experiences that are both visually stunning and strategically aligned with your business goals.",
     category: "services",
-    icon: <Rocket className="w-5 h-5" />,
+    icon: <RocketIcon className="w-5 h-5" />,
   },
   {
     id: "9",
     question: "How does the design process work at Altra?",
     answer: "Our design process follows four key phases: 1) Discovery - understanding your business, users, and goals, 2) Strategy - defining the solution architecture, 3) Design - creating visual concepts and prototypes, 4) Delivery - providing final assets and development support. We maintain close collaboration throughout.",
     category: "process",
-    icon: <Settings className="w-5 h-5" />,
+    icon: <GearIcon className="w-5 h-5" />,
   },
   {
     id: "10",
     question: "What makes Altra different from other design agencies?",
     answer: "At Altra, we focus on creating bespoke designs that are not only visually stunning but also strategically aligned with your business goals. Our collaborative approach ensures that each project is personalized and effective. We don't do templates - every solution is custom-built for your specific needs.",
     category: "about",
-    icon: <Award className="w-5 h-5" />,
+    icon: <StarFilledIcon className="w-5 h-5" />,
   },
 ];
 
 const categoryList = [
-  { id: "general", name: "General", icon: <Globe className="w-4 h-4" />, description: "General questions about Web3" },
-  { id: "programs", name: "Programs", icon: <Users className="w-4 h-4" />, description: "SkillChain and training programs" },
+  { id: "general", name: "General", icon: <GlobeIcon className="w-4 h-4" />, description: "General questions about Web3" },
+  { id: "programs", name: "Programs", icon: <PersonIcon className="w-4 h-4" />, description: "SkillChain and training programs" },
   { id: "partnership", name: "Partnership", icon: <Handshake className="w-4 h-4" />, description: "Collaboration opportunities" },
-  { id: "technology", name: "Technology", icon: <Cpu className="w-4 h-4" />, description: "Blockchain and Web3 tech" },
-  { id: "investing", name: "Investing", icon: <TrendingUp className="w-4 h-4" />, description: "Crypto investment guides" },
-  { id: "security", name: "Security", icon: <Shield className="w-4 h-4" />, description: "Asset protection" },
-  { id: "services", name: "Services", icon: <Briefcase className="w-4 h-4" />, description: "Design services" },
-  { id: "process", name: "Process", icon: <Settings className="w-4 h-4" />, description: "How we work" },
-  { id: "about", name: "About", icon: <Award className="w-4 h-4" />, description: "About Altra" },
+  { id: "technology", name: "Technology", icon: <LightningBoltIcon className="w-4 h-4" />, description: "Blockchain and Web3 tech" },
+  { id: "investing", name: "Investing", icon: <LightningBoltIcon className="w-4 h-4" />, description: "Crypto investment guides" },
+  { id: "security", name: "Security", icon: <LockClosedIcon className="w-4 h-4" />, description: "Asset protection" },
+  { id: "services", name: "Services", icon: <ReaderIcon className="w-4 h-4" />, description: "Design services" },
+  { id: "process", name: "Process", icon: <GearIcon className="w-4 h-4" />, description: "How we work" },
+  { id: "about", name: "About", icon: <StarFilledIcon className="w-4 h-4" />, description: "About Altra" },
 ];
 
 // ============================================
@@ -266,7 +263,7 @@ export const CompoundComponentExample: Story = {
         >
           <AccordionItem id="1">
             <AccordionSummary id="1">
-              <AccordionTitle icon={<Globe className="w-5 h-5" />} category="General">
+              <AccordionTitle icon={<GlobeIcon className="w-5 h-5" />} category="General">
                 What is Web3 Africa?
               </AccordionTitle>
             </AccordionSummary>
@@ -284,7 +281,7 @@ export const CompoundComponentExample: Story = {
 
           <AccordionItem id="2">
             <AccordionSummary id="2">
-              <AccordionTitle icon={<Users className="w-5 h-5" />} category="Programs">
+              <AccordionTitle icon={<PersonIcon className="w-5 h-5" />} category="Programs">
                 Who can join the SkillChain Program?
               </AccordionTitle>
             </AccordionSummary>
@@ -328,7 +325,7 @@ export const CustomAccordionWithIcons: Story = {
       <div className="p-8 max-w-3xl mx-auto bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 rounded-3xl">
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-4">
-            <Sparkles className="w-4 h-4" />
+            <StarFilledIcon className="w-4 h-4" />
             <span className="text-sm font-medium">CUSTOM COMPOSITION</span>
           </div>
           <Typography variant="h2" weight="bold" className="text-4xl mb-3 text-white/90">
@@ -348,7 +345,7 @@ export const CustomAccordionWithIcons: Story = {
             <AccordionSummary id="custom1">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                  <Rocket className="w-5 h-5" />
+                  <RocketIcon className="w-5 h-5" />
                 </div>
                 <div>
                   <Typography variant="body-small" color="muted" className="mb-0.5 text-white/90">
@@ -374,7 +371,7 @@ export const CustomAccordionWithIcons: Story = {
             <AccordionSummary id="custom2">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400">
-                  <Shield className="w-5 h-5" />
+                  <LockClosedIcon className="w-5 h-5" />
                 </div>
                 <div>
                   <Typography variant="body-small" color="muted" className="mb-0.5 text-white/90">
@@ -603,7 +600,6 @@ export const FeaturedWithStats: Story = {
     enableStats: true,
     enableSingleOpen: true,
     darkMode: true,
-
   },
   name: "Featured Layout with Stats",
 };
@@ -737,7 +733,7 @@ export const VibrantElectricBlue: Story = {
     customHeader: (
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 mb-4">
-          <Zap className="w-4 h-4" />
+          <LightningBoltIcon className="w-4 h-4" />
           <span className="text-sm font-medium">POWERED BY BLUE</span>
         </div>
       </div>
@@ -781,7 +777,7 @@ export const VibrantEmeraldGreen: Story = {
     customHeader: (
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 mb-4">
-          <Shield className="w-4 h-4" />
+          <LockClosedIcon className="w-4 h-4" />
           <span className="text-sm font-medium">ECO CERTIFIED</span>
         </div>
       </div>
@@ -825,7 +821,7 @@ export const VibrantRoyalPurple: Story = {
     customHeader: (
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30 mb-4">
-          <Award className="w-4 h-4" />
+          <StarFilledIcon className="w-4 h-4" />
           <span className="text-sm font-medium">PREMIUM TIER</span>
         </div>
       </div>
@@ -869,7 +865,7 @@ export const VibrantSunsetOrange: Story = {
     customHeader: (
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30 mb-4">
-          <TrendingUp className="w-4 h-4" />
+          <SunIcon className="w-4 h-4" />
           <span className="text-sm font-medium">GROWTH DRIVEN</span>
         </div>
       </div>
@@ -915,7 +911,7 @@ export const PastelLavender: Story = {
     customHeader: (
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-100 text-purple-700 border border-purple-200 mb-4">
-          <Sparkles className="w-4 h-4" />
+          <StarFilledIcon className="w-4 h-4" />
           <span className="text-sm font-medium">SOFT & GENTLE</span>
         </div>
       </div>
@@ -952,7 +948,7 @@ export const PastelMint: Story = {
     customHeader: (
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-100 text-emerald-700 border border-green-200 mb-4">
-          <Shield className="w-4 h-4" />
+          <LockClosedIcon className="w-4 h-4" />
           <span className="text-sm font-medium">FRESH & CLEAN</span>
         </div>
       </div>
@@ -989,7 +985,7 @@ export const PastelPeach: Story = {
     customHeader: (
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-100 text-orange-700 border border-orange-200 mb-4">
-          <Sun className="w-4 h-4" />
+          <SunIcon className="w-4 h-4" />
           <span className="text-sm font-medium">WARM & FRIENDLY</span>
         </div>
       </div>
@@ -1034,7 +1030,7 @@ export const GlassBlueDream: Story = {
     customHeader: (
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/20 backdrop-blur-sm text-blue-300 border border-blue-400/30 mb-4">
-          <Cpu className="w-4 h-4" />
+          <LightningBoltIcon className="w-4 h-4" />
           <span className="text-sm font-medium">GLASS MORPHISM</span>
         </div>
       </div>
@@ -1063,7 +1059,7 @@ export const GlassPurpleHaze: Story = {
     customHeader: (
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/20 backdrop-blur-sm text-purple-300 border border-purple-400/30 mb-4">
-          <Sparkles className="w-4 h-4" />
+          <StarFilledIcon className="w-4 h-4" />
           <span className="text-sm font-medium">PURPLE HAZE</span>
         </div>
       </div>
@@ -1100,16 +1096,16 @@ export const GradientAurora: Story = {
     customHeader: (
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white border border-white/20 mb-4">
-          <Sparkles className="w-4 h-4" />
+          <StarFilledIcon className="w-4 h-4" />
           <span className="text-sm font-medium">AURORA BOREALIS</span>
         </div>
       </div>
     ),
     stats: [
-      { label: "Northern Lights", value: "1000+", icon: <Sparkles className="w-5 h-5" /> },
+      { label: "Northern Lights", value: "1000+", icon: <StarFilledIcon className="w-5 h-5" /> },
       { label: "Magic Moments", value: "500+", icon: <Star className="w-5 h-5" /> },
-      { label: "Happy Travelers", value: "10K+", icon: <Users className="w-5 h-5" /> },
-      { label: "Arctic Nights", value: "365", icon: <Moon className="w-5 h-5" /> },
+      { label: "Happy Travelers", value: "10K+", icon: <PersonIcon className="w-5 h-5" /> },
+      { label: "Arctic Nights", value: "365", icon: <MoonIcon className="w-5 h-5" /> },
     ],
   },
   decorators: [
@@ -1133,16 +1129,16 @@ export const GradientSunrise: Story = {
     customHeader: (
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white border border-white/20 mb-4">
-          <Sun className="w-4 h-4" />
+          <SunIcon className="w-4 h-4" />
           <span className="text-sm font-medium">SUNRISE ENERGY</span>
         </div>
       </div>
     ),
     stats: [
-      { label: "Sunrises", value: "365+", icon: <Sun className="w-5 h-5" /> },
+      { label: "Sunrises", value: "365+", icon: <SunIcon className="w-5 h-5" /> },
       { label: "Coffee Cups", value: "1000+", icon: <Coffee className="w-5 h-5" /> },
-      { label: "Early Birds", value: "5K+", icon: <Users className="w-5 h-5" /> },
-      { label: "Productivity", value: "+47%", icon: <TrendingUp className="w-5 h-5" /> },
+      { label: "Early Birds", value: "5K+", icon: <PersonIcon className="w-5 h-5" /> },
+      { label: "Productivity", value: "+47%", icon: <LightningBoltIcon className="w-5 h-5" /> },
     ],
   },
   decorators: [
@@ -1168,37 +1164,37 @@ export const RainbowAccordions: Story = {
         id: "rainbow1",
         question: "🌈 Red - Passion & Energy",
         answer: "Our red-themed FAQs cover high-priority topics that need immediate attention. From emergency procedures to urgent updates, we've got you covered with instant support.",
-        icon: <Zap className="w-5 h-5" />,
+        icon: <LightningBoltIcon className="w-5 h-5" />,
       },
       {
         id: "rainbow2",
         question: "🧡 Orange - Creativity & Growth",
         answer: "Orange represents innovation and creative solutions. Find answers about our design process, creative workshops, and how we help brands stand out with unique visual identities.",
-        icon: <Sparkles className="w-5 h-5" />,
+        icon: <StarFilledIcon className="w-5 h-5" />,
       },
       {
         id: "rainbow3",
         question: "💛 Yellow - Optimism & Clarity",
         answer: "Yellow brings clarity and positive energy. Explore our educational resources, beginner guides, and easy-to-follow tutorials that make complex topics simple and enjoyable.",
-        icon: <Sun className="w-5 h-5" />,
+        icon: <SunIcon className="w-5 h-5" />,
       },
       {
         id: "rainbow4",
         question: "💚 Green - Growth & Harmony",
         answer: "Green represents sustainable growth and balanced solutions. Learn about our eco-friendly initiatives, green hosting options, and commitment to carbon-neutral operations.",
-        icon: <Shield className="w-5 h-5" />,
+        icon: <LockClosedIcon className="w-5 h-5" />,
       },
       {
         id: "rainbow5",
         question: "💙 Blue - Trust & Reliability",
         answer: "Blue is the color of trust and dependability. Discover our security protocols, data protection measures, and why thousands of companies trust us with their critical infrastructure.",
-        icon: <Lock className="w-5 h-5" />,
+        icon: <LockClosedIcon className="w-5 h-5" />,
       },
       {
         id: "rainbow6",
         question: "💜 Purple - Luxury & Wisdom",
         answer: "Purple combines the stability of blue with the energy of red. Access our premium resources, advanced strategies, and exclusive insights for enterprise-level clients.",
-        icon: <Award className="w-5 h-5" />,
+        icon: <StarFilledIcon className="w-5 h-5" />,
       },
     ],
     title: "Rainbow Collection",
@@ -1212,7 +1208,7 @@ export const RainbowAccordions: Story = {
     customHeader: (
       <div className="text-center mb-12">
         <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-red-500 via-yellow-500 to-blue-500 text-white mb-6">
-          <Sparkles className="w-5 h-5" />
+          <StarFilledIcon className="w-5 h-5" />
           <span className="text-sm font-medium">FULL SPECTRUM</span>
         </div>
         <Typography variant="h2" weight="bold" className="text-5xl mb-4 bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent">
@@ -1250,7 +1246,7 @@ export const ChristmasSpecial: Story = {
     customHeader: (
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-red-500 to-green-500 text-white mb-6">
-          <Sparkles className="w-4 h-4" />
+          <StarFilledIcon className="w-4 h-4" />
           <span className="text-sm font-medium">MERRY CHRISTMAS</span>
         </div>
       </div>
@@ -1280,7 +1276,7 @@ export const HalloweenSpecial: Story = {
     customHeader: (
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-orange-500 to-purple-600 text-white mb-6">
-          <Moon className="w-4 h-4" />
+          <MoonIcon className="w-4 h-4" />
           <span className="text-sm font-medium">TRICK OR TREAT</span>
         </div>
       </div>
@@ -1344,7 +1340,7 @@ export const Web3AfricaFAQ: Story = {
           Contact our partnership team directly
         </Typography>
         <Button variant="default" className="cursor-pointer">
-          <Mail className="w-4 h-4 mr-2" />
+          <EnvelopeClosedIcon className="w-4 h-4 mr-2" />
           web3africa2024@gmail.com
         </Button>
       </div>
@@ -1378,7 +1374,7 @@ export const AltraDesignFAQ: Story = {
           Schedule a call with James
         </Typography>
         <Button variant="secondary" className="w-full cursor-pointer bg-white text-primary hover:bg-white/90">
-          <Calendar className="w-4 h-4 mr-2" />
+          <CalendarIcon className="w-4 h-4 mr-2" />
           Schedule a call
         </Button>
       </div>
@@ -1510,7 +1506,6 @@ export const IconStyles: Story = {
 export const LoadingState: Story = {
   args: {
     ...Standard.args,
-    // variant: "dark",
     themeVariant: "dark",
     darkMode: true,
     isLoading: true,

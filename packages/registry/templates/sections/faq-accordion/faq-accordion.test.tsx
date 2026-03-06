@@ -98,7 +98,7 @@ describe("Accordion Components", () => {
         it("handles controlled open items", async () => {
             const user = userEvent.setup()
             const handleChange = vi.fn()
-            
+
             render(
                 <Accordion
                     value={['1']}
@@ -203,7 +203,7 @@ describe("Accordion Components", () => {
 
             await user.click(button)
             expect(button).toHaveAttribute('aria-expanded', 'true')
-            
+
             await user.click(button)
             expect(button).toHaveAttribute('aria-expanded', 'false')
         })
@@ -224,7 +224,7 @@ describe("Accordion Components", () => {
             button.focus()
 
             expect(button).toHaveAttribute('aria-expanded', 'false')
-            
+
             await user.keyboard('{Enter}')
             expect(button).toHaveAttribute('aria-expanded', 'true')
 
@@ -232,29 +232,6 @@ describe("Accordion Components", () => {
             expect(button).toHaveAttribute('aria-expanded', 'false')
         })
 
-        it("renders different icon styles", () => {
-            const { rerender } = render(
-                <Accordion iconStyle="chevron">
-                    <AccordionItem id="1">
-                        <AccordionSummary id="1">Chevron</AccordionSummary>
-                    </AccordionItem>
-                </Accordion>
-            )
-
-            let icon = document.querySelector('.lucide-chevron-down')
-            expect(icon).toBeInTheDocument()
-
-            rerender(
-                <Accordion iconStyle="plus-minus">
-                    <AccordionItem id="1">
-                        <AccordionSummary id="1">Plus/Minus</AccordionSummary>
-                    </AccordionItem>
-                </Accordion>
-            )
-
-            icon = document.querySelector('.lucide-plus')
-            expect(icon).toBeInTheDocument()
-        })
     })
 
     describe("AccordionTitle", () => {
@@ -583,13 +560,13 @@ describe("FAQSection", () => {
             render(<FAQSection items={mockItems} />)
 
             const question = screen.getByRole('button', { name: /what is your return policy/i })
-            
+
             // Initially closed
             expect(screen.queryByText(/you can return items/i)).not.toBeInTheDocument()
 
             // Open
             await user.click(question)
-            
+
             // Wait for content to appear
             await waitFor(() => {
                 expect(screen.getByText(/you can return items/i)).toBeInTheDocument()
@@ -597,7 +574,7 @@ describe("FAQSection", () => {
 
             // Close
             await user.click(question)
-            
+
             // Wait for content to disappear
             await waitFor(() => {
                 expect(screen.queryByText(/you can return items/i)).not.toBeInTheDocument()

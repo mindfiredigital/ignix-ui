@@ -1,27 +1,26 @@
-
-import { useState, useEffect, createContext, useContext } from 'react';
+import React, { useState, useEffect, createContext, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cva } from 'class-variance-authority';
 import {
-    ChevronDown,
-    ChevronRight,
-    Plus,
-    Minus,
-    Search,
-    X,
-    HelpCircle,
-    Mail,
-    Calendar,
-    MessageCircle,
-    ArrowRight,
-    Check,
-    Sparkles,
-    Zap,
-    Shield,
-    Users,
-    Phone,
-    Send,
-} from 'lucide-react';
+    ChevronDownIcon,
+    ChevronRightIcon,
+    PlusIcon,
+    MinusIcon,
+    MagnifyingGlassIcon,
+    Cross2Icon,
+    QuestionMarkCircledIcon,
+    EnvelopeClosedIcon,
+    CalendarIcon,
+    ChatBubbleIcon,
+    ArrowRightIcon,
+    CheckIcon,
+    RocketIcon,
+    LightningBoltIcon,
+    PersonIcon,
+    MobileIcon,
+    PaperPlaneIcon,
+    LockClosedIcon
+} from '@radix-ui/react-icons';
 import { cn } from '../../../utils/cn';
 import { Button } from '@ignix-ui/button';
 import { Typography } from '@ignix-ui/typography';
@@ -90,32 +89,6 @@ const useAccordionContext = () => {
     }
     return context;
 };
-
-interface ContactOption {
-    id: string;
-    type: 'email' | 'chat' | 'phone' | 'schedule';
-    label: string;
-    value: string;
-    icon: React.ReactNode;
-    action?: () => void;
-}
-
-interface AccordionContextType {
-    openItems: string[];
-    toggleItem: (id: string) => void;
-    variant?: AccordionVariant;
-    themeVariant?: ThemeVariant;
-    animationVariant?: AnimationVariant;
-    iconStyle?: IconStyle;
-    theme?: ThemeVariant;
-    enableSingleOpen?: boolean;
-    isDark?: boolean;
-}
-
-
-
-
-
 
 interface ContactOption {
     id: string;
@@ -384,13 +357,13 @@ const Accordion = ({
         </AccordionContext.Provider>
     );
 };
+
 interface AccordionItemProps {
     id: string;
     children: React.ReactNode;
     className?: string;
     disabled?: boolean;
 }
-
 
 // Accordion Title Component
 const AccordionItem = ({ _id, children, className, disabled = false }: AccordionItemProps) => {
@@ -436,6 +409,7 @@ const AccordionItem = ({ _id, children, className, disabled = false }: Accordion
         </div>
     );
 };
+
 interface AccordionTitleProps {
     children: React.ReactNode;
     className?: string;
@@ -498,7 +472,7 @@ const AccordionSummary = ({ children, className, id }: AccordionSummaryProps) =>
         switch (context.iconStyle) {
             case 'chevron':
                 return (
-                    <ChevronDown
+                    <ChevronDownIcon
                         className={cn(
                             iconClasses,
                             isOpen ? "rotate-180" : "rotate-0"
@@ -507,13 +481,13 @@ const AccordionSummary = ({ children, className, id }: AccordionSummaryProps) =>
                 );
             case 'plus-minus':
                 return isOpen ? (
-                    <Minus className={iconClasses} />
+                    <MinusIcon className={iconClasses} />
                 ) : (
-                    <Plus className={iconClasses} />
+                    <PlusIcon className={iconClasses} />
                 );
             case 'arrow':
                 return (
-                    <ChevronRight
+                    <ChevronRightIcon
                         className={cn(
                             iconClasses,
                             isOpen ? "rotate-90" : "rotate-0"
@@ -531,12 +505,12 @@ const AccordionSummary = ({ children, className, id }: AccordionSummaryProps) =>
                                 context.isDark ? "border-gray-600" : "border-gray-300"
                             )
                     )}>
-                        {isOpen && <Check className="w-3 h-3" />}
+                        {isOpen && <CheckIcon className="w-3 h-3" />}
                     </div>
                 );
             default:
                 return (
-                    <ChevronDown
+                    <ChevronDownIcon
                         className={cn(
                             iconClasses,
                             isOpen ? "rotate-180" : "rotate-0"
@@ -656,7 +630,7 @@ const AccordionLink = ({ href, children, className }: AccordionLinkProps) => {
             )}
         >
             {children}
-            <ArrowRight className="w-3 h-3" />
+            <ArrowRightIcon className="w-3 h-3" />
         </a>
     );
 };
@@ -701,7 +675,7 @@ const FAQSearch = ({
                 "absolute left-3 top-1/2 -translate-y-1/2",
                 isDark ? "text-gray-500" : "text-gray-400"
             )}>
-                <Search className="w-4 h-4" />
+                <MagnifyingGlassIcon className="w-4 h-4" />
             </div>
             <input
                 type="text"
@@ -732,7 +706,7 @@ const FAQSearch = ({
                     )}
                     aria-label="Clear search"
                 >
-                    <X className="w-3 h-3" />
+                    <Cross2Icon className="w-3 h-3" />
                 </button>
             )}
         </div>
@@ -782,28 +756,28 @@ const FAQContactSection = ({
             type: 'email' as const,
             label: 'Email us',
             value: email,
-            icon: <Mail className="w-5 h-5" />,
+            icon: <EnvelopeClosedIcon className="w-5 h-5" />,
         },
         {
             id: 'phone',
             type: 'phone' as const,
             label: 'Call us',
             value: phone,
-            icon: <Phone className="w-5 h-5" />,
+            icon: <MobileIcon className="w-5 h-5" />,
         },
         ...(hasChat ? [{
             id: 'chat',
             type: 'chat' as const,
             label: 'Live chat',
             value: 'Available 24/7',
-            icon: <MessageCircle className="w-5 h-5" />,
+            icon: <ChatBubbleIcon className="w-5 h-5" />,
         }] : []),
         {
             id: 'schedule',
             type: 'schedule' as const,
             label: 'Schedule a call',
             value: 'Book a time',
-            icon: <Calendar className="w-5 h-5" />,
+            icon: <CalendarIcon className="w-5 h-5" />,
         },
     ];
 
@@ -867,7 +841,7 @@ const FAQContactSection = ({
                                 </Typography>
                             </div>
                         </div>
-                        <ArrowRight className={cn(
+                        <ArrowRightIcon className={cn(
                             "w-4 h-4 transition-all",
                             isDark ? "text-gray-500 group-hover:text-primary-400" : "text-gray-400 group-hover:text-primary",
                             "group-hover:translate-x-1"
@@ -965,6 +939,13 @@ const FAQStats = ({
         'bg-[#201524] border border-[#3A2A3A]': theme === 'sunset',
     });
 
+
+    const getStatIcon = (icon: React.ReactNode) => {
+        // Since we're not using Lucide React at all, we can simplify this
+        // The stats prop will now be passed with Radix icons directly
+        return icon;
+    };
+
     return (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             {stats.map((stat, index) => (
@@ -979,7 +960,7 @@ const FAQStats = ({
                         "w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center",
                         isDark ? "bg-primary/20 text-primary-400" : "bg-primary/10 text-primary"
                     )}>
-                        {stat.icon}
+                        {getStatIcon(stat.icon)}
                     </div>
                     <Typography
                         variant="h4"
@@ -1003,6 +984,7 @@ const FAQStats = ({
 /* ============================================
    MAIN FAQ SECTION COMPONENT
 ============================================ */
+
 
 interface FAQSectionProps {
     items: FAQItem[];
@@ -1048,7 +1030,7 @@ const FAQSection = ({
     categories = [],
     title = "Frequently asked questions",
     description = "We're happy to answer your questions",
-    // icon = <HelpCircle className="w-5 h-5" />,
+    // icon = <QuestionMarkCircledIcon className="w-5 h-5" />,
     layoutVariant = "standard",
     enableSearch = false,
     enableCategories = false,
@@ -1078,10 +1060,10 @@ const FAQSection = ({
     contactChat = true,
     scheduleUrl = "/schedule",
     stats = [
-        { label: "Happy Customers", value: "10K+", icon: <Users className="w-5 h-5" /> },
-        { label: "Questions Answered", value: "50K+", icon: <MessageCircle className="w-5 h-5" /> },
-        { label: "Response Time", value: "< 2h", icon: <Zap className="w-5 h-5" /> },
-        { label: "Satisfaction", value: "98%", icon: <Shield className="w-5 h-5" /> },
+        { label: "Happy Customers", value: "10K+", icon: <PersonIcon className="w-5 h-5" /> },
+        { label: "Questions Answered", value: "50K+", icon: <ChatBubbleIcon className="w-5 h-5" /> },
+        { label: "Response Time", value: "< 2h", icon: <LightningBoltIcon className="w-5 h-5" /> },
+        { label: "Satisfaction", value: "98%", icon: <LockClosedIcon className="w-5 h-5" /> },
     ],
     darkMode,
     className,
@@ -1115,7 +1097,6 @@ const FAQSection = ({
         setFilteredItems(result);
         onSearch?.(searchQuery);
     }, [items, searchQuery, activeCategory, enableSearch, enableCategories, onSearch]);
-
 
     const handleClearSearch = () => {
         setSearchQuery('');
@@ -1173,7 +1154,7 @@ const FAQSection = ({
                             "text-center py-12",
                             isDark ? "text-gray-400" : "text-gray-500"
                         )}>
-                            <HelpCircle className={cn(
+                            <QuestionMarkCircledIcon className={cn(
                                 "w-12 h-12 mx-auto mb-4",
                                 isDark ? "text-gray-700" : "text-gray-300"
                             )} />
@@ -1495,7 +1476,7 @@ const FAQSection = ({
                                                 "text-center py-12",
                                                 isDark ? "text-gray-400" : "text-gray-500"
                                             )}>
-                                                <HelpCircle className={cn(
+                                                <QuestionMarkCircledIcon className={cn(
                                                     "w-12 h-12 mx-auto mb-4",
                                                     isDark ? "text-gray-700" : "text-gray-300"
                                                 )} />
@@ -1580,7 +1561,7 @@ const FAQSection = ({
                                         isDark && "border-gray-700 text-white hover:bg-gray-800"
                                     )}
                                 >
-                                    <Mail className="w-4 h-4 mr-2" />
+                                    <EnvelopeClosedIcon className="w-4 h-4 mr-2" />
                                     Contact support
                                 </Button>
                             </div>
@@ -1601,7 +1582,7 @@ const FAQSection = ({
                             {customHeader || (
                                 <div className="text-center mb-10">
                                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white mb-6">
-                                        <Sparkles className="w-4 h-4" />
+                                        <RocketIcon className="w-4 h-4" />
                                         <span className="text-sm font-medium">FAQ</span>
                                     </div>
                                     <Typography variant="h2" weight="bold" className="text-4xl md:text-5xl text-white mb-4">
@@ -1666,7 +1647,7 @@ const FAQSection = ({
                                         onClick={() => onContact?.('schedule')}
                                         className="text-white border-white/20 hover:bg-white/10 cursor-pointer"
                                     >
-                                        <Send className="w-4 h-4 mr-2" />
+                                        <PaperPlaneIcon className="w-4 h-4 mr-2" />
                                         Still have questions? Contact us
                                     </Button>
                                 </div>
