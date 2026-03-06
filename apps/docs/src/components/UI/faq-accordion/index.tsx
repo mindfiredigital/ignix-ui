@@ -304,7 +304,20 @@ interface AccordionProps {
     className?: string;
 }
 
-// Accordion Item Component
+/**
+ * Root Accordion component that provides context and state management for all child accordion components.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <Accordion defaultValue={["item1"]} enableSingleOpen variant="bordered">
+ *   <AccordionItem id="item1">
+ *     <AccordionSummary id="item1">Question 1</AccordionSummary>
+ *     <AccordionDetails id="item1">Answer 1</AccordionDetails>
+ *   </AccordionItem>
+ * </Accordion>
+ * ```
+ */
 const Accordion = ({
     children,
     defaultValue = [],
@@ -365,7 +378,18 @@ interface AccordionItemProps {
     disabled?: boolean;
 }
 
-// Accordion Title Component
+/**
+ * Individual accordion item container that wraps a question-answer pair.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <AccordionItem id="faq-1" disabled={false}>
+ *   <AccordionSummary id="faq-1">What is your return policy?</AccordionSummary>
+ *   <AccordionDetails id="faq-1">We offer 30-day returns...</AccordionDetails>
+ * </AccordionItem>
+ * ```
+ */
 const AccordionItem = ({ _id, children, className, disabled = false }: AccordionItemProps) => {
     const context = useAccordionContext();
     // const isOpen = context.openItems.includes(id);
@@ -417,6 +441,20 @@ interface AccordionTitleProps {
     category?: string;
 }
 
+/**
+ * Title component for accordion items that displays the question with optional icon and category.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <AccordionTitle 
+ *   icon={<QuestionMarkCircledIcon />} 
+ *   category="Shipping"
+ * >
+ *   How long does shipping take?
+ * </AccordionTitle>
+ * ```
+ */
 const AccordionTitle = ({ children, className, icon, category }: AccordionTitleProps) => {
     const context = useAccordionContext();
 
@@ -458,6 +496,18 @@ interface AccordionSummaryProps {
     id: string;
 }
 
+/**
+ * Interactive button component that toggles the accordion item's open/closed state.
+ * Displays different icons based on the configured iconStyle prop.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <AccordionSummary id="faq-1">
+ *   <AccordionTitle>What is your return policy?</AccordionTitle>
+ * </AccordionSummary>
+ * ```
+ */
 const AccordionSummary = ({ children, className, id }: AccordionSummaryProps) => {
     const context = useAccordionContext();
     const isOpen = context.openItems.includes(id);
@@ -545,7 +595,7 @@ const AccordionSummary = ({ children, className, id }: AccordionSummaryProps) =>
             className={cn(
                 QuestionVariants({ variant: context.variant }),
                 summaryThemeClasses,
-                "cursor-pointer focus:outline-none  focus:ring-primary/50 focus:ring-offset-2",
+                "cursor-pointer focus:outline-none focus:ring-primary/50 focus:ring-offset-2",
                 context.theme === 'light' && "focus:ring-offset-white",
                 context.isDark && "focus:ring-offset-gray-900",
                 context.theme === 'midnight' && "focus:ring-offset-[#0B1120]",
@@ -576,6 +626,19 @@ interface AccordionDetailsProps {
     id: string;
 }
 
+/**
+ * Content panel that displays the answer when the accordion item is open.
+ * Features animated enter/exit transitions.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <AccordionDetails id="faq-1">
+ *   <Typography>You can return items within 30 days...</Typography>
+ *   <AccordionLink href="/returns">Learn more about returns</AccordionLink>
+ * </AccordionDetails>
+ * ```
+ */
 const AccordionDetails = ({ children, className, id }: AccordionDetailsProps) => {
     const context = useAccordionContext();
     const isOpen = context.openItems.includes(id);
@@ -616,6 +679,17 @@ interface AccordionLinkProps {
     className?: string;
 }
 
+/**
+ * Link component for displaying additional resources or related content within accordion answers.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <AccordionLink href="/shipping-policy">
+ *   Read our full shipping policy
+ * </AccordionLink>
+ * ```
+ */
 const AccordionLink = ({ href, children, className }: AccordionLinkProps) => {
     const context = useAccordionContext();
 
@@ -639,6 +713,23 @@ const AccordionLink = ({ href, children, className }: AccordionLinkProps) => {
    SUPPORT COMPONENTS
 ============================================ */
 
+/**
+ * Search input component for filtering FAQ items with real-time search functionality.
+ * Includes clear button and loading states.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <FAQSearch
+ *   value={searchQuery}
+ *   onChange={setSearchQuery}
+ *   onClear={handleClearSearch}
+ *   placeholder="Search FAQs..."
+ *   disabled={isSearching}
+ *   theme="light"
+ * />
+ * ```
+ */
 const FAQSearch = ({
     value,
     onChange,
@@ -713,6 +804,21 @@ const FAQSearch = ({
     );
 };
 
+/**
+ * Contact section component displaying multiple ways to get support (email, phone, chat, schedule).
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <FAQContactSection
+ *   email="support@example.com"
+ *   phone="+1 (555) 123-4567"
+ *   hasChat={true}
+ *   onContact={(type) => console.log(`Contact via ${type}`)}
+ *   theme="dark"
+ * />
+ * ```
+ */
 const FAQContactSection = ({
     email = "support@example.com",
     phone = "+1 (555) 123-4567",
@@ -853,6 +959,20 @@ const FAQContactSection = ({
     );
 };
 
+/**
+ * Tab navigation component for filtering FAQ items by category.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <FAQCategoryTabs
+ *   categories={categories}
+ *   activeCategory={activeCategory}
+ *   onCategoryChange={setActiveCategory}
+ *   theme="light"
+ * />
+ * ```
+ */
 const FAQCategoryTabs = ({
     categories,
     activeCategory,
@@ -920,6 +1040,21 @@ const FAQCategoryTabs = ({
     );
 };
 
+/**
+ * Statistics display component showing key metrics and achievements.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <FAQStats
+ *   stats={[
+ *     { label: "Happy Customers", value: "10K+", icon: <PersonIcon /> },
+ *     { label: "Response Time", value: "< 2h", icon: <LightningBoltIcon /> }
+ *   ]}
+ *   theme="dark"
+ * />
+ * ```
+ */
 const FAQStats = ({
     stats,
     theme = 'light',
@@ -1025,6 +1160,39 @@ interface FAQSectionProps {
     className?: string;
 }
 
+/**
+ * Main FAQ section component that combines all sub-components into a complete FAQ solution.
+ * Supports multiple layout variants, theming, search, categories, and contact integration.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <FAQSection
+ *   title="Frequently Asked Questions"
+ *   description="Find answers to common questions"
+ *   items={faqItems}
+ *   categories={faqCategories}
+ *   layoutVariant="split-left"
+ *   enableSearch={true}
+ *   enableCategories={true}
+ *   themeVariant="ocean"
+ *   onContact={(type) => handleContact(type)}
+ * />
+ * ```
+ * 
+ * @example
+ * ```tsx
+ * // Featured layout with stats
+ * <FAQSection
+ *   items={faqItems}
+ *   layoutVariant="featured"
+ *   enableStats={true}
+ *   enableContactSection={true}
+ *   themeVariant="forest"
+ *   stats={supportStats}
+ * />
+ * ```
+ */
 const FAQSection = ({
     items,
     categories = [],

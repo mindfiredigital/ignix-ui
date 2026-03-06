@@ -178,32 +178,7 @@ export const AccordionCenteredDemo = () => {
     const [singleOpen, setSingleOpen] = useState(false);
     const [showBorder, setShowBorder] = useState(true);
 
-    // Build code string
-    const codeString = `<Accordion
-  value={openItems}
-  onValueChange={setOpenItems}
-  variant="${variant}"
-  animationVariant="${animation}"
-  iconStyle="${iconStyle}"
-  theme="${theme}"
-  enableSingleOpen={${singleOpen}}
->
-  <AccordionItem id="1">
-    <AccordionSummary id="1">
-      <AccordionTitle icon={<GlobeIcon className="w-5 h-5" />} category="General">
-        What is Web3 Africa?
-      </AccordionTitle>
-    </AccordionSummary>
-    <AccordionDetails id="1">
-      <Typography variant="body-small">
-        Web3 Africa is a community-driven initiative...
-      </Typography>
-      <AccordionLink href="/learn-more">
-        Learn more about Web3 Africa
-      </AccordionLink>
-    </AccordionDetails>
-  </AccordionItem>
-</Accordion>`;
+
 
     const effectiveVariant = showBorder ? variant : 'minimal';
 
@@ -222,6 +197,84 @@ export const AccordionCenteredDemo = () => {
     const handleAnimationChange = (value: string) => {
         setAnimation(value as AnimationType);
     };
+
+    // Build code string with imports
+    const codeString = `import React, { useState } from 'react';
+import { 
+  Accordion, 
+  AccordionItem, 
+  AccordionSummary, 
+  AccordionTitle, 
+  AccordionDetails, 
+  AccordionLink 
+} from './faq-section';
+import { Typography } from '../../../../components/typography';
+import { GlobeIcon, PersonIcon, HandshakeIcon } from '@radix-ui/react-icons';
+
+const AccordionExample = () => {
+  const [openItems, setOpenItems] = useState<string[]>(${JSON.stringify(openItems)});
+
+  return (
+    <Accordion
+      value={openItems}
+      onValueChange={setOpenItems}
+      variant="${effectiveVariant}"
+      animationVariant="${animation}"
+      iconStyle="${iconStyle}"
+      theme="${theme}"
+      enableSingleOpen={${singleOpen}}
+    >
+      <AccordionItem id="1">
+        <AccordionSummary id="1">
+          <AccordionTitle icon={<GlobeIcon className="w-5 h-5" />} category="General">
+            What is Web3 Africa?
+          </AccordionTitle>
+        </AccordionSummary>
+        <AccordionDetails id="1">
+          <Typography variant="body-small" className="leading-relaxed">
+            Web3 Africa is a community-driven initiative focused on educating and empowering
+            African developers, entrepreneurs, and creators to build and participate in the
+            decentralized web.
+          </Typography>
+          <AccordionLink href="/learn-more">
+            Learn more about Web3 Africa
+          </AccordionLink>
+        </AccordionDetails>
+      </AccordionItem>
+
+      <AccordionItem id="2">
+        <AccordionSummary id="2">
+          <AccordionTitle icon={<PersonIcon className="w-5 h-5" />} category="Programs">
+            Who can join the SkillChain Program?
+          </AccordionTitle>
+        </AccordionSummary>
+        <AccordionDetails id="2">
+          <Typography variant="body-small" className="leading-relaxed">
+            The SkillChain Program is open to anyone with a passion for blockchain technology
+            and Web3 development, from beginners to experienced developers.
+          </Typography>
+        </AccordionDetails>
+      </AccordionItem>
+
+      <AccordionItem id="3">
+        <AccordionSummary id="3">
+          <AccordionTitle icon={<HandshakeIcon className="w-5 h-5" />} category="Partnership">
+            How can I become a partner?
+          </AccordionTitle>
+        </AccordionSummary>
+        <AccordionDetails id="3">
+          <Typography variant="body-small" className="leading-relaxed">
+            We're always open to collaborating with organizations that share our vision.
+            Reach out to our partnership team to explore opportunities.
+          </Typography>
+          <AccordionLink href="mailto:partners@web3africa.com">
+            Contact partnership team
+          </AccordionLink>
+        </AccordionDetails>
+      </AccordionItem>
+    </Accordion>
+  );
+};`;
 
     return (
         <div className="space-y-4">
@@ -369,41 +422,116 @@ export const AccordionSplitDemo = () => {
     const [contentSide, setContentSide] = useState<'left' | 'right'>('left');
     const [accentColor, setAccentColor] = useState('primary');
 
-    // Build code string
-    const codeString = `<div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-  <div className={${contentSide === 'left' ? '"order-1"' : '"order-2"'}}>
-    <Typography variant="h2" weight="bold" className="text-4xl mb-4">
-      Frequently Asked Questions
-    </Typography>
-    <Typography variant="lead" className="text-lg mb-6">
-      Have questions? We're here to help.
-    </Typography>
-    <div className="bg-${accentColor}/5 p-6 rounded-2xl">
-      <Typography variant="h6" weight="semibold" className="mb-2">
-        Still have questions?
-      </Typography>
-      <Typography variant="body-small" className="mb-4">
-        Reach out to our support team.
-      </Typography>
-      <button className="px-4 py-2 bg-${accentColor} text-white rounded-lg">
-        Contact Support
-      </button>
-    </div>
-  </div>
+    // Build code string with complete imports and full implementation
+    const codeString = `import React, { useState } from 'react';
+import { 
+  Accordion, 
+  AccordionItem, 
+  AccordionSummary, 
+  AccordionTitle, 
+  AccordionDetails 
+} from './faq-section';
+import { Typography } from '../../../../components/typography';
+import { RocketIcon, LockClosedIcon, PersonIcon } from '@radix-ui/react-icons';
 
-  <div className={${contentSide === 'left' ? '"order-2"' : '"order-1"'}}>
-    <Accordion
-      value={openItems}
-      onValueChange={setOpenItems}
-      variant="${variant}"
-      animationVariant="${animation}"
-      iconStyle="${iconStyle}"
-      theme="${theme}"
-    >
-      {/* Accordion items */}
-    </Accordion>
-  </div>
-</div>`;
+const AccordionSplitExample = () => {
+  const [openItems, setOpenItems] = useState<string[]>(${JSON.stringify(openItems)});
+  const contentSide = "${contentSide}";
+  const accentColor = "${accentColor}";
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+      {/* Content side */}
+      <div className={contentSide === 'left' ? 'order-1' : 'order-2'}>
+        <Typography
+          variant="h2"
+          weight="bold"
+          className="text-4xl mb-4 text-gray-900 dark:text-white"
+        >
+          Frequently Asked Questions
+        </Typography>
+        <Typography
+          variant="lead"
+          className="text-lg mb-6 text-gray-500 dark:text-gray-400"
+        >
+          Have questions? We're here to help you understand everything about our platform.
+        </Typography>
+        <div className={\`p-6 rounded-2xl bg-\${accentColor}/5 dark:bg-\${accentColor}/10\`}>
+          <Typography
+            variant="h6"
+            weight="semibold"
+            className="mb-2 text-gray-900 dark:text-white"
+          >
+            Still have questions?
+          </Typography>
+          <Typography
+            variant="body-small"
+            className="mb-4 text-gray-500 dark:text-gray-400"
+          >
+            Can't find what you're looking for? Reach out to our support team.
+          </Typography>
+          <button className={\`px-4 py-2 bg-\${accentColor} text-white rounded-lg hover:bg-\${accentColor}/90 transition-colors\`}>
+            Contact Support
+          </button>
+        </div>
+      </div>
+
+      {/* Accordion side */}
+      <div className={contentSide === 'left' ? 'order-2' : 'order-1'}>
+        <Accordion
+          value={openItems}
+          onValueChange={setOpenItems}
+          variant="${variant}"
+          animationVariant="${animation}"
+          iconStyle="${iconStyle}"
+          theme="${theme}"
+        >
+          <AccordionItem id="1">
+            <AccordionSummary id="1">
+              <AccordionTitle icon={<RocketIcon className="w-5 h-5" />}>
+                How do I get started?
+              </AccordionTitle>
+            </AccordionSummary>
+            <AccordionDetails id="1">
+              <Typography variant="body-small">
+                Getting started is easy! Sign up for a free account, complete your profile,
+                and you'll have access to all our basic features.
+              </Typography>
+            </AccordionDetails>
+          </AccordionItem>
+
+          <AccordionItem id="2">
+            <AccordionSummary id="2">
+              <AccordionTitle icon={<LockClosedIcon className="w-5 h-5" />}>
+                Is my data secure?
+              </AccordionTitle>
+            </AccordionSummary>
+            <AccordionDetails id="2">
+              <Typography variant="body-small">
+                Yes, we take security seriously. All data is encrypted using AES-256,
+                we're GDPR compliant, and we perform regular security audits.
+              </Typography>
+            </AccordionDetails>
+          </AccordionItem>
+
+          <AccordionItem id="3">
+            <AccordionSummary id="3">
+              <AccordionTitle icon={<PersonIcon className="w-5 h-5" />}>
+                Can I invite team members?
+              </AccordionTitle>
+            </AccordionSummary>
+            <AccordionDetails id="3">
+              <Typography variant="body-small">
+                Absolutely! Our team plans allow you to invite unlimited team members with
+                role-based access control.
+              </Typography>
+            </AccordionDetails>
+          </AccordionItem>
+        </Accordion>
+      </div>
+    </div>
+  );
+};`;
 
     const handleThemeChange = (value: string) => {
         setTheme(value as ThemeType);
@@ -637,45 +765,215 @@ export const AccordionVibrantDemo = () => {
         return 'text-white/80';
     };
 
-    // Build code string
-    const codeString = `<div className="relative overflow-hidden rounded-2xl p-8 md:p-12 ${getBackgroundClass()}">
-  <div className="text-center mb-8">
-    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full ${activeCategory === 'pastel'
-            ? 'bg-' + (currentTheme as any).accent + '-100 text-' + (currentTheme as any).accent + '-800'
-            : 'bg-white/10 backdrop-blur-sm text-white'
-        } mb-4">
-      <StarIcon className="w-4 h-4" />
-      <span className="text-sm font-medium uppercase">${(currentTheme as any).name}</span>
+    // Build code string with complete imports and full implementation
+    const codeString = `import React, { useState } from 'react';
+import { 
+  Accordion, 
+  AccordionItem, 
+  AccordionSummary, 
+  AccordionTitle, 
+  AccordionDetails,
+  AccordionLink 
+} from './faq-section';
+import { Typography } from '../../../../components/typography';
+import { 
+  StarIcon, 
+  TimerIcon, 
+  RocketIcon, 
+  EnvelopeClosedIcon,
+  MagicWandIcon,
+  HeartIcon 
+} from '@radix-ui/react-icons';
+
+const AccordionVibrantExample = () => {
+  const [openItems, setOpenItems] = useState<string[]>(${JSON.stringify(openItems)});
+  const showIcons = ${showIcons};
+  const showCategories = ${showCategories};
+  const glassEffect = ${glassEffect};
+  const activeCategory = "${activeCategory}";
+  const currentTheme = {
+    name: "${(currentTheme as any).name}",
+    accent: "${(currentTheme as any).accent || 'primary'}",
+    gradient: "${(currentTheme as any).gradient || ''}",
+    bg: "${(currentTheme as any).bg || ''}"
+  };
+
+  const getBackgroundClass = () => {
+    if (activeCategory === 'glass') {
+      return \`relative overflow-hidden \${glassEffect ? 'backdrop-blur-xl' : ''}\`;
+    }
+    if (currentTheme.gradient) {
+      return \`bg-gradient-to-br \${currentTheme.gradient}\`;
+    }
+    return currentTheme.bg;
+  };
+
+  const getGlassBackground = () => {
+    if (activeCategory !== 'glass') return '';
+    const baseBg = glassEffect ? 'bg-black/40' : currentTheme.bg;
+    return \`\${baseBg} backdrop-blur-md border border-white/20 shadow-xl\`;
+  };
+
+  const getTextColor = () => {
+    if (activeCategory === 'pastel') return 'text-gray-900';
+    if (activeCategory === 'glass') return 'text-white';
+    return 'text-white';
+  };
+
+  const getMutedTextColor = () => {
+    if (activeCategory === 'pastel') return 'text-gray-600';
+    if (activeCategory === 'glass') return 'text-white/80';
+    return 'text-white/80';
+  };
+
+  return (
+    <div className={\`relative overflow-hidden rounded-2xl p-8 md:p-12 transition-all duration-500 \${
+      activeCategory === 'glass' 
+        ? getGlassBackground() 
+        : getBackgroundClass()
+    }\`}>
+      {/* Decorative elements for glass effect */}
+      {activeCategory === 'glass' && glassEffect && (
+        <>
+          <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
+          <div className="absolute top-0 left-0 w-64 h-64 bg-gradient-to-br from-white/10 to-transparent rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-white/5 to-transparent rounded-full blur-3xl"></div>
+        </>
+      )}
+
+      {/* Content */}
+      <div className="relative z-10">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className={\`inline-flex items-center gap-2 px-4 py-2 rounded-full \${
+            activeCategory === 'pastel'
+              ? \`bg-\${currentTheme.accent}-100 text-\${currentTheme.accent}-800\`
+              : activeCategory === 'glass'
+                ? 'bg-white/20 backdrop-blur-sm text-white border border-white/30'
+                : 'bg-white/10 backdrop-blur-sm text-white'
+          } mb-4\`}>
+            <StarIcon className="w-4 h-4" />
+            <span className="text-sm font-medium uppercase">{currentTheme.name}</span>
+          </div>
+          <Typography
+            variant="h2"
+            weight="bold"
+            className={\`text-3xl md:text-4xl mb-2 \${getTextColor()}\`}
+          >
+            Frequently Asked Questions
+          </Typography>
+          <Typography
+            variant="lead"
+            className={getMutedTextColor()}
+          >
+            Everything you need to know about our {currentTheme.name.toLowerCase()} theme
+          </Typography>
+        </div>
+
+        {/* Accordion */}
+        <Accordion
+          value={openItems}
+          onValueChange={setOpenItems}
+          variant="${variant}"
+          animationVariant="${animation}"
+          iconStyle="${iconStyle}"
+          theme="dark"
+        >
+          <AccordionItem id="1">
+            <AccordionSummary id="1">
+              <AccordionTitle
+                icon={showIcons ? <TimerIcon className="w-5 h-5" /> : undefined}
+                category={showCategories ? "Technology" : undefined}
+              >
+                What technology stack do you use?
+              </AccordionTitle>
+            </AccordionSummary>
+            <AccordionDetails id="1">
+              <Typography variant="body-small" className={getMutedTextColor()}>
+                We use cutting-edge technologies including React, TypeScript, Node.js, and
+                Web3 libraries. Our stack is carefully chosen for performance, security,
+                and developer experience.
+              </Typography>
+            </AccordionDetails>
+          </AccordionItem>
+
+          <AccordionItem id="2">
+            <AccordionSummary id="2">
+              <AccordionTitle
+                icon={showIcons ? <RocketIcon className="w-5 h-5" /> : undefined}
+                category={showCategories ? "Growth" : undefined}
+              >
+                How can your platform help my business grow?
+              </AccordionTitle>
+            </AccordionSummary>
+            <AccordionDetails id="2">
+              <Typography variant="body-small" className={getMutedTextColor()}>
+                Our platform provides analytics, automation tools, and insights that help
+                you make data-driven decisions. Join thousands of businesses that have
+                grown 3x faster with our solutions.
+              </Typography>
+            </AccordionDetails>
+          </AccordionItem>
+
+          <AccordionItem id="3">
+            <AccordionSummary id="3">
+              <AccordionTitle
+                icon={showIcons ? <StarIcon className="w-5 h-5" /> : undefined}
+                category={showCategories ? "Premium" : undefined}
+              >
+                What's included in the premium plan?
+              </AccordionTitle>
+            </AccordionSummary>
+            <AccordionDetails id="3">
+              <Typography variant="body-small" className={getMutedTextColor()}>
+                Premium includes unlimited projects, priority support, advanced analytics,
+                custom integrations, and dedicated account manager. Perfect for growing
+                businesses and enterprises.
+              </Typography>
+              <AccordionLink
+                href="/pricing"
+                className={activeCategory === 'pastel' ? \`text-\${currentTheme.accent}-600\` : 'text-white/90 hover:text-white'}
+              >
+                View pricing details
+              </AccordionLink>
+            </AccordionDetails>
+          </AccordionItem>
+
+          <AccordionItem id="4">
+            <AccordionSummary id="4">
+              <AccordionTitle
+                icon={showIcons ? <EnvelopeClosedIcon className="w-5 h-5" /> : undefined}
+                category={showCategories ? "Support" : undefined}
+              >
+                How do I contact support?
+              </AccordionTitle>
+            </AccordionSummary>
+            <AccordionDetails id="4">
+              <Typography variant="body-small" className={getMutedTextColor()}>
+                Premium users get 24/7 priority support via live chat and phone.
+                Free users can reach us via email with 24-hour response time.
+                We're always here to help!
+              </Typography>
+            </AccordionDetails>
+          </AccordionItem>
+        </Accordion>
+
+        {/* Footer */}
+        <div className="mt-8 text-center">
+          <button className={\`px-6 py-3 rounded-xl transition-all duration-300 \${
+            activeCategory === 'pastel'
+              ? \`bg-\${currentTheme.accent}-600 text-white hover:bg-\${currentTheme.accent}-700\`
+              : activeCategory === 'glass'
+                ? 'bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 border border-white/20'
+                : 'bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 border border-white/20'
+          }\`}>
+            Still have questions? Contact us
+          </button>
+        </div>
+      </div>
     </div>
-    <Typography variant="h2" weight="bold" className="text-4xl mb-2 ${getTextColor()}">
-      Frequently Asked Questions
-    </Typography>
-    <Typography variant="lead" className="${getMutedTextColor()}">
-      Everything you need to know about our ${(currentTheme as any).name.toLowerCase()} theme
-    </Typography>
-  </div>
-
-  <Accordion
-    value={openItems}
-    onValueChange={setOpenItems}
-    variant="${variant}"
-    animationVariant="${animation}"
-    iconStyle="${iconStyle}"
-    theme="dark"
-  >
-    {/* Accordion items */}
-  </Accordion>
-
-  <div className="mt-8 text-center">
-    <button className="px-6 py-3 ${activeCategory === 'pastel'
-            ? 'bg-' + (currentTheme as any).accent + '-600 text-white'
-            : 'bg-white/10 backdrop-blur-sm text-white'
-        } rounded-xl hover:bg-opacity-80 transition-all border ${activeCategory !== 'pastel' ? 'border-white/20' : ''
-        }">
-      Still have questions? Contact us
-    </button>
-  </div>
-</div>`;
+  );
+};`;
 
     const handleIconStyleChange = (value: string) => {
         setIconStyle(value as IconStyleType);
@@ -959,43 +1257,6 @@ export const AccordionVibrantDemo = () => {
                     </div>
                 </TabItem>
             </Tabs>
-
-            {/* Theme Info Panel */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                <div className="p-4 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800">
-                    <h3 className="font-semibold mb-2 flex items-center gap-2">
-                        <MagicWandIcon className="w-4 h-4" />
-                        Active Theme
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Category: <span className="capitalize font-medium">{activeCategory}</span><br />
-                        Theme: <span className="font-medium">{(currentTheme as any).name}</span><br />
-                        Accent: <span className={`text-${(currentTheme as any).accent}-500 capitalize`}>{(currentTheme as any).accent}</span>
-                    </p>
-                </div>
-                <div className="p-4 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800">
-                    <h3 className="font-semibold mb-2 flex items-center gap-2">
-                        <MagicWandIcon className="w-4 h-4" />
-                        Current Styles
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Variant: <span className="capitalize">{variant}</span><br />
-                        Icons: <span className="capitalize">{iconStyle}</span><br />
-                        Animation: <span className="capitalize">{animation}</span>
-                    </p>
-                </div>
-                <div className="p-4 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800">
-                    <h3 className="font-semibold mb-2 flex items-center gap-2">
-                        <HeartIcon className="w-4 h-4" />
-                        Features
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Icons: {showIcons ? '✅' : '❌'}<br />
-                        Categories: {showCategories ? '✅' : '❌'}<br />
-                        Glass Effect: {glassEffect ? '✅' : '❌'}
-                    </p>
-                </div>
-            </div>
         </div>
     );
 };
