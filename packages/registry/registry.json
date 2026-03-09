@@ -1063,17 +1063,15 @@
       "description": "",
       "dependencies": [
         "framer-motion",
-        "react-icons",
         "lucide-react",
         "class-variance-authority"
       ],
       "componentDependencies": [
         "avatar",
-        "button",
-        "breadcrumbs",
+        "buttonWithIcon",
         "typography",
         "card",
-        "comparisonTable",
+        "pricingGrid",
         "dialogBox"
       ],
       "files": {
