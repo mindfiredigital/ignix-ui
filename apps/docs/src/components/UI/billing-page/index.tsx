@@ -753,7 +753,7 @@ export const PaymentMethodCard: React.FC<PaymentMethodProps> = React.memo(({
         </div>
 
         <ButtonWithIcon
-          variant="default"
+          variant="primary"
           size="md"
           className="w-full"
           icon={<Pencil />}
