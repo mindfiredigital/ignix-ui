@@ -254,6 +254,13 @@
               "items": [
                 "templates/pages/error-page"
               ]
+            },
+            {
+              "type": "category",
+              "label": "Forms",
+              "items": [
+                "templates/pages/forms/dynamic-form"
+              ]
             }
           ]                      
         },
