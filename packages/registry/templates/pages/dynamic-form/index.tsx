@@ -292,6 +292,46 @@ const evaluateCondition = (condition: Condition, allValues: FormValues): boolean
 };
 
 /* ============================================
+   INPUT COMPONENT
+============================================ */
+
+// interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+//     icon?: React.ElementType;
+//     error?: string;
+//     variant?: string;
+// }
+
+// const Input: React.FC<InputProps> = ({
+//     icon: Icon,
+//     error,
+//     className,
+//     variant = 'default',
+//     ...props
+// }) => {
+//     return (
+//         <div className="relative">
+//             {Icon && (
+//                 <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+//                     <Icon className="w-4 h-4" />
+//                 </div>
+//             )}
+//             <input
+//                 className={cn(
+//                     "w-full px-4 py-3 rounded-lg transition-all duration-300",
+//                     "bg-background border-2",
+//                     Icon && "pl-10",
+//                     error ? "border-destructive/50 focus:border-destructive" : "border-border focus:border-primary",
+//                     "focus:outline-none focus:ring-4 focus:ring-primary/20",
+//                     "text-foreground placeholder:text-muted-foreground",
+//                     className
+//                 )}
+//                 {...props}
+//             />
+//         </div>
+//     );
+// };
+
+/* ============================================
    MAIN PROVIDER COMPONENT
 ============================================ */
 
@@ -346,6 +386,26 @@ export interface DynamicFormProps {
     containerClassName?: string;
 }
 
+/**
+ * Main Dynamic Form component that provides context and layout for form functionality.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <DynamicForm
+ *   fields={formFields}
+ *   onSubmit={handleSubmit}
+ *   variant="ocean"
+ * >
+ *   <DynamicForm.Header title="User Registration" />
+ *   <DynamicForm.Content>
+ *     <DynamicForm.Field field={fields.name} />
+ *     <DynamicForm.Field field={fields.email} />
+ *   </DynamicForm.Content>
+ *   <DynamicForm.Navigation />
+ * </DynamicForm>
+ * ```
+ */
 const DynamicForm: React.FC<DynamicFormProps> & {
     Header: typeof DynamicHeader;
     Content: typeof DynamicContent;
@@ -746,6 +806,21 @@ export interface DynamicHeaderProps {
     gradient?: boolean;
 }
 
+/**
+ * Header component for the Dynamic Form with optional title, description, and icon.
+ * Supports sticky positioning and animated transitions.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <DynamicForm.Header
+ *   title="Contact Information"
+ *   description="Please provide your contact details"
+ *   icon={<UserIcon />}
+ *   gradient
+ * />
+ * ```
+ */
 const DynamicHeader: React.FC<DynamicHeaderProps> = ({
     title,
     description,
@@ -851,6 +926,25 @@ export interface DynamicContentProps {
     showFieldCount?: boolean;
 }
 
+/**
+ * Content container for form fields with animated transitions and card styling.
+ * Automatically handles field visibility and animations based on conditional logic.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <DynamicForm.Content
+ *   cardVariant="glass"
+ *   showFieldCount={true}
+ *   animateChanges={true}
+ * >
+ *   <DynamicForm.Field field={fields.name} />
+ *   <DynamicForm.Section title="Additional Info">
+ *     <DynamicForm.Field field={fields.phone} />
+ *   </DynamicForm.Section>
+ * </DynamicForm.Content>
+ * ```
+ */
 const DynamicContent: React.FC<DynamicContentProps> = ({
     children,
     className,
@@ -946,6 +1040,28 @@ export interface DynamicFieldProps {
     animationVariant?: 'fade' | 'slide' | 'scale' | 'rotate';
 }
 
+/**
+ * Individual form field component that renders appropriate input type based on field configuration.
+ * Supports various field types: text, email, password, number, textarea, select, checkbox, radio, date, range, color.
+ * Includes validation, animations, and conditional visibility.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <DynamicForm.Field
+ *   field={{
+ *     id: 'email',
+ *     name: 'email',
+ *     label: 'Email Address',
+ *     type: 'email',
+ *     required: true,
+ *     icon: EnvelopeIcon,
+ *     validation: (value) => !value ? 'Email is required' : undefined
+ *   }}
+ *   animationVariant="slide"
+ * />
+ * ```
+ */
 const DynamicField: React.FC<DynamicFieldProps> = ({
     field,
     className,
@@ -1309,6 +1425,26 @@ export interface DynamicSectionProps {
     icon?: React.ElementType;
 }
 
+/**
+ * Section component that groups related fields together with optional collapsible functionality.
+ * Can be conditionally shown/hidden based on field values.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <DynamicForm.Section
+ *   title="Payment Details"
+ *   description="Enter your payment information"
+ *   condition={{ field: 'paymentMethod', operator: 'equals', value: 'credit' }}
+ *   collapsible
+ *   defaultCollapsed={false}
+ *   icon={CreditCardIcon}
+ * >
+ *   <DynamicForm.Field field={fields.cardNumber} />
+ *   <DynamicForm.Field field={fields.expiryDate} />
+ * </DynamicForm.Section>
+ * ```
+ */
 const DynamicSection: React.FC<DynamicSectionProps> = ({
     title,
     description,
@@ -1434,6 +1570,22 @@ export interface DynamicNavigationProps {
     children?: React.ReactNode;
 }
 
+/**
+ * Navigation component that provides form submission and cancellation controls.
+ * Supports sticky positioning and various button styles.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <DynamicForm.Navigation
+ *   submitButtonLabel="Register"
+ *   cancelButtonLabel="Back"
+ *   showCancelButton={true}
+ *   position="sticky"
+ *   animated={true}
+ * />
+ * ```
+ */
 const DynamicNavigation: React.FC<DynamicNavigationProps> = ({
     submitButtonLabel: customSubmitLabel,
     cancelButtonLabel: customCancelLabel,
@@ -1561,6 +1713,22 @@ export interface DynamicNotificationProps {
     icon?: React.ElementType;
 }
 
+/**
+ * Notification component that displays temporary feedback messages.
+ * Automatically dismisses after specified duration.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <DynamicForm.Notification
+ *   type="success"
+ *   message="Form submitted successfully!"
+ *   onClose={() => setNotification(null)}
+ *   duration={3000}
+ *   icon={CheckCircledIcon}
+ * />
+ * ```
+ */
 const DynamicNotification: React.FC<DynamicNotificationProps> = ({
     type = 'success',
     message,
@@ -1625,6 +1793,16 @@ export interface DynamicDebuggerProps {
     className?: string;
 }
 
+/**
+ * Debugging component that displays form state, errors, and visible fields in real-time.
+ * Useful for development and troubleshooting conditional logic.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <DynamicForm.Debugger className="bottom-20 left-4" />
+ * ```
+ */
 const DynamicDebugger: React.FC<DynamicDebuggerProps> = ({ className }) => {
     const { formData, errors, visibleFields, fields } = useDynamicForm();
     const [isOpen, setIsOpen] = useState(false);

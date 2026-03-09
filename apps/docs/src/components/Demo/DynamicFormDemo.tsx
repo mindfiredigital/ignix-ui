@@ -63,23 +63,6 @@ const themeOptions = [
     { value: 'dark', label: 'Pure Dark' },
 ];
 
-// Card variant options
-const cardVariantOptions = [
-    { value: 'default', label: 'Default' },
-    { value: 'glass', label: 'Glass' },
-    { value: 'border', label: 'Border' },
-    { value: 'elevated', label: 'Elevated' },
-    { value: 'neon', label: 'Neon' },
-    { value: 'vibrant', label: 'Vibrant' },
-];
-
-// Animation intensity options
-const animationIntensityOptions = [
-    { value: 'subtle', label: 'Subtle' },
-    { value: 'moderate', label: 'Moderate' },
-    { value: 'high', label: 'High' },
-];
-
 // Form type options
 const formTypeOptions = [
     { value: 'registration', label: 'User Registration' },
@@ -1201,26 +1184,6 @@ const ${formType}Sections = [
                         variantLabels={Object.fromEntries(themeOptions.map(o => [o.value, o.label]))}
                     />
                 </div>
-
-                <div className="space-y-2 mx-1">
-                    <VariantSelector
-                        variants={cardVariantOptions.map(o => o.value)}
-                        selectedVariant={cardVariant}
-                        onSelectVariant={(value) => setCardVariant(value as CardVariant)}
-                        type="Card Style"
-                        variantLabels={Object.fromEntries(cardVariantOptions.map(o => [o.value, o.label]))}
-                    />
-                </div>
-
-                <div className="space-y-2 mx-1">
-                    <VariantSelector
-                        variants={animationIntensityOptions.map(o => o.value)}
-                        selectedVariant={animationIntensity}
-                        onSelectVariant={(value) => setAnimationIntensity(value as AnimationIntensity)}
-                        type="Animation"
-                        variantLabels={Object.fromEntries(animationIntensityOptions.map(o => [o.value, o.label]))}
-                    />
-                </div>
             </div>
 
             {/* Feature Toggles */}
@@ -1228,25 +1191,6 @@ const ${formType}Sections = [
                 "flex flex-row items-center justify-end gap-2 px-2 flex-wrap",
                 darkMode ? "bg-gray-900 text-gray-200" : "bg-gray-50 text-gray-700"
             )}>
-                <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                        type="checkbox"
-                        checked={showDebugger}
-                        onChange={(e) => setShowDebugger(e.target.checked)}
-                        className="rounded text-primary"
-                    />
-                    <span className="text-sm">Debugger</span>
-                </label>
-
-                <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                        type="checkbox"
-                        checked={showThemeToggle}
-                        onChange={(e) => setShowThemeToggle(e.target.checked)}
-                        className="rounded text-primary"
-                    />
-                    <span className="text-sm">Theme Toggle</span>
-                </label>
 
                 <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -1278,19 +1222,6 @@ const ${formType}Sections = [
                     <span className="text-sm">Field Count</span>
                 </label>
 
-                <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                        type="checkbox"
-                        checked={darkMode}
-                        onChange={(e) => {
-                            setDarkMode(e.target.checked);
-                            setThemeVariant(e.target.checked ? 'dark' : 'default');
-                            setUserChangedTheme(true);
-                        }}
-                        className="rounded text-primary"
-                    />
-                    <span className="text-sm">Dark Mode</span>
-                </label>
             </div>
 
             {/* Loading State Controls */}
