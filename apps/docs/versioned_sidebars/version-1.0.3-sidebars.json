@@ -225,7 +225,8 @@
               "type": "category",
               "label": "Dashboard",
               "items": [
-                "templates/pages/dashboard/dashboard-overview-page"
+                "templates/pages/dashboard/dashboard-overview-page",
+                "templates/pages/dashboard/analytics-dashboard-page"
               ]
             },
             {
@@ -234,6 +235,13 @@
               "items": [
                 "templates/pages/error-page",
                 "templates/pages/maintenance-page"
+              ]
+            },
+            {
+              "type": "category",
+              "label": "Forms",
+              "items": [
+                "templates/pages/forms/dynamic-form"
               ]
             }
           ]                      
@@ -244,9 +252,11 @@
           "items": [
             "templates/sections/content/call-to-action",
             "templates/sections/content/comparison-table",
+            "templates/sections/content/faq-accordion",
             "templates/sections/content/hero",
             "templates/sections/content/mega-menu-multi-column-dropdown",
             "templates/sections/content/pricing-grid",
+            "templates/sections/content/stats-grid",
             "templates/sections/content/tab-navigation",
             "templates/sections/content/team-profiles"
           ]

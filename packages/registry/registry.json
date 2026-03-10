@@ -120,7 +120,26 @@
         }
       }
     },
-    "error-page": {
+    "dynamicForm": {
+      "name": "DynamicForm",
+      "description": "A dynamic form component that generates form fields based on a JSON schema, enabling easy form creation and validation.",
+      "dependencies": [
+        "lucide-react", 
+        "class-variance-authority",
+        "framer-motion"
+      ],
+      "componentDependencies": [
+        "typography",
+        "button"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/sections/dynamic-form/index.tsx",
+          "type": "template"
+        }
+      }
+    },
+    "errorPage": {
       "name": "ErrorPage",
       "description": "A customizable error page template with multiple animation variants, designed to display clear messaging, illustration/icons.",
       "dependencies": ["lucide-react", "framer-motion", "class-variance-authority"],
@@ -151,6 +170,22 @@
         "main": {
           "path": "components/layouts/responsive-grid/index.tsx",
           "type": "component"
+        }
+      }
+    },
+    "statsGrid" :{
+      "name": "StatsGrid",
+      "description": "A responsive grid layout for displaying statistics with animated count-up and staggered entrance effects.",
+      "dependencies": [
+        "lucide-react", 
+        "class-variance-authority",
+        "framer-motion"
+      ],
+      "componentDependencies": [      ],
+      "files": {
+        "main": {
+          "path": "templates/sections/stats-grid/index.tsx",
+          "type": "template"
         }
       }
     },
@@ -1100,6 +1135,22 @@
         }
       }
     },
+    "analytics-dashboard-page": {
+      "name": "analytics-dashboard-page",
+      "description": "A composable analytics dashboard template with KPI summary cards, time-series line and bar charts, and a distribution pie chart, driven by dynamic time-series data and series configuration.",
+      "dependencies": [],
+      "componentDependencies": [
+        "button",
+        "card",
+        "datePicker"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/analytics-dashboard-page/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "imageCard": {
       "name": "ImageCard",
       "description": "An image card component with different variants",
@@ -1317,6 +1368,24 @@
           "type": "template"
         }
       }
-    } 
-  }
+    },
+    "faqAccordion":{
+      "name": "FAQAccordion",
+      "description": "A flexible faq accordion component with custom tags and multiple interaction modes.",
+      "dependencies": [
+        "lucide-react", 
+        "class-variance-authority", "framer-motion"
+      ],
+      "componentDependencies": [
+        "typography",
+        "button"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/sections/faq-accordion/index.tsx",
+          "type": "component"
+        }
+      }
+    }
+  } 
 }
