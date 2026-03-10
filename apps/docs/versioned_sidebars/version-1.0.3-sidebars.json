@@ -245,7 +245,8 @@
               "type": "category",
               "label": "Dashboard",
               "items": [
-                "templates/pages/dashboard/dashboard-overview-page"
+                "templates/pages/dashboard/dashboard-overview-page",
+                "templates/pages/dashboard/analytics-dashboard-page"
               ]
             },
             {

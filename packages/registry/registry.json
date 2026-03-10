@@ -1114,6 +1114,22 @@
         }
       }
     },
+    "analytics-dashboard-page": {
+      "name": "analytics-dashboard-page",
+      "description": "A composable analytics dashboard template with KPI summary cards, time-series line and bar charts, and a distribution pie chart, driven by dynamic time-series data and series configuration.",
+      "dependencies": [],
+      "componentDependencies": [
+        "button",
+        "card",
+        "datePicker"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/analytics-dashboard-page/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "imageCard": {
       "name": "ImageCard",
       "description": "An image card component with different variants",
