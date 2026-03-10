@@ -228,7 +228,7 @@
                 "templates/pages/authentication/sign-up",
                 "templates/pages/authentication/two-factor-auth-setup-page"
               ]
-            },
+            }, 
             {
               "type": "category",
               "label": "Account Management",
@@ -245,7 +245,8 @@
               "type": "category",
               "label": "Dashboard",
               "items": [
-                "templates/pages/dashboard/dashboard-overview-page"
+                "templates/pages/dashboard/dashboard-overview-page",
+                "templates/pages/dashboard/analytics-dashboard-page"
               ]
             },
             {
@@ -259,7 +260,8 @@
               "type": "category",
               "label": "Forms",
               "items": [
-                "templates/pages/forms/multi-step-form"
+                "templates/pages/forms/multi-step-form",
+                "templates/pages/forms/dynamic-form"
               ]
             }
           ]                      
@@ -270,9 +272,11 @@
           "items": [
             "templates/sections/content/call-to-action",
             "templates/sections/content/comparison-table",
+            "templates/sections/content/faq-accordion",
             "templates/sections/content/hero",
             "templates/sections/content/mega-menu-multi-column-dropdown",
             "templates/sections/content/pricing-grid",
+            "templates/sections/content/stats-grid",
             "templates/sections/content/tab-navigation",
             "templates/sections/content/team-profiles"
           ]
