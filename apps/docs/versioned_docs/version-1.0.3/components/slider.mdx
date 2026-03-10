@@ -9,46 +9,9 @@ import TabItem from '@theme/TabItem';
 import { Slider } from '@site/src/components/UI/slider';
 import { useState } from 'react';
 
-## Overview
-
 The Slider component is a highly customizable input element that allows users to select a value within a range. Built with Radix UI and Framer Motion, it offers various styles, animations, and interactive features.
 
-## Preview
-
-<Tabs defaultValue="preview">
-  <TabItem value="preview" label="Preview" default>
-    <div className="w-full p-8 space-y-8 border rounded-lg">
-      <div className="p-6 rounded-lg">
-        <Slider
-          defaultValue={[50]}
-          max={100}
-          step={1}
-          variant="default"
-          showValue
-          valueSuffix="%"
-        />
-      </div>
-    </div>
-  </TabItem>
-  <TabItem value="code" label="Code">
-    ```tsx
-    import { Slider } from './components/ui';
-
-    function SliderDemo() {
-      return (
-        <Slider
-          defaultValue={[50]}
-          max={100}
-          step={1}
-          variant="default"
-          showValue
-          valueSuffix="%"
-        />
-      );
-    }
-    ```
-  </TabItem>
-</Tabs>
+<SliderDemo />
 
 ## Installation
 
@@ -144,7 +107,6 @@ const variantStyles: Record<
       'absolute h-full rounded-full',
       'bg-gradient-to-r from-primary to-primary/90',
       'shadow-lg shadow-primary/25 dark:shadow-primary/20',
-      'transition-all duration-300',
       'before:absolute before:inset-0 before:rounded-full',
       'before:bg-gradient-to-t before:from-white/20 before:to-transparent',
       'before:pointer-events-none'
@@ -173,7 +135,7 @@ const variantStyles: Record<
     range: cn(
       'absolute h-full rounded-full',
       'bg-gradient-to-r from-primary/80 to-primary/70',
-      'shadow-sm shadow-primary/20 transition-all duration-300'
+      'shadow-sm shadow-primary/20'
     ),
     thumb: cn(
       'block h-3 w-3 rounded-full bg-gradient-to-br from-primary to-primary/80',
@@ -196,7 +158,7 @@ const variantStyles: Record<
     range: cn(
       'absolute h-full rounded-full',
       'bg-gradient-to-r from-primary via-primary/95 to-primary/90',
-      'shadow-lg shadow-primary/30 transition-all duration-300',
+      'shadow-lg shadow-primary/30',
       'before:absolute before:inset-0 before:rounded-full',
       'before:bg-gradient-to-t before:from-transparent before:via-white/10 before:to-white/20',
       'before:pointer-events-none'
@@ -227,7 +189,7 @@ const variantStyles: Record<
     range: cn(
       'absolute h-full rounded-full',
       'bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500',
-      'shadow-lg shadow-purple-500/30 transition-all duration-300',
+      'shadow-lg shadow-purple-500/30',
       'before:absolute before:inset-0 before:rounded-full',
       'before:bg-gradient-to-t before:from-black/10 before:to-white/30',
       'before:pointer-events-none',
@@ -266,7 +228,6 @@ const variantStyles: Record<
       'absolute h-full rounded-full',
       'bg-white/30 dark:bg-white/20 backdrop-blur-md',
       'shadow-lg shadow-white/20 dark:shadow-white/10',
-      'transition-all duration-300',
       'before:absolute before:inset-0 before:rounded-full',
       'before:bg-gradient-to-t before:from-transparent before:to-white/30',
       'before:pointer-events-none'
@@ -298,7 +259,7 @@ const variantStyles: Record<
     range: cn(
       'absolute h-full rounded-full',
       'bg-transparent border-2 border-primary',
-      'shadow-lg shadow-primary/20 transition-all duration-300',
+      'shadow-lg shadow-primary/20',
       'before:absolute before:inset-0 before:rounded-full',
       'before:bg-gradient-to-r before:from-primary/10 before:to-primary/5',
       'before:pointer-events-none'
@@ -329,7 +290,7 @@ const variantStyles: Record<
     range: cn(
       'absolute h-full rounded-full',
       'bg-gradient-to-b from-primary/90 to-primary',
-      'shadow-lg shadow-primary/30 transition-all duration-300',
+      'shadow-lg shadow-primary/30',
       'before:absolute before:inset-0 before:rounded-full',
       'before:bg-gradient-to-t before:from-transparent before:to-white/20',
       'before:pointer-events-none'
@@ -362,7 +323,6 @@ const variantStyles: Record<
       'absolute h-full rounded-full',
       'bg-gradient-to-r from-cyan-500 to-cyan-400',
       'shadow-[0_0_15px_3px_rgba(6,182,212,0.7),0_0_30px_5px_rgba(6,182,212,0.5)]',
-      'transition-all duration-300',
       'before:absolute before:inset-0 before:rounded-full',
       'before:bg-gradient-to-t before:from-transparent before:to-white/20',
       'before:pointer-events-none'
@@ -394,7 +354,7 @@ const variantStyles: Record<
     range: cn(
       'absolute h-full rounded-full',
       'bg-gradient-to-r from-primary to-primary/90',
-      'shadow-md shadow-primary/25 transition-all duration-300',
+      'shadow-md shadow-primary/25',
       'before:absolute before:inset-0 before:rounded-full',
       'before:bg-gradient-to-t before:from-transparent before:to-white/15',
       'before:pointer-events-none'
@@ -428,7 +388,6 @@ const variantStyles: Record<
       'absolute h-full rounded-full',
       'bg-gradient-to-r from-blue-400 to-blue-500',
       'shadow-[inset_-2px_-2px_4px_rgba(0,0,0,0.1),inset_2px_2px_4px_rgba(255,255,255,0.2)]',
-      'transition-all duration-300'
     ),
     thumb: cn(
       'block h-6 w-6 rounded-full',
@@ -456,7 +415,6 @@ const variantStyles: Record<
       'absolute h-full',
       'bg-gradient-to-b from-amber-500 to-amber-600',
       'shadow-[inset_0_1px_2px_rgba(146,64,14,0.4)]',
-      'transition-all duration-300',
       'before:absolute before:inset-0',
       'before:bg-gradient-to-t before:from-transparent before:to-amber-400/30',
       'before:pointer-events-none'
@@ -487,7 +445,6 @@ const variantStyles: Record<
       'absolute h-full',
       'bg-gradient-to-r from-fuchsia-600 via-purple-600 to-cyan-600',
       'shadow-[0_0_15px_rgba(192,38,211,0.7)]',
-      'transition-all duration-300',
       'before:absolute before:inset-0',
       'before:bg-gradient-to-t before:from-transparent before:to-white/20',
       'before:pointer-events-none'
@@ -518,7 +475,6 @@ const variantStyles: Record<
       'absolute h-full',
       'bg-gradient-to-b from-gray-800 to-black',
       'shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]',
-      'transition-all duration-200'
     ),
     thumb: cn(
       'block h-8 w-8 rounded-none',
@@ -545,7 +501,7 @@ const variantStyles: Record<
     range: cn(
       'absolute h-full rounded-full',
       'bg-gradient-to-b from-blue-400 via-blue-500 to-blue-600',
-      'border-r border-gray-500 transition-all duration-300',
+      'border-r border-gray-500',
       'shadow-[inset_0_1px_3px_rgba(255,255,255,0.4),inset_0_-1px_2px_rgba(0,0,0,0.2)]',
       'before:absolute before:inset-0 before:rounded-full',
       'before:bg-gradient-to-t before:from-transparent before:to-white/25',
@@ -951,9 +907,6 @@ function BasicSlider() {
 
 import SliderDemo from '@site/src/components/Demo/SliderDemo';
 
-## Variants
-
-<SliderDemo />
 
 ### Custom Range Values
 
@@ -970,3 +923,40 @@ Create a slider with custom range and step values:
   valueSuffix="°C"
 />
 ```
+
+## Props
+
+### Slider
+
+| Prop | Type | Default | Description |
+|-----|------|---------|-------------|
+| `variant` | `'default' \| 'minimal' \| 'rounded' \| 'gradient' \| 'glass' \| 'outline' \| 'shadow' \| 'neon' \| 'material' \| 'neumorphic' \| 'retro' \| 'cyberpunk' \| 'brutalist' \| 'skeuomorphic'` | `'default'` | Visual style of the slider. |
+| `animationType` | `'none' \| 'slide' \| 'fade' \| 'zoom' \| 'spring' \| 'elastic' \| 'parallax' \| 'flip' \| 'morph' \| 'hover' \| 'pulse' \| 'breathe' \| 'wave' \| 'rainbow' \| 'bounce'` | `'none'` | Animation applied to the slider elements. |
+| `animationDuration` | `number` | `0.3` | Duration of the animation in seconds. |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Controls the size of the slider and thumb. |
+| `showValue` | `boolean` | `false` | Displays the current slider value below the component. |
+| `valuePrefix` | `string` | `''` | Prefix text shown before the value. |
+| `valueSuffix` | `string` | `''` | Suffix text shown after the value. |
+| `showTooltip` | `boolean` | `false` | Displays a tooltip above the thumb showing the value while hovering. |
+| `glowEffect` | `boolean` | `false` | Adds a glow shadow effect to the slider range. |
+| `trackClassName` | `string` | `-` | Custom className for the slider track. |
+| `rangeClassName` | `string` | `-` | Custom className for the filled range. |
+| `thumbClassName` | `string` | `-` | Custom className for the slider thumb. |
+| `valueClassName` | `string` | `-` | Custom className for the value display element. |
+| `className` | `string` | `-` | Additional className applied to the slider root. |
+
+---
+
+### Radix Slider Props
+
+The component also supports all props from **Radix UI Slider Primitive**.
+
+| Prop | Type | Default | Description |
+|-----|------|---------|-------------|
+| `value` | `number[]` | `-` | Controlled slider value. |
+| `defaultValue` | `number[]` | `[0]` | Initial value for uncontrolled usage. |
+| `min` | `number` | `0` | Minimum slider value. |
+| `max` | `number` | `100` | Maximum slider value. |
+| `step` | `number` | `1` | Step interval for value changes. |
+| `onValueChange` | `(value: number[]) => void` | `-` | Callback triggered when slider value changes. |
+| `disabled` | `boolean` | `false` | Disables slider interaction. |
