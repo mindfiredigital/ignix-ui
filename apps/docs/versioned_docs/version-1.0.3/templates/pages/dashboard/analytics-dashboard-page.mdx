@@ -1,0 +1,331 @@
+---
+sidebar_position: 6
+title: Analytics Dashboard Page
+description: A composable analytics dashboard template with KPI cards, time-series trend chart, segment breakdowns, and distribution insights for complex, multi-metric datasets.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import AnalyticsDashboardPageDemo from '@site/src/components/Demo/AnalyticsDashboardPageDemo';
+
+## Overview
+
+The **Analytics Dashboard Page** is a high-level template for data-heavy analytics views. It combines KPI summary cards, a time-series line chart (e.g. revenue vs signups vs churn), side-by-side segment cards, and distribution-style widgets into a single responsive layout. The page is **data-driven and composable**: you pass in your own time-series points, series configuration, and optional aggregates, and the template renders a modern analytics UI similar to SaaS admin dashboards.
+
+## Preview
+
+<AnalyticsDashboardPageDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+
+```bash
+ignix add component analytics-dashboard-page
+```
+
+  </TabItem>
+  <TabItem value="manual" label="Manual">
+
+```tsx
+import {
+  AnalyticsDashboardPage,
+  type AnalyticsDateRange,
+  type LineSeriesConfig,
+  type TimeSeriesPoint,
+  type AggregatedSeriesValue,
+  type DistributionSlice,
+} from "@ignix-ui/analytics-dashboard-page";
+
+const seriesConfig: LineSeriesConfig[] = [
+  {
+    id: "revenue",
+    label: "Revenue",
+    strokeClass: "stroke-emerald-400",
+    dotClass: "fill-emerald-400",
+    legendBgClass: "bg-emerald-500",
+  },
+  {
+    id: "signups",
+    label: "New Signups",
+    strokeClass: "stroke-sky-400",
+    dotClass: "fill-sky-400",
+    legendBgClass: "bg-sky-500",
+  },
+  {
+    id: "churn",
+    label: "Churned Accounts",
+    strokeClass: "stroke-rose-400",
+    dotClass: "fill-rose-400",
+    legendBgClass: "bg-rose-500",
+  },
+];
+
+const timeSeries: TimeSeriesPoint[] = [
+  {
+    date: new Date("2024-02-14"),
+    values: { revenue: 18200, signups: 140, churn: 12 },
+  },
+  {
+    date: new Date("2024-02-15"),
+    values: { revenue: 19120, signups: 156, churn: 10 },
+  },
+  // ...more points
+];
+
+export function AnalyticsDashboardExample() {
+  const handleDateRangeChange = (range: AnalyticsDateRange) => {
+    console.log("Selected range:", range);
+    // Refetch analytics for this period
+  };
+
+  return (
+    <AnalyticsDashboardPage
+      timeSeries={timeSeries}
+      lineSeriesConfig={seriesConfig}
+      onDateRangeChange={handleDateRangeChange}
+      onExportCharts={() => console.log("Export charts")}
+    />
+  );
+}
+```
+
+  </TabItem>
+</Tabs>
+
+## Features
+
+- **KPI summary row** with 3–4 top-level metrics (revenue, signups, churn, active users, etc.)
+- **Time-series line chart** for multiple series (e.g. Revenue, New Signups, Churned Accounts) with interactive legend
+- **Date range picker** that drives filtering and can be wired to your backend fetch logic
+- **Scrollable chart viewport** with a fixed maximum width so dense datasets stay readable
+- **Segment and distribution cards** to show breakdowns by segment, plan, geography, or channel
+- **Composable sections** (layout, header, line chart, bar chart, pie chart) that you can mix, match, and reorder
+
+## Props
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `timeSeries` | `TimeSeriesPoint[]` | Time-series data points; each point has a JavaScript `Date` plus a `values` map keyed by series id. |
+| `lineSeriesConfig` | `LineSeriesConfig[]` | Configuration for each logical series (id, label, Tailwind stroke/dot/legend classes, optional pie slice class). |
+| `barAggregates` | `AggregatedSeriesValue[]` (optional) | Pre-computed aggregates for the bar chart. When omitted, they are derived from `timeSeries` and `lineSeriesConfig`. |
+| `distributionSlices` | `DistributionSlice[]` (optional) | Pre-computed distribution slices for the pie chart. When omitted, they are derived from the aggregates. |
+| `dateRange` | `AnalyticsDateRange` (optional) | Controlled date range (start/end). When omitted, the page manages its own internal range. |
+| `onDateRangeChange` | `(range: AnalyticsDateRange) => void` (optional) | Called when the user picks a new date range; ideal place to trigger data refetching. |
+| `onExportCharts` | `() => void` (optional) | Fired when the “Export report” / “Export charts” button is clicked. |
+| `className` | `string` (optional) | Additional class names applied to the root layout container. |
+
+### Page props (`AnalyticsDashboardPage`)
+
+```ts
+interface AnalyticsDateRange {
+  start: Date | null;
+  end: Date | null;
+}
+
+type LineSeriesId = string;
+
+interface LineSeriesConfig {
+  id: LineSeriesId;
+  label: string;
+  strokeClass: string;
+  dotClass: string;
+  legendBgClass: string;
+  pieSliceClass?: string;
+}
+
+interface TimeSeriesPoint {
+  date: Date;
+  values: Record<LineSeriesId, number>;
+}
+
+interface AggregatedSeriesValue {
+  id: LineSeriesId;
+  label: string;
+  total: number;
+}
+
+interface DistributionSlice {
+  id: LineSeriesId;
+  label: string;
+  value: number;
+}
+```
+
+### Composable component props
+
+#### `AnalyticsLayout`
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` | `ReactNode` | Page content (header + charts, cards, etc.). |
+| `className` | `string` (optional) | Extra Tailwind classes for the outer layout container. |
+
+#### `AnalyticsHeader`
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `title` | `string` (optional) | Page title; defaults to `"Analytics Dashboard"`. |
+| `description` | `string` (optional) | Short subtitle under the title. |
+| `dateRange` | `AnalyticsDateRange` (optional) | Current filter range, for controlled usage. |
+| `onDateRangeChange` | `(range: AnalyticsDateRange) => void` (optional) | Called when the user picks a new range in the date picker. |
+| `onExportCharts` | `() => void` (optional) | Called when the export button is clicked. |
+
+#### `AnalyticsLineChart`
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `data` | `TimeSeriesPoint[]` | Time-series data points already filtered for the desired range. |
+| `seriesConfig` | `LineSeriesConfig[]` | Series definitions (ids, labels, stroke/dot/legend colors). |
+| `activeSeries` | `Set<LineSeriesId>` | Which series are currently visible (for legend toggling). |
+| `onToggleSeries` | `(id: LineSeriesId) => void` | Called when a legend pill is clicked. |
+
+#### `AnalyticsBarChart`
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `aggregates` | `AggregatedSeriesValue[]` | Aggregated totals per series used to render horizontal bars. |
+
+#### `AnalyticsPieChart`
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `slices` | `DistributionSlice[]` | Distribution data for each slice of the pie. |
+| `seriesConfig` | `LineSeriesConfig[]` | Used to resolve labels and colors for each slice. |
+
+## Usage Examples
+
+### Basic analytics dashboard
+
+```tsx
+<AnalyticsDashboardPage
+  timeSeries={timeSeries}
+  lineSeriesConfig={seriesConfig}
+/>
+```
+
+### With controlled date range
+
+```tsx
+const [range, setRange] = useState<AnalyticsDateRange | undefined>();
+
+<AnalyticsDashboardPage
+  timeSeries={timeSeries}
+  lineSeriesConfig={seriesConfig}
+  dateRange={range}
+  onDateRangeChange={setRange}
+/>
+```
+
+### With custom aggregates and slices
+
+```tsx
+<AnalyticsDashboardPage
+  timeSeries={timeSeries}
+  lineSeriesConfig={seriesConfig}
+  barAggregates={customAggregates}
+  distributionSlices={customSlices}
+/>
+```
+
+### Composable layout using building blocks
+
+```tsx
+import React, { useCallback, useMemo, useState } from "react";
+import {
+  AnalyticsLayout,
+  AnalyticsHeader,
+  AnalyticsLineChart,
+  AnalyticsBarChart,
+  AnalyticsPieChart,
+  type LineSeriesConfig,
+  type TimeSeriesPoint,
+  type AggregatedSeriesValue,
+} from "@ignix-ui/analytics-dashboard-page";
+
+// Reuse your existing seriesConfig and timeSeries from the examples above.
+
+function ComposableAnalyticsPage({
+  seriesConfig,
+  timeSeries,
+}: {
+  seriesConfig: LineSeriesConfig[];
+  timeSeries: TimeSeriesPoint[];
+}) {
+  const [activeSeries, setActiveSeries] = useState(
+    () => new Set(seriesConfig.map((s) => s.id)),
+  );
+
+  const aggregates = useMemo<AggregatedSeriesValue[]>(() => {
+    const totals: Record<string, number> = {};
+    for (const point of timeSeries) {
+      for (const series of seriesConfig) {
+        const value = point.values[series.id] ?? 0;
+        totals[series.id] = (totals[series.id] ?? 0) + value;
+      }
+    }
+    return seriesConfig.map((series) => ({
+      id: series.id,
+      label: series.label,
+      total: totals[series.id] ?? 0,
+    }));
+  }, [seriesConfig, timeSeries]);
+
+  const slices = useMemo(
+    () =>
+      aggregates.map((aggregate) => ({
+        id: aggregate.id,
+        label: aggregate.label,
+        value: aggregate.total,
+      })),
+    [aggregates],
+  );
+
+  const handleToggleSeries = useCallback((id: string) => {
+    setActiveSeries((prev) => {
+      const next = new Set(prev);
+      if (next.has(id) && next.size > 1) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }, []);
+
+  return (
+    <AnalyticsLayout>
+      <AnalyticsHeader />
+
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+        <div className="xl:col-span-2">
+          <AnalyticsLineChart
+            data={timeSeries}
+            seriesConfig={seriesConfig}
+            activeSeries={activeSeries}
+            onToggleSeries={handleToggleSeries}
+          />
+        </div>
+        <div className="xl:col-span-1">
+          <AnalyticsBarChart aggregates={aggregates} />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <AnalyticsPieChart
+          slices={slices}
+          seriesConfig={seriesConfig}
+        />
+      </div>
+    </AnalyticsLayout>
+  );
+}
+```
+
+## Notes
+
+- The template is **data-agnostic**: as long as your `timeSeries` and series ids line up with `lineSeriesConfig`, the charts will render correctly.
+- Use the `onDateRangeChange` callback to refetch analytics from your APIs when the user changes the date picker.
+- The scrollable chart viewport is useful when you have many time points (e.g. daily data over multiple months) and want to avoid cramming labels. 
+

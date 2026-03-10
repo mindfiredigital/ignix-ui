@@ -128,7 +128,7 @@ const itemAnimation = {
 
 const animationVariants = {
   pulse: {
-    initial: { opacity: 1, scale: 1 },
+    initial: { opacity: 1, scale: 1, rotate: 0, x: 0, y: 0 },
     animate: {
       opacity: [1, 0.7, 1],
       scale: [1, 1.05, 1],
@@ -140,7 +140,7 @@ const animationVariants = {
     },
   },
   bounce: {
-    initial: { y: 0 },
+    initial: { y: 0, rotate: 0, x: 0, scale: 1, opacity: 1 },
     animate: {
         y: [0, -10, 0],
     },
@@ -151,7 +151,7 @@ const animationVariants = {
     },
   },
   glow: {
-    initial: { opacity: 1, filter: "brightness(1)" },
+    initial: { opacity: 1, filter: "brightness(1)", rotate: 0, x: 0, y: 0, scale: 1 },
     animate: {
       opacity: [1, 0.6, 1],
       filter: ["brightness(1)", "brightness(1.5)", "brightness(1)"],
@@ -163,7 +163,7 @@ const animationVariants = {
     },
   },
   shake: {
-    initial: { x: 0 },
+    initial: { x: 0, rotate: 0, y: 0, scale: 1, opacity: 1 },
     animate: {
       x: [0, -5, 5, -5, 5, 0],
     },
@@ -174,7 +174,7 @@ const animationVariants = {
     },
   },
   rotate: {
-    initial: { rotate: 0 },
+    initial: { rotate: 0, x: 0, y: 0, scale: 1, opacity: 1 },
     animate: {
       rotate: [0, 5, -5, 5, -5, 0],
     },
@@ -185,7 +185,7 @@ const animationVariants = {
     },
   },
   none: {
-    initial: {},
+    initial: { rotate: 0, x: 0, y: 0, scale: 1, opacity: 1 },
     animate: {},
     transition: {},
   },
@@ -491,6 +491,7 @@ export const ErrorPageErrorCode: React.FC<ErrorPageErrorCodeProps> = React.memo(
 
   const errorCodeContent = (
     <motion.div
+      key={animationType}
       initial={selectedAnimation.initial}
       animate={selectedAnimation.animate}
       transition={selectedAnimation.transition}
