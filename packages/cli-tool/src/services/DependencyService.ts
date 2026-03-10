@@ -7,7 +7,7 @@ const execa = async (...args: any[]): Promise<any> => {
 };
 
 export class DependencyService {
-  public async install(packages: string[], isDev: boolean): Promise<void> {
+  public async install(packages: string[], isDev: boolean, silent = false): Promise<void> {
     if (packages.length === 0) return;
 
     const packageManager = await getPackageManager();
@@ -30,11 +30,20 @@ export class DependencyService {
     args.push(...packages);
 
     try {
-      logger.info(`Installing dependencies: ${packageManager} ${args.join(' ')}`);
-      await execa(packageManager, args, { stdio: 'inherit', cwd: process.cwd() });
-      logger.success(`Successfully installed: ${packages.join(', ')}`);
+      if (!silent) {
+        logger.info(`Installing dependencies: ${packageManager} ${args.join(' ')}`);
+      }
+      await execa(packageManager, args, {
+        stdio: silent ? 'ignore' : 'inherit',
+        cwd: process.cwd(),
+      });
+      if (!silent) {
+        logger.success(`Successfully installed: ${packages.join(', ')}`);
+      }
     } catch (error) {
-      logger.error(error as string);
+      if (!silent) {
+        logger.error(error as string);
+      }
       throw new Error(`Failed to install dependencies: ${packages.join(', ')}`);
     }
   }

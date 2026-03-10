@@ -2,6 +2,7 @@
 hide_title: true
 ---
 
+import { DashboardIcon, BarChartIcon } from '@radix-ui/react-icons';
 import ComponentCard from '../all-components/ComponentCard';
 import {
   Rocket,
@@ -21,7 +22,7 @@ import {
   Columns3,
   Image,
   ArrowRightCircle,
-  Ghost,
+  AlertTriangle,
 } from 'lucide-react';
 import { TfiLayoutTab } from "react-icons/tfi";
 
@@ -130,14 +131,31 @@ import { TfiLayoutTab } from "react-icons/tfi";
   />
 </div>
 
+## Dashboard pages
+<div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+  <ComponentCard 
+    title="Dashboard Overview Page" 
+    href="/docs/templates/pages/dashboard/dashboard-overview-page"
+    description="A composable dashboard overview template."
+    icon={DashboardIcon}
+  />
+  <ComponentCard 
+    title="Analytics Dashboard Page" 
+    href="/docs/templates/pages/dashboard/analytics-dashboard-page"
+    description="A composable analytics dashboard template with charts and metrics."
+    icon={BarChartIcon}
+  />
+  
+</div>
+
 ## Error Page
 
 <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
   <ComponentCard 
-    title="404 Page Not Found" 
+    title="Error page" 
     href="/docs/templates/pages/error-page"
     description="A customizable error page with variants, illustration/icons."
-    icon={Ghost}
+    icon={AlertTriangle}
   />
 </div>
 
