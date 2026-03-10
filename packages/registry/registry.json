@@ -109,6 +109,25 @@
         }
       }
     },
+    "dynamicForm": {
+      "name": "DynamicForm",
+      "description": "A dynamic form component that generates form fields based on a JSON schema, enabling easy form creation and validation.",
+      "dependencies": [
+        "lucide-react", 
+        "class-variance-authority",
+        "framer-motion"
+      ],
+      "componentDependencies": [
+        "typography",
+        "button"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/sections/dynamic-form/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "errorPage": {
       "name": "ErrorPage",
       "description": "A customizable error page template with multiple animation variants, designed to display clear messaging, illustration/icons.",
