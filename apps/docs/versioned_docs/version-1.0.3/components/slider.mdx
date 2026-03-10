@@ -9,46 +9,9 @@ import TabItem from '@theme/TabItem';
 import { Slider } from '@site/src/components/UI/slider';
 import { useState } from 'react';
 
-## Overview
-
 The Slider component is a highly customizable input element that allows users to select a value within a range. Built with Radix UI and Framer Motion, it offers various styles, animations, and interactive features.
 
-## Preview
-
-<Tabs defaultValue="preview">
-  <TabItem value="preview" label="Preview" default>
-    <div className="w-full p-8 space-y-8 border rounded-lg">
-      <div className="p-6 rounded-lg">
-        <Slider
-          defaultValue={[50]}
-          max={100}
-          step={1}
-          variant="default"
-          showValue
-          valueSuffix="%"
-        />
-      </div>
-    </div>
-  </TabItem>
-  <TabItem value="code" label="Code">
-    ```tsx
-    import { Slider } from './components/ui';
-
-    function SliderDemo() {
-      return (
-        <Slider
-          defaultValue={[50]}
-          max={100}
-          step={1}
-          variant="default"
-          showValue
-          valueSuffix="%"
-        />
-      );
-    }
-    ```
-  </TabItem>
-</Tabs>
+<SliderDemo />
 
 ## Installation
 
@@ -944,9 +907,6 @@ function BasicSlider() {
 
 import SliderDemo from '@site/src/components/Demo/SliderDemo';
 
-## Variants
-
-<SliderDemo />
 
 ### Custom Range Values
 
@@ -963,3 +923,40 @@ Create a slider with custom range and step values:
   valueSuffix="°C"
 />
 ```
+
+## Props
+
+### Slider
+
+| Prop | Type | Default | Description |
+|-----|------|---------|-------------|
+| `variant` | `'default' \| 'minimal' \| 'rounded' \| 'gradient' \| 'glass' \| 'outline' \| 'shadow' \| 'neon' \| 'material' \| 'neumorphic' \| 'retro' \| 'cyberpunk' \| 'brutalist' \| 'skeuomorphic'` | `'default'` | Visual style of the slider. |
+| `animationType` | `'none' \| 'slide' \| 'fade' \| 'zoom' \| 'spring' \| 'elastic' \| 'parallax' \| 'flip' \| 'morph' \| 'hover' \| 'pulse' \| 'breathe' \| 'wave' \| 'rainbow' \| 'bounce'` | `'none'` | Animation applied to the slider elements. |
+| `animationDuration` | `number` | `0.3` | Duration of the animation in seconds. |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Controls the size of the slider and thumb. |
+| `showValue` | `boolean` | `false` | Displays the current slider value below the component. |
+| `valuePrefix` | `string` | `''` | Prefix text shown before the value. |
+| `valueSuffix` | `string` | `''` | Suffix text shown after the value. |
+| `showTooltip` | `boolean` | `false` | Displays a tooltip above the thumb showing the value while hovering. |
+| `glowEffect` | `boolean` | `false` | Adds a glow shadow effect to the slider range. |
+| `trackClassName` | `string` | `-` | Custom className for the slider track. |
+| `rangeClassName` | `string` | `-` | Custom className for the filled range. |
+| `thumbClassName` | `string` | `-` | Custom className for the slider thumb. |
+| `valueClassName` | `string` | `-` | Custom className for the value display element. |
+| `className` | `string` | `-` | Additional className applied to the slider root. |
+
+---
+
+### Radix Slider Props
+
+The component also supports all props from **Radix UI Slider Primitive**.
+
+| Prop | Type | Default | Description |
+|-----|------|---------|-------------|
+| `value` | `number[]` | `-` | Controlled slider value. |
+| `defaultValue` | `number[]` | `[0]` | Initial value for uncontrolled usage. |
+| `min` | `number` | `0` | Minimum slider value. |
+| `max` | `number` | `100` | Maximum slider value. |
+| `step` | `number` | `1` | Step interval for value changes. |
+| `onValueChange` | `(value: number[]) => void` | `-` | Callback triggered when slider value changes. |
+| `disabled` | `boolean` | `false` | Disables slider interaction. |
