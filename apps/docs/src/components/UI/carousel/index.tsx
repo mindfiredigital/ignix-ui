@@ -3,7 +3,7 @@
 import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
-import { cn } from "../../../utils/cn";
+import { cn } from "@site/src/utils/cn";
 
 /* -------------------------------------------------------------------------- */
 /*                                  INTERFACE                                 */
@@ -77,6 +77,14 @@ interface CarouselContextValue extends CarouselCommonProps{
 }
 
 /* -------------------------------------------------------------------------- */
+/*                                  CONSTANTS                                 */
+/* -------------------------------------------------------------------------- */
+
+// Width percentage for split mode carousel items (non-mobile)
+// 48% or 50% = 2 items per page, 33.3333% = 3 items per page
+const SPLIT_MODE_WIDTH_PERCENTAGE = 48;
+
+/* -------------------------------------------------------------------------- */
 /*                                  CONTEXT                                   */
 /* -------------------------------------------------------------------------- */
 
@@ -129,10 +137,27 @@ export const Carousel: React.FC<CarouselProps> = ({
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  // Calculate items per page based on width percentage
+  // Width is set in CarouselItem: 48% or 50% = 2 items, 33.3333% = 3 items
+  const getItemsPerPage = React.useCallback(() => {
+    if (!split) return 1;
+    if (isMobile) return 1;
+    // Calculate based on width percentage used in CarouselItem
+    // For 48% or 50% width, we can fit 2 items per page
+    // For 33.3333% width, we can fit 3 items per page
+    if (SPLIT_MODE_WIDTH_PERCENTAGE >= 48 && SPLIT_MODE_WIDTH_PERCENTAGE <= 50) {
+      return 2;
+    } else if (SPLIT_MODE_WIDTH_PERCENTAGE >= 33 && SPLIT_MODE_WIDTH_PERCENTAGE < 48) {
+      return 3;
+    }
+    // Default fallback: calculate based on percentage
+    return Math.floor(100 / SPLIT_MODE_WIDTH_PERCENTAGE);
+  }, [split, isMobile]);
+
   const pageCount = React.useMemo(() => {
-    const itemsPerPage = split ? (isMobile ? 1 : 3) : 1;
+    const itemsPerPage = getItemsPerPage();
     return Math.ceil(slideCount / itemsPerPage);
-  }, [slideCount, split, isMobile]);
+  }, [slideCount, getItemsPerPage]);
 
   // Navigation functions
   const goToSlide = React.useCallback(
@@ -158,7 +183,7 @@ export const Carousel: React.FC<CarouselProps> = ({
         });
       } else {
         const width = container.offsetWidth;
-        const itemsPerPage = split ? (isMobile ? 1 : 3) : 1;
+        const itemsPerPage = getItemsPerPage();
         
         if (split) {
           // In split mode, find the first item of the target page and scroll to its position
@@ -206,7 +231,7 @@ export const Carousel: React.FC<CarouselProps> = ({
         isTransitioningRef.current = false;
       }, transitionDuration);
     },
-    [loop, pageCount, transitionDuration, dotsPosition, split, isMobile]
+    [loop, pageCount, transitionDuration, dotsPosition, split, isMobile, getItemsPerPage]
   );
 
   const goToNext = React.useCallback(() => {
@@ -275,7 +300,7 @@ export const Carousel: React.FC<CarouselProps> = ({
       } else {
         const width = container.offsetWidth;
         const scrollLeft = container.scrollLeft;
-        const itemsPerPage = split ? (isMobile ? 1 : 3) : 1;
+        const itemsPerPage = getItemsPerPage();
         
         let currentPage: number;
         if (split) {
@@ -352,7 +377,7 @@ export const Carousel: React.FC<CarouselProps> = ({
 
     container.addEventListener("scroll", handleScroll, { passive: true });
     return () => container.removeEventListener("scroll", handleScroll);
-  }, [loop, pageCount, dotsPosition, split, isMobile]);
+  }, [loop, pageCount, dotsPosition, split, isMobile, getItemsPerPage]);
 
   const hasOverflowVisible = className?.includes("overflow-visible");
 
@@ -509,7 +534,8 @@ export const CarouselContent: React.FC<CarouselContentProps> = ({
     }
     
     // Split mode: show multiple items based on current page
-    const itemsPerPage = isMobile ? 1 : 3;
+    // Calculate itemsPerPage based on width percentage (48% = 2 items, 33.3333% = 3 items)
+    const itemsPerPage = isMobile ? 1 : (SPLIT_MODE_WIDTH_PERCENTAGE >= 48 && SPLIT_MODE_WIDTH_PERCENTAGE <= 50 ? 2 : 3);
     const startIndex = index * itemsPerPage;
     const visibleItems: React.ReactNode[] = [];
     
@@ -614,7 +640,7 @@ export const CarouselItem: React.FC<CarouselContentItemProps> = ({
         }
       `;
     } else {
-      const width = split ? (isMobile ? "100%" : "33.333333%") : "100%";
+      const width = split ? (isMobile ? "100%" : `${SPLIT_MODE_WIDTH_PERCENTAGE}%`) : "100%";
       styleElement.textContent = `
         .${itemClass} {
           flex: 0 0 ${width};
