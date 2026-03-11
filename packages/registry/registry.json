@@ -109,6 +109,17 @@
         }
       }
     },
+    "carousel": {
+      "name": "Carousel",
+      "description": " A flexible carousel component with navigation controls, dots indicators, thumbnails, animations, and responsive support.",
+      "dependencies": ["framer-motion", "lucide-react"],
+      "files": {
+        "main": {
+          "path": "components/carousel/index.tsx",
+          "type": "component"
+        }
+      }
+    },
     "dynamicForm": {
       "name": "DynamicForm",
       "description": "A dynamic form component that generates form fields based on a JSON schema, enabling easy form creation and validation.",
