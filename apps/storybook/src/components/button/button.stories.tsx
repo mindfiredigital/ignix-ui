@@ -40,3 +40,17 @@ export const Outline = {
       variant: 'outline',
     },
   };
+
+export const pill = {
+  args: {
+    children: 'Cancel',
+    size: 'pill',
+  },
+};
+
+export const glass = {
+  args: {
+    children: 'Cancel',
+    variant: 'glass',
+  },
+};
