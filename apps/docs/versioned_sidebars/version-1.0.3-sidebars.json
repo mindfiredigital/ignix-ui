@@ -65,6 +65,7 @@
             "components/avatar",
             "components/badge",
             "components/card",
+            "components/carousel",
             "components/list",
             "components/advanced-table",
             "components/tooltip",
