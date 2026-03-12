@@ -39,7 +39,7 @@
       "dependencies": ["framer-motion"],
       "files": {
         "main": {
-          "path": "components/box/index.tsx",
+          "path": "components/layouts/box/index.tsx",
           "type": "component"
         }
       }
