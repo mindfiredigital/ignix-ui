@@ -5,6 +5,7 @@ import { addCommand } from './commands/add';
 import { initCommand } from './commands/init';
 import { listCommand } from './commands/list';
 import { themesCommand } from './commands/theme';
+import { doctorCommand } from './commands/doctor';
 import {
   startersCommandMonorepo,
   startersCommandNextjsApp,
@@ -13,10 +14,13 @@ import {
 import { logger } from './utils/logger';
 import { RegistryService } from './services/RegistryService';
 import { templateCommand } from './commands/template';
+import { startMcpServer } from './commands/mcp';
+import { mcpInitCommand } from './commands/mcp-init';
 
 const program = new Command();
 
 const isMachineMode = process.argv.includes('--json');
+const isMcpMode = process.argv.includes('mcp');
 
 program.version(chalk.red('1.0.0'));
 // Register Commands
@@ -28,9 +32,36 @@ program.addCommand(startersCommandMonorepo);
 program.addCommand(startersCommandNextjsApp);
 program.addCommand(startersCommandViteReact);
 program.addCommand(templateCommand);
+program.addCommand(doctorCommand);
+
+const mcpCommand = new Command('mcp').description('Ignix MCP server');
+
+// default: start server
+mcpCommand.action(async () => {
+  await startMcpServer();
+});
+
+// init command
+mcpCommand
+  .command('init')
+  .requiredOption('--client <client>')
+  .action(async (opts) => {
+    await mcpInitCommand.parseAsync(['node', 'ignix', '--client', opts.client]);
+  });
+
+// optional explicit start command
+mcpCommand
+  .command('start')
+  .description('Start Ignix MCP server')
+  .action(async () => {
+    await startMcpServer();
+  });
+
+program.addCommand(mcpCommand);
+
 // Display welcome message
 function showWelcome(): void {
-  if (isMachineMode) return;
+  if (isMachineMode || isMcpMode) return;
   console.log(`
 ${chalk.hex('#FF0000').bold('  ██╗ ██████╗ ███╗   ██╗██╗███ ███╗    ██╗   ██╗██╗')}
 ${chalk.hex('#FF2A2A').bold('  ██║██╔════╝ ████╗  ██║██║╚██ ██╝║    ██║   ██║██║')}
@@ -158,7 +189,7 @@ async function startInteractiveCLI(): Promise<void> {
 }
 
 // Check if running in interactive mode or with arguments
-if (process.argv.length <= 2 && !isMachineMode) {
+if (process.argv.length <= 2 && !isMachineMode && !isMcpMode) {
   // No arguments provided - start interactive mode
   startInteractiveCLI().catch((error) => {
     console.error(chalk.red('Fatal error:'), error);

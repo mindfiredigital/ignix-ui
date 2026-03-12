@@ -26,6 +26,7 @@
   "author": "Ignix UI Team",
   "license": "MIT",
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
     "@antfu/ni": "^0.21.12",
     "axios": "^1.7.2",
     "chalk": "^4.1.2",

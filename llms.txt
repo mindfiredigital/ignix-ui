@@ -103,3 +103,76 @@ Ignix components MUST only be installed via the MCP tool `install_component`.
 Do NOT use shell.
 Do NOT run npx.
 Do NOT manually edit files.
+
+
+## Common Component Combinations
+
+### Landing Page Essentials
+For a typical landing page, install these components:
+ignix add component button card navbar hero-section features-grid footer --yes --json
+
+### Form Building
+For forms with validation:
+ignix add component input select checkbox form validation-hook --yes --json
+
+### Dashboard Layout
+For admin dashboards:
+ignix add component sidebar header table card charts dropdown --yes --json
+
+## Example AI Workflow for Building a Page
+
+When a user asks to build a page using Ignix UI:
+
+1. First, initialize Ignix if not present:
+   ignix init --yes --json --cwd {projectPath}
+
+2. List available components to understand what's available:
+   ignix list component --json
+
+3. Install required components based on page requirements:
+   ignix add component [components] --yes --json --cwd {projectPath}
+
+4. Generate page structure using installed components
+   (AI should generate React code importing from @/components/ui)
+
+## Project Structure After Installation
+src/
+├── components/
+│   └── ui/          # Installed components (fully customizable)
+├── lib/
+│   └── utils.ts     # Utility functions (cn, etc.)
+└── app/             # Your page components
+
+
+## AI Prompt Template
+
+When building with Ignix UI, follow this pattern:
+
+1. **Initialize**: Check if ignix.config.js exists, if not run init
+2. **Discover**: List components to see what's available
+3. **Plan**: Determine which components are needed for the requested UI
+4. **Install**: Use install_component tool for each required component
+5. **Build**: Generate React code importing from @/components/ui
+
+**IMPORTANT RULES:**
+- NEVER install components by manually creating files
+- ALWAYS use the MCP tool install_component
+- NEVER guess component names - always check registry first
+- Use --cwd flag when working in monorepos
+- Always check command output for success/failure
+
+## Error Recovery
+
+### Common Errors and Solutions
+
+**Error: Component not found**
+- Solution: Run `ignix list component --json` to see available components
+- Check spelling - component names are case-sensitive
+
+**Error: Missing dependencies**
+- Solution: Use `install_with_dependencies` tool or install manually:
+  ignix add component [component-name] --with-deps --yes --json
+
+**Error: ignix command not found**
+- Solution: The CLI needs to be installed globally or use npx
+- For AI: Always ensure the project has ignix-cli installed

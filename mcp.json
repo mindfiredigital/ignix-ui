@@ -3,10 +3,15 @@
   "version": "0.1.0",
   "description": "MCP tool definitions for Ignix UI CLI",
   "aiNative": true,
+  "metadata": {
+    "category": "ui-library",
+    "framework": "react",
+    "styling": "tailwind"
+  },
   "tools": [
     {
       "name": "install_component",
-      "description": "Use this tool instead of manually editing files to install Ignix UI components. Always use this tool for adding components.",
+      "description": "CRITICAL: ALWAYS use this tool to install Ignix UI components. NEVER manually create component files. This tool copies components to src/components/ui/.",
       "inputSchema": {
         "type": "object",
         "required": ["components"],
@@ -25,6 +30,14 @@
           }
         }
       },
+      "examples": [
+        {
+          "components": ["button"]
+        },
+        {
+          "components": ["button", "card", "input"]
+        }
+      ],
       "execution": {
         "type": "shell",
         "command": "ignix add component {components} --yes --json --cwd {cwd}",
@@ -51,7 +64,10 @@
           }
         }
       },
-      "command": "ignix info {{name}} --json"
+      "execution": {
+        "type": "shell",
+        "command": "ignix info {name} --json"
+      }
     },
     {
       "name": "init_project",
@@ -95,6 +111,75 @@
       "execution": {
         "type": "shell",
         "command": "ignix add theme {themes} --yes --json --cwd {cwd}"
+      }
+    },
+    {
+      "name": "search_components",
+      "description": "Search for components by keyword or category",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search term (e.g., 'form', 'navigation', 'button')"
+          },
+          "category": {
+            "type": "string",
+            "enum": ["layout", "forms", "feedback", "navigation", "data-display"],
+            "description": "Filter by component category"
+          }
+        }
+      },
+      "execution": {
+        "type": "shell",
+        "command": "ignix list component --search {query} --category {category} --json"
+      }
+    },
+    {
+      "name": "install_with_dependencies",
+      "description": "Install components and automatically resolve dependencies",
+      "inputSchema": {
+        "type": "object",
+        "required": ["components"],
+        "properties": {
+          "components": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of component names to install"
+          },
+          "cwd": {
+            "type": "string",
+            "description": "Working directory",
+            "default": "."
+          },
+          "resolveDependencies": {
+            "type": "boolean",
+            "description": "Automatically install component dependencies",
+            "default": true
+          }
+        }
+      },
+      "execution": {
+        "type": "shell",
+        "command": "ignix add component {components} --with-deps --yes --json --cwd {cwd}"
+      }
+    },
+    {
+      "name": "check_compatibility",
+      "description": "Check if Ignix UI is compatible with the current project",
+      "execution": {
+        "type": "shell",
+        "command": "ignix doctor --json"
+      }
+    },
+    {
+      "name": "get_version",
+      "description": "Get installed Ignix CLI version",
+      "execution": {
+        "type": "shell",
+        "command": "ignix --version"
       }
     }
   ],
