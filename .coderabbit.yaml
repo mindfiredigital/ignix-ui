@@ -90,8 +90,7 @@ reviews:
     drafts: false
     base_branches:
       - "main"
-      - "develop"
-      - "release/**"
+      - "development"
 
   # Files excluded from review (still cloned for context)
   path_filters:
