@@ -63,5 +63,13 @@
       "require": "./dist/index.js",
       "default": "./dist/index.js"
     }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mindfiredigital/ignix-ui"
+  },
+  "homepage": "https://github.com/mindfiredigital/ignix-ui",
+  "bugs": {
+    "url": "https://github.com/mindfiredigital/ignix-ui/issues"
   }
 }

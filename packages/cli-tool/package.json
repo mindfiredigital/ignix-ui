@@ -45,5 +45,13 @@
   },
   "engines": {
     "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mindfiredigital/ignix-ui"
+  },
+  "homepage": "https://github.com/mindfiredigital/ignix-ui",
+  "bugs": {
+    "url": "https://github.com/mindfiredigital/ignix-ui/issues"
   }
 }
