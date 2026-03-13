@@ -260,6 +260,7 @@
               "type": "category",
               "label": "Forms",
               "items": [
+                "templates/pages/forms/multi-step-form",
                 "templates/pages/forms/dynamic-form"
               ]
             }
