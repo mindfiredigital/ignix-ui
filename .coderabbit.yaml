@@ -292,6 +292,6 @@ knowledge_base:
     enabled: true
     filePatterns:
       - "CONTRIBUTING.md"
-      - "docs/**/*.md"
+      - "README.md"
   learnings:
     scope: auto
