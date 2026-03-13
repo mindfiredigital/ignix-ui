@@ -1,0 +1,298 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  CodeRabbit Configuration for mindfiredigital/ignix-ui
+#
+#  Stack   : React 18 + TypeScript · Tailwind CSS · Framer Motion · tsup
+#  Tooling : pnpm · Vitest · ESLint · Prettier
+#  Pattern : Component-library + CLI (single-package repo)
+#
+#  Validate : https://docs.coderabbit.ai/configuration/yaml-validator
+#  Reference: https://docs.coderabbit.ai/reference/configuration
+# ─────────────────────────────────────────────────────────────────────────────
+
+language: "en-US"
+
+# Max 250 characters
+tone_instructions: "Senior React/TypeScript UI library reviewer. Be concise and specific. Cite Tailwind, React, or TypeScript best-practices when flagging issues. Suggest concrete fixes. Praise good patterns as well as flagging problems."
+
+early_access: false
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  REVIEWS
+# ─────────────────────────────────────────────────────────────────────────────
+reviews:
+  profile: "assertive"
+  request_changes_workflow: true
+
+  # PR description enrichment
+  high_level_summary: true
+  high_level_summary_instructions: >
+    Summarise the PR as a concise bullet-point list. Group changes by:
+    (1) New components or component API changes,
+    (2) Bug fixes,
+    (3) Tooling / config changes,
+    (4) Docs / Storybook updates.
+    End with a "Breaking changes" section (write "None" if absent).
+  high_level_summary_in_walkthrough: false
+
+  # Walkthrough & diagnostics
+  collapse_walkthrough: false
+  changed_files_summary: true
+  sequence_diagrams: true
+  estimate_code_review_effort: true
+  assess_linked_issues: true
+  related_issues: true
+  related_prs: true
+
+  # Labels
+  suggested_labels: true
+  auto_apply_labels: false
+  labeling_instructions:
+    - label: "component: new"
+      instructions: "Apply when the PR introduces a brand-new UI component under src/components/."
+    - label: "component: enhancement"
+      instructions: "Apply when the PR extends props, variants, or animation of an existing component."
+    - label: "breaking change"
+      instructions: "Apply when the PR removes or renames exported props/components, or changes the public API in a backwards-incompatible way."
+    - label: "a11y"
+      instructions: "Apply when the PR touches ARIA attributes, keyboard navigation, focus management, or screen-reader behaviour."
+    - label: "animation"
+      instructions: "Apply when the PR adds or modifies Framer Motion variants, transitions, or CSS keyframes."
+    - label: "tailwind"
+      instructions: "Apply when the PR introduces new Tailwind utility usage, custom tokens, or changes to tailwind.config.ts."
+    - label: "cli"
+      instructions: "Apply when the PR touches src/cli-entry.ts or any CLI scaffolding logic."
+    - label: "docs"
+      instructions: "Apply when the PR only changes documentation, README files, or JSDoc."
+    - label: "tests"
+      instructions: "Apply when the PR adds or modifies Vitest test files (*.test.tsx / *.spec.tsx)."
+    - label: "build"
+      instructions: "Apply when the PR changes tsup.config.ts, package.json scripts, or CI workflows."
+    - label: "dependencies"
+      instructions: "Apply when the PR bumps or removes npm/pnpm dependencies."
+
+  # Reviewer suggestions
+  suggested_reviewers: true
+  auto_assign_reviewers: false
+
+  # Commit status
+  commit_status: true
+  fail_commit_status: false
+  review_status: true
+  review_details: true
+
+  # Display
+  poem: false
+  in_progress_fortune: false
+
+  # Auto-review triggers
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - "main"
+      - "develop"
+      - "release/**"
+
+  # Files excluded from review (still cloned for context)
+  path_filters:
+    - "!dist/**"
+    - "!dist-cli/**"
+    - "!node_modules/**"
+    - "!pnpm-lock.yaml"
+    - "!package-lock.json"
+    - "!yarn.lock"
+    - "!**/*.snap"
+    - "!**/__snapshots__/**"
+    - "!.husky/**"
+    - "!coverage/**"
+    - "!.turbo/**"
+    - "!.next/**"
+    - "!storybook-static/**"
+
+  # Path-specific review instructions
+  path_instructions:
+    - path: "src/components/**/*.tsx"
+      instructions: |
+        ## Component Review Checklist
+
+        ### TypeScript & Props
+        - All props must be typed via an exported interface (e.g. ButtonProps).
+        - Avoid any; prefer unknown or generics.
+        - Default props should use ES default parameters, not defaultProps.
+        - Discriminated unions are preferred over optional boolean flags.
+
+        ### React Patterns
+        - Functional components only (no class components).
+        - React.forwardRef is required for any component that wraps a DOM element.
+        - Memoisation (React.memo, useMemo, useCallback) only where measurable benefit exists.
+        - Custom hooks that encapsulate complex logic should live in src/hooks/.
+
+        ### Tailwind CSS
+        - Use cn() (clsx + twMerge) to compose class lists — never string concatenation.
+        - Avoid arbitrary values (e.g. w-[37px]) unless design-token-driven.
+        - Responsive variants must be mobile-first (sm:, md:, lg:).
+        - Dark-mode must use the dark: prefix — no inline style hacks.
+
+        ### Framer Motion / Animations
+        - Animation variants must be defined outside the component body.
+        - Respect prefers-reduced-motion via useReducedMotion or motionSafe/motionReduce.
+        - Prefer whileHover, whileTap, AnimatePresence over imperatively driven animate.
+
+        ### Accessibility (a11y)
+        - Every interactive element needs a visible :focus-visible indicator.
+        - Use semantic HTML (button not div onClick).
+        - ARIA attributes must be correct (role, aria-label, aria-expanded, etc.).
+        - Keyboard navigation must work without a mouse.
+        - Color contrast must meet WCAG 2.1 AA (4.5:1 text, 3:1 UI components).
+
+        ### Exports & Registry
+        - Every new component must be exported from its index.ts barrel file.
+        - Confirm that registry.json has been updated by the scaffold script.
+
+    - path: "src/components/**/index.ts"
+      instructions: |
+        Verify that:
+        1. All public exports from this component directory are re-exported here.
+        2. No implementation details (internal sub-components, helpers) are exported.
+        3. Naming is consistent: PascalCase for components, camelCase for hooks,
+           SCREAMING_SNAKE_CASE for constants.
+
+    - path: "src/components/**/*.test.tsx"
+      instructions: |
+        ## Test Review Checklist (Vitest + Testing Library)
+        - Tests must cover: render without crashing, key prop variations, user interactions,
+          and edge cases (empty/null props).
+        - Use @testing-library/user-event over fireEvent for realistic interactions.
+        - Prefer getByRole queries over getByTestId for semantic assertions.
+        - Mock Framer Motion where animation side-effects cause false failures.
+        - Each test file should import from the component public index.ts barrel.
+        - Aim for >= 80% branch coverage on new components.
+
+    - path: "src/index.ts"
+      instructions: |
+        This is the library public entry point. Verify:
+        - All newly added components are re-exported here.
+        - No internal utilities or CLI-only helpers are leaked into this export.
+        - Tree-shaking is not broken (named exports only; no wildcard export * from non-index files).
+
+    - path: "src/cli-entry.ts"
+      instructions: |
+        The CLI bundle must be Node-only (target: node18). Review for:
+        - No browser-only APIs (window, document, localStorage).
+        - No React imports that would pull in the browser bundle.
+        - Approved Node-only deps: chalk, ora, fs-extra, axios, @antfu/ni. Additions must be justified.
+        - The #!/usr/bin/env node shebang must be preserved in built output (via tsup banner).
+
+    - path: "tsup.config.ts"
+      instructions: |
+        Review the dual-bundle separation:
+        - Browser bundle: entry src/index.ts -> dist/ (platform: browser, external: react, react-dom).
+        - CLI bundle: entry src/cli-entry.ts -> dist/cli/ (platform: node, target: node18).
+        - Ensure treeshake: true and minify: true for the browser bundle.
+        - Node-only packages must not appear in external for the browser build.
+
+    - path: "tailwind.config.*"
+      instructions: |
+        - Design tokens must use CSS custom properties for runtime theme switching.
+        - content globs must cover all TSX/JSX source files.
+        - Avoid disabling core plugins without an explanatory comment.
+        - New custom plugins must have a JSDoc comment explaining their purpose.
+
+    - path: "tsconfig*.json"
+      instructions: |
+        - strict: true must remain enabled.
+        - moduleResolution should be bundler for the browser build.
+        - Path aliases must be consistent with tsup and Vite resolver configs.
+        - Flag if noUncheckedIndexedAccess or exactOptionalPropertyTypes are disabled.
+
+    - path: "eslint.config.*"
+      instructions: |
+        - Ensure plugin:react-hooks/recommended is included.
+        - no-console should be warn or error, not off.
+        - Tailwind class ordering rule (eslint-plugin-tailwindcss) should be active.
+        - Flag any disabled rules that relate to TypeScript type safety.
+
+    - path: "package.json"
+      instructions: |
+        - exports map must expose both . (browser) and ./cli (Node) entry points.
+        - peerDependencies must list react and react-dom with a broad semver range (>=17.0.0).
+        - Node-only deps must be in dependencies or devDependencies, NOT peerDependencies.
+        - Verify sideEffects: false is set (enables tree-shaking).
+        - Ensure the generate-component script points to the correct scaffolding file.
+
+    - path: ".github/workflows/**"
+      instructions: |
+        - All actions must be pinned to a specific version tag (not @main).
+        - Secrets must be accessed via ${{ secrets.* }} — no hardcoded values.
+        - pnpm version must be pinned in uses: pnpm/action-setup.
+        - Test and lint steps must fail the build on error (continue-on-error: false).
+        - A typecheck step (tsc --noEmit) must exist alongside the lint step.
+
+    - path: "**/*.md"
+      instructions: |
+        - Code examples must use fenced code blocks with a language tag.
+        - Component prop tables should be Markdown tables listing type, default, and description.
+        - Verify relative links point to existing files.
+
+    - path: "scripts/**"
+      instructions: |
+        - The generate-component script must produce: ComponentName.tsx, ComponentName.test.tsx,
+          index.ts, and update registry.json.
+        - File naming: PascalCase for component files, camelCase for utility scripts.
+        - Any new script must be added to the scripts field in package.json.
+
+    - path: "registry.json"
+      instructions: |
+        - Every entry must include: name, description, files array, and dependencies array.
+        - Component names must be kebab-case matching the directory name under src/components/.
+        - Removing a registry entry without a corresponding code deletion is a red flag.
+
+  # Static analysis tools (nested under reviews per schema)
+  tools:
+    eslint:
+      enabled: true
+    biome:
+      enabled: false
+    markdownlint:
+      enabled: true
+    actionlint:
+      enabled: true
+    gitleaks:
+      enabled: true
+    htmlhint:
+      enabled: true
+    checkov:
+      enabled: true
+    languagetool:
+      enabled: true
+      enabled_rules:
+        - "OXFORD_COMMA"
+        - "EN_QUOTES"
+        - "COMMA_PARENTHESIS_WHITESPACE"
+      disabled_categories:
+        - "TYPOGRAPHY"
+    yamllint:
+      enabled: true
+    ast-grep:
+      essential_rules: true
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  CHAT
+# ─────────────────────────────────────────────────────────────────────────────
+chat:
+  auto_reply: true
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  KNOWLEDGE BASE
+# ─────────────────────────────────────────────────────────────────────────────
+knowledge_base:
+  opt_out: false
+  web_search:
+    enabled: true
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - "CONTRIBUTING.md"
+      - "docs/**/*.md"
+  learnings:
+    scope: auto
