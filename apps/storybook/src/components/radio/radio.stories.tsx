@@ -265,3 +265,65 @@ export const defaultChecked: Story = {
   },
 }
 
+export const Glow: Story = {
+  render: () => {
+    const [value, setValue] = useState("one");
+
+    return (
+      <div className="p-5">
+        <RadioGroup
+          name="glow-example"
+          options={[{ value: "one", label: "One" }, { value: "two", label: "Two" }, { value: "three", label: "Three"}]}
+          value={value}
+          onChange={setValue}
+          animationVariant="glow"
+          size="lg"
+        />
+      </div>
+    );
+  },
+}
+
+export const Pulse: Story = {
+  render: () => {
+    const [value, setValue] = useState("one");
+
+    return (
+      <div className="p-5">
+        <RadioGroup
+          name="pulse-example"
+          options={[{ value: "one", label: "One" }, { value: "two", label: "Two" }]}
+          value={value}
+          onChange={setValue}
+          animationVariant="pulse"
+          size="lg"
+        />
+      </div>
+    );
+  },
+}
+
+export const HorizontalLayout: Story = {
+  render: () => {
+    const [value, setValue] = useState("one");
+
+    return (
+      <div className="p-5">
+        <p className="mb-4 text-sm font-medium text-muted-foreground">
+          Override default vertical layout with className prop
+        </p>
+        <RadioGroup
+          direction="horizontal"
+          options={[
+            { value: "one", label: "Option One" },
+            { value: "two", label: "Option Two" },
+            { value: "three", label: "Option Three" },
+          ]}
+          value={value}
+          onChange={setValue}
+          size="lg"
+        />
+      </div>
+    );
+  },
+}
