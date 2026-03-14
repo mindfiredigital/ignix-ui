@@ -39,7 +39,7 @@
       "dependencies": ["framer-motion"],
       "files": {
         "main": {
-          "path": "components/box/index.tsx",
+          "path": "components/layouts/box/index.tsx",
           "type": "component"
         }
       }
@@ -105,6 +105,17 @@
       "files": {
         "main": {
           "path": "components/layouts/center/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "carousel": {
+      "name": "Carousel",
+      "description": " A flexible carousel component with navigation controls, dots indicators, thumbnails, animations, and responsive support.",
+      "dependencies": ["framer-motion", "lucide-react"],
+      "files": {
+        "main": {
+          "path": "components/carousel/index.tsx",
           "type": "component"
         }
       }
@@ -197,6 +208,18 @@
         "main": {
           "path": "components/layouts/masonry/index.tsx",
           "type": "component"
+        }
+      }
+    },
+    "maintenance-page": {
+      "name": "MaintenancePage ",
+      "description": "A customizable maintenance page template with multiple animation variants, designed to display clear messaging, ETA.",
+      "dependencies": ["lucide-react", "framer-motion", "class-variance-authority"],
+      "componentDependencies": ["button", "typography"],
+      "files": {
+        "main": {
+          "path": "templates/pages/maintenance-page/index.tsx",
+          "type": "template"
         }
       }
     },
@@ -798,7 +821,7 @@
         }
       }
     },
-    "forgotPassword": {
+    "forgot-password": {
       "name": "forgotPassword",
       "description": "A fully responsive and customizable Forgot Password component with an input field and submit button, built to support secure in-app password reset processes.",
       "dependencies": [
@@ -869,7 +892,7 @@
         }
       }
     },
-    "otpVerification": {
+    "otp-verification": {
       "name": "otpVerification",
       "description": "A fully responsive OTP (One-Time Password) verification component that provides configurable input length, animations, themes, auto-focus behavior, and paste-to-autofill support.",
       "dependencies": [
@@ -1075,17 +1098,15 @@
       "description": "",
       "dependencies": [
         "framer-motion",
-        "react-icons",
         "lucide-react",
         "class-variance-authority"
       ],
       "componentDependencies": [
         "avatar",
-        "button",
-        "breadcrumbs",
+        "buttonWithIcon",
         "typography",
         "card",
-        "comparisonTable",
+        "pricingGrid",
         "dialogBox"
       ],
       "files": {

@@ -23,6 +23,7 @@ import {
   Image,
   ArrowRightCircle,
   AlertTriangle,
+  Wrench,
 } from 'lucide-react';
 import { TfiLayoutTab } from "react-icons/tfi";
 
@@ -152,10 +153,16 @@ import { TfiLayoutTab } from "react-icons/tfi";
 
 <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
   <ComponentCard 
-    title="Error page" 
+    title="Error page with status code" 
     href="/docs/templates/pages/error-page"
     description="A customizable error page with variants, illustration/icons."
     icon={AlertTriangle}
+  />
+  <ComponentCard 
+    title="Maintenance page" 
+    href="/docs/templates/pages/maintenance-page"
+    description="A customizable error page with variants, illustration/icons."
+    icon={Wrench}
   />
 </div>
 
