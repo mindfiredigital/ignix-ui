@@ -586,10 +586,11 @@ const SignUp: React.FC<SignUpProps> = ({
                     }
                     break;
                 default:
-                // console.warn(`Unsupported social provider: ${provider}`);
+                    alert(`Unsupported social provider: ${provider}`);
+
             }
         } catch (error) {
-            // console.error(`Social sign-up failed for ${provider}:`, error);
+            alert(`Social sign-up failed for ${provider}: ${error}`);
         } finally {
             setTimeout(() => setSocialLoading(null), 500);
         }

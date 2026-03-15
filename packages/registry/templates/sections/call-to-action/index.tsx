@@ -706,7 +706,7 @@ export const CTABannerDemoRequest: React.FC<{
                 setTouched({});
             } catch (err) {
                 setStatus('error');
-                console.error('Demo request submission error:', err);
+                alert('Demo request submission error: ' + err);
             }
         };
 
@@ -1213,7 +1213,7 @@ export const CTABannerContactForm: React.FC<{
                 setTouched({});
             } catch (err) {
                 setStatus('error');
-                console.error('Contact form submission error:', err);
+                alert('Contact form submission error: ' + err);
             }
         };
 

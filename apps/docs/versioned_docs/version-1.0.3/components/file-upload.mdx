@@ -374,7 +374,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                         try {
                             preview = await createImagePreview(file);
                         } catch (error) {
-                            console.error('Failed to create preview:', error);
+                            alert(`Failed to create preview: ${error}`);
                         }
                     } else {
                         alert('Skipping preview for non-image file');
