@@ -75,27 +75,23 @@ function fillTemplate(command: string, args: Record<string, unknown> = {}): stri
 
 async function runCommand(command: string) {
   try {
-    const { stdout } = await execAsync(command);
+    const { stdout, stderr } = await execAsync(command);
 
-    try {
-      return {
-        content: [
-          {
-            type: 'json',
-            json: JSON.parse(stdout),
-          },
-        ],
-      };
-    } catch {
-      return {
-        content: [
-          {
-            type: 'text',
-            text: stdout,
-          },
-        ],
-      };
-    }
+    const output =
+      typeof stdout === 'string' && stdout.trim().length > 0
+        ? stdout.trim()
+        : typeof stderr === 'string' && stderr.trim().length > 0
+        ? stderr.trim()
+        : 'Command executed successfully';
+
+    return {
+      content: [
+        {
+          type: 'text',
+          text: String(output),
+        },
+      ],
+    };
   } catch (err) {
     const message =
       err instanceof Error
@@ -109,7 +105,7 @@ async function runCommand(command: string) {
       content: [
         {
           type: 'text',
-          text: message,
+          text: message || 'Unknown error',
         },
       ],
     };
@@ -133,6 +129,8 @@ export async function startMcpServer() {
   );
 
   server.setRequestHandler(ListToolsRequestSchema, async () => {
+    console.error('MCP: ListToolsRequest received');
+
     const toolList = tools.map((tool) => ({
       name: tool.name,
       description: tool.description,
@@ -146,6 +144,7 @@ export async function startMcpServer() {
   });
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    console.error('MCP: CallToolRequest received', request.params.name);
     const { name, arguments: args } = request.params;
 
     const tool = tools.find((t) => t.name === name);
