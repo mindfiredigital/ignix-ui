@@ -921,7 +921,7 @@ import { SignIn } from '@site/src/components/UI/sign-in';
 
 function LoginPage() {
   const handleSubmit = async (data) => {
-    console.log('User data:', data);
+    alert(`Login successful! User data: ${JSON.stringify(data)}`);
     // Your authentication logic here
   };
 
@@ -966,7 +966,7 @@ function ControlledSignIn() {
       }
       
       // Handle successful login
-      console.log('Login successful:', data);
+      alert(`Login successful! User data: ${JSON.stringify(data)}`);
     } catch (error) {
       setError('Invalid credentials. Please try again.');
     } finally {
@@ -1015,7 +1015,7 @@ function SocialSignIn() {
       showSocialLogin={true}
       onGoogleSignIn={handleGoogleSignIn}
       onGitHubSignIn={handleGitHubSignIn}
-      onMicrosoftSignIn={() => console.log('Microsoft sign-in')}
+      onMicrosoftSignIn={() => alert('Microsoft sign-in')}
     />
   );
 }

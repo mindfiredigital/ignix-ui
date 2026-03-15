@@ -51,7 +51,7 @@ const ProfilePageDemo = () => {
     };
 
     const handleCancel = () => {
-        // console.log('Cancelled editing');
+        alert('Cancelled editing');
     };
 
     const codeString = `

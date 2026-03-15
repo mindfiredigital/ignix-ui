@@ -390,8 +390,8 @@ const CompleteRegistrationDemo = () => {
         setIsLoading(false);
     };
 
-    const handleCaptchaVerify = (_token: string) => {
-        // console.log('CAPTCHA token:', token);
+    const handleCaptchaVerify = (token: string) => {
+        alert(`CAPTCHA token: ${token}`);
         setCaptchaVerified(true);
     };
 

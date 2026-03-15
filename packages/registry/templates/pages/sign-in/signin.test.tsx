@@ -445,7 +445,7 @@ describe("SignIn Component", () => {
         await waitFor(() => {
             // Check if any error messages are rendered
             const errorMessages = container.querySelectorAll('[class*="error"], [class*="Error"], [id*="error"]');
-            errorMessages.forEach(el => console.log("Error element:", el.textContent));
+            errorMessages.forEach(el => alert(`Error element: ${el.textContent}`));
         }, { timeout: 1000 });
     });
 });

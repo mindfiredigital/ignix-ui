@@ -102,7 +102,7 @@ const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light'
                     buttonVariant="primary"
                     layout="inline"
                     onSubmit={async (email) => {
-                        console.log('Newsletter subscription:', email);
+                        alert(`Subscribed to newsletter: ${email}`);
                     }}
                 >
                     <NewsletterHeading>Stay in the Loop</NewsletterHeading>
@@ -126,7 +126,7 @@ const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light'
                     maxMessageLength={1000}
                     layout="vertical"
                     onSubmit={async (data) => {
-                        console.log('Contact form submitted:', data);
+                        alert(`Contact form submitted: ${JSON.stringify(data)}`);
                     }}
                 >
                     <ContactFormHeading>Get In Touch</ContactFormHeading>
@@ -149,7 +149,7 @@ const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light'
                     requirePhone={false}
                     layout="two-column"
                     onSubmit={async (data) => {
-                        console.log('Demo request submitted:', data);
+                        alert(`Demo request submitted: ${JSON.stringify(data)}`);
                     }}
                 >
                     <DemoFormHeading>See Our Platform Live</DemoFormHeading>
