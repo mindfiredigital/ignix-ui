@@ -2,7 +2,8 @@
 
 import type React from "react";
 import { useState, useRef, useEffect } from "react";
-import { motion, Variants, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import type { Variants } from "framer-motion";
 import { cn } from "../../../utils/cn";
 
 interface AnimatedTextareaProps {
