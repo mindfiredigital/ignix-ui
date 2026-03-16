@@ -7,7 +7,7 @@
         "type": "doc",
         "id": "introduction"
       },
-      "items": ["introduction", "installation"]
+      "items": ["introduction", "installation", "mcp"]
     },
     {
       "type": "category",
