@@ -1,3 +1,4 @@
+// packages/cli-tool/src/commands/mcp.ts
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
@@ -17,8 +18,25 @@ const execAsync = promisify(exec);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const ROOT_DIR = path.resolve(__dirname, '../../..');
-const MCP_CONFIG_PATH = path.join(ROOT_DIR, 'mcp.json');
+// Look for mcp.json in multiple locations
+const possiblePaths = [
+  path.resolve(__dirname, '../../mcp.json'), // relative to cli-tool/dist
+  path.resolve(__dirname, '../../../mcp.json'), // relative to project root
+  path.resolve(process.cwd(), 'mcp.json'), // current working directory
+];
+
+let MCP_CONFIG_PATH = '';
+for (const p of possiblePaths) {
+  if (fs.existsSync(p)) {
+    MCP_CONFIG_PATH = p;
+    break;
+  }
+}
+
+if (!MCP_CONFIG_PATH) {
+  console.error('❌ Could not find mcp.json in any of:', possiblePaths);
+  process.exit(1);
+}
 
 type ToolExecution = {
   type: 'shell';
@@ -48,9 +66,13 @@ type MCPConfig = {
 let MCP_CONFIG: MCPConfig;
 
 try {
-  MCP_CONFIG = JSON.parse(fs.readFileSync(MCP_CONFIG_PATH, 'utf-8'));
+  const configContent = fs.readFileSync(MCP_CONFIG_PATH, 'utf-8');
+  MCP_CONFIG = JSON.parse(configContent);
+  console.error(`✅ Loaded MCP config from ${MCP_CONFIG_PATH}`);
+  console.error(`   Tools found: ${MCP_CONFIG.tools?.length || 0}`);
+  MCP_CONFIG.tools?.forEach((t) => console.error(`   - ${t.name}`));
 } catch (err) {
-  console.error('Failed to load mcp.json:', err);
+  console.error('❌ Failed to load mcp.json:', err);
   process.exit(1);
 }
 
@@ -75,7 +97,14 @@ function fillTemplate(command: string, args: Record<string, unknown> = {}): stri
 
 async function runCommand(command: string) {
   try {
-    const { stdout, stderr } = await execAsync(command);
+    console.error(`🔧 Executing: ${command}`);
+    const { stdout, stderr } = await execAsync(command, {
+      env: {
+        ...process.env,
+        PATH: process.env.PATH,
+      },
+      shell: process.platform === 'win32' ? 'cmd.exe' : '/bin/bash',
+    });
 
     const output =
       typeof stdout === 'string' && stdout.trim().length > 0
@@ -84,14 +113,28 @@ async function runCommand(command: string) {
         ? stderr.trim()
         : 'Command executed successfully';
 
-    return {
-      content: [
-        {
-          type: 'text',
-          text: String(output),
-        },
-      ],
-    };
+    // Try to parse as JSON if possible
+    try {
+      const parsed = JSON.parse(output);
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(parsed, null, 2),
+          },
+        ],
+      };
+    } catch {
+      // Not JSON, return as is
+      return {
+        content: [
+          {
+            type: 'text',
+            text: String(output),
+          },
+        ],
+      };
+    }
   } catch (err) {
     const message =
       err instanceof Error
@@ -99,6 +142,8 @@ async function runCommand(command: string) {
         : typeof err === 'object' && err !== null && 'stderr' in err
         ? String((err as { stderr?: string }).stderr)
         : String(err);
+
+    console.error(`❌ Command failed: ${message}`);
 
     return {
       isError: true,
@@ -120,16 +165,14 @@ export async function startMcpServer() {
     },
     {
       capabilities: {
-        tools: {
-          listChanged: false,
-        },
+        tools: {},
         resources: {},
       },
     }
   );
 
   server.setRequestHandler(ListToolsRequestSchema, async () => {
-    console.error('MCP: ListToolsRequest received');
+    console.error('\n📋 MCP: ListToolsRequest received');
 
     const toolList = tools.map((tool) => ({
       name: tool.name,
@@ -140,34 +183,50 @@ export async function startMcpServer() {
       },
     }));
 
+    console.error(`   Returning ${toolList.length} tools:`);
+    toolList.forEach((t) => console.error(`   - ${t.name}`));
+    console.error('');
+
     return { tools: toolList };
   });
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
-    console.error('MCP: CallToolRequest received', request.params.name);
+    console.error(`\n🛠️ MCP: CallToolRequest received for "${request.params.name}"`);
     const { name, arguments: args } = request.params;
 
     const tool = tools.find((t) => t.name === name);
 
     if (!tool) {
+      console.error(`   ❌ Unknown tool: ${name}`);
       throw new Error(`Unknown tool: ${name}`);
     }
 
     if (!tool.execution?.command) {
+      console.error(`   ❌ Tool "${name}" has no execution command`);
       throw new Error(`Tool "${name}" does not define an execution command`);
     }
 
     const command = fillTemplate(tool.execution.command, args as Record<string, unknown>);
+    console.error(`   🔧 Command: ${command}`);
 
-    return runCommand(command);
+    const result = await runCommand(command);
+    console.error(`   ✅ Command completed`);
+    console.error('');
+
+    return result;
   });
 
   server.setRequestHandler(ListResourcesRequestSchema, async () => {
+    console.error('\n📚 MCP: ListResourcesRequest received');
+
     const resourceList = resources.map((r) => ({
       name: r.name,
       uri: r.uri,
       description: r.description,
     }));
+
+    console.error(`   Returning ${resourceList.length} resources`);
+    console.error('');
 
     return { resources: resourceList };
   });
@@ -176,5 +235,10 @@ export async function startMcpServer() {
 
   await server.connect(transport);
 
-  console.error('Ignix MCP server running');
+  console.error('\n🚀 Ignix MCP server running');
+  console.error(`📦 Available tools (${tools.length}):`);
+  tools.forEach((t) => console.error(`   - ${t.name}`));
+  console.error(`📚 Available resources (${resources.length}):`);
+  resources.forEach((r) => console.error(`   - ${r.name}`));
+  console.error('');
 }

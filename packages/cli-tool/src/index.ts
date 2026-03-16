@@ -16,6 +16,7 @@ import { RegistryService } from './services/RegistryService';
 import { templateCommand } from './commands/template';
 import { startMcpServer } from './commands/mcp';
 import { mcpInitCommand } from './commands/mcp-init';
+import { infoCommand } from './commands/info'; // Add this import
 
 const program = new Command();
 
@@ -33,6 +34,7 @@ program.addCommand(startersCommandNextjsApp);
 program.addCommand(startersCommandViteReact);
 program.addCommand(templateCommand);
 program.addCommand(doctorCommand);
+program.addCommand(infoCommand);
 
 const mcpCommand = new Command('mcp').description('Ignix MCP server');
 

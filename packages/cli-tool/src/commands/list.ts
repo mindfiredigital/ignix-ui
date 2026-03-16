@@ -1,3 +1,4 @@
+// packages/cli-tool/src/commands/list.ts
 import { Command } from 'commander';
 import { RegistryService } from '../services/RegistryService';
 import chalk from 'chalk';
@@ -10,6 +11,11 @@ export const listCommand = new Command()
   .option('-y, --yes', 'Skip prompts')
   .option('--json', 'Machine output')
   .option('--cwd <path>', 'Working directory', '.')
+  .option('--search <query>', 'Search components by keyword')
+  .option(
+    '--category <category>',
+    'Filter by category (layout, forms, feedback, navigation, data-display)'
+  )
   .description(chalk.hex('#FF6B35')('List available components or themes from the registry.'))
   .argument('<namespace>', 'The type of asset to list (e.g., component, theme)')
   .action(async (namespace, opts) => {
@@ -17,6 +23,8 @@ export const listCommand = new Command()
       isYes: !!opts.yes,
       isJson: !!opts.json,
       cwd: path.resolve(opts.cwd || '.'),
+      search: opts.search,
+      category: opts.category,
     };
 
     const originalCwd = process.cwd();
@@ -46,11 +54,33 @@ export const listCommand = new Command()
       switch (namespace) {
         case 'component':
         case 'components': {
-          const components = await registryService.getAvailableComponents();
+          let components = await registryService.getAvailableComponents();
 
+          // Apply search filter if provided
+          if (ctx.search) {
+            const searchTerm = ctx.search.toLowerCase();
+            components = components.filter(
+              (c) =>
+                c.name.toLowerCase().includes(searchTerm) ||
+                (c.description && c.description.toLowerCase().includes(searchTerm))
+            );
+          }
+
+          // Apply category filter if provided
+          if (ctx.category) {
+            const category = ctx.category.toLowerCase();
+            components = components.filter((c) => c.category?.toLowerCase() === category);
+          }
+
+          // Sort components alphabetically
           const sorted = components
-            .map((c) => c.name.toLowerCase())
-            .sort((a, b) => a.localeCompare(b));
+            .map((c) => ({
+              name: c.name,
+              description: c.description,
+              category: c.category,
+              id: c.id,
+            }))
+            .sort((a, b) => a.name.localeCompare(b.name));
 
           if (ctx.isJson) {
             console.log(
@@ -58,6 +88,9 @@ export const listCommand = new Command()
                 {
                   success: true,
                   components: sorted,
+                  total: sorted.length,
+                  searchQuery: ctx.search || null,
+                  category: ctx.category || null,
                 },
                 null,
                 2
@@ -66,13 +99,31 @@ export const listCommand = new Command()
             return;
           }
 
-          if (components.length > 0) {
-            logger.info(chalk.bold('Available Components:'));
-            components.forEach((comp) => {
-              console.log(`- ${chalk.cyan(comp.name)}: ${comp.description}`);
+          if (sorted.length > 0) {
+            if (ctx.search) {
+              logger.info(chalk.bold(`\n🔍 Search results for "${ctx.search}":`));
+            } else if (ctx.category) {
+              logger.info(chalk.bold(`\n📂 ${ctx.category} components:`));
+            } else {
+              logger.info(chalk.bold('\n📦 Available Components:'));
+            }
+
+            sorted.forEach((comp) => {
+              const category = comp.category ? chalk.gray(` [${comp.category}]`) : '';
+              console.log(`  ${chalk.cyan('•')} ${chalk.cyan(comp.name)}${category}`);
+              if (comp.description) {
+                console.log(`    ${chalk.gray(comp.description)}`);
+              }
             });
+            console.log(chalk.gray(`\nTotal: ${sorted.length} components`));
           } else {
-            logger.warn('No components found in the registry.');
+            if (ctx.search) {
+              logger.warn(`No components found matching "${ctx.search}"`);
+            } else if (ctx.category) {
+              logger.warn(`No components found in category "${ctx.category}"`);
+            } else {
+              logger.warn('No components found in the registry.');
+            }
           }
 
           break;
@@ -82,7 +133,14 @@ export const listCommand = new Command()
         case 'themes': {
           const themes = await themeService.getAvailableThemes();
 
-          const sorted = themes.map((t) => t.id.toLowerCase()).sort((a, b) => a.localeCompare(b));
+          // Sort themes alphabetically
+          const sorted = themes
+            .map((t) => ({
+              id: t.id,
+              name: t.name,
+              description: t.description,
+            }))
+            .sort((a, b) => a.name.localeCompare(b.name));
 
           if (ctx.isJson) {
             console.log(
@@ -90,6 +148,7 @@ export const listCommand = new Command()
                 {
                   success: true,
                   themes: sorted,
+                  total: sorted.length,
                 },
                 null,
                 2
@@ -98,11 +157,15 @@ export const listCommand = new Command()
             return;
           }
 
-          if (themes.length > 0) {
-            logger.info(chalk.bold('Available Themes:'));
-            themes.forEach((theme) => {
-              console.log(`- ${chalk.cyan(theme.name)} (${theme.id}): ${theme.description}`);
+          if (sorted.length > 0) {
+            logger.info(chalk.bold('\n🎨 Available Themes:'));
+            sorted.forEach((theme) => {
+              console.log(`  ${chalk.cyan('•')} ${chalk.cyan(theme.name)} (${theme.id})`);
+              if (theme.description) {
+                console.log(`    ${chalk.gray(theme.description)}`);
+              }
             });
+            console.log(chalk.gray(`\nTotal: ${sorted.length} themes`));
           } else {
             logger.warn('No themes found in the registry.');
           }
@@ -114,10 +177,15 @@ export const listCommand = new Command()
         case 'templates': {
           const templates = await registryService.getAvailableTemplates();
 
+          // Sort templates alphabetically
           const sorted = templates
             .filter((t) => t.id)
-            .map((t) => t.id!.toLowerCase())
-            .sort((a, b) => a.localeCompare(b));
+            .map((t) => ({
+              id: t.id,
+              name: t.name,
+              description: t.description,
+            }))
+            .sort((a, b) => a.name!.localeCompare(b.name!));
 
           if (ctx.isJson) {
             console.log(
@@ -125,6 +193,7 @@ export const listCommand = new Command()
                 {
                   success: true,
                   templates: sorted,
+                  total: sorted.length,
                 },
                 null,
                 2
@@ -133,13 +202,15 @@ export const listCommand = new Command()
             return;
           }
 
-          if (templates.length > 0) {
-            logger.info(chalk.bold('Available Templates:'));
-            templates.forEach((template) => {
-              console.log(
-                `- ${chalk.cyan(template.name)} (${template.id}): ${template.description}`
-              );
+          if (sorted.length > 0) {
+            logger.info(chalk.bold('\n📋 Available Templates:'));
+            sorted.forEach((template) => {
+              console.log(`  ${chalk.cyan('•')} ${chalk.cyan(template.name)} (${template.id})`);
+              if (template.description) {
+                console.log(`    ${chalk.gray(template.description)}`);
+              }
             });
+            console.log(chalk.gray(`\nTotal: ${sorted.length} templates`));
           } else {
             logger.warn('No templates found in the registry.');
           }
@@ -153,7 +224,7 @@ export const listCommand = new Command()
               JSON.stringify(
                 {
                   success: false,
-                  error: `Unknown namespace: '${namespace}'`,
+                  error: `Unknown namespace: '${namespace}'. Please use 'component', 'theme', or 'template'.`,
                 },
                 null,
                 2
@@ -162,7 +233,9 @@ export const listCommand = new Command()
             process.exit(1);
           }
 
-          logger.error(`Unknown namespace: '${namespace}'. Please use 'component' or 'theme'.`);
+          logger.error(
+            `Unknown namespace: '${namespace}'. Please use 'component', 'theme', or 'template'.`
+          );
           process.exit(1);
       }
     } catch (error) {

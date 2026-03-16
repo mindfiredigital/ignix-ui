@@ -1,4 +1,14 @@
-# Ignix UI
+# Ignix UI - AI Integration Entry Point
+
+This file contains ALL information needed to use Ignix UI with AI assistants.
+READ THIS FIRST before attempting to help users with Ignix UI.
+
+## Quick Start for AI
+1. You have 9 MCP tools available (see mcp.json)
+2. ALWAYS discover before acting
+3. NEVER assume component names
+4. Chain tools automatically based on user intent
+5. Use JSON mode for all operations
 
 Ignix UI is a CLI-based React component library using a copy-paste ownership model (similar to shadcn/ui).  
 Components are installed directly into the user's project and can be fully customized.
@@ -176,3 +186,56 @@ When building with Ignix UI, follow this pattern:
 **Error: ignix command not found**
 - Solution: The CLI needs to be installed globally or use npx
 - For AI: Always ensure the project has ignix-cli installed
+
+
+## 📊 CURRENT STATS (Always Growing)
+- **Components**: Use `list_components` to see current count (growing regularly)
+- **Themes**: Use `list_themes` to see current count (expanding frequently)
+- **Templates**: Use `list_templates` to see current count (increasing over time)
+- **Framework**: React 18+, Tailwind CSS, TypeScript
+
+
+## 🤖 FOR ALL AI ASSISTANTS (Cursor, Claude, Copilot, Cline, etc.)
+
+### Core Principle
+**YOU HAVE MCP TOOLS. USE THEM AUTOMATICALLY.** Do not wait for users to specify tool names. Detect intent and chain tools appropriately.
+
+### Automatic Tool Selection Guide
+
+| User Says | What You Should AUTO-DO |
+|-----------|-------------------------|
+| "Create a login page" | 1. Check if initialized → `init_project` if needed<br>2. `search_components` for "auth" or "login"<br>3. `install_component` with SignIn, Input, Button<br>4. Generate code using installed components |
+| "Add a dark mode" | 1. `list_themes` to find dark themes<br>2. `install_theme` with "dark-forest" or similar<br>3. Apply theme configuration |
+| "Build a dashboard" | 1. `search_components` for "dashboard"<br>2. `install_component` Sidebar, Header, Card, Table<br>3. `list_templates` for dashboard layouts<br>4. Generate dashboard structure |
+| "Make a contact form" | 1. `search_components` for "form"<br>2. `install_component` Input, Textarea, Button<br>3. Generate form with validation |
+| "Fix my setup" | 1. `check_compatibility`<br>2. Identify issues<br>3. `init_project` if needed |
+
+### The Discovery-First Workflow
+
+```mermaid
+graph TD
+    A[User Request] --> B{What's needed?}
+    B --> C[Component?] --> C1[🔍 SEARCH_COMPONENTS first]
+    B --> D[Theme?] --> D1[🔍 LIST_THEMES first]
+    B --> E[Template?] --> E1[🔍 LIST_TEMPLATES first]
+    C1 --> F[Verify existence]
+    D1 --> F
+    E1 --> F
+    F --> G[Install if available]
+    G --> H[Generate code]
+
+### Tool Chaining Patterns
+
+#### Building a Landing Page
+```javascript
+// AUTO-DETECT from "Create a restaurant landing page"
+await init_project({ cwd: '.' });  // If needed
+const components = await search_components({ query: 'landing' });
+// Returns: Hero, Navbar, Card, Button, Footer
+await install_component({ 
+  components: ['Navbar', 'Hero', 'Card', 'Button', 'Footer'],
+  cwd: '.'
+});
+const themes = await list_themes();
+await install_theme({ themes: ['restaurant-warm'], cwd: '.' });
+// Then generate the React page
