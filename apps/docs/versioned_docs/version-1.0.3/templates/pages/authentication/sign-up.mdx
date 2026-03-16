@@ -57,6 +57,13 @@ The SignUp component provides a complete, production-ready registration form wit
     import { FcGoogle } from "react-icons/fc";
     import { FaGithub, FaMicrosoft } from "react-icons/fa";
 
+    
+    export interface VerificationError {
+        code?: string;
+        message: string;
+        cause?: unknown;
+    }
+
     // Types
     export interface SignUpProps {
         /** Layout type */
@@ -159,7 +166,7 @@ The SignUp component provides a complete, production-ready registration form wit
             /** Callback when CAPTCHA expires */
             onExpire?: () => void;
             /** Callback when CAPTCHA errors */
-            onError?: (error: any) => void;
+            onError?: (error: VerificationError) => void;
         };
 
         /** Split Layout Background Customization */

@@ -34,6 +34,12 @@ import {
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub, FaMicrosoft } from "react-icons/fa";
 
+export interface VerificationError {
+    code?: string;
+    message: string;
+    cause?: unknown;
+}
+
 // Types
 export interface SignUpProps {
     /** Layout type */
@@ -139,7 +145,7 @@ export interface SignUpProps {
         /** Callback when CAPTCHA expires */
         onExpire?: () => void;
         /** Callback when CAPTCHA errors */
-        onError?: (error: any) => void;
+        onError?: (error: VerificationError) => void;
     };
 
     /** Split Layout Background Customization */

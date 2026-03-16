@@ -968,9 +968,9 @@ const formConfigs = {
 };
 
 // Handle submit
-const handleSubmit = async (data: any) => {
+const handleSubmit = async (data: FormValues): Promise<void> => {
     alert(`Form submitted: ${JSON.stringify(data)}`);
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise<void>((resolve) => setTimeout(resolve, 1500));
 };
 
 // ==============================
