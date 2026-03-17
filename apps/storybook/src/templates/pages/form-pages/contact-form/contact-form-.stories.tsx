@@ -4,6 +4,10 @@ import { ContactForm } from "./index";
 const meta: Meta<typeof ContactForm> = {
   title: "Templates/Forms/ContactForm",
   component: ContactForm,
+  parameters: {
+    layout: 'fullscreen',
+  },
+  tags: ['autodocs'],
 };
 
 export default meta;
@@ -40,6 +44,7 @@ export const BackgroundImage: Story = {
         <ContactForm.Field name="name" label="Name" />
         <ContactForm.Field name="email" label="Email" />
         <ContactForm.Textarea name="message" label="Message" />
+        <ContactForm.FileUpload />
       </ContactForm.Content>
 
       <ContactForm.Actions />
@@ -59,6 +64,7 @@ export const SplitLayout: Story = {
         <ContactForm.Field name="name" label="Name" />
         <ContactForm.Field name="email" label="Email" />
         <ContactForm.Textarea name="message" label="Message" />
+        <ContactForm.FileUpload />
       </ContactForm.Content>
 
       <ContactForm.Actions />

@@ -8,8 +8,6 @@ import { Button } from "../../../../components/button";
 import FileUpload from "../../../../components/file-upload";
 import AnimatedTextarea from "../../../../components/textarea";
 
-
-
 type FormData = {
   name?: string;
   email?: string;
@@ -29,6 +27,8 @@ type ContactFormProps = {
 type ContextType = {
   data: FormData;
   setData: React.Dispatch<React.SetStateAction<FormData>>;
+  errors: ValidationErrors;
+  updateField: (name: keyof FormData, value: string) => void;
 };
 
 const ContactFormContext = createContext<ContextType | null>(null);
@@ -56,6 +56,13 @@ const itemVariants: Variants = {
   },
 };
 
+type ValidationErrors = {
+  name?: string;
+  email?: string;
+  subject?: string;
+  message?: string;
+};
+
 function Root({
   children,
   variant = "default",
@@ -64,10 +71,59 @@ function Root({
   onSubmit,
 }: ContactFormProps) {
   const [data, setData] = useState<FormData>({});
+  const [errors, setErrors] = useState<ValidationErrors>({});
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateForm()) return;
+    console.log("its valid");
     onSubmit?.(data);
+  };
+
+  const validateForm = () => {
+    const newErrors: ValidationErrors = {};
+    let isValid = true;
+
+    (["name", "email", "subject"] as (keyof FormData)[]).forEach(
+      (field) => {
+        const error = validateField(field, data[field]);
+        if (error) {
+          newErrors[field] = error;
+          isValid = false;
+        }
+      }
+    );
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const validateField = (name: keyof FormData, value?: string) => {
+    if (!value || value.trim() === "") {
+      return `${name} is required`;
+    }
+
+    if (name === "email") {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!emailRegex.test(value)) {
+        return "Enter a valid email address";
+      }
+    }
+
+    return undefined;
+  };
+
+
+  const updateField = (name: keyof FormData, value: string) => {
+    setData((prev) => ({ ...prev, [name]: value }));
+
+    if (errors[name]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
   };
 
   const baseCard =
@@ -92,7 +148,9 @@ function Root({
 
   if (variant === "split") {
     return (
-      <ContactFormContext.Provider value={{ data, setData }}>
+      <ContactFormContext.Provider 
+      value={{ data, setData, errors, updateField }}
+      >
         <div className="grid md:grid-cols-2 rounded-2xl overflow-hidden shadow-xl max-w-5xl mx-auto">
           <div
             className="hidden md:block bg-cover bg-center"
@@ -114,7 +172,9 @@ function Root({
   }
 
   return (
-    <ContactFormContext.Provider value={{ data, setData }}>
+    <ContactFormContext.Provider 
+    value={{ data, setData, errors, updateField }}
+    >
       <div
         className="flex items-center justify-center p-10"
         style={
@@ -169,8 +229,8 @@ function Field({
   label: string;
   type?: string;
 }) {
-  const { data, setData } = useContactForm();
-
+  const { data, updateField, errors  } = useContactForm();
+  const error = errors[name] ?? undefined;
   return (
     <motion.div variants={itemVariants} className="pt-4">
       <AnimatedInput
@@ -181,9 +241,11 @@ function Field({
         // onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
         //   setData((p) => ({ ...p, [name]: e.target.value }))
         // }
-        onChange={(value: string) =>
-            setData((p) => ({ ...p, [name]: value }))
-        }
+        // onChange={(value: string) =>
+        //   setData((p) => ({ ...p, [name]: value }))
+        // }
+        onChange={(value: string) => updateField(name, value)}
+        error={error}
       />
     </motion.div>
   );
@@ -214,57 +276,39 @@ function MessageTextarea({
   );
 }
 interface FileUploadFieldProps {
-    label?: string;
-    multiple?: boolean;
-    accept?: string;
-    maxSize?: number;
-  }
+  label?: string;
+  multiple?: boolean;
+  accept?: string;
+  maxSize?: number;
+}
   
-  const FileUploadField: React.FC<FileUploadFieldProps> = ({
-    label = "Attachment (optional)",
-    multiple = false,
-    accept = "*/*",
-    maxSize = 10 * 1024 * 1024,
-  }) => {
-    const { updateField } = useContactForm();
-  
-    return (
-      <div className="space-y-2">
-        <label className="text-sm font-medium">{label}</label>
-  
-        <FileUpload
-          multiple={multiple}
-          accept={accept}
-          maxSize={maxSize}
-          showFileList
-          onFilesChange={(files) => {
-            updateField("attachment", multiple ? files : files[0] ?? null);
-          }}
-        />
-  
-        <p className="text-xs text-muted-foreground">
-          Optional file attachment
-        </p>
-      </div>
-    );
-  };
-// function FileUpload() {
-//   const { setData } = useContactForm();
+const FileUploadField: React.FC<FileUploadFieldProps> = ({
+  label = "Attachment (optional)",
+  multiple = false,
+  accept = "*/*",
+  maxSize = 10 * 1024 * 1024,
+}) => {
+  const { setData } = useContactForm();
 
-//   return (
-//     <motion.div variants={itemVariants}>
-//       <input
-//         type="file"
-//         onChange={(e) =>
-//           setData((p) => ({
-//             ...p,
-//             file: e.target.files?.[0] ?? null,
-//           }))
-//         }
-//       />
-//     </motion.div>
-//   );
-// }
+  return (
+    <div className="space-y-2">
+      <label className="text-sm font-medium">{label}</label>
+
+      <FileUpload
+        multiple={multiple}
+        accept={accept}
+        maxSize={maxSize}
+        showFileList
+        onFilesChange={(files) => {
+          setData((prev) => ({
+            ...prev,
+            file: multiple ? (files as any) : files[0] ?? null,
+          }));
+        }}
+      />
+    </div>
+  );
+};
 
 function Actions() {
   return (
