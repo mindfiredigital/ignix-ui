@@ -18,6 +18,8 @@ const BreakpointDemo = () => {
   ] as const;
 
   const codeString = `
+import { Breakpoint } from '@ignix-ui/breakpoint';
+
 <Breakpoint 
   ${show ? `show="${show}"` : ""}
   ${hide ? `hide="${hide}"` : ""}

@@ -67,6 +67,8 @@ const RadioGroupDemo = () => {
   const [disabled, setDisabled] = React.useState(false);
 
   const codeString = `
+  import { RadioGroup } from '@ignix-ui/radio';
+  
   const options = [
     { value: "one", label: "Option One" },
     { value: "two", label: "Option Two" },

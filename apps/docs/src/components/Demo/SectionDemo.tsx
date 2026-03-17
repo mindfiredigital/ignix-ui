@@ -47,7 +47,10 @@ const SectionDemo = () => {
   const [maxWidth, setMaxWidth] = useState<SectionMaxWidth>("readable");
   const [animation, setAnimation] = useState<SectionAnimation>("none");
 
-  const codeString = `<Section
+  const codeString = `
+import { Section } from '@ignix-ui/section';
+
+<Section
   spacing="${spacing}"
   padding="${padding}"
   maxWidth="${maxWidth}"
