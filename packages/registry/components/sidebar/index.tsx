@@ -37,8 +37,8 @@ const sidebarVariants = cva("absolute h-full overflow-hidden transition-all", {
       default: "bg-background text-foreground",
       dark: "bg-black text-white",
       light: "bg-white text-gray-900 border-r",
-      glass: "bg-white/10 backdrop-blur-lg text-white",
-      gradient: "bg-gradient-to-b from-purple-500 to-purple-300 text-foreground",
+      glass: "bg-gray-300 backdrop-blur-lg shadow-md shadow-destructive text-primary-foreground",
+      gradient: "bg-gradient-to-b from-gray-800 to-gray-500 text-foreground",
     },
 
     direction: {

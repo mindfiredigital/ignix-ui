@@ -40,7 +40,7 @@ const withSidebarProvider =
   (Story: React.ComponentType) =>
     (
       <div
-        className={`relative w-full h-[500px] overflow-hidden border border-gray-200 rounded-lg ${backgroundClass}`}
+        className={`relative w-full h-[420px] overflow-hidden border border-gray-200 rounded-lg ${backgroundClass}`}
       >
         <SidebarProvider initialOpen={initialOpen}>
           <Story />
@@ -122,7 +122,7 @@ export const Light: Story = {
 export const Glass: Story = {
   decorators: [
     (Story) => (
-      <div className="relative w-full h-[420px] overflow-hidden rounded-lg bg-gradient-to-br from-[#6366f1] via-[#8b5cf6] to-[#ec4899]">
+      <div>
         <SidebarProvider>
           <Story />
         </SidebarProvider>
@@ -218,11 +218,11 @@ const ExternalToggleDemo = (args: React.ComponentProps<typeof Sidebar>) => {
       <div className="absolute top-4 right-4 flex flex-col gap-2 items-end">
         <button
           onClick={toggle}
-          className="px-4 py-2 bg-[#4f46e5] text-white border-none rounded-md cursor-pointer text-sm font-medium hover:bg-[#4338ca] transition-colors"
+          className="px-4 py-2 bg-accent-foreground text-white border-none rounded-md cursor-pointer text-sm font-medium"
         >
           {isOpen ? "Collapse sidebar" : "Expand sidebar"}
         </button>
-        <span className="text-xs text-gray-500">
+        <span className="text-xs text-primary">
           isOpen: <strong className="font-bold">{String(isOpen)}</strong>
         </span>
       </div>
