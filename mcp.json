@@ -142,6 +142,45 @@
       }
     },
     {
+      "name": "create_react_project",
+      "description": "[PROJECT CREATION TOOL] USE THIS FIRST when working in an empty directory. Creates a new React + TypeScript + Tailwind CSS project using Vite.",
+      "inputSchema": {
+        "type": "object",
+        "required": ["projectName"],
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Name of the project to create"
+          },
+          "cwd": {
+            "type": "string",
+            "description": "Working directory (parent folder where project will be created)",
+            "default": "."
+          },
+          "packageManager": {
+            "type": "string",
+            "enum": ["npm", "yarn", "pnpm"],
+            "description": "Package manager to use",
+            "default": "npm"
+          }
+        }
+      },
+      "execution": {
+        "type": "shell",
+        "command": "cd {cwd} && npm create vite@latest {projectName} -- --template react-ts && cd {projectName} && npm install && npm install -D tailwindcss postcss autoprefixer && npx tailwindcss init -p && echo '@tailwind base; @tailwind components; @tailwind utilities;' > src/index.css"
+      },
+      "triggers": {
+        "keywords": [
+          "create project",
+          "new project",
+          "empty directory",
+          "start from scratch",
+          "initialize react"
+        ],
+        "condition": "Check if package.json exists before using other tools"
+      }
+    },
+    {
       "name": "init_project",
       "description": "[SETUP TOOL] USE THIS AUTOMATICALLY as first step if ignix.config.js doesn't exist. Creates configuration files and directory structure. Always future-proof - sets up project to receive new components/themes/templates as they're added.",
       "inputSchema": {

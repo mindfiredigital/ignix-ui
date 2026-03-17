@@ -69,7 +69,7 @@ export const listCommand = new Command()
           // Apply category filter if provided
           if (ctx.category) {
             const category = ctx.category.toLowerCase();
-            components = components.filter((c) => c.category?.toLowerCase() === category);
+            components = components.filter((c) => c.files.main.type?.toLowerCase() === category);
           }
 
           // Sort components alphabetically
@@ -77,7 +77,7 @@ export const listCommand = new Command()
             .map((c) => ({
               name: c.name,
               description: c.description,
-              category: c.category,
+              category: c.files.main.type,
               id: c.id,
             }))
             .sort((a, b) => a.name.localeCompare(b.name));

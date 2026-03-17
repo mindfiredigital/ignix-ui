@@ -8,7 +8,9 @@ READ THIS FIRST before attempting to help users with Ignix UI.
 2. ALWAYS discover before acting
 3. NEVER assume component names
 4. Chain tools automatically based on user intent
-5. Use JSON mode for all operations
+5. Use YES and JSON mode for all operations (--yes --json)
+6. FIRST check if React project exists - if not, use `create_react_project` tool
+
 
 Ignix UI is a CLI-based React component library using a copy-paste ownership model (similar to shadcn/ui).  
 Components are installed directly into the user's project and can be fully customized.
@@ -17,6 +19,33 @@ Components are installed directly into the user's project and can be fully custo
 Framework: React 18+  
 Styling: Tailwind CSS  
 Language: TypeScript  
+
+## Project Detection & Creation
+
+### IMPORTANT: Empty Directory Handling
+
+If the working directory is EMPTY or doesn't contain a React project:
+
+1. **FIRST**, create a React + TypeScript project:
+   ```javascript
+   await create_react_project({ 
+     projectName: "my-app",  // or derive from user intent
+     cwd: "." 
+   });
+   ```
+2. **THEN**, navigate into the project and initialize Ignix:
+   ```javascript
+   await init_project({ cwd: "./my-app" });
+   ```
+3. **FINALLY**, install components as needed:
+   ```javascript
+   await install_component({ 
+      components: ["button", "navbar"], 
+      cwd: "./my-app" 
+   });
+   ```
+
+Example flow for empty directory: create_react_project → init_project → install_component → build
 
 ## Initialize
 
@@ -133,7 +162,12 @@ ignix add component sidebar header table card charts dropdown --yes --json
 
 When a user asks to build a page using Ignix UI:
 
-1. First, initialize Ignix if not present:
+0. **Ensure React project exists**:
+   - Check for package.json with react
+   - If not found, use `create_react_project` first
+   - Update working directory to new project
+
+1. **Initialize Ignix** if not present:
    ignix init --yes --json --cwd {projectPath}
 
 2. List available components to understand what's available:
@@ -158,6 +192,7 @@ src/
 
 When building with Ignix UI, follow this pattern:
 
+0. **Project Check**: Ensure React project exists (create if needed)
 1. **Initialize**: Check if ignix.config.js exists, if not run init
 2. **Discover**: List components to see what's available
 3. **Plan**: Determine which components are needed for the requested UI
@@ -204,6 +239,7 @@ When building with Ignix UI, follow this pattern:
 
 | User Says | What You Should AUTO-DO |
 |-----------|-------------------------|
+| "Start a new project from scratch" | 1. `create_react_project` with suggested name<br>2. `init_project` in new project<br>3. Then handle the specific request (landing page, dashboard, etc.) |
 | "Create a login page" | 1. Check if initialized → `init_project` if needed<br>2. `search_components` for "auth" or "login"<br>3. `install_component` with SignIn, Input, Button<br>4. Generate code using installed components |
 | "Add a dark mode" | 1. `list_themes` to find dark themes<br>2. `install_theme` with "dark-forest" or similar<br>3. Apply theme configuration |
 | "Build a dashboard" | 1. `search_components` for "dashboard"<br>2. `install_component` Sidebar, Header, Card, Table<br>3. `list_templates` for dashboard layouts<br>4. Generate dashboard structure |
@@ -239,3 +275,4 @@ await install_component({
 const themes = await list_themes();
 await install_theme({ themes: ['restaurant-warm'], cwd: '.' });
 // Then generate the React page
+```
