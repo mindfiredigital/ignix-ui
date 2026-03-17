@@ -38,7 +38,7 @@ const sidebarVariants = cva("absolute h-full overflow-hidden transition-all", {
       dark: "bg-black text-white",
       light: "bg-white text-gray-900 border-r",
       glass: "bg-white/10 backdrop-blur-lg text-white",
-      gradient: "bg-gradient-to-br from-purple-500 to-purple-400 text-foreground",
+      gradient: "bg-gradient-to-b from-purple-500 to-purple-300 text-foreground",
     },
 
     direction: {
@@ -169,8 +169,8 @@ const Sidebar: React.FC<SidebarProps> = ({
       {/* Sidebar Links */}
       <motion.nav
         className={cn(
-          direction === "horizontal" ? "flex-row" : "flex-col",
-          "flex"
+          direction === "horizontal" ? "flex-row overflow-x-auto" : "flex-col overflow-y-auto",
+          "flex flex-1"
         )}
       >
         {links.map((link, index) => (
