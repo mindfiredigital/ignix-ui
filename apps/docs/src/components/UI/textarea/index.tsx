@@ -271,7 +271,7 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
       <motion.label
         className={cn(
           "absolute left-4 pointer-events-none transition-colors duration-300 z-10 origin-left",
-          "text-muted-foreground group-focus-within:text-primary",
+          "text-muted-foreground group-focus-within:text-primary pt-2",
           error && "text-red-500",
           success && "text-emerald-500",
           config.label,
