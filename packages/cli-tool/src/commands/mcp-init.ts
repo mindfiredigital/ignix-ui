@@ -31,8 +31,8 @@ export const mcpInitCommand = new Command()
     const config = {
       mcpServers: {
         ignix: {
-          command: 'npx',
-          args: ['@mindfiredigital/ignix-cli', 'mcp'],
+          command: 'ignix',
+          args: ['mcp'],
         },
       },
     };
