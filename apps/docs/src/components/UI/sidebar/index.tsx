@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
 import { motion } from "framer-motion";
 import {
-  HelpCircle,
-  Menu,
-  Settings,
-  User,
-  X,
-} from "lucide-react";
+  QuestionMarkCircledIcon,
+  HamburgerMenuIcon,
+  GearIcon,
+  PersonIcon,
+  Cross1Icon,
+} from "@radix-ui/react-icons";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../utils/cn";
 import Home from '@site/src/pages';
@@ -166,13 +166,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {isOpen ? (
         <button onClick={onClose}>
             <span title="Close">
-              <X size={24} />
+              <Cross1Icon width={24} height={24} />
             </span>
         </button>
           ) : (
             <button onClick={onOpen}>
               <span title="Open">
-                <Menu size={24} />
+                <HamburgerMenuIcon width={24} height={24} />
               </span>
             </button>
           )}
@@ -191,7 +191,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             href={link.href}
             className="flex items-center p-4 gap-4 "
           >
-            <link.icon size={24} />
+            <link.icon width={24} height={24} />
             {isOpen && <span>{link.label}</span>}
           </a>
         ))}
@@ -206,9 +206,9 @@ export default function SidebarDemo() {
       <Sidebar
         links={[
           { label: 'Home', href: '#', icon: Home },
-          { label: 'Profile', href: '#', icon: User },
-          { label: 'Settings', href: '#', icon: Settings },
-          { label: 'Help', href: '#', icon: HelpCircle },
+          { label: 'Profile', href: '#', icon: PersonIcon },
+          { label: 'Settings', href: '#', icon: GearIcon },
+          { label: 'Help', href: '#', icon: QuestionMarkCircledIcon },
         ]}
         brandName="Demo App"
       />

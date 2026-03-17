@@ -1,37 +1,37 @@
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
-  Home,
-  Settings,
-  User,
-  Mail,
-  HelpCircle,
-  BarChart2,
-  Bell,
-  Folder,
-  Star,
-  LogOut,
-} from "lucide-react";
+  HomeIcon,
+  GearIcon,
+  PersonIcon,
+  EnvelopeClosedIcon,
+  QuestionMarkCircledIcon,
+  BarChartIcon,
+  BellIcon,
+  FileIcon,
+  StarIcon,
+  PinRightIcon,
+} from "@radix-ui/react-icons";
  
 import Sidebar, { SidebarProvider, useSidebar } from "./index";
  
 // Shared link sets
 const defaultLinks = [
-  { label: "Home", href: "#", icon: Home },
-  { label: "Profile", href: "#", icon: User },
-  { label: "Settings", href: "#", icon: Settings },
-  { label: "Help", href: "#", icon: HelpCircle },
+  { label: "Home", href: "#", icon: HomeIcon },
+  { label: "Profile", href: "#", icon: PersonIcon },
+  { label: "Settings", href: "#", icon: GearIcon },
+  { label: "Help", href: "#", icon: QuestionMarkCircledIcon },
 ];
  
 const extendedLinks = [
-  { label: "Dashboard", href: "#", icon: BarChart2 },
-  { label: "Profile", href: "#", icon: User },
-  { label: "Notifications", href: "#", icon: Bell },
-  { label: "Files", href: "#", icon: Folder },
-  { label: "Favourites", href: "#", icon: Star },
-  { label: "Mail", href: "#", icon: Mail },
-  { label: "Settings", href: "#", icon: Settings },
-  { label: "Logout", href: "#", icon: LogOut },
+  { label: "Dashboard", href: "#", icon: BarChartIcon },
+  { label: "Profile", href: "#", icon: PersonIcon },
+  { label: "Notifications", href: "#", icon: BellIcon },
+  { label: "Files", href: "#", icon: FileIcon },
+  { label: "Favourites", href: "#", icon: StarIcon },
+  { label: "Mail", href: "#", icon: EnvelopeClosedIcon },
+  { label: "Settings", href: "#", icon: GearIcon },
+  { label: "Logout", href: "#", icon: PinRightIcon },
 ];
  
 // Decorator
@@ -129,7 +129,6 @@ export const Glass: Story = {
       </div>
     ),
   ],
-  parameters: { decorators: { disable: true } },
   args: {
     links: defaultLinks,
     brandName: "Glass UI",

@@ -336,7 +336,7 @@
     "sidebar": {
       "name": "Sidebar",
       "description": "A collapsible sidebar component with animation",
-      "dependencies": ["framer-motion", "lucide-react", "class-variance-authority"],
+      "dependencies": ["framer-motion", "@radix-ui/react-icons", "class-variance-authority"],
       "files": {
         "main": {
           "path": "components/sidebar/index.tsx",

@@ -4,7 +4,7 @@ import VariantSelector from './VariantSelector';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import CodeBlock from '@theme/CodeBlock';
-import { Home, Settings, User, HelpCircle } from 'lucide-react';
+import { HomeIcon, GearIcon, PersonIcon, QuestionMarkCircledIcon } from '@radix-ui/react-icons';
 import {SidebarProvider, Sidebar} from '@site/src/components/UI/sidebar';
 
 const sidebarVariants = ['default', 'dark', 'light', 'glass', 'gradient'];
@@ -57,10 +57,10 @@ const SidebarDemo = () => {
             <div className="relative h-[calc(100%-2rem)] bg-white">
               <Sidebar
                 links={[
-                  { label: 'Home', href: '#', icon: Home },
-                  { label: 'Profile', href: '#', icon: User },
-                  { label: 'Settings', href: '#', icon: Settings },
-                  { label: 'Help', href: '#', icon: HelpCircle },
+                  { label: 'Home', href: '#', icon: HomeIcon },
+                  { label: 'Profile', href: '#', icon: PersonIcon },
+                  { label: 'Settings', href: '#', icon: GearIcon },
+                  { label: 'Help', href: '#', icon: QuestionMarkCircledIcon },
                 ]}
                 brandName="Demo App"
                 variant={variant as any}

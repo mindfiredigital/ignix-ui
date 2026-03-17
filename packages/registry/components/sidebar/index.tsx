@@ -1,9 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
 import { motion } from "framer-motion";
-import {
-  Menu,
-  X,
-} from "lucide-react";
+import {HamburgerMenuIcon, Cross1Icon} from "@radix-ui/react-icons";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../utils/cn";
 
@@ -154,13 +151,13 @@ const Sidebar: React.FC<SidebarProps> = ({
           {isOpen ? (
         <button onClick={onClose}>
             <span title="Close">
-              <X size={24} />
+              <Cross1Icon width={24} height={24} />
             </span>
         </button>
           ) : (
             <button onClick={onOpen}>
               <span title="Open">
-                <Menu size={24} />
+                <HamburgerMenuIcon width={24} height={24} />
               </span>
             </button>
           )}
@@ -179,7 +176,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             href={link.href}
             className="flex items-center p-4 gap-4 "
           >
-            <link.icon size={24} />
+            <link.icon width={24} height={24} />
             {isOpen && <span>{link.label}</span>}
           </a>
         ))}
