@@ -7,7 +7,7 @@ import CodeBlock from '@theme/CodeBlock';
 import { Home, Settings, User, HelpCircle } from 'lucide-react';
 import {SidebarProvider, Sidebar} from '@site/src/components/UI/sidebar';
 
-const sidebarVariants = ['default', 'dark', 'light', 'glass'];
+const sidebarVariants = ['default', 'dark', 'light', 'glass', 'gradient'];
 const sidebarPositions = ['left', 'right'];
 
 const SidebarDemo = () => {
