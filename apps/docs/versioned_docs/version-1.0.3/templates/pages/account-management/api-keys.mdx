@@ -105,8 +105,7 @@ function ApiKeysDashboard() {
       // Show success message
       alert('API key deleted successfully');
     } catch (error) {
-      console.error('Failed to delete key:', error);
-      alert('Failed to delete API key');
+      alert('Failed to delete API key: ' + error.message);
     }
   };
   
@@ -148,7 +147,7 @@ function ApiKeysDashboard() {
       // Return the full key to the component
       return data.fullKey;
     } catch (error) {
-      console.error('Failed to reveal key:', error);
+      alert('Failed to reveal API key ', error.message);
       throw error; // Component will show error notification
     }
   };
@@ -194,7 +193,7 @@ function ApiKeysDashboard() {
       
       return true; // Success
     } catch (error) {
-      console.error('Failed to revoke key:', error);
+      alert('Failed to revoke API key', error.message);
       throw error; // Component will show error notification
     }
   };
@@ -256,8 +255,7 @@ function ApiKeysDashboard() {
         link.click();
       }
     } catch (error) {
-      console.error('Export failed:', error);
-      alert('Failed to export keys');
+      alert('Failed to export keys', error.message);
     }
   };
   

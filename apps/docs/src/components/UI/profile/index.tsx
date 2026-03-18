@@ -733,7 +733,7 @@ export const ProfilePage: React.FC<ProfileProps> = ({
                 showNotification('success', saveNotificationMessage);
             }
         } catch (error) {
-            // console.error('Failed to save profile:', error);
+            alert(`Failed to save profile: ${error.message}`);
             // Show error notification
             showNotification('error', 'Failed to save changes. Please try again.');
         } finally {

@@ -120,8 +120,6 @@ vi.mock('@ignix-ui/typography', () => ({
     ),
 }));
 
-// Mock console.error to suppress the error log from test
-// Mock console.error to suppress the error log from test
 beforeAll(() => {
     vi.spyOn(console, 'error').mockImplementation(() => {
         // Suppress error logs during tests

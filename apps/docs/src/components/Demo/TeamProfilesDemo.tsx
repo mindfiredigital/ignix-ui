@@ -18,6 +18,7 @@ import {
     MemberCardOverlay,
     TeamFooter,
     type TeamMember,
+    TeamProfilesProps,
 } from '../UI/team-profiles';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -423,7 +424,7 @@ export const AdvancedTeamDemo = () => {
     };
 
     // Prepare props based on current state
-    const teamProps: any = {
+    const teamProps: Partial<TeamProfilesProps> = {
         variant: sectionVariant,
         cardVariant,
         enableModal,
@@ -786,5 +787,3 @@ import { Button } from '../../components/button';
         </div>
     );
 };
-// Export both demos
-// export { BasicTeamDemo, AdvancedTeamDemo };

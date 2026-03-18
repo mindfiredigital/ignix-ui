@@ -3,7 +3,7 @@
     {
       "type": "category",
       "label": "Getting Started",
-      "items": ["introduction", "installation"]
+      "items": ["introduction", "installation", "mcp"]
     },
     {
       "type": "category",

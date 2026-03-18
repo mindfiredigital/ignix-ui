@@ -1310,7 +1310,7 @@ export const FormCustomizer: Story = {
         };
 
         const handleSubmit = (data: FormValues) => {
-            console.log('Form submitted:', data);
+            alert(`Form submitted: ${JSON.stringify(data)}`);
             setFormData(data);
         };
 
@@ -1354,7 +1354,7 @@ export const FormCustomizer: Story = {
                         animationIntensity="moderate"
                         showSuccessNotification={true}
                         debug={showDebug}
-                        onChange={(data: FormValues) => console.log('Form changed:', data)}
+                        onChange={(data: FormValues) => alert(`Form changed: ${JSON.stringify(data)}`)}
                     >
                         <DynamicHeader
                             title={selectedForm.name}
@@ -1391,7 +1391,7 @@ export const FormCustomizer: Story = {
                             submitButtonLabel="Submit"
                             showCancelButton={true}
                             cancelButtonLabel="Reset"
-                            onCancel={() => console.log('Form cancelled')}
+                            onCancel={() => alert('Form cancelled')}
                         />
 
                         <ThemeToggle />
@@ -1422,7 +1422,7 @@ export const VibrantTheme: Story = {
     render: () => (
         <DynamicForm
             fields={basicFields}
-            onSubmit={(data: FormValues) => console.log('Form submitted:', data)}
+            onSubmit={(data: FormValues) => alert(`Form submitted: ${JSON.stringify(data)}`)}
             variant="vibrant"
             cardVariant="glass"
             animationIntensity="high"
@@ -1450,7 +1450,7 @@ export const NeonTheme: Story = {
     render: () => (
         <DynamicForm
             fields={basicFields}
-            onSubmit={(data: FormValues) => console.log('Form submitted:', data)}
+            onSubmit={(data: FormValues) => alert(`Form submitted: ${JSON.stringify(data)}`)}
             variant="neon"
             cardVariant="neon"
             animationIntensity="high"
@@ -1478,7 +1478,7 @@ export const OceanTheme: Story = {
     render: () => (
         <DynamicForm
             fields={basicFields}
-            onSubmit={(data: FormValues) => console.log('Form submitted:', data)}
+            onSubmit={(data: FormValues) => alert(`Form submitted: ${JSON.stringify(data)}`)}
             variant="ocean"
             cardVariant="glass"
         >
@@ -1505,7 +1505,7 @@ export const SunsetTheme: Story = {
     render: () => (
         <DynamicForm
             fields={basicFields}
-            onSubmit={(data: FormValues) => console.log('Form submitted:', data)}
+            onSubmit={(data: FormValues) => alert(`Form submitted: ${JSON.stringify(data)}`)}
             variant="sunset"
             cardVariant="elevated"
         >
@@ -1532,7 +1532,7 @@ export const ForestTheme: Story = {
     render: () => (
         <DynamicForm
             fields={basicFields}
-            onSubmit={(data: FormValues) => console.log('Form submitted:', data)}
+            onSubmit={(data: FormValues) => alert(`Form submitted: ${JSON.stringify(data)}`)}
             variant="forest"
             cardVariant="border"
         >
@@ -1559,7 +1559,7 @@ export const GalaxyTheme: Story = {
     render: () => (
         <DynamicForm
             fields={basicFields}
-            onSubmit={(data: FormValues) => console.log('Form submitted:', data)}
+            onSubmit={(data: FormValues) => alert(`Form submitted: ${JSON.stringify(data)}`)}
             variant="galaxy"
             cardVariant="glass"
         >
@@ -1594,7 +1594,7 @@ export const MultiStepForm: Story = {
         return (
             <DynamicForm
                 fields={basicFields}
-                onSubmit={(data: FormValues) => console.log('Form submitted:', data)}
+                onSubmit={(data: FormValues) => alert(`Form submitted: ${JSON.stringify(data)}`)}
                 variant="vibrant"
                 cardVariant="glass"
             >
@@ -1678,14 +1678,14 @@ export const MultiStepForm: Story = {
                                 Next
                             </Button>
                         ) : (
-                            <Button onClick={() => console.log('Complete')}>
+                            <Button onClick={() => alert("Complete")}>
                                 Complete
                             </Button>
                         )}
                     </div>
                 </DynamicNavigation>
                 <ThemeToggle />
-            </DynamicForm>
+            </DynamicForm >
         );
     },
 };
@@ -1695,7 +1695,7 @@ export const ConditionalLogicDemo: Story = {
     render: () => (
         <DynamicForm
             fields={complexConditionalFields}
-            onSubmit={(data: FormValues) => console.log('Form submitted:', data)}
+            onSubmit={(data: FormValues) => alert(`Form submitted: ${JSON.stringify(data)}`)}
             variant="vibrant"
             cardVariant="glass"
             animationIntensity="high"
@@ -1746,7 +1746,7 @@ export const AnimationIntensity: Story = {
 
                     <DynamicForm
                         fields={basicFields}
-                        onSubmit={(data: FormValues) => console.log('Form submitted:', data)}
+                        onSubmit={(data: FormValues) => alert(`Form submitted: ${JSON.stringify(data)}`)}
                         variant="default"
                         animationIntensity={intensity}
                     >
@@ -1775,7 +1775,7 @@ export const CompactView: Story = {
     render: () => (
         <DynamicForm
             fields={basicFields}
-            onSubmit={(data: FormValues) => console.log('Form submitted:', data)}
+            onSubmit={(data: FormValues) => alert(`Form submitted: ${JSON.stringify(data)}`)}
             variant="default"
             cardVariant="border"
         >
@@ -1858,7 +1858,7 @@ export const FormPresets: Story = {
 
                     <DynamicForm
                         fields={presets[preset].fields}
-                        onSubmit={(data: FormValues) => console.log('Form submitted:', data)}
+                        onSubmit={(data: FormValues) => alert(`Form submitted: ${JSON.stringify(data)}`)}
                         variant="default"
                         cardVariant="elevated"
                         animationIntensity="moderate"
@@ -1905,7 +1905,7 @@ export const FullFeaturedDemo: Story = {
         return (
             <DynamicForm
                 fields={allFields}
-                onSubmit={(data: FormValues) => console.log('Form submitted:', data)}
+                onSubmit={(data: FormValues) => alert(`Form submitted: ${JSON.stringify(data)}`)}
                 variant="galaxy"
                 cardVariant="glass"
                 animationIntensity="high"
@@ -2023,7 +2023,7 @@ export const FullFeaturedDemo: Story = {
                                 Next
                             </Button>
                         ) : (
-                            <Button onClick={() => console.log('Submitting...')}>
+                            <Button onClick={() => alert('Submitting...')}>
                                 Submit Form
                             </Button>
                         )}

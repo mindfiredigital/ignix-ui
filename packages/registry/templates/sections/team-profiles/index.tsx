@@ -75,6 +75,21 @@ const useTeam = () => {
    SOCIAL ICON COMPONENT
 ============================================ */
 
+/**
+ * Renders the appropriate social media icon based on platform name.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <SocialIcon platform="linkedin" className="w-5 h-5" />
+ * <SocialIcon platform="github" />
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {string} props.platform - Social platform name (linkedin, github, twitter, website, email)
+ * @param {string} [props.className] - Additional CSS classes for the icon
+ * @returns {JSX.Element} The corresponding social icon component
+ */
 export const SocialIcon: React.FC<{ platform: string; className?: string }> = ({
     platform,
     className
@@ -101,7 +116,30 @@ export const SocialIcon: React.FC<{ platform: string; className?: string }> = ({
    MEMBER CARD COMPONENTS (Compound)
 ============================================ */
 
-// Member Card Container
+/**
+ * Container component for individual team member cards.
+ * Handles animations, hover effects, and click interactions.
+ * Must be used within TeamProfiles component.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <MemberCard member={teamMember} onClick={() => console.log('card clicked')}>
+ *   <MemberPhoto src="/photo.jpg" />
+ *   <MemberContent>
+ *     <MemberName>John Doe</MemberName>
+ *     <MemberRole>Software Engineer</MemberRole>
+ *   </MemberContent>
+ * </MemberCard>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {TeamMember} props.member - Team member data object
+ * @param {React.ReactNode} [props.children] - Child components to render inside the card
+ * @param {string} [props.className] - Additional CSS classes
+ * @param {() => void} [props.onClick] - Optional click handler
+ * @returns {JSX.Element} Animated team member card
+ */
 export const MemberCard: React.FC<{
     member: TeamMember;
     children?: React.ReactNode;
@@ -192,7 +230,24 @@ export const MemberCard: React.FC<{
     );
 };
 
-// Member Photo
+/**
+ * Displays a team member's photo with fallback to initials if image fails to load.
+ * Includes hover zoom effect and lazy loading.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <MemberPhoto src="/team/john.jpg" alt="John Doe" />
+ * <MemberPhoto initials="JD" /> // Fallback with initials
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {string} [props.src] - Image source URL
+ * @param {string} [props.alt] - Alt text for the image
+ * @param {string} [props.initials] - Initials to display if image is not available
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Member photo with fallback
+ */
 export const MemberPhoto: React.FC<{
     src?: string;
     alt?: string;
@@ -228,7 +283,24 @@ export const MemberPhoto: React.FC<{
     );
 };
 
-// Member Content
+/**
+ * Content wrapper for team member card information.
+ * Provides consistent padding and layout structure.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <MemberContent>
+ *   <MemberName>John Doe</MemberName>
+ *   <MemberRole>Developer</MemberRole>
+ * </MemberContent>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Content to wrap
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Wrapped content with padding
+ */
 export const MemberContent: React.FC<{
     children: React.ReactNode;
     className?: string;
@@ -240,7 +312,20 @@ export const MemberContent: React.FC<{
     );
 };
 
-// Member Name
+/**
+ * Displays the team member's name with appropriate typography and theme styling.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <MemberName>John Doe</MemberName>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Member name text
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Styled member name
+ */
 export const MemberName: React.FC<{
     children: React.ReactNode;
     className?: string;
@@ -262,7 +347,20 @@ export const MemberName: React.FC<{
     );
 };
 
-// Member Role
+/**
+ * Displays the team member's job title or role.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <MemberRole>Senior Software Engineer</MemberRole>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Role text
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Styled member role
+ */
 export const MemberRole: React.FC<{
     children: React.ReactNode;
     className?: string;
@@ -283,7 +381,20 @@ export const MemberRole: React.FC<{
     );
 };
 
-// Member Department
+/**
+ * Displays the team member's department with an award icon.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <MemberDepartment>Engineering</MemberDepartment>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Department name
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Department with icon
+ */
 export const MemberDepartment: React.FC<{
     children: React.ReactNode;
     className?: string;
@@ -306,7 +417,20 @@ export const MemberDepartment: React.FC<{
     );
 };
 
-// Member Location
+/**
+ * Displays the team member's location with a map pin icon.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <MemberLocation>San Francisco, CA</MemberLocation>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Location text
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Location with icon
+ */
 export const MemberLocation: React.FC<{
     children: React.ReactNode;
     className?: string;
@@ -329,7 +453,24 @@ export const MemberLocation: React.FC<{
     );
 };
 
-// Member Bio
+/**
+ * Displays a truncated version of the team member's bio.
+ * Supports line clamping for consistent height.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <MemberBio lines={3}>
+ *   John has over 10 years of experience in software development...
+ * </MemberBio>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Bio text
+ * @param {string} [props.className] - Additional CSS classes
+ * @param {number} [props.lines=2] - Number of lines to display before truncating
+ * @returns {JSX.Element} Truncated bio
+ */
 export const MemberBio: React.FC<{
     children: React.ReactNode;
     className?: string;
@@ -351,7 +492,20 @@ export const MemberBio: React.FC<{
     );
 };
 
-// Member Join Date
+/**
+ * Displays the date when the team member joined the organization.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <MemberJoinDate>January 2020</MemberJoinDate>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Join date text
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Formatted join date
+ */
 export const MemberJoinDate: React.FC<{
     children: React.ReactNode;
     className?: string;
@@ -372,7 +526,25 @@ export const MemberJoinDate: React.FC<{
     );
 };
 
-// Member Expertise Tags
+/**
+ * Displays the team member's areas of expertise as tag-like chips.
+ * Supports limiting the number of displayed items with a "+X more" indicator.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <MemberExpertise 
+ *   items={["React", "TypeScript", "Node.js", "GraphQL"]} 
+ *   limit={3}
+ * />
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {string[]} props.items - Array of expertise/skill strings
+ * @param {number} [props.limit=3] - Maximum number of items to display
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element|null} Expertise tags or null if no items
+ */
 export const MemberExpertise: React.FC<{
     items: string[];
     limit?: number;
@@ -413,7 +585,25 @@ export const MemberExpertise: React.FC<{
     );
 };
 
-// Member Awards
+/**
+ * Displays the team member's awards and recognitions.
+ * Supports limiting the number of displayed items.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <MemberAwards 
+ *   items={["Employee of the Year 2023", "Innovation Award"]} 
+ *   limit={1}
+ * />
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {string[]} props.items - Array of award strings
+ * @param {number} [props.limit=1] - Maximum number of awards to display
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element|null} Awards section or null if no items
+ */
 export const MemberAwards: React.FC<{
     items: string[];
     limit?: number;
@@ -466,7 +656,30 @@ export const MemberAwards: React.FC<{
     );
 };
 
-// Member Social Links
+/**
+ * Displays social media links for a team member with clickable icons.
+ * Handles external link opening and optional click tracking.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <MemberSocialLinks 
+ *   links={[
+ *     { platform: 'linkedin', url: 'https://linkedin.com/in/johndoe' },
+ *     { platform: 'github', url: 'https://github.com/johndoe' }
+ *   ]}
+ *   memberId="123"
+ *   memberName="John Doe"
+ * />
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {SocialLink[]} props.links - Array of social link objects
+ * @param {string} [props.memberId] - Member ID for tracking purposes
+ * @param {string} [props.memberName] - Member name for tracking purposes
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element|null} Social links or null if no links
+ */
 export const MemberSocialLinks: React.FC<{
     links: SocialLink[];
     memberId?: string;
@@ -510,14 +723,30 @@ export const MemberSocialLinks: React.FC<{
     );
 };
 
-// Member Card Hover Overlay
+/**
+ * Hover overlay component for member cards that appears on hover.
+ * Can contain custom content or default "View Profile" button.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <MemberCardOverlay>
+ *   <Button variant="primary">Quick View</Button>
+ * </MemberCardOverlay>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} [props.children] - Custom overlay content
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Hover overlay
+ */
 export const MemberCardOverlay: React.FC<{
     children?: React.ReactNode;
     className?: string;
 }> = ({ children, className }) => {
     return (
         <div className={cn(
-            "absolute inset-0 bg-black/50 opacity-0  transition-opacity duration-300 flex items-center justify-center",
+            "absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center",
             className
         )}>
             {children || (
@@ -538,6 +767,33 @@ export const MemberCardOverlay: React.FC<{
    GRID COMPONENTS
 ============================================ */
 
+/**
+ * Responsive grid layout for organizing team member cards.
+ * Provides configurable columns for different screen sizes and consistent gap spacing.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <TeamGrid 
+ *   columns={{ mobile: 1, tablet: 2, desktop: 3, wide: 4 }}
+ *   gap="lg"
+ * >
+ *   <MemberCard member={member1} />
+ *   <MemberCard member={member2} />
+ * </TeamGrid>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Grid items (typically MemberCard components)
+ * @param {Object} [props.columns] - Column configuration for different breakpoints
+ * @param {number} [props.columns.mobile=1] - Columns on mobile devices
+ * @param {number} [props.columns.tablet] - Columns on tablets (sm breakpoint)
+ * @param {number} [props.columns.desktop] - Columns on desktops (lg breakpoint)
+ * @param {number} [props.columns.wide] - Columns on wide screens (xl breakpoint)
+ * @param {('sm'|'md'|'lg'|'xl')} [props.gap='md'] - Gap size between grid items
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Responsive grid layout
+ */
 export const TeamGrid: React.FC<{
     children: React.ReactNode;
     columns?: {
@@ -582,7 +838,7 @@ export const TeamGrid: React.FC<{
                     return React.cloneElement(child, {
                         ...child.props,
                         // Pass index for animation if needed
-                        'data-index': index
+                        ['data-index']: index
                     });
                 }
                 return child;
@@ -595,6 +851,32 @@ export const TeamGrid: React.FC<{
    HEADER COMPONENTS
 ============================================ */
 
+/**
+ * Header section for team profiles with title and subtitle support.
+ * Can accept custom children or use built-in title/subtitle props.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * // With children
+ * <TeamHeader>
+ *   <CustomHeading>Our Team</CustomHeading>
+ * </TeamHeader>
+ * 
+ * // With props
+ * <TeamHeader 
+ *   title="Meet Our Team" 
+ *   subtitle="Passionate experts dedicated to your success"
+ * />
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} [props.children] - Custom header content
+ * @param {string} [props.title] - Main heading text
+ * @param {string} [props.subtitle] - Subheading text
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Team header section
+ */
 export const TeamHeader: React.FC<{
     children?: React.ReactNode;
     title?: string;
@@ -636,6 +918,23 @@ export const TeamHeader: React.FC<{
     );
 };
 
+/**
+ * Footer section for team profiles that can contain additional content
+ * such as pagination, view all links, or load more buttons.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <TeamFooter>
+ *   <Button variant="outline">View All Team Members</Button>
+ * </TeamFooter>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Footer content
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Team footer section
+ */
 export const TeamFooter: React.FC<{
     children: React.ReactNode;
     className?: string;
@@ -651,6 +950,30 @@ export const TeamFooter: React.FC<{
    MODAL COMPONENTS
 ============================================ */
 
+/**
+ * Modal dialog for displaying detailed team member information.
+ * Features responsive layout with image and content sections.
+ * Includes backdrop click and close button functionality.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <TeamModal
+ *   isOpen={isModalOpen}
+ *   onClose={() => setIsModalOpen(false)}
+ *   member={selectedMember}
+ * >
+ *   <CustomModalContent />
+ * </TeamModal>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {boolean} props.isOpen - Controls modal visibility
+ * @param {() => void} props.onClose - Function to close the modal
+ * @param {TeamMember | null} props.member - Team member data to display
+ * @param {React.ReactNode} [props.children] - Custom modal content
+ * @returns {JSX.Element|null} Modal component or null if closed
+ */
 export const TeamModal: React.FC<{
     isOpen: boolean;
     onClose: () => void;
@@ -876,6 +1199,179 @@ export interface TeamProfilesProps {
     children: React.ReactNode;
 }
 
+/**
+ * TeamProfiles - A comprehensive and composable team profiles component system.
+ * 
+ * This component serves as the main wrapper for displaying team member information.
+ * It uses a compound component pattern where child components like MemberCard,
+ * MemberPhoto, MemberName, etc., must be used inside it. The system provides extensive
+ * customization options including themes, card variants, animations, and modal support.
+ * 
+ * Features:
+ * - Multiple card variants: default, minimal, elevated, bordered
+ * - Theme support: light/dark modes with forced theme capability
+ * - Configurable information display (bio, social links, department, etc.)
+ * - Modal support for detailed member profiles
+ * - Hover effects and animations
+ * - Responsive grid layout with TeamGrid component
+ * - Accessibility-focused with ARIA labels and semantic HTML
+ * - Compound component pattern for flexible composition
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * // Basic usage
+ * <TeamProfiles
+ *   variant="default"
+ *   cardVariant="elevated"
+ *   showBio={true}
+ *   showSocialLinks={true}
+ *   enableModal={true}
+ *   theme="light"
+ * >
+ *   <TeamHeader
+ *     title="Meet Our Team"
+ *     subtitle="Passionate experts dedicated to your success"
+ *   />
+ *   
+ *   <TeamGrid
+ *     columns={{ mobile: 1, tablet: 2, desktop: 3 }}
+ *     gap="lg"
+ *   >
+ *     {teamMembers.map((member) => (
+ *       <MemberCard key={member.id} member={member}>
+ *         <MemberPhoto src={member.photo} initials={getInitials(member.name)} />
+ *         <MemberContent>
+ *           <MemberName>{member.name}</MemberName>
+ *           <MemberRole>{member.role}</MemberRole>
+ *           {member.department && <MemberDepartment>{member.department}</MemberDepartment>}
+ *           {member.location && <MemberLocation>{member.location}</MemberLocation>}
+ *           {showBio && <MemberBio lines={2}>{member.bio}</MemberBio>}
+ *           {member.expertise && <MemberExpertise items={member.expertise} limit={3} />}
+ *           {showSocialLinks && member.socialLinks && (
+ *             <MemberSocialLinks
+ *               links={member.socialLinks}
+ *               memberId={member.id}
+ *               memberName={member.name}
+ *             />
+ *           )}
+ *         </MemberContent>
+ *         {enableModal && <MemberCardOverlay />}
+ *       </MemberCard>
+ *     ))}
+ *   </TeamGrid>
+ *   
+ *   <TeamFooter>
+ *     <Button variant="outline">View All Team Members</Button>
+ *   </TeamFooter>
+ * </TeamProfiles>
+ * 
+ * // Minimal variant with limited information
+ * <TeamProfiles
+ *   variant="light"
+ *   cardVariant="minimal"
+ *   showBio={false}
+ *   showSocialLinks={false}
+ *   enableModal={false}
+ *   enableHover={false}
+ * >
+ *   <TeamGrid columns={{ mobile: 2, tablet: 3, desktop: 4 }} gap="sm">
+ *     {teamMembers.map((member) => (
+ *       <MemberCard key={member.id} member={member}>
+ *         <MemberPhoto src={member.photo} />
+ *         <MemberContent>
+ *           <MemberName>{member.name}</MemberName>
+ *           <MemberRole>{member.role}</MemberRole>
+ *         </MemberContent>
+ *       </MemberCard>
+ *     ))}
+ *   </TeamGrid>
+ * </TeamProfiles>
+ * 
+ * // Dark theme with gradient background and modal support
+ * <TeamProfiles
+ *   variant="gradient"
+ *   cardVariant="bordered"
+ *   theme="dark"
+ *   backgroundType="gradient"
+ *   gradientFrom="#4F46E5"
+ *   gradientTo="#7C3AED"
+ *   enableModal={true}
+ *   onMemberClick={handleMemberClick}
+ *   onSocialClick={handleSocialClick}
+ * >
+ *   <TeamHeader
+ *     title="Our Leadership Team"
+ *     subtitle="Meet the people shaping our company's future"
+ *   />
+ *   
+ *   <TeamGrid columns={{ mobile: 1, tablet: 2, desktop: 2 }} gap="xl">
+ *     {leadershipTeam.map((leader) => (
+ *       <MemberCard key={leader.id} member={leader}>
+ *         <MemberPhoto src={leader.photo} />
+ *         <MemberContent>
+ *           <MemberName>{leader.name}</MemberName>
+ *           <MemberRole>{leader.role}</MemberRole>
+ *           <MemberDepartment>{leader.department}</MemberDepartment>
+ *           <MemberLocation>{leader.location}</MemberLocation>
+ *           <MemberBio lines={3}>{leader.bio}</MemberBio>
+ *           <MemberExpertise items={leader.expertise} limit={4} />
+ *           <MemberAwards items={leader.awards} limit={2} />
+ *           <MemberSocialLinks
+ *             links={leader.socialLinks}
+ *             memberId={leader.id}
+ *             memberName={leader.name}
+ *           />
+ *           <MemberJoinDate>{leader.joinDate}</MemberJoinDate>
+ *         </MemberContent>
+ *         <MemberCardOverlay />
+ *       </MemberCard>
+ *     ))}
+ *   </TeamGrid>
+ * </TeamProfiles>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {('default'|'primary'|'secondary'|'accent'|'muted'|'gradient'|'glass'|'dark'|'light')} [props.variant='default'] - Visual style variant for the section
+ * @param {('default'|'minimal'|'elevated'|'bordered')} [props.cardVariant='default'] - Visual style variant for member cards
+ * @param {boolean} [props.showBio=true] - Whether to display member bios
+ * @param {boolean} [props.showSocialLinks=true] - Whether to display social media links
+ * @param {boolean} [props.showDepartment=false] - Whether to display department information
+ * @param {boolean} [props.showLocation=false] - Whether to display location information
+ * @param {boolean} [props.showExpertise=false] - Whether to display expertise/skills
+ * @param {boolean} [props.showAwards=false] - Whether to display awards
+ * @param {boolean} [props.showJoinDate=false] - Whether to display join date
+ * @param {boolean} [props.enableModal=false] - Whether to enable modal for detailed profiles
+ * @param {boolean} [props.enableHover=true] - Whether to enable hover effects on cards
+ * @param {('light'|'dark')} [props.theme] - Color theme (auto-detected from variant if not provided)
+ * @param {boolean} [props.forceTheme=false] - Force theme application regardless of parent
+ * @param {('solid'|'gradient'|'image')} [props.backgroundType='solid'] - Background type
+ * @param {string} [props.backgroundColor] - Custom background color (hex/rgb/hsl)
+ * @param {string} [props.gradientFrom] - Start color for gradient backgrounds
+ * @param {string} [props.gradientTo] - End color for gradient backgrounds
+ * @param {string} [props.backgroundImage] - URL for image backgrounds
+ * @param {boolean} [props.animate=true] - Enable/disable animations
+ * @param {number} [props.animationDelay=0] - Delay before animation starts (seconds)
+ * @param {('fade'|'slide'|'scale'|'stagger')} [props.animationType='fade'] - Animation type
+ * @param {('sm'|'md'|'lg'|'xl'|'2xl'|'none')} [props.padding='lg'] - Padding size
+ * @param {(member: TeamMember) => void} [props.onMemberClick] - Callback when a member card is clicked
+ * @param {(member: TeamMember, platform: string, url: string) => void} [props.onSocialClick] - Callback when a social link is clicked
+ * @param {string} [props.ariaLabel='Team profiles section'] - ARIA label for accessibility
+ * @param {React.ReactNode} props.children - Child components (must be Team components)
+ * @returns {JSX.Element} Rendered team profiles section with all child components
+ * 
+ * @see {@link MemberCard} - For individual team member cards
+ * @see {@link MemberPhoto} - For member photos with fallback
+ * @see {@link MemberName} - For member names
+ * @see {@link MemberRole} - For member roles
+ * @see {@link MemberBio} - For truncated bios
+ * @see {@link MemberSocialLinks} - For social media links
+ * @see {@link MemberExpertise} - For expertise tags
+ * @see {@link TeamGrid} - For responsive grid layout
+ * @see {@link TeamHeader} - For section header
+ * @see {@link TeamFooter} - For section footer
+ * @see {@link TeamModal} - For detailed profile modal
+ */
 export const TeamProfiles: React.FC<TeamProfilesProps> = ({
     // Layout & Variants
     variant = "default",

@@ -292,46 +292,6 @@ const evaluateCondition = (condition: Condition, allValues: FormValues): boolean
 };
 
 /* ============================================
-   INPUT COMPONENT
-============================================ */
-
-// interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-//     icon?: React.ElementType;
-//     error?: string;
-//     variant?: string;
-// }
-
-// const Input: React.FC<InputProps> = ({
-//     icon: Icon,
-//     error,
-//     className,
-//     variant = 'default',
-//     ...props
-// }) => {
-//     return (
-//         <div className="relative">
-//             {Icon && (
-//                 <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-//                     <Icon className="w-4 h-4" />
-//                 </div>
-//             )}
-//             <input
-//                 className={cn(
-//                     "w-full px-4 py-3 rounded-lg transition-all duration-300",
-//                     "bg-background border-2",
-//                     Icon && "pl-10",
-//                     error ? "border-destructive/50 focus:border-destructive" : "border-border focus:border-primary",
-//                     "focus:outline-none focus:ring-4 focus:ring-primary/20",
-//                     "text-foreground placeholder:text-muted-foreground",
-//                     className
-//                 )}
-//                 {...props}
-//             />
-//         </div>
-//     );
-// };
-
-/* ============================================
    MAIN PROVIDER COMPONENT
 ============================================ */
 
