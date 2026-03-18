@@ -34,7 +34,7 @@ const sidebarVariants = cva("absolute h-full overflow-hidden transition-all", {
       default: "bg-background text-foreground [&_a]:!text-foreground [&_button]:!text-foreground [&_span]:!text-foreground",
       dark: "bg-black text-white [&_a]:!text-foreground [&_button]:!text-white [&_span]:!text-white",
       light: "bg-white text-gray-900 shadow-[4px_0_16px_rgba(0,0,0,0.08)] [&_a]:!text-gray-900 [&_button]:!text-gray-900 [&_span]:!text-gray-900",
-      glass: "relative bg-muted/25 backdrop-blur-3xl backdrop-saturate-200 backdrop-brightness-90 border border-white/30 shadow-[inset_0_1.5px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(0,0,0,0.15),0_8px_32px_rgba(0,0,0,0.25)] [&_a]:!text-foreground [&_button]:!text-foreground [&_span]:!text-white",
+      glass: "bg-muted/25 backdrop-blur-3xl backdrop-saturate-200 backdrop-brightness-90 border border-white/30 shadow-[inset_0_1.5px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(0,0,0,0.15),0_8px_32px_rgba(0,0,0,0.25)] [&_a]:!text-foreground [&_button]:!text-foreground [&_span]:!text-white",
       gradient: "bg-gradient-to-b from-gray-800 to-gray-500 [&_a]:!text-white [&_button]:!text-white [&_span]:!text-white",
     },
 

@@ -13,7 +13,7 @@ import {
   PinRightIcon,
 } from "@radix-ui/react-icons";
  
-import Sidebar, { SidebarProvider, useSidebar } from "./index";
+import { Sidebar, SidebarProvider, useSidebar } from "./index";
  
 // Shared link sets
 const defaultLinks = [
