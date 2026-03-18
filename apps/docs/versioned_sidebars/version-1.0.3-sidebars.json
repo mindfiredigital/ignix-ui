@@ -3,19 +3,11 @@
     {
       "type": "category",
       "label": "Getting Started",
-      "link": {
-        "type": "doc",
-        "id": "introduction"
-      },
       "items": ["introduction", "installation", "mcp"]
     },
     {
       "type": "category",
       "label": "Theming",
-      "link": {
-        "type": "doc",
-        "id": "theming/quick-start"
-      },
       "items": [
         {
           "type": "doc",
@@ -42,10 +34,6 @@
     {
       "type": "category",
       "label": "Components",
-      "link": {
-        "type": "doc",
-        "id": "components/all-components/index"
-      },
       "items": [
         {
         "type": "doc",
@@ -77,6 +65,7 @@
             "components/avatar",
             "components/badge",
             "components/card",
+            "components/carousel",
             "components/list",
             "components/advanced-table",
             "components/tooltip",
@@ -110,10 +99,6 @@
     {
       "type": "category",
       "label": "Layouts",
-      "link": {
-        "type": "doc",
-        "id": "components/all-layouts/index"
-      },
       "items": [
         {
         "type": "doc",
@@ -194,10 +179,6 @@
     {
       "type": "category",
       "label": "Templates",
-      "link": {
-        "type": "doc",
-        "id": "components/all-templates/index"
-      },
       "items":[
         {
           "type": "doc",
