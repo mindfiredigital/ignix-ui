@@ -17,10 +17,10 @@ const SidebarDemo = () => {
   const codeString = `
 <Sidebar
   links={[
-    { label: 'Home', href: '#', icon: Home },
-    { label: 'Profile', href: '#', icon: User },
-    { label: 'Settings', href: '#', icon: Settings },
-    { label: 'Help', href: '#', icon: HelpCircle },
+    { label: 'Home', href: '#', icon: HomeIcon },
+    { label: 'Profile', href: '#', icon: PersonIcon },
+    { label: 'Settings', href: '#', icon: GearIcon },
+    { label: 'Help', href: '#', icon: QuestionMarkCircledIcon },
   ]}
   brandName="Demo App"
   variant="${variant}"
