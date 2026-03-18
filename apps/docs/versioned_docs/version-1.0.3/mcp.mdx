@@ -1,219 +1,245 @@
 ---
-description: Use the Ignix MCP server to browse, search, and install
-  Ignix components, themes, and templates directly from AI assistants.
-title: MCP Server
+
+title: Ignix MCP Server
+
+description: Use the Ignix MCP server to browse, search, and install components, themes, and templates from registries.
+
 ---
 
-# Ignix MCP Server
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-The **Ignix MCP Server** allows AI assistants to interact with Ignix
-registries.\
-You can browse available components, search for specific ones, and
-install them directly into your project using natural language.
+The Ignix MCP Server allows AI assistants to interact with Ignix registries. You can browse available components, search for specific ones, and install them directly into your project using natural language.
 
-Example prompts:
+---
 
--   Build a landing page using Ignix components
--   Find a login form component and install it
--   Install the dashboard template into my project
+## Quick Start
 
-Registries are configured in your project's `ignix.config.json` file.
+Select your MCP client and follow the instructions to configure the ignix MCP server.
 
-``` json
-{
-  "registries": {
-    "@ignix": "https://registry.ignix.dev/{name}.json"
-  }
-}
-```
+<Tabs defaultValue="Cursor">
+  <TabItem value="Cursor">
+      **Run the following command** in your project:
 
-------------------------------------------------------------------------
 
-# Quick Start
+      ```bash
+      npx ignix mcp init --client cursor
+      ```
 
-## Cursor
+      Open **Cursor Settings → MCP**, enable the Ignix server, and restart Cursor.
 
-Run:
+      Try the following prompts:
 
-``` bash
-npx ignix mcp init --client cursor
-```
+      * Show me all available Ignix components
+      * Add button and card components
+      * Create a landing page using Ignix
+  </TabItem>
+  <TabItem value="VS Code">
+      **Run the following command** in your project:
 
-Then enable the MCP server in **Cursor Settings** and restart Cursor.
+      ```bash
+      npx ignix mcp init --client vscode
+      ```
 
-Example prompts:
+      Open `.vscode/mcp.json` and click **Start** next to Ignix.
 
--   Show me all available Ignix components
--   Add the button and card components to my project
--   Create a landing page using Ignix components
+      Try with GitHub Copilot:
 
-------------------------------------------------------------------------
+      * Show all Ignix components
+      * Install a hero section
+      * Build a contact form
+  </TabItem>
+  <TabItem value="Claude Code">
+      **Run the following command** in your project:
 
-# What is MCP?
+      ```bash
+      npx ignix mcp init --client claude
+      ```
 
-[Model Context Protocol (MCP)](https://modelcontextprotocol.io) is an
-open protocol that enables AI assistants to securely connect to external
-tools and data sources.
+      Restart Claude Code and run `/mcp`.
 
-With the Ignix MCP server, AI assistants can:
+      Try:
 
--   Browse components
--   Search components
--   Install components using natural language
--   Install themes
--   Install templates
+      * List all components
+      * Add login form
+      * Build dashboard layout
+  </TabItem>
+  <TabItem value="Codex">
 
-------------------------------------------------------------------------
+      ```bash
+      npx ignix mcp init --client codex
+      ```
 
-# How It Works
+      Then manually add:
 
-The MCP server acts as a bridge between:
+      ```toml
+      [mcp_servers.ignix]
+      command = "npx"
+      args = ["ignix", "mcp"]
+      ```
 
--   AI Assistant
--   Ignix CLI
--   Ignix Registry
--   Your Project
+      Restart Codex and test prompts.
+  </TabItem>
+</Tabs>
 
-Workflow:
+---
 
-1.  **Registry Connection**\
-    MCP connects to Ignix registries.
+## What is MCP?
 
-2.  **Natural Language Input**\
-    User writes a prompt such as:
+[Model Context Protocol (MCP)](https://modelcontextprotocol.io) is an open protocol that enables AI assistants to securely connect to external tools and data sources.
 
-        Build a restaurant landing page
+With Ignix MCP, your AI assistant can:
 
-3.  **AI Processing**\
-    The assistant converts the request into MCP tool calls.
+* **Browse Components** — List all available UI components
+* **Search Components** — Find components across registries
+* **Install via Natural Language** — "add login form"
+* **Install Themes & Templates**
+* **Work with Multiple Registries**
 
-4.  **CLI Execution**\
-    Ignix CLI executes the command.
 
-5.  **Component Installation**\
-    Components are downloaded and installed in the project.
+---
 
-------------------------------------------------------------------------
+## How It Works
 
-# Available MCP Tools
+The MCP server acts as a bridge between your AI assistant, Ignix CLI, and registries.
+
+1. **Registry Connection** → Connects to configured registries
+2. **Natural Language Input** → User prompt
+3. **AI Processing** → Converts prompt to tool calls
+4. **CLI Execution** → Ignix CLI runs commands
+5. **Installation** → Components added to project
+
+---
+
+## Available MCP Tools
 
 ### Project Tools
 
-**get_version**\
-Returns the Ignix CLI and MCP version.
-
-**check_compatibility**\
-Checks if the environment supports Ignix.
-
-**init_project**\
-Initializes an Ignix project configuration.
-
-------------------------------------------------------------------------
-
-### Registry Tools
-
-**list_templates**\
-Lists available templates.
-
-**list_themes**\
-Lists available themes.
-
-**install_theme**\
-Installs a theme into the project.
-
-------------------------------------------------------------------------
+* **get_version** → Returns CLI + MCP version
+* **check_compatibility** → Validates environment
+* **init_project** → Initializes project
+* **create_react_project** → Creates a new React + TypeScript + Tailwind project (used in empty directories)
 
 ### Component Tools
 
-**list_components**\
-Lists all UI components.
+* **list_components** → List all available components (source of truth)
+* **search_components** → Search components by keyword (recommended before install)
+* **install_component** → Install components into your project
 
-**search_components**\
-Searches components by name or metadata.
+### Template Tools
 
-**install_component**\
-Installs a component into the project.
+* **list_templates** → List all available templates (complete pages/layouts)
+* **search_templates** → Search templates by keyword
+* **install_template** → Install templates into your project
 
-------------------------------------------------------------------------
+### Theme Tools
+* **list_themes** → List all available themes
+* **install_theme** → Install themes into your project
 
-# Supported Registries
 
-Ignix MCP supports:
+---
 
--   Ignix official registry
--   Third-party registries
--   Private company registries
--   Namespaced registries
+## Configuration
 
-Example:
+You can manually configure MCP servers depending on your client.
 
-``` json
+### Cursor
+
+```json title=".cursor/mcp.json"
 {
-  "registries": {
-    "@ignix": "https://registry.ignix.dev/{name}.json",
-    "@internal": "https://registry.company.com/{name}.json"
+  "mcpServers": {
+    "ignix": {
+      "command": "ignix",
+      "args": ["mcp"]
+    }
   }
 }
 ```
 
-------------------------------------------------------------------------
+### VS Code
 
-# Example Prompts
+```json title=".vscode/mcp.json"
+{
+  "servers": {
+    "ignix": {
+      "command": "ignix",
+      "args": ["mcp"]
+    }
+  }
+}
+```
 
-### Browse components
+### Claude Code
 
--   Show me all Ignix components
--   List available UI components
+```json title=".mcp.json"
+{
+  "mcpServers": {
+    "ignix": {
+      "command": "ignix",
+      "args": ["mcp"]
+    }
+  }
+}
+```
 
-### Search components
 
--   Find a login form component
--   Search for navbar component
+---
 
-### Install components
+## Example Prompts
 
--   Add button and card components
--   Install hero section
+### Browse & Search
 
-### Build pages
+* Show me all Ignix components
+* Find login form
 
--   Create a landing page
--   Build a dashboard layout
--   Generate a restaurant landing page
+### Install
 
-------------------------------------------------------------------------
+* Add button component
+* Install hero section
+* Create dashboard layout
 
-# Troubleshooting
+### Namespaces
 
-## MCP Not Responding
+* Install @internal/auth-form
+* Show components from @ignix
+* Build landing page using hero + features
 
-1.  Verify MCP configuration
-2.  Restart the MCP client
-3.  Ensure Ignix CLI is installed
-4.  Check network access
+---
 
-## Component Installation Issues
+## Troubleshooting
 
-1.  Verify project initialization
-2.  Check registry configuration
-3.  Confirm file permissions
+### MCP Not Responding
 
-## Empty Project Directory Issue
+1. Check MCP configuration
+2. Restart MCP client
+3. Ensure Ignix CLI is installed
+4. Check network access
 
-If MCP tools fail in an empty directory:
 
-1.  First create a React project
+### Registry Issues
 
-``` bash
-npx create-react-app my-app
+1. Verify `ignix.config.json`
+2. Check registry URL
+
+### Installation Failures
+
+1. Ensure project is initialized
+2. Check directory structure
+3. Verify permissions
+4. Install dependencies
+
+### Empty Project Issue
+
+If MCP fails in an empty directory:
+
+```bash
+npm create vite@latest .
 ```
 
 or
 
-``` bash
-npm create vite@latest
+```bash
+npx create-react-app my-app
 ```
 
-2.  Then run Ignix MCP prompts.
-
-Ignix MCP requires an existing project structure.
+Then retry MCP commands.
