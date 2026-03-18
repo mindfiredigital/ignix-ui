@@ -6,10 +6,10 @@ import {
   GearIcon,
   PersonIcon,
   DoubleArrowLeftIcon,
+  HomeIcon
 } from "@radix-ui/react-icons";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../utils/cn";
-import Home from '@site/src/pages';
 
 interface LinkItem {
   label: string;
@@ -211,7 +211,7 @@ export default function SidebarDemo() {
     <SidebarProvider>
       <Sidebar
         links={[
-          { label: 'Home', href: '#', icon: Home },
+          { label: 'Home', href: '#', icon: HomeIcon },
           { label: 'Profile', href: '#', icon: PersonIcon },
           { label: 'Settings', href: '#', icon: GearIcon },
           { label: 'Help', href: '#', icon: QuestionMarkCircledIcon },
