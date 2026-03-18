@@ -23,61 +23,65 @@ export class TemplateService {
     this.componentService.setSilent?.(value);
   }
 
-  private async safeWriteFile(filePath: string, content: string) {
-    if (await fs.pathExists(filePath)) {
-      if (!this.silent) {
-        logger.warn(`Skipping existing file (template): ${filePath}`);
-      }
-      return;
-    }
-    await fs.writeFile(filePath, content);
-  }
-
   public async install(name: string): Promise<void> {
-    const noop = (): void => {
-      return;
-    };
+    let spinner: ReturnType<typeof ora> | null = null;
 
-    const spinner = this.silent
-      ? { start: noop, succeed: noop, fail: noop, text: '' }
-      : ora(`Installing template layout: ${name}...`).start();
+    if (!this.silent) {
+      spinner = ora(`Installing template: ${name}...`).start();
+    }
+
+    logger.info(`[Template] Starting install: ${name}`);
 
     try {
       const config = await this.config;
 
-      // IMPORTANT: template uses template registry
       const templateConfig = await this.registryService.getTemplateConfig(name);
 
       if (!templateConfig) {
         throw new Error(`Template '${name}' not found.`);
       }
 
-      // 1️⃣ Install dependencies
+      logger.info('[Template] Template config loaded');
+
+      //--------------------------------------------------
+      // Dependencies
+      //--------------------------------------------------
       if (templateConfig.dependencies?.length) {
-        if (!this.silent) spinner.text = `Installing dependencies...`;
+        spinner && (spinner.text = 'Installing dependencies...');
+        logger.info('[Template] Installing dependencies');
+
         await this.dependencyService.install(templateConfig.dependencies, false, this.silent);
       }
 
-      // 2️⃣ Install internal components
+      //--------------------------------------------------
+      // Internal Components
+      //--------------------------------------------------
       if (templateConfig.componentDependencies?.length) {
-        if (!this.silent) spinner.text = `Installing internal components...`;
+        spinner && (spinner.text = 'Installing internal components...');
+        logger.info('[Template] Installing internal components');
 
         for (const dep of templateConfig.componentDependencies) {
+          logger.info(`[Template] Installing component dependency: ${dep}`);
           await this.componentService.install(dep);
         }
       }
 
-      // 3️⃣ Download files
-      if (!this.silent) spinner.text = `Downloading template files...`;
+      //--------------------------------------------------
+      // Files
+      //--------------------------------------------------
+      spinner && (spinner.text = 'Downloading template files...');
 
       const templateDir = path.resolve(config.templateDir, name.toLowerCase());
       await fs.ensureDir(templateDir);
 
-      const baseUrl = config.registryUrl.substring(0, config.registryUrl.lastIndexOf('/'));
+      const baseUrl = config.registryUrl.replace('/registry.json', '');
+      logger.info(`[Template] Base URL: ${baseUrl}`);
 
       for (const fileKey in templateConfig.files) {
         const fileInfo = templateConfig.files[fileKey];
-        const fileUrl = `${baseUrl}/${fileInfo.path}`;
+
+        const fileUrl = new URL(fileInfo.path, baseUrl + '/').toString();
+        logger.info(`[Template] Downloading: ${fileUrl}`);
 
         const { data: content } = await axios.get(fileUrl, {
           responseType: 'text',
@@ -86,20 +90,33 @@ export class TemplateService {
         const fileName = path.basename(fileInfo.path);
         const filePath = path.join(templateDir, fileName);
 
-        await this.safeWriteFile(filePath, content);
+        await fs.writeFile(filePath, content);
+
+        logger.info(`[Template] Saved: ${filePath}`);
       }
 
-      if (!this.silent) {
-        spinner.succeed(chalk.green(`Template layout installed: ${chalk.cyan(name)}`));
-        logger.info(`Template saved at: ${chalk.yellow(templateDir)}`);
-      }
+      spinner?.succeed(chalk.green(`Template installed: ${name}`));
+      logger.info(`[Template] Install complete: ${name}`);
     } catch (err) {
-      if (!this.silent) {
-        spinner.fail(`Failed to install template: ${name}`);
-        if (err instanceof Error) logger.error(err.message);
+      spinner?.fail(`Failed to install template: ${name}`);
+
+      logger.error('[Template] Install failed');
+
+      if (axios.isAxiosError(err)) {
+        logger.error(`[Axios] ${err.message}`);
+
+        if (err.response) {
+          logger.error(`Status: ${err.response.status}`);
+          logger.error(`URL: ${err.config?.url}`);
+        } else if (err.request) {
+          logger.error('No response received from server');
+        }
+      } else if (err instanceof Error) {
+        logger.error(`Reason: ${err.message}`);
+      } else {
+        logger.error(`Reason: ${String(err)}`);
       }
 
-      // 🔥 DO NOT exit here
       throw err;
     }
   }
