@@ -50,7 +50,7 @@ const withSidebarProvider =
  
 // Meta
 const meta: Meta<typeof Sidebar> = {
-  title: "UI/Sidebar",
+  title: "Navigation/Sidebar",
   component: Sidebar,
   tags: ["autodocs"],
   decorators: [withSidebarProvider()],
