@@ -99,6 +99,8 @@ const BillingPageDemo = () => {
   ];
 
   const codeString = `
+    import { BillingPage } from '@ignix-ui/billingpage';
+
     const AVAILABLE_PAYMENT_METHODS = [
       {
         id: "visa",

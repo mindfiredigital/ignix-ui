@@ -14,6 +14,8 @@ const TwoFactorAuthSetupPageDemo = () => {
   const [issuer, setIssuer] = useState('Your App');
 
   const codeString = `
+    import TwoFactorAuthSetupPage from '@ignix-ui/twofactorauthsetup';
+
     <TwoFactorAuthSetupPage
       secretKey="${secretKey}"
       accountName="${accountName}"

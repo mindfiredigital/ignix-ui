@@ -59,7 +59,10 @@ const ThreeColumnSidebarLayoutDemo = () => {
 
   const year = new Date().getFullYear();
 
-  const codeString = `<ThreeColumnSidebarLayout
+  const codeString = `
+import { ThreeColumnSidebarLayout } from '@ignix-ui/threecolumnlayout';
+
+  <ThreeColumnSidebarLayout
   header={
     <div className="flex items-center justify-between w-full">
       <div className="flex items-center gap-3">

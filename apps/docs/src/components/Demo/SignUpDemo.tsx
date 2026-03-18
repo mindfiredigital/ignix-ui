@@ -24,6 +24,8 @@ const CenteredDarkDemo = () => {
     };
 
     const codeString = `
+import { SignUp } from '@ignix-ui/signup';
+
 const handleSubmit = async (data) => {
     console.log('Registration data:', data);
     // Your registration logic here
@@ -164,7 +166,10 @@ const SplitDarkDemo = () => {
         setIsLoading(false);
     };
 
-    const codeString = `<SignUp
+    const codeString = `
+import { SignUp } from '@ignix-ui/signup';
+
+<SignUp
   type="split"
   variant="dark"
   companyName="SecureApp"
@@ -462,7 +467,10 @@ const CompleteRegistrationDemo = () => {
                 <TabItem value="code" label="Code">
                     <div className="mt-4">
                         <CodeBlock language="tsx" className="text-sm">
-                            {`<SignUp
+                            {`
+import { SignUp } from '@ignix-ui/signup';
+
+<SignUp
   type="centered"
   variant="modern"
   companyName="SecurePortal"
