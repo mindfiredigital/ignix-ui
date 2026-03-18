@@ -4,67 +4,33 @@ import VariantSelector from "./VariantSelector";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 import CodeBlock from "@theme/CodeBlock";
-import { RadioGroup } from "../UI/radio";
+import { RadioGroup } from "@site/src/components/UI/radio";
 
-const radioVariants = [
-  { value: "default", label: "Default" },
-  { value: "primary", label: "Primary" },
-  { value: "success", label: "Success" },
-  { value: "warning", label: "Warning" },
-  { value: "danger", label: "Danger" },
-  { value: "outline", label: "Outline" },
-  { value: "subtle", label: "Subtle" },
-  { value: "glass", label: "Glass" },
-  { value: "neon", label: "Neon" },
-];
+const sizes = ["xs", "sm", "md", "lg", "xl"] as const;
+const animations = ["bounce", "scale", "pulse", "glow", "shake", "flip", "nina"] as const;
+const variants = ["default", "primary", "success", "warning", "danger", "outline", "neon"] as const;
+const labelPositions = ["left", "right"] as const 
+const checkedVariants = ["default", "classic", "surface"] as const
 
-type RadioAnimation =
-  | "bounce"
-  | "scale"
-  | "pulse"
-  | "glow"
-  | "shake"
-  | "flip"
-  | "nina";
-
-const radioAnimations: {
-  value: RadioAnimation;
-  label: string;
-}[] = [
-  { value: "bounce", label: "Bounce" },
-  { value: "scale", label: "Scale" },
-  { value: "pulse", label: "Pulse" },
-  { value: "glow", label: "Glow" },
-  { value: "shake", label: "Shake" },
-  { value: "flip", label: "Flip" },
-  { value: "nina", label: "Nina" },
-];
-
-const radioSizes = [
-  { value: "xs", label: "Extra Small" },
-  { value: "sm", label: "Small" },
-  { value: "md", label: "Medium" },
-  { value: "lg", label: "Large" },
-  { value: "xl", label: "Extra Large" },
-];
-
-const labelPositions = ["left", "right"]
-
-const checkedVariants = ["default", "classic", "surface"]
-
+type RadioSizes = typeof sizes[number];
+type RadioAnimations = typeof animations[number];
+type RadioVariants = typeof variants[number];
+type RadioPositions = typeof labelPositions[number];
+type RadioCheckedVariant = typeof checkedVariants[number];
+ 
 const options = [
   { value: "one", label: "Option One" },
   { value: "two", label: "Option Two" },
 ];
 
 const RadioGroupDemo = () => {
-  const [variant, setVariant] = useState("default");
-  const [size, setSize] = useState("md");
-  const [animation, setAnimation] = useState("bounce");
-  const [labelPosition, setLabelPosition] = useState("right");
-  const [checkedVariant, setCheckedVariant] = useState("surface");
-  const [value, setValue] = useState("one");
-  const [disabled, setDisabled] = React.useState(false);
+  const [variant, setVariant] = useState<RadioVariants>("default");
+  const [size, setSize] = useState<RadioSizes>("md");
+  const [animation, setAnimation] = useState<RadioAnimations>("bounce");
+  const [labelPosition, setLabelPosition] = useState<RadioPositions>("right");
+  const [checkedVariant, setCheckedVariant] = useState<RadioCheckedVariant>("surface");
+  const [value, setValue] = useState<string>("one");
+  const [disabled, setDisabled] = useState<boolean>(false);
 
   const codeString = `
   const options = [
@@ -91,44 +57,44 @@ const RadioGroupDemo = () => {
       <div className="flex flex-wrap gap-4 justify-start sm:justify-end">
         <div className="space-y-2">
           <VariantSelector
-            variants={radioVariants.map((v) => v.value)}
+            variants={[...variants]}
             selectedVariant={variant}
-            onSelectVariant={setVariant}
+            onSelectVariant={(v) => setVariant(v as RadioVariants)}
           />
         </div>
 
         <div className="space-y-2">
           <VariantSelector
-            variants={radioSizes.map((s) => s.value)}
+            variants={[...sizes]}
             selectedVariant={size}
-            onSelectVariant={setSize}
+            onSelectVariant={(v) => setSize(v as RadioSizes)}
             type="Size"
           />
         </div>
 
          <div className="space-y-2">
           <VariantSelector
-            variants={checkedVariants}
+            variants={[...checkedVariants]}
             selectedVariant={checkedVariant}
-            onSelectVariant={setCheckedVariant}
+            onSelectVariant={(v) => setCheckedVariant(v as RadioCheckedVariant)}
             type="Checked Variant"
           />
         </div>
         
         <div className="space-y-2">
           <VariantSelector
-            variants={radioAnimations.map((a) => a.value)}
+            variants={[...animations]}
             selectedVariant={animation}
-            onSelectVariant={setAnimation}
+            onSelectVariant={(v) => setAnimation(v as RadioAnimations)}
             type="Animation"
           />
         </div>
 
         <div className="space-y-2">
           <VariantSelector
-            variants={labelPositions}
+            variants={[...labelPositions]}
             selectedVariant={labelPosition}
-            onSelectVariant={setLabelPosition}
+            onSelectVariant={(v) => setLabelPosition(v as RadioPositions)}
             type="Label Position"
           />
         </div>
@@ -147,7 +113,7 @@ const RadioGroupDemo = () => {
       {/* Demo */}
       <Tabs>
         <TabItem value="preview" label="Preview">
-          <div className="p-6 border rounded-lg mt-4">
+          <div className="p-6 border border-gray-300 rounded-lg mt-4">
             <div className="flex flex-col gap-6 items-center">
               {/* Basic RadioGroup */}
               <div className="space-y-4">
@@ -156,11 +122,11 @@ const RadioGroupDemo = () => {
                     options={options}
                     value={value}
                     onChange={setValue}
-                    labelPosition={labelPosition as any}
-                    size={size as any}
-                    checkedVariant={checkedVariant as any}
-                    variant={variant as any}
-                    animationVariant={animation as any}
+                    labelPosition={labelPosition}
+                    size={size}
+                    checkedVariant={checkedVariant}
+                    variant={variant}
+                    animationVariant={animation}
                     disabled={disabled}
                   />
               </div>
@@ -185,24 +151,22 @@ const RadioGroupDemo = () => {
 // // Group RadioGroup Demo
 const RadioGroupGroupDemo = () => {
   return (
-    <div className="space-y-6">
-      <h3 className="text-lg font-bold">Sizes Variants</h3>
-      <p className="text-lg font-semibold">Use the <span className="text-red-500">size</span> prop to control the radio button size.</p>
-      <div className="p-6 border rounded-lg">
+    <div className="space-y-2">
+      <div className="p-6 border border-gray-300 rounded-lg">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {radioSizes.map((animation) => (
+          {sizes.map((size) => (
             <div
-              key={animation.value}
+              key={size}
               className="flex flex-col items-center gap-3 cursor-pointer"
             >
               <span className="text-sm font-medium">
-                {animation.label}
+                {size.toUpperCase()}
               </span>
 
               <RadioGroup
                 options={[{ value: "demo", label: "" }]}
                 value="demo"
-                size={animation.value as any}
+                size={size}
               />
             </div>
           ))}
@@ -224,27 +188,25 @@ const RadioGroupAnimationDemo = () => {
   };
 
   return (
-    <div className="space-y-6 mt-4">
-      <h3 className="text-lg font-semibold">Animation Variants</h3>
-      <p className="text-lg font-semibold">Use the <span className="text-red-500">animationVariant</span> prop to control the radio button animation.</p>
-      <div className="p-6 border rounded-lg">
+    <div className="space-y-6">
+      <div className="p-6 border border-gray-300 rounded-lg">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {radioAnimations.map((animation) => (
+          {animations.map((animation) => (
             <div
-              key={animation.value}
+              key={animation}
               className="flex flex-col items-center gap-3 cursor-pointer"
-              onClick={() => replay(animation.value)}
+              onClick={() => replay(animation)}
             >
               <span className="text-sm font-medium">
-                {animation.label}
+                {animation.toUpperCase()}
               </span>
 
               <RadioGroup
-                key={`${animation.value}-${ticks[animation.value] ?? 0}`}
+                key={`${animation}-${ticks[animation] ?? 0}`}
                 options={[{ value: "demo", label: "" }]}
                 value="demo"
                 size="lg"
-                animationVariant={animation.value}
+                animationVariant={animation}
               />
             </div>
           ))}
