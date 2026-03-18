@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import '@testing-library/jest-dom';
 
-import Sidebar, { SidebarProvider, useSidebar } from '.';
+import { Sidebar, SidebarProvider, useSidebar } from './index';
 vi.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...props }: any) =>
@@ -264,7 +264,7 @@ describe('Sidebar variant styles', () => {
     { variant: 'default' as const, expectedClass: 'bg-background' },
     { variant: 'dark' as const, expectedClass: 'bg-black' },
     { variant: 'light' as const, expectedClass: 'bg-white' },
-    { variant: 'glass' as const, expectedClass: 'glass-sidebar' },
+    { variant: 'glass' as const, expectedClass: 'backdrop-blur-3xl' },
     { variant: 'gradient' as const, expectedClass: 'from-gray-800' },
   ];
 
