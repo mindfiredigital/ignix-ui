@@ -122,13 +122,14 @@ export const Light: Story = {
 export const Glass: Story = {
   decorators: [
     (Story) => (
-      <div>
+      <div className="relative w-full h-[500px] overflow-hidden rounded-lg bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900">
         <SidebarProvider>
           <Story />
         </SidebarProvider>
       </div>
     ),
   ],
+  parameters: { decorators: { disable: true } },
   args: {
     links: defaultLinks,
     brandName: "Glass UI",

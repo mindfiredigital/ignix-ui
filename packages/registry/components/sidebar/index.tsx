@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
 import { motion } from "framer-motion";
-import {HamburgerMenuIcon, Cross1Icon} from "@radix-ui/react-icons";
+import {HamburgerMenuIcon, DoubleArrowLeftIcon} from "@radix-ui/react-icons";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../utils/cn";
 
@@ -31,11 +31,11 @@ const sidebarVariants = cva("absolute h-full overflow-hidden transition-all", {
       false: "h-full",
     },
     variant: {
-      default: "bg-background text-foreground",
-      dark: "bg-black text-white",
-      light: "bg-white text-gray-900 border-r",
-      glass: "bg-gray-300 backdrop-blur-lg shadow-md shadow-destructive text-primary-foreground",
-      gradient: "bg-gradient-to-b from-gray-800 to-gray-500 text-foreground",
+      default: "bg-background text-foreground shadow-md",
+      dark: "bg-black text-white [&_a]:text-white [&_button]:text-white [&_span]:text-white",
+      light: "bg-white text-gray-900 shadow-[4px_0_16px_rgba(0,0,0,0.08)]",
+      glass: "glass-sidebar",
+      gradient: "bg-gradient-to-b from-gray-800 to-gray-500 text-foreground [&_a]:text-white [&_button]:text-white [&_span]:text-white",    
     },
 
     direction: {
@@ -138,26 +138,27 @@ const Sidebar: React.FC<SidebarProps> = ({
       transition={{ duration: 0.4 }}
       className={cn(
         sidebarVariants({ position, isOpen, variant, direction }),
+        'flex flex-col',
         isOpen
-          ? "w-[var(--sidebar-w,16rem)]"
-          : "w-[var(--sidebar-w-collapsed,5rem)]",
+          ? "w-[var(--sidebar-w,11rem)]"
+          : "w-[var(--sidebar-w-collapsed,3rem)]",
         isMobile ? !isOpen ? "w-0" : isOpen: '',
         className
       )}
     >
       {/* Sidebar Header */}
-      <div className="p-4 flex items-center justify-between gap-4">
-        {isOpen && <h1 className="text-xl font-bold">{brandName}</h1>}
+      <div className="p-4 flex items-center justify-between w-full shrink-0">
+        {isOpen && <span className="text-xl font-semibold truncate">{brandName}</span>}
           {isOpen ? (
         <button onClick={onClose}>
             <span title="Close">
-              <Cross1Icon width={24} height={24} />
+              <DoubleArrowLeftIcon width={14} height={14} />
             </span>
         </button>
           ) : (
             <button onClick={onOpen}>
               <span title="Open">
-                <HamburgerMenuIcon width={24} height={24} />
+                <HamburgerMenuIcon width={16} height={16} />
               </span>
             </button>
           )}
@@ -167,17 +168,17 @@ const Sidebar: React.FC<SidebarProps> = ({
       <motion.nav
         className={cn(
           direction === "horizontal" ? "flex-row overflow-x-auto" : "flex-col overflow-y-auto",
-          "flex flex-1"
+          "flex flex-1 min-h-0 scrollbar-hidden"
         )}
       >
         {links.map((link, index) => (
           <a
             key={index}
             href={link.href}
-            className="flex items-center p-4 gap-4 "
+            className="flex items-center pl-4 pr-3 py-2 gap-3"
           >
-            <link.icon width={24} height={24} />
-            {isOpen && <span>{link.label}</span>}
+            <link.icon width={15} height={15} />
+            {isOpen && <span className='text-sm'>{link.label}</span>}
           </a>
         ))}
       </motion.nav>

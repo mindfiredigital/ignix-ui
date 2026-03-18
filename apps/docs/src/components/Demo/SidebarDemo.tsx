@@ -54,7 +54,7 @@ const SidebarDemo = () => {
               <div className="w-3 h-3 rounded-full bg-green-500" />
               <span className="text-sm text-gray-600 ml-2">Demo Window</span>
             </div>
-            <div className="relative h-[calc(100%-2rem)] bg-white">
+            <div className="relative h-[calc(100%-2rem)] bg-background/90 overflow-hidden scrollbar-hidden">
               <Sidebar
                 links={[
                   { label: 'Home', href: '#', icon: HomeIcon },

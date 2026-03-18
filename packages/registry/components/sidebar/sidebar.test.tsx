@@ -264,7 +264,7 @@ describe('Sidebar variant styles', () => {
     { variant: 'default' as const, expectedClass: 'bg-background' },
     { variant: 'dark' as const, expectedClass: 'bg-black' },
     { variant: 'light' as const, expectedClass: 'bg-white' },
-    { variant: 'glass' as const, expectedClass: 'backdrop-blur-lg' },
+    { variant: 'glass' as const, expectedClass: 'glass-sidebar' },
     { variant: 'gradient' as const, expectedClass: 'from-gray-800' },
   ];
 
