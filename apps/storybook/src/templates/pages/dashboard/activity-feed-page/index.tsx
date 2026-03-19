@@ -210,6 +210,53 @@ function getEventTypePillClasses(
 }
 
 /**
+ * Accent classes per event type to improve visual scanability in both themes.
+ */
+function getEventTypeAccentClasses(type: ActivityEventType): {
+  iconChip: string;
+  rowAccent: string;
+  dotAccent: string;
+} {
+  switch (type) {
+    case "billing":
+      return {
+        iconChip: "border-success/30 bg-success/10 text-success",
+        rowAccent: "border-l-success/50",
+        dotAccent: "bg-success/80",
+      };
+    case "security":
+      return {
+        iconChip: "border-warning/35 bg-warning/10 text-warning",
+        rowAccent: "border-l-warning/60",
+        dotAccent: "bg-warning/80",
+      };
+    case "warning":
+      return {
+        iconChip: "border-destructive/30 bg-destructive/10 text-destructive",
+        rowAccent: "border-l-destructive/60",
+        dotAccent: "bg-destructive/80",
+      };
+    case "user":
+    case "order":
+    case "schedule":
+      return {
+        iconChip: "border-primary/30 bg-primary/10 text-primary",
+        rowAccent: "border-l-primary/55",
+        dotAccent: "bg-primary/80",
+      };
+    case "authentication":
+    case "system":
+    case "comment":
+    case "document":
+      return {
+        iconChip: "border-border/60 bg-muted/40 text-muted-foreground",
+        rowAccent: "border-l-cyan-400/60 dark:border-l-cyan-300/55",
+        dotAccent: "bg-cyan-500/80 dark:bg-cyan-300/80",
+      };
+  }
+}
+
+/**
  * Returns a stable, case-insensitive query match against event fields.
  */
 function matchesQuery(event: ActivityEvent, query: string): boolean {
@@ -325,6 +372,7 @@ const EventTypePill = React.memo(function EventTypePill({
   type: ActivityEventType;
 }) {
   const badgeType = EVENT_TYPE_BADGE_TYPE[type];
+  const accent = getEventTypeAccentClasses(type);
   return (
     <span
       className={cn(
@@ -333,7 +381,14 @@ const EventTypePill = React.memo(function EventTypePill({
         getEventTypePillClasses(badgeType),
       )}
     >
-      <EventTypeIcon type={type} />
+      <span
+        className={cn(
+          "inline-flex items-center justify-center rounded-md border px-1 py-0.5",
+          accent.iconChip,
+        )}
+      >
+        <EventTypeIcon type={type} />
+      </span>
       <span>{EVENT_TYPE_LABEL[type]}</span>
     </span>
   );
@@ -398,13 +453,15 @@ const ActivityEventRow = React.memo(function ActivityEventRow({
       ? formatRelative(event.occurredAt, now)
       : formatAbsolute(event.occurredAt);
   }, [event.occurredAt, now, timestampMode]);
+  const accent = getEventTypeAccentClasses(event.type);
 
   return (
     <div
       className={cn(
-        "flex gap-3 rounded-xl border border-border/60 bg-background/70 backdrop-blur-sm",
+        "flex gap-3 rounded-xl border border-border/60 border-l-4 bg-background/70 backdrop-blur-sm",
         "px-4 py-3",
         "hover:bg-muted/40 transition-colors",
+        accent.rowAccent,
       )}
       data-testid={`activity-event-${event.id}`}
     >
@@ -674,6 +731,7 @@ export function ActivityFeedPage({
               {EVENT_TYPE_ORDER.map((type) => {
                 const count = eventTypeCounts[type] ?? 0;
                 const active = effectiveFilter.type === type;
+                const accent = getEventTypeAccentClasses(type);
                 return (
                   <Button
                     key={type}
@@ -683,7 +741,14 @@ export function ActivityFeedPage({
                     disabled={count === 0}
                   >
                     <span className="inline-flex items-center gap-2">
-                      <span className="inline-flex items-center justify-center rounded-md border border-border/60 bg-muted/40 px-1.5 py-1">
+                      <span
+                        className={cn(
+                          "inline-flex items-center justify-center rounded-md border px-1.5 py-1",
+                          active
+                            ? "border-white/25 bg-white/15 text-primary-foreground"
+                            : accent.iconChip,
+                        )}
+                      >
                         <EventTypeIcon type={type} />
                       </span>
                       <span>{EVENT_TYPE_LABEL[type]}</span>
@@ -713,7 +778,16 @@ export function ActivityFeedPage({
                   {grouped.map((group) => (
                     <section key={group.label} aria-label={`Events: ${group.label}`}>
                       <div className="sticky top-0 z-10 -mx-2 mb-3 px-2">
-                        <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/80 px-3 py-1 text-xs text-muted-foreground backdrop-blur">
+                        <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-gradient-to-r from-primary/10 via-cyan-400/10 to-purple-500/10 px-3 py-1 text-xs text-muted-foreground backdrop-blur">
+                          <span
+                            className={cn(
+                              "h-1.5 w-1.5 rounded-full",
+                              grouped.length > 0 && group.events[0]
+                                ? getEventTypeAccentClasses(group.events[0].type).dotAccent
+                                : "bg-primary/70",
+                            )}
+                            aria-hidden
+                          />
                           <span className="font-medium text-foreground/90">
                             {group.label}
                           </span>
