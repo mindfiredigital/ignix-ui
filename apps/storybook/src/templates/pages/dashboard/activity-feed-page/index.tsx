@@ -133,6 +133,72 @@ export interface ActivityFeedPageProps {
   className?: string;
 }
 
+/**
+ * Props for the high-level layout wrapper (gradient background + max-width content).
+ */
+export interface ActivityFeedLayoutProps {
+  /** Page content (header, filters, list, etc.). */
+  children: React.ReactNode;
+  /** Optional className for the outermost wrapper. */
+  className?: string;
+}
+
+/**
+ * Props for the page header (title + description + search input).
+ */
+export interface ActivityFeedHeaderProps {
+  /** Page title (e.g. "Activity Feed"). */
+  title?: string;
+  /** Optional subtitle/description. */
+  description?: string;
+  /** Current search query value. */
+  query: string;
+  /** Change handler for the search query. */
+  onQueryChange: (value: string) => void;
+}
+
+/**
+ * Props for the filters section (event type chips).
+ */
+export interface ActivityFeedFiltersProps {
+  /** Full, sorted list of events (used to compute type counts). */
+  events: ActivityEvent[];
+  /** Current filter state (type + query). */
+  filter: ActivityFeedFilterState;
+  /** Change handler when type filter changes. */
+  onFilterChange: (next: ActivityFeedFilterState) => void;
+}
+
+/**
+ * Props for the grouped list section.
+ */
+export interface ActivityFeedListProps {
+  /** Already-filtered and paged events to display. */
+  events: ActivityEvent[];
+  /** Timestamp rendering mode. */
+  timestampMode: TimestampMode;
+  /** Reference "now" for relative times. */
+  now: Date;
+}
+
+/**
+ * Props for pagination / infinite scroll controls.
+ */
+export interface ActivityFeedPaginationProps {
+  /** Paging behaviour: numbered pages or infinite "load more". */
+  pagingMode: FeedPagingMode;
+  /** Current page (pagination mode). */
+  currentPage: number;
+  /** Total pages (pagination mode). */
+  totalPages: number;
+  /** Whether more items can be loaded (infinite mode). */
+  canLoadMore: boolean;
+  /** Callback when page changes (pagination mode). */
+  onPageChange: (page: number) => void;
+  /** Callback when more items should be loaded (infinite mode). */
+  onLoadMore: () => void;
+}
+
 // =============================================================================
 // DEFAULTS
 // =============================================================================
@@ -439,7 +505,7 @@ const ActorAvatar = React.memo(function ActorAvatar({
 /**
  * A single feed row. Memoized to reduce re-renders when paging/filtering changes.
  */
-const ActivityEventRow = React.memo(function ActivityEventRow({
+const ActivityEventRowInner = function ActivityEventRowInner({
   event,
   timestampMode,
   now,
@@ -512,10 +578,305 @@ const ActivityEventRow = React.memo(function ActivityEventRow({
       </div>
     </div>
   );
-});
+};
+
+/**
+ * Exported memoized ActivityEventRow for composable usage.
+ */
+export const ActivityEventRow = React.memo(ActivityEventRowInner);
 
 // =============================================================================
-// PAGE
+// LAYOUT (COMPOSABLE) + PAGE
+// =============================================================================
+
+/**
+ * Root layout wrapper providing gradient background and max-width container.
+ * Composable building block; place custom headers and sections inside.
+ */
+export function ActivityFeedLayout({
+  children,
+  className,
+}: ActivityFeedLayoutProps) {
+  return (
+    <div
+      className={cn(
+        "relative min-h-screen overflow-hidden",
+        "bg-gradient-to-br from-background via-background to-muted/40",
+        "text-foreground p-4 md:p-6",
+        className,
+      )}
+    >
+      <div className="pointer-events-none absolute inset-0 opacity-60">
+        <div className="absolute -top-32 -left-24 h-64 w-64 rounded-full bg-gradient-to-br from-primary/25 via-cyan-400/15 to-transparent blur-3xl" />
+        <div className="absolute -bottom-32 -right-20 h-72 w-72 rounded-full bg-gradient-to-tr from-purple-500/20 via-pink-500/10 to-transparent blur-3xl" />
+      </div>
+
+      <div className="relative z-10 mx-auto w-full max-w-6xl space-y-6">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Page header with title, description and search input.
+ * Composable; use inside ActivityFeedLayout.
+ */
+export function ActivityFeedHeader({
+  title = "Activity Feed",
+  description = "Track recent actions, system updates, and user activity.",
+  query,
+  onQueryChange,
+}: ActivityFeedHeaderProps) {
+  const handleChange = useCallback(
+    (value: string) => {
+      onQueryChange(value);
+    },
+    [onQueryChange],
+  );
+
+  return (
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div>
+        <h1 className="bg-gradient-to-r from-primary via-cyan-400 to-purple-500 bg-clip-text text-2xl font-bold tracking-tight text-transparent">
+          {title}
+        </h1>
+        {description && (
+          <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+        )}
+      </div>
+
+      <div className="w-full sm:w-[360px]">
+        <AnimatedInput
+          placeholder="Search activity"
+          variant="clean"
+          value={query}
+          onChange={handleChange}
+        />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Filters section with "All" and per-type pills.
+ */
+export function ActivityFeedFilters({
+  events,
+  filter,
+  onFilterChange,
+}: ActivityFeedFiltersProps) {
+  const sortedEvents = useMemo(
+    () =>
+      [...events].sort(
+        (a, b) => b.occurredAt.getTime() - a.occurredAt.getTime(),
+      ),
+    [events],
+  );
+
+  const counts = useMemo(() => {
+    const map: Partial<Record<ActivityEventType, number>> = {};
+    for (const ev of sortedEvents) {
+      map[ev.type] = (map[ev.type] ?? 0) + 1;
+    }
+    return map;
+  }, [sortedEvents]);
+
+  const handleSelectType = useCallback(
+    (type: ActivityEventType | null) => {
+      onFilterChange({ ...filter, type });
+    },
+    [filter, onFilterChange],
+  );
+
+  return (
+    <div className="flex flex-wrap gap-2">
+      <Button
+        size="sm"
+        variant={filter.type == null ? "default" : "outline"}
+        onClick={() => handleSelectType(null)}
+      >
+        All{" "}
+        <span className="ml-2 text-xs text-muted-foreground">
+          {sortedEvents.length}
+        </span>
+      </Button>
+
+      {EVENT_TYPE_ORDER.map((type) => {
+        const count = counts[type] ?? 0;
+        const active = filter.type === type;
+        const accent = getEventTypeAccentClasses(type);
+        return (
+          <Button
+            key={type}
+            size="sm"
+            variant={active ? "default" : "outline"}
+            onClick={() => handleSelectType(type)}
+            disabled={count === 0}
+          >
+            <span className="inline-flex items-center gap-2">
+              <span
+                className={cn(
+                  "inline-flex items-center justify-center rounded-md border px-1.5 py-1",
+                  active
+                    ? "border-white/25 bg-white/15 text-primary-foreground"
+                    : accent.iconChip,
+                )}
+              >
+                <EventTypeIcon type={type} />
+              </span>
+              <span>{EVENT_TYPE_LABEL[type]}</span>
+              <span className="text-xs text-muted-foreground">
+                {count}
+              </span>
+            </span>
+          </Button>
+        );
+      })}
+    </div>
+  );
+}
+
+/**
+ * Grouped list of events by date label.
+ */
+export function ActivityFeedList({
+  events,
+  timestampMode,
+  now,
+}: ActivityFeedListProps) {
+  const grouped = useMemo(() => {
+    const groups: { label: string; events: ActivityEvent[] }[] = [];
+    for (const ev of events) {
+      const label = getDateGroupLabel(ev.occurredAt, now);
+      const last = groups[groups.length - 1];
+      if (last && last.label === label) {
+        last.events.push(ev);
+      } else {
+        groups.push({ label, events: [ev] });
+      }
+    }
+    return groups;
+  }, [events, now]);
+
+  if (events.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="space-y-6">
+      {grouped.map((group) => (
+        <section key={group.label} aria-label={`Events: ${group.label}`}>
+          <div className="sticky top-0 z-10 -mx-2 mb-3 px-2">
+            <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-gradient-to-r from-primary/10 via-cyan-400/10 to-purple-500/10 px-3 py-1 text-xs text-muted-foreground backdrop-blur">
+              <span
+                className={cn(
+                  "h-1.5 w-1.5 rounded-full",
+                  group.events[0]
+                    ? getEventTypeAccentClasses(group.events[0].type).dotAccent
+                    : "bg-primary/70",
+                )}
+                aria-hidden
+              />
+              <span className="font-medium text-foreground/90">
+                {group.label}
+              </span>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            {group.events.map((event) => (
+              <ActivityEventRow
+                key={event.id}
+                event={event}
+                now={now}
+                timestampMode={timestampMode}
+              />
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * Pagination / infinite controls, composable.
+ */
+export function ActivityFeedPagination({
+  pagingMode,
+  currentPage,
+  totalPages,
+  canLoadMore,
+  onPageChange,
+  onLoadMore,
+}: ActivityFeedPaginationProps) {
+  const [isNarrowViewport, setIsNarrowViewport] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+
+  // Compact pagination on small screens.
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 480px)");
+    const update = () => setIsNarrowViewport(mediaQuery.matches);
+    update();
+    mediaQuery.addEventListener("change", update);
+    return () => mediaQuery.removeEventListener("change", update);
+  }, []);
+
+  // Intersection observer for infinite mode.
+  useEffect(() => {
+    if (pagingMode !== "infinite") return;
+    if (!canLoadMore) return;
+    const node = sentinelRef.current;
+    if (!node) return;
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (!entry) return;
+        if (entry.isIntersecting) {
+          onLoadMore();
+        }
+      },
+      { root: null, rootMargin: "200px", threshold: 0 },
+    );
+    obs.observe(node);
+    return () => obs.disconnect();
+  }, [pagingMode, canLoadMore, onLoadMore]);
+
+  if (pagingMode === "pagination") {
+    return (
+      <div className="w-full overflow-x-auto">
+        <div className="min-w-max">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={onPageChange}
+            siblingCount={isNarrowViewport ? 0 : 1}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-3 pt-2">
+      {canLoadMore ? (
+        <Button variant="outline" size="md" onClick={onLoadMore}>
+          Load more
+        </Button>
+      ) : (
+        <p className="text-xs text-muted-foreground">
+          You’ve reached the end of the feed.
+        </p>
+      )}
+      <div ref={sentinelRef} aria-hidden className="h-1 w-full" />
+    </div>
+  );
+}
+
+// =============================================================================
+// PAGE (PRE-COMPOSED)
 // =============================================================================
 
 /**
@@ -560,14 +921,6 @@ export function ActivityFeedPage({
     );
   }, [events]);
 
-  const eventTypeCounts = useMemo(() => {
-    const counts: Partial<Record<ActivityEventType, number>> = {};
-    for (const ev of sortedEvents) {
-      counts[ev.type] = (counts[ev.type] ?? 0) + 1;
-    }
-    return counts;
-  }, [sortedEvents]);
-
   const filtered = useMemo(() => {
     const type = effectiveFilter.type;
     return sortedEvents.filter((ev) => {
@@ -589,37 +942,12 @@ export function ActivityFeedPage({
     return filtered.slice(0, infiniteCount);
   }, [filtered, pagingMode, page, pageSize, infiniteCount]);
 
-  const grouped = useMemo(() => {
-    const groups: { label: string; events: ActivityEvent[] }[] = [];
-    const now = nowRef.current;
-
-    for (const ev of pageEvents) {
-      const label = getDateGroupLabel(ev.occurredAt, now);
-      const last = groups[groups.length - 1];
-      if (last && last.label === label) {
-        last.events.push(ev);
-      } else {
-        groups.push({ label, events: [ev] });
-      }
-    }
-    return groups;
-  }, [pageEvents]);
-
   const setFilter = useCallback(
     (next: ActivityFeedFilterState) => {
       if (!filterState) setInternalFilter(next);
       onFilterChange?.(next);
     },
     [filterState, onFilterChange],
-  );
-
-  const handleSelectType = useCallback(
-    (type: ActivityEventType | null) => {
-      setPage(1);
-      setInfiniteCount(pageSize);
-      setFilter({ ...effectiveFilter, type });
-    },
-    [effectiveFilter, pageSize, setFilter],
   );
 
   const handleSearchChange = useCallback(
@@ -640,72 +968,15 @@ export function ActivityFeedPage({
     setInfiniteCount((prev) => Math.min(filtered.length, prev + pageSize));
   }, [filtered.length, pageSize]);
 
-  const sentinelRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
-    if (pagingMode !== "infinite") return;
-    if (!canLoadMore) return;
-    const node = sentinelRef.current;
-    if (!node) return;
-
-    const obs = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (!entry) return;
-        if (entry.isIntersecting) {
-          handleLoadMore();
-        }
-      },
-      { root: null, rootMargin: "200px", threshold: 0 },
-    );
-    obs.observe(node);
-    return () => obs.disconnect();
-  }, [pagingMode, canLoadMore, handleLoadMore]);
-
-  const [isNarrowViewport, setIsNarrowViewport] = useState(false);
-
-  // Keep pagination compact on very small screens.
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(max-width: 480px)");
-    const update = () => setIsNarrowViewport(mediaQuery.matches);
-    update();
-    mediaQuery.addEventListener("change", update);
-    return () => mediaQuery.removeEventListener("change", update);
-  }, []);
-
   return (
-    <div
-      className={cn(
-        "relative min-h-screen overflow-hidden",
-        "bg-gradient-to-br from-background via-background to-muted/40",
-        "text-foreground p-4 md:p-6",
-        className,
-      )}
-    >
-      <div className="pointer-events-none absolute inset-0 opacity-60">
-        <div className="absolute -top-32 -left-24 h-64 w-64 rounded-full bg-gradient-to-br from-primary/25 via-cyan-400/15 to-transparent blur-3xl" />
-        <div className="absolute -bottom-32 -right-20 h-72 w-72 rounded-full bg-gradient-to-tr from-purple-500/20 via-pink-500/10 to-transparent blur-3xl" />
-      </div>
-
-      <div className="relative z-10 mx-auto w-full max-w-6xl space-y-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h1 className="bg-gradient-to-r from-primary via-cyan-400 to-purple-500 bg-clip-text text-2xl font-bold tracking-tight text-transparent">
-              {title}
-            </h1>
-            {description && (
-              <p className="mt-1 text-sm text-muted-foreground">{description}</p>
-            )}
-          </div>
-
-          <div className="w-full sm:w-[360px]">
-            <AnimatedInput
-              placeholder="Search activity"
-              variant="clean"
-              value={effectiveFilter.query}
-              onChange={handleSearchChange}
-            />
-          </div>
-        </div>
+    <ActivityFeedLayout className={className}>
+      <div className="space-y-6">
+        <ActivityFeedHeader
+          title={title}
+          description={description}
+          query={effectiveFilter.query}
+          onQueryChange={handleSearchChange}
+        />
 
         <Card variant="default" className="border border-border/60 shadow-sm">
           <CardHeader variant="compact" className="gap-3">
@@ -716,50 +987,11 @@ export function ActivityFeedPage({
               </CardDescription>
             </div>
 
-            <div className="flex flex-wrap gap-2">
-              <Button
-                size="sm"
-                variant={effectiveFilter.type == null ? "default" : "outline"}
-                onClick={() => handleSelectType(null)}
-              >
-                All{" "}
-                <span className="ml-2 text-xs text-muted-foreground">
-                  {sortedEvents.length}
-                </span>
-              </Button>
-
-              {EVENT_TYPE_ORDER.map((type) => {
-                const count = eventTypeCounts[type] ?? 0;
-                const active = effectiveFilter.type === type;
-                const accent = getEventTypeAccentClasses(type);
-                return (
-                  <Button
-                    key={type}
-                    size="sm"
-                    variant={active ? "default" : "outline"}
-                    onClick={() => handleSelectType(type)}
-                    disabled={count === 0}
-                  >
-                    <span className="inline-flex items-center gap-2">
-                      <span
-                        className={cn(
-                          "inline-flex items-center justify-center rounded-md border px-1.5 py-1",
-                          active
-                            ? "border-white/25 bg-white/15 text-primary-foreground"
-                            : accent.iconChip,
-                        )}
-                      >
-                        <EventTypeIcon type={type} />
-                      </span>
-                      <span>{EVENT_TYPE_LABEL[type]}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {count}
-                      </span>
-                    </span>
-                  </Button>
-                );
-              })}
-            </div>
+            <ActivityFeedFilters
+              events={sortedEvents}
+              filter={effectiveFilter}
+              onFilterChange={setFilter}
+            />
           </CardHeader>
 
           <CardContent variant="compact" className="space-y-5">
@@ -774,71 +1006,25 @@ export function ActivityFeedPage({
               </div>
             ) : (
               <>
-                <div className="space-y-6">
-                  {grouped.map((group) => (
-                    <section key={group.label} aria-label={`Events: ${group.label}`}>
-                      <div className="sticky top-0 z-10 -mx-2 mb-3 px-2">
-                        <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-gradient-to-r from-primary/10 via-cyan-400/10 to-purple-500/10 px-3 py-1 text-xs text-muted-foreground backdrop-blur">
-                          <span
-                            className={cn(
-                              "h-1.5 w-1.5 rounded-full",
-                              grouped.length > 0 && group.events[0]
-                                ? getEventTypeAccentClasses(group.events[0].type).dotAccent
-                                : "bg-primary/70",
-                            )}
-                            aria-hidden
-                          />
-                          <span className="font-medium text-foreground/90">
-                            {group.label}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="space-y-3">
-                        {group.events.map((ev) => (
-                          <ActivityEventRow
-                            key={ev.id}
-                            event={ev}
-                            now={nowRef.current}
-                            timestampMode={timestampMode}
-                          />
-                        ))}
-                      </div>
-                    </section>
-                  ))}
-                </div>
-
-                {pagingMode === "pagination" ? (
-                  <div className="w-full overflow-x-auto">
-                    <div className="min-w-max">
-                      <Pagination
-                        currentPage={page}
-                        totalPages={totalPages}
-                        onPageChange={handlePageChange}
-                        siblingCount={isNarrowViewport ? 0 : 1}
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center gap-3 pt-2">
-                    {canLoadMore ? (
-                      <Button variant="outline" size="md" onClick={handleLoadMore}>
-                        Load more
-                      </Button>
-                    ) : (
-                      <p className="text-xs text-muted-foreground">
-                        You’ve reached the end of the feed.
-                      </p>
-                    )}
-                    <div ref={sentinelRef} aria-hidden className="h-1 w-full" />
-                  </div>
-                )}
+                <ActivityFeedList
+                  events={pageEvents}
+                  timestampMode={timestampMode}
+                  now={nowRef.current}
+                />
+                <ActivityFeedPagination
+                  pagingMode={pagingMode}
+                  currentPage={page}
+                  totalPages={totalPages}
+                  canLoadMore={canLoadMore}
+                  onPageChange={handlePageChange}
+                  onLoadMore={handleLoadMore}
+                />
               </>
             )}
           </CardContent>
         </Card>
       </div>
-    </div>
+    </ActivityFeedLayout>
   );
 }
 

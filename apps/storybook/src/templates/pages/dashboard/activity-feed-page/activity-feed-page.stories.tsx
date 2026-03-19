@@ -9,6 +9,11 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import React, { useCallback, useMemo, useState } from "react";
 import {
   ActivityFeedPage,
+  ActivityFeedLayout,
+  ActivityFeedHeader,
+  ActivityFeedFilters,
+  ActivityFeedList,
+  ActivityFeedPagination,
   type ActivityEvent,
   type ActivityEventType,
   type ActivityFeedFilterState,
@@ -196,6 +201,128 @@ function ControlledFiltersWrapper(
     />
   );
 }
+
+/**
+ * Query matcher used by composable demo filtering.
+ */
+function matchesQuery(event: ActivityEvent, query: string): boolean {
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  const text = [
+    event.title,
+    event.description,
+    event.actor.name,
+    event.actor.meta ?? "",
+    event.contextLabel ?? "",
+    event.type,
+  ]
+    .join(" ")
+    .toLowerCase();
+  return text.includes(q);
+}
+
+/**
+ * Fully interactive composable demo using layout + header + filters + list + pagination.
+ */
+function ComposableDemo() {
+  const [filter, setFilter] = useState<ActivityFeedFilterState>({
+    type: null,
+    query: "",
+  });
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+  const now = new Date();
+
+  const sorted = useMemo(
+    () => [...DEMO_EVENTS].sort((a, b) => b.occurredAt.getTime() - a.occurredAt.getTime()),
+    [],
+  );
+
+  const filtered = useMemo(() => {
+    return sorted.filter((event) => {
+      if (filter.type && event.type !== filter.type) return false;
+      return matchesQuery(event, filter.query);
+    });
+  }, [sorted, filter.type, filter.query]);
+
+  const totalPages = useMemo(
+    () => Math.max(1, Math.ceil(filtered.length / pageSize)),
+    [filtered.length],
+  );
+
+  const pagedEvents = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return filtered.slice(start, start + pageSize);
+  }, [filtered, page]);
+
+  const handleFilterChange = useCallback((next: ActivityFeedFilterState) => {
+    setFilter(next);
+    setPage(1);
+  }, []);
+
+  const handleQueryChange = useCallback((query: string) => {
+    setFilter((prev) => ({ ...prev, query }));
+    setPage(1);
+  }, []);
+
+  const handlePageChange = useCallback((nextPage: number) => {
+    setPage(nextPage);
+  }, []);
+
+  return (
+    <ActivityFeedLayout>
+      <ActivityFeedHeader
+        title="Activity Feed (Composable)"
+        description="Interactive demo composed from layout, header, filters, list, and pagination sections."
+        query={filter.query}
+        onQueryChange={handleQueryChange}
+      />
+      <div className="border border-border/60 bg-background/80 shadow-sm rounded-xl">
+        <div className="border-b border-border/60 px-4 py-3">
+          <ActivityFeedFilters
+            events={sorted}
+            filter={filter}
+            onFilterChange={handleFilterChange}
+          />
+        </div>
+        <div className="px-4 py-4 space-y-4">
+          {filtered.length === 0 ? (
+            <div className="rounded-xl border border-border/60 bg-muted/20 p-10 text-center">
+              <p className="text-sm font-medium text-foreground">No events found</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Try a different filter or search query.
+              </p>
+            </div>
+          ) : (
+            <>
+              <ActivityFeedList
+                events={pagedEvents}
+                timestampMode="relative"
+                now={now}
+              />
+              <ActivityFeedPagination
+                pagingMode="pagination"
+                currentPage={page}
+                totalPages={totalPages}
+                canLoadMore={false}
+                onPageChange={handlePageChange}
+                onLoadMore={() => undefined}
+              />
+            </>
+          )}
+        </div>
+      </div>
+    </ActivityFeedLayout>
+  );
+}
+
+/**
+ * Composable usage: layout + header + filters + list + pagination.
+ */
+export const Composable: Story = {
+  render: () => <ComposableDemo />,
+  name: "Composable (layout + sections)",
+};
 
 /**
  * Default story: relative timestamps + pagination.
