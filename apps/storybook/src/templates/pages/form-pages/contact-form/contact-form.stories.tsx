@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { ContactForm } from "./index";
 
 const meta: Meta<typeof ContactForm> = {
-  title: "Templates/Forms/ContactForm",
+  title: "Templates/Pages/Forms/ContactForm",
   component: ContactForm,
   parameters: {
     layout: 'fullscreen',
