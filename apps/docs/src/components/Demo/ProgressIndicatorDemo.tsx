@@ -55,7 +55,7 @@ const ProgressIndicatorDemo: React.FC = () => {
   const currentLabelPosition =
     type === 'linear' ? linearLabelPosition : circularLabelPosition;
 
-  const codeString = `import { ProgressIndicator } from './components/ui/progress-indicator';
+  const codeString = `import { ProgressIndicator } from '@ignix-ui/progress-indicator';
 
 function Example() {
   return (

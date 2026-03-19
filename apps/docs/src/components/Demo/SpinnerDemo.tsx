@@ -12,6 +12,8 @@ const SpinnerDemo = () => {
   const [variant, setVariant] = useState('default');
 
   const codeString = `
+import { Spinner } from '@ignix-ui/spinner';
+
 <Spinner size={40} variant="${variant}" color="border-primary" />
 `;
 
