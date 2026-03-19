@@ -19,11 +19,19 @@ type VSCodeConfig = {
 };
 
 type PackageJson = {
+  name?: string;
+  private?: boolean;
   dependencies?: Record<string, string>;
 };
 
 const IGNIX_PACKAGE = '@mindfiredigital/ignix-ui';
 const IGNIX_VERSION = '^1.0.7';
+
+async function detectPackageManager(): Promise<'npm' | 'yarn' | 'pnpm'> {
+  if (await fs.exists('pnpm-lock.yaml')) return 'pnpm';
+  if (await fs.exists('yarn.lock')) return 'yarn';
+  return 'npm';
+}
 
 export const mcpInitCommand = new Command()
   .name('init')
@@ -60,25 +68,39 @@ args = ["ignix", "mcp"]\n`);
     // =========================
     const packageJsonPath = path.resolve('package.json');
 
-    let packageJson: PackageJson;
+    let packageJson: PackageJson = {};
+    let shouldInstall = false;
 
     const exists = await fs.exists(packageJsonPath);
 
     if (!exists) {
       packageJson = {
+        name: path.basename(process.cwd()),
+        private: true,
         dependencies: {},
       };
+      shouldInstall = true;
     } else {
-      packageJson = await fs.readJSON(packageJsonPath);
+      try {
+        packageJson = await fs.readJSON(packageJsonPath);
+      } catch {
+        packageJson = {};
+      }
     }
 
     if (!packageJson.dependencies) {
       packageJson.dependencies = {};
     }
 
-    packageJson.dependencies[IGNIX_PACKAGE] = IGNIX_VERSION;
+    // Only add if not present
+    if (!packageJson.dependencies[IGNIX_PACKAGE]) {
+      packageJson.dependencies[IGNIX_PACKAGE] = IGNIX_VERSION;
+      shouldInstall = true;
+    }
 
-    await fs.writeJSON(packageJsonPath, packageJson, { spaces: 2 });
+    if (shouldInstall) {
+      await fs.writeJSON(packageJsonPath, packageJson, { spaces: 2 });
+    }
 
     // =========================
     // ⚙️ MCP CONFIG
@@ -90,60 +112,88 @@ args = ["ignix", "mcp"]\n`);
 
     await fs.ensureDir(path.dirname(configPath));
 
+    let shouldWriteConfig = true;
+
     if (client === 'vscode') {
       const existing: VSCodeConfig = { servers: {} };
 
       if (await fs.exists(configPath)) {
         const data = (await fs.readJSON(configPath)) as VSCodeConfig;
         existing.servers = data.servers ?? {};
+
+        if (existing.servers.ignix) {
+          shouldWriteConfig = false;
+        }
       }
 
-      await fs.writeJSON(
-        configPath,
-        {
-          servers: {
-            ...existing.servers,
-            ignix: ignixServer,
+      if (shouldWriteConfig) {
+        await fs.writeJSON(
+          configPath,
+          {
+            servers: {
+              ...existing.servers,
+              ignix: ignixServer,
+            },
           },
-        },
-        { spaces: 2 }
-      );
+          { spaces: 2 }
+        );
+      }
     } else {
       const existing: CursorClaudeConfig = { mcpServers: {} };
 
       if (await fs.exists(configPath)) {
         const data = (await fs.readJSON(configPath)) as CursorClaudeConfig;
         existing.mcpServers = data.mcpServers ?? {};
+
+        if (existing.mcpServers.ignix) {
+          shouldWriteConfig = false;
+        }
       }
 
-      await fs.writeJSON(
-        configPath,
-        {
-          mcpServers: {
-            ...existing.mcpServers,
-            ignix: ignixServer,
+      if (shouldWriteConfig) {
+        await fs.writeJSON(
+          configPath,
+          {
+            mcpServers: {
+              ...existing.mcpServers,
+              ignix: ignixServer,
+            },
           },
-        },
-        { spaces: 2 }
-      );
+          { spaces: 2 }
+        );
+      }
     }
 
     // =========================
-    // 📦 INSTALL (SILENT)
+    // 📦 INSTALL (ONLY IF NEEDED)
     // =========================
     console.log('✔ Configuring MCP server.');
     console.log('✔ Installing dependencies.\n');
 
-    try {
-      await execa('npm', ['install'], {
-        stdio: 'ignore', // 🔥 hides npm logs
-      });
-    } catch {
-      // silent fail (like shadcn)
+    if (shouldInstall) {
+      try {
+        const pm = await detectPackageManager();
+
+        if (pm === 'pnpm') {
+          await execa('pnpm', ['install'], { stdio: 'ignore' });
+        } else if (pm === 'yarn') {
+          await execa('yarn', [], { stdio: 'ignore' });
+        } else {
+          await execa('npm', ['install', '--silent', '--no-audit', '--no-fund'], {
+            stdio: 'ignore',
+          });
+        }
+      } catch (error) {
+        if (process.env.DEBUG) {
+          console.error(error);
+        }
+      }
     }
 
     // =========================
-    // 🎉 FINAL OUTPUT
+    // 🎉 OUTPUT
     // =========================
-    console.log(`Configuration saved to ${configPath}.\n`);
+    const relativePath = path.relative(process.cwd(), configPath).replace(/\\/g, '/');
+
+    console.log(`Configuration saved to ${relativePath}.\n`);
   });
