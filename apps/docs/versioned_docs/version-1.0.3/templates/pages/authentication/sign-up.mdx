@@ -57,6 +57,13 @@ The SignUp component provides a complete, production-ready registration form wit
     import { FcGoogle } from "react-icons/fc";
     import { FaGithub, FaMicrosoft } from "react-icons/fa";
 
+    
+    export interface VerificationError {
+        code?: string;
+        message: string;
+        cause?: unknown;
+    }
+
     // Types
     export interface SignUpProps {
         /** Layout type */
@@ -159,7 +166,7 @@ The SignUp component provides a complete, production-ready registration form wit
             /** Callback when CAPTCHA expires */
             onExpire?: () => void;
             /** Callback when CAPTCHA errors */
-            onError?: (error: any) => void;
+            onError?: (error: VerificationError) => void;
         };
 
         /** Split Layout Background Customization */
@@ -582,7 +589,7 @@ The SignUp component provides a complete, production-ready registration form wit
             if (onLogin) {
                 onLogin();
             } else {
-                console.warn('Login callback not provided. Implement navigation to login page.');
+                alert('Login callback not provided. Implement navigation to login page.');
             }
         };
 
@@ -595,28 +602,28 @@ The SignUp component provides a complete, production-ready registration form wit
                         if (onGoogleSignUp) {
                             await onGoogleSignUp();
                         } else {
-                            console.warn(`onGoogleSignUp callback not implemented.`);
+                            alert(`onGoogleSignUp callback not implemented.`);
                         }
                         break;
                     case 'github':
                         if (onGitHubSignUp) {
                             await onGitHubSignUp();
                         } else {
-                            console.warn(`onGitHubSignUp callback not implemented.`);
+                            alert(`onGitHubSignUp callback not implemented.`);
                         }
                         break;
                     case 'microsoft':
                         if (onMicrosoftSignUp) {
                             await onMicrosoftSignUp();
                         } else {
-                            console.warn(`onMicrosoftSignUp callback not implemented.`);
+                            alert(`onMicrosoftSignUp callback not implemented.`);
                         }
                         break;
                     default:
-                        console.warn(`Unsupported social provider: ${provider}`);
+                        alert(`Unsupported social provider: ${provider}`);
                 }
             } catch (error) {
-                console.error(`Social sign-up failed for ${provider}:`, error);
+                alert(`Social sign-up failed for ${provider}: ${error}`);
             } finally {
                 setTimeout(() => setSocialLoading(null), 500);
             }
@@ -1877,7 +1884,7 @@ import { SignUp } from '@site/src/components/UI/sign-up';
 
 function RegistrationPage() {
   const handleSubmit = async (data) => {
-    console.log('Registration data:', data);
+    alert(`Registration Data: ${JSON.stringify(data)}`);
     // Your registration logic here
   };
 

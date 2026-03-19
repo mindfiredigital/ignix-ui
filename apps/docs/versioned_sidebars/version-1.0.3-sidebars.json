@@ -7,7 +7,7 @@
         "type": "doc",
         "id": "introduction"
       },
-      "items": ["introduction", "installation"]
+      "items": ["introduction", "installation", "mcp"]
     },
     {
       "type": "category",
@@ -253,7 +253,8 @@
               "type": "category",
               "label": "Error Pages",
               "items": [
-                "templates/pages/error-page"
+                "templates/pages/error-page",
+                "templates/pages/maintenance-page"
               ]
             },
             {

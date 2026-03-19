@@ -261,13 +261,13 @@ export const CompleteControl: Story = {
             </div>
         ),
         onNavLinkClick: (href, label) => {
-            console.log(`Navigating to ${label}: ${href}`);
+            alert(`Navigating to ${label}: ${href}`);
         },
         onSignInClick: () => {
-            // console.log("Sign in clicked");
+            alert("Sign In clicked!");
         },
         onSignUpClick: () => {
-            // console.log("Sign up clicked");
+            alert("Sign Up clicked!");
         },
     },
 };

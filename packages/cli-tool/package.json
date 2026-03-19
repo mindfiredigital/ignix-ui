@@ -26,6 +26,7 @@
   "author": "Ignix UI Team",
   "license": "MIT",
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
     "@antfu/ni": "^0.21.12",
     "axios": "^1.7.2",
     "chalk": "^4.1.2",
@@ -45,5 +46,13 @@
   },
   "engines": {
     "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mindfiredigital/ignix-ui"
+  },
+  "homepage": "https://mindfiredigital.github.io/ignix-ui",
+  "bugs": {
+    "url": "https://github.com/mindfiredigital/ignix-ui/issues"
   }
 }

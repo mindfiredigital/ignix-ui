@@ -407,10 +407,10 @@ const SignIn: React.FC<SignInProps> = ({
                     }
                     break;
                 default:
-                // console.warn(`Unsupported social provider: ${provider}`);
+                    alert(`Unsupported social provider: ${provider}`);
             }
         } catch (error) {
-            // console.error(`Social sign-in failed for ${provider}:`, error);
+            alert(`Social sign-in failed for ${provider}: ${error}`);
         } finally {
             setTimeout(() => setSocialLoading(null), 500);
         }

@@ -232,50 +232,6 @@ describe('SignUp Component', () => {
     });
 
     describe('Form Validation', () => {
-        // it('shows validation errors for empty required fields on submit', async () => {
-        //     const user = userEvent.setup();
-        //     render(<SignUp {...defaultProps} />);
-
-        //     const submitButton = screen.getByRole('button', { name: /Create Account/i });
-        //     await user.click(submitButton);
-
-        //     // Wait for validation to trigger
-        //     await waitFor(() => {
-        //         // Check for any error messages
-        //         const errorElements = screen.getAllByText(/is required|must accept/i);
-        //         expect(errorElements.length).toBeGreaterThan(0);
-        //     });
-        // });
-
-        // it('validates email format', async () => {
-        //     const user = userEvent.setup();
-        //     render(<SignUp {...defaultProps} />);
-
-        //     const emailInput = screen.getByPlaceholderText('you@example.com');
-        //     await user.type(emailInput, 'invalid-email');
-        //     await user.tab();
-
-        //     // Wait for validation to trigger
-        //     await waitFor(() => {
-        //         expect(screen.getByText(/valid email/i)).toBeInTheDocument();
-        //     });
-        // });
-
-        // it('validates email confirmation matches', async () => {
-        //     const user = userEvent.setup();
-        //     render(<SignUp {...defaultProps} />);
-
-        //     // const emailInput = screen.getByPlaceholderText('you@example.com');
-        //     // const confirmEmailInput = screen.getByPlaceholderText(/Confirm your email/i);
-
-        //     // await user.type(emailInput, 'test@example.com');
-        //     // await user.type(confirmEmailInput, 'different@example.com');
-        //     await user.tab();
-
-        //     // await waitFor(() => {
-        //     //     expect(screen.getByText(/Emails do not match/i)).toBeInTheDocument();
-        //     // });
-        // });
 
         it('validates password confirmation matches', async () => {
             const user = userEvent.setup();
@@ -318,13 +274,6 @@ describe('SignUp Component', () => {
         it('clears validation errors when user starts typing', async () => {
             const user = userEvent.setup();
             render(<SignUp {...defaultProps} />);
-
-            // const submitButton = screen.getByRole('button', { name: /Create Account/i });
-            // await user.click(submitButton);
-
-            // await waitFor(() => {
-            //     expect(screen.queryByText(/First name is required/i)).toBeInTheDocument();
-            // });
 
             const firstNameInput = screen.getByPlaceholderText('John');
             await user.type(firstNameInput, 'J');
@@ -408,27 +357,7 @@ describe('SignUp Component', () => {
             const termsCheckbox = screen.getByLabelText(/Accept terms and conditions/i);
             await user.click(termsCheckbox);
 
-            // Submit
-            // const submitButton = screen.getByRole('button', { name: /Create Account/i });
-            // await user.click(submitButton);
-
-            // await waitFor(() => {
-            //     expect(mockOnSubmit).toHaveBeenCalled();
-            //     const submittedData = mockOnSubmit.mock.calls[0][0];
-            //     expect(submittedData.firstName).toBe('John');
-            //     expect(submittedData.lastName).toBe('Doe');
-            //     expect(submittedData.email).toBe('john.doe@example.com');
-            //     expect(submittedData.acceptTerms).toBe(true);
-            // });
         });
-
-        // it('shows loading state during submission', () => {
-        //     render(<SignUp {...defaultProps} loading={true} />);
-
-        //     const submitButton = screen.getByRole('button', { name: /Create Account/i });
-        //     expect(submitButton).toBeDisabled();
-        //     expect(submitButton).toHaveTextContent(/Creating Account.../i);
-        // });
 
         it('displays error message when provided', () => {
             const errorMessage = 'Registration failed. Please try again.';
@@ -666,13 +595,6 @@ describe('SignUp Component', () => {
             const termsCheckbox = screen.getByLabelText(/Accept terms and conditions/i);
             await user.click(termsCheckbox);
 
-            // const submitButton = screen.getByRole('button', { name: /Create Account/i });
-            // await user.click(submitButton);
-
-            // Should show CAPTCHA error
-            // await waitFor(() => {
-            //     expect(screen.getByText(/Please complete the CAPTCHA verification/i)).toBeInTheDocument();
-            // });
         });
     });
 
@@ -710,19 +632,6 @@ describe('SignUp Component', () => {
             expect(screen.getByLabelText(/Sign up with Microsoft/i)).toBeInTheDocument();
         });
 
-        // it('shows aria-invalid for invalid fields', async () => {
-        //     const user = userEvent.setup();
-        //     render(<SignUp {...defaultProps} />);
-
-        //     const submitButton = screen.getByRole('button', { name: /Create Account/i });
-        //     await user.click(submitButton);
-
-        //     // Wait for validation
-        //     await waitFor(() => {
-        //         const firstNameInput = screen.getByPlaceholderText('John');
-        //         expect(firstNameInput).toHaveAttribute('aria-invalid', 'true');
-        //     });
-        // });
     });
 
     describe('Edge Cases', () => {
@@ -743,22 +652,6 @@ describe('SignUp Component', () => {
             expect(firstNameInput).toHaveValue("Jean-Pierre");
         });
 
-        // it('handles disabled state correctly', () => {
-        //     render(<SignUp {...defaultProps} loading={true} />);
-
-        //     const submitButton = screen.getByRole('button', { name: /Create Account/i });
-        //     expect(submitButton).toBeDisabled();
-
-        //     if (screen.queryByText(/Or sign up with/i)) {
-        //         const socialButtons = screen.getAllByRole('button').filter(
-        //             button => button.getAttribute('aria-label')?.includes('Sign up with')
-        //         );
-
-        //         socialButtons.forEach(button => {
-        //             expect(button).toBeDisabled();
-        //         });
-        //     }
-        // });
     });
 
     describe('Internationalization Readiness', () => {

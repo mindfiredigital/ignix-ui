@@ -233,17 +233,7 @@ const SplitDarkDemo = () => {
 
     return (
         <div className="space-y-6">
-            {/* <div className="flex justify-end mb-2">
-                <label className="flex items-center gap-2">
-                    <input
-                        type="checkbox"
-                        checked={requireEmailConfirmation}
-                        onChange={(e) => setRequireEmailConfirmation(e.target.checked)}
-                        className="rounded border-gray-300"
-                    />
-                    Require Email Confirmation
-                </label>
-            </div> */}
+
 
             <Tabs>
                 <TabItem value="preview" label="Preview">
@@ -390,8 +380,8 @@ const CompleteRegistrationDemo = () => {
         setIsLoading(false);
     };
 
-    const handleCaptchaVerify = (_token: string) => {
-        // console.log('CAPTCHA token:', token);
+    const handleCaptchaVerify = (token: string) => {
+        alert(`CAPTCHA token: ${token}`);
         setCaptchaVerified(true);
     };
 

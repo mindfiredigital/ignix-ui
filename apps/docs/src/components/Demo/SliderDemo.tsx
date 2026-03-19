@@ -30,6 +30,7 @@ const SliderDemo = () => {
 
   const codeString = `
 <Slider
+  key={"${variant}-${animation}"}
   defaultValue={[50]}
   max={100}
   step={1}
@@ -61,6 +62,7 @@ const SliderDemo = () => {
           <div className="w-full p-8 space-y-8 border rounded-lg mt-4">
             <div className="p-6 rounded-lg">
               <Slider
+                key={`${variant}-${animation}`}
                 defaultValue={[50]}
                 max={100}
                 step={1}
