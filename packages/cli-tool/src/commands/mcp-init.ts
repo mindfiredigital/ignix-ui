@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import fs from 'fs-extra';
 import path from 'path';
+import { execa } from 'execa';
 
 type Client = 'cursor' | 'vscode' | 'claude' | 'codex';
 
@@ -17,6 +18,13 @@ type VSCodeConfig = {
   servers: Record<string, MCPServerConfig>;
 };
 
+type PackageJson = {
+  dependencies?: Record<string, string>;
+};
+
+const IGNIX_PACKAGE = '@mindfiredigital/ignix-ui';
+const IGNIX_VERSION = '^1.0.7';
+
 export const mcpInitCommand = new Command()
   .name('init')
   .description('Initialize MCP configuration for AI tools')
@@ -30,100 +38,112 @@ export const mcpInitCommand = new Command()
       case 'cursor':
         configPath = path.resolve('.cursor/mcp.json');
         break;
-
       case 'vscode':
         configPath = path.resolve('.vscode/mcp.json');
         break;
-
       case 'claude':
         configPath = path.resolve('.mcp.json');
         break;
-
       case 'codex':
         console.log('\n⚠️ Codex requires manual setup.\n');
-        console.log(`Add this to ~/.codex/config.toml:\n`);
         console.log(`[mcp_servers.ignix]
-command = "ignix"
-args = ["mcp"]\n`);
+command = "npx"
+args = ["ignix", "mcp"]\n`);
         return;
-
       default:
         console.error('❌ Unsupported MCP client:', client);
         process.exit(1);
     }
 
+    // =========================
+    // 📦 PACKAGE.JSON
+    // =========================
+    const packageJsonPath = path.resolve('package.json');
+
+    let packageJson: PackageJson;
+
+    const exists = await fs.exists(packageJsonPath);
+
+    if (!exists) {
+      packageJson = {
+        dependencies: {},
+      };
+    } else {
+      packageJson = await fs.readJSON(packageJsonPath);
+    }
+
+    if (!packageJson.dependencies) {
+      packageJson.dependencies = {};
+    }
+
+    packageJson.dependencies[IGNIX_PACKAGE] = IGNIX_VERSION;
+
+    await fs.writeJSON(packageJsonPath, packageJson, { spaces: 2 });
+
+    // =========================
+    // ⚙️ MCP CONFIG
+    // =========================
     const ignixServer: MCPServerConfig = {
-      command: 'ignix',
-      args: ['mcp'],
+      command: 'npx',
+      args: ['ignix', 'mcp'],
     };
 
     await fs.ensureDir(path.dirname(configPath));
 
-    // ✅ VS Code config
     if (client === 'vscode') {
-      let existing: VSCodeConfig = { servers: {} };
+      const existing: VSCodeConfig = { servers: {} };
 
       if (await fs.exists(configPath)) {
-        const data = await fs.readJSON(configPath);
-        existing = {
+        const data = (await fs.readJSON(configPath)) as VSCodeConfig;
+        existing.servers = data.servers ?? {};
+      }
+
+      await fs.writeJSON(
+        configPath,
+        {
           servers: {
-            ...(data.servers ?? {}),
+            ...existing.servers,
+            ignix: ignixServer,
           },
-        };
-      }
-
-      const updated: VSCodeConfig = {
-        servers: {
-          ...existing.servers,
-          ignix: ignixServer,
         },
-      };
-
-      await fs.writeJSON(configPath, updated, { spaces: 2 });
-    }
-
-    // ✅ Cursor + Claude config
-    else {
-      let existing: CursorClaudeConfig = { mcpServers: {} };
+        { spaces: 2 }
+      );
+    } else {
+      const existing: CursorClaudeConfig = { mcpServers: {} };
 
       if (await fs.exists(configPath)) {
-        const data = await fs.readJSON(configPath);
-        existing = {
-          mcpServers: {
-            ...(data.mcpServers ?? {}),
-          },
-        };
+        const data = (await fs.readJSON(configPath)) as CursorClaudeConfig;
+        existing.mcpServers = data.mcpServers ?? {};
       }
 
-      const updated: CursorClaudeConfig = {
-        mcpServers: {
-          ...existing.mcpServers,
-          ignix: ignixServer,
+      await fs.writeJSON(
+        configPath,
+        {
+          mcpServers: {
+            ...existing.mcpServers,
+            ignix: ignixServer,
+          },
         },
-      };
-
-      await fs.writeJSON(configPath, updated, { spaces: 2 });
+        { spaces: 2 }
+      );
     }
 
-    // ✅ DX Logs
-    console.log(`\n✅ MCP configured for ${client}`);
-    console.log(`📁 File: ${configPath}`);
-    console.log(`\nNext steps:`);
+    // =========================
+    // 📦 INSTALL (SILENT)
+    // =========================
+    console.log('✔ Configuring MCP server.');
+    console.log('✔ Installing dependencies.\n');
 
-    if (client === 'cursor') {
-      console.log('- Open Cursor Settings → MCP');
-      console.log('- Enable Ignix server');
+    try {
+      await execa('npm', ['install'], {
+        stdio: 'ignore', // 🔥 hides npm logs
+      });
+    } catch {
+      // silent fail (like shadcn)
     }
 
-    if (client === 'vscode') {
-      console.log('- Open .vscode/mcp.json');
-      console.log('- Click "Start" next to Ignix');
-    }
-
-    if (client === 'claude') {
-      console.log('- Restart Claude Code');
-      console.log('- Run /mcp');
-    }
-
-    console.log('');
+    // =========================
+    // 🎉 FINAL OUTPUT
+    // =========================
+    console.log(`Configuration saved to ${configPath}.\n`);
   });
