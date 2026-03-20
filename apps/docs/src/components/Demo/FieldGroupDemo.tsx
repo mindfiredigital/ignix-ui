@@ -19,6 +19,8 @@ const FieldGroupDemo = () => {
   ];
 
   const codeString = `
+import FieldGroup from '@ignix-ui/fieldgroup';
+
 <FieldGroup
   title="Personal Information"
   columns={${typeof columns === "number" ? columns : `"${columns}"`}}

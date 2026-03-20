@@ -42,6 +42,15 @@ const CardsDemo = () => {
   },[animation]);
 
   const codeString = `
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from '@ignix-ui/card';
+
 <Card 
   variant="${variant}" 
   size="${size}" 
@@ -142,6 +151,12 @@ const CardsDemo = () => {
 
 const FeatureCardDemo = () => {
   const codeString = `
+import {
+  FeatureCard,
+  CardTitle,
+  CardDescription,
+} from '@ignix-ui/card';
+
 <FeatureCard icon={<Star className="h-8 w-8 text-primary" />} variant="elevated">
   <CardTitle>Amazing Feature</CardTitle>
   <CardDescription>This feature will blow your mind</CardDescription>
@@ -174,6 +189,8 @@ const FeatureCardDemo = () => {
 
 const StatCardDemo = () => {
   const codeString = `
+import { StatCard } from '@ignix-ui/card';
+  
 <StatCard value="99.9%" label="Uptime" trend="up" trendValue="+2.1%"/>
 `;
   return (

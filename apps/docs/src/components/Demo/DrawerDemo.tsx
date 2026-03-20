@@ -36,6 +36,8 @@ const DrawerDemo = () => {
   const [size, setSize] = useState('350px');
 
   const codeString = `
+import { Drawer } from '@ignix-ui/drawer'
+
 <Drawer
   isOpen={${isOpen}}
   onClose={() => setIsOpen(false)}

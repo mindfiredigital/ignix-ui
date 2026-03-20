@@ -917,7 +917,7 @@ Import the component and start using it:
 
 ```tsx
 
-import { SignIn } from '@site/src/components/UI/sign-in';
+import { SignIn } from '@ignix-ui/signin';
 
 function LoginPage() {
   const handleSubmit = async (data) => {
@@ -943,7 +943,7 @@ function LoginPage() {
 <div className="w-full h-[500px] overflow-y-scroll">
     ```tsx
 import React, { useState } from 'react';
-import { SignIn } from '@site/src/components/UI/sign-in';
+import { SignIn } from '@ignix-ui/signin';
 
 function ControlledSignIn() {
   const [loading, setLoading] = useState(false);
@@ -994,7 +994,7 @@ function ControlledSignIn() {
 <div className="w-full h-[500px] overflow-y-scroll">
 ```tsx
 import React from 'react';
-import { SignIn } from '@site/src/components/UI/sign-in';
+import { SignIn } from '@ignix-ui/signin';
 
 function SocialSignIn() {
   const handleGoogleSignIn = async () => {

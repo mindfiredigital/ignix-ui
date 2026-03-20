@@ -13,6 +13,8 @@ const SecurityPageDemo = () => {
   const [layout, setLayout] = useState<(typeof layoutVariants)[number]>("grid");
 
   const codeString = `
+import SecurityPage from '@ignix-ui/security';
+
 <SecurityPage
   title="Security"
   description="Manage password, sessions, 2FA, recovery codes, and login activity."

@@ -37,6 +37,8 @@ const ClusterDemo = () => {
   const items = [1, 2, 3, 4, 5];
 
   const codeString = `
+import { Cluster } from '@ignix-ui/cluster';
+
 <Cluster 
   spacing="${spacing}"
   align="${align}"

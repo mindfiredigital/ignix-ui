@@ -31,7 +31,7 @@ Key features:
 <Tabs>
   <TabItem value="cli" label="CLI" default>
     ```bash
-    ignix add component modals
+    ignix add component modal
     ```
   </TabItem>
 </Tabs>
@@ -48,8 +48,8 @@ The demo above includes both **Simple (Modal)** and **Composable (nested)** tabs
 ### Basic usage (Simple)
 
 ```tsx
-import { Modal } from './components/ui/modals';
-import { Button } from './components/ui/button';
+import Modal from '@ignix-ui/modal';
+import { Button } from '@ignix-ui/button';
 
 function BasicModalExample() {
   const [isOpen, setIsOpen] = useState(false);
@@ -83,8 +83,8 @@ import {
   ModalBody,
   ModalFooter,
   Modal,
-} from './components/ui/modals';
-import { Button } from './components/ui/button';
+} from '@ignix-ui/modal';
+import { Button } from '@ignix-ui/button';
 import { cn } from './utils/cn';
 import { Info } from 'lucide-react';
 

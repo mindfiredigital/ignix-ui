@@ -29,6 +29,8 @@ const CenterDemo = (): ReactElement => {
   const [minHeight, setMinHeight] = useState("150px");
 
   const codeString = `
+import Center from '@ignix-ui/center';
+
 <Center
   variant="${variant}"
   horizontal={${horizontal}}

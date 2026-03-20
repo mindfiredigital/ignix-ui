@@ -25,6 +25,8 @@ const AutoGridDemo = () => {
   ];
 
   const codeString = `
+import AutoGrid from '@ignix-ui/autogrid';
+
 <AutoGrid 
   minItemWidth="${minItemWidth}" 
   maxColumns={${maxColumns}} 

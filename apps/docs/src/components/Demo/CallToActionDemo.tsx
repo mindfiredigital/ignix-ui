@@ -231,7 +231,7 @@ const getCodeSnippet = (formType: FormType, demoType: string, variant: VariantTy
     }
 
     const importStatement = formType === 'banner'
-        ? `import { CTABanner, CTABannerContent } from '../UI/call-to-action';`
+        ? `import { CTABanner, CTABannerContent } from '@ignix-ui/calltoaction';`
         : formType === 'newsletter'
             ? `import { CTABanner, CTABannerContent, CTABannerNewsletter, NewsletterHeading, NewsletterSubheading } from '../UI/call-to-action';`
             : formType === 'contact-form'

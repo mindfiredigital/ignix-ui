@@ -16,6 +16,8 @@ const SplitDemo = () => {
   const [resizable, setResizable] = useState(false);
 
   const codeString = `
+import { Split, Left, Right } from '@ignix-ui/split';
+
 <Split
   ratio="${ratio}"
   gap="${gap}"
