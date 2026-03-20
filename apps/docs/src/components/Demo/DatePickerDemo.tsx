@@ -73,7 +73,7 @@ export const BasicDatePickerDemo = () => {
     };
 
     const codeString = `
-import { DatePicker } from '@mindfiredigital/ignix-ui';
+import DatePicker from '@ignix-ui/datepicker';
 
 function MyComponent() {
   const [date, setDate] = useState<Date | null>(null);
@@ -138,7 +138,7 @@ export const RangeDatePickerDemo = () => {
     };
 
     const codeString = `
-import { DatePicker } from '@mindfiredigital/ignix-ui';
+import DatePicker from '@ignix-ui/datepicker';
 
 function MyComponent() {
   const [range, setRange] = useState({ start: null, end: null });
@@ -819,7 +819,7 @@ export const ControlledDatePickerDemo = () => {
     };
 
     const singleCodeString = `import { useState } from 'react';
-import { DatePicker } from '@mindfiredigital/ignix-ui';
+import DatePicker from '@ignix-ui/datepicker';
 
 function SingleDateExample() {
   const [date, setDate] = useState<Date | null>(null);
@@ -841,7 +841,7 @@ function SingleDateExample() {
 
 
     const rangeCodeString = `import { useState } from 'react';
-import { DatePicker } from '@mindfiredigital/ignix-ui';
+import DatePicker from '@ignix-ui/datepicker';
 
 function RangeDateExample() {
   const [range, setRange] = useState({ 

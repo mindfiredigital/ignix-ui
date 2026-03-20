@@ -271,6 +271,8 @@ const SingleColumnLayoutDemo = () => {
 
     const generateCodeString = () => {
         const baseCode = `
+import { SingleColumnLayout } from '@ignix-ui/singlecolumnlayout'
+
 <SingleColumnLayout
   variant="default"
   animation="fade"

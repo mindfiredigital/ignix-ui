@@ -1784,7 +1784,7 @@ export const DynamicFormDemo = () => {
     DynamicNavigation,
     ThemeToggle,
     type DynamicFormField,
-} from '../UI/dynamic-form';
+} from '@ignix-ui/dynamicform';
 import {
     ${iconName},
     PersonIcon,

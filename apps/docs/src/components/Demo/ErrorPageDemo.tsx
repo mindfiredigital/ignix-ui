@@ -66,7 +66,21 @@ const ErrorPageDemo = () => {
   ];
 
   const generateCodeString = () => {
-    let code = `<ErrorPage\n  variant="${variant}"\n  icon={Settings}${showBackgroundImage ? '\n  backgroundImage="https://images.unsplash.com/photo-1557683316-973673baf926?w=1600&h=900&fit=crop&q=90"' : ''}\n>`;
+    let code =`import {
+    ErrorPage,
+    ErrorPageErrorCode,
+    ErrorPageHeading,
+    ErrorPageDesc,
+    ErrorPageIllustration,
+    ErrorPageContent,
+    ErrorPageSearch,
+    ErrorPageFooter,
+    ErrorPageLinks,
+    ErrorPageIcons,
+    ErrorPageErrorReference,
+  } from '@ignix-ui/errorpage';\n`
+   code += `import { ButtonWithIcon } from '@ignix-ui/buttonwithicon';\n`
+    code += `\n<ErrorPage\n  variant="${variant}"\n  icon={Settings}${showBackgroundImage ? '\n  backgroundImage="https://images.unsplash.com/photo-1557683316-973673baf926?w=1600&h=900&fit=crop&q=90"' : ''}\n>`;
     
     if (showIllustration && errorType === '404') {
       code += `\n  <ErrorPageIllustration\n    position="${illustrationPosition}"\n    illustration="/ignix-ui/img/404-1.svg"\n    className="w-90 h-90 mx-auto"\n  />`;
@@ -401,7 +415,21 @@ const CustomDesignDemo = () => {
           </TabItem>
           <TabItem value="custom-code" label="Code">
             <CodeBlock language="tsx" className="whitespace-pre-wrap max-h-[500px] overflow-y-scroll">
-{`<ErrorPage variant="default" className="bg-slate-950 relative overflow-hidden">
+{`import {
+    ErrorPage,
+    ErrorPageErrorCode,
+    ErrorPageHeading,
+    ErrorPageDesc,
+    ErrorPageIllustration,
+    ErrorPageContent,
+    ErrorPageSearch,
+    ErrorPageFooter,
+    ErrorPageLinks,
+    ErrorPageIcons,
+    ErrorPageErrorReference,
+  } from '@ignix-ui/errorpage';\n
+import { ButtonWithIcon } from '@ignix-ui/buttonwithicon';\n
+<ErrorPage variant="default" className="bg-slate-950 relative overflow-hidden">
   {/* Space background with stars */}
   <div className="absolute inset-0 bg-slate-950">
     {Array.from({ length: 100 }).map((_, i) => (

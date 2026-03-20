@@ -12,6 +12,8 @@ const ResetPasswordPageDemo = () => {
   const [token, setToken] = useState('');
 
   const codeString = `
+    import ResetPasswordPage from '@ignix-ui/resetpassword';
+  
     <ResetPasswordPage
     token="${token}"
     inputVariant="${inputVariant}"
