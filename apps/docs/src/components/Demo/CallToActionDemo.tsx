@@ -17,7 +17,8 @@ import {
     NewsletterHeading,
     NewsletterSubheading,
     DemoFormHeading,
-    DemoFormSubheading
+    DemoFormSubheading,
+    CTABannerProps
 } from '../UI/call-to-action';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -102,7 +103,7 @@ const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light'
                     buttonVariant="primary"
                     layout="inline"
                     onSubmit={async (email) => {
-                        console.log('Newsletter subscription:', email);
+                        alert(`Subscribed to newsletter: ${email}`);
                     }}
                 >
                     <NewsletterHeading>Stay in the Loop</NewsletterHeading>
@@ -126,7 +127,7 @@ const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light'
                     maxMessageLength={1000}
                     layout="vertical"
                     onSubmit={async (data) => {
-                        console.log('Contact form submitted:', data);
+                        alert(`Contact form submitted: ${JSON.stringify(data)}`);
                     }}
                 >
                     <ContactFormHeading>Get In Touch</ContactFormHeading>
@@ -149,7 +150,7 @@ const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light'
                     requirePhone={false}
                     layout="two-column"
                     onSubmit={async (data) => {
-                        console.log('Demo request submitted:', data);
+                        alert(`Demo request submitted: ${JSON.stringify(data)}`);
                     }}
                 >
                     <DemoFormHeading>See Our Platform Live</DemoFormHeading>
@@ -162,8 +163,12 @@ const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light'
     }
 };
 
+type CodeSnippetProps = Partial<{
+    imagePosition: ImagePositionType;
+}>;
+
 // Helper function to get code snippet
-const getCodeSnippet = (formType: FormType, demoType: string, variant: VariantType, additionalProps: any = {}) => {
+const getCodeSnippet = (formType: FormType, demoType: string, variant: VariantType, additionalProps: CodeSnippetProps = {}) => {
     // Build props string dynamically
     const props: string[] = [
         `variant="${variant}"`,
@@ -360,7 +365,7 @@ const CTABannerDemo = ({
 
 
     const renderBanner = () => {
-        const bannerProps: any = {
+        const bannerProps: Partial<CTABannerProps> = {
             variant,
             layout: demoType === 'split' ? 'split' : 'centered',
             contentAlign: demoType === 'split' ? 'left' : 'center',

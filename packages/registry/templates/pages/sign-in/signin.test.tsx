@@ -365,22 +365,6 @@ describe("SignIn Component", () => {
         expect(screen.getByText("Welcome Back")).toBeInTheDocument();
     });
 
-    // it("validates email format correctly", async () => {
-    //     render(<SignIn onSubmit={mockOnSubmit} />);
-
-    //     const emailInput = screen.getByPlaceholderText("you@example.com");
-    //     fireEvent.change(emailInput, { target: { value: "invalid-email" } });
-
-    //     const submitButton = screen.getByTestId("button");
-    //     fireEvent.click(submitButton);
-
-    //     // Wait for the validation error to appear
-    //     await waitFor(() => {
-    //         // Look for the error message with a simpler approach
-    //         const errorElements = screen.getAllByText(/enter a valid email|valid email|email is invalid/i);
-    //         expect(errorElements.length).toBeGreaterThan(0);
-    //     }, { timeout: 3000 });
-    // });
 
     it("validates password length correctly", async () => {
         render(<SignIn onSubmit={mockOnSubmit} />);
@@ -445,7 +429,7 @@ describe("SignIn Component", () => {
         await waitFor(() => {
             // Check if any error messages are rendered
             const errorMessages = container.querySelectorAll('[class*="error"], [class*="Error"], [id*="error"]');
-            errorMessages.forEach(el => console.log("Error element:", el.textContent));
+            errorMessages.forEach(el => alert(`Error element: ${el.textContent}`));
         }, { timeout: 1000 });
     });
 });

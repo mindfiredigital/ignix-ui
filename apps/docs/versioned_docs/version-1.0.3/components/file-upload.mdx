@@ -374,10 +374,10 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                         try {
                             preview = await createImagePreview(file);
                         } catch (error) {
-                            console.error('Failed to create preview:', error);
+                            alert(`Failed to create preview: ${error}`);
                         }
                     } else {
-                        console.log('Skipping preview for non-image file');
+                        alert('Skipping preview for non-image file');
                     }
 
                     // Create file object with explicit properties
@@ -588,7 +588,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                                                             e.currentTarget.style.border = '2px solid red';
                                                         }}
                                                         onLoad={() => {
-                                                            console.log('Avatar loaded successfully for:', file.name);
+                                                            alert('Avatar loaded successfully');
                                                         }}
                                                     />
                                                 </>
