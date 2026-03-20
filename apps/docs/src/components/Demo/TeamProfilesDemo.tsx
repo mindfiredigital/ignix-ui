@@ -277,7 +277,7 @@ export const BasicTeamDemo = () => {
     MemberRole,
     MemberBio,
     MemberSocialLinks,
-} from '../UI/team-profiles';
+} from '@ignix-ui/teamprofiles';
 
 const teamMembers = [
     {
@@ -497,10 +497,10 @@ export const AdvancedTeamDemo = () => {
     MemberSocialLinks,
     MemberCardOverlay,
     TeamFooter,
-} from '../UI/team-profiles';
+} from '@ignix-ui/teamprofiles';
 import { UserCircle } from 'lucide-react';
-import { Typography } from '../../components/typography';
-import { Button } from '../../components/button';
+import { Typography } from '@ignix-ui/typography';
+import { Button } from '@ignix-ui/button';
 
 <TeamProfiles
     ${props.join('\n    ')}
