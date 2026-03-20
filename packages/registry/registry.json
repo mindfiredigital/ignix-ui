@@ -1130,6 +1130,23 @@
         }
       }
     },
+    "activity-feed-page": {
+      "name": "activity-feed-page",
+      "description": "A composable activity feed page template with a chronological events list (newest-first), event-type filters, search, relative/absolute timestamps, and pagination or infinite load-more.",
+      "dependencies": ["@radix-ui/react-icons"],
+      "componentDependencies": [
+        "button",
+        "card",
+        "input",
+        "pagination"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/activity-feed-page/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "imageCard": {
       "name": "ImageCard",
       "description": "An image card component with different variants",
