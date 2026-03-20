@@ -17,6 +17,8 @@ const ContainerDemo = () => {
   const [responsive, setResponsive] = useState(true);
 
   const codeString = `
+import { Container } from '@ignix-ui/container';
+
 <Container
   size="${size}"
   padding="${padding}"

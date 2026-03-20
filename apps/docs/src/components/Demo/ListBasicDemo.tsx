@@ -50,6 +50,7 @@ const ListBasicDemo = () => {
      * Generate code string based on current configuration
      */
     const codeString = `
+import { ListBasic } from '@ignix-ui/list-basic';
 <ListBasic 
   items={${JSON.stringify(items)}}
   type="${type}"
@@ -107,6 +108,7 @@ const ListBasicDemo = () => {
  */
 export const SpacingComparison = () => {
     const codeString = `
+import { ListBasic } from '@ignix-ui/list-basic'
 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
   <div>
     <h3 className="text-sm font-semibold mb-2">Small Spacing</h3>
@@ -186,6 +188,7 @@ export const SpacingComparison = () => {
  */
 export const TypeComparison = () => {
     const codeString = `
+import { ListBasic } from '@ignix-ui/list-basic'
 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
   <div>
     <h3 className="text-sm font-semibold mb-2">Unordered List</h3>
@@ -250,6 +253,7 @@ export const TypeComparison = () => {
  */
 export const ChildrenExample = () => {
     const codeString = `
+import { ListBasic } from '@ignix-ui/list-basic'
 <ListBasic type="unordered" spacing="md">
   <li>
     <strong>Bold item</strong> with additional text

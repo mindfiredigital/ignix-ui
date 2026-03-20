@@ -109,6 +109,7 @@ const TabNavigationDemo = () => {
     "  { id: 'settings', label: 'Settings', content: <div>Settings...</div> },",
     "];",
     "",
+    `import TabNavigation from '@ignix-ui/tabnavigation';`,
     "<TabNavigation",
     "  tabs={tabs}",
     `  indicatorVariant="${indicatorVariant}"`,

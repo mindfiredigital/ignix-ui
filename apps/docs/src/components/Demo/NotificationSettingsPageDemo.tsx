@@ -3,7 +3,7 @@ import Tabs from "@theme/Tabs";
 import CodeBlock from "@theme/CodeBlock";
 import { useState, useEffect } from "react";
 import VariantSelector from "./VariantSelector";
-import { NotificationSettingsPage } from "../UI/notification-settings";
+import NotificationPage from "../UI/notification-settings-page";
 
 const themeVariants = ["light", "dark", "auto"] as const;
 const layoutVariants = ["grid", "list"] as const;
@@ -13,7 +13,9 @@ const NotificationSettingsPageDemo = () => {
   const [layout, setLayout] = useState<(typeof layoutVariants)[number]>("grid");
 
   const codeString = `
-<NotificationSettingsPage
+import NotificationPage from '@ignix-ui/notificationsettingspage';
+
+<NotificationPage
   title="Notifications"
   description="Manage your notification preferences and stay informed about what matters to you."
   variant="${variant}"
@@ -45,7 +47,7 @@ const NotificationSettingsPageDemo = () => {
       <Tabs>
         <TabItem value="preview" label="Preview">
           <div className="border rounded-lg overflow-hidden p-4">
-            <NotificationSettingsPage
+            <NotificationPage
               title="Notifications"
               description="Manage your notification preferences and stay informed about what matters to you."
               variant={variant}

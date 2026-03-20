@@ -1388,6 +1388,16 @@
           "type": "component"
         }
       }
+    },
+    "split": {
+      "name": "Split",
+      "description": "component simplifies the creation of two-column layouts such as sidebars with content, image and text sections, or dashboard layouts. It supports ratios, gaps, responsive stacking, and optional resizing.",
+      "files": {
+        "main": {
+          "path": "components/layouts/split/index.tsx",
+          "type": "component"
+        }
+      }
     }
   } 
 }
