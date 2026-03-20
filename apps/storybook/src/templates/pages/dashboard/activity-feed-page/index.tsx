@@ -944,16 +944,18 @@ export function ActivityFeedPage({
 
   const setFilter = useCallback(
     (next: ActivityFeedFilterState) => {
+      // Reset paging whenever the filter/search criteria changes
+      // so the user always lands on the first page of the new results.
+      setPage(1);
+      setInfiniteCount(pageSize);
       if (!filterState) setInternalFilter(next);
       onFilterChange?.(next);
     },
-    [filterState, onFilterChange],
+    [filterState, onFilterChange, pageSize],
   );
 
   const handleSearchChange = useCallback(
     (query: string) => {
-      setPage(1);
-      setInfiniteCount(pageSize);
       setFilter({ ...effectiveFilter, query });
     },
     [effectiveFilter, pageSize, setFilter],
