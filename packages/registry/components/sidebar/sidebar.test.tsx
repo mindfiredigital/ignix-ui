@@ -5,48 +5,73 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import '@testing-library/jest-dom';
 
 import { Sidebar, SidebarProvider, useSidebar } from './index';
+
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) =>
-      React.createElement('div', props, children),
-    nav: ({ children, ...props }: any) =>
-      React.createElement('nav', props, children),
-    span: ({ children, ...props }: any) =>
-      React.createElement('span', props, children),
+    div: ({ children, animate, ...props }: any) => {
+      const isHidden =
+        animate &&
+        typeof animate === 'object' &&
+        animate.height === 0;
+      return React.createElement(
+        'div',
+        props,
+        isHidden ? null : children
+      );
+    },
+    nav:  ({ children, ...props }: any) => React.createElement('nav',  props, children),
+    span: ({ children, ...props }: any) => React.createElement('span', props, children),
   },
   AnimatePresence: ({ children }: any) =>
     React.createElement(React.Fragment, null, children),
 }));
 
-vi.mock('lucide-react', () => ({
-  Menu: ({ size }: { size?: number }) => (
-    <svg data-testid="menu-icon" width={size} height={size} />
-  ),
-  X: ({ size }: { size?: number }) => (
-    <svg data-testid="x-icon" width={size} height={size} />
-  ),
+vi.mock('@radix-ui/react-icons', () => ({
+  HamburgerMenuIcon: ({ width, height }: any) => <svg data-testid="menu-icon"    width={width} height={height} />,
+  DoubleArrowLeftIcon: ({ width, height }: any) => <svg data-testid="close-icon"   width={width} height={height} />,
+  ChevronDownIcon: ({ width, height }: any) => <svg data-testid="chevron-icon" width={width} height={height} />,
+  HomeIcon: () => <svg data-testid="home-radix-icon" />,
+  PersonIcon: () => <svg data-testid="person-icon" />,
+  GearIcon: () => <svg data-testid="gear-icon" />,
+  QuestionMarkCircledIcon: () => <svg data-testid="help-icon" />,
+  DashboardIcon: () => <svg data-testid="dashboard-icon" />,
+  BarChartIcon: () => <svg data-testid="barchart-icon" />,
+  FaceIcon: () => <svg data-testid="face-icon" />,
+  LockClosedIcon: () => <svg data-testid="lock-icon" />,
+  InfoCircledIcon: () => <svg data-testid="info-icon" />,
 }));
-
-// Shared test helpers
 
 const HomeIcon = () => <svg data-testid="home-icon" />;
 const SettingsIcon = () => <svg data-testid="settings-icon" />;
+const ChildIcon = () => <svg data-testid="child-icon" />;
 
 const defaultLinks = [
-  { label: 'Home', href: '/home', icon: HomeIcon },
+  { label: 'Home',     href: '/home',     icon: HomeIcon },
+  { label: 'Settings', href: '/settings', icon: SettingsIcon },
+];
+
+const linksWithChildren = [
+  {
+    label: 'Home',
+    href: '/home',
+    icon: HomeIcon,
+    children: [
+      { label: 'Dashboard', href: '/dashboard', icon: ChildIcon },
+      { label: 'Analytics', href: '/analytics', icon: ChildIcon },
+    ],
+  },
   { label: 'Settings', href: '/settings', icon: SettingsIcon },
 ];
 
 const renderSidebar = (
   sidebarProps: Partial<React.ComponentProps<typeof Sidebar>> = {},
   providerProps: { initialOpen?: boolean } = {}
-) => {
-  return render(
+) =>
+  render(
     <SidebarProvider initialOpen={providerProps.initialOpen ?? true}>
       <Sidebar links={defaultLinks} {...sidebarProps} />
     </SidebarProvider>
   );
-};
 
 const SidebarConsumer = ({
   onRender,
@@ -164,9 +189,11 @@ describe('Sidebar rendering', () => {
     expect(screen.getByText('Brand')).toBeInTheDocument();
   });
 
-  it('hides the brand name when sidebar is closed', () => {
+  it('brand name is invisible (not removed) when sidebar is closed', () => {
     renderSidebar({}, { initialOpen: false });
-    expect(screen.queryByText('Brand')).not.toBeInTheDocument();
+    const brand = screen.getByText('Brand');
+    expect(brand).toBeInTheDocument();
+    expect(brand).toHaveClass('invisible');
   });
 
   it('renders all navigation links', () => {
@@ -208,31 +235,31 @@ describe('Sidebar rendering', () => {
 // Toggle buttons
 
 describe('Sidebar toggle buttons', () => {
-  it('shows the X (close) button when open', () => {
+  it('shows the close button when open', () => {
     renderSidebar();
     expect(screen.getByTitle('Close')).toBeInTheDocument();
     expect(screen.queryByTitle('Open')).not.toBeInTheDocument();
   });
 
-  it('shows the Menu (open) button when closed', () => {
+  it('shows the menu button when closed', () => {
     renderSidebar({}, { initialOpen: false });
     expect(screen.getByTitle('Open')).toBeInTheDocument();
     expect(screen.queryByTitle('Close')).not.toBeInTheDocument();
   });
 
-  it('closes the sidebar when the X button is clicked', async () => {
+  it('closes the sidebar when close button is clicked', async () => {
     const user = userEvent.setup();
     renderSidebar();
     await user.click(screen.getByTitle('Close').closest('button')!);
-    expect(screen.queryByText('Brand')).not.toBeInTheDocument();
+    expect(screen.getByText('Brand')).toHaveClass('invisible');
     expect(screen.getByTitle('Open')).toBeInTheDocument();
   });
 
-  it('opens the sidebar when the Menu button is clicked', async () => {
+  it('opens the sidebar when menu button is clicked', async () => {
     const user = userEvent.setup();
     renderSidebar({}, { initialOpen: false });
     await user.click(screen.getByTitle('Open').closest('button')!);
-    expect(screen.getByText('Brand')).toBeInTheDocument();
+    expect(screen.getByText('Brand')).not.toHaveClass('invisible');
     expect(screen.getByTitle('Close')).toBeInTheDocument();
   });
 });
@@ -266,6 +293,7 @@ describe('Sidebar variant styles', () => {
     { variant: 'light' as const, expectedClass: 'bg-white' },
     { variant: 'glass' as const, expectedClass: 'backdrop-blur-3xl' },
     { variant: 'gradient' as const, expectedClass: 'from-gray-800' },
+    { variant: 'dropdown' as const, expectedClass: 'bg-background' },
   ];
 
   variants.forEach(({ variant, expectedClass }) => {
@@ -277,7 +305,22 @@ describe('Sidebar variant styles', () => {
   });
 });
 
-//Custom className
+
+describe('Glass variant sheen', () => {
+  it('renders the sheen div when variant is glass', () => {
+    const { container } = renderSidebar({ variant: 'glass' });
+    const sheen = container.querySelector('.bg-gradient-to-br');
+    expect(sheen).toBeInTheDocument();
+  });
+
+  it('does not render sheen div for non-glass variants', () => {
+    const { container } = renderSidebar({ variant: 'default' });
+    const sheen = container.querySelector('.bg-gradient-to-br');
+    expect(sheen).not.toBeInTheDocument();
+  });
+});
+
+// Custom className
 
 describe('Sidebar className prop', () => {
   it('merges a custom className onto the root element', () => {
@@ -303,10 +346,123 @@ describe('Sidebar direction prop', () => {
   });
 });
 
+// SidebarLink — dropdown variant behaviour
+
+describe('SidebarLink — dropdown variant', () => {
+  it('renders plain <a> for links without children even in dropdown variant', () => {
+    render(
+      <SidebarProvider initialOpen={true}>
+        <Sidebar links={defaultLinks} variant="dropdown" />
+      </SidebarProvider>
+    );
+    expect(screen.getByRole('link', { name: /home/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /settings/i })).toBeInTheDocument();
+  });
+
+  it('renders a button trigger for links with children in dropdown variant', () => {
+    render(
+      <SidebarProvider initialOpen={true}>
+        <Sidebar links={linksWithChildren} variant="dropdown" />
+      </SidebarProvider>
+    );
+    expect(screen.getByRole('button', { name: /home/i })).toBeInTheDocument();
+  });
+
+  it('children are hidden by default', () => {
+    render(
+      <SidebarProvider initialOpen={true}>
+        <Sidebar links={linksWithChildren} variant="dropdown" />
+      </SidebarProvider>
+    );
+    expect(screen.queryByText('Dashboard')).not.toBeInTheDocument();
+    expect(screen.queryByText('Analytics')).not.toBeInTheDocument();
+  });
+
+  it('clicking the trigger reveals children', async () => {
+    const user = userEvent.setup();
+    render(
+      <SidebarProvider initialOpen={true}>
+        <Sidebar links={linksWithChildren} variant="dropdown" />
+      </SidebarProvider>
+    );
+    await user.click(screen.getByRole('button', { name: /home/i }));
+    expect(screen.getByText('Dashboard')).toBeInTheDocument();
+    expect(screen.getByText('Analytics')).toBeInTheDocument();
+  });
+
+  it('clicking the trigger again hides children', async () => {
+    const user = userEvent.setup();
+    render(
+      <SidebarProvider initialOpen={true}>
+        <Sidebar links={linksWithChildren} variant="dropdown" />
+      </SidebarProvider>
+    );
+    await user.click(screen.getByRole('button', { name: /home/i }));
+    expect(screen.getByText('Dashboard')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /home/i }));
+    expect(screen.queryByText('Dashboard')).not.toBeInTheDocument();
+  });
+
+  it('child links have correct hrefs', async () => {
+    const user = userEvent.setup();
+    render(
+      <SidebarProvider initialOpen={true}>
+        <Sidebar links={linksWithChildren} variant="dropdown" />
+      </SidebarProvider>
+    );
+    await user.click(screen.getByRole('button', { name: /home/i }));
+    expect(screen.getByRole('link', { name: /dashboard/i })).toHaveAttribute('href', '/dashboard');
+    expect(screen.getByRole('link', { name: /analytics/i })).toHaveAttribute('href', '/analytics');
+  });
+
+  it('shows chevron icon when sidebar is open', () => {
+    render(
+      <SidebarProvider initialOpen={true}>
+        <Sidebar links={linksWithChildren} variant="dropdown" />
+      </SidebarProvider>
+    );
+    expect(screen.getByTestId('chevron-icon')).toBeInTheDocument();
+  });
+
+  it('hides label and chevron when sidebar is collapsed', () => {
+    render(
+      <SidebarProvider initialOpen={false}>
+        <Sidebar links={linksWithChildren} variant="dropdown" />
+      </SidebarProvider>
+    );
+    expect(screen.queryByText('Home')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('chevron-icon')).not.toBeInTheDocument();
+  });
+
+  it('open groups collapse when sidebar collapses', async () => {
+    const user = userEvent.setup();
+    let capturedCtx: ReturnType<typeof useSidebar> | null = null;
+    render(
+      <SidebarProvider initialOpen={true}>
+        <SidebarConsumer onRender={(ctx) => { capturedCtx = ctx; }} />
+        <Sidebar links={linksWithChildren} variant="dropdown" />
+      </SidebarProvider>
+    );
+    await user.click(screen.getByRole('button', { name: /home/i }));
+    expect(screen.getByText('Dashboard')).toBeInTheDocument();
+    act(() => capturedCtx!.onClose());
+    expect(screen.queryByText('Dashboard')).not.toBeInTheDocument();
+  });
+
+  it('renders plain <a> for links with children when variant is NOT dropdown', () => {
+    render(
+      <SidebarProvider initialOpen={true}>
+        <Sidebar links={linksWithChildren} variant="default" />
+      </SidebarProvider>
+    );
+    expect(screen.getByRole('link', { name: /home/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /home/i })).not.toBeInTheDocument();
+  });
+});
 
 // Responsive / mobile behaviour
 
-describe('Sidebar mobile responsiveness', () => {
+describe('Sidebar mobileBreakPoint prop', () => {
   const originalInnerWidth = window.innerWidth;
 
   afterEach(() => {
@@ -318,13 +474,24 @@ describe('Sidebar mobile responsiveness', () => {
     window.dispatchEvent(new Event('resize'));
   });
 
-  it('detects mobile viewport below 768px', () => {
+  it('detects mobile viewport below default 768px breakpoint', () => {
     Object.defineProperty(window, 'innerWidth', {
       writable: true,
       configurable: true,
       value: 375,
     });
     const { container } = renderSidebar({}, { initialOpen: false });
+    fireEvent(window, new Event('resize'));
+    expect(container.firstChild).toBeInTheDocument();
+  });
+
+  it('respects custom mobileBreakPoint', () => {
+    Object.defineProperty(window, 'innerWidth', {
+      writable: true,
+      configurable: true,
+      value: 900,
+    });
+    const { container } = renderSidebar({ mobileBreakPoint: 1024 }, { initialOpen: false });
     fireEvent(window, new Event('resize'));
     expect(container.firstChild).toBeInTheDocument();
   });
@@ -351,14 +518,14 @@ describe('Sidebar mobile responsiveness', () => {
   });
 });
 
-// Multiple links cases
+// Many links
 
 describe('Sidebar with many links', () => {
   it('renders all links when a large list is provided', () => {
     const manyLinks = Array.from({ length: 10 }, (_, i) => ({
       label: `Link ${i}`,
-      href: `/link-${i}`,
-      icon: HomeIcon,
+      href:  `/link-${i}`,
+      icon:  HomeIcon,
     }));
     renderSidebar({ links: manyLinks });
     manyLinks.forEach(({ label }) => {
@@ -369,12 +536,14 @@ describe('Sidebar with many links', () => {
   it('renders correct href for every link', () => {
     const manyLinks = Array.from({ length: 5 }, (_, i) => ({
       label: `Page ${i}`,
-      href: `/page-${i}`,
-      icon: HomeIcon,
+      href:  `/page-${i}`,
+      icon:  HomeIcon,
     }));
     renderSidebar({ links: manyLinks });
     manyLinks.forEach(({ label, href }) => {
-      expect(screen.getByRole('link', { name: new RegExp(label, 'i') })).toHaveAttribute('href', href);
+      expect(
+        screen.getByRole('link', { name: new RegExp(label, 'i') })
+      ).toHaveAttribute('href', href);
     });
   });
 });
@@ -384,17 +553,16 @@ describe('Sidebar with many links', () => {
 describe('Sidebar context integration', () => {
   it('external toggle from context updates the sidebar UI', () => {
     let capturedCtx: ReturnType<typeof useSidebar> | null = null;
-
     render(
       <SidebarProvider initialOpen={true}>
         <SidebarConsumer onRender={(ctx) => { capturedCtx = ctx; }} />
         <Sidebar links={defaultLinks} brandName="Ignix" />
       </SidebarProvider>
     );
-
-    expect(screen.getByText('Ignix')).toBeInTheDocument();
+    const brand = screen.getByText('Ignix');
+    expect(brand).not.toHaveClass('invisible');
     act(() => capturedCtx!.onClose());
-    expect(screen.queryByText('Ignix')).not.toBeInTheDocument();
+    expect(brand).toHaveClass('invisible');
   });
 
   it('multiple siblings share the same context state', () => {
@@ -406,11 +574,10 @@ describe('Sidebar context integration', () => {
         <Sidebar links={defaultLinks} brandName="Sidebar A" />
       </SidebarProvider>
     );
-
+    const brand = screen.getByText('Sidebar A');
     act(() => capturedCtx!.onClose());
-    expect(screen.queryByText('Sidebar A')).not.toBeInTheDocument();
-
+    expect(brand).toHaveClass('invisible');
     act(() => capturedCtx!.onOpen());
-    expect(screen.getByText('Sidebar A')).toBeInTheDocument();
+    expect(brand).not.toHaveClass('invisible');
   });
 });
