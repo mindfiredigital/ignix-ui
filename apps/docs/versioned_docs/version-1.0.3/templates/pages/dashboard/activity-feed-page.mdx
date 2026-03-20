@@ -1,0 +1,377 @@
+---
+sidebar_position: 7
+title: Activity Feed Page
+description: A composable activity feed template with chronological events, type filters, search, relative/absolute timestamps, and pagination or infinite scrolling.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import ActivityFeedPageDemo from '@site/src/components/Demo/ActivityFeedPageDemo';
+
+
+The **Activity Feed Page** is a high-level template for displaying chronological events such as user actions, system updates, billing events, and security alerts. It provides:
+
+- A **chronological event list**, sorted newest-first.
+- **Event type icons and badges** for quick scanning (auth, user, billing, security, etc.).
+- **Actor information** (who performed the action).
+- **Relative or absolute timestamps** (e.g. `"2 hours ago"` or `"Mar 12, 2026, 08:45"`).
+- **Filter by event type** chips and **search** across titles, descriptions, actors, and context.
+- Either **pagination** or **infinite load-more** behaviour.
+
+The page is **composable**: you can use the full `ActivityFeedPage` component, or mix and match layout, header, filters, list, row, and pagination building blocks to fit your dashboard.
+
+
+<ActivityFeedPageDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+
+```bash
+ignix add component activity-feed-page
+```
+
+  </TabItem>
+  <TabItem value="manual" label="Manual">
+
+```tsx
+import {
+  ActivityFeedPage,
+  type ActivityEvent,
+  type ActivityFeedFilterState,
+} from "@ignix-ui/activity-feed-page";
+
+const events: ActivityEvent[] = [
+  {
+    id: "1",
+    type: "authentication",
+    actor: { name: "Alex Morgan", meta: "Admin" },
+    occurredAt: new Date(),
+    title: "User signed in",
+    description: "Successful login from a trusted device.",
+  },
+  // ...more ActivityEvent rows
+];
+
+export function ActivityFeedExample() {
+  const [filter, setFilter] = useState<ActivityFeedFilterState>({
+    type: null,
+    query: "",
+  });
+
+  return (
+    <ActivityFeedPage
+      events={events}
+      filterState={filter}
+      onFilterChange={setFilter}
+      pagingMode="pagination"
+      pageSize={10}
+    />
+  );
+}
+```
+
+  </TabItem>
+</Tabs>
+
+## Features
+
+- **Chronological event list**: events are always sorted newest-first by their `occurredAt` timestamp.
+- **Event type badges**: each event shows an icon and badge (auth, user, security, billing, etc.) with theme-aware colors.
+- **Actor + context**: display who performed the action plus extra context like invoice or order IDs.
+- **Relative or absolute time**: show friendly `"2 hours ago"` strings or full absolute timestamps.
+- **Search + filters**: filter by event type and search across titles, descriptions, actors, and context.
+- **Pagination or infinite scroll**: choose between numbered pages or a "Load more" / infinite pattern.
+- **Composable sections**: `ActivityFeedLayout`, `ActivityFeedHeader`, `ActivityFeedFilters`, `ActivityFeedList`, `ActivityEventRow`, and `ActivityFeedPagination` can be used independently.
+
+## Props
+
+### Page props (`ActivityFeedPage`)
+
+```ts
+type ActivityEventType =
+  | "authentication"
+  | "user"
+  | "security"
+  | "system"
+  | "billing"
+  | "order"
+  | "comment"
+  | "document"
+  | "schedule"
+  | "warning";
+
+interface ActivityActor {
+  name: string;
+  meta?: string;
+  avatarUrl?: string;
+}
+
+interface ActivityEvent {
+  id: string;
+  type: ActivityEventType;
+  actor: ActivityActor;
+  occurredAt: Date;
+  title: string;
+  description: string;
+  contextLabel?: string;
+}
+
+type TimestampMode = "relative" | "absolute";
+
+type FeedPagingMode = "pagination" | "infinite";
+
+interface ActivityFeedFilterState {
+  type: ActivityEventType | null;
+  query: string;
+}
+```
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `events` | `ActivityEvent[]` | Events to display in the feed; they are sorted newest-first by `occurredAt`. |
+| `title` | `string` (optional) | Page title; defaults to `"Activity Feed"`. |
+| `description` | `string` (optional) | Subtitle shown under the title. |
+| `timestampMode` | `"relative" \| "absolute"` (optional) | Controls whether timestamps are rendered as `"2 hours ago"` or as absolute locale strings. Defaults to `"relative"`. |
+| `pagingMode` | `"pagination" \| "infinite"` (optional) | Whether to paginate with numbered pages or use an infinite "Load more" pattern. Defaults to `"pagination"`. |
+| `pageSize` | `number` (optional) | Number of events per page or per load. Defaults to `10`. |
+| `filterState` | `ActivityFeedFilterState` (optional) | Controlled filter state (type + search query). When omitted, the page manages its own filter state. |
+| `onFilterChange` | `(next: ActivityFeedFilterState) => void` (optional) | Called when the user changes the type filter or search query. Use this to control `filterState` from above. |
+| `className` | `string` (optional) | Additional class names for the outer layout wrapper. |
+
+## Composable component props
+
+### `ActivityFeedLayout`
+
+```ts
+interface ActivityFeedLayoutProps {
+  children: React.ReactNode;
+  className?: string;
+}
+```
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` | `ReactNode` | Page content (header, filters, list, etc.). |
+| `className` | `string` (optional) | Extra Tailwind classes for the outer layout container. |
+
+### `ActivityFeedHeader`
+
+```ts
+interface ActivityFeedHeaderProps {
+  title?: string;
+  description?: string;
+  query: string;
+  onQueryChange: (value: string) => void;
+}
+```
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `title` | `string` (optional) | Page title; defaults to `"Activity Feed"`. |
+| `description` | `string` (optional) | Short subtitle below the title. |
+| `query` | `string` | Current search query value. |
+| `onQueryChange` | `(value: string) => void` | Called when the user types into the search input. |
+
+### `ActivityFeedFilters`
+
+```ts
+interface ActivityFeedFiltersProps {
+  events: ActivityEvent[];
+  filter: ActivityFeedFilterState;
+  onFilterChange: (next: ActivityFeedFilterState) => void;
+}
+```
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `events` | `ActivityEvent[]` | Full events list used to compute per-type counts. |
+| `filter` | `ActivityFeedFilterState` | Current filter state (type + query). |
+| `onFilterChange` | `(next: ActivityFeedFilterState) => void` | Called when the user clicks a type chip; query is preserved. |
+
+### `ActivityFeedList`
+
+```ts
+interface ActivityFeedListProps {
+  events: ActivityEvent[];
+  timestampMode: TimestampMode;
+  now: Date;
+}
+```
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `events` | `ActivityEvent[]` | Already-filtered and paged events; the list groups them by date label (Today, Yesterday, etc.). |
+| `timestampMode` | `"relative" \| "absolute"` | Controls timestamp rendering for each row. |
+| `now` | `Date` | Reference timestamp used for computing relative times. |
+
+### `ActivityEventRow`
+
+```ts
+interface ActivityEventRowProps {
+  event: ActivityEvent;
+  timestampMode: TimestampMode;
+  now: Date;
+}
+```
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `event` | `ActivityEvent` | The event to render. |
+| `timestampMode` | `"relative" \| "absolute"` | Controls how the row’s timestamp is rendered. |
+| `now` | `Date` | Reference timestamp for relative calculations. |
+
+### `ActivityFeedPagination`
+
+```ts
+interface ActivityFeedPaginationProps {
+  pagingMode: FeedPagingMode;
+  currentPage: number;
+  totalPages: number;
+  canLoadMore: boolean;
+  onPageChange: (page: number) => void;
+  onLoadMore: () => void;
+}
+```
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `pagingMode` | `"pagination" \| "infinite"` | Determines whether a `Pagination` control or "Load more" pattern is rendered. |
+| `currentPage` | `number` | Current page index (1-based) for pagination mode. |
+| `totalPages` | `number` | Total page count for pagination mode. |
+| `canLoadMore` | `boolean` | Whether there are more events to load in infinite mode. |
+| `onPageChange` | `(page: number) => void` | Called when the user selects a different page. |
+| `onLoadMore` | `() => void` | Called when the user clicks "Load more" or when the sentinel enters view (infinite mode). |
+
+## Usage Examples
+
+### Basic activity feed
+
+```tsx
+<ActivityFeedPage
+  events={events}
+/>
+```
+
+### With controlled filter state
+
+```tsx
+const [filter, setFilter] = useState<ActivityFeedFilterState>({
+  type: null,
+  query: "",
+});
+
+<ActivityFeedPage
+  events={events}
+  filterState={filter}
+  onFilterChange={setFilter}
+  pagingMode="pagination"
+  pageSize={10}
+/>
+```
+
+### Infinite "Load more" feed
+
+```tsx
+<ActivityFeedPage
+  events={events}
+  pagingMode="infinite"
+  pageSize={20}
+/>
+```
+
+### Composable layout using building blocks
+
+```tsx
+import React, { useCallback, useMemo, useState } from "react";
+import {
+  ActivityFeedLayout,
+  ActivityFeedHeader,
+  ActivityFeedFilters,
+  ActivityFeedList,
+  ActivityFeedPagination,
+  type ActivityEvent,
+  type ActivityFeedFilterState,
+} from "@ignix-ui/activity-feed-page";
+
+function ComposableActivityFeed({ events }: { events: ActivityEvent[] }) {
+  const [filter, setFilter] = useState<ActivityFeedFilterState>({
+    type: null,
+    query: "",
+  });
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+
+  const sorted = useMemo(
+    () => [...events].sort((a, b) => b.occurredAt.getTime() - a.occurredAt.getTime()),
+    [events],
+  );
+
+  const filtered = useMemo(
+    () =>
+      sorted.filter((event) => {
+        if (filter.type && event.type !== filter.type) return false;
+        const q = filter.query.trim().toLowerCase();
+        if (!q) return true;
+        const text = [
+          event.title,
+          event.description,
+          event.actor.name,
+          event.actor.meta ?? "",
+          event.contextLabel ?? "",
+        ]
+          .join(" ")
+          .toLowerCase();
+        return text.includes(q);
+      }),
+    [sorted, filter.type, filter.query],
+  );
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const pagedEvents = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return filtered.slice(start, start + pageSize);
+  }, [filtered, page, pageSize]);
+
+  const handleFilterChange = useCallback((next: ActivityFeedFilterState) => {
+    setFilter(next);
+    setPage(1);
+  }, []);
+
+  const handleQueryChange = useCallback((query: string) => {
+    setFilter((prev) => ({ ...prev, query }));
+    setPage(1);
+  }, []);
+
+  return (
+    <ActivityFeedLayout>
+      <ActivityFeedHeader
+        title="Activity Feed"
+        description="Track recent actions, system updates, and user activity."
+        query={filter.query}
+        onQueryChange={handleQueryChange}
+      />
+      <ActivityFeedFilters
+        events={sorted}
+        filter={filter}
+        onFilterChange={handleFilterChange}
+      />
+      <ActivityFeedList
+        events={pagedEvents}
+        timestampMode="relative"
+        now={new Date()}
+      />
+      <ActivityFeedPagination
+        pagingMode="pagination"
+        currentPage={page}
+        totalPages={totalPages}
+        canLoadMore={false}
+        onPageChange={setPage}
+        onLoadMore={() => undefined}
+      />
+    </ActivityFeedLayout>
+  );
+}
+```
+
