@@ -11,6 +11,10 @@ import {
   FileIcon,
   StarIcon,
   PinRightIcon,
+  DashboardIcon,
+  FaceIcon,
+  LockClosedIcon,
+  InfoCircledIcon,
 } from "@radix-ui/react-icons";
  
 import { Sidebar, SidebarProvider, useSidebar } from "./index";
@@ -34,6 +38,43 @@ const extendedLinks = [
   { label: "Logout", href: "#", icon: PinRightIcon },
 ];
  
+const dropdownLinks = [
+  {
+    label: "Home",
+    href: "#",
+    icon: HomeIcon,
+    children: [
+      { label: "Dashboard", href: "#", icon: DashboardIcon },
+      { label: "Analytics", href: "#", icon: BarChartIcon },
+    ],
+  },
+  {
+    label: "Profile",
+    href: "#",
+    icon: PersonIcon,
+    children: [
+      { label: "Account", href: "#", icon: FaceIcon },
+    ],
+  },
+  {
+    label: "Settings",
+    href: "#",
+    icon: GearIcon,
+    children: [
+      { label: "General",  href: "#", icon: GearIcon },
+      { label: "Security", href: "#", icon: LockClosedIcon },
+    ],
+  },
+  {
+    label: "Help",
+    href: "#",
+    icon: QuestionMarkCircledIcon,
+    children: [
+      { label: "Contact", href: "#", icon: InfoCircledIcon },
+    ],
+  },
+];
+
 // Decorator
 const withSidebarProvider =
   (initialOpen = true, backgroundClass = "bg-slate-50") =>
@@ -70,7 +111,7 @@ const meta: Meta<typeof Sidebar> = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["default", "dark", "light", "glass", "gradient"],
+      options: ["default", "dark", "light", "glass", "gradient", "dropdown"],
       description: "Visual theme of the sidebar.",
     },
     position: {
@@ -144,6 +185,39 @@ export const Gradient: Story = {
     variant: "gradient",
   },
 };
+
+//Stroies - dropdown variant
+export const DropdownVariant: Story = {
+  name: "Dropdown",
+  decorators: [
+    (Story) => (
+      <div className="relative w-full h-[420px] border border-gray-200 rounded-lg bg-background">
+        <SidebarProvider initialOpen={true}>
+          <Story />
+        </SidebarProvider>
+      </div>
+    ),
+  ],
+  parameters: {
+    decorators: { disable: true },
+    docs: {
+      description: {
+        story:
+          "The `dropdown` variant enables inline collapsible sections for links " +
+          "that have a `children` array. The chevron rotates 180° on open and " +
+          "children slide in with a height animation. " +
+          "Links without `children` render as plain anchors. " +
+          "All open groups collapse automatically when the sidebar collapses to icon-only.",
+      },
+    },
+  },
+  args: {
+    links: dropdownLinks,
+    brandName: "Demo App",
+    variant: "dropdown",
+    position: "left",
+  },
+};
  
 // Stories — position variants
 export const PositionRight: Story = {
@@ -162,7 +236,7 @@ export const PositionBottomLeft: Story = {
     links: defaultLinks,
     brandName: "BL App",
     position: "bottomLeft",
-    variant: "dark",
+    variant: "default",
   },
 };
  
@@ -172,7 +246,7 @@ export const PositionBottomRight: Story = {
     links: defaultLinks,
     brandName: "BR App",
     position: "bottomRight",
-    variant: "dark",
+    variant: "default",
   },
 };
  
@@ -204,7 +278,7 @@ export const ManyLinks: Story = {
   args: {
     links: extendedLinks,
     brandName: "Full Nav",
-    variant: "dark",
+    variant: "default",
   },
 };
  

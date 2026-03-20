@@ -20,7 +20,7 @@ interface SidebarProps
   mobileBreakPoint?: number;
 }
 
-const sidebarVariants = cva("absolute h-full overflow-hidden transition-all", {
+const sidebarVariants = cva("absolute h-full transition-all", {
   variants: {
     position: {
       left: "top-0 left-0",
@@ -81,10 +81,14 @@ export const SidebarProvider: React.FC<SidebarProviderProps> = ({
 
   const onClose = useCallback(() => {
     setIsOpen(false);
+    const overlay = document.querySelector(".sidebar-sm-ignis");
+    if (overlay) overlay.classList.remove("bg-black/50");
   }, []);
 
   const onOpen = useCallback(() => {
     setIsOpen(true);
+    const overlay = document.querySelector(".sidebar-sm-ignis");
+    if (overlay) overlay.classList.add("bg-black/50");
   }, []);
 
   const value: SidebarContextType = {
@@ -125,7 +129,7 @@ const SidebarLink: React.FC<{
     return (
       <a
         href={link.href}
-        className='flex items-center pl-4 pr-3 gap-3 transition-colors'
+        className='flex items-center pl-4 pr-3 py-2 gap-3 transition-colors'
       >
         <link.icon width={15} height={15} className="text-primary shrink-0"/>
         {sidebarOpen && <span className="text-sm !text-accent-foreground">{link.label}</span>}
@@ -258,4 +262,4 @@ const Sidebar: React.FC<SidebarProps> = ({
   );
 };
 
-export { Sidebar };
+export { Sidebar }
