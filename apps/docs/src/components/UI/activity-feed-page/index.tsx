@@ -15,17 +15,17 @@ import React, {
   useState,
 } from "react";
 import {
-  AlertTriangle,
-  BadgeCheck,
-  CalendarClock,
-  FileText,
-  LogIn,
-  MessageSquare,
-  Settings,
-  Shield,
-  ShoppingCart,
-  UserPlus,
-} from "lucide-react";
+  ActivityLogIcon,
+  CalendarIcon,
+  CheckCircledIcon,
+  FileTextIcon,
+  GearIcon,
+  LightningBoltIcon,
+  LockClosedIcon,
+  Pencil2Icon,
+  PersonIcon,
+  RocketIcon,
+} from "@radix-ui/react-icons";
 import { cn } from "@site/src/utils/cn";
 import { Button } from "../button";
 import {
@@ -318,25 +318,25 @@ function EventTypeIcon({ type }: { type: ActivityEventType }) {
   const className = "h-4 w-4";
   switch (type) {
     case "authentication":
-      return <LogIn className={className} aria-hidden />;
+      return <LockClosedIcon className={className} aria-hidden />;
     case "user":
-      return <UserPlus className={className} aria-hidden />;
+      return <PersonIcon className={className} aria-hidden />;
     case "security":
-      return <Shield className={className} aria-hidden />;
+      return <ActivityLogIcon className={className} aria-hidden />;
     case "system":
-      return <Settings className={className} aria-hidden />;
+      return <GearIcon className={className} aria-hidden />;
     case "billing":
-      return <BadgeCheck className={className} aria-hidden />;
+      return <CheckCircledIcon className={className} aria-hidden />;
     case "order":
-      return <ShoppingCart className={className} aria-hidden />;
+      return <RocketIcon className={className} aria-hidden />;
     case "comment":
-      return <MessageSquare className={className} aria-hidden />;
+      return <Pencil2Icon className={className} aria-hidden />;
     case "document":
-      return <FileText className={className} aria-hidden />;
+      return <FileTextIcon className={className} aria-hidden />;
     case "schedule":
-      return <CalendarClock className={className} aria-hidden />;
+      return <CalendarIcon className={className} aria-hidden />;
     case "warning":
-      return <AlertTriangle className={className} aria-hidden />;
+      return <LightningBoltIcon className={className} aria-hidden />;
   }
 }
 
