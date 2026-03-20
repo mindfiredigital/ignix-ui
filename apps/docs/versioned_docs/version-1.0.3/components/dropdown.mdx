@@ -9,44 +9,11 @@ import TabItem from '@theme/TabItem';
 import { Dropdown, DropdownItem } from '@site/src/components/UI/dropdown';
 import { Button } from '@site/src/components/UI/button';
 
-## Overview
-
 The Dropdown component provides a flexible and customizable way to create dropdown menus with various styling options, animations, and sizing variants. Built with Radix UI and Framer Motion, it offers smooth animations and accessible functionality out of the box.
 
-## Preview
+import DropdownDemo from '@site/src/components/Demo/DropdownDemo';
 
-<Tabs defaultValue="preview">
-  <TabItem value="preview" label="Preview" default>
-    <div className="p-4 border rounded-lg">
-      <Dropdown
-        trigger={<Button>Open Menu</Button>}
-        animation="default"
-      >
-        <DropdownItem>Profile</DropdownItem>
-        <DropdownItem>Settings</DropdownItem>
-        <DropdownItem>Logout</DropdownItem>
-      </Dropdown>
-    </div>
-  </TabItem>
-  <TabItem value="code" label="Code">
-    ```tsx
-    import { Dropdown, DropdownItem } from './components/ui';
-
-    function DropdownDemo() {
-      return (
-        <Dropdown
-          trigger={<Button>Open Menu</Button>}
-          animation="default"
-        >
-          <DropdownItem>Profile</DropdownItem>
-          <DropdownItem>Settings</DropdownItem>
-          <DropdownItem>Logout</DropdownItem>
-        </Dropdown>
-      );
-    }
-    ```
-  </TabItem>
-</Tabs>
+<DropdownDemo />
 
 ## Installation
 
@@ -60,7 +27,7 @@ The Dropdown component provides a flexible and customizable way to create dropdo
 
     ```tsx
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { motion, MotionProps } from "framer-motion";
+import { motion } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../utils/cn";
 import { ReactNode } from "react";
@@ -127,10 +94,13 @@ const animations = {
 type AnimationVariant = keyof typeof animations;
 
 interface DropdownProps extends VariantProps<typeof dropdownVariants> {
-  children: MotionProps['children'];
+  children: ReactNode;
   trigger: ReactNode;
   animation?: AnimationVariant;
   className?: string;
+  side?: "top" | "bottom" | "left" | "right";
+  sideOffset?: number;
+  align?: "start" | "center" | "end";
 }
 
 export const Dropdown = ({
@@ -190,7 +160,7 @@ export const DropdownItem = ({
 Import the components:
 
 ```tsx
-import { Dropdown, DropdownItem } from './components/ui';
+import { Dropdown, DropdownItem } from '@ignix-ui/dropdown';
 ```
 
 ### Basic Usage
@@ -207,8 +177,29 @@ function BasicDropdown() {
 }
 ```
 
-import DropdownDemo from '@site/src/components/Demo/DropdownDemo';
+## Props
 
-## Variants
+### Dropdown
 
-<DropdownDemo />
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `trigger` | `ReactNode` | - | The element that opens the dropdown when clicked |
+| `children` | `ReactNode` | - | The content rendered inside the dropdown panel |
+| `animation` | `"default" \| "fade" \| "scale" \| "slide" \| "flip"` | `"default"` | Entry and exit animation style |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Font size of the dropdown content |
+| `rounded` | `"none" \| "sm" \| "md" \| "full"` | `"md"` | Border radius of the dropdown panel |
+| `bg` | `"default" \| "dark" \| "transparent" \| "glass" \| "gradient" \| "primary"` | `"default"` | Background style of the dropdown panel |
+| `side` | `"top" \| "bottom" \| "left" \| "right"` | `"bottom"` | Which side of the trigger the dropdown opens on |
+| `sideOffset` | `number` | `8` | Gap in px between the trigger and the dropdown panel |
+| `align` | `"start" \| "center" \| "end"` | `"center"` | Alignment of the dropdown panel relative to the trigger |
+| `className` | `string` | - | Additional CSS classes to apply |
+
+### DropdownItem
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | - | Content of the menu item |
+| `className` | `string` | - | Additional CSS classes to apply |
+| `onSelect` | `(event: Event) => void` | - | Callback fired when the item is selected |
+| `disabled` | `boolean` | `false` | Prevents selection and applies disabled styles |
+| `asChild` | `boolean` | `false` | Merges props onto the child element instead of rendering a wrapper |

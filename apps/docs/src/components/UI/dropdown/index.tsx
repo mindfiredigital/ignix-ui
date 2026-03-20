@@ -1,5 +1,5 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { motion, MotionProps } from "framer-motion";
+import { motion} from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../utils/cn";
 import { ReactNode } from "react";
@@ -66,7 +66,7 @@ const animations = {
 type AnimationVariant = keyof typeof animations;
 
 interface DropdownProps extends VariantProps<typeof dropdownVariants> {
-  children: MotionProps['children'];
+  children: ReactNode;
   trigger: ReactNode;
   animation?: AnimationVariant;
   className?: string;
