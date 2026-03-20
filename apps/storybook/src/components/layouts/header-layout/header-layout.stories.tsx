@@ -1,6 +1,6 @@
 import { HeaderLayout } from "./index";
 import { Navbar } from "../../navbar";
-import Sidebar from "../../sidebar";
+import {Sidebar} from "../../sidebar";
 import { Button } from "../../button";
 import { Card } from "../../card";
 import type { Meta, StoryObj } from "@storybook/react-vite";

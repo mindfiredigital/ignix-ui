@@ -1,20 +1,21 @@
 import React, { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
 import { motion } from "framer-motion";
 import {
-  HelpCircle,
-  Menu,
-  Settings,
-  User,
-  X,
-} from "lucide-react";
+  QuestionMarkCircledIcon,
+  HamburgerMenuIcon,
+  GearIcon,
+  PersonIcon,
+  DoubleArrowLeftIcon,
+  HomeIcon
+} from "@radix-ui/react-icons";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../utils/cn";
-import Home from '@site/src/pages';
 
 interface LinkItem {
   label: string;
   href: string;
   icon: React.ElementType;
+  children?: Omit<LinkItem, 'children'>[];
 }
 
 interface SidebarProps
@@ -38,11 +39,11 @@ const sidebarVariants = cva("absolute h-full overflow-hidden transition-all", {
       false: "h-full",
     },
     variant: {
-      default: "bg-background text-foreground",
-      dark: "bg-black text-white",
-      light: "bg-white text-gray-900 border-r",
-      glass: "bg-white/10 backdrop-blur-lg text-white",
-      gradient: "bg-gradient-to-br from-purple-500 to-purple-400 text-foreground",
+      default: "bg-background text-foreground [&_a]:!text-foreground [&_button]:!text-foreground [&_span]:!text-foreground",
+      dark: "bg-black text-white [&_a]:!text-foreground [&_button]:!text-white [&_span]:!text-white",
+      light: "bg-white text-gray-900 shadow-[4px_0_16px_rgba(0,0,0,0.08)] [&_a]:!text-gray-900 [&_button]:!text-gray-900 [&_span]:!text-gray-900",
+      glass: "bg-muted/25 backdrop-blur-3xl backdrop-saturate-200 backdrop-brightness-90 border border-white/30 shadow-[inset_0_1.5px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(0,0,0,0.15),0_8px_32px_rgba(0,0,0,0.25)] [&_a]:!text-foreground [&_button]:!text-foreground [&_span]:!text-white",
+      gradient: "bg-gradient-to-b from-gray-800 to-gray-500 [&_a]:!text-white [&_button]:!text-white [&_span]:!text-white",
     },
 
     direction: {
@@ -153,26 +154,31 @@ export const Sidebar: React.FC<SidebarProps> = ({
       transition={{ duration: 0.4 }}
       className={cn(
         sidebarVariants({ position, isOpen, variant, direction }),
+        'flex flex-col',
         isOpen
-          ? "w-[var(--sidebar-w,16rem)]"
-          : "w-[var(--sidebar-w-collapsed,5rem)]",
+          ? "w-[var(--sidebar-w,11rem)]"
+          : "w-[var(--sidebar-w-collapsed,3rem)]",
         isMobile ? !isOpen ? "w-0" : isOpen: '',
         className
       )}
     >
+      {variant === "glass" && (
+        <div className="absolute inset-0 bg-gradient-to-br from-white/50 via-white/10 to-transparent pointer-events-none z-0" />
+      )}
+ 
       {/* Sidebar Header */}
-      <div className="p-4 flex items-center justify-between gap-4">
-        {isOpen && <h1 className="text-xl font-bold">{brandName}</h1>}
+      <div className="p-4 flex items-center justify-between w-full shrink-0">
+        {isOpen && <span className="text-xl font-semibold truncate">{brandName}</span>}
           {isOpen ? (
         <button onClick={onClose}>
             <span title="Close">
-              <X size={24} />
+              <DoubleArrowLeftIcon width={14} height={14} />
             </span>
         </button>
           ) : (
             <button onClick={onOpen}>
               <span title="Open">
-                <Menu size={24} />
+                <HamburgerMenuIcon width={16} height={16} />
               </span>
             </button>
           )}
@@ -181,18 +187,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Sidebar Links */}
       <motion.nav
         className={cn(
-          direction === "horizontal" ? "flex-row" : "flex-col",
-          "flex"
+          direction === "horizontal" ? "flex-row overflow-x-auto" : "flex-col overflow-y-auto",
+          "flex flex-1 min-h-0 scrollbar-hidden"
         )}
       >
         {links.map((link, index) => (
           <a
             key={index}
             href={link.href}
-            className="flex items-center p-4 gap-4 "
+            className="flex items-center pl-4 pr-3 py-2 gap-3"
           >
-            <link.icon size={24} />
-            {isOpen && <span>{link.label}</span>}
+            <link.icon width={15} height={15} />
+            {isOpen && <span className='text-sm'>{link.label}</span>}
           </a>
         ))}
       </motion.nav>
@@ -205,10 +211,10 @@ export default function SidebarDemo() {
     <SidebarProvider>
       <Sidebar
         links={[
-          { label: 'Home', href: '#', icon: Home },
-          { label: 'Profile', href: '#', icon: User },
-          { label: 'Settings', href: '#', icon: Settings },
-          { label: 'Help', href: '#', icon: HelpCircle },
+          { label: 'Home', href: '#', icon: HomeIcon },
+          { label: 'Profile', href: '#', icon: PersonIcon },
+          { label: 'Settings', href: '#', icon: GearIcon },
+          { label: 'Help', href: '#', icon: QuestionMarkCircledIcon },
         ]}
         brandName="Demo App"
       />
