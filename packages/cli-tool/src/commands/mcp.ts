@@ -68,9 +68,9 @@ let MCP_CONFIG: MCPConfig;
 try {
   const configContent = fs.readFileSync(MCP_CONFIG_PATH, 'utf-8');
   MCP_CONFIG = JSON.parse(configContent);
-  console.error(`✅ Loaded MCP config from ${MCP_CONFIG_PATH}`);
-  console.error(`   Tools found: ${MCP_CONFIG.tools?.length || 0}`);
-  MCP_CONFIG.tools?.forEach((t) => console.error(`   - ${t.name}`));
+  // console.error(`✅ Loaded MCP config from ${MCP_CONFIG_PATH}`);
+  // console.error(`   Tools found: ${MCP_CONFIG.tools?.length || 0}`);
+  // MCP_CONFIG.tools?.forEach((t) => console.error(`   - ${t.name}`));
 } catch (err) {
   console.error('❌ Failed to load mcp.json:', err);
   process.exit(1);

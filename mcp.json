@@ -23,7 +23,12 @@
       "discovery": "BEFORE any installation, ALWAYS call search_components or list_components to verify component existence. NEVER guess component names.",
       "installation": "ALWAYS use install_component for adding components. NEVER create component files manually.",
       "theming": "BEFORE installing a theme, ALWAYS call list_themes to see current available themes.",
-      "templates": "For complete pages, ALWAYS call list_templates first to see available templates."
+      "templates": "For complete pages, ALWAYS call list_templates first to see available templates.",
+      "emptyDirectory": {
+        "detection": "ALWAYS check if the current directory is empty or doesn't contain a React project (no package.json or package.json without react dependency).",
+        "action": "If directory is empty or no React project detected, ALWAYS run create_react_project FIRST, THEN init_project, THEN proceed with the requested installation.",
+        "example": "For 'build me a landing page' in empty folder: 1. create_react_project({ projectName: 'gym-landing' }) → 2. init_project({ cwd: './gym-landing' }) → 3. search_templates for 'landing' to find page templates → 4. install_template with templates (hero, callToAction) → 5. search_components for UI elements → 6. install_component with components (navbar, button, card, footer)"
+      }
     }
   },
   "tools": [
@@ -93,6 +98,52 @@
       }
     },
     {
+      "name": "install_template",
+      "description": "[TEMPLATE INSTALLATION TOOL] USE THIS when users want complete pages or layouts. Installs templates to src/components/templates/. Templates are pre-built pages like sign-in, dashboard, pricing grids, etc.",
+      "inputSchema": {
+        "type": "object",
+        "required": ["templates"],
+        "properties": {
+          "templates": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Template names to install. ALWAYS verify via list_templates first."
+          },
+          "cwd": {
+            "type": "string",
+            "description": "Working directory",
+            "default": "."
+          },
+          "withDeps": {
+            "type": "boolean",
+            "description": "Automatically install component dependencies",
+            "default": true
+          }
+        }
+      },
+      "execution": {
+        "type": "shell",
+        "command": "ignix add component {templates} --yes --json --cwd {cwd}"
+      },
+      "triggers": {
+        "keywords": [
+          "signin",
+          "signup",
+          "login",
+          "register",
+          "dashboard",
+          "landing page",
+          "pricing page",
+          "profile page",
+          "settings page",
+          "authentication"
+        ],
+        "intents": ["complete page", "full layout", "page template", "auth page"]
+      }
+    },
+    {
       "name": "list_components",
       "description": "[ESSENTIAL DISCOVERY TOOL] USE THIS FIRST before any component work. Returns CURRENT list of all available components with names, descriptions, and categories. The library is constantly expanding - always use this to get fresh data.",
       "inputSchema": {
@@ -107,6 +158,23 @@
         "keywords": ["what components", "available", "show me", "list", "catalog", "library"]
       },
       "notes": "This is your SOURCE OF TRUTH for component availability. Call it frequently as the library grows."
+    },
+    {
+      "name": "list_templates",
+      "description": "[TEMPLATE DISCOVERY TOOL] USE THIS for complete pages. Returns CURRENT list of all available templates. Template library EXPANDS regularly - always check here first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "execution": {
+        "type": "shell",
+        "command": "ignix list template --json"
+      },
+      "notes": "Template collection grows over time. Always verify current availability.",
+      "triggers": {
+        "keywords": ["page template", "layout", "complete page", "starter", "boilerplate"],
+        "intents": ["dashboard page", "landing page", "auth page", "settings page"]
+      }
     },
     {
       "name": "search_components",
@@ -138,6 +206,35 @@
           "navigation",
           "settings",
           "profile"
+        ]
+      }
+    },
+    {
+      "name": "search_templates",
+      "description": "[TEMPLATE DISCOVERY TOOL] USE THIS when users mention complete pages. Searches the CURRENT template registry by keyword. Perfect for finding templates like signin, dashboard, landing pages.",
+      "inputSchema": {
+        "type": "object",
+        "required": ["query"],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search term like 'landing', 'auth', 'dashboard', 'pricing'"
+          }
+        }
+      },
+      "execution": {
+        "type": "shell",
+        "command": "ignix list template --json | node -e \"const fs=require('fs'); const input=fs.readFileSync(0,'utf8'); const data=JSON.parse(input); const query=process.argv[1].toLowerCase(); const results=data.templates ? data.templates.filter(t => t.name.toLowerCase().includes(query) || (t.description && t.description.toLowerCase().includes(query))) : []; console.log(JSON.stringify({success: true, query: process.argv[1], results, count: results.length}, null, 2));\" {query}"
+      },
+      "triggers": {
+        "keywords": ["find page", "search template", "looking for page", "template for"],
+        "intents": [
+          "landing page",
+          "login page",
+          "signup page",
+          "dashboard page",
+          "pricing page",
+          "profile page"
         ]
       }
     },
@@ -305,23 +402,6 @@
         "keywords": ["what themes", "available themes", "theme options", "color schemes"]
       },
       "notes": "Source of truth for theme availability. New themes added frequently."
-    },
-    {
-      "name": "list_templates",
-      "description": "[TEMPLATE DISCOVERY TOOL] USE THIS for complete pages. Returns CURRENT list of all available templates. Template library EXPANDS regularly - always check here first.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {}
-      },
-      "execution": {
-        "type": "shell",
-        "command": "ignix list template --json"
-      },
-      "notes": "Template collection grows over time. Always verify current availability.",
-      "triggers": {
-        "keywords": ["page template", "layout", "complete page", "starter", "boilerplate"],
-        "intents": ["dashboard page", "landing page", "auth page", "settings page"]
-      }
     }
   ],
   "resources": [
