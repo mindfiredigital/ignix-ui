@@ -1,13 +1,13 @@
 // call-to-action.test.tsx
 import { describe, it, expect, vi } from "vitest"
-import { render, screen,  waitFor } from "@testing-library/react"
+import { render, screen, waitFor } from "@testing-library/react"
 import React from "react"
 import userEvent from "@testing-library/user-event"
 
 // Mock the Button and Typography components
 vi.mock("@ignix-ui/button", () => ({
     Button: ({ children, variant, size, onClick, disabled, className, type, ...props }: any) => (
-        <button 
+        <button
             onClick={onClick}
             disabled={disabled}
             className={className}
@@ -24,7 +24,7 @@ vi.mock("@ignix-ui/button", () => ({
 
 vi.mock("@ignix-ui/typography", () => ({
     Typography: ({ children, variant, weight, className, ...props }: any) => (
-        <div 
+        <div
             className={className}
             data-testid="typography"
             data-variant={variant}
@@ -61,8 +61,8 @@ vi.mock("./", async () => {
 });
 
 // Now import the components after mocking
-import { 
-    CTABanner, 
+import {
+    CTABanner,
     CTABannerContent,
     CTABannerHeading,
     CTABannerSubheading,
@@ -540,7 +540,7 @@ describe("Edge Cases and Error Handling", () => {
 
     it("resets form after successful submission", async () => {
         const user = userEvent.setup()
-        
+
         // Mock the form submission to be successful
         const mockSubmit = vi.fn().mockResolvedValue({ success: true })
 
@@ -566,7 +566,7 @@ describe("Edge Cases and Error Handling", () => {
             const successMessage = screen.queryByText(/demo request submitted/i)
             // const resetButton = screen.queryByText(/request another demo/i)
             const freshForm = screen.queryByLabelText(/full name/i)
-            
+
             // The form should either show success or be reset
             expect(successMessage || freshForm).toBeTruthy()
         })

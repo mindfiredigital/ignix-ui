@@ -33,6 +33,9 @@ const RatingDemo = () => {
   ].filter(Boolean);
 
   const codeString = `
+  import { Rating } from '@ignix-ui/rating';
+  import { StarIcon } from '@radix-ui/react-icons';
+
   <Rating
   ${props.join("\n  ")}
 />`;
@@ -188,6 +191,7 @@ const EmojiRatingDemo = () => {
   }, [animationType]);
 
     const codeString = `
+  import { Rating } from '@ignix-ui/rating';
   <Rating
     value={${value}}
     max={5}

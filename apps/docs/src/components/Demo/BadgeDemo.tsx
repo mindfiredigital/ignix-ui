@@ -14,6 +14,8 @@ const BadgeDemo = () => {
   const [type, setType] = useState('primary');
 
   const codeString = `
+import { Badge } from '@ignix-ui/badge';
+
 <div className="relative inline-flex items-center">
   <Mail className="h-6 w-6" />
   <Badge text="3" type="${type}" variant="${variant}" />

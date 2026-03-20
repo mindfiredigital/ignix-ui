@@ -37,7 +37,7 @@ const ProductCardDemo = () => {
 
   // Build code string
   const codeParts: string[] = [];
-  
+  codeParts.push(`import { ProductCard } from '@ignix-ui/productcard';`);
   codeParts.push(`<ProductCard size="${size}">`);
   
   codeParts.push(`  <ProductCardHeader>`);

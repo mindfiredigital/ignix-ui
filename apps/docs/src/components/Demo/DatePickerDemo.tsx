@@ -68,12 +68,12 @@ export const BasicDatePickerDemo = () => {
     const { colorMode } = useColorMode();
     const [date, setDate] = useState<Date | null>(null);
     // Handler for single date picker
-    const handleSingleDateChange = (date: Date | null) => {
+    const handleSingleDateChange = (date: Date | null): void => {
         setDate(date);
     };
 
     const codeString = `
-import { DatePicker } from '@mindfiredigital/ignix-ui';
+import DatePicker from '@ignix-ui/datepicker';
 
 function MyComponent() {
   const [date, setDate] = useState<Date | null>(null);
@@ -133,12 +133,12 @@ export const RangeDatePickerDemo = () => {
     });
 
     // Handler for range date picker
-    const handleRangeDateChange = (range: { start: Date | null; end: Date | null }) => {
+    const handleRangeDateChange = (range: { start: Date | null; end: Date | null }): void => {
         setRange(range);
     };
 
     const codeString = `
-import { DatePicker } from '@mindfiredigital/ignix-ui';
+import DatePicker from '@ignix-ui/datepicker';
 
 function MyComponent() {
   const [range, setRange] = useState({ start: null, end: null });
@@ -513,17 +513,6 @@ function HotelBooking() {
                         </div>
                     </div>
                 )}
-
-                {/* <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded">
-                    <Typography variant="body-small" weight="medium" className="mb-1">Features demonstrated:</Typography>
-                    <ul className="list-disc pl-5 space-y-1">
-                        <Typography variant="caption" as="li">Date range selection</Typography>
-                        <Typography variant="caption" as="li">Min/max date constraints</Typography>
-                        <Typography variant="caption" as="li">Disabled dates (weekends)</Typography>
-                        <Typography variant="caption" as="li">Today and Clear buttons</Typography>
-                        <Typography variant="caption" as="li">Custom date format (MMM DD, YYYY)</Typography>
-                    </ul>
-                </div> */}
             </div>
         </DemoSection>
     );
@@ -611,14 +600,26 @@ export const ValidationExamplesDemo = () => {
     );
 };
 
+type PlaygroundConfig = {
+    variant: 'single' | 'range';
+    size: 'sm' | 'md' | 'lg' | 'xl';
+    themeMode: 'light' | 'dark';
+    colorScheme: string;
+    popupPosition: string;
+    showIcon: boolean;
+    todayButton: boolean;
+    clearButton: boolean;
+    required: boolean;
+    disabled: boolean;
+};
 // Demo 9: Interactive Playground
 export const DatePickerPlayground = () => {
-    const [config, setConfig] = useState({
-        variant: 'single' as 'single' | 'range',
-        size: 'md' as 'sm' | 'md' | 'lg' | 'xl',
-        themeMode: 'dark' as 'light' | 'dark',
-        colorScheme: 'blue' as string,
-        popupPosition: 'bottom-left' as string,
+    const [config, setConfig] = useState<PlaygroundConfig>({
+        variant: 'single',
+        size: 'md',
+        themeMode: 'dark',
+        colorScheme: 'blue',
+        popupPosition: 'bottom-left',
         showIcon: true,
         todayButton: true,
         clearButton: true,
@@ -632,16 +633,19 @@ export const DatePickerPlayground = () => {
         end: null
     });
 
-    const handleConfigChange = (key: string, value: any) => {
+    const handleConfigChange = <K extends keyof PlaygroundConfig>(
+        key: K,
+        value: PlaygroundConfig[K]
+    ): void => {
         setConfig(prev => ({ ...prev, [key]: value }));
     };
     // Handler for single date picker
-    const handleSingleDateChange = (date: Date | null) => {
+    const handleSingleDateChange = (date: Date | null): void => {
         setDate(date);
     };
 
     // Handler for range date picker
-    const handleRangeDateChange = (range: { start: Date | null; end: Date | null }) => {
+    const handleRangeDateChange = (range: { start: Date | null; end: Date | null }): void => {
         setRange(range);
     };
 
@@ -815,7 +819,7 @@ export const ControlledDatePickerDemo = () => {
     };
 
     const singleCodeString = `import { useState } from 'react';
-import { DatePicker } from '@mindfiredigital/ignix-ui';
+import DatePicker from '@ignix-ui/datepicker';
 
 function SingleDateExample() {
   const [date, setDate] = useState<Date | null>(null);
@@ -837,7 +841,7 @@ function SingleDateExample() {
 
 
     const rangeCodeString = `import { useState } from 'react';
-import { DatePicker } from '@mindfiredigital/ignix-ui';
+import DatePicker from '@ignix-ui/datepicker';
 
 function RangeDateExample() {
   const [range, setRange] = useState({ 

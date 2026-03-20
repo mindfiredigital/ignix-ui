@@ -23,6 +23,8 @@ const BreadcrumbsDemo = () => {
   const steps = ['Cart', 'Shipping', 'Payment', 'Confirmation'];
 
   const codeString = `
+import { Breadcrumbs } from '@ignix-ui/breadcrumbs';
+
 <Breadcrumbs 
   ${variant === 'text' || variant === 'custom' ? `items={[
     { label: 'Home', href: '#', icon: Home },

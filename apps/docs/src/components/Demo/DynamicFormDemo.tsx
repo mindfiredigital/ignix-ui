@@ -1583,9 +1583,9 @@ const formConfigs = {
 };
 
 // Handle submit
-const handleSubmit = async (data: any) => {
-    console.log('Form submitted:', data);
-    await new Promise(resolve => setTimeout(resolve, 1500));
+const handleSubmit = async (data: FormValues): Promise<void> => {
+    alert(`Form submitted: ${JSON.stringify(data)}`);
+    await new Promise<void>((resolve) => setTimeout(resolve, 1500));
 };
 
 // ==============================
@@ -1784,7 +1784,7 @@ export const DynamicFormDemo = () => {
     DynamicNavigation,
     ThemeToggle,
     type DynamicFormField,
-} from '../UI/dynamic-form';
+} from '@ignix-ui/dynamicform';
 import {
     ${iconName},
     PersonIcon,
@@ -2037,7 +2037,7 @@ const ${formType}Sections = [
                                 }
                                 showCancelButton={showCancelButton}
                                 cancelButtonLabel="Cancel"
-                                onCancel={() => console.log('Form cancelled')}
+                                onCancel={() => alert('Form cancelled')}
                             />
 
                             {showThemeToggle && <ThemeToggle />}

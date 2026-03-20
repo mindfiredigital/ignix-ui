@@ -70,6 +70,7 @@ const PricingGridBasicDemo = () => {
   }, [animation, scaleRecommended, showToggle, showBackgroundImage])
 
   const codeString = `
+  import { PricingGrid } from '@ignix-ui/pricinggrid';
   const tiers = [
     {
       name: "Starter",
@@ -243,6 +244,7 @@ const PricingGridHorizontalDisplay = () => {
   const [showBackgroundImage, setShowBackgroundImage] = useState<boolean>(false);
 
   const codeString = `
+  import { PricingGrid } from '@ignix-ui/pricinggrid';
   const tiers = [
     {
       name: "Starter",
@@ -377,6 +379,8 @@ const PricingGridWithCardImages = () => {
     ];
 
   const codeString = `
+  import { PricingGrid } from '@ignix-ui/pricinggrid';
+
   const tiers = [
     {
       name: 'STARTER',
