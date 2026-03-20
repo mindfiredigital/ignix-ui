@@ -7,67 +7,12 @@ description: A flexible and animated sidebar component for displaying content.
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import {Sidebar, SidebarProvider} from '@site/src/components/UI/sidebar';
-import { Home, Settings, User, Mail, HelpCircle } from 'lucide-react';
-
-## Overview
+import { HomeIcon, GearIcon, PersonIcon, EnvelopeClosedIcon, QuestionMarkCircledIcon } from '@radix-ui/react-icons';
+import SidebarDemo from '@site/src/components/Demo/SidebarDemo';
 
 The Sidebar component is a versatile and animated navigation element that provides an elegant way to organize navigation links and actions in your application. It supports multiple positions, variants, and animations built with Framer Motion.
 
-## Preview
-
-<Tabs defaultValue="preview">
-  <TabItem value="preview" label="Preview" default>
-    <div className="w-full h-[400px] relative border rounded-lg overflow-hidden bg-slate-100 shadow-lg">
-      <div className="w-full h-8 bg-gray-200 flex items-center px-2 gap-2">
-        <div className="w-3 h-3 rounded-full bg-red-500"/>
-        <div className="w-3 h-3 rounded-full bg-yellow-500"/>
-        <div className="w-3 h-3 rounded-full bg-green-500"/>
-        <span className="text-sm text-gray-600 ml-2">Demo Window</span>
-      </div>
-      <div className="relative h-[calc(100%-2rem)] bg-white">
-      <SidebarProvider>
-        <Sidebar
-          links={[
-            { label: 'Home', href: '#', icon: Home },
-            { label: 'Profile', href: '#', icon: User },
-            { label: 'Settings', href: '#', icon: Settings },
-            { label: 'Help', href: '#', icon: HelpCircle },
-          ]}
-          brandName="Demo App"
-        />
-        </SidebarProvider>
-      </div>
-    </div>
-  </TabItem>
-  <TabItem value="code" label="Code">
-    ```tsx
-import Sidebar, { SidebarProvider } from '@ignix-ui/sidebar';
-
- <div className="w-full h-[400px] relative border rounded-lg overflow-hidden bg-slate-100 shadow-lg">
-      <div className="w-full h-8 bg-gray-200 flex items-center px-2 gap-2">
-        <div className="w-3 h-3 rounded-full bg-red-500"/>
-        <div className="w-3 h-3 rounded-full bg-yellow-500"/>
-        <div className="w-3 h-3 rounded-full bg-green-500"/>
-        <span className="text-sm text-gray-600 ml-2">Demo Window</span>
-      </div>
-      <div className="relative h-[calc(100%-2rem)] bg-white">
-      <SidebarProvider>
-        <Sidebar
-          links={[
-            { label: 'Home', href: '#', icon: Home },
-            { label: 'Profile', href: '#', icon: User },
-            { label: 'Settings', href: '#', icon: Settings },
-            { label: 'Help', href: '#', icon: HelpCircle },
-          ]}
-          brandName="Demo App"
-        />
-        </SidebarProvider>
-      </div>
-    </div>
-    ```
-  </TabItem>
-</Tabs>
-
+<SidebarDemo />
 
 ## Installation
 
@@ -82,248 +27,320 @@ import Sidebar, { SidebarProvider } from '@ignix-ui/sidebar';
     ```tsx
 import React, { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
 import { motion } from "framer-motion";
-import {
-Menu,
-X,
-} from "lucide-react";
+import {HamburgerMenuIcon, DoubleArrowLeftIcon, ChevronDownIcon} from '@radix-ui/react-icons';
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../utils/cn";
 
 interface LinkItem {
-label: string;
-href: string;
-icon: React.ElementType;
+  label: string;
+  href: string;
+  icon: React.ElementType;
+  children?: Omit<LinkItem, 'children'>[];
 }
 
 interface SidebarProps
-extends React.HTMLAttributes<HTMLDivElement>,
-VariantProps<typeof sidebarVariants> {
-links: LinkItem[];
-brandName?: string;
-position?: "left" | "right" | "bottomLeft" | "bottomRight";
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof sidebarVariants> {
+  links: LinkItem[];
+  brandName?: string;
+  position?: "left" | "right" | "bottomLeft" | "bottomRight";
+  mobileBreakPoint?: number;
 }
 
 const sidebarVariants = cva("absolute h-full overflow-hidden transition-all", {
-variants: {
-position: {
-  left: "top-0 left-0",
-  right: "top-0 right-0",
-  bottomLeft: "bottom-0 left-0",
-  bottomRight: "bottom-0 right-0",
-},
-isOpen: {
-  true: "w-64 h-full",
-  false: `w-20 h-full`,
-},
-variant: {
-  default: "bg-background text-foreground",
-  dark: "bg-black text-white",
-  light: "bg-white text-gray-900 border-r",
-  glass: "bg-white/10 backdrop-blur-lg text-white",
-},
+  variants: {
+    position: {
+      left: "top-0 left-0",
+      right: "top-0 right-0",
+      bottomLeft: "bottom-0 left-0",
+      bottomRight: "bottom-0 right-0",
+    },
+    isOpen: {
+      true: "h-full",
+      false: "h-full",
+    },
+    variant: {
+      default: "bg-background text-foreground [&_a]:!text-foreground [&_button]:!text-foreground [&_span]:!text-accent-foreground shadow-md",
+      dark: "bg-black text-accent-foreground [&_a]:!text-accent-foreground [&_button]:!text-accent-foreground [&_span]:!text-accent-foreground",
+      light: "bg-white text-gray-900 shadow-[4px_0_16px_rgba(0,0,0,0.08)] [&_a]:!text-gray-900 [&_button]:!text-gray-900 [&_span]:!text-gray-900",
+      glass: "bg-muted/25 backdrop-blur-3xl backdrop-saturate-200 backdrop-brightness-90 border border-white/30 shadow-[inset_0_1.5px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(0,0,0,0.15),0_8px_32px_rgba(0,0,0,0.25)] [&_a]:!text-foreground [&_button]:!text-foreground [&_span]:!text-accent-foreground",
+      gradient: "bg-gradient-to-b from-gray-800 to-gray-500 [&_a]:!text-accent-foreground [&_button]:!text-accent-foreground [&_span]:!text-accent-foreground",
+      dropdown: "bg-background text-foreground [&_a]:!text-foreground [&_button]:!text-foreground [&_span]:!text-forground shadow-md",
+    },
 
-direction: {
-  horizontal: "flex-row",
-  vertical: "flex-col items-start",
-},
-},
-defaultVariants: {
-position: "left",
-isOpen: true,
-variant: "default",
-direction: "vertical",
-},
+    direction: {
+      horizontal: "flex-row",
+      vertical: "flex-col items-start",
+    },
+  },
+  defaultVariants: {
+    position: "left",
+    isOpen: true,
+    variant: "default",
+    direction: "vertical",
+  },
 });
 
 interface SidebarContextType {
-isOpen: boolean;
-setIsOpen: (open: boolean) => void;
-toggle: () => void;
-onClose: () => void;
-onOpen: () => void;
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+  toggle: () => void;
+  onClose: () => void;
+  onOpen: () => void;
 }
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
 
 interface SidebarProviderProps {
-children: ReactNode;
-initialOpen?: boolean;
+  children: ReactNode;
+  initialOpen?: boolean;
 }
 
 export const SidebarProvider: React.FC<SidebarProviderProps> = ({ 
-children, 
-initialOpen = true 
+  children, 
+  initialOpen = true 
 }) => {
-const [isOpen, setIsOpen] = useState(initialOpen);
+  const [isOpen, setIsOpen] = useState(initialOpen);
 
-const toggle = useCallback(() => {
-setIsOpen(prev => !prev);
-}, []);
+  const toggle = useCallback(() => {
+    setIsOpen(prev => !prev);
+  }, []);
 
-const onClose = useCallback(() => {
-setIsOpen(false);
-}, []);
+  const onClose = useCallback(() => {
+    setIsOpen(false);
+  }, []);
 
-const onOpen = useCallback(() => {
-setIsOpen(true);
-}, []);
+  const onOpen = useCallback(() => {
+    setIsOpen(true);
+  }, []);
 
-const value: SidebarContextType = {
-isOpen,
-setIsOpen,
-toggle,
-onClose,
-onOpen,
-};
+  const value: SidebarContextType = {
+    isOpen,
+    setIsOpen,
+    toggle,
+    onClose,
+    onOpen,
+  };
 
-return (
-<SidebarContext.Provider value={value}>
-  {children}
-</SidebarContext.Provider>
-);
+  return (
+    <SidebarContext.Provider value={value}>
+      {children}
+    </SidebarContext.Provider>
+  );
 };
 
 export const useSidebar = () => {
-const context = useContext(SidebarContext);
-if (context === undefined) {
-throw new Error('useSidebar must be used within a SidebarProvider');
-}
-return context;
+  const context = useContext(SidebarContext);
+  if (context === undefined) {
+    throw new Error('useSidebar must be used within a SidebarProvider');
+  }
+  return context;
 };
+
+const SidebarLink: React.FC<{
+  link: LinkItem;
+  sidebarOpen: boolean;
+  variant?: string | null;
+}> = ({ link, sidebarOpen, variant}) => {
+  const [open, setOpen] = useState(false);
+
+  React.useEffect(() => {
+    if (!sidebarOpen) setOpen(false);
+  }, [sidebarOpen]);
+
+  if(!link.children?.length || variant !== "dropdown"){
+    return (
+      <a
+        href={link.href}
+        className='flex items-center pl-4 pr-3 gap-3 transition-colors'
+      >
+        <link.icon width={15} height={15} className="text-primary shrink-0"/>
+        {sidebarOpen && <span className="text-sm !text-accent-foreground">{link.label}</span>}
+      </a>
+    );
+  }
+
+  return (
+    <div>
+      <button
+        onClick={() => sidebarOpen && setOpen(prev => !prev)}
+        className="w-full flex items-center justify-between pl-4 pr-4 py-2 hover:bg-accent transition-colors"
+      >
+        <div className='flex items-center gap-3'>
+          <link.icon width={15} height={15} className="text-primary shrink-0" />
+          {sidebarOpen && <span className="text-sm !text-accent-foreground">{link.label}</span>}
+        </div>
+
+        {sidebarOpen && (
+          <motion.span
+            animate={{ rotate: open ? 180 : 0}}
+            transition={{ duration: 0.2 }}
+            style={{ display: "flex"}}
+          >
+            <ChevronDownIcon width={12} height={12} className='cursor-pointer' />
+          </motion.span>
+        )}
+      </button>
+
+      <motion.div
+        initial={false}
+        animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }}
+        transition={{ duration: 0.2, ease: "easeInOut"}}
+        style={{ overflow: "hidden" }}
+      >
+
+        {link.children.map((child, i) => (
+          <a
+            key={i}
+            href={child.href}
+            className="flex items-center pl-10 pr-3 py-2 gap-3 transition-colors"
+          >
+            <child.icon width={13} height={13} className="text-primary shrink-0" />
+            <span className="text-sm !text-accent-foreground">{child.label}</span>
+          </a>
+        ))}
+      </motion.div>
+    </div>
+  );
+}
 
 const Sidebar: React.FC<SidebarProps> = ({
-links,
-brandName = "Brand",
-position = "left",
-variant,
-className,
-direction,
+  links,
+  brandName = "Brand",
+  position = "left",
+  variant,
+  className,
+  direction,
+  mobileBreakPoint = 768,
 }) => {
-const { isOpen, onClose, onOpen } = useSidebar();
-const [isMobile, setIsMobile] = React.useState(false);
+  const { isOpen, onClose, onOpen } = useSidebar();
+  const [isMobile, setIsMobile] = React.useState(false);
+  
+  React.useEffect(() => {
+    const check = () => {
+      const mobile = window.innerWidth < mobileBreakPoint;
+      setIsMobile(mobile);
+    };
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, [mobileBreakPoint]);
 
-// breakpoint width
-const bp = 768; // 1024;
-
-React.useEffect(() => {
-  const check = () => {
-    const mobile = window.innerWidth < bp;
-    setIsMobile(mobile);
-  };
-  check();
-  window.addEventListener("resize", check);
-  return () => window.removeEventListener("resize", check);
-}, [bp]);
-
-return (
-<motion.div
-  initial={{ x: 0 }}
-  animate={{ x: 0 }}
-  transition={{ duration: 0.4 }}
-  className={cn(
-    sidebarVariants({ position, isOpen, variant, direction }),
-    isMobile ? !isOpen ? "w-0" : isOpen: '',
-    className
-  )}
->
-  {/* Sidebar Header */}
-  <div className="p-4 flex items-center justify-between gap-4">
-    {isOpen && <h1 className="text-xl font-bold">{brandName}</h1>}
-      {isOpen ? (
-    <button onClick={onClose}>
-        <span title="Close">
-          <X size={24} />
-        </span>
-    </button>
-      ) : (
-        <button onClick={onOpen}>
-          <span title="Open">
-            <Menu size={24} />
-          </span>
-        </button>
+  return (
+    <motion.div
+      initial={{ x: 0 }}
+      animate={{ x: 0 }}
+      transition={{ duration: 0.4 }}
+      className={cn(
+        sidebarVariants({ position, isOpen, variant, direction }),
+        'flex flex-col',
+        isOpen
+          ? "w-[var(--sidebar-w,11rem)]"
+          : "w-[var(--sidebar-w-collapsed,3rem)]",
+        isMobile && !isOpen && "w-0",
+        className
       )}
-  </div>
+    >
+      {variant === "glass" && (
+        <div className="absolute inset-0 bg-gradient-to-br from-white/50 via-white/10 to-transparent pointer-events-none z-0" />
+      )}
 
-  {/* Sidebar Links */}
-  <motion.nav
-    className={cn(
-      direction === "horizontal" ? "flex-row" : "flex-col",
-      "flex"
-    )}
-  >
-    {links.map((link, index) => (
-      <a
-        key={index}
-        href={link.href}
-        className="flex items-center p-4 gap-4 "
+      {/* Sidebar Header */}
+      <div className="relative z-10 shrink-0 p-4 flex items-center justify-between w-full">
+        <span className={cn("text-base font-semibold truncate", !isOpen && "invisible")}>
+          {brandName}
+        </span>
+        {isOpen ? (
+          <button onClick={onClose} className='cursor-pointer'>
+            <span title="Close">
+              <DoubleArrowLeftIcon width={14} height={14} />
+            </span>
+          </button>
+        ) : (
+          <button onClick={onOpen} className='cursor-pointer'>
+            <span title="Open">
+              <HamburgerMenuIcon width={16} height={16} />
+            </span>
+          </button>
+        )}
+      </div>
+
+      {/* Sidebar Links */}
+      <motion.nav
+        className={cn(
+          direction === "horizontal" ? "flex-row overflow-x-auto" : "flex-col overflow-y-auto",
+          "relative z-10 flex flex-1 w-full min-h-0 scrollbar-hidden"
+        )}
       >
-        <link.icon size={24} />
-        {isOpen && <span>{link.label}</span>}
-      </a>
-    ))}
-  </motion.nav>
-</motion.div>
-);
+        {links.map((link, index) => (
+          <SidebarLink
+            key={index}
+            link={link}
+            sidebarOpen={isOpen}
+            variant={variant}
+          />
+        ))}
+      </motion.nav>
+    </motion.div>
+  );
 };
 
-export default Sidebar;
+export { Sidebar };
     ```
   </TabItem>
 </Tabs>
 
 ## Usage
 
-Import the component:
-
-```tsx
-import { Sidebar } from './components/ui';
-```
-
 ### Basic Usage
 
+The `Sidebar` must always be wrapped inside a `SidebarProvider` to manage its open/close state.
+
 ```tsx
-import { Home, Settings, User, Mail } from 'lucide-react';
+import { Sidebar, SidebarProvider } from '@ignix-ui/sidebar';
+import { HomeIcon, GearIcon, PersonIcon, EnvelopeClosedIcon, QuestionMarkCircledIcon } from '@radix-ui/react-icons';
 
 function BasicSidebar() {
   const links = [
-    { label: 'Home', href: '/', icon: Home },
-    { label: 'Profile', href: '/profile', icon: User },
-    { label: 'Settings', href: '/settings', icon: Settings },
-    { label: 'Contact', href: '/contact', icon: Mail },
+    { label: 'Home', href: '/', icon: HomeIcon },
+    { label: 'Profile', href: '/profile', icon: PersonIcon },
+    { label: 'Settings', href: '/settings', icon: GearIcon },
+    { label: 'Contact', href: '/contact', icon: EnvelopeClosedIcon },
   ];
 
   return (
-    <Sidebar
-      links={links}
-      brandName="My App"
-    />
+    <SidebarProvider>
+      <Sidebar
+       links={links}
+        brandName="My App"
+      />
+    </SidebarProvider>
   );
 }
 ```
-
-import SidebarDemo from '@site/src/components/Demo/SidebarDemo';
-
-## Variants
-
-<SidebarDemo />
 
 ## Customization
 
 ### With Custom Link Styling
 
 ```tsx
+import { Sidebar, SidebarProvider } from '@ignix-ui/sidebar';
+import { HomeIcon, GearIcon} from '@radix-ui/react-icons';
+
 function CustomStyledSidebar() {
   const links = [
-    { label: 'Home', href: '/', icon: Home },
-    { label: 'Settings', href: '/settings', icon: Settings },
+    { label: 'Home', href: '/', icon: HomeIcon },
+    { label: 'Settings', href: '/settings', icon: GearIcon },
   ];
 
   return (
-    <Sidebar
-      links={links}
-      brandName="Custom Links"
-      className="[&_a]:hover:bg-blue-500 [&_a]:transition-colors"
-    />
+    <SidebarProvider>
+      <Sidebar
+        links={links}
+        brandName="Custom Links"
+        className="[&_a]:hover:bg-blue-500 [&_a]:transition-colors"
+      />
+    </SidebarProvider>
   );
 }
 ```
@@ -333,6 +350,7 @@ function CustomStyledSidebar() {
 Create a responsive sidebar that adapts to different screen sizes:
 
 ```tsx
+import { Sidebar, SidebarProvider } from '@ignix-ui/sidebar';
 import { useState, useEffect } from 'react';
 
 function ResponsiveSidebar() {
@@ -350,12 +368,27 @@ function ResponsiveSidebar() {
   }, []);
 
   return (
-    <Sidebar
-      links={links}
-      isOpen={isOpen}
-      onClose={() => setIsOpen(false)}
-      className="md:relative absolute"
-    />
+    <SidebarProvider>
+      <Sidebar
+       links={links}
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        className="md:relative absolute"
+      />
+    </SidebarProvider>
   );
 }
 ```
+
+## Props
+
+| Prop | Type | Default | Description |
+|-----|-----|-----|-----|
+| `links` | `{ label: string; href: string; icon: React.ElementType }[]` | **required** | Array of navigation items displayed in the sidebar |
+| `brandName` | `string` | `"Brand"` | Text displayed in the sidebar header |
+| `position` | `'left' \| 'right' \| 'bottomLeft' \| 'bottomRight'` | `'left'` | Determines where the sidebar appears on the screen |
+| `mobileBreakPoint` | `number` | `768` | Width breakpoint for mobile devices
+| `variant` | `'default' \| 'dark' \| 'light' \| 'glass' \| 'gradient'` | `'default'` | Visual style of the sidebar |
+| `direction` | `'vertical' \| 'horizontal'` | `'vertical'` | Layout direction of the navigation links |
+| `className` | `string` | `undefined` | Additional Tailwind classes applied to the sidebar container |
+| All `HTMLDivElement` props | `React.HTMLAttributes<HTMLDivElement>` | - | Supports all standard div attributes (e.g., `style`, `id`, `onClick`) |

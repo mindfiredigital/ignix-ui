@@ -24,12 +24,14 @@ const AspectRatio = React.forwardRef<HTMLDivElement, AspectRatioProps>(
     const isAspectRatioSupported =
       typeof CSS !== 'undefined' && CSS.supports('aspect-ratio', '1/1');
 
-    const computedMaxWidth =
-      typeof maxWidth === 'number' ? `${maxWidth}px` : maxWidth;
+    const computedWidth =
+      typeof maxWidth === 'number' ? `${maxWidth}px` : (maxWidth ?? '100%');
 
     const containerStyle: React.CSSProperties = {
-      width: '100%',
-      maxWidth: computedMaxWidth,
+      position: 'relative',
+      width: computedWidth,
+      maxWidth: '100%',
+      aspectRatio: `${w} / ${h}`,
       ...style,
     };
 
@@ -77,7 +79,11 @@ const AspectRatio = React.forwardRef<HTMLDivElement, AspectRatioProps>(
         style={containerStyle}
         {...props}
       >
-        <div style={contentStyle}>{enhancedChildren}</div>
+      {isAspectRatioSupported ? (
+        enhancedChildren
+      ) : (
+      <div style={contentStyle}>{enhancedChildren}</div>
+      )}      
       </div>
     );
   }
