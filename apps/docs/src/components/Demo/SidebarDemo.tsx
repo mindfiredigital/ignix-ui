@@ -64,7 +64,7 @@ const SidebarDemo = () => {
   const isDropdown = variant === 'dropdown';
 
   const codeString = isDropdown ? `
-import { Sidebar, SidebarProvider } from '@ignix-ui/sidebar;
+import { Sidebar, SidebarProvider } from '@ignix-ui/sidebar';
 import {
   HomeIcon,
   DashboardIcon,
@@ -124,7 +124,7 @@ function Example(){
   );
 }
 ` : `
-import { Sidebar, SidebarProvider } from '@ignix-ui/sidebar;
+import { Sidebar, SidebarProvider } from '@ignix-ui/sidebar';
 import {
   HomeIcon,
   PersonIcon,
