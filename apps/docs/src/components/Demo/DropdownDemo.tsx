@@ -16,6 +16,7 @@ const DropdownDemo = () => {
 
   const codeString = `
   import { Dropdown, DropdownItem } from '@ignix-ui/dropdown';
+  import { Button } from '@ignix-ui/button';
 
   <Dropdown
     trigger={<Button>Open Menu</Button>}
