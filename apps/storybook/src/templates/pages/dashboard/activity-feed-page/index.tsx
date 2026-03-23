@@ -902,15 +902,13 @@ export function ActivityFeedPage({
   const [page, setPage] = useState(1);
   const [infiniteCount, setInfiniteCount] = useState(pageSize);
 
-  const nowRef = useRef<Date>(new Date());
-  const [, forceTick] = useState(0);
+  const [now, setNow] = useState<Date>(() => new Date());
 
   // Refresh "relative" timestamps periodically for realism in Storybook.
   useEffect(() => {
     if (timestampMode !== "relative") return;
     const interval = window.setInterval(() => {
-      nowRef.current = new Date();
-      forceTick((x) => x + 1);
+      setNow(new Date());
     }, 30_000);
     return () => window.clearInterval(interval);
   }, [timestampMode]);
@@ -1011,7 +1009,7 @@ export function ActivityFeedPage({
                 <ActivityFeedList
                   events={pageEvents}
                   timestampMode={timestampMode}
-                  now={nowRef.current}
+                  now={now}
                 />
                 <ActivityFeedPagination
                   pagingMode={pagingMode}
