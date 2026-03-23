@@ -87,7 +87,10 @@ reviews:
   # Auto-review triggers
   auto_review:
     enabled: true
-    drafts: false
+    branches:
+      - main
+      - development
+   
 
   # Files excluded from review (still cloned for context)
   path_filters:
