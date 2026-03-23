@@ -15,17 +15,17 @@ const DropdownDemo = () => {
   const [bg, setBg] = useState('default');
 
   const codeString = `
-  import { Dropdown, DropdownItem } from '@ignix-ui/dropdown';
+import { Dropdown } from '@ignix-ui/dropdown';
 
-  <Dropdown
-    trigger={<Button>Open Menu</Button>}
-    animation="${animation}"
-    bg="${bg}"
-  >
-    <DropdownItem>Profile</DropdownItem>
-    <DropdownItem>Settings</DropdownItem>
-    <DropdownItem>Logout</DropdownItem>
-  </Dropdown>
+<Dropdown
+  trigger={<Button>Open Menu</Button>}
+  animation="${animation}"
+  bg="${bg}"
+>
+  <DropdownItem>Profile</DropdownItem>
+  <DropdownItem>Settings</DropdownItem>
+  <DropdownItem>Logout</DropdownItem>
+</Dropdown>
 `;
 
   return (
