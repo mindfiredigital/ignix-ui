@@ -9,9 +9,8 @@ export interface IgnixConfig {
   themeUrl: string;
   componentsDir: string;
   themesDir: string;
-  tokensDir: string;
   templateLayoutUrl: string;
-  templateDir: string;
+  templateLayoutDir: string;
 }
 
 export async function loadConfig(): Promise<IgnixConfig> {
