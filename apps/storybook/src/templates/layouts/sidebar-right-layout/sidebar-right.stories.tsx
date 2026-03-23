@@ -2,7 +2,7 @@ import { SidebarRightLayout } from "./index";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Home, Settings, BookOpen, Palette, Layout } from 'lucide-react';
 import { Navbar } from "../../../components/navbar";
-import Sidebar from "../../../components/sidebar";
+import {Sidebar} from "../../../components/sidebar";
 import { Card } from "../../../components/card";
 
 const date = new Date()
