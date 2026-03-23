@@ -11,9 +11,40 @@ import { Button } from '@site/src/components/UI/button';
 
 The Dropdown component provides a flexible and customizable way to create dropdown menus with various styling options, animations, and sizing variants. Built with Radix UI and Framer Motion, it offers smooth animations and accessible functionality out of the box.
 
-import DropdownDemo from '@site/src/components/Demo/DropdownDemo';
+## Preview
 
-<DropdownDemo />
+<Tabs defaultValue="preview">
+  <TabItem value="preview" label="Preview" default>
+    <div className="p-4 border rounded-lg">
+      <Dropdown
+        trigger={<Button>Open Menu</Button>}
+        animation="default"
+      >
+        <DropdownItem>Profile</DropdownItem>
+        <DropdownItem>Settings</DropdownItem>
+        <DropdownItem>Logout</DropdownItem>
+      </Dropdown>
+    </div>
+  </TabItem>
+  <TabItem value="code" label="Code">
+    ```tsx
+    import { Dropdown } from '@ignix-ui/dropdown';
+
+    function DropdownDemo() {
+      return (
+        <Dropdown
+          trigger={<Button>Open Menu</Button>}
+          animation="default"
+        >
+          <DropdownItem>Profile</DropdownItem>
+          <DropdownItem>Settings</DropdownItem>
+          <DropdownItem>Logout</DropdownItem>
+        </Dropdown>
+      );
+    }
+    ```
+  </TabItem>
+</Tabs>
 
 ## Installation
 
@@ -161,6 +192,7 @@ Import the components:
 
 ```tsx
 import { Dropdown, DropdownItem } from '@ignix-ui/dropdown';
+
 ```
 
 ### Basic Usage
