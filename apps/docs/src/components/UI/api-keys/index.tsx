@@ -248,7 +248,7 @@ interface ApiKeysPageProps {
     | "slideUp"
     | "slideLeft"
     | "slideRight";
-    cardVariant?: string;
+    cardVariant?: CardVariantType;
     inputVariant?: string;
     buttonVariant?: ButtonVariant;
     buttonAnimationVariant?: string;
@@ -2139,6 +2139,11 @@ const ViewKeyModal = ({
     );
 };
 
+// First, define the allowed variant types
+type CardVariantType = "default" | "glass" | "border" | "elevated";
+type TableVariantType = "default" | "glass" | "border";
+
+
 // ==================== MAIN COMPONENT ====================
 export const ApiKeysPage: React.FC<ApiKeysPageProps> = ({
     headerTitle = "API Keys Management",
@@ -2615,7 +2620,7 @@ export const ApiKeysPage: React.FC<ApiKeysPageProps> = ({
                         </div>
                     ) : (
                         <div className={cn(CardVariants({ variant: cardVariant }), "overflow-hidden")}>
-                            <table className={cn("w-full", TableVariants({ variant: cardVariant }))}>
+                            <table className={cn("w-full", TableVariants({ variant: cardVariant as TableVariantType }))}>
                                 <thead>
                                     <tr className="border-b border-border">
                                         <th className="px-6 py-3 text-left text-sm font-medium text-muted-foreground">
@@ -2826,7 +2831,7 @@ export const ApiKeysPage: React.FC<ApiKeysPageProps> = ({
                     setIsViewModalOpen(false);
                     setSelectedApiKey(null);
                 }}
-                onReveal={handleRevealKey}
+                onReveal={async (key) => { await handleRevealKey(key!); }}
                 apiKey={selectedApiKey}
                 inputVariant={inputVariant}
                 buttonVariant={buttonVariant}

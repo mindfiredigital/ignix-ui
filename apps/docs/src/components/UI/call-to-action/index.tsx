@@ -69,6 +69,7 @@ interface CTAContextType {
     contentAlign: 'left' | 'center' | 'right';
     variant: string;
     imagePosition: 'left' | 'right';
+    imageVariant: 'light' | 'dark' | 'default';
     isVisible: boolean;
     animationDelay: number;
     animationType: 'fade' | 'slide' | 'scale';
@@ -2233,7 +2234,7 @@ export const CTABanner: React.FC<CTABannerProps> = ({
 
     // Image Options
     imagePosition = "right",
-    // imageVariant = "default",
+    imageVariant = "default",
 
     // Theme
     theme,
@@ -2305,6 +2306,7 @@ export const CTABanner: React.FC<CTABannerProps> = ({
         contentAlign,
         variant: typeof variant === 'string' ? variant : 'default',
         imagePosition,
+        imageVariant: imageVariant || 'default',
         isVisible,
         animationDelay,
         animationType,
