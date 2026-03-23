@@ -1,5 +1,4 @@
 
-
 import React, { useState } from 'react';
 import {
     CTABanner,
@@ -356,7 +355,7 @@ const CTABannerDemo = ({
     const [formType, setFormType] = useState<FormType>('banner');
     const [imagePosition, setImagePosition] = useState<ImagePositionType>('right');
 
-    const theme = variant === 'dark' || variant === 'gradient' || (demoType === 'background-image' && variant === 'dark') ? 'dark' : 'light';
+    const theme = (variant as string) === 'dark' || (variant as string) === 'gradient' || (demoType === 'background-image' && (variant as string) === 'dark') ? 'dark' : 'light';
 
     // Update variant when color mode changes
     React.useEffect(() => {
@@ -479,32 +478,32 @@ const CTABannerDemo = ({
 // Export the four demos
 export const CenteredDemo = () => (
     <CTABannerDemo
-        // title="1. Centered Layout"
-        // description="Classic centered layout perfect for most use cases. Content is centered with equal padding on all sides."
+        title="1. Centered Layout"
+        description="Classic centered layout perfect for most use cases. Content is centered with equal padding on all sides."
         demoType="centered"
     />
 );
 
 export const SplitDemo = () => (
     <CTABannerDemo
-        // title="2. Split Layout"
-        // description="Split layout with content on one side and an image on the other. Great for visual storytelling."
+        title="2. Split Layout"
+        description="Split layout with content on one side and an image on the other. Great for visual storytelling."
         demoType="split"
     />
 );
 
 export const BackgroundImageDemo = () => (
     <CTABannerDemo
-        // title="3. Background Image"
-        // description="Full-width background image with optional overlay. Creates a visually striking call-to-action."
+        title="3. Background Image"
+        description="Full-width background image with optional overlay. Creates a visually striking call-to-action."
         demoType="background-image"
     />
 );
 
 export const GradientBackgroundDemo = () => (
     <CTABannerDemo
-        // title="4. Gradient Background"
-        // description="Gradient overlay over a background image for modern, eye-catching designs."
+        title="4. Gradient Background"
+        description="Gradient overlay over a background image for modern, eye-catching designs."
         demoType="gradient-background"
     />
 );

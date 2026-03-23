@@ -1570,7 +1570,7 @@ const educationSections = [
 ];
 
 // Map form types to their configurations
-const formConfigs = {
+const formConfigs: Record<FormType, { fields: DynamicFormField[]; sections: { title: string; description: string; fields: string[] }[] }> = {
     registration: { fields: registrationFields, sections: registrationSections },
     business: { fields: businessFields, sections: businessSections },
     developer: { fields: developerFields, sections: developerSections },

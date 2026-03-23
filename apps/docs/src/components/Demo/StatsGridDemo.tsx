@@ -5,10 +5,6 @@ import {
     StatsGridDescription,
     StatsGridCard,
     StatsGridContainer,
-    // StatValue,
-    // StatLabel,
-    // StatSubtext,
-    // StatIcon,
 } from '../UI/stats-grid';
 import {
     Users, DollarSign, Download, Star, Shield, Globe, Heart, Activity
@@ -20,46 +16,46 @@ import VariantSelector from './VariantSelector';
 import { cn } from "@site/src/utils/cn";
 import { useColorMode } from '@docusaurus/theme-common';
 
+// Import the StatAccent type from the StatsGrid component
+import type { StatAccent } from '../UI/stats-grid';
 
 /* ============================================
    OPTIONS
 ============================================ */
 
 const themeOptions = [
-    { value: 'light', label: 'Light Theme' },
-    { value: 'dark', label: 'Dark Theme (Solid)' },
+    { value: 'light' as const, label: 'Light Theme' },
+    { value: 'dark' as const, label: 'Dark Theme (Solid)' },
 ];
 
 const columnOptions = [
-    { value: 2, label: '2 Columns' },
-    { value: 3, label: '3 Columns' },
-    { value: 4, label: '4 Columns' },
-    { value: 5, label: '5 Columns' },
-    { value: 6, label: '6 Columns' },
+    { value: 2 as const, label: '2 Columns' },
+    { value: 3 as const, label: '3 Columns' },
+    { value: 4 as const, label: '4 Columns' },
+    { value: 5 as const, label: '5 Columns' },
+    { value: 6 as const, label: '6 Columns' },
 ];
 
 const alignOptions = [
-    { value: 'left', label: 'Left Aligned' },
-    { value: 'center', label: 'Center Aligned' },
-    { value: 'right', label: 'Right Aligned' },
+    { value: 'left' as const, label: 'Left Aligned' },
+    { value: 'center' as const, label: 'Center Aligned' },
+    { value: 'right' as const, label: 'Right Aligned' },
 ];
 
 const gapOptions = [
-    { value: 'sm', label: 'Small Gap' },
-    { value: 'md', label: 'Medium Gap' },
-    { value: 'lg', label: 'Large Gap' },
-    { value: 'xl', label: 'Extra Large Gap' },
+    { value: 'sm' as const, label: 'Small Gap' },
+    { value: 'md' as const, label: 'Medium Gap' },
+    { value: 'lg' as const, label: 'Large Gap' },
+    { value: 'xl' as const, label: 'Extra Large Gap' },
 ];
 
 const paddingOptions = [
-    { value: 'sm', label: 'Small Padding' },
-    { value: 'md', label: 'Medium Padding' },
-    { value: 'lg', label: 'Large Padding' },
-    { value: 'xl', label: 'Extra Large Padding' },
-    { value: '2xl', label: '2X Large Padding' },
+    { value: 'sm' as const, label: 'Small Padding' },
+    { value: 'md' as const, label: 'Medium Padding' },
+    { value: 'lg' as const, label: 'Large Padding' },
+    { value: 'xl' as const, label: 'Extra Large Padding' },
+    { value: '2xl' as const, label: '2X Large Padding' },
 ];
-
-
 
 /* ============================================
    SAMPLE STATS DATA
@@ -142,12 +138,11 @@ const sampleStats = [
 
 export const StatsGridSimpleDemo = () => {
     const { colorMode } = useColorMode();
-    const [theme, setTheme] = useState(colorMode === 'dark' ? 'dark' : 'light');
-    const [columns, setColumns] = useState(4);
-    const [align, setAlign] = useState('center');
-    // const [animationType, setAnimationType] = useState('slide');
-    const [gap, setGap] = useState('md');
-    const [padding, setPadding] = useState('lg');
+    const [theme, setTheme] = useState<'light' | 'dark'>(colorMode === 'dark' ? 'dark' : 'light');
+    const [columns, setColumns] = useState<2 | 3 | 4 | 5 | 6>(4);
+    const [align, setAlign] = useState<'left' | 'center' | 'right'>('center');
+    const [gap, setGap] = useState<'sm' | 'md' | 'lg' | 'xl'>('md');
+    const [padding, setPadding] = useState<'sm' | 'md' | 'lg' | 'xl' | '2xl'>('lg');
     const [animated, setAnimated] = useState(true);
     const [showTitle, setShowTitle] = useState(true);
     const [showDescription, setShowDescription] = useState(true);
@@ -248,35 +243,35 @@ export default StatsGridExample;`;
                 <VariantSelector
                     variants={themeOptions.map(o => o.value)}
                     selectedVariant={theme}
-                    onSelectVariant={setTheme}
+                    onSelectVariant={(value) => setTheme(value as 'light' | 'dark')}
                     type="Theme"
                     getLabel={(v) => themeOptions.find(o => o.value === v)?.label || v}
                 />
                 <VariantSelector
                     variants={columnOptions.map(o => o.value.toString())}
                     selectedVariant={columns.toString()}
-                    onSelectVariant={(v) => setColumns(Number(v))}
+                    onSelectVariant={(value) => setColumns(Number(value) as 2 | 3 | 4 | 5 | 6)}
                     type="Columns"
                     getLabel={(v) => columnOptions.find(o => o.value.toString() === v)?.label || v}
                 />
                 <VariantSelector
                     variants={alignOptions.map(o => o.value)}
                     selectedVariant={align}
-                    onSelectVariant={setAlign}
+                    onSelectVariant={(value) => setAlign(value as 'left' | 'center' | 'right')}
                     type="Align"
                     getLabel={(v) => alignOptions.find(o => o.value === v)?.label || v}
                 />
                 <VariantSelector
                     variants={gapOptions.map(o => o.value)}
                     selectedVariant={gap}
-                    onSelectVariant={setGap}
+                    onSelectVariant={(value) => setGap(value as 'sm' | 'md' | 'lg' | 'xl')}
                     type="Gap"
                     getLabel={(v) => gapOptions.find(o => o.value === v)?.label || v}
                 />
                 <VariantSelector
                     variants={paddingOptions.map(o => o.value)}
                     selectedVariant={padding}
-                    onSelectVariant={setPadding}
+                    onSelectVariant={(value) => setPadding(value as 'sm' | 'md' | 'lg' | 'xl' | '2xl')}
                     type="Padding"
                     getLabel={(v) => paddingOptions.find(o => o.value === v)?.label || v}
                 />
@@ -340,12 +335,12 @@ export default StatsGridExample;`;
                 <TabItem value="preview" label="Preview">
                     <div className="border rounded-lg overflow-hidden">
                         <StatsGrid
-                            variant={theme as any}
-                            columns={columns as any}
-                            contentAlign={align as any}
+                            variant={theme}
+                            columns={columns}
+                            contentAlign={align}
                             animated={animated}
-                            gap={gap as any}
-                            padding={padding as any}
+                            gap={gap}
+                            padding={padding}
                         >
                             {showTitle && <StatsGridTitle>Simple Stats Grid Demo</StatsGridTitle>}
                             {showDescription && (
@@ -361,7 +356,7 @@ export default StatsGridExample;`;
                                             ...stat,
                                             icon: showIcons ? stat.icon : undefined,
                                             subtext: showSubtext ? stat.subtext : undefined,
-                                            accent: index % 2 === 0 ? 'blue' : 'purple',
+                                            accent: (index % 2 === 0 ? 'blue' : 'purple') as StatAccent,
                                         }}
                                         index={index}
                                     />
@@ -399,34 +394,49 @@ export default StatsGridExample;`;
    2. VIBRANT EXAMPLES SHOWCASE
 ============================================ */
 
+interface VibrantExample {
+    id: string;
+    name: string;
+    variant: 'light' | 'dark';
+    columns: 2 | 3 | 4 | 5 | 6;
+    bgColor: string;
+    cardBgColor: string;
+    cardBorderColor: string;
+    textColor: string;
+    iconBgColor: string;
+    iconColor: string;
+    cardAccents: StatAccent[];
+    description: string;
+}
+
 export const VibrantExamplesDemo = () => {
     const [selectedExample, setSelectedExample] = useState('neon-nights');
 
-    const examples = [
+    const examples: VibrantExample[] = [
         {
             id: 'neon-nights',
             name: '🎮 Neon Nights',
-            variant: 'dark' as const,
+            variant: 'dark',
             columns: 4,
             bgColor: 'bg-gradient-to-br from-slate-950 via-blue-950 to-purple-950',
             cardBgColor: 'bg-gradient-to-br from-blue-900/40 to-purple-900/40 backdrop-blur-md',
             cardBorderColor: 'border-blue-800/50',
             textColor: 'text-white',
-            iconBgColor: 'bg-gradient-to-br from-fuchsia-500 to-pink-500',
+            iconBgColor: 'bg-gradient-to-br from-pink-500 to-rose-500',
             iconColor: 'text-white',
-            cardAccents: ['blue', 'fuchsia'],
+            cardAccents: ['blue', 'purple'],
             description: 'Cyberpunk-inspired neon on deep dark background'
         },
         {
             id: 'citrus-burst',
             name: '🍊 Citrus Burst',
-            variant: 'light' as const,
+            variant: 'light',
             columns: 4,
             bgColor: 'bg-gradient-to-br from-yellow-500 via-orange-500 to-red-500',
             cardBgColor: 'bg-white/95 backdrop-blur-sm',
             cardBorderColor: 'border-orange-300',
             textColor: 'text-gray-900',
-            iconBgColor: 'bg-gradient-to-br from-lime-400 to-emerald-400',
+            iconBgColor: 'bg-gradient-to-br from-emerald-400 to-green-400',
             iconColor: 'text-white',
             cardAccents: ['orange', 'red'],
             description: 'Zesty citrus explosion with fresh green accents'
@@ -434,7 +444,7 @@ export const VibrantExamplesDemo = () => {
         {
             id: 'cherry-blossom',
             name: '🌸 Cherry Blossom',
-            variant: 'light' as const,
+            variant: 'light',
             columns: 4,
             bgColor: 'bg-gradient-to-br from-pink-400 via-rose-300 to-purple-300',
             cardBgColor: 'bg-white/80 backdrop-blur-sm',
@@ -448,13 +458,13 @@ export const VibrantExamplesDemo = () => {
         {
             id: 'fruit-punch',
             name: '🧃 Fruit Punch',
-            variant: 'light' as const,
+            variant: 'light',
             columns: 4,
             bgColor: 'bg-gradient-to-br from-red-500 via-pink-500 to-purple-500',
             cardBgColor: 'bg-white/90 backdrop-blur-sm',
             cardBorderColor: 'border-red-300',
             textColor: 'text-gray-900',
-            iconBgColor: 'bg-gradient-to-br from-lime-400 to-green-400',
+            iconBgColor: 'bg-gradient-to-br from-emerald-400 to-green-400',
             iconColor: 'text-white',
             cardAccents: ['red', 'pink'],
             description: 'Bold fruit cocktail with fresh lime accents'
@@ -462,7 +472,7 @@ export const VibrantExamplesDemo = () => {
         {
             id: 'electric-blue',
             name: '⚡ Electric Blue',
-            variant: 'dark' as const,
+            variant: 'dark',
             columns: 4,
             bgColor: 'bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600',
             cardBgColor: 'bg-white/10 backdrop-blur-md',
@@ -476,7 +486,7 @@ export const VibrantExamplesDemo = () => {
         {
             id: 'tropical-punch',
             name: '🍹 Tropical Punch',
-            variant: 'light' as const,
+            variant: 'light',
             columns: 4,
             bgColor: 'bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500',
             cardBgColor: 'bg-white/90 backdrop-blur-sm',
@@ -491,7 +501,7 @@ export const VibrantExamplesDemo = () => {
 
     const currentExample = examples.find(ex => ex.id === selectedExample) || examples[0];
 
-    const sampleStats = [
+    const vibrantSampleStats = [
         {
             id: '1',
             value: 10000000,
@@ -545,7 +555,14 @@ export const VibrantExamplesDemo = () => {
         },
     ];
 
-    const getAccentCode = () => {
+    const getAccentValue = (index: number): StatAccent => {
+        if (currentExample.cardAccents.length > 1) {
+            return index % 2 === 0 ? currentExample.cardAccents[0] : currentExample.cardAccents[1];
+        }
+        return currentExample.cardAccents[0];
+    };
+
+    const getAccentCode = (): string => {
         if (currentExample.cardAccents.length > 1) {
             return `i % 2 === 0 ? '${currentExample.cardAccents[0]}' : '${currentExample.cardAccents[1]}'`;
         }
@@ -614,22 +631,16 @@ export const VibrantExamplesDemo = () => {
                                 {currentExample.description}
                             </StatsGridDescription>
                             <StatsGridContainer>
-                                {sampleStats.map((stat, index) => {
-                                    const accent = currentExample.cardAccents.length > 1
-                                        ? (index % 2 === 0 ? currentExample.cardAccents[0] : currentExample.cardAccents[1])
-                                        : currentExample.cardAccents[0];
-
-                                    return (
-                                        <StatsGridCard
-                                            key={stat.id}
-                                            stat={{
-                                                ...stat,
-                                                accent: accent as any,
-                                            }}
-                                            index={index}
-                                        />
-                                    );
-                                })}
+                                {vibrantSampleStats.map((stat, index) => (
+                                    <StatsGridCard
+                                        key={stat.id}
+                                        stat={{
+                                            ...stat,
+                                            accent: getAccentValue(index),
+                                        }}
+                                        index={index}
+                                    />
+                                ))}
                             </StatsGridContainer>
                         </StatsGrid>
                     </div>
@@ -677,20 +688,20 @@ export const VibrantExamplesDemo = () => {
                         <div className="space-y-2">
                             <p className="text-xs font-medium text-gray-500 dark:text-gray-400">Accent 1</p>
                             <div className={cn("h-20 rounded-lg shadow-inner",
-                                currentExample.cardAccents[0] === 'fuchsia' && 'bg-fuchsia-500',
-                                currentExample.cardAccents[0] === 'violet' && 'bg-violet-500',
-                                currentExample.cardAccents[0] === 'emerald' && 'bg-emerald-500',
-                                currentExample.cardAccents[0] === 'teal' && 'bg-teal-500',
-                                currentExample.cardAccents[0] === 'indigo' && 'bg-indigo-500',
-                                currentExample.cardAccents[0] === 'pink' && 'bg-pink-500',
-                                currentExample.cardAccents[0] === 'rose' && 'bg-rose-500',
-                                currentExample.cardAccents[0] === 'orange' && 'bg-orange-500',
                                 currentExample.cardAccents[0] === 'blue' && 'bg-blue-500',
                                 currentExample.cardAccents[0] === 'purple' && 'bg-purple-500',
+                                currentExample.cardAccents[0] === 'emerald' && 'bg-emerald-500',
                                 currentExample.cardAccents[0] === 'amber' && 'bg-amber-500',
-                                currentExample.cardAccents[0] === 'red' && 'bg-red-500',
+                                currentExample.cardAccents[0] === 'rose' && 'bg-rose-500',
+                                currentExample.cardAccents[0] === 'violet' && 'bg-violet-500',
+                                currentExample.cardAccents[0] === 'pink' && 'bg-pink-500',
+                                currentExample.cardAccents[0] === 'indigo' && 'bg-indigo-500',
                                 currentExample.cardAccents[0] === 'cyan' && 'bg-cyan-500',
+                                currentExample.cardAccents[0] === 'orange' && 'bg-orange-500',
                                 currentExample.cardAccents[0] === 'yellow' && 'bg-yellow-400',
+                                currentExample.cardAccents[0] === 'teal' && 'bg-teal-500',
+                                currentExample.cardAccents[0] === 'red' && 'bg-red-500',
+                                currentExample.cardAccents[0] === 'green' && 'bg-green-500',
                             )} />
                             <p className="text-xs font-mono capitalize">{currentExample.cardAccents[0]}</p>
                         </div>
@@ -698,20 +709,20 @@ export const VibrantExamplesDemo = () => {
                             <div className="space-y-2">
                                 <p className="text-xs font-medium text-gray-500 dark:text-gray-400">Accent 2</p>
                                 <div className={cn("h-20 rounded-lg shadow-inner",
-                                    currentExample.cardAccents[1] === 'fuchsia' && 'bg-fuchsia-500',
-                                    currentExample.cardAccents[1] === 'violet' && 'bg-violet-500',
-                                    currentExample.cardAccents[1] === 'emerald' && 'bg-emerald-500',
-                                    currentExample.cardAccents[1] === 'teal' && 'bg-teal-500',
-                                    currentExample.cardAccents[1] === 'indigo' && 'bg-indigo-500',
-                                    currentExample.cardAccents[1] === 'pink' && 'bg-pink-500',
-                                    currentExample.cardAccents[1] === 'rose' && 'bg-rose-500',
-                                    currentExample.cardAccents[1] === 'orange' && 'bg-orange-500',
                                     currentExample.cardAccents[1] === 'blue' && 'bg-blue-500',
                                     currentExample.cardAccents[1] === 'purple' && 'bg-purple-500',
+                                    currentExample.cardAccents[1] === 'emerald' && 'bg-emerald-500',
                                     currentExample.cardAccents[1] === 'amber' && 'bg-amber-500',
-                                    currentExample.cardAccents[1] === 'red' && 'bg-red-500',
+                                    currentExample.cardAccents[1] === 'rose' && 'bg-rose-500',
+                                    currentExample.cardAccents[1] === 'violet' && 'bg-violet-500',
+                                    currentExample.cardAccents[1] === 'pink' && 'bg-pink-500',
+                                    currentExample.cardAccents[1] === 'indigo' && 'bg-indigo-500',
                                     currentExample.cardAccents[1] === 'cyan' && 'bg-cyan-500',
+                                    currentExample.cardAccents[1] === 'orange' && 'bg-orange-500',
                                     currentExample.cardAccents[1] === 'yellow' && 'bg-yellow-400',
+                                    currentExample.cardAccents[1] === 'teal' && 'bg-teal-500',
+                                    currentExample.cardAccents[1] === 'red' && 'bg-red-500',
+                                    currentExample.cardAccents[1] === 'green' && 'bg-green-500',
                                 )} />
                                 <p className="text-xs font-mono capitalize">{currentExample.cardAccents[1]}</p>
                             </div>

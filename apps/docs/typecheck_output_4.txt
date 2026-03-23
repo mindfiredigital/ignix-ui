@@ -1,0 +1,6 @@
+
+> docs@1.0.0 typecheck
+> tsc
+
+src/components/Demo/DynamicFormDemo.tsx(1986,29): error TS2322: Type 'ThemeVariant' is not assignable to type '"default" | "neon" | "ocean" | "forest" | "vibrant" | "pastel" | "earthy" | "sunset" | "galaxy" | "candy"'.
+  Type '"dark"' is not assignable to type '"default" | "neon" | "ocean" | "forest" | "vibrant" | "pastel" | "earthy" | "sunset" | "galaxy" | "candy"'.
