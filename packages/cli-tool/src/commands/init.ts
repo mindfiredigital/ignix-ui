@@ -248,7 +248,12 @@ async function createConfigFiles() {
 
 async function setupIgnixUIAlias(): Promise<void> {
   const root = process.cwd();
-  const templatesDir = path.resolve(__dirname, './templates');
+  let templatesDir = path.resolve(__dirname, '../../templates');
+
+  if (!(await fs.pathExists(templatesDir))) {
+    // Fallback for bundled version
+    templatesDir = path.resolve(__dirname, './templates');
+  }
 
   // 1️⃣ Copy tsconfig.app.json template
   const tsconfigTemplatePath = path.join(templatesDir, 'tsconfig.app.json');
@@ -333,11 +338,21 @@ async function createLlmsTxtFile() {
 }
 
 async function createIgnixConfigFIle() {
-  const configTemplatePath = path.resolve(__dirname, './templates/ignix.config.js');
+  const configTemplatePath = path.resolve(__dirname, '../../templates/ignix.config.js');
   if (await fs.pathExists(DEFAULT_CONFIG_PATH)) {
     logger.info('`ignix.config.js` already exists. Skipping creation.');
   } else {
-    await fs.copy(configTemplatePath, DEFAULT_CONFIG_PATH);
+    if (!(await fs.pathExists(configTemplatePath))) {
+      // Fallback for bundled version
+      const bundledTemplatePath = path.resolve(__dirname, './templates/ignix.config.js');
+      if (await fs.pathExists(bundledTemplatePath)) {
+        await fs.copy(bundledTemplatePath, DEFAULT_CONFIG_PATH);
+      } else {
+        throw new Error(`Config template not found at ${configTemplatePath} or ${bundledTemplatePath}`);
+      }
+    } else {
+      await fs.copy(configTemplatePath, DEFAULT_CONFIG_PATH);
+    }
     logger.success('Created `ignix.config.js`.');
   }
 }
