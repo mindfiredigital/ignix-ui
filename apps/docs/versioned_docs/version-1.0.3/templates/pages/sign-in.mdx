@@ -304,7 +304,7 @@ The SignIn component provides a complete, production-ready authentication form w
             if (onSignUp) {
                 onSignUp();
             } else {
-                console.warn('SignUp callback not provided. Implement navigation to sign-up page.');
+                alert('SignUp callback not provided. Implement navigation to sign-up page.');
             }
         };
 
@@ -317,28 +317,28 @@ The SignIn component provides a complete, production-ready authentication form w
                         if (onGoogleSignIn) {
                             await onGoogleSignIn();
                         } else {
-                            console.warn(`onGoogleSignIn callback not implemented.`);
+                            alert(`onGoogleSignIn callback not implemented.`);
                         }
                         break;
                     case 'github':
                         if (onGitHubSignIn) {
                             await onGitHubSignIn();
                         } else {
-                            console.warn(`onGitHubSignIn callback not implemented.`);
+                            alert(`onGitHubSignIn callback not implemented.`);
                         }
                         break;
                     case 'microsoft':
                         if (onMicrosoftSignIn) {
                             await onMicrosoftSignIn();
                         } else {
-                            console.warn(`onMicrosoftSignIn callback not implemented.`);
+                            alert(`onMicrosoftSignIn callback not implemented.`);
                         }
                         break;
                     default:
-                        console.warn(`Unsupported social provider: ${provider}`);
+                        alert(`Unsupported social provider: ${provider}`);
                 }
             } catch (error) {
-                console.error(`Social sign-in failed for ${provider}:`, error);
+                alert(`Social sign-in failed for ${provider}: ${error}`);
             } finally {
                 setTimeout(() => setSocialLoading(null), 500);
             }
@@ -917,11 +917,11 @@ Import the component and start using it:
 
 ```tsx
 
-import { SignIn } from '@site/src/components/UI/sign-in';
+import { SignIn } from '@ignix-ui/signin';
 
 function LoginPage() {
   const handleSubmit = async (data) => {
-    console.log('User data:', data);
+    alert(`Login successful! User data: ${JSON.stringify(data)}`);
     // Your authentication logic here
   };
 
@@ -943,7 +943,7 @@ function LoginPage() {
 <div className="w-full h-[500px] overflow-y-scroll">
     ```tsx
 import React, { useState } from 'react';
-import { SignIn } from '@site/src/components/UI/sign-in';
+import { SignIn } from '@ignix-ui/signin';
 
 function ControlledSignIn() {
   const [loading, setLoading] = useState(false);
@@ -966,7 +966,7 @@ function ControlledSignIn() {
       }
       
       // Handle successful login
-      console.log('Login successful:', data);
+      alert(`Login successful! User data: ${JSON.stringify(data)}`);
     } catch (error) {
       setError('Invalid credentials. Please try again.');
     } finally {
@@ -994,7 +994,7 @@ function ControlledSignIn() {
 <div className="w-full h-[500px] overflow-y-scroll">
 ```tsx
 import React from 'react';
-import { SignIn } from '@site/src/components/UI/sign-in';
+import { SignIn } from '@ignix-ui/signin';
 
 function SocialSignIn() {
   const handleGoogleSignIn = async () => {
@@ -1015,7 +1015,7 @@ function SocialSignIn() {
       showSocialLogin={true}
       onGoogleSignIn={handleGoogleSignIn}
       onGitHubSignIn={handleGitHubSignIn}
-      onMicrosoftSignIn={() => console.log('Microsoft sign-in')}
+      onMicrosoftSignIn={() => alert('Microsoft sign-in')}
     />
   );
 }

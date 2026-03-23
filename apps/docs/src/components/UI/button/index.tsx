@@ -30,9 +30,8 @@ const buttonVariants = cva(
         link: 'text-primary underline-offset-4 hover:underline',
         subtle: 'bg-accent text-accent-foreground hover:bg-accent/80',
         elevated: 'bg-background shadow-md hover:shadow-lg',
-        glass: 'bg-black/10 backdrop-blur-lg text-white hover:bg-black/20',
+        glass: 'bg-black/10 backdrop-blur-lg text-primary hover:bg-black/20',
         neon: 'bg-pink-500 text-white shadow-lg shadow-pink-500/50 hover:bg-pink-600',
-        pill: 'rounded-full px-6 py-2 bg-pill text-white hover:bg-pill/90',
         none: '',
       },
       size: {

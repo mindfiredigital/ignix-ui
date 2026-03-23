@@ -3,7 +3,7 @@ import VariantSelector from "./VariantSelector";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 import CodeBlock from "@theme/CodeBlock";
-import { ImageCard } from "../UI/image-card";
+import { ImageCard } from "@site/src/components/UI/image-card";
 import { Play, SkipBack, SkipForward, Star } from "lucide-react";
 
 type ImageCardPosition = typeof positions[number];
@@ -20,6 +20,8 @@ const ImageCardBasicDemo = () => {
   const [position, setPosition] = useState<ImageCardPosition>("top");
 
   const codeString = `
+  import { ImageCard } from '@ignix-ui/imagecard';
+  
   <ImageCard
     image="https://picsum.photos/id/237/800/600"
     title="Explore Pets"
@@ -131,6 +133,8 @@ const ImageCardBelowDemo = () => {
   const [size, setSize] = useState<ImageCardSizes>("sm");
 
   const codeString = `
+   import { ImageCard } from '@ignix-ui/imagecard';
+
    <ImageCard
     image="https://picsum.photos/id/237/800/600"
     title="Explore Pets"
@@ -223,6 +227,8 @@ const ImageCardMediaDemo = () => {
   const [size, setSize] = useState<ImageCardSizes>("lg");
 
   const codeString = `
+  import { ImageCard } from '@ignix-ui/imagecard';
+
   <ImageCard
     mode="media"
     image="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=80"

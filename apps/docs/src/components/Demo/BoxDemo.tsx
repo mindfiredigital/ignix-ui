@@ -22,6 +22,8 @@ const BoxDemo = () => {
   const [shadow, setShadow] = useState("subtle");
 
   const codeString = `
+    import { Box } from '@ignix-ui/box';
+
     <Box
       width="${width}"
       height="${height}"

@@ -153,6 +153,8 @@ const SignInDemo = () => {
     };
 
     const codeString = `
+import { SignIn } from '@ignix-ui/signin';
+
 <SignIn 
   type="${layoutType}"
   variant="${variant}"
@@ -303,7 +305,10 @@ const CenteredDarkDemo = () => {
         setIsLoading(false);
     };
 
-    const codeString = `<SignIn
+    const codeString = `
+import { SignIn } from '@ignix-ui/signin';
+
+<SignIn
   type="centered"
   variant="dark"
   companyName="DarkCorp"
@@ -409,7 +414,10 @@ const SplitDarkDemo = () => {
         setIsLoading(false);
     };
 
-    const codeString = `<SignIn
+    const codeString = `
+import { SignIn } from '@ignix-ui/signin';
+
+<SignIn
   type="split"
   variant="dark"
   companyName="SecureApp"
@@ -623,7 +631,10 @@ const FullyCustomizableDemo = () => {
 
     const getCodeString = () => {
         const bgConfig = getBackgroundConfig();
-        return `<SignIn
+        return `
+import { SignIn } from '@ignix-ui/signin';
+
+<SignIn
   type="split"
   variant="modern"
   companyName="${companyName}"

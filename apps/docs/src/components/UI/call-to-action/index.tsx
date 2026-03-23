@@ -11,6 +11,7 @@ import { cn } from '@site/src/utils/cn';
 import { Button } from '@site/src/components/UI/button';
 import { Typography } from '@site/src/components/UI/typography';
 
+
 /* ============================================
    TYPES & INTERFACES
 ============================================ */
@@ -88,6 +89,22 @@ const useCTA = () => {
    BASIC CHILD COMPONENTS
 ============================================ */
 
+/**
+ * Heading component for the CTA banner. Renders the main title with animations.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <CTABannerHeading>
+ *   Ready to get started?
+ * </CTABannerHeading>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Heading text content
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Animated heading component
+ */
 export const CTABannerHeading: React.FC<{
     children: React.ReactNode;
     className?: string;
@@ -124,6 +141,22 @@ export const CTABannerHeading: React.FC<{
     );
 };
 
+/**
+ * Subheading component for the CTA banner. Provides supporting text with animations.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <CTABannerSubheading>
+ *   Join thousands of satisfied customers today.
+ * </CTABannerSubheading>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Subheading text content
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Animated subheading component
+ */
 export const CTABannerSubheading: React.FC<{
     children: React.ReactNode;
     className?: string;
@@ -162,6 +195,23 @@ export const CTABannerSubheading: React.FC<{
     );
 };
 
+/**
+ * Container for CTA action buttons. Handles layout and animations for button groups.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <CTABannerActions>
+ *   <CTABannerButton label="Get Started" />
+ *   <CTABannerButton label="Learn More" variant="outline" />
+ * </CTABannerActions>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Button components
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Animated container for action buttons
+ */
 export const CTABannerActions: React.FC<{
     children: React.ReactNode;
     className?: string;
@@ -186,6 +236,31 @@ export const CTABannerActions: React.FC<{
     );
 };
 
+/**
+ * Button component for CTA actions. Supports multiple variants, icons, and link behavior.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <CTABannerButton
+ *   label="Get Started"
+ *   variant="primary"
+ *   icon={ArrowRight}
+ *   onClick={() => console.log('clicked')}
+ * />
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {string} props.label - Button text
+ * @param {('primary'|'secondary'|'outline'|'ghost'|'link')} [props.variant='primary'] - Button style variant
+ * @param {React.ElementType} [props.icon] - Icon component to display
+ * @param {() => void} [props.onClick] - Click handler
+ * @param {string} [props.href] - Link URL (if button should behave as a link)
+ * @param {boolean} [props.external] - Whether the link opens in a new tab
+ * @param {('sm'|'md'|'lg')} [props.size] - Button size
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Styled button component
+ */
 export const CTABannerButton: React.FC<{
     label: string;
     variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'link';
@@ -230,6 +305,26 @@ export const CTABannerButton: React.FC<{
     );
 };
 
+/**
+ * Image component for split layout CTA banners. Only renders when layout is 'split'.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <CTABannerImage
+ *   src="/images/cta-image.jpg"
+ *   alt="Feature illustration"
+ *   variant="light"
+ * />
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {string} props.src - Image source URL
+ * @param {string} [props.alt="CTA Visual"] - Alt text for the image
+ * @param {string} [props.className] - Additional CSS classes
+ * @param {('light'|'dark'|'default')} [props.variant] - Image style variant
+ * @returns {JSX.Element|null} Animated image component or null if layout not split
+ */
 export const CTABannerImage: React.FC<{
     src: string;
     alt?: string;
@@ -264,6 +359,23 @@ export const CTABannerImage: React.FC<{
     );
 };
 
+/**
+ * Content wrapper component that handles layout positioning and animations for CTA content.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <CTABannerContent>
+ *   <CTABannerHeading>Title</CTABannerHeading>
+ *   <CTABannerSubheading>Description</CTABannerSubheading>
+ * </CTABannerContent>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Content elements
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Animated content container
+ */
 export const CTABannerContent: React.FC<{
     children: React.ReactNode;
     className?: string;
@@ -407,7 +519,22 @@ const imageVariants = cva(
    FORM-SPECIFIC CHILD COMPONENTS
 ============================================ */
 
-// Form-specific heading components for better composition
+/**
+ * Heading component specifically for demo request forms.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <DemoFormHeading>
+ *   Request a Demo
+ * </DemoFormHeading>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Heading text
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Styled heading for demo forms
+ */
 export const DemoFormHeading: React.FC<{
     children: React.ReactNode;
     className?: string;
@@ -429,6 +556,22 @@ export const DemoFormHeading: React.FC<{
     );
 };
 
+/**
+ * Subheading component specifically for demo request forms.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <DemoFormSubheading>
+ *   Fill out the form below and we'll contact you shortly.
+ * </DemoFormSubheading>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Subheading text
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Styled subheading for demo forms
+ */
 export const DemoFormSubheading: React.FC<{
     children: React.ReactNode;
     className?: string;
@@ -449,6 +592,22 @@ export const DemoFormSubheading: React.FC<{
     );
 };
 
+/**
+ * Heading component specifically for contact forms.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <ContactFormHeading>
+ *   Get in Touch
+ * </ContactFormHeading>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Heading text
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Styled heading for contact forms
+ */
 export const ContactFormHeading: React.FC<{
     children: React.ReactNode;
     className?: string;
@@ -470,6 +629,22 @@ export const ContactFormHeading: React.FC<{
     );
 };
 
+/**
+ * Subheading component specifically for contact forms.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <ContactFormSubheading>
+ *   We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+ * </ContactFormSubheading>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Subheading text
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Styled subheading for contact forms
+ */
 export const ContactFormSubheading: React.FC<{
     children: React.ReactNode;
     className?: string;
@@ -490,6 +665,22 @@ export const ContactFormSubheading: React.FC<{
     );
 };
 
+/**
+ * Heading component specifically for newsletter signup forms.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <NewsletterHeading>
+ *   Subscribe to Our Newsletter
+ * </NewsletterHeading>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Heading text
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Styled heading for newsletter forms
+ */
 export const NewsletterHeading: React.FC<{
     children: React.ReactNode;
     className?: string;
@@ -511,6 +702,22 @@ export const NewsletterHeading: React.FC<{
     );
 };
 
+/**
+ * Subheading component specifically for newsletter signup forms.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <NewsletterSubheading>
+ *   Get the latest updates and offers delivered to your inbox.
+ * </NewsletterSubheading>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Subheading text
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Styled subheading for newsletter forms
+ */
 export const NewsletterSubheading: React.FC<{
     children: React.ReactNode;
     className?: string;
@@ -553,6 +760,43 @@ export interface ContactFormData {
    DEMO REQUEST COMPONENT (Accepts Children)
 ============================================ */
 
+/**
+ * Demo request form component for collecting user information to schedule a product demo.
+ * Supports comprehensive validation, loading states, success/error handling, and accepts
+ * child components for custom headings and content.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <CTABannerDemoRequest
+ *   onSubmit={handleDemoRequest}
+ *   requireCompany={true}
+ *   layout="two-column"
+ * >
+ *   <DemoFormHeading>Request a Demo</DemoFormHeading>
+ *   <DemoFormSubheading>See our platform in action</DemoFormSubheading>
+ * </CTABannerDemoRequest>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {string} [props.nameLabel="Full Name"] - Label for name field
+ * @param {string} [props.namePlaceholder="Enter your full name"] - Placeholder for name field
+ * @param {string} [props.emailLabel="Work Email"] - Label for email field
+ * @param {string} [props.emailPlaceholder="you@company.com"] - Placeholder for email field
+ * @param {string} [props.companyLabel="Company"] - Label for company field
+ * @param {string} [props.companyPlaceholder="Your company name"] - Placeholder for company field
+ * @param {string} [props.phoneLabel="Phone Number"] - Label for phone field
+ * @param {string} [props.phonePlaceholder="(123) 456-7890"] - Placeholder for phone field
+ * @param {string} [props.submitText="Request Demo"] - Submit button text
+ * @param {string} [props.successMessage] - Success message after submission
+ * @param {boolean} [props.requireCompany=false] - Whether company field is required
+ * @param {boolean} [props.requirePhone=false] - Whether phone field is required
+ * @param {('single'|'two-column')} [props.layout='single'] - Form layout style
+ * @param {(data: DemoRequestData) => Promise<void> | void} [props.onSubmit] - Submit handler
+ * @param {React.ReactNode} [props.children] - Optional child components for headings
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Complete demo request form with validation and animations
+ */
 export const CTABannerDemoRequest: React.FC<{
     // Form configuration
     nameLabel?: string;
@@ -706,7 +950,7 @@ export const CTABannerDemoRequest: React.FC<{
                 setTouched({});
             } catch (err) {
                 setStatus('error');
-                console.error('Demo request submission error:', err);
+                alert('Demo request submission error: ' + err);
             }
         };
 
@@ -1066,6 +1310,40 @@ export const CTABannerDemoRequest: React.FC<{
    CONTACT FORM COMPONENT (Accepts Children)
 ============================================ */
 
+/**
+ * Contact form component for collecting user messages and inquiries.
+ * Features comprehensive validation, character counting, and success/error states.
+ * Accepts child components for custom headings and content.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <CTABannerContactForm
+ *   onSubmit={handleContactSubmit}
+ *   requireSubject={true}
+ *   maxMessageLength={1000}
+ *   layout="vertical"
+ * >
+ *   <ContactFormHeading>Contact Us</ContactFormHeading>
+ *   <ContactFormSubheading>We're here to help</ContactFormSubheading>
+ * </CTABannerContactForm>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {string} [props.namePlaceholder="Enter your name"] - Placeholder for name field
+ * @param {string} [props.emailPlaceholder="you@example.com"] - Placeholder for email field
+ * @param {string} [props.subjectPlaceholder="How can we help you?"] - Placeholder for subject field
+ * @param {string} [props.messagePlaceholder="Tell us about your inquiry..."] - Placeholder for message field
+ * @param {string} [props.submitText="Send Message"] - Submit button text
+ * @param {string} [props.successMessage] - Success message after submission
+ * @param {boolean} [props.requireSubject=true] - Whether subject field is required
+ * @param {number} [props.maxMessageLength=1000] - Maximum allowed characters for message
+ * @param {('vertical'|'compact')} [props.layout='vertical'] - Form layout style
+ * @param {(data: ContactFormData) => Promise<void> | void} [props.onSubmit] - Submit handler
+ * @param {React.ReactNode} [props.children] - Optional child components for headings
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Complete contact form with validation and animations
+ */
 export const CTABannerContactForm: React.FC<{
     // Form configuration
     namePlaceholder?: string;
@@ -1213,7 +1491,7 @@ export const CTABannerContactForm: React.FC<{
                 setTouched({});
             } catch (err) {
                 setStatus('error');
-                console.error('Contact form submission error:', err);
+                alert('Contact form submission error: ' + err);
             }
         };
 
@@ -1581,6 +1859,36 @@ export const CTABannerContactForm: React.FC<{
    NEWSLETTER COMPONENT (Accepts Children)
 ============================================ */
 
+/**
+ * Newsletter signup form component for email subscriptions.
+ * Features email validation, loading states, success confirmation, and privacy note.
+ * Accepts child components for custom headings and content.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <CTABannerNewsletter
+ *   onSubmit={handleSubscribe}
+ *   placeholder="Enter your email"
+ *   submitText="Subscribe"
+ *   privacyNote="We respect your privacy. Unsubscribe at any time."
+ *   buttonVariant="primary"
+ * >
+ *   <NewsletterHeading>Stay Updated</NewsletterHeading>
+ *   <NewsletterSubheading>Get the latest news and offers</NewsletterSubheading>
+ * </CTABannerNewsletter>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {string} [props.placeholder="Enter your email address"] - Input placeholder text
+ * @param {string} [props.submitText="Subscribe"] - Submit button text
+ * @param {string} [props.privacyNote] - Privacy policy disclaimer text
+ * @param {('primary'|'secondary'|'outline')} [props.buttonVariant='primary'] - Button style variant
+ * @param {(email: string) => Promise<void> | void} [props.onSubmit] - Submit handler
+ * @param {React.ReactNode} [props.children] - Optional child components for headings
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Newsletter signup form with validation
+ */
 export const CTABannerNewsletter: React.FC<{
     // Form configuration
     placeholder?: string;
@@ -1784,6 +2092,132 @@ export const CTABannerNewsletter: React.FC<{
    MAIN COMPONENT
 ============================================ */
 
+/**
+ * CTABanner - A flexible and composable call-to-action banner component.
+ * 
+ * This component serves as the main wrapper for all CTA-related content. It provides
+ * extensive customization options including layouts, themes, animations, and background
+ * styles. The component uses a compound component pattern where child components like
+ * CTABannerHeading, CTABannerSubheading, CTABannerActions, etc., must be used inside it.
+ * 
+ * Features:
+ * - Multiple layout options: centered, split, compact
+ * - Theme support: light/dark modes with forced theme capability
+ * - Various background types: solid, gradient, image
+ * - Smooth animations with configurable types and delays
+ * - Accessibility-focused with ARIA labels and proper semantic HTML
+ * - Split layout support with image positioning
+ * - Compound component pattern for flexible composition
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * // Basic centered layout
+ * <CTABanner
+ *   variant="primary"
+ *   layout="centered"
+ *   padding="lg"
+ *   animate={true}
+ * >
+ *   <CTABannerHeading>
+ *     Ready to Transform Your Business?
+ *   </CTABannerHeading>
+ *   <CTABannerSubheading>
+ *     Join thousands of satisfied customers who have already made the switch.
+ *   </CTABannerSubheading>
+ *   <CTABannerActions>
+ *     <CTABannerButton
+ *       label="Get Started"
+ *       variant="primary"
+ *       icon={ArrowRight}
+ *       onClick={() => console.log('Get Started clicked')}
+ *     />
+ *     <CTABannerButton
+ *       label="Learn More"
+ *       variant="outline"
+ *       href="/about"
+ *     />
+ *   </CTABannerActions>
+ * </CTABanner>
+ * 
+ * // Split layout with image
+ * <CTABanner
+ *   layout="split"
+ *   imagePosition="right"
+ *   theme="light"
+ *   animationType="slide"
+ * >
+ *   <CTABannerContent>
+ *     <CTABannerHeading>Schedule a Demo</CTABannerHeading>
+ *     <CTABannerSubheading>
+ *       See our platform in action with a personalized demo.
+ *     </CTABannerSubheading>
+ *     <CTABannerDemoRequest
+ *       onSubmit={handleDemoRequest}
+ *       requireCompany={true}
+ *     />
+ *   </CTABannerContent>
+ *   <CTABannerImage
+ *     src="/images/demo-illustration.jpg"
+ *     alt="Product demo illustration"
+ *   />
+ * </CTABanner>
+ * 
+ * // Compact newsletter layout
+ * <CTABanner
+ *   variant="muted"
+ *   layout="compact"
+ *   contentAlign="center"
+ *   theme="light"
+ * >
+ *   <CTABannerHeading>
+ *     Stay in the Loop
+ *   </CTABannerHeading>
+ *   <CTABannerSubheading>
+ *     Subscribe to our newsletter for updates and exclusive offers.
+ *   </CTABannerSubheading>
+ *   <CTABannerActions>
+ *     <CTABannerNewsletter
+ *       onSubmit={handleSubscribe}
+ *       placeholder="Enter your email"
+ *       submitText="Subscribe"
+ *     />
+ *   </CTABannerActions>
+ * </CTABanner>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {('default'|'primary'|'secondary'|'accent'|'muted'|'gradient'|'glass'|'dark'|'light')} [props.variant='default'] - Visual style variant
+ * @param {('centered'|'split'|'compact')} [props.layout='centered'] - Layout structure
+ * @param {('left'|'center'|'right')} [props.contentAlign='center'] - Content alignment
+ * @param {('solid'|'gradient'|'image')} [props.backgroundType='solid'] - Background type
+ * @param {string} [props.backgroundColor] - Custom background color (hex/rgb/hsl)
+ * @param {string} [props.gradientFrom] - Start color for gradient backgrounds
+ * @param {string} [props.gradientTo] - End color for gradient backgrounds
+ * @param {string} [props.backgroundImage] - URL for image backgrounds
+ * @param {('left'|'right')} [props.imagePosition='right'] - Image position in split layout
+ * @param {('light'|'dark'|'default')} [props.imageVariant='default'] - Image style variant
+ * @param {('light'|'dark')} [props.theme] - Color theme (auto-detected if not provided)
+ * @param {boolean} [props.forceTheme=false] - Force theme application regardless of parent
+ * @param {boolean} [props.animate=true] - Enable/disable animations
+ * @param {number} [props.animationDelay=0] - Delay before animation starts (seconds)
+ * @param {('fade'|'slide'|'scale')} [props.animationType='fade'] - Animation type
+ * @param {('sm'|'md'|'lg'|'xl'|'2xl')} [props.padding='lg'] - Padding size
+ * @param {React.ReactNode} props.children - Child components (must be CTA components)
+ * @param {string} [props.ariaLabel='Call to action banner'] - ARIA label for accessibility
+ * @param {string} [props.role='banner'] - ARIA role
+ * @returns {JSX.Element} Rendered CTA banner with all child components
+ * 
+ * @see {@link CTABannerHeading} - For the main heading component
+ * @see {@link CTABannerSubheading} - For supporting text
+ * @see {@link CTABannerActions} - For button container
+ * @see {@link CTABannerButton} - For individual buttons
+ * @see {@link CTABannerImage} - For images in split layout
+ * @see {@link CTABannerContent} - For content wrapper in split layout
+ * @see {@link CTABannerDemoRequest} - For demo request form
+ * @see {@link CTABannerContactForm} - For contact form
+ * @see {@link CTABannerNewsletter} - For newsletter signup
+ */
 export const CTABanner: React.FC<CTABannerProps> = ({
     // Layout & Variants
     variant = "default",

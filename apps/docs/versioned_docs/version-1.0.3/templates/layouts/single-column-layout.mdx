@@ -659,7 +659,7 @@ export { SingleColumnLayout };
 ### Basic Example
 
 ```tsx
-import { SingleColumnLayout } from './components/single-column-layout';
+import { SingleColumnLayout } from '@ignix-ui/singlecolumnlayout'
 
 function App() {
   return (
@@ -692,7 +692,7 @@ function CustomNavigationExample() {
   ];
 
   const handleNavClick = (href, label) => {
-    console.log(`Navigating to ${label}: ${href}`);
+    alert(`Navigating to ${label}: ${href}`);
     // Your navigation logic here
   };
 
@@ -706,8 +706,8 @@ function CustomNavigationExample() {
         signUp: <Button>Get Started</Button>
       }}
       onNavLinkClick={handleNavClick}
-      onSignInClick={() => console.log("Sign in clicked")}
-      onSignUpClick={() => console.log("Sign up clicked")}
+      onSignInClick={() =>  alert("Sign Up clicked!");}
+      onSignUpClick={() =>  alert("Sign Up clicked!");}
       className={{
         header: "shadow-lg",
         main: "pt-12"

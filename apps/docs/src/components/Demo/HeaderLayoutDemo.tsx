@@ -74,6 +74,8 @@ const HeaderLayoutDemo = () => {
   );
 
   const codeString = `
+import { HeaderLayout } from '@ignix-ui/headerlayout';
+
 <HeaderLayout
   variant="${variant}"
   sidebarPosition="${sidebarPosition}"

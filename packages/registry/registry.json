@@ -109,6 +109,48 @@
         }
       }
     },
+    "carousel": {
+      "name": "Carousel",
+      "description": " A flexible carousel component with navigation controls, dots indicators, thumbnails, animations, and responsive support.",
+      "dependencies": ["framer-motion", "lucide-react"],
+      "files": {
+        "main": {
+          "path": "components/carousel/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "dynamicForm": {
+      "name": "DynamicForm",
+      "description": "A dynamic form component that generates form fields based on a JSON schema, enabling easy form creation and validation.",
+      "dependencies": [
+        "lucide-react", 
+        "class-variance-authority",
+        "framer-motion"
+      ],
+      "componentDependencies": [
+        "typography",
+        "button"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/sections/dynamic-form/index.tsx",
+          "type": "template"
+        }
+      }
+    },
+    "errorPage": {
+      "name": "ErrorPage",
+      "description": "A customizable error page template with multiple animation variants, designed to display clear messaging, illustration/icons.",
+      "dependencies": ["lucide-react", "framer-motion", "class-variance-authority"],
+      "componentDependencies": ["button", "typography"],
+      "files": {
+        "main": {
+          "path": "templates/pages/error-page/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "pin": {
       "name": "Pin",
       "description": "A layout utility component for Pin content",
@@ -121,13 +163,29 @@
       }
     },
     "responsive-grid": {
-      "name": "Responsive Grid",
+      "name": "ResponsiveGrid",
       "description": "A flexible grid layout component with responsive columns, gaps, equal-height option, and animations (fade, stagger, scale).",
       "dependencies": ["framer-motion"],
       "files": {
         "main": {
           "path": "components/layouts/responsive-grid/index.tsx",
           "type": "component"
+        }
+      }
+    },
+    "statsGrid" :{
+      "name": "StatsGrid",
+      "description": "A responsive grid layout for displaying statistics with animated count-up and staggered entrance effects.",
+      "dependencies": [
+        "lucide-react", 
+        "class-variance-authority",
+        "framer-motion"
+      ],
+      "componentDependencies": [      ],
+      "files": {
+        "main": {
+          "path": "templates/sections/stats-grid/index.tsx",
+          "type": "template"
         }
       }
     },
@@ -150,6 +208,18 @@
         "main": {
           "path": "components/layouts/masonry/index.tsx",
           "type": "component"
+        }
+      }
+    },
+    "maintenance-page": {
+      "name": "MaintenancePage ",
+      "description": "A customizable maintenance page template with multiple animation variants, designed to display clear messaging, ETA.",
+      "dependencies": ["lucide-react", "framer-motion", "class-variance-authority"],
+      "componentDependencies": ["button", "typography"],
+      "files": {
+        "main": {
+          "path": "templates/pages/maintenance-page/index.tsx",
+          "type": "template"
         }
       }
     },
@@ -289,7 +359,7 @@
     "sidebar": {
       "name": "Sidebar",
       "description": "A collapsible sidebar component with animation",
-      "dependencies": ["framer-motion", "lucide-react", "class-variance-authority"],
+      "dependencies": ["framer-motion", "@radix-ui/react-icons", "class-variance-authority"],
       "files": {
         "main": {
           "path": "components/sidebar/index.tsx",
@@ -658,7 +728,7 @@
         }
       }
     },
-     "singleColumnLayout": {
+    "singleColumnLayout": {
       "name": "SingleColumnLayout",
       "description": "A clean, responsive single-column layout with header, constrained content area, and footer. Supports multiple theme variants and animations.",
       "dependencies": ["framer-motion", "lucide-react", "class-variance-authority"],
@@ -751,7 +821,7 @@
         }
       }
     },
-    "forgotPassword": {
+    "forgot-password": {
       "name": "forgotPassword",
       "description": "A fully responsive and customizable Forgot Password component with an input field and submit button, built to support secure in-app password reset processes.",
       "dependencies": [
@@ -822,7 +892,7 @@
         }
       }
     },
-    "otpVerification": {
+    "otp-verification": {
       "name": "otpVerification",
       "description": "A fully responsive OTP (One-Time Password) verification component that provides configurable input length, animations, themes, auto-focus behavior, and paste-to-autofill support.",
       "dependencies": [
@@ -928,14 +998,10 @@
       "description": "A pricing grid template with responsive design.",
       "dependencies": [
         "framer-motion",
-        "lucide-react",
-        "class-variance-authority"
+        "lucide-react"
       ],
       "componentDependencies": [
-        "button",
-        "switch",
-        "card",
-        "typography"
+        "button"
       ],
       "files": {
         "main": {
@@ -1052,6 +1118,41 @@
         }
       }
     },
+    "dashboard-overview-page": {
+      "name": "dashboard-overview-page",
+      "description": "A composable analytics dashboard template with KPI cards, key metrics grid, paginated activity list, CTA actions, and date-range filtering.",
+      "dependencies": [
+        "react-icons"
+      ],
+      "componentDependencies": [
+        "button",
+        "card",
+        "datePicker",
+        "pagination"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/dashboard-overview/index.tsx",
+          "type": "template"
+        }
+      }
+    },
+    "analytics-dashboard-page": {
+      "name": "analytics-dashboard-page",
+      "description": "A composable analytics dashboard template with KPI summary cards, time-series line and bar charts, and a distribution pie chart, driven by dynamic time-series data and series configuration.",
+      "dependencies": [],
+      "componentDependencies": [
+        "button",
+        "card",
+        "datePicker"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/analytics-dashboard-page/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "imageCard": {
       "name": "ImageCard",
       "description": "An image card component with different variants",
@@ -1162,6 +1263,22 @@
         }
       }
     },
+    "mega-menu-multi-column-dropdown": {
+      "name": "mega-menu-multi-column-dropdown",
+      "description": "A header mega menu section with a multi-column dropdown, category headers, icons/images per link, nested submenus, and an optional CTA button.",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "componentDependencies": [
+        "button"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/sections/mega-menu-multi-column-dropdown/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "productCard":{
       "name": "ProductCard",
       "description": "A flexible product card component with custom tags and multiple interaction modes.",
@@ -1201,6 +1318,20 @@
         }
       }
     },
+    "tab-navigation": {
+      "name": "tab-navigation",
+      "description": "A horizontal tab navigation template with active indicator, optional icons and badges, and full keyboard support.",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "componentDependencies": [],
+      "files": {
+        "main": {
+          "path": "templates/sections/tab-navigation/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "testimonialCard" :{
       "name": "TestimonialCard",
       "description": "Testimonial Card component showcases customer feedback in a clear and engaging format. It supports flexible layouts with features such as quotes, author details (name, title, avatar), ratings, social links.",
@@ -1217,7 +1348,7 @@
       "files": {
         "main": {
           "path": "components/testimonial-card/index.tsx",
-          "type": "template"
+          "type": "component"
         }
       }
     },
@@ -1239,6 +1370,34 @@
           "type": "template"
         }
       }
-    } 
-  }
+    },
+    "faqAccordion":{
+      "name": "FAQAccordion",
+      "description": "A flexible faq accordion component with custom tags and multiple interaction modes.",
+      "dependencies": [
+        "lucide-react", 
+        "class-variance-authority", "framer-motion"
+      ],
+      "componentDependencies": [
+        "typography",
+        "button"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/sections/faq-accordion/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "split": {
+      "name": "Split",
+      "description": "component simplifies the creation of two-column layouts such as sidebars with content, image and text sections, or dashboard layouts. It supports ratios, gaps, responsive stacking, and optional resizing.",
+      "files": {
+        "main": {
+          "path": "components/layouts/split/index.tsx",
+          "type": "component"
+        }
+      }
+    }
+  } 
 }

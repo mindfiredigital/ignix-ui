@@ -8,7 +8,7 @@
     "types": ["vite/client"],
     "paths": {
       "@ignix-ui": ["./src/components/ui/index.ts"],
-      "@ignix-ui/*": ["./src/components/ui/*"]
+      "@ignix-ui/*": ["./src/components/ui/*", "./src/components/templates/*"]
     },
     "skipLibCheck": true,
     /* Bundler mode */

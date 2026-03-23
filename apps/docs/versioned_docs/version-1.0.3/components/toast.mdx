@@ -25,7 +25,7 @@ The Toast component is a versatile notification system that provides animated, c
   </TabItem>
   <TabItem value="code" label="Code">
     ```tsx
-    import { useToast } from './components/ui';
+    import { useToast } from '@ignix-ui/toast';
     import { InfoCircledIcon } from "@radix-ui/react-icons";
 
     function ToastDemo() {
@@ -804,7 +804,7 @@ export default { ToastProvider, useToast };
 First, wrap your application with the ToastProvider:
 
 ```tsx
-import { ToastProvider } from './components/ui';
+import { ToastProvider } from '@ignix-ui/toast';
 
 function App() {
   return (
@@ -818,7 +818,7 @@ function App() {
 Then use the toast in your components:
 
 ```tsx
-import { useToast } from './components/ui';
+import {useToast } from '@ignix-ui/toast';
 
 function MyComponent() {
   const toast = useToast();

@@ -81,7 +81,6 @@ const variantStyles: Record<
       'absolute h-full rounded-full',
       'bg-gradient-to-r from-primary to-primary/90',
       'shadow-lg shadow-primary/25 dark:shadow-primary/20',
-      'transition-all duration-300',
       'before:absolute before:inset-0 before:rounded-full',
       'before:bg-gradient-to-t before:from-white/20 before:to-transparent',
       'before:pointer-events-none'
@@ -110,7 +109,7 @@ const variantStyles: Record<
     range: cn(
       'absolute h-full rounded-full',
       'bg-gradient-to-r from-primary/80 to-primary/70',
-      'shadow-sm shadow-primary/20 transition-all duration-300'
+      'shadow-sm shadow-primary/20'
     ),
     thumb: cn(
       'block h-3 w-3 rounded-full bg-gradient-to-br from-primary to-primary/80',
@@ -133,7 +132,7 @@ const variantStyles: Record<
     range: cn(
       'absolute h-full rounded-full',
       'bg-gradient-to-r from-primary via-primary/95 to-primary/90',
-      'shadow-lg shadow-primary/30 transition-all duration-300',
+      'shadow-lg shadow-primary/30',
       'before:absolute before:inset-0 before:rounded-full',
       'before:bg-gradient-to-t before:from-transparent before:via-white/10 before:to-white/20',
       'before:pointer-events-none'
@@ -164,7 +163,7 @@ const variantStyles: Record<
     range: cn(
       'absolute h-full rounded-full',
       'bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500',
-      'shadow-lg shadow-purple-500/30 transition-all duration-300',
+      'shadow-lg shadow-purple-500/30',
       'before:absolute before:inset-0 before:rounded-full',
       'before:bg-gradient-to-t before:from-black/10 before:to-white/30',
       'before:pointer-events-none',
@@ -197,13 +196,12 @@ const variantStyles: Record<
       'transition-all duration-300',
       'before:absolute before:inset-0 before:rounded-full',
       'before:bg-gradient-to-br before:from-white/20 before:via-white/5 before:to-transparent',
-      'before:pointer-events-none'
+      'before:pointer-events-none',
     ),
     range: cn(
       'absolute h-full rounded-full',
       'bg-white/30 dark:bg-white/20 backdrop-blur-md',
       'shadow-lg shadow-white/20 dark:shadow-white/10',
-      'transition-all duration-300',
       'before:absolute before:inset-0 before:rounded-full',
       'before:bg-gradient-to-t before:from-transparent before:to-white/30',
       'before:pointer-events-none'
@@ -235,7 +233,7 @@ const variantStyles: Record<
     range: cn(
       'absolute h-full rounded-full',
       'bg-transparent border-2 border-primary',
-      'shadow-lg shadow-primary/20 transition-all duration-300',
+      'shadow-lg shadow-primary/20',
       'before:absolute before:inset-0 before:rounded-full',
       'before:bg-gradient-to-r before:from-primary/10 before:to-primary/5',
       'before:pointer-events-none'
@@ -266,7 +264,7 @@ const variantStyles: Record<
     range: cn(
       'absolute h-full rounded-full',
       'bg-gradient-to-b from-primary/90 to-primary',
-      'shadow-lg shadow-primary/30 transition-all duration-300',
+      'shadow-lg shadow-primary/30',
       'before:absolute before:inset-0 before:rounded-full',
       'before:bg-gradient-to-t before:from-transparent before:to-white/20',
       'before:pointer-events-none'
@@ -299,7 +297,6 @@ const variantStyles: Record<
       'absolute h-full rounded-full',
       'bg-gradient-to-r from-cyan-500 to-cyan-400',
       'shadow-[0_0_15px_3px_rgba(6,182,212,0.7),0_0_30px_5px_rgba(6,182,212,0.5)]',
-      'transition-all duration-300',
       'before:absolute before:inset-0 before:rounded-full',
       'before:bg-gradient-to-t before:from-transparent before:to-white/20',
       'before:pointer-events-none'
@@ -331,7 +328,7 @@ const variantStyles: Record<
     range: cn(
       'absolute h-full rounded-full',
       'bg-gradient-to-r from-primary to-primary/90',
-      'shadow-md shadow-primary/25 transition-all duration-300',
+      'shadow-md shadow-primary/25',
       'before:absolute before:inset-0 before:rounded-full',
       'before:bg-gradient-to-t before:from-transparent before:to-white/15',
       'before:pointer-events-none'
@@ -365,7 +362,6 @@ const variantStyles: Record<
       'absolute h-full rounded-full',
       'bg-gradient-to-r from-blue-400 to-blue-500',
       'shadow-[inset_-2px_-2px_4px_rgba(0,0,0,0.1),inset_2px_2px_4px_rgba(255,255,255,0.2)]',
-      'transition-all duration-300'
     ),
     thumb: cn(
       'block h-6 w-6 rounded-full',
@@ -393,7 +389,6 @@ const variantStyles: Record<
       'absolute h-full',
       'bg-gradient-to-b from-amber-500 to-amber-600',
       'shadow-[inset_0_1px_2px_rgba(146,64,14,0.4)]',
-      'transition-all duration-300',
       'before:absolute before:inset-0',
       'before:bg-gradient-to-t before:from-transparent before:to-amber-400/30',
       'before:pointer-events-none'
@@ -424,7 +419,6 @@ const variantStyles: Record<
       'absolute h-full',
       'bg-gradient-to-r from-fuchsia-600 via-purple-600 to-cyan-600',
       'shadow-[0_0_15px_rgba(192,38,211,0.7)]',
-      'transition-all duration-300',
       'before:absolute before:inset-0',
       'before:bg-gradient-to-t before:from-transparent before:to-white/20',
       'before:pointer-events-none'
@@ -455,7 +449,6 @@ const variantStyles: Record<
       'absolute h-full',
       'bg-gradient-to-b from-gray-800 to-black',
       'shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]',
-      'transition-all duration-200'
     ),
     thumb: cn(
       'block h-8 w-8 rounded-none',
@@ -482,7 +475,7 @@ const variantStyles: Record<
     range: cn(
       'absolute h-full rounded-full',
       'bg-gradient-to-b from-blue-400 via-blue-500 to-blue-600',
-      'border-r border-gray-500 transition-all duration-300',
+      'border-r border-gray-500',
       'shadow-[inset_0_1px_3px_rgba(255,255,255,0.4),inset_0_-1px_2px_rgba(0,0,0,0.2)]',
       'before:absolute before:inset-0 before:rounded-full',
       'before:bg-gradient-to-t before:from-transparent before:to-white/25',

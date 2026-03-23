@@ -200,14 +200,6 @@ const MONTH_NAMES = [
 
 const DAY_NAMES = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
-// const DATE_FORMATS = {
-//     'MM/DD/YYYY': 'MM/DD/YYYY',
-//     'DD/MM/YYYY': 'DD/MM/YYYY',
-//     'YYYY-MM-DD': 'YYYY-MM-DD',
-//     'MMM DD, YYYY': 'MMM DD, YYYY',
-//     'DD MMM YYYY': 'DD MMM YYYY',
-//     'YYYY/MM/DD': 'YYYY/MM/DD',
-// } as const;
 
 const COLOR_SCHEMES: Record<ColorScheme, ColorSchemeStyles> = {
     blue: {

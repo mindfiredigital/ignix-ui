@@ -40,7 +40,8 @@ describe("AspectRatio", () => {
       </AspectRatio>
     );
     expect(container.firstChild).toHaveStyle({
-      maxWidth: "500px",
+      width: "500px",
+      maxWidth: "100%",
     });
   });
 

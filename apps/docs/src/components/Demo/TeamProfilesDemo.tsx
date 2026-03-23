@@ -18,6 +18,7 @@ import {
     MemberCardOverlay,
     TeamFooter,
     type TeamMember,
+    TeamProfilesProps,
 } from '../UI/team-profiles';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -276,7 +277,7 @@ export const BasicTeamDemo = () => {
     MemberRole,
     MemberBio,
     MemberSocialLinks,
-} from '../UI/team-profiles';
+} from '@ignix-ui/teamprofiles';
 
 const teamMembers = [
     {
@@ -423,7 +424,7 @@ export const AdvancedTeamDemo = () => {
     };
 
     // Prepare props based on current state
-    const teamProps: any = {
+    const teamProps: Partial<TeamProfilesProps> = {
         variant: sectionVariant,
         cardVariant,
         enableModal,
@@ -496,10 +497,10 @@ export const AdvancedTeamDemo = () => {
     MemberSocialLinks,
     MemberCardOverlay,
     TeamFooter,
-} from '../UI/team-profiles';
+} from '@ignix-ui/teamprofiles';
 import { UserCircle } from 'lucide-react';
-import { Typography } from '../../components/typography';
-import { Button } from '../../components/button';
+import { Typography } from '@ignix-ui/typography';
+import { Button } from '@ignix-ui/button';
 
 <TeamProfiles
     ${props.join('\n    ')}
@@ -786,5 +787,3 @@ import { Button } from '../../components/button';
         </div>
     );
 };
-// Export both demos
-// export { BasicTeamDemo, AdvancedTeamDemo };

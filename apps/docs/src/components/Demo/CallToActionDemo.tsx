@@ -17,7 +17,8 @@ import {
     NewsletterHeading,
     NewsletterSubheading,
     DemoFormHeading,
-    DemoFormSubheading
+    DemoFormSubheading,
+    CTABannerProps
 } from '../UI/call-to-action';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -92,7 +93,7 @@ const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light'
                     </div>
                 </>
             );
-        
+
         case 'newsletter':
             return (
                 <CTABannerNewsletter
@@ -102,7 +103,7 @@ const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light'
                     buttonVariant="primary"
                     layout="inline"
                     onSubmit={async (email) => {
-                        console.log('Newsletter subscription:', email);
+                        alert(`Subscribed to newsletter: ${email}`);
                     }}
                 >
                     <NewsletterHeading>Stay in the Loop</NewsletterHeading>
@@ -112,7 +113,7 @@ const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light'
                     </NewsletterSubheading>
                 </CTABannerNewsletter>
             );
-        
+
         case 'contact-form':
             return (
                 <CTABannerContactForm
@@ -126,7 +127,7 @@ const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light'
                     maxMessageLength={1000}
                     layout="vertical"
                     onSubmit={async (data) => {
-                        console.log('Contact form submitted:', data);
+                        alert(`Contact form submitted: ${JSON.stringify(data)}`);
                     }}
                 >
                     <ContactFormHeading>Get In Touch</ContactFormHeading>
@@ -135,7 +136,7 @@ const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light'
                     </ContactFormSubheading>
                 </CTABannerContactForm>
             );
-        
+
         case 'demo-request':
             return (
                 <CTABannerDemoRequest
@@ -149,7 +150,7 @@ const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light'
                     requirePhone={false}
                     layout="two-column"
                     onSubmit={async (data) => {
-                        console.log('Demo request submitted:', data);
+                        alert(`Demo request submitted: ${JSON.stringify(data)}`);
                     }}
                 >
                     <DemoFormHeading>See Our Platform Live</DemoFormHeading>
@@ -162,54 +163,12 @@ const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light'
     }
 };
 
-// Helper function to get code snippet
-// const getCodeSnippet = (formType: FormType, demoType: string, variant: VariantType, additionalProps: any = {}) => {
-//     // Determine if we should show overlay based on variant and demo type
-//     const shouldShowOverlay = 
-//         (demoType === 'gradient-background') || 
-//         (demoType === 'background-image' && (variant === 'dark' || variant === 'light'));
-
-//     const baseCode = `import { CTABanner, CTABannerContent${formType !== 'banner' ? `, ${formType === 'newsletter' ? 'CTABannerNewsletter, NewsletterHeading, NewsletterSubheading' : formType === 'contact-form' ? 'CTABannerContactForm, ContactFormHeading, ContactFormSubheading' : 'CTABannerDemoRequest, DemoFormHeading, DemoFormSubheading'}` : ''} } from '../UI/call-to-action';
-
-// <CTABanner
-//   variant="${variant}"
-//   layout="${demoType === 'centered' ? 'centered' : demoType === 'split' ? 'split' : 'centered'}"
-//   contentAlign="${demoType === 'split' ? 'left' : 'center'}"
-//   ${demoType === 'background-image' ? 'backgroundType="image"' : ''}
-//   ${demoType === 'background-image' ? 'backgroundImage="https://images.unsplash.com/photo-1663427929868-3941f957bb36?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"' : ''}
-//   ${demoType === 'gradient-background' ? 'backgroundType="image"' : ''}
-//   ${demoType === 'gradient-background' ? 'backgroundImage="https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3"' : ''}
-//   ${demoType === 'split' ? `imagePosition="${additionalProps.imagePosition || 'right'}"` : ''}
-//   ${demoType === 'split' ? 'imageVariant="default"' : ''}
-// >
-//   ${demoType === 'gradient-background' ? '  {/* Gradient overlay */}' : ''}
-//   ${demoType === 'gradient-background' ? '  <div' : ''}
-//   ${demoType === 'gradient-background' ? '    className="absolute inset-0"' : ''}
-//   ${demoType === 'gradient-background' ? '    style={{' : ''}
-//   ${demoType === 'gradient-background' ? `      background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(139, 92, 246, 0.8) 100%)',` : ''}
-//   ${demoType === 'gradient-background' ? '    }}' : ''}
-//   ${demoType === 'gradient-background' ? '  />' : ''}
-  
-//   ${demoType === 'background-image' && shouldShowOverlay ? '  {/* Optional overlay for better contrast */}' : ''}
-//   ${demoType === 'background-image' && variant === 'dark' ? '  <div className="absolute inset-0 bg-black/40" />' : ''}
-//   ${demoType === 'background-image' && variant === 'light' ? '  <div className="absolute inset-0 bg-white/30" />' : ''}
-
-//   <CTABannerContent${demoType === 'background-image' || demoType === 'gradient-background' ? ' className="relative z-10"' : ''}>
-//     ${getFormCode(formType)}
-//   </CTABannerContent>
-  
-//   ${demoType === 'split' ? `  <CTABannerImage
-//     src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-//     alt="Team collaboration"
-//     className="h-[420px] lg:h-[480px]"
-//   />` : ''}
-// </CTABanner>`;
-
-//     return baseCode;
-// };
+type CodeSnippetProps = Partial<{
+    imagePosition: ImagePositionType;
+}>;
 
 // Helper function to get code snippet
-const getCodeSnippet = (formType: FormType, demoType: string, variant: VariantType, additionalProps: any = {}) => {
+const getCodeSnippet = (formType: FormType, demoType: string, variant: VariantType, additionalProps: CodeSnippetProps = {}) => {
     // Build props string dynamically
     const props: string[] = [
         `variant="${variant}"`,
@@ -271,8 +230,8 @@ const getCodeSnippet = (formType: FormType, demoType: string, variant: VariantTy
         childrenContent += `  />\n`;
     }
 
-    const importStatement = formType === 'banner' 
-        ? `import { CTABanner, CTABannerContent } from '../UI/call-to-action';`
+    const importStatement = formType === 'banner'
+        ? `import { CTABanner, CTABannerContent } from '@ignix-ui/calltoaction';`
         : formType === 'newsletter'
             ? `import { CTABanner, CTABannerContent, CTABannerNewsletter, NewsletterHeading, NewsletterSubheading } from '../UI/call-to-action';`
             : formType === 'contact-form'
@@ -314,7 +273,7 @@ const getFormCode = (formType: FormType) => {
         />
       </CTABannerActions>
     </>`;
-        
+
         case 'newsletter':
             return `    <CTABannerNewsletter
       placeholder="Enter your email"
@@ -332,7 +291,7 @@ const getFormCode = (formType: FormType) => {
         Join 10,000+ professionals already subscribed.
       </NewsletterSubheading>
     </CTABannerNewsletter>`;
-        
+
         case 'contact-form':
             return `    <CTABannerContactForm
       namePlaceholder="Your name"
@@ -353,7 +312,7 @@ const getFormCode = (formType: FormType) => {
         Have questions or need assistance? Our team is here to help you succeed.
       </ContactFormSubheading>
     </CTABannerContactForm>`;
-        
+
         case 'demo-request':
             return `    <CTABannerDemoRequest
       namePlaceholder="John Doe"
@@ -379,17 +338,17 @@ const getFormCode = (formType: FormType) => {
 };
 
 // Generic Demo Component
-const CTABannerDemo = ({ 
-    title, 
-    description, 
-    demoType 
-}: { 
-    title: string; 
+const CTABannerDemo = ({
+    title,
+    description,
+    demoType
+}: {
+    title: string;
     description: string;
     demoType: 'centered' | 'split' | 'background-image' | 'gradient-background';
 }) => {
     const { colorMode } = useColorMode();
-    
+
     // Initialize variant based on theme
     const [variant, setVariant] = useState<VariantType>(
         getThemeAwareVariant(demoType, colorMode)
@@ -406,7 +365,7 @@ const CTABannerDemo = ({
 
 
     const renderBanner = () => {
-        const bannerProps: any = {
+        const bannerProps: Partial<CTABannerProps> = {
             variant,
             layout: demoType === 'split' ? 'split' : 'centered',
             contentAlign: demoType === 'split' ? 'left' : 'center',
@@ -465,10 +424,10 @@ const CTABannerDemo = ({
             </div>
 
             <div className="flex flex-wrap gap-4 justify-end items-center">
-                
+
 
                 <div className="flex flex-row items-center gap-2">
-                   
+
                     <VariantSelector
                         variants={['banner', 'newsletter', 'contact-form', 'demo-request']}
                         selectedVariant={formType}
@@ -505,10 +464,10 @@ const CTABannerDemo = ({
                 <TabItem value="code" label="Code">
                     <div className="mt-4">
                         <CodeBlock language="tsx" className="text-sm">
-                            {getCodeSnippet(formType, demoType, variant, 
-                            {
-                                imagePosition,
-                            })}
+                            {getCodeSnippet(formType, demoType, variant,
+                                {
+                                    imagePosition,
+                                })}
                         </CodeBlock>
                     </div>
                 </TabItem>

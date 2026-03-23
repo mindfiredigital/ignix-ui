@@ -1,6 +1,6 @@
 {
   "name": "@mindfiredigital/ignix-cli",
-  "version": "1.0.5",
+  "version": "1.0.8",
   "description": "CLI tool for the Ignix UI component library",
   "type": "commonjs",
   "bin": {
@@ -46,5 +46,13 @@
   },
   "engines": {
     "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mindfiredigital/ignix-ui"
+  },
+  "homepage": "https://mindfiredigital.github.io/ignix-ui",
+  "bugs": {
+    "url": "https://github.com/mindfiredigital/ignix-ui/issues"
   }
 }

@@ -34,6 +34,8 @@ const SpacerDemo = () => {
   });
 
   const codeString = `
+    import { Spacer } from '@ignix-ui/spacer';
+
     <Spacer 
       size="${size}" 
       direction="${direction}" 

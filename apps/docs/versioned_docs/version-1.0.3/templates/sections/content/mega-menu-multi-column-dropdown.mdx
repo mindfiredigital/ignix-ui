@@ -1,0 +1,656 @@
+---
+sidebar_position: 12
+title: Mega Menu Multi-Column Dropdown
+description: A responsive mega menu with multi-column dropdown, category headers, nested options, icons/images, and CTA support.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { MegaMenuMultiColumnDropdownDemo } from '@site/src/components/Demo/MegaMenuMultiColumnDropdownDemo';
+
+**Mega Menu Multi-Column Dropdown** is a flexible navigation pattern for organizing large sets of links.
+
+It supports:
+- **Multi-column dropdowns** with category headers
+- **Links organized by column**, each with optional **icons** or **images**
+- **Nested children** for n-level deep menus
+- An optional **CTA button** in the dropdown panel
+- **Hover** and **keyboard** (arrow keys + Escape) interactions
+- Fully **responsive layout** for desktop and mobile.
+
+---
+
+<MegaMenuMultiColumnDropdownDemo />
+
+---
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+
+```bash
+ignix add component mega-menu-multi-column-dropdown
+```
+
+  </TabItem>
+  <TabItem value="manual" label="Manual">
+
+```tsx
+"use client";
+
+import * as React from "react";
+import { ChevronDown } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { cn } from "../../../utils/cn";
+import { Button } from "@ignix-ui/button";
+
+// Single link item within a mega menu column
+export interface MegaMenuLinkItem {
+  label: string;
+  href: string;
+  icon?: LucideIcon;
+  imageUrl?: string;
+  imageAlt?: string;
+  external?: boolean;
+  children?: MegaMenuLinkItem[];
+}
+
+// One column in the mega menu dropdown
+export interface MegaMenuColumn {
+  header: string;
+  links: MegaMenuLinkItem[];
+}
+
+// Optional CTA configuration
+export interface MegaMenuCtaConfig {
+  label: string;
+  href?: string;
+  onClick?: () => void;
+  variant?: "default" | "primary" | "secondary" | "outline" | "ghost" | "link";
+}
+
+export interface MegaMenuMultiColumnDropdownProps {
+  triggerLabel: string;
+  columns: MegaMenuColumn[];
+  cta?: MegaMenuCtaConfig;
+  onLinkSelect?: (item: MegaMenuLinkItem, column: MegaMenuColumn) => void;
+  onOpen?: () => void;
+  onClose?: () => void;
+  className?: string;
+  theme?: "light" | "dark";
+  align?: "left" | "center" | "right";
+}
+
+interface FocusableItem {
+  type: "trigger" | "link" | "cta";
+  columnIndex: number;
+  linkIndex?: number;
+  elementId: string;
+}
+
+const MegaMenuLinkRow = React.memo(function MegaMenuLinkRow({
+  item,
+  onSelect,
+  theme,
+  id,
+  hasChildren,
+  isExpanded,
+  onToggleExpand,
+}: {
+  item: MegaMenuLinkItem;
+  onSelect?: (item: MegaMenuLinkItem) => void;
+  theme: "light" | "dark";
+  id: string;
+  hasChildren?: boolean;
+  isExpanded?: boolean;
+  onToggleExpand?: () => void;
+}) {
+  const handleClick = React.useCallback(() => {
+    if (!hasChildren) {
+      onSelect?.(item);
+    } else {
+      onToggleExpand?.();
+    }
+  }, [hasChildren, item, onSelect, onToggleExpand]);
+
+  const linkContent = (
+    <>
+      <span className="flex min-w-0 flex-1 items-center gap-3">
+        {item.icon ? (
+          <item.icon className="h-5 w-5 shrink-0 text-current opacity-80" aria-hidden />
+        ) : item.imageUrl ? (
+          <img
+            src={item.imageUrl}
+            alt={item.imageAlt ?? item.label}
+            className="h-8 w-8 shrink-0 rounded object-cover"
+          />
+        ) : null}
+        <span className="truncate">{item.label}</span>
+      </span>
+      {hasChildren && (
+        <ChevronDown
+          className={cn(
+            "ml-2 h-4 w-4 shrink-0 text-current transition-transform",
+            isExpanded && "rotate-180"
+          )}
+          aria-hidden
+        />
+      )}
+    </>
+  );
+
+  const isDark = theme === "dark";
+  const baseClass = cn(
+    "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors",
+    "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+    isDark
+      ? "text-gray-200 hover:bg-white/10 focus-visible:ring-primary-500"
+      : "text-gray-700 hover:bg-gray-100 focus-visible:ring-primary-500"
+  );
+
+  if (hasChildren) {
+    return (
+      <button
+        id={id}
+        type="button"
+        className={baseClass}
+        onClick={handleClick}
+        aria-expanded={isExpanded}
+        aria-haspopup="true"
+      >
+        {linkContent}
+      </button>
+    );
+  }
+
+  return (
+    <a
+      id={id}
+      href={item.href}
+      target={item.external ? "_blank" : undefined}
+      rel={item.external ? "noopener noreferrer" : undefined}
+      className={baseClass}
+      onClick={handleClick}
+    >
+      {linkContent}
+    </a>
+  );
+});
+
+const MegaMenuColumnBlock = React.memo(function MegaMenuColumnBlock({
+  column,
+  columnIndex,
+  onLinkSelect,
+  theme,
+  linkIdPrefix,
+}: {
+  column: MegaMenuColumn;
+  columnIndex: number;
+  onLinkSelect?: (item: MegaMenuLinkItem, column: MegaMenuColumn) => void;
+  theme: "light" | "dark";
+  linkIdPrefix: string;
+}) {
+  const [expandedKeys, setExpandedKeys] = React.useState<Set<string>>(() => new Set());
+
+  const handleSelect = React.useCallback(
+    (item: MegaMenuLinkItem) => {
+      onLinkSelect?.(item, column);
+    },
+    [column, onLinkSelect]
+  );
+
+  const toggleExpand = React.useCallback((key: string) => {
+    setExpandedKeys((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      return next;
+    });
+  }, []);
+
+  const isDark = theme === "dark";
+
+  const renderItem = (
+    link: MegaMenuLinkItem,
+    linkIndex: number,
+    depth = 0,
+    parentKey = ""
+  ): React.ReactNode => {
+    const key = parentKey ? `${parentKey}-${linkIndex}` : `${linkIndex}`;
+    const hasChildren = Array.isArray(link.children) && link.children.length > 0;
+    const isExpanded = expandedKeys.has(key);
+
+    const idForFocus =
+      depth === 0 && !parentKey
+        ? `${linkIdPrefix}-col-${columnIndex}-link-${linkIndex}`
+        : `${linkIdPrefix}-col-${columnIndex}-link-${key}`;
+
+    return (
+      <li key={`${link.href}-${key}`}>
+        <MegaMenuLinkRow
+          item={link}
+          onSelect={hasChildren ? undefined : handleSelect}
+          theme={theme}
+          id={idForFocus}
+          hasChildren={hasChildren}
+          isExpanded={isExpanded}
+          onToggleExpand={hasChildren ? () => toggleExpand(key) : undefined}
+        />
+        {hasChildren && isExpanded && (
+          <ul
+            className={cn(
+              "mt-1 space-y-0.5 border-l pl-3",
+              isDark ? "border-gray-700" : "border-gray-200"
+            )}
+            role="list"
+          >
+            {link.children!.map((child, childIndex) =>
+              renderItem(child, childIndex, depth + 1, key)
+            )}
+          </ul>
+        )}
+      </li>
+    );
+  };
+
+  return (
+    <div className="flex min-w-0 flex-col">
+      <h3
+        className={cn(
+          "mb-2 px-3 text-xs font-semibold uppercase tracking-wider",
+          isDark ? "text-gray-400" : "text-gray-500"
+        )}
+      >
+        {column.header}
+      </h3>
+      <ul className="flex flex-col gap-0.5" role="list">
+        {column.links.map((link, linkIndex) => renderItem(link, linkIndex))}
+      </ul>
+    </div>
+  );
+});
+
+export function MegaMenuMultiColumnDropdown({
+  triggerLabel,
+  columns,
+  cta,
+  onLinkSelect,
+  onOpen,
+  onClose,
+  className,
+  theme = "light",
+  align = "left",
+}: MegaMenuMultiColumnDropdownProps) {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [focusedIndex, setFocusedIndex] = React.useState(-1);
+  const triggerRef = React.useRef<HTMLButtonElement>(null);
+  const panelRef = React.useRef<HTMLDivElement>(null);
+  const openTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const closeTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const focusableItems = React.useMemo((): FocusableItem[] => {
+    const items: FocusableItem[] = [{ type: "trigger", columnIndex: -1, elementId: "mega-menu-trigger" }];
+    columns.forEach((col, colIdx) => {
+      col.links.forEach((_, linkIdx) => {
+        items.push({
+          type: "link",
+          columnIndex: colIdx,
+          linkIndex: linkIdx,
+          elementId: `mega-menu-col-${colIdx}-link-${linkIdx}`,
+        });
+      });
+    });
+    if (cta) {
+      items.push({ type: "cta", columnIndex: -1, elementId: "mega-menu-cta" });
+    }
+    return items;
+  }, [columns, cta]);
+
+  const clearOpenTimeout = React.useCallback(() => {
+    if (openTimeoutRef.current) {
+      clearTimeout(openTimeoutRef.current);
+      openTimeoutRef.current = null;
+    }
+  }, []);
+
+  const clearCloseTimeout = React.useCallback(() => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+  }, []);
+
+  const openMenu = React.useCallback(() => {
+    clearCloseTimeout();
+    openTimeoutRef.current = setTimeout(() => {
+      setIsOpen(true);
+      setFocusedIndex(-1);
+      onOpen?.();
+      openTimeoutRef.current = null;
+    }, 150);
+  }, [clearCloseTimeout, onOpen]);
+
+  const closeMenu = React.useCallback(() => {
+    clearOpenTimeout();
+    closeTimeoutRef.current = setTimeout(() => {
+      setIsOpen(false);
+      setFocusedIndex(-1);
+      onClose?.();
+      closeTimeoutRef.current = null;
+    }, 120);
+  }, [clearOpenTimeout, onClose]);
+
+  React.useEffect(() => {
+    if (!isOpen || focusedIndex < 0) return;
+    const item = focusableItems[focusedIndex];
+    if (!item) return;
+    if (item.type === "trigger") {
+      triggerRef.current?.focus();
+      return;
+    }
+    if (item.type === "cta") {
+      panelRef.current?.querySelector<HTMLElement>(`#${item.elementId}`)?.focus();
+      return;
+    }
+    const el = document.getElementById(item.elementId);
+    if (el) el.focus();
+  }, [isOpen, focusedIndex, focusableItems]);
+
+  const handleTriggerKeyDown = React.useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        setIsOpen((prev) => !prev);
+        if (!isOpen) setFocusedIndex(0);
+      }
+      if (e.key === "ArrowDown" && isOpen) {
+        e.preventDefault();
+        setFocusedIndex((i) => Math.min(i + 1, focusableItems.length - 1));
+      }
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closeMenu();
+        triggerRef.current?.focus();
+      }
+    },
+    [isOpen, focusableItems.length, closeMenu]
+  );
+
+  const handlePanelKeyDown = React.useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setFocusedIndex((i) => Math.min(i + 1, focusableItems.length - 1));
+      }
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setFocusedIndex((i) => Math.max(i - 1, 0));
+      }
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closeMenu();
+        triggerRef.current?.focus();
+      }
+    },
+    [focusableItems.length, closeMenu]
+  );
+
+  const isDark = theme === "dark";
+
+  return (
+    <nav
+      className={cn("relative inline-block", className)}
+      aria-label="Mega menu"
+      onMouseEnter={openMenu}
+      onMouseLeave={closeMenu}
+    >
+      <button
+        ref={triggerRef}
+        id="mega-menu-trigger"
+        type="button"
+        aria-expanded={isOpen}
+        aria-haspopup="true"
+        aria-controls="mega-menu-panel"
+        onClick={() => setIsOpen((prev) => !prev)}
+        onKeyDown={handleTriggerKeyDown}
+        onFocus={openMenu}
+        className={cn(
+          "inline-flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+          "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500",
+          isDark
+            ? "text-gray-200 hover:bg-white/10 hover:text-white"
+            : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+        )}
+      >
+        {triggerLabel}
+        <ChevronDown
+          className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")}
+          aria-hidden
+        />
+      </button>
+
+      <div
+        id="mega-menu-panel"
+        ref={panelRef}
+        role="menu"
+        aria-orientation="vertical"
+        aria-label="Menu"
+        hidden={!isOpen}
+        onKeyDown={handlePanelKeyDown}
+        className={cn(
+          "absolute top-full z-50 mt-1 min-w-[280px] rounded-xl border shadow-lg transition-opacity duration-150",
+          "md:min-w-[560px] lg:min-w-[720px]",
+          align === "left" && "left-0",
+          align === "right" && "right-0",
+          align === "center" && "left-1/2 -translate-x-1/2",
+          isOpen ? "opacity-100" : "pointer-events-none opacity-0",
+          isDark
+            ? "border-gray-700 bg-gray-900"
+            : "border-gray-200 bg-white"
+        )}
+        style={{ visibility: isOpen ? "visible" : "hidden" }}
+      >
+        <div className="p-4 md:p-5">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {columns.map((column, idx) => (
+              <MegaMenuColumnBlock
+                key={column.header}
+                column={column}
+                columnIndex={idx}
+                onLinkSelect={onLinkSelect}
+                theme={theme}
+                linkIdPrefix="mega-menu"
+              />
+            ))}
+          </div>
+          {cta && (
+            <div className="mt-4 border-t pt-4 sm:border-gray-200 lg:border-gray-700">
+              {cta.href ? (
+                <Button
+                  id="mega-menu-cta"
+                  variant={cta.variant ?? "primary"}
+                  size="sm"
+                  asChild
+                  className="w-full sm:w-auto"
+                >
+                  <a href={cta.href}>{cta.label}</a>
+                </Button>
+              ) : (
+                <Button
+                  id="mega-menu-cta"
+                  variant={cta.variant ?? "primary"}
+                  size="sm"
+                  onClick={cta.onClick}
+                  className="w-full sm:w-auto"
+                >
+                  {cta.label}
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </nav>
+  );
+}
+```
+
+  </TabItem>
+</Tabs>
+
+---
+
+## Usage
+
+Import the component:
+
+```tsx
+import { MegaMenuMultiColumnDropdown } from "@ignix-ui/mega-menu-multi-column-dropdown";
+import { LayoutDashboard, FileText, Settings, Users, HelpCircle, BookOpen, Code2, Zap, Shield, Globe } from "lucide-react";
+```
+
+### Basic Mega Menu
+
+```tsx
+const columns = [
+  {
+    header: "Products",
+    links: [
+      { label: "Dashboard", href: "#dashboard", icon: LayoutDashboard },
+      { label: "Documents", href: "#documents", icon: FileText },
+      { label: "Settings", href: "#settings", icon: Settings },
+    ],
+  },
+  {
+    header: "Resources",
+    links: [
+      { label: "Help Center", href: "#help", icon: HelpCircle },
+      { label: "Documentation", href: "#docs", icon: BookOpen },
+      { label: "API Reference", href: "#api", icon: Code2 },
+    ],
+  },
+  {
+    header: "Company",
+    links: [
+      { label: "About Us", href: "#about", icon: Users },
+      { label: "Careers", href: "#careers", icon: Zap },
+      { label: "Security", href: "#security", icon: Shield },
+      { label: "Contact", href: "#contact", icon: Globe },
+    ],
+  },
+];
+
+export function BasicMegaMenu() {
+  return (
+    <MegaMenuMultiColumnDropdown
+      triggerLabel="Menu"
+      theme="light"
+      align="left"
+      columns={columns}
+      cta={{
+        label: "View all features",
+        href: "#all-features",
+        variant: "primary",
+      }}
+    />
+  );
+}
+```
+
+### Nested Options (n-level)
+
+```tsx
+const nestedColumns = [
+  {
+    header: "Products",
+    links: [
+      {
+        label: "Analytics",
+        href: "#analytics",
+        icon: LayoutDashboard,
+        children: [
+          {
+            label: "Dashboards",
+            href: "#analytics-dashboards",
+            children: [
+              { label: "Team Dashboard", href: "#analytics-dashboards-team" },
+              { label: "Executive Overview", href: "#analytics-dashboards-exec" },
+            ],
+          },
+          {
+            label: "Reports",
+            href: "#analytics-reports",
+            children: [
+              { label: "Weekly Reports", href: "#analytics-reports-weekly" },
+              { label: "Custom Reports", href: "#analytics-reports-custom" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  // more columns...
+];
+
+export function NestedMegaMenu() {
+  return (
+    <MegaMenuMultiColumnDropdown
+      triggerLabel="Nested"
+      theme="light"
+      align="left"
+      columns={nestedColumns}
+    />
+  );
+}
+```
+
+---
+
+## Props
+
+### MegaMenuMultiColumnDropdown
+
+| Prop          | Type                                                                                                    | Default   | Description                                                                                               |
+|--------------|---------------------------------------------------------------------------------------------------------|-----------|-----------------------------------------------------------------------------------------------------------|
+| `triggerLabel` | `string`                                                                                              | —         | Label for the top-level nav item that opens the mega menu.                                               |
+| `columns`    | `MegaMenuColumn[]`                                                                                      | —         | Columns to display in the dropdown (each has a header and an array of links).                            |
+| `cta`        | `MegaMenuCtaConfig`                                                                                    | `undefined` | Optional CTA button rendered at the bottom of the dropdown panel.                                       |
+| `onLinkSelect` | `(item: MegaMenuLinkItem, column: MegaMenuColumn) => void`                                           | `undefined` | Callback fired when a link (without children) is selected.                                              |
+| `onOpen`     | `() => void`                                                                                            | `undefined` | Callback fired when the menu is opened.                                                                  |
+| `onClose`    | `() => void`                                                                                            | `undefined` | Callback fired when the menu is closed.                                                                  |
+| `className`  | `string`                                                                                                | `undefined` | Additional class names for the root `<nav>` element.                                                     |
+| `theme`      | `"light" \| "dark"`                                                                                    | `"light"` | Controls dropdown background and text colors.                                                             |
+| `align`      | `"left" \| "center" \| "right"`                                                                        | `"left"`  | Alignment of the dropdown panel relative to the trigger.                                                 |
+
+### MegaMenuColumn
+
+| Prop    | Type              | Description                                   |
+|---------|-------------------|-----------------------------------------------|
+| `header`| `string`          | Category header text for the column.          |
+| `links` | `MegaMenuLinkItem[]` | Array of links belonging to this column. |
+
+### MegaMenuLinkItem
+
+| Prop       | Type               | Description                                                                 |
+|------------|--------------------|-----------------------------------------------------------------------------|
+| `label`    | `string`           | Display label for the link.                                                |
+| `href`     | `string`           | Destination URL or hash.                                                   |
+| `icon`     | `LucideIcon`       | Optional Lucide icon component to render before the label.                 |
+| `imageUrl` | `string`           | Optional image URL; used when `icon` is not provided.                      |
+| `imageAlt` | `string`           | Alt text for the image.                                                    |
+| `external` | `boolean`          | When `true`, opens the link in a new browser tab.                          |
+| `children` | `MegaMenuLinkItem[]` | Optional nested children for n-level deep menus.                        |
+
+### MegaMenuCtaConfig
+
+| Prop     | Type                                                        | Description                                            |
+|----------|-------------------------------------------------------------|--------------------------------------------------------|
+| `label`  | `string`                                                    | CTA button label.                                      |
+| `href`   | `string`                                                    | Optional destination URL (renders as `<a>` in button). |
+| `onClick`| `() => void`                                               | Optional click handler when `href` is not provided.    |
+| `variant`| `"default" \| "primary" \| "secondary" \| "outline" \| "ghost" \| "link"` | Button visual variant.               |
+

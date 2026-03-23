@@ -21,6 +21,8 @@ const PinDemo = (): ReactElement => {
   const [zIndex, setZIndex] = useState("high");
 
   const codeString = `
+import Pin from '@ignix-ui/pin';
+
 <div className="relative p-10 w-40 sm:w-96 m-auto border rounded-lg min-h-[200px]">
   <Pin to="${position}" offset="${offset}" zIndex="${zIndex}">
     <button className="bg-red-600 text-white w-6 h-6 rounded-full shadow">✕</button>

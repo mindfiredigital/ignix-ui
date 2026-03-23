@@ -74,9 +74,8 @@ const buttonVariants = cva(
         link: 'text-primary underline-offset-4 hover:underline',
         subtle: 'bg-accent text-accent-foreground hover:bg-accent/80',
         elevated: 'bg-background shadow-md hover:shadow-lg',
-        glass: 'bg-black/10 backdrop-blur-lg text-white hover:bg-black/20',
+        glass: 'bg-black/10 backdrop-blur-lg text-primary hover:bg-black/20',
         neon: 'bg-pink-500 text-white shadow-lg shadow-pink-500/50 hover:bg-pink-600',
-        pill: 'rounded-full px-6 py-2 bg-pill text-white hover:bg-pill/90',
         none: '',
       },
       size: {
@@ -435,6 +434,7 @@ import { Button } from './components/ui';
 ### Basic Usage
 
 ```tsx
+
 function BasicButton() {
   return (
     <Button>Click me</Button>
@@ -446,7 +446,7 @@ function BasicButton() {
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'success' \| 'warning' \| 'danger' \| 'outline' \| 'ghost' \| 'link' \| 'subtle' \| 'elevated' \| 'glass' \| 'neon' \| 'pill' \| 'none'` | `'default'` | The visual style variant of the button |
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'success' \| 'warning' \| 'danger' \| 'outline' \| 'ghost' \| 'link' \| 'subtle' \| 'elevated' \| 'glass' \| 'neon' \| 'none'` | `'default'` | The visual style variant of the button |
 | `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| 'icon' \| 'pill' \| 'block' \| 'compact' \| 'wide'` | `'md'` | The size of the button |
 | `asChild` | `boolean` | `false` | When true, merges props with the child component instead of rendering a button element |
 | `animationVariant` | `string` | `undefined` | Animation variant to apply to the button (e.g., 'bounce', 'pulse', 'spin', etc.) |
