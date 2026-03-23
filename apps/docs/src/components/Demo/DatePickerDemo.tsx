@@ -373,12 +373,12 @@ export const PopupPositionsDemo = () => {
     );
 };
 
-// Demo 6: Hotel Booking Example
+// Demo 6: Hotel Booking Example - FIXED
 export const HotelBookingDemo = () => {
     const { colorMode } = useColorMode();
     const [booking, setBooking] = useState({
-        start: null as Date | null,  // Fixed: Changed from checkIn/checkOut to start/end
-        end: null as Date | null,    // Fixed: Changed from checkIn/checkOut to start/end
+        start: null as Date | null,
+        end: null as Date | null,
     });
 
     const today = new Date();
@@ -398,7 +398,7 @@ export const HotelBookingDemo = () => {
             return date;
         }
         return null;
-    }).filter(Boolean);
+    }).filter(Boolean) as Date[];
 
     // Handler for booking date range change
     const handleBookingChange = (newRange: { start: Date | null; end: Date | null }) => {
@@ -424,8 +424,8 @@ function HotelBooking() {
 
   const handleBookingChange = (newRange: { start: Date | null; end: Date | null }) => {
     setBooking({
-      checkIn: newRange.start,
-      checkOut: newRange.end
+      start: newRange.start,
+      end: newRange.end
     });
   };
 
@@ -458,11 +458,10 @@ function HotelBooking() {
             code={codeString}
         >
             <div className="space-y-6 max-w-2xl">
-
                 <DatePicker
                     themeMode={colorMode as 'light' | 'dark'}
                     variant="range"
-                    value={booking}  // Now correctly typed with start/end
+                    value={booking}
                     onChange={handleBookingChange}
                     placeholder={['Check-in date', 'Check-out date']}
                     label="Select Your Stay"
@@ -478,7 +477,7 @@ function HotelBooking() {
                     format="MMM DD, YYYY"
                 />
 
-                {booking.start && booking.end && (  // Fixed: Changed from checkIn/checkOut to start/end
+                {booking.start && booking.end && (
                     <div className="p-4 border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 rounded-lg">
                         <Typography variant="h6" weight="semibold" className="text-green-800 dark:text-green-300 mb-2">
                             Booking Summary
@@ -487,7 +486,7 @@ function HotelBooking() {
                             <div>
                                 <Typography variant="caption" className="text-gray-500 dark:text-gray-400">Check-in</Typography>
                                 <Typography variant="body" className="font-medium">
-                                    {booking.start.toLocaleDateString('en-US', {  // Fixed: Changed from checkIn to start
+                                    {booking.start.toLocaleDateString('en-US', {
                                         weekday: 'short',
                                         month: 'short',
                                         day: 'numeric'
@@ -497,7 +496,7 @@ function HotelBooking() {
                             <div>
                                 <Typography variant="caption" className="text-gray-500 dark:text-gray-400">Check-out</Typography>
                                 <Typography variant="body" className="font-medium">
-                                    {booking.end.toLocaleDateString('en-US', {  // Fixed: Changed from checkOut to end
+                                    {booking.end.toLocaleDateString('en-US', {
                                         weekday: 'short',
                                         month: 'short',
                                         day: 'numeric'
@@ -601,8 +600,7 @@ export const ValidationExamplesDemo = () => {
     );
 };
 
-
-// Demo 9: Interactive Playground (Fixed select type issue)
+// Demo 9: Interactive Playground - FIXED
 export const DatePickerPlayground = () => {
     const [config, setConfig] = useState<PlaygroundConfig>({
         variant: 'single',
@@ -652,7 +650,7 @@ export const DatePickerPlayground = () => {
                         <Typography variant="caption" weight="medium">Variant</Typography>
                         <select
                             value={config.variant}
-                            onChange={(e) => handleConfigChange('variant', e.target.value as 'single' | 'range')}  // Fixed: Added type assertion
+                            onChange={(e) => handleConfigChange('variant', e.target.value as 'single' | 'range')}
                             className="w-full px-3 py-1.5 text-sm border rounded"
                         >
                             <option value="single">Single Date</option>
@@ -664,7 +662,7 @@ export const DatePickerPlayground = () => {
                         <Typography variant="caption" weight="medium">Size</Typography>
                         <select
                             value={config.size}
-                            onChange={(e) => handleConfigChange('size', e.target.value as 'sm' | 'md' | 'lg' | 'xl')}  // Fixed: Added type assertion
+                            onChange={(e) => handleConfigChange('size', e.target.value as 'sm' | 'md' | 'lg' | 'xl')}
                             className="w-full px-3 py-1.5 text-sm border rounded"
                         >
                             {sizeOptions.map(option => (
@@ -677,7 +675,7 @@ export const DatePickerPlayground = () => {
                         <Typography variant="caption" weight="medium">Color Scheme</Typography>
                         <select
                             value={config.colorScheme}
-                            onChange={(e) => handleConfigChange('colorScheme', e.target.value as 'blue' | 'green' | 'purple' | 'orange' | 'slate' | 'rose')}  // Fixed: Added type assertion
+                            onChange={(e) => handleConfigChange('colorScheme', e.target.value as 'blue' | 'green' | 'purple' | 'orange' | 'slate' | 'rose')}
                             className="w-full px-3 py-1.5 text-sm border rounded"
                         >
                             {colorSchemeOptions.map(option => (
@@ -690,7 +688,7 @@ export const DatePickerPlayground = () => {
                         <Typography variant="caption" weight="medium">Popup Position</Typography>
                         <select
                             value={config.popupPosition}
-                            onChange={(e) => handleConfigChange('popupPosition', e.target.value as 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right' | 'left' | 'right')}  // Fixed: Added type assertion
+                            onChange={(e) => handleConfigChange('popupPosition', e.target.value as 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right' | 'left' | 'right')}
                             className="w-full px-3 py-1.5 text-sm border rounded"
                         >
                             {popupPositionOptions.map(option => (
@@ -789,7 +787,6 @@ export const DatePickerPlayground = () => {
     );
 };
 
-
 type PlaygroundConfig = {
     variant: 'single' | 'range';
     size: 'sm' | 'md' | 'lg' | 'xl';
@@ -802,9 +799,6 @@ type PlaygroundConfig = {
     required: boolean;
     disabled: boolean;
 };
-
-
-
 
 export const ControlledDatePickerDemo = () => {
     const { colorMode } = useColorMode();

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
     CTABanner,
@@ -29,7 +28,6 @@ import { useColorMode } from '@docusaurus/theme-common';
 type VariantType = 'default' | 'primary' | 'secondary' | 'accent' | 'muted' | 'gradient' | 'glass' | 'dark' | 'light';
 type ImagePositionType = 'left' | 'right';
 type FormType = 'banner' | 'newsletter' | 'contact-form' | 'demo-request';
-
 
 // Helper function to get theme-aware variant based on color mode
 const getThemeAwareVariant = (demoType: string, colorMode: 'light' | 'dark'): VariantType => {
@@ -350,7 +348,7 @@ const CTABannerDemo = ({
 
     // Initialize variant based on theme
     const [variant, setVariant] = useState<VariantType>(
-        getThemeAwareVariant(demoType, colorMode)
+        getThemeAwareVariant(demoType, colorMode as 'light' | 'dark')
     );
     const [formType, setFormType] = useState<FormType>('banner');
     const [imagePosition, setImagePosition] = useState<ImagePositionType>('right');
@@ -359,7 +357,7 @@ const CTABannerDemo = ({
 
     // Update variant when color mode changes
     React.useEffect(() => {
-        setVariant(getThemeAwareVariant(demoType, colorMode));
+        setVariant(getThemeAwareVariant(demoType, colorMode as 'light' | 'dark'));
     }, [colorMode, demoType]);
 
 
@@ -423,10 +421,7 @@ const CTABannerDemo = ({
             </div>
 
             <div className="flex flex-wrap gap-4 justify-end items-center">
-
-
                 <div className="flex flex-row items-center gap-2">
-
                     <VariantSelector
                         variants={['banner', 'newsletter', 'contact-form', 'demo-request']}
                         selectedVariant={formType}
@@ -440,16 +435,13 @@ const CTABannerDemo = ({
                         }}
                     />
                     {demoType === 'split' && (
-                        <div className="space-y-2">
-                            <VariantSelector
-                                variants={['left', 'right']}
-                                selectedVariant={imagePosition}
-                                onSelectVariant={(value) => setImagePosition(value as ImagePositionType)}
-                                type="Image Position"
-                            />
-                        </div>
+                        <VariantSelector
+                            variants={['left', 'right']}
+                            selectedVariant={imagePosition}
+                            onSelectVariant={(value) => setImagePosition(value as ImagePositionType)}
+                            type="Image Position"
+                        />
                     )}
-
                 </div>
             </div>
 
@@ -475,7 +467,7 @@ const CTABannerDemo = ({
     );
 };
 
-// Export the four demos
+// Export the four demos with all required props
 export const CenteredDemo = () => (
     <CTABannerDemo
         title="1. Centered Layout"

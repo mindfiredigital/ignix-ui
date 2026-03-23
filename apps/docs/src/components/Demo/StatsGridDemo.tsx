@@ -245,35 +245,35 @@ export default StatsGridExample;`;
                     selectedVariant={theme}
                     onSelectVariant={(value) => setTheme(value as 'light' | 'dark')}
                     type="Theme"
-                    getLabel={(v) => themeOptions.find(o => o.value === v)?.label || v}
+                    variantLabels={Object.fromEntries(themeOptions.map(o => [o.value, o.label]))}
                 />
                 <VariantSelector
                     variants={columnOptions.map(o => o.value.toString())}
                     selectedVariant={columns.toString()}
                     onSelectVariant={(value) => setColumns(Number(value) as 2 | 3 | 4 | 5 | 6)}
                     type="Columns"
-                    getLabel={(v) => columnOptions.find(o => o.value.toString() === v)?.label || v}
+                    variantLabels={Object.fromEntries(columnOptions.map(o => [o.value.toString(), o.label]))}
                 />
                 <VariantSelector
                     variants={alignOptions.map(o => o.value)}
                     selectedVariant={align}
                     onSelectVariant={(value) => setAlign(value as 'left' | 'center' | 'right')}
                     type="Align"
-                    getLabel={(v) => alignOptions.find(o => o.value === v)?.label || v}
+                    variantLabels={Object.fromEntries(alignOptions.map(o => [o.value, o.label]))}
                 />
                 <VariantSelector
                     variants={gapOptions.map(o => o.value)}
                     selectedVariant={gap}
                     onSelectVariant={(value) => setGap(value as 'sm' | 'md' | 'lg' | 'xl')}
                     type="Gap"
-                    getLabel={(v) => gapOptions.find(o => o.value === v)?.label || v}
+                    variantLabels={Object.fromEntries(gapOptions.map(o => [o.value, o.label]))}
                 />
                 <VariantSelector
                     variants={paddingOptions.map(o => o.value)}
                     selectedVariant={padding}
                     onSelectVariant={(value) => setPadding(value as 'sm' | 'md' | 'lg' | 'xl' | '2xl')}
                     type="Padding"
-                    getLabel={(v) => paddingOptions.find(o => o.value === v)?.label || v}
+                    variantLabels={Object.fromEntries(paddingOptions.map(o => [o.value, o.label]))}
                 />
             </div>
 
@@ -605,7 +605,7 @@ export const VibrantExamplesDemo = () => {
                     selectedVariant={selectedExample}
                     onSelectVariant={setSelectedExample}
                     type="Theme"
-                    getLabel={(id) => examples.find(ex => ex.id === id)?.name || id}
+                    variantLabels={Object.fromEntries(examples.map(ex => [ex.id, ex.name]))}
                 />
             </div>
 

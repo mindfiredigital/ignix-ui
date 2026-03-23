@@ -43,13 +43,11 @@ import {
 import { cn } from '@site/src/utils/cn';
 import { Button } from '@site/src/components/UI/button';
 
-// Types for our variant selectors
 type ThemeVariant = 'default' | 'vibrant' | 'pastel' | 'neon' | 'earthy' | 'ocean' | 'sunset' | 'forest' | 'galaxy' | 'candy' | 'dark';
 type CardVariant = 'default' | 'glass' | 'border' | 'elevated' | 'neon' | 'vibrant';
 type AnimationIntensity = 'subtle' | 'moderate' | 'high';
 type FormType = 'registration' | 'business' | 'developer' | 'survey' | 'health' | 'checkout' | 'job' | 'travel' | 'education';
 
-// Theme options - Added 'dark' option
 const themeOptions = [
     { value: 'default', label: 'Default' },
     { value: 'vibrant', label: 'Vibrant' },
@@ -1595,7 +1593,6 @@ const handleSubmit = async (data: FormValues): Promise<void> => {
 export const DynamicFormDemo = () => {
     const { colorMode } = useColorMode();
 
-    // Core state
     const [formType, setFormType] = useState<FormType>('registration');
     const [themeVariant, setThemeVariant] = useState<ThemeVariant>(
         colorMode === 'dark' ? 'dark' : 'default'
@@ -1633,7 +1630,6 @@ export const DynamicFormDemo = () => {
         setAnimationKey((k) => k + 1);
     }, [formType, themeVariant, cardVariant, animationIntensity]);
 
-    // Handle theme change
     const handleThemeChange = (value: string) => {
         setThemeVariant(value as ThemeVariant);
         setDarkMode(value === 'dark' || value === 'galaxy' || value === 'candy' || value === 'neon');
@@ -1877,6 +1873,7 @@ const ${formType}Sections = [
     ${showDebugger ? '<DynamicDebugger />' : ''}
 </DynamicForm>`;
     };
+
     return (
         <div className="space-y-6">
             {/* Theme Controls - First Row */}
