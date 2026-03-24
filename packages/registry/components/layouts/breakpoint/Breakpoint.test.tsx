@@ -103,16 +103,6 @@ describe("Breakpoint Component", () => {
     expect(screen.getByText("Visible up to mobile")).toBeInTheDocument();
   });
 
-  // it("does not render children when `to` does not match the current breakpoint", () => {
-  //   render(
-  //     <Breakpoint to="tablet">
-  //       <p>Visible up to tablet</p>
-  //     </Breakpoint>
-  //   );
-
-  //   expect(screen.queryByText("Visible up to tablet")).not.toBeInTheDocument();
-  // });
-
   it("renders children when `from` and `to` define a range that includes the current breakpoint", () => {
     render(
       <Breakpoint from="mobile" to="tablet">
