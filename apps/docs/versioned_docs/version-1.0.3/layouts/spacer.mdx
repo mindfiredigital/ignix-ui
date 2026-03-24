@@ -9,36 +9,9 @@ import TabItem from '@theme/TabItem';
 import { Spacer } from '@site/src/components/UI/spacer';
 import SpacerDemo from '@site/src/components/Demo/SpacerDemo';
 
-## Overview
-
 The **Spacer** component adds consistent spacing between elements, without writing custom CSS or margin classes.
 
-## Preview
-
-<Tabs defaultValue="preview">
-  <TabItem value="preview" label="Preview" default>
-    <div className="p-4 border rounded-lg flex flex-col items-center">
-      <div className="bg-blue-500 w-16 h-8" />
-      <Spacer size="md" direction="vertical" />
-      <div className="bg-red-500 w-16 h-8" />
-    </div>
-  </TabItem>
-  <TabItem value="code" label="Code">
-    ```tsx
-    import { Spacer } from '@ignix-ui/spacer';
-
-    function MyComponent() {
-      return (
-        <>
-          <div className="bg-blue-500 w-16 h-8" />
-          <Spacer size="md" direction="vertical" />
-          <div className="bg-red-500 w-16 h-8" />
-        </>
-      );
-    }
-    ```
-  </TabItem>
-</Tabs>
+<SpacerDemo />
 
 ## Installation
 
@@ -50,7 +23,7 @@ The **Spacer** component adds consistent spacing between elements, without writi
   </TabItem>
   <TabItem value="manual" label="manual" className="max-h-[500px] overflow-y-auto">
 
-    ```tsx
+```tsx
 import * as React from 'react';
 import { cva } from 'class-variance-authority';
 import { cn } from '../../../utils/cn';
@@ -153,7 +126,7 @@ Spacer.displayName = 'Spacer';
 
 export { Spacer, spacerVariants };
 
-    ```
+```
   </TabItem>
 </Tabs>
 
@@ -179,9 +152,12 @@ function BasicSpacer() {
 }
 ```
 
-## Variants
+## Props
 
-<SpacerDemo />
-
-
-
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| number \| string` | `'md'` | Size of the spacer. Accepts a design token, a raw number (treated as `px`), or any valid CSS length string (e.g. `"2rem"`, `"20px"`) |
+| `direction` | `'vertical' \| 'horizontal' \| 'both'` | `'vertical'` | Axis along which space is applied. `vertical` collapses width to `0`, `horizontal` collapses height to `0` |
+| `responsive` | `{ mobile?: Size; tablet?: Size; desktop?: Size }` | `undefined` | Applies different token sizes at each breakpoint. Only design tokens (`xs`–`xl`) are supported; custom sizes are ignored |
+| `className` | `string` | `undefined` | Additional Tailwind classes applied to the spacer container |
+| All `HTMLDivElement` props | `React.HTMLAttributes<HTMLDivElement>` | — | Supports all standard div attributes (e.g. `style`, `id`) |
