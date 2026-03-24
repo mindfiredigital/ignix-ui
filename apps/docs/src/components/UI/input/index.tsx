@@ -3,6 +3,7 @@
 import type React from "react";
 import { useState, useEffect, useRef } from "react";
 import { motion, Variants, useMotionValue, useSpring, useTransform } from "framer-motion";
+import type { TargetAndTransition, Transition } from "framer-motion";
 import { Eye, EyeOff, Check, AlertCircle } from "lucide-react";
 import { cn } from "../../../utils/cn";
 
@@ -23,6 +24,7 @@ interface AnimatedInputProps {
   icon?: React.ElementType;
   showPasswordToggle?: boolean;
   size?: "sm" | "md" | "lg";
+  className?: string;
 }
 
 interface InputVariant {
@@ -32,8 +34,10 @@ interface InputVariant {
   container?: Variants;
 }
 
-// Enhanced border beam variants with better animations
-const borderBeamVariants = {
+const borderBeamVariants: {
+  initial: TargetAndTransition;
+  animate: TargetAndTransition & { transition: Transition };
+} = {
   initial: {
     pathLength: 0,
     opacity: 0,
@@ -73,7 +77,6 @@ const createEnhancedParticles = (container: HTMLElement, count = 8) => {
     particle.style.top = `${Math.random() * 100}%`;
     particle.style.boxShadow = `0 0 ${size * 2}px rgba(var(--color-background), 0.6)`;
 
-    // Enhanced animation
     particle.style.animation = `particleFloat ${Math.random() * 3 + 2}s ease-in-out infinite`;
     particle.style.animationDelay = `${Math.random() * 2}s`;
 
@@ -291,9 +294,8 @@ export const AnimatedInput: React.FC<AnimatedInputProps> = ({
               strokeWidth="2"
               strokeLinecap="round"
               rx="12"
-              initial="initial"
-              animate="animate"
-              variants={borderBeamVariants}
+              initial={borderBeamVariants.initial}
+              animate={borderBeamVariants.animate}
             />
             <defs>
               <linearGradient
@@ -693,12 +695,13 @@ const inputVariants: Record<string, InputVariant> = {
 
   shake: {
     label: {
-      initial: { x: 0, y: 0, color: "var(--primary)" },
+      initial: { skewX: 0, y: 0, color: "var(--primary)" },
       animate: {
-        x: [-3, 3, -2, 2, 0],
+        skewX: [-8, 8, -4, 4, 0],
         y: -32,
         scale: 0.85,
         color: "var(--primary)",
+        textShadow: "2px 0 #ff0000, -2px 0 #00ff00",
         transition: {
           x: { duration: 0.5, ease: "easeInOut" },
           y: { type: "spring", stiffness: 300, damping: 15 },
@@ -708,13 +711,13 @@ const inputVariants: Record<string, InputVariant> = {
       },
     },
     input: {
-      initial: { x: 0 },
+      initial: { skewX: 0 },
       animate: {
-        x: [-2, 2, -1, 1, 0],
+        skewX: [0, -3, 3, -2, 2, 0],
         borderColor: "var(--primary)",
-        boxShadow: "0 4px 15px var(--primary)",
+        boxShadow: "2px 0 8px var(--primary), -2px 0 8px var(--primary)",
         transition: {
-          x: {
+          skewX: {
             repeat: Infinity,
             duration: 0.6,
             ease: "easeInOut",
@@ -975,29 +978,30 @@ const inputVariants: Record<string, InputVariant> = {
     },
   },
 
+  // FIX: `skew` replaced with `skewX` (valid Framer Motion transform property)
   glitch: {
     label: {
-      initial: { skew: 0, y: 0, color: "var(--primary)" },
+      initial: { skewX: 0, y: 0, color: "var(--primary)" },
       animate: {
-        skew: [-8, 8, -4, 4, 0],
+        skewX: [-8, 8, -4, 4, 0],
         y: -32,
         scale: 0.85,
         color: "var(--primary)",
         textShadow: "2px 0 #ff0000, -2px 0 #00ff00",
         transition: {
-          skew: { repeat: Infinity, duration: 0.6, repeatDelay: 2 },
+          skewX: { repeat: Infinity, duration: 0.6, repeatDelay: 2 },
           textShadow: { repeat: Infinity, duration: 0.1, repeatDelay: 2 }
         },
       },
     },
     input: {
-      initial: { skew: 0 },
+      initial: { skewX: 0 },
       animate: {
-        skew: [0, -3, 3, -2, 2, 0],
+        skewX: [0, -3, 3, -2, 2, 0],
         borderColor: "var(--primary)",
         boxShadow: "2px 0 8px var(--primary), -2px 0 8px var(--primary)",
         transition: {
-          skew: { repeat: Infinity, duration: 0.6, repeatDelay: 2 }
+          skewX: { repeat: Infinity, duration: 0.6, repeatDelay: 2 }
         },
       },
     },

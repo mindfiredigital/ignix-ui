@@ -82,7 +82,7 @@ const AspectRatio = React.forwardRef<HTMLDivElement, AspectRatioProps>(
       {isAspectRatioSupported ? (
         enhancedChildren
       ) : (
-      <div style={contentStyle}>{enhancedChildren}</div>
+        <div style={contentStyle}>{enhancedChildren}</div>
       )}      
       </div>
     );
