@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import * as React from 'react';
 import * as SwitchPrimitives from '@radix-ui/react-switch';
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import { cn } from '../../../utils/cn';
 
 // Enhanced animations with premium effects
@@ -230,7 +230,7 @@ const animations = {
       transition: { duration: 0.8, ease: "easeInOut" },
     },
   },
-};
+} as const;
 
 // Enhanced variants with premium styling
 const variants = {
@@ -442,7 +442,7 @@ const Switch = React.forwardRef<React.ComponentRef<typeof SwitchPrimitives.Root>
         ...animations[animation].checked,
         x: thumbOffset,
       },
-    };
+    } as unknown as Variants;
 
     React.useEffect(() => {
       if (props.checked !== undefined) {

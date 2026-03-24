@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, type Variants } from 'framer-motion';
 import {
   CrossCircledIcon,
   CheckCircledIcon,
@@ -87,7 +87,7 @@ const variantColors = {
 export const ToastContext = React.createContext<ToastManagerRef | undefined>(undefined);
 
 // FIXED: Enhanced animation variants with proper positioning
-const animationVariants = {
+const animationVariants: Record<ToastAnimationTypes, Variants> = {
   slide: {
     hidden: {
       x: '120%',
