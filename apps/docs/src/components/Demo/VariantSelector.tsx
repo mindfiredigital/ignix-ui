@@ -7,6 +7,8 @@ interface VariantSelectorProps {
   selectedVariant: string;
   onSelectVariant: (variant: string) => void;
   type?: string;
+  getLabel?: (variant: string) => string;
+  variantLabels?: Record<string, string>;
 }
 
 const VariantSelector: React.FC<VariantSelectorProps> = ({
@@ -14,13 +16,21 @@ const VariantSelector: React.FC<VariantSelectorProps> = ({
   selectedVariant,
   onSelectVariant,
   type = 'Variant',
+  getLabel,
+  variantLabels,
 }) => {
+  const displayLabel = (v: string) => {
+    if (variantLabels && variantLabels[v]) return variantLabels[v];
+    if (getLabel) return getLabel(v);
+    return v;
+  };
+
   return (
     <div className="flex justify-end mb-4 ">
-      <Dropdown animation='default' className='max-h-[500px] overflow-y-scroll' bg='default' trigger={<Button variant="outline">{type}: {selectedVariant}</Button>}>
+      <Dropdown animation='default' className='max-h-[500px] overflow-y-scroll' bg='default' trigger={<Button variant="outline">{type}: {displayLabel(selectedVariant)}</Button>}>
         {variants.map((v) => (
           <DropdownItem key={v} onClick={() => onSelectVariant(v)}>
-            {v}
+            {displayLabel(v)}
           </DropdownItem>
         ))}
       </Dropdown>

@@ -158,6 +158,7 @@ const DynamicFormVariants = cva("min-h-screen transition-all duration-500", {
             forest: "bg-gradient-to-br from-green-50 via-teal-50 to-lime-50 dark:from-green-950 dark:via-teal-950 dark:to-lime-950 text-foreground",
             galaxy: "bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white",
             candy: "bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-300 dark:from-pink-700 dark:via-purple-700 dark:to-indigo-700",
+            dark: "bg-gray-950 text-white",
         },
     },
     defaultVariants: {
