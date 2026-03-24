@@ -516,9 +516,10 @@ function DashboardShortcutsPage({
   );
 }
 
-export { DashboardShortcutsPage };
+
 export default DashboardShortcutsPage;
 export {
+  DashboardShortcutsPage,
   DashboardShortcutsLayout,
   DashboardShortcutsHeader,
   DashboardShortcutsActionsSection,

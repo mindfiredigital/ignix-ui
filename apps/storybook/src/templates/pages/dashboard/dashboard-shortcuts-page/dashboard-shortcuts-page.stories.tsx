@@ -5,7 +5,7 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import DashboardShortcutsPage, {
   DashboardShortcutsActionsSection,
   DashboardShortcutsFooter,
