@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
+import type { Target, TargetAndTransition } from 'framer-motion';
 import { createContext, CSSProperties, useState } from 'react';
 import { X, Check, AlertTriangle, Info, XCircle } from 'lucide-react';
 
@@ -24,7 +25,15 @@ export type DialogAnimationTypes =
 
 export type DialogTypes = 'success' | 'confirm' | 'error' | 'alert' | 'info' | 'warning';
 
-export const animations = {
+interface AnimationDefinition {
+  initial: Target;
+  animate: TargetAndTransition;
+  exit: TargetAndTransition;
+}
+
+type AnimationsMap = Record<DialogAnimationTypes, AnimationDefinition>;
+
+export const animations: AnimationsMap = {
   popIn: {
     initial: {
       scale: 0.95,
