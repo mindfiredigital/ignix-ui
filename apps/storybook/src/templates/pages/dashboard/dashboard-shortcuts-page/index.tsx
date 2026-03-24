@@ -168,6 +168,47 @@ const ACTION_ICON_MAP: Record<string, IconComponent> = {
 };
 
 /**
+ * Theme-safe color styles for action buttons.
+ */
+const ACTION_COLOR_MAP: Record<
+  string,
+  {
+    button: string;
+    keyHint: string;
+    iconWrap: string;
+  }
+> = {
+  create: {
+    button:
+      "bg-gradient-to-r from-primary to-primary/80 text-primary-foreground border border-primary/30 hover:from-primary/90 hover:to-primary/75",
+    keyHint:
+      "border-primary-foreground/40 bg-primary-foreground/15 text-primary-foreground",
+    iconWrap: "bg-primary-foreground/15 text-primary-foreground",
+  },
+  upload: {
+    button:
+      "bg-gradient-to-r from-success to-success/80 text-success-foreground border border-success/30 hover:from-success/90 hover:to-success/75",
+    keyHint:
+      "border-success-foreground/40 bg-success-foreground/15 text-success-foreground",
+    iconWrap: "bg-success-foreground/15 text-success-foreground",
+  },
+  download: {
+    button:
+      "bg-gradient-to-r from-info to-info/80 text-info-foreground border border-info/30 hover:from-info/90 hover:to-info/75",
+    keyHint:
+      "border-info-foreground/40 bg-info-foreground/15 text-info-foreground",
+    iconWrap: "bg-info-foreground/15 text-info-foreground",
+  },
+  share: {
+    button:
+      "bg-gradient-to-r from-warning to-warning/80 text-warning-foreground border border-warning/35 hover:from-warning/90 hover:to-warning/75",
+    keyHint:
+      "border-warning-foreground/40 bg-warning-foreground/15 text-warning-foreground",
+    iconWrap: "bg-warning-foreground/15 text-warning-foreground",
+  },
+};
+
+/**
  * Icon map for shortcuts.
  */
 const SHORTCUT_ICON_MAP: Record<string, IconComponent> = {
@@ -176,7 +217,50 @@ const SHORTCUT_ICON_MAP: Record<string, IconComponent> = {
   "launch-center": RocketIcon,
   "sync-files": UploadIcon,
   "export-data": DownloadIcon,
-  preferences: GearIcon,
+  "preferences": GearIcon,
+};
+
+/**
+ * Theme-safe tile accent colors for shortcuts.
+ */
+const SHORTCUT_ACCENT_MAP: Record<
+  string,
+  {
+    tile: string;
+    iconWrap: string;
+    keyHint: string;
+  }
+> = {
+  "new-project": {
+    tile: "border-primary/30 bg-primary/5 hover:bg-primary/10 dark:bg-primary/10 dark:hover:bg-primary/15",
+    iconWrap: "bg-primary/15 text-primary dark:bg-primary/25",
+    keyHint: "border-primary/40 bg-primary/10 text-primary dark:bg-primary/20",
+  },
+  "quick-search": {
+    tile: "border-info/30 bg-info/5 hover:bg-info/10 dark:bg-info/10 dark:hover:bg-info/15",
+    iconWrap: "bg-info/15 text-info dark:bg-info/25",
+    keyHint: "border-info/40 bg-info/10 text-info dark:bg-info/20",
+  },
+  "launch-center": {
+    tile: "border-purple-500/30 bg-purple-500/5 hover:bg-purple-500/10 dark:bg-purple-500/10 dark:hover:bg-purple-500/15",
+    iconWrap: "bg-purple-600 text-white dark:bg-purple-500 dark:text-white",
+    keyHint: "border-purple-600/60 bg-purple-600 text-white dark:border-purple-400/60 dark:bg-purple-500 dark:text-white",
+  },
+  "sync-files": {
+    tile: "border-success/30 bg-success/5 hover:bg-success/10 dark:bg-success/10 dark:hover:bg-success/15",
+    iconWrap: "bg-success/15 text-success dark:bg-success/25",
+    keyHint: "border-success/40 bg-success/10 text-success dark:bg-success/20",
+  },
+  "export-data": {
+    tile: "border-warning/30 bg-warning/5 hover:bg-warning/10 dark:bg-warning/10 dark:hover:bg-warning/15",
+    iconWrap: "bg-warning/15 text-warning dark:bg-warning/25",
+    keyHint: "border-warning/40 bg-warning/10 text-warning dark:bg-warning/20",
+  },
+  preferences: {
+    tile: "border-muted-foreground/30 bg-muted/40 hover:bg-muted/60 dark:bg-muted/20 dark:hover:bg-muted/35",
+    iconWrap: "border border-foreground/30 bg-background text-foreground dark:border-foreground/40 dark:bg-muted/50",
+    keyHint: "border-muted-foreground/40 bg-muted/60 text-foreground dark:bg-muted/30",
+  },
 };
 
 /**
@@ -195,6 +279,38 @@ function getActionIcon(id: string): IconComponent {
  */
 function getShortcutIcon(id: string): IconComponent {
   return SHORTCUT_ICON_MAP[id] ?? RocketIcon;
+}
+
+/**
+ * Returns the style object for an action button.
+ * @param id - action id
+ * @returns style classes for the action
+ */
+function getActionColors(id: string) {
+  return (
+    ACTION_COLOR_MAP[id] ?? {
+      button:
+        "bg-gradient-to-r from-primary to-primary/80 text-primary-foreground border border-primary/30 hover:from-primary/90 hover:to-primary/75",
+      keyHint:
+        "border-primary-foreground/40 bg-primary-foreground/15 text-primary-foreground",
+      iconWrap: "bg-primary-foreground/15 text-primary-foreground",
+    }
+  );
+}
+
+/**
+ * Returns the style object for a shortcut tile.
+ * @param id - shortcut id
+ * @returns style classes for the shortcut
+ */
+function getShortcutColors(id: string) {
+  return (
+    SHORTCUT_ACCENT_MAP[id] ?? {
+      tile: "border-border/60 bg-background/80 hover:bg-muted/40",
+      iconWrap: "bg-primary/10 text-primary",
+      keyHint: "border-border/70 bg-muted/50 text-muted-foreground",
+    }
+  );
 }
 
 /**
@@ -267,19 +383,27 @@ function DashboardShortcutsActionsSection({
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {actions.map((action) => {
           const Icon = resolveIcon(action.id);
+          const colors = getActionColors(action.id);
           return (
             <Button
               key={action.id}
-              variant="default"
+              variant="none"
               size="xl"
-              className="h-20 justify-between rounded-xl px-5 text-left font-semibold shadow-md shadow-black/5"
+              className={cn(
+                "h-20 justify-between rounded-xl px-5 text-left font-semibold shadow-md shadow-black/10 transform-gpu",
+                "transition-[background-color,color,border-color,filter] duration-300 ease-out motion-reduce:transition-none",
+                "hover:brightness-[1.03] focus-visible:ring-offset-0",
+                colors.button,
+              )}
               onClick={action.onClick}
             >
               <span className="inline-flex items-center gap-2">
-                <Icon className="h-5 w-5 shrink-0" aria-hidden />
+                <span className={cn("inline-flex h-8 w-8 items-center justify-center rounded-md", colors.iconWrap)}>
+                  <Icon className="h-5 w-5 shrink-0" aria-hidden />
+                </span>
                 <span>{action.label}</span>
               </span>
-              <span className="rounded-md border border-white/30 bg-white/10 px-2 py-1 text-xs font-medium">
+              <span className={cn("rounded-md border px-2 py-1 text-xs font-medium", colors.keyHint)}>
                 {action.shortcutHint}
               </span>
             </Button>
@@ -315,6 +439,7 @@ function DashboardShortcutsGridSection({
             {shortcuts.map((shortcut) => {
               const Icon = resolveIcon(shortcut.id);
               const isDragging = draggingId === shortcut.id;
+              const colors = getShortcutColors(shortcut.id);
 
               return (
                 <button
@@ -327,14 +452,15 @@ function DashboardShortcutsGridSection({
                   onDragEnd={onDragEnd}
                   onClick={shortcut.onTrigger}
                   className={cn(
-                    "rounded-xl border border-border/60 bg-background/80 p-4 text-left shadow-sm transition-all",
-                    "hover:border-border hover:bg-muted/40 hover:shadow-md",
+                    "rounded-xl border p-4 text-left shadow-sm transition-all",
+                    "hover:shadow-md",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                    colors.tile,
                     isDragging && "scale-[0.98] opacity-70",
                   )}
                   aria-label={`${shortcut.label} shortcut`}
                 >
-                  <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <div className={cn("mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg", colors.iconWrap)}>
                     <Icon className="h-5 w-5" aria-hidden />
                   </div>
                   <div className="space-y-1">
@@ -343,7 +469,7 @@ function DashboardShortcutsGridSection({
                       <p className="text-sm text-muted-foreground">{shortcut.description}</p>
                     )}
                   </div>
-                  <div className="mt-4 inline-flex items-center rounded-md border border-border/70 bg-muted/50 px-2 py-1 text-xs font-medium text-muted-foreground">
+                  <div className={cn("mt-4 inline-flex items-center rounded-md border px-2 py-1 text-xs font-medium", colors.keyHint)}>
                     Key: {shortcut.shortcutHint}
                   </div>
                 </button>
