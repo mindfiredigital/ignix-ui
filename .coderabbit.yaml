@@ -87,7 +87,7 @@ reviews:
   # Auto-review triggers
   auto_review:
     enabled: true
-    branches:
+    base_branches:
       - main
       - development
    
