@@ -36,7 +36,7 @@ const HeroDemo = () => {
 
   // Build code string parts to avoid extra whitespace
   const codeParts: string[] = [];
-  
+  codeParts.push(`import { Hero, HeroContent, HeroHeading, HeroSubheading, HeroActions, HeroMedia, HeroBadge, HeroFeatures, HeroGlassCard, HeroStats } from '@ignix-ui/hero';`);
   codeParts.push(`<Hero 
   align="${align}" 
   animationType="${animationType}"
@@ -307,6 +307,7 @@ const HeroSplitDemo = () => {
   
   // Build code string parts to avoid extra whitespace
   const codeParts: string[] = [];
+  codeParts.push(`import { Hero, HeroContent, HeroHeading, HeroSubheading, HeroActions, HeroMedia, HeroBadge, HeroFeatures, HeroGlassCard, HeroStats } from '@ignix-ui/hero';`);
   
   codeParts.push(`<Hero 
   split
@@ -443,6 +444,7 @@ const HeroSplitDemo = () => {
 
 const HeroVideoDemo = () => {
   const codeParts: string[] = [];
+  codeParts.push(`import { Hero, HeroContent, HeroHeading, HeroSubheading, HeroActions, HeroMedia, HeroBadge, HeroFeatures, HeroGlassCard, HeroStats } from '@ignix-ui/hero';`);
   
   codeParts.push(`<Hero 
   align="center" 
@@ -614,6 +616,7 @@ const HeroCarouselDemo = () => {
 
   // Build code string
   const codeParts: string[] = [];
+  codeParts.push(`import { Hero, HeroContent, HeroHeading, HeroSubheading, HeroActions, HeroMedia, HeroBadge, HeroFeatures, HeroGlassCard, HeroStats } from '@ignix-ui/hero';`);
   
   codeParts.push(`<HeroCarousel
   slides={[

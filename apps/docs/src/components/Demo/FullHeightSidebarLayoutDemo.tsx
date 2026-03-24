@@ -47,6 +47,8 @@ const FullHeightSidebarLayoutDemo = () => {
   ];
 
   const codeString = `
+import { FullHeightSidebarLayout } from '@ignix-ui/fullheightsidebarlayout';
+
   const navItems = [
     { label: "Dashboard", href: "#", icon:  Home },
     { label: "Pages", href: "#", icon: BookOpen },

@@ -57,6 +57,8 @@ const CheckboxDemo = () => {
     };
 
     const codeString = `
+import { Checkbox } from '@ignix-ui/checkbox';
+
 <Checkbox 
   variant="${variant}" 
   size="${size}" 
@@ -241,6 +243,8 @@ const CheckboxGroupDemo = () => {
 
     const codeString = `
 // Checkbox Group Example
+import { Checkbox } from '@ignix-ui/checkbox';
+
 const [selectedOptions, setSelectedOptions] = useState(['option1']);
 
 const handleChange = (option: string) => (checked: boolean) => {

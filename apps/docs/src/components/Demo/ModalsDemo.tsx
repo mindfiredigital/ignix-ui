@@ -71,8 +71,9 @@ const ModalsDemo: React.FC = () => {
             ? 'bg-info/10 border-info/30'
             : 'bg-primary/10 border-primary/30';
 
-  const codeString = `import { Modal } from './components/ui/modals';
-import { Button } from './components/ui/button';
+  const codeString = `
+import Modal from '@ignix-ui/modal';
+import { Button } from '@ignix-ui/button';
 import { Info } from 'lucide-react';
 
 function Example() {

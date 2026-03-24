@@ -26,6 +26,7 @@ const UserCardBasicDemo = () => {
   const [shape, setShape] = useState<UserCardAvatarShapes>("circle");
 
   const codeString = `
+  import { UserCard } from '@ignix-ui/usercard';
   <UserCard
     name="Alex Thompson"
     username="alexthompson"
@@ -183,6 +184,7 @@ const UserCardAdvancedDemo = () => {
   };
 
   const codeString = `
+  import { UserCard } from '@ignix-ui/usercard';
   <UserCard
     advanced
     name="Sarah Johnson"
@@ -317,6 +319,7 @@ ${getBadgeCode()}
 
 const UserCardExamplesDemo = () => {
     const codeString = `
+  import { UserCard } from '@ignix-ui/usercard';
   <UserCard
     advanced
     name="Emma Davis"

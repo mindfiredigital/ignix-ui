@@ -35,6 +35,8 @@ const SwitchDemo = () => {
   const [animation, setAnimation] = useState('default');
 
   const codeString = `
+import { Switch } from '@ignix-ui/switch';
+
 <Switch variant="${variant}" animation="${animation}" defaultChecked />
 `;
 

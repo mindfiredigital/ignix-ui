@@ -2,7 +2,7 @@ import { FullHeightSidebarLayout } from "./index";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Home, Settings, BookOpen, Palette, Layout, Users, DollarSign, Activity, ArrowUpRight, ArrowDownRight, CheckCircle2, Clock, FileText, Plus, Download, Zap, Target, BarChart3, Bell, Award, LineChart, ShoppingCart } from 'lucide-react';
 import { Navbar } from "../../../components/navbar";
-import Sidebar from "../../../components/sidebar";
+import {Sidebar} from "../../../components/sidebar";
 
 const meta: Meta<typeof FullHeightSidebarLayout> = {
   title: "Templates/Layouts/FullHeightSidebarLayout",

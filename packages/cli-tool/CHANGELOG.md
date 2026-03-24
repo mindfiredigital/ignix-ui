@@ -1,5 +1,23 @@
 # @mindfiredigital/ignix-cli
 
+## 1.0.8
+
+### Patch Changes
+
+- Merge pull request #485 from mindfiredigital/development
+
+## 1.0.7
+
+### Patch Changes
+
+- Merge pull request #482 from mindfiredigital/development
+
+## 1.0.6
+
+### Patch Changes
+
+- Merge pull request #476 from mindfiredigital/development
+
 ## 1.0.5
 
 ### Patch Changes

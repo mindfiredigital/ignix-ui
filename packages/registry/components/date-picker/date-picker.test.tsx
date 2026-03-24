@@ -124,40 +124,6 @@ describe('DatePicker', () => {
             expect(screen.getByPlaceholderText('End date')).toBeInTheDocument();
             expect(screen.getByText('–')).toBeInTheDocument();
         });
-
-        //     const user = userEvent.setup();
-        //     await openCalendar(user);
-
-        //     // Calendar should open (look for month/year header)
-        //     await waitFor(() => {
-        //         expect(screen.getByText('January')).toBeInTheDocument();
-        //         expect(screen.getByText('2024')).toBeInTheDocument();
-        //     });
-        // });
-
-        // it('closes calendar when clicking outside', async () => {
-        //     const user = userEvent.setup();
-        //     render(
-        //         <div>
-        //             <DatePicker />
-        //             <div data-testid="outside">Outside</div>
-        //         </div>
-        //     );
-
-        //     const input = screen.getByPlaceholderText('Select date');
-        //     await user.click(input);
-
-        //     // Calendar should be open
-        //     expect(screen.getByText('January')).toBeInTheDocument();
-
-        //     // Click outside
-        //     await user.click(screen.getByTestId('outside'));
-
-        //     // Calendar should close
-        //     await waitFor(() => {
-        //         expect(screen.queryByText('January')).not.toBeInTheDocument();
-        //     });
-        // });
     });
 
     // Date selection tests
@@ -192,24 +158,6 @@ describe('DatePicker', () => {
             });
         });
 
-        //     const user = userEvent.setup();
-        //     const onChange = vi.fn();
-
-        //     render(<DatePicker variant="range" onChange={onChange} format="MM/DD/YYYY" />);
-
-        //     const startInput = screen.getByPlaceholderText('Start date');
-        //     const endInput = screen.getByPlaceholderText('End date');
-
-        //     await user.type(startInput, '01/10/2024');
-        //     await user.type(endInput, '01/20/2024');
-
-        //     await waitFor(() => {
-        //         expect(onChange).toHaveBeenCalledWith({
-        //             start: expect.any(Date),
-        //             end: expect.any(Date),
-        //         });
-        //     });
-        // });
     });
 
     // Props and configuration tests

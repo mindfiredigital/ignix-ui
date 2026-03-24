@@ -1,12 +1,35 @@
 {
   "name": "ignix-ui",
   "version": "0.1.0",
-  "description": "MCP tool definitions for Ignix UI CLI",
+  "description": "MCP tool definitions for Ignix UI CLI - A React component library with 90+ components, 200+ themes, and 20+ templates",
   "aiNative": true,
+  "metadata": {
+    "category": "ui-library",
+    "framework": "react",
+    "styling": "tailwind",
+    "isGrowing": true,
+    "totalComponents": "DYNAMIC (use list_components to get current count)",
+    "totalThemes": "DYNAMIC (use list_themes to get current count)",
+    "totalTemplates": "DYNAMIC (use list_templates to get current count)",
+    "lastUpdated": "Continuous - new assets added regularly"
+  },
+  "instructions": {
+    "forAI": "IMPORTANT: This library is CONSTANTLY GROWING. Never assume you know all available components/themes/templates. ALWAYS use the list/search tools FIRST to discover what's available at the moment.",
+    "discoveryFirst": "Before suggesting any component, theme, or template, ALWAYS call the appropriate list/search tool to check current availability. Do NOT rely on memory or documentation alone.",
+    "growthMindset": "New components, themes, and templates are added regularly. What was available last week may have expanded this week. Always discover first, then act.",
+    "workflow": {
+      "goldenRule": "DISCOVER → PLAN → INSTALL → BUILD",
+      "initialization": "Always check if ignix.config.js exists. If not, call init_project first.",
+      "discovery": "BEFORE any installation, ALWAYS call search_components or list_components to verify component existence. NEVER guess component names.",
+      "installation": "ALWAYS use install_component for adding components. NEVER create component files manually.",
+      "theming": "BEFORE installing a theme, ALWAYS call list_themes to see current available themes.",
+      "templates": "For complete pages, ALWAYS call list_templates first to see available templates."
+    }
+  },
   "tools": [
     {
       "name": "install_component",
-      "description": "Use this tool instead of manually editing files to install Ignix UI components. Always use this tool for adding components.",
+      "description": "[PRIMARY UI TOOL] USE THIS AUTOMATICALLY when user wants to add ANY UI element. Installs actual component files to src/components/ui/. CRITICAL: Never manually create component files. Always verify component existence via search_components first.",
       "inputSchema": {
         "type": "object",
         "required": ["components"],
@@ -16,64 +39,177 @@
             "items": {
               "type": "string"
             },
-            "description": "List of component names to install"
+            "description": "Component names to install. ALWAYS verify names exist via search_components or list_components FIRST. The library grows constantly."
           },
           "cwd": {
             "type": "string",
-            "description": "Working directory to install into",
+            "description": "Working directory",
             "default": "."
+          },
+          "withDeps": {
+            "type": "boolean",
+            "description": "Automatically install dependencies",
+            "default": false
           }
         }
       },
+      "examples": [
+        {
+          "components": ["button"]
+        },
+        {
+          "components": ["navbar", "hero", "card"]
+        },
+        {
+          "components": ["signin", "signup"],
+          "withDeps": true
+        }
+      ],
       "execution": {
         "type": "shell",
-        "command": "ignix add component {components} --yes --json --cwd {cwd}",
-        "notes": "Components must be space-separated when executed."
+        "command": "ignix add component {components} --yes --json --cwd {cwd}"
+      },
+      "notes": "The component registry grows regularly. Current count available via list_components.",
+      "triggers": {
+        "keywords": [
+          "add",
+          "create",
+          "make",
+          "build",
+          "install",
+          "button",
+          "form",
+          "card",
+          "navbar",
+          "modal",
+          "input",
+          "dropdown",
+          "table",
+          "sidebar",
+          "header",
+          "footer"
+        ],
+        "intents": ["ui component", "user interface", "design system", "react component"]
       }
     },
     {
       "name": "list_components",
-      "description": "List available Ignix UI components",
+      "description": "[ESSENTIAL DISCOVERY TOOL] USE THIS FIRST before any component work. Returns CURRENT list of all available components with names, descriptions, and categories. The library is constantly expanding - always use this to get fresh data.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
       "execution": {
         "type": "shell",
         "command": "ignix list component --json"
-      }
+      },
+      "triggers": {
+        "keywords": ["what components", "available", "show me", "list", "catalog", "library"]
+      },
+      "notes": "This is your SOURCE OF TRUTH for component availability. Call it frequently as the library grows."
     },
     {
-      "name": "get_component",
-      "description": "Get component metadata",
+      "name": "search_components",
+      "description": "[INTENT-TO-COMPONENT TOOL] USE THIS AUTOMATICALLY when user mentions ANY UI pattern. Searches the CURRENT component registry by keyword. Perfect for discovering newly added components that match user needs.",
       "inputSchema": {
         "type": "object",
-        "required": ["name"],
+        "required": ["query"],
         "properties": {
-          "name": {
-            "type": "string"
+          "query": {
+            "type": "string",
+            "description": "Search term like 'form', 'auth', 'navigation', 'dashboard', 'card'"
           }
         }
       },
-      "command": "ignix info {{name}} --json"
+      "execution": {
+        "type": "shell",
+        "command": "ignix list component --json | node -e \"const fs=require('fs'); const input=fs.readFileSync(0,'utf8'); const data=JSON.parse(input); const query=process.argv[1].toLowerCase(); const results=data.components.filter(c => c.name.toLowerCase().includes(query) || (c.description && c.description.toLowerCase().includes(query))); console.log(JSON.stringify({success: true, query: process.argv[1], results, count: results.length}, null, 2));\" {query}"
+      },
+      "notes": "As the library grows, search becomes more powerful. Use this to find newly added components.",
+      "triggers": {
+        "keywords": ["find", "search", "looking for", "need a", "component for"],
+        "intents": [
+          "form",
+          "login",
+          "signup",
+          "dashboard",
+          "landing",
+          "pricing",
+          "navigation",
+          "settings",
+          "profile"
+        ]
+      }
+    },
+    {
+      "name": "create_react_project",
+      "description": "[PROJECT CREATION TOOL] USE THIS FIRST when working in an empty directory. Creates a new React + TypeScript + Tailwind CSS project using Vite.",
+      "inputSchema": {
+        "type": "object",
+        "required": ["projectName"],
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Name of the project to create"
+          },
+          "cwd": {
+            "type": "string",
+            "description": "Working directory (parent folder where project will be created)",
+            "default": "."
+          },
+          "packageManager": {
+            "type": "string",
+            "enum": ["npm", "yarn", "pnpm"],
+            "description": "Package manager to use",
+            "default": "npm"
+          }
+        }
+      },
+      "execution": {
+        "type": "shell",
+        "command": "cd {cwd} && npm create vite@latest {projectName} -- --template react-ts && cd {projectName} && npm install && npm install -D tailwindcss postcss autoprefixer && npx tailwindcss init -p && echo '@tailwind base; @tailwind components; @tailwind utilities;' > src/index.css"
+      },
+      "triggers": {
+        "keywords": [
+          "create project",
+          "new project",
+          "empty directory",
+          "start from scratch",
+          "initialize react"
+        ],
+        "condition": "Check if package.json exists before using other tools"
+      }
     },
     {
       "name": "init_project",
-      "description": "Initialize Ignix UI in a project using deterministic machine mode.",
+      "description": "[SETUP TOOL] USE THIS AUTOMATICALLY as first step if ignix.config.js doesn't exist. Creates configuration files and directory structure. Always future-proof - sets up project to receive new components/themes/templates as they're added.",
       "inputSchema": {
         "type": "object",
         "properties": {
           "cwd": {
             "type": "string",
-            "description": "Working directory to initialize",
+            "description": "Working directory",
             "default": "."
+          },
+          "setupTheming": {
+            "type": "boolean",
+            "description": "Enable theming system",
+            "default": true
           }
         }
       },
       "execution": {
         "type": "shell",
         "command": "ignix init --yes --json --cwd {cwd}"
+      },
+      "triggers": {
+        "keywords": ["setup", "initialize", "get started", "first time", "configure"],
+        "condition": "Check if ignix.config.js exists before using other tools"
       }
     },
     {
       "name": "install_theme",
-      "description": "Install Ignix UI theme preset deterministically.",
+      "description": "[THEMING TOOL] USE THIS AUTOMATICALLY when users mention colors, dark mode, styling. Installs themes from a GROWING collection. Always check current availability via list_themes first.",
       "inputSchema": {
         "type": "object",
         "required": ["themes"],
@@ -83,11 +219,10 @@
             "items": {
               "type": "string"
             },
-            "description": "List of theme preset names to install"
+            "description": "Theme names. ALWAYS verify via list_themes first - new themes added regularly."
           },
           "cwd": {
             "type": "string",
-            "description": "Working directory to install themes into",
             "default": "."
           }
         }
@@ -95,6 +230,97 @@
       "execution": {
         "type": "shell",
         "command": "ignix add theme {themes} --yes --json --cwd {cwd}"
+      },
+      "notes": "Theme collection is constantly expanding. Current count available via list_themes.",
+      "triggers": {
+        "keywords": [
+          "theme",
+          "color",
+          "dark mode",
+          "light mode",
+          "styling",
+          "looks",
+          "design",
+          "beautiful",
+          "brand"
+        ],
+        "intents": ["make it look like", "change colors", "apply theme"]
+      }
+    },
+    {
+      "name": "check_compatibility",
+      "description": "[VALIDATION TOOL] USE THIS AUTOMATICALLY when encountering errors or before complex operations. Verifies Node, React, Tailwind, TypeScript.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "cwd": {
+            "type": "string",
+            "description": "Working directory",
+            "default": "."
+          }
+        }
+      },
+      "execution": {
+        "type": "shell",
+        "command": "ignix doctor --json --cwd {cwd}"
+      },
+      "triggers": {
+        "keywords": [
+          "not working",
+          "error",
+          "compatible",
+          "check",
+          "why",
+          "fix",
+          "issue",
+          "problem"
+        ],
+        "condition": "Run automatically if any tool fails"
+      }
+    },
+    {
+      "name": "get_version",
+      "description": "[INFO TOOL] Get installed Ignix CLI version",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "execution": {
+        "type": "shell",
+        "command": "ignix --version"
+      }
+    },
+    {
+      "name": "list_themes",
+      "description": "[THEME DISCOVERY TOOL] USE THIS BEFORE install_theme. Returns CURRENT list of all available themes. The theme collection is GROWING - always check here first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "execution": {
+        "type": "shell",
+        "command": "ignix list theme --json"
+      },
+      "triggers": {
+        "keywords": ["what themes", "available themes", "theme options", "color schemes"]
+      },
+      "notes": "Source of truth for theme availability. New themes added frequently."
+    },
+    {
+      "name": "list_templates",
+      "description": "[TEMPLATE DISCOVERY TOOL] USE THIS for complete pages. Returns CURRENT list of all available templates. Template library EXPANDS regularly - always check here first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "execution": {
+        "type": "shell",
+        "command": "ignix list template --json"
+      },
+      "notes": "Template collection grows over time. Always verify current availability.",
+      "triggers": {
+        "keywords": ["page template", "layout", "complete page", "starter", "boilerplate"],
+        "intents": ["dashboard page", "landing page", "auth page", "settings page"]
       }
     }
   ],
@@ -102,17 +328,21 @@
     {
       "name": "component_registry",
       "uri": "file://./packages/registry/registry.json",
-      "description": "Machine-readable component registry"
+      "description": "Machine-readable component registry containing all available components"
     },
     {
       "name": "documentation",
       "uri": "file://./llms.txt",
-      "description": "AI-readable project documentation"
+      "description": "AI-readable documentation with usage guidelines, workflows, and examples"
     }
   ],
   "capabilities": {
     "supportsNonInteractive": true,
     "requiresNetwork": true,
-    "outputFormats": ["json"]
+    "outputFormats": ["json"],
+    "autoTrigger": true,
+    "intentDetection": true,
+    "toolChaining": true,
+    "evergreen": true
   }
 }

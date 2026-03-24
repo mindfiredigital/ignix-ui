@@ -29,6 +29,8 @@ const SliderDemo = () => {
   const [animation, setAnimation] = useState('slide');
 
   const codeString = `
+import { Slider } from '@ignix-ui/slider';
+
 <Slider
   key={"${variant}-${animation}"}
   defaultValue={[50]}

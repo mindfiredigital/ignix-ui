@@ -23,6 +23,8 @@ const LazyLoadDemo = () => {
   ];
 
   const codeString = `
+import { LazyLoad } from '@ignix-ui/lazyload';
+
 <LazyLoad 
   threshold="${threshold}"
   animation="${animation}"

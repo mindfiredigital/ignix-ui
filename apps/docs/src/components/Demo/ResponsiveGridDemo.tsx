@@ -25,6 +25,8 @@ const ResponsiveGridDemo = () => {
   ];
 
   const codeString = `
+import ResponsiveGrid from '@ignix-ui/responsivegrid';
+
 <ResponsiveGrid 
   columns={{ mobile: ${columns.mobile}, tablet: ${columns.tablet}, desktop: ${columns.desktop} }}
   gap="${gap}"

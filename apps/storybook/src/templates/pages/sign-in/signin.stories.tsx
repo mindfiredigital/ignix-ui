@@ -140,30 +140,6 @@ export const DarkCentered: Story = {
 // SPLIT LAYOUTS WITH CUSTOMIZABLE BACKGROUNDS AND BUTTONS
 // ============================================================================
 
-// 🎯 Split Layout - Default with Custom Button
-// export const DefaultSplit: Story = {
-//     name: "Split Layout - Default",
-//     parameters: {
-//         description: "Split layout with default background and custom purple button",
-//     },
-//     args: {
-//         type: "split",
-//         variant: "default",
-//         companyName: "YourBrand",
-//         loading: false,
-//         error: "",
-//         showSocialLogin: true,
-//         showForgotPassword: true,
-//         showSignUpLink: true,
-//         // buttonStyle: {
-//         //     gradient: "bg-gradient-to-r from-purple-600 to-purple-700",
-//         //     hoverGradient: "hover:from-purple-700 hover:to-purple-800",
-//         //     shadow: "shadow-lg shadow-purple-200",
-//         //     hoverShadow: "hover:shadow-xl hover:shadow-purple-300",
-//         // },
-//     },
-// };
-
 // 🌙 Split Layout - Dark Version (Original)
 export const DarkSplit: Story = {
     name: "Split Layout - Dark",

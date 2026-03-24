@@ -142,7 +142,10 @@ const ResponsiveGridLayoutDemo = () => {
   const [padding, setPadding] = useState('md');
   const [maxWidth, setMaxWidth] = useState('7xl');
 
-  const codeString = `<ResponsiveGridLayout
+  const codeString = `
+import { ResponsiveGridLayout } from '@ignix-ui/responsivegridlayout';
+
+<ResponsiveGridLayout
   gap="${gap}"
   padding="${padding}"
   maxWidth="${maxWidth}"

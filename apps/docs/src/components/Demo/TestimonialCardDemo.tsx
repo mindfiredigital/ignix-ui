@@ -35,6 +35,7 @@ const TestimonialCardDemo = () => {
   const codeParts: string[] = [];
 
 // Opening tag
+codeParts.push(`import { TestimonialCard } from '@ignix-ui/testimonialcard';`);
 codeParts.push(`<TestimonialCard`);
 codeParts.push(`  size="${size}"`);
 
