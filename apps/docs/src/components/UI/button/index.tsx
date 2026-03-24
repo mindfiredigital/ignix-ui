@@ -6,14 +6,6 @@ import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../../utils/cn';
 
-export interface ButtonProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onDrag'>,
-  VariantProps<typeof buttonVariants> {
-  asChild?: boolean;
-  animationVariant?: string;
-  children?: React.ReactNode;
-}
-
 const buttonVariants = cva(
   'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
   {
@@ -32,6 +24,7 @@ const buttonVariants = cva(
         elevated: 'bg-background shadow-md hover:shadow-lg',
         glass: 'bg-black/10 backdrop-blur-lg text-primary hover:bg-black/20',
         neon: 'bg-pink-500 text-white shadow-lg shadow-pink-500/50 hover:bg-pink-600',
+        pill: 'rounded-full',
         none: '',
       },
       size: {
@@ -53,6 +46,16 @@ const buttonVariants = cva(
     },
   }
 );
+
+export type ButtonVariant = VariantProps<typeof buttonVariants>['variant'];
+
+export interface ButtonProps
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onDrag'>,
+  VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+  animationVariant?: string;
+  children?: React.ReactNode;
+}
 
 const animations = {
   bounce: {
