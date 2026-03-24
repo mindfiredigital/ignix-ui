@@ -390,20 +390,20 @@ function DashboardShortcutsActionsSection({
               variant="none"
               size="xl"
               className={cn(
-                "h-20 justify-between rounded-xl px-5 text-left font-semibold shadow-md shadow-black/10 transform-gpu",
+                "h-20 justify-between rounded-xl px-5 text-left text-base font-semibold leading-tight shadow-md shadow-black/10 transform-gpu",
                 "transition-[background-color,color,border-color,filter] duration-300 ease-out motion-reduce:transition-none",
                 "hover:brightness-[1.03] focus-visible:ring-offset-0",
                 colors.button,
               )}
               onClick={action.onClick}
             >
-              <span className="inline-flex items-center gap-2">
+              <span className="inline-flex min-w-0 flex-1 items-center gap-2">
                 <span className={cn("inline-flex h-8 w-8 items-center justify-center rounded-md", colors.iconWrap)}>
                   <Icon className="h-5 w-5 shrink-0" aria-hidden />
                 </span>
-                <span>{action.label}</span>
+                <span className="truncate">{action.label}</span>
               </span>
-              <span className={cn("rounded-md border px-2 py-1 text-xs font-medium", colors.keyHint)}>
+              <span className={cn("shrink-0 rounded-md border px-2 py-1 text-[11px] font-medium", colors.keyHint)}>
                 {action.shortcutHint}
               </span>
             </Button>
