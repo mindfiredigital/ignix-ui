@@ -296,7 +296,11 @@ const ninaTextVariants = {
   hover: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { delay: i * 0.045, duration: 0.3, ease: [0.75, 0, 0.125, 1] },
+    transition: {
+      delay: i * 0.045,
+      duration: 0.3,
+      ease: [0.75, 0, 0.125, 1] as [number, number, number, number],
+    },
   }),
 };
 
@@ -305,9 +309,12 @@ const ninaBeforeVariants = {
   hover: {
     opacity: 0,
     y: 20,
-    transition: { duration: 0.3, ease: [0.75, 0, 0.125, 1] },
+    transition: {
+      duration: 0.3,
+      ease: [0.75, 0, 0.125, 1] as [number, number, number, number],
+    },
   },
-};
+} as const;
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, animationVariant, children, ...props }, ref) => {
