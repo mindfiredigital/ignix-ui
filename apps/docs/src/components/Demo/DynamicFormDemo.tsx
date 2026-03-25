@@ -6,8 +6,6 @@ import {
     DynamicField,
     DynamicSection,
     DynamicNavigation,
-    ThemeToggle,
-    DynamicDebugger,
 } from '../UI/dynamic-form';
 import type { DynamicFormField, FormValues } from '../UI/dynamic-form';
 import Tabs from '@theme/Tabs';
@@ -1601,8 +1599,6 @@ export const DynamicFormDemo = () => {
     const [animationIntensity, setAnimationIntensity] = useState<AnimationIntensity>('moderate');
 
     // Feature toggles
-    const [showDebugger, setShowDebugger] = useState<boolean>(false);
-    const [showThemeToggle, setShowThemeToggle] = useState<boolean>(true);
     const [showCancelButton, setShowCancelButton] = useState<boolean>(true);
     const [showSuccessNotification, setShowSuccessNotification] = useState<boolean>(true);
     const [showFieldCount, setShowFieldCount] = useState<boolean>(true);
@@ -1869,8 +1865,6 @@ const ${formType}Sections = [
         cancelButtonLabel="Cancel"
     />
 
-    ${showThemeToggle ? '<ThemeToggle />' : ''}
-    ${showDebugger ? '<DynamicDebugger />' : ''}
 </DynamicForm>`;
     };
 
@@ -1951,8 +1945,6 @@ const ${formType}Sections = [
                         setThemeVariant(colorMode === 'dark' ? 'dark' : 'default');
                         setCardVariant('default');
                         setAnimationIntensity('moderate');
-                        setShowDebugger(false);
-                        setShowThemeToggle(true);
                         setShowCancelButton(true);
                         setShowSuccessNotification(true);
                         setShowFieldCount(true);
@@ -1972,8 +1964,8 @@ const ${formType}Sections = [
             <Tabs>
                 <TabItem value="preview" label="Preview">
                     <div className={cn(
-                        "border rounded-lg overflow-hidden transition-colors duration-300",
-                        darkMode ? "border-gray-700 bg-gray-900" : "border-gray-300 bg-white"
+                        "border rounded-lg overflow-hidden transition-colors duration-300 ",
+                        darkMode ? "border-gray-700 " : "border-gray-300 bg-white"
                     )}>
                         {/* The Dynamic Form component - now properly placed inside the preview */}
                         <DynamicForm
@@ -1987,7 +1979,6 @@ const ${formType}Sections = [
                             successNotificationMessage={`✨ ${formType.charAt(0).toUpperCase() + formType.slice(1)} form submitted successfully!`}
                             isLoading={isLoading}
                             isSubmitting={isSubmitting}
-                            debug={showDebugger}
                             theme={darkMode ? 'dark' : 'light'}
                         >
                             <DynamicHeader
@@ -2036,9 +2027,6 @@ const ${formType}Sections = [
                                 cancelButtonLabel="Cancel"
                                 onCancel={() => alert('Form cancelled')}
                             />
-
-                            {showThemeToggle && <ThemeToggle />}
-                            {showDebugger && <DynamicDebugger />}
                         </DynamicForm>
                     </div>
 

@@ -13,8 +13,6 @@ import {
     InfoCircledIcon,
     ChevronDownIcon,
     MagicWandIcon,
-    SunIcon,
-    MoonIcon,
     RocketIcon,
 } from '@radix-ui/react-icons';
 import { cn } from '../../../utils/cn';
@@ -158,6 +156,7 @@ const DynamicFormVariants = cva("min-h-screen transition-all duration-500", {
             forest: "bg-gradient-to-br from-green-50 via-teal-50 to-lime-50 dark:from-green-950 dark:via-teal-950 dark:to-lime-950 text-foreground",
             galaxy: "bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white",
             candy: "bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-300 dark:from-pink-700 dark:via-purple-700 dark:to-indigo-700",
+            dark: "bg-gray-950 text-white",
         },
     },
     defaultVariants: {
@@ -374,7 +373,6 @@ const DynamicForm: React.FC<DynamicFormProps> & {
     Section: typeof DynamicSection;
     Notification: typeof DynamicNotification;
     Debugger: typeof DynamicDebugger;
-    ThemeToggle: typeof ThemeToggle;
 } = ({
     children,
     fields,
@@ -736,8 +734,6 @@ const DynamicForm: React.FC<DynamicFormProps> & {
                         </motion.div>
                     </main>
 
-                    {/* Theme Toggle Button */}
-                    <ThemeToggle />
                 </div>
             </DynamicFormContext.Provider>
         );
@@ -1861,28 +1857,6 @@ export interface ThemeToggleProps {
     className?: string;
 }
 
-const ThemeToggle: React.FC<ThemeToggleProps> = ({ className }) => {
-    const { theme } = useDynamicForm();
-
-    return (
-        <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            className={cn(
-                "fixed bottom-4 right-4 p-3 rounded-full bg-primary/10 hover:bg-primary/20 backdrop-blur-sm border border-primary/20 transition-all duration-300 z-50",
-                className
-            )}
-            aria-label="Toggle theme"
-        >
-            {theme === 'light' ? (
-                <MoonIcon className="w-5 h-5 text-primary" />
-            ) : (
-                <SunIcon className="w-5 h-5 text-primary" />
-            )}
-        </motion.button>
-    );
-};
-
 /* ============================================
    ASSIGN COMPOUND COMPONENTS
 ============================================ */
@@ -1894,7 +1868,6 @@ DynamicForm.Section = DynamicSection;
 DynamicForm.Navigation = DynamicNavigation;
 DynamicForm.Notification = DynamicNotification;
 DynamicForm.Debugger = DynamicDebugger;
-DynamicForm.ThemeToggle = ThemeToggle;
 
 export {
     DynamicForm,
@@ -1905,5 +1878,4 @@ export {
     DynamicNavigation,
     DynamicNotification,
     DynamicDebugger,
-    ThemeToggle,
 };
