@@ -243,17 +243,56 @@ function getShortcutColors(id: string): { tile: string; iconWrap: string; keyHin
   );
 }
 
-function reorderById(items: ShortcutItem[], activeId: string, targetId: string): ShortcutItem[] {
-  const sourceIndex = items.findIndex((item) => item.id === activeId);
-  const targetIndex = items.findIndex((item) => item.id === targetId);
-  if (sourceIndex < 0 || targetIndex < 0 || sourceIndex === targetIndex) {
-    return items;
-  }
-
-  const next = [...items];
+/**
+ * Reorders an array of ids by moving one id before another.
+ * @param ids - current id order
+ * @param activeId - dragged id
+ * @param targetId - drop target id
+ * @returns reordered id list
+ */
+function reorderIds(ids: string[], activeId: string, targetId: string): string[] {
+  const sourceIndex = ids.indexOf(activeId);
+  const targetIndex = ids.indexOf(targetId);
+  if (sourceIndex < 0 || targetIndex < 0 || sourceIndex === targetIndex) return ids;
+  const next = [...ids];
   const [moved] = next.splice(sourceIndex, 1);
   next.splice(targetIndex, 0, moved);
   return next;
+}
+
+/**
+ * Creates a normalized order list from a stored order and the current shortcuts list.
+ * @param storedOrder - stored id order (possibly stale)
+ * @param shortcuts - current shortcuts list
+ * @returns normalized order list
+ */
+function normalizeOrderIds(storedOrder: string[], shortcuts: ShortcutItem[]): string[] {
+  const validIds = new Set(shortcuts.map((s) => s.id));
+  const filtered = storedOrder.filter((id) => validIds.has(id));
+  const missing = shortcuts.map((s) => s.id).filter((id) => !filtered.includes(id));
+  return [...filtered, ...missing];
+}
+
+/**
+ * Reads an order id list from localStorage, falling back to the given shortcuts list.
+ * @param storageKey - localStorage key
+ * @param shortcuts - current shortcuts list
+ * @returns initial order ids
+ */
+function loadInitialOrderIds(storageKey: string, shortcuts: ShortcutItem[]): string[] {
+  if (typeof window === "undefined") {
+    return shortcuts.map((s) => s.id);
+  }
+
+  try {
+    const raw = window.localStorage.getItem(storageKey);
+    if (!raw) return shortcuts.map((s) => s.id);
+    const parsed = JSON.parse(raw) as string[];
+    if (!Array.isArray(parsed)) return shortcuts.map((s) => s.id);
+    return normalizeOrderIds(parsed, shortcuts);
+  } catch {
+    return shortcuts.map((s) => s.id);
+  }
 }
 
 /**
@@ -264,8 +303,22 @@ function useDashboardShortcutsState({
   actions,
   storageKey = "docs.dashboard-shortcuts-page.order",
 }: UseDashboardShortcutsStateOptions): UseDashboardShortcutsStateResult {
-  const [orderedShortcuts, setOrderedShortcuts] = useState<ShortcutItem[]>(shortcuts);
+  const [orderIds, setOrderIds] = useState<string[]>(() =>
+    loadInitialOrderIds(storageKey, shortcuts),
+  );
   const [draggingId, setDraggingId] = useState<string | null>(null);
+
+  const normalizedOrderIds = useMemo(
+    () => normalizeOrderIds(orderIds, shortcuts),
+    [orderIds, shortcuts],
+  );
+
+  const orderedShortcuts = useMemo(() => {
+    const byId = new Map(shortcuts.map((s) => [s.id, s]));
+    return normalizedOrderIds
+      .map((id) => byId.get(id))
+      .filter((item): item is ShortcutItem => item !== undefined);
+  }, [normalizedOrderIds, shortcuts]);
 
   const actionByShortcutKey = useMemo(() => {
     const map = new Map<string, DashboardAction>();
@@ -284,36 +337,8 @@ function useDashboardShortcutsState({
   }, [orderedShortcuts]);
 
   useEffect(() => {
-    setOrderedShortcuts((prev) => {
-      const byId = new Map(shortcuts.map((item) => [item.id, item]));
-      const filtered = prev.filter((item) => byId.has(item.id));
-      const appended = shortcuts.filter((item) => !filtered.some((existing) => existing.id === item.id));
-      return [...filtered, ...appended];
-    });
-  }, [shortcuts]);
-
-  useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(storageKey);
-      if (!raw) {
-        return;
-      }
-      const parsed = JSON.parse(raw) as string[];
-      if (!Array.isArray(parsed)) {
-        return;
-      }
-      const byId = new Map(shortcuts.map((item) => [item.id, item]));
-      const fromStorage = parsed.map((id) => byId.get(id)).filter((item): item is ShortcutItem => item !== undefined);
-      const remaining = shortcuts.filter((item) => !parsed.includes(item.id));
-      setOrderedShortcuts([...fromStorage, ...remaining]);
-    } catch {
-      setOrderedShortcuts(shortcuts);
-    }
-  }, [shortcuts, storageKey]);
-
-  useEffect(() => {
-    window.localStorage.setItem(storageKey, JSON.stringify(orderedShortcuts.map((item) => item.id)));
-  }, [orderedShortcuts, storageKey]);
+    window.localStorage.setItem(storageKey, JSON.stringify(normalizedOrderIds));
+  }, [normalizedOrderIds, storageKey]);
 
   const handleKeyboardShortcut = useCallback(
     (event: KeyboardEvent) => {
@@ -346,14 +371,14 @@ function useDashboardShortcutsState({
   }, [handleKeyboardShortcut]);
 
   const handleDrop = useCallback((targetId: string) => {
-    setOrderedShortcuts((prev) => {
-      if (!draggingId) {
-        return prev;
-      }
-      return reorderById(prev, draggingId, targetId);
+    if (!draggingId) return;
+    setOrderIds((prev) => {
+      const normalized = normalizeOrderIds(prev, shortcuts);
+      const reordered = reorderIds(normalized, draggingId, targetId);
+      return normalizeOrderIds(reordered, shortcuts);
     });
     setDraggingId(null);
-  }, [draggingId]);
+  }, [draggingId, shortcuts]);
 
   const handleDragStart = useCallback((id: string) => {
     setDraggingId(id);
