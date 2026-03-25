@@ -34,7 +34,7 @@ The CTABanner component is a flexible, full-width call-to-action section designe
 <Tabs>
   <TabItem value="cli" label="CLI" default>
     ```bash
-    ignix add component calltoaction
+    ignix add component callToAction
     ```
   </TabItem>
   <TabItem value="manual" label="MANUAL">
@@ -1718,7 +1718,7 @@ export const CTABannerContactForm: React.FC<{
                             </div>
 
                             {/* Subject Field - Full width */}
-                            <div className={layout === 'compact' ? 'md:col-span-2' : ''}>
+                            <div className="col-span-1 md:col-span-2">
                                 <label htmlFor="contact-subject" className="block mb-2">
                                     <Typography
                                         variant="small"
