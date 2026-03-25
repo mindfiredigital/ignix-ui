@@ -332,12 +332,12 @@ export const CTABannerImage: React.FC<{
     className?: string;
     variant?: 'light' | 'dark' | 'default';
 }> = ({ src, alt = "CTA Visual", className, variant }) => {
-    const { layout, theme, isVisible, animationDelay, imageVariant: contextVariant } = useCTA();
+    const { layout, theme, isVisible, animationDelay } = useCTA();
 
     if (layout !== 'split') return null;
 
     const resolvedVariant =
-        variant || contextVariant || (theme === 'dark' ? 'dark' : 'light');
+        variant || (theme === 'dark' ? 'dark' : 'light');
 
     return (
         <motion.div
