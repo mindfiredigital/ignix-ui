@@ -8,8 +8,6 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import {
     StatsGridSimpleDemo,
-    StatsGridCustomizableDemo,
-    VibrantExamplesDemo,
 } from '@site/src/components/Demo/StatsGridDemo';
 import { StatsGrid, StatsGridTitle, StatsGridDescription, StatsGridCard, StatsGridContainer, StatValue, StatLabel, StatSubtext, StatIcon } from '@site/src/components/UI/stats-grid';
 import { Users, DollarSign, Download, Clock, Star, Shield, Globe, Award, Rocket, Heart, Activity, BarChart3, ShoppingCart, Mail, TrendingUp, Zap, CheckCircle, Target, Crown, HeartHandshake, CreditCard, CircleDollarSign, Package, Eye, Smile, Circle, Database, Server, Network, Timer, Banknote, Calendar, Calculator, TrendingDown, PieChart, Percent } from 'lucide-react';
@@ -18,12 +16,6 @@ The StatsGrid component provides a flexible and customizable way to display stat
 
 ### Simple Demo
 <StatsGridSimpleDemo />
-
-### Customizable Demo
-{/* <StatsGridCustomizableDemo /> */}
-
-### Advanced Examples
-<VibrantExamplesDemo />
 
 
 ### Installation
@@ -1158,6 +1150,104 @@ export default StatsGrid;
     ```
     </TabItem>
 </Tabs>
+
+
+## Basic usage exmaple 
+```tsc
+import React from 'react';
+import { StatsGrid, StatsGridTitle, StatsGridDescription, StatsGridCard, StatsGridContainer } from '@ignix-ui/stats-grid';
+import {  } from 'lucide-react';
+
+const StatsGridExample = () => {
+  const stats = [
+    {
+      id: '1',
+      value: 10000000,
+      label: "Active Users",
+        subtext: "Growing 20% month over month",
+        icon: undefined,
+      format: "compact",
+      accent: "blue",
+    },
+    {
+      id: '2',
+      value: 99.9,
+      label: "Uptime SLA",
+        subtext: "Enterprise-grade reliability",
+        icon: undefined,
+      format: "percentage",
+        suffix: "%",
+      accent: "purple",
+    },
+    {
+      id: '3',
+      value: 2500000000,
+      label: "Annual Revenue",
+        subtext: "Record growth this quarter",
+        icon: undefined,
+      format: "currency",
+      accent: "blue",
+    },
+    {
+      id: '4',
+      value: 50000000,
+      label: "Total Downloads",
+        subtext: "Across all platforms",
+        icon: undefined,
+      format: "compact",
+        suffix: "+",
+      accent: "purple",
+    },
+    {
+      id: '5',
+      value: 4.9,
+      label: "App Store Rating",
+        subtext: "Based on 50K+ reviews",
+        icon: undefined,
+      format: "raw",
+        decimals: 1,
+      accent: "blue",
+    },
+    {
+      id: '6',
+      value: 98.5,
+      label: "Customer Satisfaction",
+        subtext: "NPS Score",
+        icon: undefined,
+      format: "percentage",
+        suffix: "%",
+      accent: "purple",
+    }
+  ];
+
+  return (
+    <StatsGrid
+      variant="dark"
+      columns={4}
+      contentAlign="center"
+      animated={true}
+      gap="md"
+      padding="lg"
+    >
+      <StatsGridTitle>Simple Stats Grid Demo</StatsGridTitle>
+      <StatsGridDescription>
+        Basic customization with light/dark themes and layout options
+      </StatsGridDescription>
+      <StatsGridContainer>
+        {stats.map((stat, index) => (
+          <StatsGridCard
+            key={stat.id}
+            stat={stat}
+            index={index}
+          />
+        ))}
+      </StatsGridContainer>
+    </StatsGrid>
+  );
+};
+
+export default StatsGridExample;
+```
 
 ## Props
 
