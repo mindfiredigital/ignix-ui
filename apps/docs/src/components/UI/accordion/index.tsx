@@ -59,7 +59,7 @@ const animations = {
       transition: { type: 'spring', stiffness: 200 },
     },
   },
-};
+} as const;
 
 type AnimationVariants = keyof typeof animations;
 

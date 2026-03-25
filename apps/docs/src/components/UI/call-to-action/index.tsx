@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, type Transition } from 'framer-motion';
 import { cva, type VariantProps } from 'class-variance-authority';
 import {
     ArrowRight,
@@ -392,12 +392,12 @@ export const CTABannerContent: React.FC<{
         slide: {
             initial: { opacity: 0, y: 40 },
             animate: { opacity: 1, y: 0 },
-            transition: { duration: 0.8, delay: animationDelay, ease: "easeOut" }
+            transition: { duration: 0.8, delay: animationDelay, ease: "easeOut" } as Transition
         },
         scale: {
             initial: { opacity: 0, scale: 0.95 },
             animate: { opacity: 1, scale: 1 },
-            transition: { duration: 0.7, delay: animationDelay, ease: "backOut" }
+            transition: { duration: 0.8, delay: animationDelay, ease: "easeOut" } as Transition
         }
     }[animationType];
 
