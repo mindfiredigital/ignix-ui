@@ -16,7 +16,7 @@ The Stepper component helps visualize progress through a multi-step process. It'
 <Tabs>
   <TabItem value="cli" label="CLI" default>
     ```bash
-    ignix add component steppers
+    ignix add component stepper
     ```
   </TabItem>
   <TabItem value="manual" label="manual" className="max-h-[500px] overflow-y-auto">
@@ -100,7 +100,7 @@ export const Stepper = ({ steps, activeStep, className }: StepperProps) => {
 Import the component:
 
 ```tsx
-import { Stepper } from '@ignix-ui/steppers';
+import { Stepper } from '@ignix-ui/stepper';
 ```
 
 ### Basic Usage
@@ -145,6 +145,8 @@ function BasicStepper() {
   </TabItem>
   <TabItem value="basic-code" label="Code">
     ```tsx
+    import { Stepper } from '@ignix-ui/stepper';
+
     <Stepper
       steps={[
         { label: 'Step 1' },
@@ -177,6 +179,8 @@ function BasicStepper() {
   </TabItem>
   <TabItem value="descriptions-code" label="Code">
     ```tsx
+    import { Stepper } from '@ignix-ui/stepper';
+
     <Stepper
       steps={[
         { label: 'Account', description: 'Create account' },
@@ -202,6 +206,9 @@ function BasicStepper() {
   </TabItem>
   <TabItem value="interactive-code" label="Code">
     ```tsx
+    import { Stepper } from '@ignix-ui/stepper';
+    import { useState } from 'react';
+
     function InteractiveStepper() {
       const [step, setStep] = useState(0);
       
@@ -238,14 +245,6 @@ function BasicStepper() {
   </TabItem>
 </Tabs>
 
-## Props
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `steps` | `Array<{ label: string; description?: string; }>` | `[]` | Array of step objects with labels and optional descriptions |
-| `activeStep` | `number` | `0` | Current active step (0-based index) |
-| `className` | `string` | - | Additional CSS classes |
-
 ## Customization
 
 ### Custom Styling
@@ -253,6 +252,8 @@ function BasicStepper() {
 You can customize the appearance using Tailwind CSS classes:
 
 ```tsx
+import { Stepper } from '@ignix-ui/stepper';
+
 <Stepper
   className="max-w-2xl mx-auto"
   steps={[
@@ -267,6 +268,9 @@ You can customize the appearance using Tailwind CSS classes:
 ### Form Integration Example
 
 ```tsx
+import { useState } from 'react';
+import { Stepper } from '@ignix-ui/stepper';
+
 function StepperForm() {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
@@ -304,3 +308,11 @@ function StepperForm() {
   );
 }
 ```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `steps` | `Array<{ label: string; description?: string; }>` | `[]` | Array of step objects with labels and optional descriptions |
+| `activeStep` | `number` | `0` | Current active step (0-based index) |
+| `className` | `string` | - | Additional CSS classes |
