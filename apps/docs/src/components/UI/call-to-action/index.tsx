@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, Transition } from 'framer-motion';
+import { motion, type Transition } from 'framer-motion';
 import { cva, type VariantProps } from 'class-variance-authority';
 import {
     ArrowRight,
