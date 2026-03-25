@@ -6,7 +6,6 @@ import * as SwitchPrimitives from '@radix-ui/react-switch';
 import { motion, type Variants } from 'framer-motion';
 import { cn } from '../../../utils/cn';
 
-// Enhanced animations with premium effects
 const animations = {
   default: {
     checked: { 
@@ -99,7 +98,7 @@ const animations = {
       transition: { 
         duration: 0.4, 
         ease: [0.4, 0, 0.2, 1],
-        type: 'tween' // Using tween for opacity/filter animations
+        type: 'tween' 
       },
     },
     unchecked: {
@@ -110,7 +109,7 @@ const animations = {
       transition: { 
         duration: 0.4, 
         ease: [0.4, 0, 0.2, 1],
-        type: 'tween' // Using tween for opacity/filter animations
+        type: 'tween'
       },
     },
   },
@@ -232,7 +231,6 @@ const animations = {
   },
 } as const;
 
-// Enhanced variants with premium styling
 const variants = {
   default: {
     root: cn(
@@ -457,7 +455,6 @@ const Switch = React.forwardRef<React.ComponentRef<typeof SwitchPrimitives.Root>
 
     return (
       <div className="relative inline-block">
-        {/* Enhanced glow effect */}
         {glowEffect && isChecked && (
           <motion.div
             className="absolute inset-0 rounded-full opacity-30"
@@ -495,7 +492,6 @@ const Switch = React.forwardRef<React.ComponentRef<typeof SwitchPrimitives.Root>
           onMouseLeave={() => setIsHovered(false)}
           ref={ref}
         >
-          {/* Track shimmer effect */}
           <motion.div
             className="absolute inset-0 rounded-[inherit] bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 pointer-events-none"
             transition={{
@@ -528,7 +524,6 @@ const Switch = React.forwardRef<React.ComponentRef<typeof SwitchPrimitives.Root>
                 transition: { duration: 0.1 }
               }}
             >
-              {/* Thumb shimmer effect */}
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 pointer-events-none rounded-[inherit]"
                 animate={{
