@@ -6,7 +6,7 @@
 
 import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import {
@@ -239,16 +239,18 @@ describe("DashboardShortcutsPage (registry template)", () => {
     const target = screen.getByRole("button", { name: "New project shortcut" });
 
     fireEvent.dragStart(source);
+    // Flush state update from dragStart before drop reads it.
+    await act(async () => undefined);
     fireEvent.dragOver(target);
-    // Let state update after dragStart before dropping.
-    await Promise.resolve();
     fireEvent.drop(target);
     fireEvent.dragEnd(source);
 
     // localStorage should be written with a JSON array of ids.
-    expect(setItemSpy).toHaveBeenCalled();
-    const calls = setItemSpy.mock.calls.filter((call) => call[0] === storageKey);
-    expect(calls.length).toBeGreaterThan(0);
+    await waitFor(() => {
+      expect(setItemSpy).toHaveBeenCalled();
+      const calls = setItemSpy.mock.calls.filter((call) => call[0] === storageKey);
+      expect(calls.length).toBeGreaterThan(0);
+    });
 
     // Dropping Preferences onto New project moves it before the target (becomes first).
     const labels = getShortcutButtonsInOrder();

@@ -100,13 +100,7 @@ export const Default: Story = {
  * Mobile viewport story to validate click targets and layout density.
  */
 export const MobileResponsive: Story = {
-  render: () => (
-    <DashboardShortcutsPage
-      actions={ACTIONS}
-      shortcuts={SHORTCUTS}
-      storageKey="storybook.dashboard-shortcuts-page.mobile"
-    />
-  ),
+  render: () => <InteractiveWrapper />,
   name: "Mobile responsive",
   parameters: {
     viewport: {

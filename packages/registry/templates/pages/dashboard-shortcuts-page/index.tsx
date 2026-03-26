@@ -123,6 +123,10 @@ export interface DashboardShortcutsGridSectionProps {
   onDrop: (targetId: string) => void;
   /** Drag end callback. */
   onDragEnd: () => void;
+  /** Move a shortcut up by one position. */
+  onMoveUp?: (id: string) => void;
+  /** Move a shortcut down by one position. */
+  onMoveDown?: (id: string) => void;
   /** Optional icon resolver for shortcut tiles. */
   resolveIcon?: (id: string) => IconComponent;
 }
@@ -331,6 +335,25 @@ function reorderIds(ids: string[], activeId: string, targetId: string): string[]
 }
 
 /**
+ * Moves an id up/down by a delta within the list.
+ * @param ids - current order
+ * @param id - id to move
+ * @param delta - -1 for up, +1 for down
+ * @returns reordered ids
+ */
+function moveId(ids: string[], id: string, delta: -1 | 1): string[] {
+  const index = ids.indexOf(id);
+  if (index < 0) return ids;
+  const nextIndex = index + delta;
+  if (nextIndex < 0 || nextIndex >= ids.length) return ids;
+  const next = [...ids];
+  const tmp = next[index];
+  next[index] = next[nextIndex];
+  next[nextIndex] = tmp;
+  return next;
+}
+
+/**
  * Creates a normalized order list from a stored order and the current shortcuts list.
  * - removes ids that no longer exist
  * - appends any new shortcut ids that are missing
@@ -448,6 +471,190 @@ function DashboardShortcutsActionsSection({
 }
 
 /**
+ * Options for the shared dashboard shortcuts state hook.
+ */
+export interface UseDashboardShortcutsStateOptions {
+  /** Action buttons used for keyboard shortcut mapping. */
+  actions: DashboardAction[];
+  /** Source shortcuts list used for ordering and rendering. */
+  shortcuts: ShortcutItem[];
+  /** localStorage key for persisted order. */
+  storageKey: string;
+  /** Enable global keyboard shortcuts. */
+  enableKeyboardShortcuts?: boolean;
+}
+
+/**
+ * Result for useDashboardShortcutsState.
+ */
+export interface UseDashboardShortcutsStateResult {
+  /** Ordered shortcuts for rendering. */
+  orderedShortcuts: ShortcutItem[];
+  /** Current dragging id. */
+  draggingId: string | null;
+  /** Starts drag interaction. */
+  handleDragStart: (id: string) => void;
+  /** Drops on a target id to reorder. */
+  handleDrop: (targetId: string) => void;
+  /** Ends drag interaction. */
+  handleDragEnd: () => void;
+  /** Moves a shortcut up. */
+  moveUp: (id: string) => void;
+  /** Moves a shortcut down. */
+  moveDown: (id: string) => void;
+}
+
+/**
+ * Shared state hook for composable usage.
+ * Handles:
+ * - persisted ordering with localStorage (guarded)
+ * - drag/drop reorder
+ * - accessible move up/down reorder
+ * - global keyboard shortcuts (optional)
+ */
+function useDashboardShortcutsState({
+  actions,
+  shortcuts,
+  storageKey,
+  enableKeyboardShortcuts = true,
+}: UseDashboardShortcutsStateOptions): UseDashboardShortcutsStateResult {
+  // SSR-safe: start with source order so server/client initial render match.
+  const [orderIds, setOrderIds] = useState<string[]>(() => shortcuts.map((s) => s.id));
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const didHydrateRef = React.useRef(false);
+
+  const normalizedOrderIds = useMemo(
+    () => normalizeOrderIds(orderIds, shortcuts),
+    [orderIds, shortcuts],
+  );
+
+  const orderedShortcuts = useMemo(() => {
+    const byId = new Map(shortcuts.map((s) => [s.id, s]));
+    return normalizedOrderIds
+      .map((id) => byId.get(id))
+      .filter((item): item is ShortcutItem => item !== undefined);
+  }, [normalizedOrderIds, shortcuts]);
+
+  const actionByShortcutKey = useMemo(() => {
+    const map = new Map<string, DashboardAction>();
+    actions.forEach((action) => map.set(action.shortcutHint.toLowerCase(), action));
+    return map;
+  }, [actions]);
+
+  const shortcutByShortcutKey = useMemo(() => {
+    const map = new Map<string, ShortcutItem>();
+    orderedShortcuts.forEach((shortcut) => map.set(shortcut.shortcutHint.toLowerCase(), shortcut));
+    return map;
+  }, [orderedShortcuts]);
+
+  // Hydrate from storage post-mount and when storageKey changes.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const initial = loadInitialOrderIds(storageKey, shortcuts);
+    setOrderIds(initial);
+    didHydrateRef.current = true;
+  }, [storageKey, shortcuts]);
+
+  // Persist order to storage (guarded) after hydration.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!didHydrateRef.current) return;
+    try {
+      window.localStorage.setItem(storageKey, JSON.stringify(normalizedOrderIds));
+    } catch {
+      // ignore storage failures (quota/private mode)
+    }
+  }, [normalizedOrderIds, storageKey]);
+
+  const handleKeyboardShortcut = useCallback(
+    (event: KeyboardEvent) => {
+      if (!enableKeyboardShortcuts) return;
+      if (event.repeat) return;
+      if (event.metaKey || event.ctrlKey || event.altKey) return;
+
+      const target = event.target;
+      if (target instanceof HTMLElement) {
+        const tag = target.tagName.toLowerCase();
+        if (tag === "input" || tag === "textarea" || target.isContentEditable) return;
+      }
+
+      const key = event.key.toLowerCase();
+      const actionMatch = actionByShortcutKey.get(key);
+      if (actionMatch) {
+        actionMatch.onClick?.();
+        return;
+      }
+
+      const shortcutMatch = shortcutByShortcutKey.get(key);
+      shortcutMatch?.onTrigger?.();
+    },
+    [actionByShortcutKey, enableKeyboardShortcuts, shortcutByShortcutKey],
+  );
+
+  useEffect(() => {
+    if (!enableKeyboardShortcuts) return;
+    window.addEventListener("keydown", handleKeyboardShortcut);
+    return () => window.removeEventListener("keydown", handleKeyboardShortcut);
+  }, [enableKeyboardShortcuts, handleKeyboardShortcut]);
+
+  const handleDrop = useCallback(
+    (targetId: string) => {
+      if (!draggingId) return;
+      setOrderIds((prev) => {
+        const normalized = normalizeOrderIds(prev, shortcuts);
+        const reordered = reorderIds(normalized, draggingId, targetId);
+        return normalizeOrderIds(reordered, shortcuts);
+      });
+      setDraggingId(null);
+    },
+    [draggingId, shortcuts],
+  );
+
+  const handleDragStart = useCallback((id: string) => setDraggingId(id), []);
+  const handleDragEnd = useCallback(() => setDraggingId(null), []);
+
+  const moveUp = useCallback(
+    (id: string) => {
+      setOrderIds((prev) => {
+        const normalized = normalizeOrderIds(prev, shortcuts);
+        return normalizeOrderIds(moveId(normalized, id, -1), shortcuts);
+      });
+    },
+    [shortcuts],
+  );
+
+  const moveDown = useCallback(
+    (id: string) => {
+      setOrderIds((prev) => {
+        const normalized = normalizeOrderIds(prev, shortcuts);
+        return normalizeOrderIds(moveId(normalized, id, 1), shortcuts);
+      });
+    },
+    [shortcuts],
+  );
+
+  return {
+    orderedShortcuts,
+    draggingId,
+    handleDragStart,
+    handleDrop,
+    handleDragEnd,
+    moveUp,
+    moveDown,
+  };
+}
+
+/**
+ * DashboardShortcutsPage component type with the state hook attached.
+ * Allows keeping a single file export surface that remains Fast Refresh friendly.
+ */
+export type DashboardShortcutsPageComponent = ((
+  props: DashboardShortcutsPageProps
+) => React.JSX.Element) & {
+  useDashboardShortcutsState: (options: UseDashboardShortcutsStateOptions) => UseDashboardShortcutsStateResult;
+};
+
+/**
  * Default section rendering draggable shortcuts grid.
  */
 function DashboardShortcutsGridSection({
@@ -456,6 +663,8 @@ function DashboardShortcutsGridSection({
   onDragStart,
   onDrop,
   onDragEnd,
+  onMoveUp,
+  onMoveDown,
   resolveIcon = getShortcutIcon,
 }: DashboardShortcutsGridSectionProps) {
   return (
@@ -475,15 +684,8 @@ function DashboardShortcutsGridSection({
               const colors = getShortcutColors(shortcut.id);
 
               return (
-                <button
+                <div
                   key={shortcut.id}
-                  type="button"
-                  draggable
-                  onDragStart={() => onDragStart(shortcut.id)}
-                  onDragOver={(event) => event.preventDefault()}
-                  onDrop={() => onDrop(shortcut.id)}
-                  onDragEnd={onDragEnd}
-                  onClick={shortcut.onTrigger}
                   className={cn(
                     "rounded-xl border p-4 text-left shadow-sm transition-all",
                     "hover:shadow-md",
@@ -491,21 +693,72 @@ function DashboardShortcutsGridSection({
                     colors.tile,
                     isDragging && "scale-[0.98] opacity-70",
                   )}
-                  aria-label={`${shortcut.label} shortcut`}
                 >
-                  <div className={cn("mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg", colors.iconWrap)}>
-                    <Icon className="h-5 w-5" aria-hidden />
-                  </div>
-                  <div className="space-y-1">
-                    <p className="font-semibold text-foreground">{shortcut.label}</p>
-                    {shortcut.description && (
-                      <p className="text-sm text-muted-foreground">{shortcut.description}</p>
+                  <div className="flex items-start justify-between gap-3">
+                    <div
+                      className={cn(
+                        "inline-flex h-10 w-10 items-center justify-center rounded-lg",
+                        colors.iconWrap,
+                      )}
+                    >
+                      <Icon className="h-5 w-5" aria-hidden />
+                    </div>
+
+                    {(onMoveUp || onMoveDown) && (
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          className={cn(
+                            "rounded-md border border-border/60 bg-background/60 px-2 py-1 text-xs text-foreground",
+                            "hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                          )}
+                          onClick={() => onMoveUp?.(shortcut.id)}
+                          aria-label={`Move ${shortcut.label} up`}
+                        >
+                          Up
+                        </button>
+                        <button
+                          type="button"
+                          className={cn(
+                            "rounded-md border border-border/60 bg-background/60 px-2 py-1 text-xs text-foreground",
+                            "hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                          )}
+                          onClick={() => onMoveDown?.(shortcut.id)}
+                          aria-label={`Move ${shortcut.label} down`}
+                        >
+                          Down
+                        </button>
+                      </div>
                     )}
                   </div>
-                  <div className={cn("mt-4 inline-flex items-center rounded-md border px-2 py-1 text-xs font-medium", colors.keyHint)}>
-                    Key: {shortcut.shortcutHint}
-                  </div>
-                </button>
+
+                  <button
+                    type="button"
+                    draggable
+                    onDragStart={() => onDragStart(shortcut.id)}
+                    onDragOver={(event) => event.preventDefault()}
+                    onDrop={() => onDrop(shortcut.id)}
+                    onDragEnd={onDragEnd}
+                    onClick={shortcut.onTrigger}
+                    className="mt-3 block w-full text-left"
+                    aria-label={`${shortcut.label} shortcut`}
+                  >
+                    <div className="space-y-1">
+                      <p className="font-semibold text-foreground">{shortcut.label}</p>
+                      {shortcut.description && (
+                        <p className="text-sm text-muted-foreground">{shortcut.description}</p>
+                      )}
+                    </div>
+                    <div
+                      className={cn(
+                        "mt-4 inline-flex items-center rounded-md border px-2 py-1 text-xs font-medium",
+                        colors.keyHint,
+                      )}
+                    >
+                      Key: {shortcut.shortcutHint}
+                    </div>
+                  </button>
+                </div>
               );
             })}
           </div>
@@ -532,7 +785,7 @@ function DashboardShortcutsFooter({
  * Dashboard page for shortcuts and frequent actions.
  * Supports keyboard activation and persistent drag-drop customization.
  */
-function DashboardShortcutsPage({
+const DashboardShortcutsPage = function DashboardShortcutsPage({
   actions = DEFAULT_ACTIONS,
   shortcuts = DEFAULT_SHORTCUTS,
   storageKey = "storybook.dashboard-shortcuts-page.order",
@@ -543,96 +796,19 @@ function DashboardShortcutsPage({
   footer,
   footerText,
 }: DashboardShortcutsPageProps) {
-  const [orderIds, setOrderIds] = useState<string[]>(() =>
-    loadInitialOrderIds(storageKey, shortcuts),
-  );
-  const [draggingId, setDraggingId] = useState<string | null>(null);
-
-  const normalizedOrderIds = useMemo(
-    () => normalizeOrderIds(orderIds, shortcuts),
-    [orderIds, shortcuts],
-  );
-
-  const orderedShortcuts = useMemo(() => {
-    const byId = new Map(shortcuts.map((s) => [s.id, s]));
-    return normalizedOrderIds
-      .map((id) => byId.get(id))
-      .filter((item): item is ShortcutItem => item !== undefined);
-  }, [normalizedOrderIds, shortcuts]);
-
-  const actionByShortcutKey = useMemo(() => {
-    const map = new Map<string, DashboardAction>();
-    actions.forEach((action) => {
-      map.set(action.shortcutHint.toLowerCase(), action);
-    });
-    return map;
-  }, [actions]);
-
-  const shortcutByShortcutKey = useMemo(() => {
-    const map = new Map<string, ShortcutItem>();
-    orderedShortcuts.forEach((shortcut) => {
-      map.set(shortcut.shortcutHint.toLowerCase(), shortcut);
-    });
-    return map;
-  }, [orderedShortcuts]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    window.localStorage.setItem(storageKey, JSON.stringify(normalizedOrderIds));
-  }, [normalizedOrderIds, storageKey]);
-
-  const handleKeyboardShortcut = useCallback(
-    (event: KeyboardEvent) => {
-      const target = event.target;
-      if (target instanceof HTMLElement) {
-        const tag = target.tagName.toLowerCase();
-        if (tag === "input" || tag === "textarea" || target.isContentEditable) {
-          return;
-        }
-      }
-
-      const key = event.key.toLowerCase();
-      const actionMatch = actionByShortcutKey.get(key);
-      if (actionMatch) {
-        actionMatch.onClick?.();
-        return;
-      }
-
-      const shortcutMatch = shortcutByShortcutKey.get(key);
-      if (shortcutMatch) {
-        shortcutMatch.onTrigger?.();
-      }
-    },
-    [actionByShortcutKey, shortcutByShortcutKey],
-  );
-
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyboardShortcut);
-    return () => {
-      window.removeEventListener("keydown", handleKeyboardShortcut);
-    };
-  }, [handleKeyboardShortcut]);
-
-  const handleDrop = useCallback((targetId: string) => {
-    if (!draggingId) return;
-    setOrderIds((prev) => {
-      const normalized = normalizeOrderIds(prev, shortcuts);
-      const reordered = reorderIds(normalized, draggingId, targetId);
-      return normalizeOrderIds(reordered, shortcuts);
-    });
-    setDraggingId(null);
-  }, [draggingId, shortcuts]);
-
-  const handleDragStart = useCallback((id: string) => {
-    setDraggingId(id);
-  }, []);
-
-  const handleDragEnd = useCallback(() => {
-    setDraggingId(null);
-  }, []);
+  const {
+    orderedShortcuts,
+    draggingId,
+    handleDragStart,
+    handleDrop,
+    handleDragEnd,
+    moveUp,
+    moveDown,
+  } = useDashboardShortcutsState({
+    actions,
+    shortcuts,
+    storageKey,
+  });
 
   return (
     <DashboardShortcutsLayout className={className}>
@@ -645,12 +821,16 @@ function DashboardShortcutsPage({
           onDragStart={handleDragStart}
           onDrop={handleDrop}
           onDragEnd={handleDragEnd}
+          onMoveUp={moveUp}
+          onMoveDown={moveDown}
         />
       )}
       {footer ?? <DashboardShortcutsFooter text={footerText} />}
     </DashboardShortcutsLayout>
   );
-}
+} as DashboardShortcutsPageComponent;
+
+DashboardShortcutsPage.useDashboardShortcutsState = useDashboardShortcutsState;
 
 
 export default DashboardShortcutsPage;
