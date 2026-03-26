@@ -3,15 +3,6 @@
 This file contains ALL information needed to use Ignix UI with AI assistants.
 READ THIS FIRST before attempting to help users with Ignix UI.
 
-## Quick Start for AI
-1. You have 9 MCP tools available (see mcp.json)
-2. ALWAYS discover before acting
-3. NEVER assume component names
-4. Chain tools automatically based on user intent
-5. Use YES and JSON mode for all operations (--yes --json)
-6. FIRST check if React project exists - if not, use `create_react_project` tool
-
-
 Ignix UI is a CLI-based React component library using a copy-paste ownership model (similar to shadcn/ui).  
 Components are installed directly into the user's project and can be fully customized.
 
@@ -20,67 +11,158 @@ Framework: React 18+
 Styling: Tailwind CSS  
 Language: TypeScript  
 
-## Project Detection & Creation
+## 🎯 Core Tools
 
-### IMPORTANT: Empty Directory Handling
+| Tool | Purpose | Installation Path | Example |
+|------|---------|------------------|---------|
+| `install_component` | UI elements (buttons, cards, inputs) | `src/components/ui/` | `install_component({ components: ["button", "card"] })` |
+| `install_template` | Complete pages (signin, dashboard, landing) | `src/components/templates/` | `install_template({ templates: ["signin", "profile"] })` |
+| `install_theme` | Color themes, dark/light mode | `src/styles/themes/` | `install_theme({ themes: ["dark-forest"] })` |
 
-If the working directory is EMPTY or doesn't contain a React project:
+## 📊 CURRENT STATS (Always Growing)
+- **Components**: Use `list_components` to see current count (growing regularly)
+- **Themes**: Use `list_themes` to see current count (expanding frequently)
+- **Templates**: Use `list_templates` to see current count (increasing over time)
+- **Framework**: React 18+, Tailwind CSS, TypeScript
 
-1. **FIRST**, create a React + TypeScript project:
-   ```javascript
-   await create_react_project({ 
-     projectName: "my-app",  // or derive from user intent
-     cwd: "." 
-   });
-   ```
-2. **THEN**, navigate into the project and initialize Ignix:
-   ```javascript
-   await init_project({ cwd: "./my-app" });
-   ```
-3. **FINALLY**, install components as needed:
-   ```javascript
-   await install_component({ 
-      components: ["button", "navbar"], 
-      cwd: "./my-app" 
-   });
-   ```
+## 🚀 Quick Start (Recommended)
+
+If the directory already has files, it creates a subfolder instead:
+
+```javascript
+
+// In a non-empty directory, creates a subfolder
+const result = await setup_project_with_ignix({ 
+  projectName: "my-app" 
+});
+// projectPath = "/current/directory/my-app"
+
+// Must use the returned projectPath
+await install_component({ 
+  components: ["button", "card"],
+  cwd: result.projectPath  // ← important!
+});
+
+```
+
+
+## 🚀 Empty Directory Workflow (CRITICAL)
+
+When the workspace is EMPTY, you MUST follow this EXACT sequence:
+
+**ALWAYS follow this exact sequence:**
+
+1. **Detect empty directory** - Check if package.json exists
+2. **Create project** - Use `create_react_project` with a descriptive name
+3. **Capture output** - Get the new project path from the tool's response
+4. **Update context** - Set `cwd` to the new project path for ALL subsequent commands
+5. **Initialize** - Run `init_project` in the new project
+6. **Proceed** - Continue with the requested components/templates
+
+
+
+```javascript
+
+// STEP 1: Create and setup the React project with Ignix
+const result = await setup_project_with_ignix({ 
+  projectName: "restaurant-landing"  // Use a descriptive name
+});
+
+// STEP 2: Wait for completion and get the project path
+const projectPath = result.projectPath;
+
+// STEP 3: Verify the project was created
+console.log(`Project created at: ${projectPath}`);
+// Expected output: d:/path/to/restaurant-landing
+
+// STEP 4: Now install components (use the project path!)
+await install_component({ 
+  components: ["navbar", "button", "card"],
+  cwd: projectPath  // ← CRITICAL: Use the returned path!
+});
+
+// STEP 5: Install templates
+await install_template({ 
+  templates: ["hero", "callToAction", "testimonialCard"],
+  cwd: projectPath
+});
+
+// STEP 6: Start the dev server
+// cd into the project and run: npm run dev
+
+```
+
+** Project Structure After Installation **
+```bash
+src/
+├── components/
+│   ├── ui/              # From install_component
+│   │   ├── button/
+│   │   ├── card/
+│   │   └── navbar/
+│   └── templates/       # From install_template
+│       ├── hero/
+│       ├── callToAction/
+│       └── testimonialCard/
+├── lib/
+│   └── utils.ts
+└── App.tsx              # Your page using templates & components
+```
 
 Example flow for empty directory: create_react_project → init_project → install_component → build
 
 ## Initialize
 
+```bash 
 ignix init
+```
 
 Creates:
-ignix.config.js
-
-## Install Component (human)
-
-ignix add component <name>
-
-Example:
-ignix add component button
+- ignix.config.js
+- src/components/ui/ (for components)
+- src/components/templates/ (for templates)
 
 ## Install Component (AI / non-interactive)
 
 The ONLY valid non-interactive machine command is:
 
+# For components
+```bash
 ignix add component <name> --yes --json
+```
+
+# For templates  
+```bash
+ignix add component <name> --yes --json
+```
+
+# For themes
+```bash
+ignix add theme <name> --yes --json
+```
 
 Do NOT use:
 - npx ignix-ui
 - ignix-ui
 - --machine
-- add <name> without "component"
+- Any variation without --yes --json
 
 Example:
-ignix add component button --yes --json
+```bash 
+ignix init --yes --json 
+ignix add component button --yes --json 
+ignix add component signin --yes --json 
+```
 
 Returns:
+```json
 {"success":true,"installed":["button"]}
+```
 
 Failure:
+```json
 {"success":false,"error":"Component not found"}
+```
 
 Exit codes:
 0 = success  
@@ -88,7 +170,9 @@ Exit codes:
 
 ## Install into specific project
 
+```bash
 ignix add component <name> --yes --json --cwd <path>
+```
 
 ## Registry
 
@@ -96,7 +180,8 @@ Machine-readable registry:
 packages/registry/registry.json (published with package)
 
 Contains:
-- component names
+- component names (go to src/components/ui/)
+- template names (go to src/components/templates/)
 - props
 - dependencies
 - file paths
@@ -111,22 +196,12 @@ Never manually create or modify component files.
 
 Always use the MCP tool or CLI in machine mode:
 
-ignix add component <name> --yes --json
+- install_component - for UI elements
+- install_template - for complete pages
+- install_theme - for themes
 
-If installing inside a monorepo, use:
-
-ignix add component <name> --yes --json --cwd <path>
-
-## STRICT COMMAND CONTRACT
-
-The Ignix CLI commands are deterministic.
-
-Correct format:
-
-ignix add component <name> --yes --json
 
 Incorrect formats (do NOT use):
-
 - npx ignix-ui
 - ignix-ui add
 - ignix add <name>
@@ -147,16 +222,30 @@ Do NOT manually edit files.
 ## Common Component Combinations
 
 ### Landing Page Essentials
-For a typical landing page, install these components:
-ignix add component button card navbar hero-section features-grid footer --yes --json
+```javascript 
+await install_template({ 
+  templates: ["hero", "callToAction", "testimonialCard"] 
+});
+await install_component({ 
+  components: ["navbar", "button", "card", "footer"] 
+});
 
-### Form Building
-For forms with validation:
-ignix add component input select checkbox form validation-hook --yes --json
+Authentication Pages
+await install_template({ 
+  templates: ["signin", "signup", "forgotPassword"] 
+});
+await install_component({ 
+  components: ["input", "button", "checkbox"] 
+});
 
-### Dashboard Layout
-For admin dashboards:
-ignix add component sidebar header table card charts dropdown --yes --json
+Dashboard
+await install_template({ 
+  templates: ["sidebarLeftLayout", "fullHeightSidebarLayout"] 
+});
+await install_component({ 
+  components: ["table", "card", "dropdown", "chart"] 
+});
+```
 
 ## Example AI Workflow for Building a Page
 
@@ -168,24 +257,22 @@ When a user asks to build a page using Ignix UI:
    - Update working directory to new project
 
 1. **Initialize Ignix** if not present:
+   ```bash 
    ignix init --yes --json --cwd {projectPath}
+   ```
 
 2. List available components to understand what's available:
+   ```bash 
    ignix list component --json
+    ```
 
 3. Install required components based on page requirements:
+   ```bash 
    ignix add component [components] --yes --json --cwd {projectPath}
+    ```
 
 4. Generate page structure using installed components
    (AI should generate React code importing from @/components/ui)
-
-## Project Structure After Installation
-src/
-├── components/
-│   └── ui/          # Installed components (fully customizable)
-├── lib/
-│   └── utils.ts     # Utility functions (cn, etc.)
-└── app/             # Your page components
 
 
 ## AI Prompt Template
@@ -211,23 +298,26 @@ When building with Ignix UI, follow this pattern:
 ### Common Errors and Solutions
 
 **Error: Component not found**
-- Solution: Run `ignix list component --json` to see available components
+- Solution: Run 
+  ```bash 
+  ignix list component --json
+  ``` 
+  to see available components
+
 - Check spelling - component names are case-sensitive
 
 **Error: Missing dependencies**
-- Solution: Use `install_with_dependencies` tool or install manually:
+- Solution: Use install_with_dependencies tool or install manually:
+  ```bash 
   ignix add component [component-name] --with-deps --yes --json
+  ```
 
 **Error: ignix command not found**
 - Solution: The CLI needs to be installed globally or use npx
 - For AI: Always ensure the project has ignix-cli installed
 
 
-## 📊 CURRENT STATS (Always Growing)
-- **Components**: Use `list_components` to see current count (growing regularly)
-- **Themes**: Use `list_themes` to see current count (expanding frequently)
-- **Templates**: Use `list_templates` to see current count (increasing over time)
-- **Framework**: React 18+, Tailwind CSS, TypeScript
+
 
 
 ## 🤖 FOR ALL AI ASSISTANTS (Cursor, Claude, Copilot, Cline, etc.)
@@ -239,12 +329,13 @@ When building with Ignix UI, follow this pattern:
 
 | User Says | What You Should AUTO-DO |
 |-----------|-------------------------|
-| "Start a new project from scratch" | 1. `create_react_project` with suggested name<br>2. `init_project` in new project<br>3. Then handle the specific request (landing page, dashboard, etc.) |
-| "Create a login page" | 1. Check if initialized → `init_project` if needed<br>2. `search_components` for "auth" or "login"<br>3. `install_component` with SignIn, Input, Button<br>4. Generate code using installed components |
-| "Add a dark mode" | 1. `list_themes` to find dark themes<br>2. `install_theme` with "dark-forest" or similar<br>3. Apply theme configuration |
-| "Build a dashboard" | 1. `search_components` for "dashboard"<br>2. `install_component` Sidebar, Header, Card, Table<br>3. `list_templates` for dashboard layouts<br>4. Generate dashboard structure |
-| "Make a contact form" | 1. `search_components` for "form"<br>2. `install_component` Input, Textarea, Button<br>3. Generate form with validation |
-| "Fix my setup" | 1. `check_compatibility`<br>2. Identify issues<br>3. `init_project` if needed |
+| "Start a new project from scratch" | 1. `create_react_project` with suggested name<br>2. `init_project` in new project<br>3. Then handle the specific request |
+| "Create a login page" | 1. Check if initialized → `init_project` if needed<br>2. `search_templates` for "login" or "signin"<br>3. `install_template` with SignIn<br>4. `install_component` with Input, Button if needed |
+| "Build a dashboard" | 1. `search_templates` for "dashboard" or "layout"<br>2. `install_template` with dashboard layout<br>3. `search_components` for "table", "card", "chart"<br>4. `install_component` with those components |
+| "Add a dark mode" | 1. `list_themes` to find dark themes<br>2. `install_theme` with dark theme |
+| "Make a contact form" | 1. `search_components` for "form", "input"<br>2. `install_component` with Input, Textarea, Button |
+| "Fix my setup" | 1. `check_compatibility`<br>2. `init_project` if needed |
+
 
 ### The Discovery-First Workflow
 
@@ -259,20 +350,51 @@ graph TD
     E1 --> F
     F --> G[Install if available]
     G --> H[Generate code]
+```
 
 ### Tool Chaining Patterns
 
 #### Building a Landing Page
 ```javascript
+
 // AUTO-DETECT from "Create a restaurant landing page"
 await init_project({ cwd: '.' });  // If needed
-const components = await search_components({ query: 'landing' });
-// Returns: Hero, Navbar, Card, Button, Footer
-await install_component({ 
-  components: ['Navbar', 'Hero', 'Card', 'Button', 'Footer'],
+
+// First, install page templates
+const templates = await search_templates({ query: 'landing' });
+await install_template({ 
+  templates: ['hero', 'callToAction', 'testimonialCard'],
   cwd: '.'
 });
+
+// Then install UI components
+const components = await search_components({ query: 'landing' });
+await install_component({ 
+  components: ['navbar', 'button', 'card', 'footer'],
+  cwd: '.'
+});
+
 const themes = await list_themes();
 await install_theme({ themes: ['restaurant-warm'], cwd: '.' });
+
 // Then generate the React page
+
 ```
+
+## Important Note About Install Commands
+
+The CLI uses the SAME command for both components and templates:
+
+```bash
+ignix add component <name> --yes --json
+```
+
+The CLI automatically knows where to install based on the registry:
+- If `<name>` is a component (button, card) → goes to `src/components/ui/`
+- If `<name>` is a template (signin, dashboard) → goes to `src/components/templates/`
+
+So when using MCP tools:
+- Use `install_component` for UI elements (buttons, cards)
+- Use `install_template` for complete pages (signin, dashboard)
+
+Both tools run the same CLI command, but they help the AI understand intent.

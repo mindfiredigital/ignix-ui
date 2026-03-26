@@ -7,18 +7,6 @@ import '@testing-library/jest-dom';
 import { Drawer, type DrawerProps } from '.';
 
 // Mock framer-motion to simplify testing by removing animations
-vi.mock('framer-motion', async () => {
-  const actual = await vi.importActual('framer-motion');
-  return {
-    ...actual,
-    motion: {
-      div: React.forwardRef(({ ...props }, ref: React.Ref<HTMLDivElement>) => (
-        <div {...props} ref={ref} />
-      )),
-    },
-    AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  };
-});
 
 // Mock createPortal to render content within the test container instead of document.body
 vi.mock('react-dom', async () => {
