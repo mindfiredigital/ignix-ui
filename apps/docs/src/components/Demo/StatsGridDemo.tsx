@@ -1,14 +1,10 @@
-import React, { useState } from 'react';
+import React, { JSX, useState } from 'react';
 import {
     StatsGrid,
     StatsGridTitle,
     StatsGridDescription,
     StatsGridCard,
     StatsGridContainer,
-    // StatValue,
-    // StatLabel,
-    // StatSubtext,
-    // StatIcon,
 } from '../UI/stats-grid';
 import {
     Users, DollarSign, Download, Star, Shield, Globe, Heart, Activity
@@ -135,18 +131,25 @@ const sampleStats = [
     },
 ];
 
+type Theme = 'light' | 'dark';
+type Columns = 2 | 3 | 4 | 5 | 6;
+type Align = 'left' | 'center' | 'right';
+type Gap = 'sm' | 'md' | 'lg' | 'xl';
+type Padding = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+
 /* ============================================
    1. SIMPLE DEMO - BASIC CUSTOMIZATION
 ============================================ */
 
-export const StatsGridSimpleDemo = () => {
+export const StatsGridSimpleDemo = (): JSX.Element => {
     const { colorMode } = useColorMode();
-    const [theme, setTheme] = useState(colorMode === 'dark' ? 'dark' : 'light');
-    const [columns, setColumns] = useState(4);
-    const [align, setAlign] = useState('center');
-    // const [animationType, setAnimationType] = useState('slide');
-    const [gap, setGap] = useState('md');
-    const [padding, setPadding] = useState('lg');
+    const [theme, setTheme] = useState<Theme>(
+        colorMode === 'dark' ? 'dark' : 'light'
+    );
+    const [columns, setColumns] = useState<Columns>(4);
+    const [align, setAlign] = useState<Align>('center');
+    const [gap, setGap] = useState<Gap>('md');
+    const [padding, setPadding] = useState<Padding>('lg');
     const [animated, setAnimated] = useState(true);
     const [showTitle, setShowTitle] = useState(true);
     const [showDescription, setShowDescription] = useState(true);
@@ -158,7 +161,7 @@ export const StatsGridSimpleDemo = () => {
 
 
     // Generate the props-only code (shorter version)
-    const generatePropsCode = () => {
+    const generatePropsCode = (): string => {
         return `
 import { StatsGrid, StatsGridTitle, StatsGridDescription, StatsGridContainer, StatsGridCard } from '@ignix-ui/stats-grid';
 
@@ -195,37 +198,37 @@ function StatsGridDemo() {
                 <VariantSelector
                     variants={themeOptions.map(o => o.value)}
                     selectedVariant={theme}
-                    onSelectVariant={setTheme}
+                    onSelectVariant={(v): void => setTheme(v as Theme)}
                     type="Theme"
-                    getLabel={(v) => themeOptions.find(o => o.value === v)?.label || v}
+                    getLabel={(v): string => themeOptions.find(o => o.value === v)?.label || v}
                 />
                 <VariantSelector
                     variants={columnOptions.map(o => o.value.toString())}
                     selectedVariant={columns.toString()}
-                    onSelectVariant={(v) => setColumns(Number(v))}
+                    onSelectVariant={(v): void => setColumns(Number(v) as Columns)}
                     type="Columns"
-                    getLabel={(v) => columnOptions.find(o => o.value.toString() === v)?.label || v}
+                    getLabel={(v): string => columnOptions.find(o => o.value.toString() === v)?.label || v}
                 />
                 <VariantSelector
                     variants={alignOptions.map(o => o.value)}
                     selectedVariant={align}
-                    onSelectVariant={setAlign}
+                    onSelectVariant={(v): void => setAlign(v as Align)}
                     type="Align"
-                    getLabel={(v) => alignOptions.find(o => o.value === v)?.label || v}
+                    getLabel={(v): string => alignOptions.find(o => o.value === v)?.label || v}
                 />
                 <VariantSelector
                     variants={gapOptions.map(o => o.value)}
                     selectedVariant={gap}
-                    onSelectVariant={setGap}
+                    onSelectVariant={(v): void => setGap(v as Gap)}
                     type="Gap"
-                    getLabel={(v) => gapOptions.find(o => o.value === v)?.label || v}
+                    getLabel={(v): string => gapOptions.find(o => o.value === v)?.label || v}
                 />
                 <VariantSelector
                     variants={paddingOptions.map(o => o.value)}
                     selectedVariant={padding}
-                    onSelectVariant={setPadding}
+                    onSelectVariant={(v): void => setPadding(v as Padding)}
                     type="Padding"
-                    getLabel={(v) => paddingOptions.find(o => o.value === v)?.label || v}
+                    getLabel={(v): string => paddingOptions.find(o => o.value === v)?.label || v}
                 />
             </div>
 
@@ -234,7 +237,7 @@ function StatsGridDemo() {
                     <input
                         type="checkbox"
                         checked={animated}
-                        onChange={(e) => setAnimated(e.target.checked)}
+                        onChange={(e): void => setAnimated(e.target.checked)}
                     />
                     <span className="text-sm font-medium">Animated</span>
                 </label>
@@ -242,7 +245,7 @@ function StatsGridDemo() {
                     <input
                         type="checkbox"
                         checked={showTitle}
-                        onChange={(e) => setShowTitle(e.target.checked)}
+                        onChange={(e): void => setShowTitle(e.target.checked)}
                     />
                     <span className="text-sm font-medium">Title</span>
                 </label>
@@ -250,7 +253,7 @@ function StatsGridDemo() {
                     <input
                         type="checkbox"
                         checked={showDescription}
-                        onChange={(e) => setShowDescription(e.target.checked)}
+                        onChange={(e): void => setShowDescription(e.target.checked)}
                     />
                     <span className="text-sm font-medium">Description</span>
                 </label>
@@ -258,7 +261,7 @@ function StatsGridDemo() {
                     <input
                         type="checkbox"
                         checked={showIcons}
-                        onChange={(e) => setShowIcons(e.target.checked)}
+                        onChange={(e): void => setShowIcons(e.target.checked)}
                     />
                     <span className="text-sm font-medium">Icons</span>
                 </label>
@@ -266,7 +269,7 @@ function StatsGridDemo() {
                     <input
                         type="checkbox"
                         checked={showSubtext}
-                        onChange={(e) => setShowSubtext(e.target.checked)}
+                        onChange={(e): void => setShowSubtext(e.target.checked)}
                     />
                     <span className="text-sm font-medium">Subtext</span>
                 </label>
@@ -277,7 +280,7 @@ function StatsGridDemo() {
                         min="1"
                         max="8"
                         value={statsCount}
-                        onChange={(e) => setStatsCount(parseInt(e.target.value))}
+                        onChange={(e): void => setStatsCount(parseInt(e.target.value))}
                         className="w-24"
                     />
                 </div>
@@ -287,12 +290,12 @@ function StatsGridDemo() {
                 <TabItem value="preview" label="Preview">
                     <div className="border rounded-lg overflow-hidden">
                         <StatsGrid
-                            variant={theme as any}
-                            columns={columns as any}
-                            contentAlign={align as any}
+                            variant={theme}
+                            columns={columns}
+                            contentAlign={align}
                             animated={animated}
-                            gap={gap as any}
-                            padding={padding as any}
+                            gap={gap}
+                            padding={padding}
                         >
                             {showTitle && <StatsGridTitle>Simple Stats Grid Demo</StatsGridTitle>}
                             {showDescription && (
