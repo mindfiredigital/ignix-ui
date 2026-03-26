@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import type { JSX } from 'react';
 import {
     DynamicForm,
     DynamicHeader,
@@ -182,7 +183,7 @@ const registrationFields: DynamicFormField[] = [
         icon: EnvelopeClosedIcon,
         colSpan: 'half',
         emailValidation: { pattern: true },
-        validation: (value) => {
+        validation: (value): string | undefined => {
             if (typeof value === 'string') {
                 return validateEmail(value);
             }
@@ -197,7 +198,7 @@ const registrationFields: DynamicFormField[] = [
         placeholder: '+1 (555) 123-4567',
         icon: MobileIcon,
         colSpan: 'half',
-        validation: (value) => {
+        validation: (value): string | undefined => {
             if (typeof value === 'string' && value) {
                 return validatePhone(value);
             }
@@ -275,7 +276,7 @@ const registrationFields: DynamicFormField[] = [
         icon: LockClosedIcon,
         colSpan: 'half',
         textValidation: { minLength: 8 },
-        validation: (value) => {
+        validation: (value): string | undefined => {
             if (typeof value === 'string') {
                 return validatePassword(value);
             }
@@ -507,7 +508,7 @@ const businessFields: DynamicFormField[] = [
         icon: EnvelopeClosedIcon,
         colSpan: 'full',
         conditions: [{ field: 'hasBusinessEmail', operator: 'equals', value: 'yes' }],
-        validation: (value) => {
+        validation: (value): string | undefined => {
             if (typeof value === 'string' && value) {
                 return validateEmail(value);
             }
@@ -597,7 +598,7 @@ const developerFields: DynamicFormField[] = [
         placeholder: 'https://linkedin.com/in/johndoe',
         icon: LinkedInLogoIcon,
         colSpan: 'half',
-        validation: (value) => {
+        validation: (value): string | undefined => {
             if (typeof value === 'string' && value) {
                 return validateUrl(value);
             }
@@ -747,7 +748,7 @@ const surveyFields: DynamicFormField[] = [
             { field: 'contactPermission', operator: 'equals', value: true },
             { field: 'contactMethod', operator: 'equals', value: 'email' }
         ],
-        validation: (value) => {
+        validation: (value): string | undefined => {
             if (typeof value === 'string' && value) {
                 return validateEmail(value);
             }
@@ -766,7 +767,7 @@ const surveyFields: DynamicFormField[] = [
             { field: 'contactPermission', operator: 'equals', value: true },
             { field: 'contactMethod', operator: 'equals', value: 'phone' }
         ],
-        validation: (value) => {
+        validation: (value): string | undefined => {
             if (typeof value === 'string' && value) {
                 return validatePhone(value);
             }
@@ -933,7 +934,7 @@ const checkoutFields: DynamicFormField[] = [
         required: true,
         icon: EnvelopeClosedIcon,
         colSpan: 'full',
-        validation: (value) => {
+        validation: (value): string | undefined => {
             if (typeof value === 'string') {
                 return validateEmail(value);
             }
@@ -1110,7 +1111,7 @@ const jobFields: DynamicFormField[] = [
         required: true,
         icon: EnvelopeClosedIcon,
         colSpan: 'full',
-        validation: (value) => {
+        validation: (value): string | undefined => {
             if (typeof value === 'string') {
                 return validateEmail(value);
             }
@@ -1421,7 +1422,7 @@ const educationFields: DynamicFormField[] = [
         required: true,
         icon: EnvelopeClosedIcon,
         colSpan: 'half',
-        validation: (value) => {
+        validation: (value): string | undefined => {
             if (typeof value === 'string') {
                 return validateEmail(value);
             }
@@ -1588,7 +1589,7 @@ const handleSubmit = async (data: FormValues): Promise<void> => {
 // MAIN COMPREHENSIVE DEMO
 // ==============================
 
-export const DynamicFormDemo = () => {
+export const DynamicFormDemo = (): JSX.Element => {
     const { colorMode } = useColorMode();
 
     const [formType, setFormType] = useState<FormType>('registration');
@@ -1626,7 +1627,7 @@ export const DynamicFormDemo = () => {
         setAnimationKey((k) => k + 1);
     }, [formType, themeVariant, cardVariant, animationIntensity]);
 
-    const handleThemeChange = (value: string) => {
+    const handleThemeChange = (value: string): void => {
         setThemeVariant(value as ThemeVariant);
         setDarkMode(value === 'dark' || value === 'galaxy' || value === 'candy' || value === 'neon');
         setUserChangedTheme(true);
@@ -1637,12 +1638,12 @@ export const DynamicFormDemo = () => {
     const CurrentIcon = formIcons[formType];
 
     // Custom submit handler
-    const handleFormSubmit = async (data: FormValues) => {
+    const handleFormSubmit = async (data: FormValues): Promise<void> => {
         setSubmittedData(data);
         await handleSubmit(data);
     };
 
-    const buildCodeString = () => {
+    const buildCodeString = (): string => {
         const iconName = iconNames[formType];
         const config = formConfigs[formType];
 
@@ -1869,21 +1870,21 @@ const ${formType}Sections = [
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-8 p-6">
             {/* Theme Controls - First Row */}
-            <div className="flex items-center justify-end flex-wrap gap-2">
+            <div className="flex flex-wrap items-center justify-end gap-3">
                 {/* Form Type Selector */}
-                <div className="space-y-2 mx-1">
+                <div className="space-y-2">
                     <VariantSelector
                         variants={formTypeOptions.map(o => o.value)}
                         selectedVariant={formType}
-                        onSelectVariant={(value) => setFormType(value as FormType)}
+                        onSelectVariant={(value): void => setFormType(value as FormType)}
                         type="Form Type"
                         variantLabels={Object.fromEntries(formTypeOptions.map(o => [o.value, o.label]))}
                     />
                 </div>
 
-                <div className="space-y-2 mx-1">
+                <div className="space-y-2">
                     <VariantSelector
                         variants={themeOptions.map(o => o.value)}
                         selectedVariant={themeVariant}
@@ -1896,51 +1897,52 @@ const ${formType}Sections = [
 
             {/* Feature Toggles */}
             <div className={cn(
-                "flex flex-row items-center justify-end gap-2 px-2 flex-wrap",
+                "flex flex-wrap items-center justify-end gap-4",
+                darkMode ? "text-gray-300" : "text-gray-700"
             )}>
-                <label className="flex items-center gap-2 cursor-pointer">
+                <label className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
                     <input
                         type="checkbox"
                         checked={showSuccessNotification}
-                        onChange={(e) => setShowSuccessNotification(e.target.checked)}
-                        className="rounded text-primary"
+                        onChange={(e): void => setShowSuccessNotification(e.target.checked)}
+                        className="rounded border-gray-300 text-primary focus:ring-primary"
                     />
-                    <span className="text-sm">Success Notification</span>
+                    <span className="text-sm font-medium">Success Notification</span>
                 </label>
 
-                <label className="flex items-center gap-2 cursor-pointer">
+                <label className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
                     <input
                         type="checkbox"
                         checked={showFieldCount}
-                        onChange={(e) => setShowFieldCount(e.target.checked)}
-                        className="rounded text-primary"
+                        onChange={(e): void => setShowFieldCount(e.target.checked)}
+                        className="rounded border-gray-300 text-primary focus:ring-primary"
                     />
-                    <span className="text-sm">Field Count</span>
+                    <span className="text-sm font-medium">Field Count</span>
                 </label>
             </div>
 
             {/* Loading State Controls */}
-            <div className="flex items-center justify-end flex-wrap gap-1">
+            <div className="flex flex-wrap items-center justify-end gap-2">
                 <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setIsSubmitting(!isSubmitting)}
-                    className="cursor-pointer mx-1"
+                    onClick={(): void => setIsSubmitting(!isSubmitting)}
+                    className="cursor-pointer transition-all duration-200 hover:scale-105"
                 >
                     {isSubmitting ? 'Stop Submitting' : 'Show Submitting State'}
                 </Button>
                 <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setIsLoading(!isLoading)}
-                    className="cursor-pointer mx-1"
+                    onClick={(): void => setIsLoading(!isLoading)}
+                    className="cursor-pointer transition-all duration-200 hover:scale-105"
                 >
                     {isLoading ? 'Stop Loading' : 'Show Loading State'}
                 </Button>
                 <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => {
+                    onClick={(): void => {
                         setFormType('registration');
                         setThemeVariant(colorMode === 'dark' ? 'dark' : 'default');
                         setCardVariant('default');
@@ -1954,7 +1956,7 @@ const ${formType}Sections = [
                         setSubmittedData(null);
                         setUserChangedTheme(false);
                     }}
-                    className="cursor-pointer mx-2"
+                    className="cursor-pointer transition-all duration-200 hover:scale-105"
                 >
                     Reset All
                 </Button>
@@ -1964,8 +1966,10 @@ const ${formType}Sections = [
             <Tabs>
                 <TabItem value="preview" label="Preview">
                     <div className={cn(
-                        "border rounded-lg overflow-hidden transition-colors duration-300 ",
-                        darkMode ? "border-gray-700 " : "border-gray-300 bg-white"
+                        " rounded-lg overflow-hidden transition-all duration-300 shadow-lg",
+                        darkMode
+                            ? "bg-gray-900 border border-gray-700"
+                            : "bg-white border border-gray-200"
                     )}>
                         {/* The Dynamic Form component - now properly placed inside the preview */}
                         <DynamicForm
@@ -2025,7 +2029,7 @@ const ${formType}Sections = [
                                 }
                                 showCancelButton={showCancelButton}
                                 cancelButtonLabel="Cancel"
-                                onCancel={() => alert('Form cancelled')}
+                                onCancel={(): void => alert('Form cancelled')}
                             />
                         </DynamicForm>
                     </div>
@@ -2033,13 +2037,22 @@ const ${formType}Sections = [
                     {/* Submitted Data Display */}
                     {submittedData && Object.keys(submittedData).length > 0 && (
                         <div className={cn(
-                            "mt-4 p-4 rounded-lg transition-colors duration-300",
-                            darkMode ? "bg-gray-800 text-gray-200" : "bg-gray-100 text-gray-800"
+                            "mt-6 p-5 rounded-lg transition-all duration-300 shadow-md",
+                            darkMode
+                                ? "bg-gray-800 border border-gray-700"
+                                : "bg-gray-50 border border-gray-200"
                         )}>
-                            <h3 className="text-lg font-semibold mb-2">📋 Last Submitted Data</h3>
+                            <h3 className={cn(
+                                "text-lg font-semibold mb-3 flex items-center gap-2",
+                                darkMode ? "text-gray-200" : "text-gray-800"
+                            )}>
+                                <span>📋</span> Last Submitted Data
+                            </h3>
                             <pre className={cn(
-                                "p-4 rounded overflow-auto max-h-60 text-sm",
-                                darkMode ? "bg-gray-900 text-green-400" : "bg-white text-gray-800"
+                                "p-4 rounded-lg overflow-auto max-h-80 text-sm font-mono",
+                                darkMode
+                                    ? "bg-gray-900 text-green-400 border border-gray-700"
+                                    : "bg-white text-gray-800 border border-gray-200"
                             )}>
                                 {JSON.stringify(submittedData, null, 2)}
                             </pre>

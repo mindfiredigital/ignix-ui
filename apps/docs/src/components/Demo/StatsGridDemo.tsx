@@ -1,4 +1,5 @@
-import React, { JSX, useState } from 'react';
+import React, { useState } from 'react';
+import type { JSX } from 'react';
 import {
     StatsGrid,
     StatsGridTitle,
