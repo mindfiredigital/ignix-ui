@@ -800,7 +800,7 @@ const DynamicHeader: React.FC<DynamicHeaderProps> = ({
     if (children) {
         return (
             <header className={cn(
-                "sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-border",
+                "z-10 bg-background/80 backdrop-blur-md border-b border-border",
                 animated && "transition-all duration-300",
                 className
             )}>
@@ -815,7 +815,7 @@ const DynamicHeader: React.FC<DynamicHeaderProps> = ({
 
     return (
         <header className={cn(
-            "sticky top-0 z-10 bg-background/20 p-3 backdrop-blur-md border-b border-border",
+            "bg-background/0 p-3 border-b border-border",
             animated && "transition-all duration-300",
             className
         )}>
