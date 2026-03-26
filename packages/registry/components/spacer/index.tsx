@@ -1,12 +1,15 @@
 import * as React from 'react';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 import { cn } from '../../../utils/cn';
 
-export interface SpacerProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof spacerVariants> {
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' ;
+export interface SpacerProps extends React.HTMLAttributes<HTMLDivElement> {
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string;
   direction?: 'vertical' | 'horizontal' | 'both';
+  responsive?: {
+    mobile?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string;
+    tablet?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string;
+    desktop?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number | string;
+  };
 }
 
 const spacerVariants = cva('', {
@@ -31,17 +34,47 @@ const spacerVariants = cva('', {
 });
 
 const Spacer = React.forwardRef<HTMLDivElement, SpacerProps>(
-  ({ className, size, direction, style, ...props }, ref) => {
-    // Handle custom numeric/string size (e.g., "12px", "2rem", "20")
-    const isCustomSize =
-      size && !['xs', 'sm', 'md', 'lg', 'xl'].includes(size);
+  (
+    { className, size = 'md', direction = 'vertical', responsive, style, ...props },
+    ref
+  ) => {
+    const designTokenSizes = ['xs', 'sm', 'md', 'lg', 'xl'];
 
+    const responsiveClasses: string[] = [];
+    if (responsive) {
+      if (responsive.mobile && designTokenSizes.includes(responsive.mobile as string)) {
+        responsiveClasses.push(spacerVariants({ size: responsive.mobile as any, direction }));
+      }
+      if (responsive.tablet && designTokenSizes.includes(responsive.tablet as string)) {
+        responsiveClasses.push(
+          `sm:${spacerVariants({ size: responsive.tablet as any, direction })}`
+        );
+      }
+      if (responsive.desktop && designTokenSizes.includes(responsive.desktop as string)) {
+        responsiveClasses.push(
+          `md:${spacerVariants({ size: responsive.desktop as any, direction })}`
+        );
+      }
+    }
+
+    const isCustomSize = size && !designTokenSizes.includes(size as string);
     const dynamicStyle: React.CSSProperties = { ...style };
+
     if (isCustomSize) {
-      const value = /^\d+$/.test(size as string) ? `${size}px` : size;
-      if (direction === 'vertical') dynamicStyle.height = value;
-      else if (direction === 'horizontal') dynamicStyle.width = value;
-      else {
+      const value =
+        typeof size === 'number'
+          ? `${size}px`
+          : /^\d+$/.test(size as string)
+          ? `${size}px`
+          : size;
+
+      if (direction === 'vertical') {
+        dynamicStyle.height = value;
+        dynamicStyle.width = 0;
+      } else if (direction === 'horizontal') {
+        dynamicStyle.width = value;
+        dynamicStyle.height = 0;
+      } else {
         dynamicStyle.height = value;
         dynamicStyle.width = value;
       }
@@ -50,7 +83,11 @@ const Spacer = React.forwardRef<HTMLDivElement, SpacerProps>(
     return (
       <div
         ref={ref}
-        className={cn(spacerVariants({ size, direction }), className)}
+        className={cn(
+          !isCustomSize && spacerVariants({ size: size as any, direction }),
+          responsiveClasses,
+          className
+        )}
         style={dynamicStyle}
         aria-hidden="true"
         {...props}
