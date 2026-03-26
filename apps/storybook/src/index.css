@@ -2,6 +2,8 @@
 
 @layer base {
   :root {
+    --color-gradient-from-dropdown: #a855f7;
+    --color-gradient-to-dropdown: #ec4899;
     --background: #ffffff;
     --foreground: #0f172a;
     --card: #ffffff;

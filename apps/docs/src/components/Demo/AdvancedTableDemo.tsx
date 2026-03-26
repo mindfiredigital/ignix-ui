@@ -45,6 +45,8 @@ const AdvancedTableDemo = () => {
   const enablePagination = mode === "full" || mode === "paginated";
 
   const codeString = `
+import AdvancedTable from '@ignix-ui/advanced-table'
+
 <AdvancedTable
   rows={sampleRows}
   columns={sampleColumns}

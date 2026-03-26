@@ -28,8 +28,9 @@ The Dialog Box component provides a flexible way to display modal dialogs with v
   </TabItem>
   <TabItem value="code" label="Code">
     ```tsx
-    import { DialogProvider, useDialog } from './components/ui';
-    import { Button } from './components/ui';
+    import { DialogProvider } from '@ignix-ui/dialogbox';
+    import { useDialog } from '@ignix-ui/dialogbox/use-dialog';
+    import { Button } from '@ignix-ui/button';
 
     function Demo() {
       const { openDialog } = useDialog();
@@ -60,7 +61,7 @@ The Dialog Box component provides a flexible way to display modal dialogs with v
 <Tabs>
   <TabItem value="cli" label="CLI" default>
     ```bash
-    ignix add component dialog-box
+    ignix add component dialogbox
     ```
   </TabItem>
   <TabItem value="manual" label="manual" className="max-h-[500px] overflow-y-auto">
@@ -794,7 +795,7 @@ export const DialogProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 ### 1. Wrap your app with DialogProvider
 
 ```tsx
-import { DialogProvider } from './components/ui';
+import { DialogProvider } from '@ignix-ui/dialogbox';
 
 function App() {
   return (
@@ -808,7 +809,7 @@ function App() {
 ### 2. Use the useDialog hook in your components
 
 ```tsx
-import { useDialog } from './components/ui';
+import { useDialog } from '@ignix-ui/dialogbox/use-dialog';
 
 function MyComponent() {
   const { openDialog } = useDialog();

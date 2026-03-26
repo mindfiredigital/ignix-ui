@@ -15,6 +15,9 @@ const DropdownDemo = () => {
   const [bg, setBg] = useState('default');
 
   const codeString = `
+  import { Dropdown, DropdownItem } from '@ignix-ui/dropdown';
+  import { Button } from '@ignix-ui/button';
+
 <Dropdown
   trigger={<Button>Open Menu</Button>}
   animation="${animation}"

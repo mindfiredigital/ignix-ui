@@ -9,48 +9,7 @@ import TabItem from '@theme/TabItem';
 import { Stepper } from '@site/src/components/UI/stepper';
 import StepperDemo from '@site/src/components/UI/stepper/demo';
 
-## Overview
-
 The Stepper component helps visualize progress through a multi-step process. It's perfect for forms, wizards, or any sequential workflow in your application. The component includes support for completed states, active states, and optional descriptions for each step.
-
-## Preview
-
-<Tabs defaultValue="preview">
-  <TabItem value="preview" label="Preview" default>
-    <div className="w-full p-8 space-y-8 rounded-lg border ">
-      <div className="p-6 rounded-lg">
-        <Stepper
-          steps={[
-            { label: 'Details', description: 'Personal info' },
-            { label: 'Address', description: 'Shipping info' },
-            { label: 'Payment', description: 'Card details' },
-            { label: 'Review', description: 'Final check' },
-          ]}
-          activeStep={1}
-        />
-      </div>
-    </div>
-  </TabItem>
-  <TabItem value="code" label="Code">
-    ```tsx
-    import { Stepper } from './components/ui';
-
-    function StepperDemo() {
-      return (
-        <Stepper
-          steps={[
-            { label: 'Details', description: 'Personal info' },
-            { label: 'Address', description: 'Shipping info' },
-            { label: 'Payment', description: 'Card details' },
-            { label: 'Review', description: 'Final check' },
-          ]}
-          activeStep={1}
-        />
-      );
-    }
-    ```
-  </TabItem>
-</Tabs>
 
 ## Installation
 
@@ -62,7 +21,7 @@ The Stepper component helps visualize progress through a multi-step process. It'
   </TabItem>
   <TabItem value="manual" label="manual" className="max-h-[500px] overflow-y-auto">
 
-    ```tsx
+```tsx
 import { cn } from "../../../utils/cn";
 
 interface Step {
@@ -72,7 +31,7 @@ interface Step {
 
 interface StepperProps {
   steps: Step[];
-  activeStep: number; // 0-based index
+  activeStep: number; 
   className?: string;
 }
 
@@ -90,7 +49,7 @@ export const Stepper = ({ steps, activeStep, className }: StepperProps) => {
           >
             {/* Line connector */}
             {index !== steps.length - 1 && (
-              <div className="absolute top-4 left-1/2 w-full h-0.5 bg-zinc-300 dark:bg-zinc-700 z-0 transform translate-x-1/2" />
+              <div className="absolute top-4 left-1/2 w-full h-0.5 bg-zinc-300 dark:bg-zinc-700 z-0" />
             )}
 
             {/* Step circle */}
@@ -132,7 +91,7 @@ export const Stepper = ({ steps, activeStep, className }: StepperProps) => {
   );
 };
 
-    ```
+```
   </TabItem>
 </Tabs>
 
@@ -141,7 +100,7 @@ export const Stepper = ({ steps, activeStep, className }: StepperProps) => {
 Import the component:
 
 ```tsx
-import { Stepper } from './components/ui';
+import { Stepper } from '@ignix-ui/stepper';
 ```
 
 ### Basic Usage
@@ -186,6 +145,8 @@ function BasicStepper() {
   </TabItem>
   <TabItem value="basic-code" label="Code">
     ```tsx
+    import { Stepper } from '@ignix-ui/stepper';
+
     <Stepper
       steps={[
         { label: 'Step 1' },
@@ -218,6 +179,8 @@ function BasicStepper() {
   </TabItem>
   <TabItem value="descriptions-code" label="Code">
     ```tsx
+    import { Stepper } from '@ignix-ui/stepper';
+
     <Stepper
       steps={[
         { label: 'Account', description: 'Create account' },
@@ -243,6 +206,9 @@ function BasicStepper() {
   </TabItem>
   <TabItem value="interactive-code" label="Code">
     ```tsx
+    import { Stepper } from '@ignix-ui/stepper';
+    import { useState } from 'react';
+
     function InteractiveStepper() {
       const [step, setStep] = useState(0);
       
@@ -279,14 +245,6 @@ function BasicStepper() {
   </TabItem>
 </Tabs>
 
-## Props
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `steps` | `Array<{ label: string; description?: string; }>` | `[]` | Array of step objects with labels and optional descriptions |
-| `activeStep` | `number` | `0` | Current active step (0-based index) |
-| `className` | `string` | - | Additional CSS classes |
-
 ## Customization
 
 ### Custom Styling
@@ -294,6 +252,8 @@ function BasicStepper() {
 You can customize the appearance using Tailwind CSS classes:
 
 ```tsx
+import { Stepper } from '@ignix-ui/stepper';
+
 <Stepper
   className="max-w-2xl mx-auto"
   steps={[
@@ -308,6 +268,9 @@ You can customize the appearance using Tailwind CSS classes:
 ### Form Integration Example
 
 ```tsx
+import { useState } from 'react';
+import { Stepper } from '@ignix-ui/stepper';
+
 function StepperForm() {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
@@ -345,3 +308,11 @@ function StepperForm() {
   );
 }
 ```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `steps` | `Array<{ label: string; description?: string; }>` | `[]` | Array of step objects with labels and optional descriptions |
+| `activeStep` | `number` | `0` | Current active step (0-based index) |
+| `className` | `string` | - | Additional CSS classes |

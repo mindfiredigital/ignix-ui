@@ -40,7 +40,7 @@ import {
  * @property variant - Background theme variant: "light", "dark", or "auto" (default: "dark")
  * @property layout - Layout style: "grid" (two-column) or "list" (accordion) (default: "grid")
  */
-interface NotificationSettingsPageProps {
+interface NotificationPageProps {
   title?: string;
   description?: string;
   /** Background theme */
@@ -112,7 +112,7 @@ interface NotificationPreferences {
  * @param props - NotificationPageProps object containing component configuration
  * @returns JSX element representing the complete notification preferences page
  */
-const NotificationSettingsPage: React.FC<NotificationSettingsPageProps> = ({
+const NotificationPage: React.FC<NotificationPageProps> = ({
   title = "Notifications",
   description = "Manage your notification preferences and stay informed about what matters to you.",
   variant,
@@ -827,5 +827,5 @@ const NotificationSettingsPage: React.FC<NotificationSettingsPageProps> = ({
   );
 };
 
-export { NotificationSettingsPage };
-export default NotificationSettingsPage;
+export { NotificationPage };
+export default NotificationPage;

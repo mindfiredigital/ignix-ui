@@ -163,7 +163,7 @@
       }
     },
     "responsive-grid": {
-      "name": "Responsive Grid",
+      "name": "ResponsiveGrid",
       "description": "A flexible grid layout component with responsive columns, gaps, equal-height option, and animations (fade, stagger, scale).",
       "dependencies": ["framer-motion"],
       "files": {
@@ -359,7 +359,7 @@
     "sidebar": {
       "name": "Sidebar",
       "description": "A collapsible sidebar component with animation",
-      "dependencies": ["framer-motion", "lucide-react", "class-variance-authority"],
+      "dependencies": ["framer-motion", "@radix-ui/react-icons", "class-variance-authority"],
       "files": {
         "main": {
           "path": "components/sidebar/index.tsx",
@@ -516,10 +516,10 @@
         }
       }
     },
-    "steppers": {
-      "name": "Steppers",
-      "description": "An animated steppers component with different variants",
-      "dependencies": ["framer-motion", "lucide-react", "class-variance-authority"],
+    "stepper": {
+      "name": "stepper",
+      "description": "An animated stepper component with different variants",
+      "dependencies": ["framer-motion", "class-variance-authority"],
       "files": {
         "main": {
           "path": "components/stepper/index.tsx",
@@ -1385,6 +1385,16 @@
       "files": {
         "main": {
           "path": "templates/sections/faq-accordion/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "split": {
+      "name": "Split",
+      "description": "component simplifies the creation of two-column layouts such as sidebars with content, image and text sections, or dashboard layouts. It supports ratios, gaps, responsive stacking, and optional resizing.",
+      "files": {
+        "main": {
+          "path": "components/layouts/split/index.tsx",
           "type": "component"
         }
       }

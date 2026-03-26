@@ -132,6 +132,10 @@ describe('DatePicker', () => {
             const user = userEvent.setup();
             const onChange = vi.fn();
 
+            await openCalendar(user, {
+                todayButton: true,
+                onChange
+            });
             // Find and click a date button (January 20)
             const dateButton = getDateButtonByDay(20);
             expect(dateButton).toBeDefined();
@@ -289,6 +293,8 @@ describe('DatePicker', () => {
         it('handles clear button click', async () => {
             const user = userEvent.setup();
             const onChange = vi.fn();
+
+            render(<DatePicker onChange={onChange} />);
 
             const input = screen.getByPlaceholderText('Select date');
             await user.click(input);

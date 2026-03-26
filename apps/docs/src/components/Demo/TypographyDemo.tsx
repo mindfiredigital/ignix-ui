@@ -11,6 +11,8 @@ const InteractiveFeaturesDemo = () => {
 
     const codeString = `
 // Interactive Features Example
+import { Typography } from '@ignix-ui/typography';
+
 <div>
   <Typography hover="underline" className="cursor-pointer">
     Hover to underline this text

@@ -21,6 +21,8 @@ const StackDemo = () => {
   const [wrap, setWrap] = useState(false);
 
   const codeString = `
+import { Stack } from '@ignix-ui/stack';
+
 <Stack
   direction="${direction}"
   align="${align}"

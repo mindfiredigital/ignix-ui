@@ -23,7 +23,12 @@
       "discovery": "BEFORE any installation, ALWAYS call search_components or list_components to verify component existence. NEVER guess component names.",
       "installation": "ALWAYS use install_component for adding components. NEVER create component files manually.",
       "theming": "BEFORE installing a theme, ALWAYS call list_themes to see current available themes.",
-      "templates": "For complete pages, ALWAYS call list_templates first to see available templates."
+      "templates": "For complete pages, ALWAYS call list_templates first to see available templates.",
+      "emptyDirectory": {
+        "detection": "ALWAYS check if the current directory is empty or doesn't contain a React project (no package.json or package.json without react dependency).",
+        "action": "If directory is empty or no React project detected, ALWAYS run create_react_project FIRST, THEN init_project, THEN proceed with the requested installation.",
+        "example": "For 'build me a landing page' in empty folder: 1. create_react_project({ projectName: 'gym-landing' }) → 2. init_project({ cwd: './gym-landing' }) → 3. search_templates for 'landing' to find page templates → 4. install_template with templates (hero, callToAction) → 5. search_components for UI elements → 6. install_component with components (navbar, button, card, footer)"
+      }
     }
   },
   "tools": [
@@ -93,6 +98,52 @@
       }
     },
     {
+      "name": "install_template",
+      "description": "[TEMPLATE INSTALLATION TOOL] USE THIS when users want complete pages or layouts. Installs templates to src/components/templates/. Templates are pre-built pages like sign-in, dashboard, pricing grids, etc.",
+      "inputSchema": {
+        "type": "object",
+        "required": ["templates"],
+        "properties": {
+          "templates": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Template names to install. ALWAYS verify via list_templates first."
+          },
+          "cwd": {
+            "type": "string",
+            "description": "Working directory",
+            "default": "."
+          },
+          "withDeps": {
+            "type": "boolean",
+            "description": "Automatically install component dependencies",
+            "default": true
+          }
+        }
+      },
+      "execution": {
+        "type": "shell",
+        "command": "ignix add component {templates} --yes --json --cwd {cwd}"
+      },
+      "triggers": {
+        "keywords": [
+          "signin",
+          "signup",
+          "login",
+          "register",
+          "dashboard",
+          "landing page",
+          "pricing page",
+          "profile page",
+          "settings page",
+          "authentication"
+        ],
+        "intents": ["complete page", "full layout", "page template", "auth page"]
+      }
+    },
+    {
       "name": "list_components",
       "description": "[ESSENTIAL DISCOVERY TOOL] USE THIS FIRST before any component work. Returns CURRENT list of all available components with names, descriptions, and categories. The library is constantly expanding - always use this to get fresh data.",
       "inputSchema": {
@@ -107,6 +158,23 @@
         "keywords": ["what components", "available", "show me", "list", "catalog", "library"]
       },
       "notes": "This is your SOURCE OF TRUTH for component availability. Call it frequently as the library grows."
+    },
+    {
+      "name": "list_templates",
+      "description": "[TEMPLATE DISCOVERY TOOL] USE THIS for complete pages. Returns CURRENT list of all available templates. Template library EXPANDS regularly - always check here first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "execution": {
+        "type": "shell",
+        "command": "npx ignix list components --json"
+      },
+      "notes": "Template collection grows over time. Always verify current availability.",
+      "triggers": {
+        "keywords": ["page template", "layout", "complete page", "starter", "boilerplate"],
+        "intents": ["dashboard page", "landing page", "auth page", "settings page"]
+      }
     },
     {
       "name": "search_components",
@@ -142,8 +210,37 @@
       }
     },
     {
+      "name": "search_templates",
+      "description": "[TEMPLATE DISCOVERY TOOL] USE THIS when users mention complete pages. Searches the CURRENT template registry by keyword. Perfect for finding templates like signin, dashboard, landing pages.",
+      "inputSchema": {
+        "type": "object",
+        "required": ["query"],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search term like 'landing', 'auth', 'dashboard', 'pricing'"
+          }
+        }
+      },
+      "execution": {
+        "type": "shell",
+        "command": "ignix list components --json | node -e \"const fs=require('fs'); const input=fs.readFileSync(0,'utf8'); const data=JSON.parse(input); const query=process.argv[1].toLowerCase(); const results=data.templates ? data.templates.filter(t => t.name.toLowerCase().includes(query) || (t.description && t.description.toLowerCase().includes(query))) : []; console.log(JSON.stringify({success: true, query: process.argv[1], results, count: results.length}, null, 2));\" {query}"
+      },
+      "triggers": {
+        "keywords": ["find page", "search template", "looking for page", "template for"],
+        "intents": [
+          "landing page",
+          "login page",
+          "signup page",
+          "dashboard page",
+          "pricing page",
+          "profile page"
+        ]
+      }
+    },
+    {
       "name": "create_react_project",
-      "description": "[PROJECT CREATION TOOL] USE THIS FIRST when working in an empty directory. Creates a new React + TypeScript + Tailwind CSS project using Vite.",
+      "description": "[PROJECT CREATION TOOL] USE THIS FIRST when working in an empty directory. Creates a new React + TypeScript + Tailwind CSS project using Vite. After creation, update your cwd to the new project path for all subsequent operations.",
       "inputSchema": {
         "type": "object",
         "required": ["projectName"],
@@ -168,21 +265,11 @@
       "execution": {
         "type": "shell",
         "command": "cd {cwd} && npm create vite@latest {projectName} -- --template react-ts && cd {projectName} && npm install && npm install -D tailwindcss postcss autoprefixer && npx tailwindcss init -p && echo '@tailwind base; @tailwind components; @tailwind utilities;' > src/index.css"
-      },
-      "triggers": {
-        "keywords": [
-          "create project",
-          "new project",
-          "empty directory",
-          "start from scratch",
-          "initialize react"
-        ],
-        "condition": "Check if package.json exists before using other tools"
       }
     },
     {
       "name": "init_project",
-      "description": "[SETUP TOOL] USE THIS AUTOMATICALLY as first step if ignix.config.js doesn't exist. Creates configuration files and directory structure. Always future-proof - sets up project to receive new components/themes/templates as they're added.",
+      "description": "[SETUP TOOL] USE THIS AUTOMATICALLY as first step if ignix.config.js doesn't exist. IMPORTANT: After running create_react_project, use the returned projectPath as the cwd parameter for this tool.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -307,20 +394,31 @@
       "notes": "Source of truth for theme availability. New themes added frequently."
     },
     {
-      "name": "list_templates",
-      "description": "[TEMPLATE DISCOVERY TOOL] USE THIS for complete pages. Returns CURRENT list of all available templates. Template library EXPANDS regularly - always check here first.",
+      "name": "setup_project_with_ignix",
+      "description": "[ALL-IN-ONE] Creates a new React project and initializes Ignix in one step. If the current directory is empty, it creates the project directly in the current directory. Otherwise, it creates a new subfolder with the project name.",
       "inputSchema": {
         "type": "object",
-        "properties": {}
+        "required": ["projectName"],
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Name of the project (only used as folder name if current directory is not empty)"
+          },
+          "cwd": {
+            "type": "string",
+            "description": "Working directory",
+            "default": "."
+          },
+          "packageManager": {
+            "type": "string",
+            "enum": ["npm", "yarn", "pnpm"],
+            "default": "npm"
+          }
+        }
       },
       "execution": {
         "type": "shell",
-        "command": "ignix list template --json"
-      },
-      "notes": "Template collection grows over time. Always verify current availability.",
-      "triggers": {
-        "keywords": ["page template", "layout", "complete page", "starter", "boilerplate"],
-        "intents": ["dashboard page", "landing page", "auth page", "settings page"]
+        "command": "npm create vite@latest {projectName} -- --template react-ts  && npm install && npm install -D tailwindcss postcss autoprefixer && npx tailwindcss init -p && echo '@tailwind base; @tailwind components; @tailwind utilities;' > src/index.css && npx ignix init --yes --json"
       }
     }
   ],

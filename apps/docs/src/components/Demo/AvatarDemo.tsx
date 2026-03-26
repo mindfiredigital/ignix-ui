@@ -343,6 +343,8 @@ const AvatarGroupDemo = () => {
 
     const codeString = `
 // Avatar Group Example
+import { Avatar } from '@ignix-ui/avatar';
+
 <AvatarGroup 
   max={${maxVisible}} 
   spacing={${spacing}}

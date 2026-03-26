@@ -16,6 +16,8 @@ const TooltipDemo = () => {
   const [rounded, setRounded] = useState('sm');
 
   const codeString = `
+import { Tooltip } from '@ignix-ui/tooltip';
+
 <Tooltip
   content="This is a tooltip"
   animation="${animation}"
