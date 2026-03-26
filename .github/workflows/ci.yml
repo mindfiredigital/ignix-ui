@@ -56,6 +56,9 @@ jobs:
 
       - name: Run lint
         run: pnpm run lint
+      
+      - name: Run Unit tests
+        run: pnpm vitest packages/registry/components
 
       - name: Log scope status
         run: echo "🔍 CI job executed because valid scope was found in commit message"
