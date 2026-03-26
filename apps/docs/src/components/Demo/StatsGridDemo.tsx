@@ -76,7 +76,6 @@ const sampleStats = [
         subtext: 'Enterprise-grade reliability',
         icon: Shield,
         format: 'percentage' as const,
-        suffix: '%',
     },
     {
         id: '3',
@@ -111,7 +110,6 @@ const sampleStats = [
         subtext: 'NPS Score',
         icon: Heart,
         format: 'percentage' as const,
-        suffix: '%',
     },
     {
         id: '7',
@@ -164,8 +162,79 @@ export const StatsGridSimpleDemo = (): JSX.Element => {
     const generatePropsCode = (): string => {
         return `
 import { StatsGrid, StatsGridTitle, StatsGridDescription, StatsGridContainer, StatsGridCard } from '@ignix-ui/stats-grid';
+import { Users, DollarSign, Download, Star, Shield, Globe, Heart, Activity  } from 'lucide-react';
 
 function StatsGridDemo() {
+
+  const stats = [
+        {
+            id: '1',
+            value: 10000000,
+            label: 'Active Users',
+            subtext: 'Growing 20% month over month',
+            icon: Users,
+            format: 'compact' as const,
+        },
+        {
+            id: '2',
+            value: 99.9,
+            label: 'Uptime SLA',
+            subtext: 'Enterprise-grade reliability',
+            icon: Shield,
+            format: 'percentage' as const,
+        },
+        {
+            id: '3',
+            value: 2500000000,
+            label: 'Annual Revenue',
+            subtext: 'Record growth this quarter',
+            icon: DollarSign,
+            format: 'currency' as const,
+        },
+        {
+            id: '4',
+            value: 50000000,
+            label: 'Total Downloads',
+            subtext: 'Across all platforms',
+            icon: Download,
+            format: 'compact' as const,
+            suffix: '+',
+        },
+        {
+            id: '5',
+            value: 4.9,
+            label: 'App Store Rating',
+            subtext: 'Based on 50K+ reviews',
+            icon: Star,
+            format: 'raw' as const,
+            decimals: 1,
+        },
+        {
+            id: '6',
+            value: 98.5,
+            label: 'Customer Satisfaction',
+            subtext: 'NPS Score',
+            icon: Heart,
+            format: 'percentage' as const,
+        },
+        {
+            id: '7',
+            value: 1500000,
+            label: 'API Calls/Day',
+            subtext: 'Average daily volume',
+            icon: Activity,
+            format: 'compact' as const,
+        },
+        {
+            id: '8',
+            value: 45,
+            label: 'Countries Served',
+            subtext: 'Global presence',
+            icon: Globe,
+            format: 'raw' as const,
+        },
+    ];
+
   return (
     <StatsGrid
         variant="${theme}"
