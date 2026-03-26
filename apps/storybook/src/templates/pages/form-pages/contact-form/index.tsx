@@ -7,6 +7,10 @@ import AnimatedInput from "../../../../components/input";
 import { Button } from "../../../../components/button";
 import FileUpload from "../../../../components/file-upload";
 import AnimatedTextarea from "../../../../components/textarea";
+import { useToast } from "../../../../components/toast";
+import { InfoCircledIcon, ExclamationTriangleIcon } from '@radix-ui/react-icons';
+
+/* ================= TYPES ================= */
 
 type FormData = {
   name?: string;
@@ -16,19 +20,42 @@ type FormData = {
   file?: File | null;
 };
 
+type ValidationErrors = {
+  name?: string;
+  email?: string;
+  subject?: string;
+  message?: string;
+};
+
 type ContactFormProps = {
   children: React.ReactNode;
   variant?: "default" | "background" | "split";
   backgroundImage?: string;
   sideImage?: string;
-  onSubmit?: (data: FormData) => void;
+  onSubmit?: (data: FormData) => Promise<void> | void;
+  onError?: (err: unknown) => void;
+  onSuccess?: () => void;
 };
+
+
+type FieldName = keyof ValidationErrors;
+
+const VALIDATION_FIELDS: (keyof ValidationErrors)[] = [
+  "name",
+  "email",
+  "subject",
+];
+
+/* ================= CONTEXT ================= */
 
 type ContextType = {
   data: FormData;
-  setData: React.Dispatch<React.SetStateAction<FormData>>;
   errors: ValidationErrors;
-  updateField: (name: keyof FormData, value: string) => void;
+  updateField: <K extends keyof FormData>(
+    name: K,
+    value: FormData[K]
+  ) => void;
+  status: "idle" | "loading" | "success" | "error";
 };
 
 const ContactFormContext = createContext<ContextType | null>(null);
@@ -38,6 +65,8 @@ const useContactForm = () => {
   if (!ctx) throw new Error("ContactForm must be used inside provider");
   return ctx;
 };
+
+/* ================= ANIMATION ================= */
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -56,12 +85,141 @@ const itemVariants: Variants = {
   },
 };
 
-type ValidationErrors = {
-  name?: string;
-  email?: string;
-  subject?: string;
-  message?: string;
+/* ================= BASE (LOGIC) ================= */
+
+const validateField = (name: keyof FormData, value?: string) => {
+  const normalized = value?.trim() ?? "";
+
+  if (!normalized) {
+    const label = name ? name[0].toUpperCase() + name.slice(1) : "";
+    return `${label} is required`;
+  }
+
+  if (name === "email") {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(normalized)) {
+      return "Enter a valid email address";
+    }
+  }
+
+  return undefined;
 };
+
+const validateForm = (data: FormData) => {
+  const newErrors: ValidationErrors = {};
+  let isValid = true;
+
+  VALIDATION_FIELDS.forEach((field) => {
+    const error = validateField(field, data[field]);
+
+    if (error) {
+      newErrors[field] = error;
+      isValid = false;
+    }
+  });
+
+  return { isValid, newErrors };
+};
+
+const isErrorField = (name: keyof FormData): name is keyof ValidationErrors => {
+  return VALIDATION_FIELDS.includes(name as keyof ValidationErrors);
+};
+
+function ContactFormBase({
+  children,
+  onSubmit,
+  onError,
+  onSuccess,
+}: {
+  children: React.ReactNode;
+  onSubmit?: (data: FormData) => Promise<void> | void;
+  onError?: (err: unknown) => void;
+  onSuccess?: () => void;
+}) {
+  const [data, setData] = useState<FormData>({});
+  const [errors, setErrors] = useState<ValidationErrors>({});
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  let toast;
+  try {
+    toast = useToast();
+  } catch {
+    toast = null;
+  }
+
+  const updateField = <K extends keyof FormData>(
+    name: K,
+    value: FormData[K]
+  ) => {
+    setData((prev) => ({ ...prev, [name]: value }));
+  
+    if (isErrorField(name) && errors[name]) {
+      setErrors((prev) => {
+        const copy = { ...prev };
+        delete copy[name];
+        return copy;
+      });
+    }
+
+    if (status === "error") {
+      setStatus("idle");
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (status === "loading") return;
+
+    const { isValid, newErrors } = validateForm(data);
+    setErrors(newErrors);
+
+    if (!isValid) return;
+
+    const normalizedData: FormData = {
+      ...data,
+      name: data.name?.trim(),
+      email: data.email?.trim(),
+      subject: data.subject?.trim(),
+      message: data.message?.trim(),
+    };
+    
+    try {
+      setStatus("loading");
+      await onSubmit?.(normalizedData);
+      setStatus("success");
+
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        toast?.addToast({
+          message: "Message sent successfully!",
+          variant: "success",
+          animation: "slide",
+          icon: <InfoCircledIcon className="w-5 h-5" />
+        });
+      }
+    } catch (err) {
+      setStatus("error");
+      if (onError) {
+        onError(err);
+      } else {
+        toast?.addToast({
+          message: "Failed to send message. Please try again.",
+          variant: "error",
+          animation: "slide",
+          icon: <InfoCircledIcon className="w-5 h-5" />
+        });
+      }
+    }
+  };
+
+  return (
+    <ContactFormContext.Provider value={{ data, errors, updateField, status }}>
+      <form onSubmit={handleSubmit}>{children}</form>
+    </ContactFormContext.Provider>
+  );
+}
+
+/* ================= WRAPPER ================= */
 
 function Root({
   children,
@@ -69,76 +227,18 @@ function Root({
   backgroundImage,
   sideImage,
   onSubmit,
+  onError,
+  onSuccess,
 }: ContactFormProps) {
-  const [data, setData] = useState<FormData>({});
-  const [errors, setErrors] = useState<ValidationErrors>({});
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-    console.log("its valid");
-    onSubmit?.(data);
-  };
-
-  const validateForm = () => {
-    const newErrors: ValidationErrors = {};
-    let isValid = true;
-
-    (["name", "email", "subject"] as (keyof FormData)[]).forEach(
-      (field) => {
-        const error = validateField(field, data[field]);
-        if (error) {
-          newErrors[field] = error;
-          isValid = false;
-        }
-      }
-    );
-    setErrors(newErrors);
-    return isValid;
-  };
-
-  const validateField = (name: keyof FormData, value?: string) => {
-    if (!value || value.trim() === "") {
-      return `${name} is required`;
-    }
-
-    if (name === "email") {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-      if (!emailRegex.test(value)) {
-        return "Enter a valid email address";
-      }
-    }
-
-    return undefined;
-  };
-
-
-  const updateField = (name: keyof FormData, value: string) => {
-    setData((prev) => ({ ...prev, [name]: value }));
-
-    if (errors[name]) {
-      setErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[name];
-        return newErrors;
-      });
-    }
-  };
-
-  const baseCard =
-    "rounded-2xl p-8 shadow-xl w-full max-w-xl space-y-6";
+  const baseCard = "rounded-2xl p-8 shadow-xl w-full max-w-xl space-y-6";
 
   const variantStyles = {
-    // default: `bg-background border ${baseCard}`,
-
     default: `
       backdrop-blur-xl
       bg-white/10
       border border-white/20
       ${baseCard}
     `,
-
     background: `
       bg-background/90
       border
@@ -148,58 +248,54 @@ function Root({
 
   if (variant === "split") {
     return (
-      <ContactFormContext.Provider 
-      value={{ data, setData, errors, updateField }}
-      >
-        <div className="grid md:grid-cols-2 rounded-2xl overflow-hidden shadow-xl max-w-5xl mx-auto">
-          <div
-            className="hidden md:block bg-cover bg-center"
-            style={{ backgroundImage: `url(${sideImage})` }}
-          />
+      <div className="grid md:grid-cols-2 rounded-2xl overflow-hidden shadow-xl max-w-5xl mx-auto">
+        <div
+          className="hidden md:block bg-cover bg-center"
+          style={{ backgroundImage: `url(${sideImage})` }}
+        />
 
-          <motion.form
-            onSubmit={handleSubmit}
+        <ContactFormBase onSubmit={onSubmit} onError={onError} onSuccess={onSuccess}>
+          <motion.div
             variants={containerVariants}
             initial="hidden"
             animate="visible"
             className="bg-background p-10 space-y-6"
           >
             {children}
-          </motion.form>
-        </div>
-      </ContactFormContext.Provider>
+          </motion.div>
+        </ContactFormBase>
+      </div>
     );
   }
 
   return (
-    <ContactFormContext.Provider 
-    value={{ data, setData, errors, updateField }}
+    <div
+      className="flex items-center justify-center p-10"
+      style={
+        variant === "background"
+          ? {
+              backgroundImage: `url(${backgroundImage})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }
+          : undefined
+      }
     >
-      <div
-        className="flex items-center justify-center p-10"
-        style={
-          variant === "background"
-            ? {
-                backgroundImage: `url(${backgroundImage})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }
-            : undefined
-        }
-      >
-        <motion.form
-          onSubmit={handleSubmit}
+      <ContactFormBase onSubmit={onSubmit} onError={onError} onSuccess={onSuccess}>
+        <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
           className={variantStyles[variant]}
         >
           {children}
-        </motion.form>
-      </div>
-    </ContactFormContext.Provider>
+        </motion.div>
+      </ContactFormBase>
+    </div>
   );
 }
+
+/* ================= SUB COMPONENTS ================= */
 
 function Header({
   title = "Contact Us",
@@ -210,8 +306,10 @@ function Header({
 }) {
   return (
     <motion.div variants={itemVariants} className="text-center space-y-2">
-      <h2 className="text-2xl font-semibold">{title}</h2>
-      <p className="text-sm text-muted-foreground">{description}</p>
+     <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-500 to-pink-500 bg-clip-text text-transparent">
+        {title}
+      </h2>
+      <p className="text-sm text-muted-foreground max-w-sm mx-auto">{description}</p>
     </motion.div>
   );
 }
@@ -225,12 +323,13 @@ function Field({
   label,
   type = "text",
 }: {
-  name: keyof FormData;
+  name: FieldName;
   label: string;
   type?: string;
 }) {
-  const { data, updateField, errors  } = useContactForm();
-  const error = errors[name] ?? undefined;
+  const { data, updateField, errors } = useContactForm();
+  const error = errors[name];
+
   return (
     <motion.div variants={itemVariants} className="pt-4">
       <AnimatedInput
@@ -238,97 +337,73 @@ function Field({
         variant="clean"
         type={type}
         value={(data[name] as string) ?? ""}
-        // onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-        //   setData((p) => ({ ...p, [name]: e.target.value }))
-        // }
-        // onChange={(value: string) =>
-        //   setData((p) => ({ ...p, [name]: value }))
-        // }
         onChange={(value: string) => updateField(name, value)}
-        error={error}
       />
+      {error && (
+        <div className="text-sm text-red-500 flex items-center gap-2">
+          <ExclamationTriangleIcon/>
+          {error}
+        </div>
+      )}
     </motion.div>
   );
 }
 
-function MessageTextarea({
-  name,
-  // label,
-}: {
-  name: keyof FormData;
-  label: string;
-}) {
-  const { data, setData } = useContactForm();
 
-  const handleChange = (value: string) => {
-    setData((p) => ({ ...p, [name]: value }));
-  };
+function Textarea({ name, maxMessageLength }: { name: keyof FormData, maxMessageLength?: number }) {
+  const { data, updateField } = useContactForm();
+
   return (
     <motion.div variants={itemVariants} className="pt-4">
-      {/* <label className="text-sm font-medium">{label}</label> */}
       <AnimatedTextarea
         placeholder="Enter your message"
         variant="clean"
+        maxLength={maxMessageLength}
         value={(data[name] as string) ?? ""}
-        onChange={handleChange}
+        onChange={(value) => updateField(name, value)}
       />
     </motion.div>
   );
 }
-interface FileUploadFieldProps {
-  label?: string;
-  multiple?: boolean;
-  accept?: string;
-  maxSize?: number;
-}
-  
-const FileUploadField: React.FC<FileUploadFieldProps> = ({
-  label = "Attachment (optional)",
-  multiple = false,
-  accept = "*/*",
-  maxSize = 10 * 1024 * 1024,
-}) => {
-  const { setData } = useContactForm();
+
+function FileUploadField() {
+  const { updateField } = useContactForm();
 
   return (
-    <div className="space-y-2">
-      <label className="text-sm font-medium">{label}</label>
-
-      <FileUpload
-        multiple={multiple}
-        accept={accept}
-        maxSize={maxSize}
-        showFileList
-        onFilesChange={(files) => {
-          setData((prev) => ({
-            ...prev,
-            file: multiple ? (files as any) : files[0] ?? null,
-          }));
-        }}
-      />
-    </div>
+    <FileUpload
+      onFilesChange={(files) => {
+        const file = files?.[0] ?? null;
+        updateField("file", file);
+      }}
+    />
   );
-};
+}
 
 function Actions() {
+  const { status } = useContactForm();
   return (
-    <motion.div
-      variants={itemVariants}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.96 }}
-    >
-      <Button type="submit" className="w-full">
-        Send Message
+    <motion.div variants={itemVariants}>
+     <Button
+        type="submit"
+        className="w-full bg-gradient-to-r from-indigo-500 to-pink-500 text-white shadow-lg"
+        disabled={status === "loading"}
+      >
+        {status === "loading" ? "Sending..." : "Send Message"}
       </Button>
     </motion.div>
   );
 }
 
+/* ================= EXPORT ================= */
+
 export const ContactForm = Object.assign(Root, {
   Header,
   Content,
   Field,
-  Textarea: MessageTextarea,
-  FileUpload : FileUploadField,
+  Textarea,
+  FileUpload: FileUploadField,
   Actions,
+  Base: ContactFormBase,
 });
+
+

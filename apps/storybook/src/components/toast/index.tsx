@@ -6,7 +6,7 @@ import {
   ExclamationTriangleIcon,
   InfoCircledIcon,
 } from '@radix-ui/react-icons';
-import { ToastVariantTypes, ToastAnimationTypes } from './types';
+import { type ToastVariantTypes, type ToastAnimationTypes } from './types';
 import { cn } from '../../../utils/cn';
 
 interface ToastContainerData {
