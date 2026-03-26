@@ -1398,6 +1398,27 @@
           "type": "component"
         }
       }
+    },
+    "contactForm": {
+      "name": "ContactForm",
+      "description": "A Contact Form Page that allows users to submit inquiries, feedback, or support requests. The form collects basic contact details and a message, with an option to attach a file.",
+      "dependencies": [
+        "radix-ui/react-icons", 
+        "framer-motion"
+      ],
+      "componentDependencies": [
+        "textarea",
+        "button",
+        "input",
+        "file-upload",
+        "toast"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/sections/contact-form/index.tsx",
+          "type": "template"
+        }
+      }
     }
   } 
 }
