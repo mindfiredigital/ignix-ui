@@ -162,7 +162,7 @@ export const StatsGridSimpleDemo = (): JSX.Element => {
     const generatePropsCode = (): string => {
         return `
 import { StatsGrid, StatsGridTitle, StatsGridDescription, StatsGridContainer, StatsGridCard } from '@ignix-ui/stats-grid';
-import { Users, DollarSign, Download, Star, Shield, Globe, Heart, Activity  } from 'lucide-react';
+import { Users, DollarSign, Download, Star, Shield, Globe, Heart, Activity } from 'lucide-react';
 
 function StatsGridDemo() {
 

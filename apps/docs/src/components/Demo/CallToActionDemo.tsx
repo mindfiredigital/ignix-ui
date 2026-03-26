@@ -181,7 +181,6 @@ const renderFormContent = (formType: FormType, isDarkTheme: boolean, demoType: s
 
 type CodeSnippetProps = Partial<{
     imagePosition: ImagePositionType;
-    // selectedTheme: 'light' | 'dark';
 }>;
 
 // Helper function to get code snippet
@@ -491,7 +490,6 @@ const CTABannerDemo = ({
                             {getCodeSnippet(formType, demoType, bannerVariant,
                                 {
                                     imagePosition,
-                                    // selectedTheme: effectiveTheme,
                                 })}
                         </CodeBlock>
                     </div>
