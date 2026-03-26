@@ -348,7 +348,9 @@ async function createIgnixConfigFIle() {
       if (await fs.pathExists(bundledTemplatePath)) {
         await fs.copy(bundledTemplatePath, DEFAULT_CONFIG_PATH);
       } else {
-        throw new Error(`Config template not found at ${configTemplatePath} or ${bundledTemplatePath}`);
+        throw new Error(
+          `Config template not found at ${configTemplatePath} or ${bundledTemplatePath}`
+        );
       }
     } else {
       await fs.copy(configTemplatePath, DEFAULT_CONFIG_PATH);
