@@ -516,10 +516,10 @@
         }
       }
     },
-    "steppers": {
-      "name": "Steppers",
-      "description": "An animated steppers component with different variants",
-      "dependencies": ["framer-motion", "lucide-react", "class-variance-authority"],
+    "stepper": {
+      "name": "stepper",
+      "description": "An animated stepper component with different variants",
+      "dependencies": ["framer-motion", "class-variance-authority"],
       "files": {
         "main": {
           "path": "components/stepper/index.tsx",

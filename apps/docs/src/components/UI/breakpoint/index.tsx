@@ -1,17 +1,22 @@
 import React, { ReactNode, useEffect, useState } from "react";
 
+type BreakpointType = "mobile" | "tablet" | "desktop";
+
 type BreakpointProps = {
-  show?: "mobile" | "tablet" | "desktop";
-  hide?: "mobile" | "tablet" | "desktop";
-  from?: "mobile" | "tablet" | "desktop";
-  to?: "mobile" | "tablet" | "desktop";
+  show?: BreakpointType;
+  hide?: BreakpointType;
+  from?: BreakpointType;
+  to?: BreakpointType;
   children: ReactNode;
 };
 
-const breakpoints = {
-  mobile: "(max-width: 767px)",
-  tablet: "(min-width: 768px) and (max-width: 1023px)",
-  desktop: "(min-width: 1024px)",
+const breakpointValues: Record<
+  BreakpointType,
+  { min: number; max: number }
+> = {
+  mobile: { min: 0, max: 767 },
+  tablet: { min: 768, max: 1023 },
+  desktop: { min: 1024, max: Infinity },
 };
 
 function useBreakpoint(query: string): boolean {
@@ -19,11 +24,13 @@ function useBreakpoint(query: string): boolean {
 
   useEffect(() => {
     const mediaQuery = window.matchMedia(query);
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     const handleChange = () => setMatches(mediaQuery.matches);
 
     handleChange();
     mediaQuery.addEventListener("change", handleChange);
 
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, [query]);
 
@@ -40,17 +47,32 @@ export const Breakpoint: React.FC<BreakpointProps> = ({
   let query = "";
 
   if (show) {
-    query = breakpoints[show];
+    const { min, max } = breakpointValues[show];
+    query =
+      max === Infinity
+        ? `(min-width: ${min}px)`
+        : `(min-width: ${min}px) and (max-width: ${max}px)`;
   } else if (hide) {
-    query = `not ${breakpoints[hide]}`;
+    const { min, max } = breakpointValues[hide];
+    query =
+      max === Infinity
+        ? `not (min-width: ${min}px)`
+        : `not (min-width: ${min}px) and (max-width: ${max}px)`;
   } else if (from && to) {
-    query = `${breakpoints[from]} and ${breakpoints[to]}`;
-  } else if (from) {
-    query = breakpoints[from];
-  } else if (to) {
-    query = breakpoints[to];
-  }
+    const min = breakpointValues[from].min;
+    const max = breakpointValues[to].max;
 
+    query =
+      max === Infinity
+        ? `(min-width: ${min}px)`
+        : `(min-width: ${min}px) and (max-width: ${max}px)`;
+  } else if (from) {
+    const min = breakpointValues[from].min;
+    query = `(min-width: ${min}px)`;
+  } else if (to) {
+    const max = breakpointValues[to].max;
+    query = `(max-width: ${max}px)`;
+  }
   const matches = useBreakpoint(query);
 
   return matches ? <>{children}</> : null;
