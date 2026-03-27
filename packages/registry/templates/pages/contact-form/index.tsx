@@ -35,6 +35,7 @@ type ContactFormProps = {
   onSubmit?: (data: FormData) => Promise<void> | void;
   onError?: (err: unknown) => void;
   onSuccess?: () => void;
+  sideImagePosition?: "left" | "right";
 };
 
 
@@ -226,6 +227,7 @@ function Root({
   variant = "default",
   backgroundImage,
   sideImage,
+  sideImagePosition = "left",
   onSubmit,
   onError,
   onSuccess,
@@ -247,23 +249,39 @@ function Root({
   };
 
   if (variant === "split") {
+    const ImageBlock = (
+      <div
+        className="hidden md:block bg-cover bg-center"
+        style={{ backgroundImage: `url(${sideImage})` }}
+      />
+    );
+  
+    const FormBlock = (
+      <ContactFormBase onSubmit={onSubmit} onError={onError} onSuccess={onSuccess}>
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="bg-background p-10 space-y-6"
+        >
+          {children}
+        </motion.div>
+      </ContactFormBase>
+    );
+  
     return (
       <div className="grid md:grid-cols-2 rounded-2xl overflow-hidden shadow-xl max-w-5xl mx-auto">
-        <div
-          className="hidden md:block bg-cover bg-center"
-          style={{ backgroundImage: `url(${sideImage})` }}
-        />
-
-        <ContactFormBase onSubmit={onSubmit} onError={onError} onSuccess={onSuccess}>
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="bg-background p-10 space-y-6"
-          >
-            {children}
-          </motion.div>
-        </ContactFormBase>
+        {sideImagePosition === "left" ? (
+          <>
+            {ImageBlock}
+            {FormBlock}
+          </>
+        ) : (
+          <>
+            {FormBlock}
+            {ImageBlock}
+          </>
+        )}
       </div>
     );
   }
