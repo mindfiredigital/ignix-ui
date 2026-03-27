@@ -10,7 +10,6 @@ import FileUpload from "@ignix-ui/file-upload";
 import AnimatedTextarea from "@ignix-ui/textarea";
 import { InfoCircledIcon, ExclamationTriangleIcon } from '@radix-ui/react-icons';
 
-
 /* ================= TYPES ================= */
 
 type FormData = {
@@ -307,8 +306,10 @@ function Header({
 }) {
   return (
     <motion.div variants={itemVariants} className="text-center space-y-2">
-      <h2 className="text-2xl font-semibold">{title}</h2>
-      <p className="text-sm text-muted-foreground">{description}</p>
+     <p className="text-3xl font-bold text-primary bg-clip-text">
+        {title}
+      </p>
+      <span className="text-sm text-muted-foreground max-w-sm mx-auto">{description}</span>
     </motion.div>
   );
 }
@@ -339,14 +340,15 @@ function Field({
         onChange={(value: string) => updateField(name, value)}
       />
       {error && (
-        <div className="text-sm text-red-500 flex items-center gap-2">
-          <ExclamationTriangleIcon className="h-4 w-4" />
+        <div className="text-sm text-red-700 flex items-center gap-2">
+          <ExclamationTriangleIcon/>
           {error}
         </div>
       )}
     </motion.div>
   );
 }
+
 
 function Textarea({ name, maxMessageLength }: { name: keyof FormData, maxMessageLength?: number }) {
   const { data, updateField } = useContactForm();
@@ -369,6 +371,7 @@ function FileUploadField() {
 
   return (
     <FileUpload
+      buttonVariant="primary"
       onFilesChange={(files) => {
         const file = files?.[0] ?? null;
         updateField("file", file);
@@ -383,7 +386,7 @@ function Actions() {
     <motion.div variants={itemVariants}>
      <Button
         type="submit"
-        className="w-full"
+        className="w-full  text-white shadow-lg"
         disabled={status === "loading"}
       >
         {status === "loading" ? "Sending..." : "Send Message"}
