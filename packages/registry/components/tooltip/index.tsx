@@ -4,7 +4,6 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../utils/cn";
 import { ReactNode, useState } from "react";
 
-// Define animation variants
 const motionVariants = {
   fade: {
     initial: { opacity: 0 },
@@ -55,8 +54,8 @@ const tooltipVariants = cva(
         light: "bg-white text-zinc-900 border-zinc-200",
         slate: "bg-slate-800 text-white border-slate-700",
         default: "bg-white text-gray-900",
-        transparent: "bg-transparent text-transparent",
-        glass: "bg-white/10 backdrop-blur-lg text-blue-200",
+        transparent: "bg-transparent border-transparent",        
+        glass: "bg-white/10 backdrop-blur-lg text-blue-300",
         gradient: "bg-gradient-to-r from-blue-500 to-purple-500 text-white",
         primary: "bg-blue-400 text-white",
       },
