@@ -34,18 +34,18 @@ const SpacerDemo = () => {
   });
 
   const codeString = `
-    import { Spacer } from '@ignix-ui/spacer';
+import { Spacer } from '@ignix-ui/spacer';
 
-    <Spacer 
-      size="${size}" 
-      direction="${direction}" 
-      responsive={{
-        mobile: "${responsive.mobile ?? ''}",
-        tablet: "${responsive.tablet ?? ''}",
-        desktop: "${responsive.desktop ?? ''}"
-      }}
-    />
-    `;
+<Spacer 
+  size="${size}" 
+  direction="${direction}" 
+  responsive={{
+    mobile: "${responsive.mobile ?? ''}",
+    tablet: "${responsive.tablet ?? ''}",
+    desktop: "${responsive.desktop ?? ''}"
+  }}
+/>
+`;
 
   return (
     <div className="space-y-6 mb-8">

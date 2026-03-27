@@ -11,20 +11,17 @@ vi.mock('lucide-react', () => ({
 }));
 
 // Mock framer-motion to remove animation delays and complexity from tests
-vi.mock('framer-motion', async () => {
-  const actual = await vi.importActual('framer-motion');
+vi.mock('framer-motion', () => {
+  const motion = new Proxy({}, {
+    get: (_, tag: string) =>
+      React.forwardRef((props: any, ref: any) =>
+        React.createElement(tag, { ...props, ref }, props.children)
+      ),
+  });
+
   return {
-    ...actual,
-    motion: {
-      ...actual,
-      div: React.forwardRef(({ ...props }, ref: React.Ref<HTMLDivElement>) => (
-        <div {...props} ref={ref} />
-      )),
-      aside: React.forwardRef(({ ...props }, ref: React.Ref<HTMLDivElement>) => (
-        <aside {...props} ref={ref} />
-      )),
-    },
-    AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+    motion,
+    AnimatePresence: ({ children }: any) => <>{children}</>,
   };
 });
 
