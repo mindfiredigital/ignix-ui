@@ -418,9 +418,10 @@ const SimpleButton: React.FC<{
     disabled: boolean;
     children: React.ReactNode;
     className?: string;
-}> = ({ onClick, disabled, children, className }) => {
+}> = ({ onClick, disabled, children, className, variant }) => {
     return (
         <button
+            type="button"
             onClick={onClick}
             disabled={disabled}
             className={cn(
@@ -432,7 +433,8 @@ const SimpleButton: React.FC<{
                 "dark:shadow-indigo-500/25 dark:hover:shadow-indigo-500/40",
                 "transition-all duration-300 transform hover:-translate-y-0.5",
                 "disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none",
-                className
+                className,
+                variant == 'primary' && 'bg-primary'
             )}
         >
             <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
