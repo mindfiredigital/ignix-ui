@@ -29,35 +29,54 @@ type VariantType = 'default' | 'primary' | 'secondary' | 'accent' | 'muted' | 'g
 type ImagePositionType = 'left' | 'right';
 type FormType = 'banner' | 'newsletter' | 'contact-form' | 'demo-request';
 
-// Helper function to get theme-aware variant based on color mode
-const getThemeAwareVariant = (demoType: string, colorMode: 'light' | 'dark'): VariantType => {
+// Theme options for the selector
+const themeOptions = [
+    { value: 'light', label: 'Light' },
+    { value: 'dark', label: 'Dark' },
+];
+
+// Helper function to get banner variant based on theme and demo type
+const getBannerVariant = (demoType: string, isDarkTheme: boolean): VariantType => {
+    // For all layouts, use explicit light/dark variants for proper background colors
     if (demoType === 'background-image') {
-        return colorMode === 'dark' ? 'dark' : 'light';
+        return isDarkTheme ? 'dark' : 'light';
     }
     if (demoType === 'gradient-background') {
-        return colorMode === 'dark' ? 'dark' : 'light';
+        return isDarkTheme ? 'dark' : 'light';
     }
     if (demoType === 'split') {
-        return colorMode === 'dark' ? 'dark' : 'light';
+        return isDarkTheme ? 'dark' : 'light';
     }
-    // For centered demo
-    return colorMode === 'dark' ? 'dark' : 'default';
+    // For centered demo - use light/dark variants for proper backgrounds
+    return isDarkTheme ? 'dark' : 'light';
 };
 
-// Helper function to render form content based on type
-const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light') => {
+// Helper function to render form content based on type with proper theme classes
+const renderFormContent = (formType: FormType, isDarkTheme: boolean, demoType: string) => {
+    // Light theme: dark text on light background
+    // Dark theme: light text on dark background
+    const headingColorClass = isDarkTheme ? 'text-white' : 'text-gray-900';
+    const subheadingColorClass = isDarkTheme ? 'text-gray-300' : 'text-gray-600';
+    const featureTextClass = isDarkTheme ? 'text-gray-300' : 'text-gray-700';
+
+    // For background image layout in light mode, make text darker
+    const isBackgroundImageLight = demoType === 'background-image' && !isDarkTheme;
+    const finalHeadingClass = isBackgroundImageLight ? 'text-gray-900' : headingColorClass;
+    const finalSubheadingClass = isBackgroundImageLight ? 'text-gray-800' : subheadingColorClass;
+    const finalFeatureClass = isBackgroundImageLight ? 'text-gray-800' : featureTextClass;
+
     switch (formType) {
         case 'banner':
             return (
                 <>
-                    <CTABannerHeading className={theme === 'dark' ? 'text-gray-100 text-3xl' : 'text-gray-900 text-4xl'}>
+                    <CTABannerHeading className={`${finalHeadingClass} text-3xl md:text-4xl`}>
                         Let's Build Something Amazing
                     </CTABannerHeading>
-                    <CTABannerSubheading className="dark:text-gray-300 text-gray-900 text-lg">
+                    <CTABannerSubheading className={`${finalSubheadingClass} text-base md:text-lg`}>
                         Join thousands of satisfied customers who have transformed their business with our platform.
                         Get started today and see the difference.
                     </CTABannerSubheading>
-                    <CTABannerActions>
+                    <CTABannerActions className="mt-8">
                         <CTABannerButton
                             label="Get Started"
                             variant="primary"
@@ -71,19 +90,19 @@ const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light'
                     <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm">
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-green-500" />
-                            <span className={theme === 'dark' ? 'text-gray-300 text-lg' : 'text-gray-900 text-lg'}>
+                            <span className={finalFeatureClass}>
                                 30-day free trial
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-green-500" />
-                            <span className={theme === 'dark' ? 'text-gray-300 text-lg' : 'text-gray-900 text-lg'}>
+                            <span className={finalFeatureClass}>
                                 No credit card required
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-green-500" />
-                            <span className={theme === 'dark' ? 'text-gray-300 text-lg' : 'text-gray-900 text-lg'}>
+                            <span className={finalFeatureClass}>
                                 24/7 support
                             </span>
                         </div>
@@ -103,8 +122,8 @@ const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light'
                         alert(`Subscribed to newsletter: ${email}`);
                     }}
                 >
-                    <NewsletterHeading>Stay in the Loop</NewsletterHeading>
-                    <NewsletterSubheading>
+                    <NewsletterHeading className={finalHeadingClass}>Stay in the Loop</NewsletterHeading>
+                    <NewsletterSubheading className={finalSubheadingClass}>
                         Subscribe to our newsletter for the latest updates, tips, and exclusive content.
                         Join 10,000+ professionals already subscribed.
                     </NewsletterSubheading>
@@ -127,8 +146,8 @@ const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light'
                         alert(`Contact form submitted: ${JSON.stringify(data)}`);
                     }}
                 >
-                    <ContactFormHeading>Get In Touch</ContactFormHeading>
-                    <ContactFormSubheading>
+                    <ContactFormHeading className={finalHeadingClass}>Get In Touch</ContactFormHeading>
+                    <ContactFormSubheading className={finalSubheadingClass}>
                         Have questions or need assistance? Our team is here to help you succeed.
                     </ContactFormSubheading>
                 </CTABannerContactForm>
@@ -150,8 +169,8 @@ const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light'
                         alert(`Demo request submitted: ${JSON.stringify(data)}`);
                     }}
                 >
-                    <DemoFormHeading>See Our Platform Live</DemoFormHeading>
-                    <DemoFormSubheading>
+                    <DemoFormHeading className={finalHeadingClass}>See Our Platform Live</DemoFormHeading>
+                    <DemoFormSubheading className={finalSubheadingClass}>
                         Get a personalized demo tailored to your business needs.
                         See firsthand how we can help you achieve your goals.
                     </DemoFormSubheading>
@@ -209,7 +228,7 @@ const getCodeSnippet = (formType: FormType, demoType: string, variant: VariantTy
             if (variant === 'dark') {
                 childrenContent += `  <div className="absolute inset-0 bg-black/40" />\n\n`;
             } else if (variant === 'light') {
-                childrenContent += `  <div className="absolute inset-0 bg-black/10" />\n\n`;
+                childrenContent += `  <div className="absolute inset-0 bg-white/70" />\n\n`;
             }
         }
     }
@@ -346,26 +365,32 @@ const CTABannerDemo = ({
 }) => {
     const { colorMode } = useColorMode();
 
-    // Initialize variant based on theme
-    const [variant, setVariant] = useState<VariantType>(
-        getThemeAwareVariant(demoType, colorMode as 'light' | 'dark')
-    );
+    // State for manual theme selection (overrides auto theme)
+    const [manualTheme, setManualTheme] = useState<'light' | 'dark' | null>(null);
+
+    // Determine effective theme: manual selection if set, otherwise auto from colorMode
+    const effectiveTheme = manualTheme || (colorMode as 'light' | 'dark');
+
+    // Determine if theme is dark
+    const isDarkTheme = effectiveTheme === 'dark';
+
+    // Get banner variant based on demo type and theme
+    const bannerVariant = getBannerVariant(demoType, isDarkTheme);
+
     const [formType, setFormType] = useState<FormType>('banner');
     const [imagePosition, setImagePosition] = useState<ImagePositionType>('right');
 
-    const theme = (variant as string) === 'dark' || (variant as string) === 'gradient' || (demoType === 'background-image' && (variant as string) === 'dark') ? 'dark' : 'light';
-
-    // Update variant when color mode changes
-    React.useEffect(() => {
-        setVariant(getThemeAwareVariant(demoType, colorMode as 'light' | 'dark'));
-    }, [colorMode, demoType]);
-
+    const handleThemeChange = (value: string) => {
+        setManualTheme(value as 'light' | 'dark');
+    };
 
     const renderBanner = () => {
         const bannerProps: Partial<CTABannerProps> = {
-            variant,
+            variant: bannerVariant,
             layout: demoType === 'split' ? 'split' : 'centered',
             contentAlign: demoType === 'split' ? 'left' : 'center',
+            theme: effectiveTheme,
+            forceTheme: true,
         };
 
         if (demoType === 'split') {
@@ -389,17 +414,17 @@ const CTABannerDemo = ({
                     <div
                         className="absolute inset-0"
                         style={{
-                            background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(139, 92, 246, 0.8) 100%)',
+                            background: `linear-gradient(135deg, ${isDarkTheme ? 'rgba(0, 0, 0, 0.6)' : 'rgba(59, 130, 246, 0.8)'} 0%, ${isDarkTheme ? 'rgba(0, 0, 0, 0.7)' : 'rgba(139, 92, 246, 0.8)'} 100%)`,
                         }}
                     />
                 )}
 
                 {(demoType === 'background-image') && (
-                    <div className={`absolute inset-0 ${variant === 'dark' ? 'bg-black/40' : 'bg-white/20'}`} />
+                    <div className={`absolute inset-0 ${isDarkTheme ? 'bg-black/40' : 'bg-white/70'}`} />
                 )}
 
                 <CTABannerContent className={(demoType === 'background-image' || demoType === 'gradient-background') ? "relative z-10" : ""}>
-                    {renderFormContent(formType, theme)}
+                    {renderFormContent(formType, isDarkTheme, demoType)}
                 </CTABannerContent>
 
                 {demoType === 'split' && (
@@ -422,6 +447,13 @@ const CTABannerDemo = ({
 
             <div className="flex flex-wrap gap-4 justify-end items-center">
                 <div className="flex flex-row items-center gap-2">
+                    {/* Theme Selector */}
+                    <VariantSelector
+                        variants={themeOptions.map(t => t.value)}
+                        selectedVariant={manualTheme || effectiveTheme}
+                        onSelectVariant={handleThemeChange}
+                        type="Theme"
+                    />
                     <VariantSelector
                         variants={['banner', 'newsletter', 'contact-form', 'demo-request']}
                         selectedVariant={formType}
@@ -455,7 +487,7 @@ const CTABannerDemo = ({
                 <TabItem value="code" label="Code">
                     <div className="mt-4">
                         <CodeBlock language="tsx" className="text-sm">
-                            {getCodeSnippet(formType, demoType, variant,
+                            {getCodeSnippet(formType, demoType, bannerVariant,
                                 {
                                     imagePosition,
                                 })}

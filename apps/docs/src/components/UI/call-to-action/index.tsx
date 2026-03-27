@@ -1678,7 +1678,8 @@ export const CTABannerContactForm: React.FC<{
                             </div>
 
                             {/* Subject Field - Full width */}
-                            <div className={layout === 'compact' ? 'md:col-span-2' : ''}>
+                            <div className="col-span-1 md:col-span-2">
+
                                 <label htmlFor="contact-subject" className="block mb-2">
                                     <Typography
                                         variant="small"
