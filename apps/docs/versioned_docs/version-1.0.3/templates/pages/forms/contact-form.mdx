@@ -31,3 +31,87 @@ ignix add component contactForm
 ```
   </TabItem>
 </Tabs>
+
+---
+
+## Props
+
+### ContactForm Props
+
+| Prop | Type | Default | Description |
+|-----|-----|-----|-----|
+| `children` | `React.ReactNode` | **Required** | Form content (Header, Content, Fields, etc.) |
+| `variant` | `"default" \| "background" \| "split"` | `"default"` | Layout variant of the form |
+| `backgroundImage` | `string` | — | Background image URL (used in `background` variant) |
+| `sideImage` | `string` | — | Side image URL (used in `split` variant) |
+| `sideImagePosition` | `"left" \| "right"` | `"left"` | Position of the side image in split layout |
+| `onSubmit` | `(data: FormData) => Promise<void> \| void` | — | Called when form is submitted successfully |
+| `onError` | `(err: unknown) => void` | — | Called when submission fails |
+| `onSuccess` | `() => void` | — | Called after successful submission (overrides default toast) |
+
+---
+
+### ContactForm.Header Props
+
+| Prop | Type | Default | Description |
+|-----|-----|-----|-----|
+| `title` | `string` | `"Contact Us"` | Form title |
+| `description` | `string` | `"We would love to hear from you"` | Subtitle/description text |
+
+---
+
+### ContactForm.Content Props
+
+| Prop | Type | Default | Description |
+|-----|-----|-----|-----|
+| `children` | `React.ReactNode` | **Required** | Form fields and content |
+
+---
+
+### ContactForm.Field Props
+
+| Prop | Type | Default | Description |
+|-----|-----|-----|-----|
+| `name` | `"name" \| "email" \| "subject"` | **Required** | Field name used for validation and data |
+| `label` | `string` | **Required** | Input placeholder/label |
+| `type` | `string` | `"text"` | Input type (e.g. text, email) |
+
+---
+
+### ContactForm.Textarea Props
+
+| Prop | Type | Default | Description |
+|-----|-----|-----|-----|
+| `name` | `"message"` | **Required** | Field name |
+| `maxMessageLength` | `number` | — | Maximum allowed message length |
+
+---
+
+### ContactForm.FileUpload Props
+
+| Prop | Type | Default | Description |
+|-----|-----|-----|-----|
+| — | — | — | Uses underlying FileUpload component props |
+
+> ℹ️ This component internally uses the `FileUpload` component. You can extend or customize it by modifying the source if needed.
+
+---
+
+### ContactForm.Actions Props
+
+| Prop | Type | Default | Description |
+|-----|-----|-----|-----|
+| — | — | — | Submit button section (no configurable props currently) |
+
+---
+
+### ContactForm.Base Props
+
+| Prop | Type | Default | Description |
+|-----|-----|-----|-----|
+| `children` | `React.ReactNode` | **Required** | Form content |
+| `onSubmit` | `(data: FormData) => Promise<void> \| void` | — | Submit handler |
+| `onError` | `(err: unknown) => void` | — | Error handler |
+| `onSuccess` | `() => void` | — | Success handler |
+
+---

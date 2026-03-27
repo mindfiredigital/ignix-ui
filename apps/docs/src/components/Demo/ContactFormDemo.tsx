@@ -13,6 +13,7 @@ type Variant = "default" | "background" | "split";
 
 export const ContactFormDemo = () => {
   const [variant, setVariant] = useState<Variant>("default");
+  const [sideImagePosition, setSideImagePosition] = useState<"left" | "right">("left");
   const [submitted, setSubmitted] = useState<any>(null);
 
   const handleSubmit = async (data: any) => {
@@ -50,13 +51,25 @@ export const ContactFormDemo = () => {
   return (
     <div className="space-y-6">
       {/* Controls */}
-      <div className="flex justify-end">
-        <VariantSelector
-          variants={["default", "background", "split"]}
-          selectedVariant={variant}
-          onSelectVariant={(v) => setVariant(v as Variant)}
-          type="Variant"
-        />
+      <div className="flex items-center justify-end flex-wrap gap-2">
+          <div className="space-y-2 mx-1">
+            <VariantSelector
+              variants={["default", "background", "split"]}
+              selectedVariant={variant}
+              onSelectVariant={(v) => setVariant(v as Variant)}
+              type="Variant"
+            />
+          </div>
+        {variant === "split" && (
+            <div className="space-y-2 mx-1">
+              <VariantSelector
+                variants={["left", "right"]}
+                selectedVariant={sideImagePosition}
+                onSelectVariant={(v) => setSideImagePosition(v as "left" | "right")}
+                type="Image Position"
+              />
+            </div>
+      )}
       </div>
 
       {/* Tabs */}
@@ -66,8 +79,9 @@ export const ContactFormDemo = () => {
             <ContactForm
               variant={variant}
               backgroundImage="https://images.unsplash.com/photo-1506744038136-46273834b3fb"
-                sideImage="https://images.unsplash.com/photo-1556761175-4b46a572b786"
+              sideImage="https://images.unsplash.com/photo-1556761175-4b46a572b786"
               onSubmit={handleSubmit}
+              sideImagePosition={sideImagePosition}
             >
               <ContactForm.Header />
               <ContactForm.Content>
