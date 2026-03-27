@@ -1,0 +1,378 @@
+---
+sidebar_position: 7
+title: Dashboard Shortcuts Page
+description: A composable dashboard shortcuts template with large action buttons, reorderable shortcut grid, Radix icons, keyboard hints, and persisted customization.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import DashboardShortcutsPageDemo from '@site/src/components/Demo/DashboardShortcutsPageDemo';
+
+The **Dashboard Shortcuts Page** is built for quick command-style workflows.  
+It is designed as **composable sections** so you can independently control layout, header, actions, shortcuts grid, and footer while keeping a consistent visual system.
+
+<DashboardShortcutsPageDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+
+```bash
+ignix add component dashboard-shortcuts-page
+```
+
+  </TabItem>
+  <TabItem value="manual" label="Manual">
+
+```tsx
+// 1) Create file: src/components/ui/dashboard-shortcuts-page/index.tsx
+// 2) Paste the component implementation (same structure as docs index file)
+
+"use client";
+
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { FilePlusIcon, UploadIcon, DownloadIcon, Share1Icon } from "@radix-ui/react-icons";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+
+export interface DashboardAction {
+  id: string;
+  label: string;
+  shortcutHint: string;
+  onClick?: () => void;
+}
+
+export interface ShortcutItem {
+  id: string;
+  label: string;
+  description?: string;
+  shortcutHint: string;
+  onTrigger?: () => void;
+}
+
+export interface DashboardShortcutsLayoutProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export interface DashboardShortcutsHeaderProps {
+  title?: string;
+  description?: string;
+}
+
+export interface DashboardShortcutsActionsSectionProps {
+  actions: DashboardAction[];
+}
+
+export interface DashboardShortcutsGridSectionProps {
+  shortcuts: ShortcutItem[];
+  draggingId: string | null;
+  onDragStart: (id: string) => void;
+  onDrop: (targetId: string) => void;
+  onDragEnd: () => void;
+}
+
+export interface DashboardShortcutsFooterProps {
+  text?: string;
+}
+
+export interface UseDashboardShortcutsStateOptions {
+  shortcuts: ShortcutItem[];
+  actions: DashboardAction[];
+  storageKey?: string;
+}
+
+export interface UseDashboardShortcutsStateResult {
+  orderedShortcuts: ShortcutItem[];
+  draggingId: string | null;
+  handleDragStart: (id: string) => void;
+  handleDrop: (targetId: string) => void;
+  handleDragEnd: () => void;
+}
+
+function reorderById(items: ShortcutItem[], activeId: string, targetId: string): ShortcutItem[] {
+  const sourceIndex = items.findIndex((item) => item.id === activeId);
+  const targetIndex = items.findIndex((item) => item.id === targetId);
+  if (sourceIndex < 0 || targetIndex < 0 || sourceIndex === targetIndex) return items;
+  const next = [...items];
+  const [moved] = next.splice(sourceIndex, 1);
+  next.splice(targetIndex, 0, moved);
+  return next;
+}
+
+export function useDashboardShortcutsState({
+  shortcuts,
+  actions,
+  storageKey = "dashboard-shortcuts.order",
+}: UseDashboardShortcutsStateOptions): UseDashboardShortcutsStateResult {
+  const [orderedShortcuts, setOrderedShortcuts] = useState<ShortcutItem[]>(shortcuts);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+
+  const actionByKey = useMemo(() => {
+    const map = new Map<string, DashboardAction>();
+    actions.forEach((action) => map.set(action.shortcutHint.toLowerCase(), action));
+    return map;
+  }, [actions]);
+
+  const shortcutByKey = useMemo(() => {
+    const map = new Map<string, ShortcutItem>();
+    orderedShortcuts.forEach((shortcut) => map.set(shortcut.shortcutHint.toLowerCase(), shortcut));
+    return map;
+  }, [orderedShortcuts]);
+
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(storageKey);
+      if (!raw) return;
+      const ids = JSON.parse(raw) as string[];
+      const byId = new Map(shortcuts.map((item) => [item.id, item]));
+      const fromStorage = ids.map((id) => byId.get(id)).filter((item): item is ShortcutItem => item !== undefined);
+      const remaining = shortcuts.filter((item) => !ids.includes(item.id));
+      setOrderedShortcuts([...fromStorage, ...remaining]);
+    } catch {
+      setOrderedShortcuts(shortcuts);
+    }
+  }, [shortcuts, storageKey]);
+
+  useEffect(() => {
+    window.localStorage.setItem(storageKey, JSON.stringify(orderedShortcuts.map((item) => item.id)));
+  }, [orderedShortcuts, storageKey]);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      const target = event.target;
+      if (target instanceof HTMLElement) {
+        const tag = target.tagName.toLowerCase();
+        if (tag === "input" || tag === "textarea" || target.isContentEditable) return;
+      }
+      const key = event.key.toLowerCase();
+      actionByKey.get(key)?.onClick?.();
+      shortcutByKey.get(key)?.onTrigger?.();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [actionByKey, shortcutByKey]);
+
+  const handleDrop = useCallback((targetId: string) => {
+    setOrderedShortcuts((prev) => (draggingId ? reorderById(prev, draggingId, targetId) : prev));
+    setDraggingId(null);
+  }, [draggingId]);
+
+  const handleDragStart = useCallback((id: string) => setDraggingId(id), []);
+  const handleDragEnd = useCallback(() => setDraggingId(null), []);
+
+  return { orderedShortcuts, draggingId, handleDragStart, handleDrop, handleDragEnd };
+}
+
+export function DashboardShortcutsLayout({ children, className }: DashboardShortcutsLayoutProps): React.JSX.Element {
+  return <div className={cn("min-h-screen p-4 md:p-6", className)}>{children}</div>;
+}
+
+export function DashboardShortcutsHeader({
+  title = "Dashboard Shortcuts Page",
+  description = "Fast actions and customizable shortcuts",
+}: DashboardShortcutsHeaderProps): React.JSX.Element {
+  return (
+    <header className="mb-6">
+      <h1 className="text-2xl font-bold">{title}</h1>
+      <p className="text-sm text-muted-foreground">{description}</p>
+    </header>
+  );
+}
+
+export function DashboardShortcutsActionsSection({ actions }: DashboardShortcutsActionsSectionProps): React.JSX.Element {
+  return (
+    <section className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {actions.map((action) => (
+        <Button key={action.id} size="xl" onClick={action.onClick} className="h-20 justify-between text-base">
+          <span className="inline-flex items-center gap-2">
+            <FilePlusIcon className="h-5 w-5" aria-hidden />
+            <span className="truncate">{action.label}</span>
+          </span>
+          <span className="shrink-0 rounded-md border px-2 py-1 text-[11px]">{action.shortcutHint}</span>
+        </Button>
+      ))}
+    </section>
+  );
+}
+
+export function DashboardShortcutsGridSection({
+  shortcuts,
+  draggingId,
+  onDragStart,
+  onDrop,
+  onDragEnd,
+}: DashboardShortcutsGridSectionProps): React.JSX.Element {
+  return (
+    <section>
+      <Card>
+        <CardHeader>
+          <CardTitle>Customizable shortcuts</CardTitle>
+          <CardDescription>Drag cards to reorder</CardDescription>
+        </CardHeader>
+        <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {shortcuts.map((shortcut) => (
+            <button
+              key={shortcut.id}
+              type="button"
+              draggable
+              onDragStart={() => onDragStart(shortcut.id)}
+              onDragOver={(event) => event.preventDefault()}
+              onDrop={() => onDrop(shortcut.id)}
+              onDragEnd={onDragEnd}
+              onClick={shortcut.onTrigger}
+              className={cn("rounded-xl border p-4 text-left", draggingId === shortcut.id && "opacity-70")}
+            >
+              <p className="font-semibold">{shortcut.label}</p>
+              {shortcut.description ? <p className="text-sm text-muted-foreground">{shortcut.description}</p> : null}
+              <div className="mt-3 inline-flex rounded-md border px-2 py-1 text-xs">Key: {shortcut.shortcutHint}</div>
+            </button>
+          ))}
+        </CardContent>
+      </Card>
+    </section>
+  );
+}
+
+export function DashboardShortcutsFooter({
+  text = "Tip: Use keyboard hints for faster navigation.",
+}: DashboardShortcutsFooterProps): React.JSX.Element {
+  return <footer className="mt-6 rounded-lg border px-4 py-3 text-sm text-muted-foreground">{text}</footer>;
+}
+
+// Keep icon imports if you customize action/shortcut icon mapping:
+// FilePlusIcon, UploadIcon, DownloadIcon, Share1Icon
+```
+
+  </TabItem>
+</Tabs>
+
+## Composable Building Blocks
+
+- `DashboardShortcutsLayout`: page shell, background, and max-width container.
+- `DashboardShortcutsHeader`: section title and supporting text.
+- `DashboardShortcutsActionsSection`: large top action buttons with icon + key hints.
+- `DashboardShortcutsGridSection`: draggable shortcuts grid.
+- `DashboardShortcutsFooter`: lightweight footer/status area.
+- `useDashboardShortcutsState`: shared state hook for keyboard handling, drag-drop reorder, and localStorage persistence.
+
+## Composable Usage
+
+```tsx
+import React from "react";
+import {
+  DashboardShortcutsLayout,
+  DashboardShortcutsHeader,
+  DashboardShortcutsActionsSection,
+  DashboardShortcutsGridSection,
+  DashboardShortcutsFooter,
+  useDashboardShortcutsState,
+  type DashboardAction,
+  type ShortcutItem,
+} from "@ignix-ui/dashboard-shortcuts-page";
+
+const actions: DashboardAction[] = [
+  { id: "create", label: "Create", shortcutHint: "C" },
+  { id: "upload", label: "Upload", shortcutHint: "U" },
+  { id: "download", label: "Download", shortcutHint: "D" },
+  { id: "share", label: "Share", shortcutHint: "S" },
+];
+
+const shortcuts: ShortcutItem[] = [
+  { id: "new-project", label: "New project", shortcutHint: "N" },
+  { id: "quick-search", label: "Quick search", shortcutHint: "/" },
+  { id: "launch-center", label: "Launch center", shortcutHint: "L" },
+  { id: "sync-files", label: "Sync files", shortcutHint: "Y" },
+  { id: "export-data", label: "Export data", shortcutHint: "E" },
+  { id: "preferences", label: "Preferences", shortcutHint: "P" },
+];
+
+export function DashboardShortcutsComposable(): React.JSX.Element {
+  const { orderedShortcuts, draggingId, handleDragStart, handleDrop, handleDragEnd } =
+    useDashboardShortcutsState({
+      shortcuts,
+      actions,
+      storageKey: "dashboard-shortcuts.order",
+    });
+
+  return (
+    <DashboardShortcutsLayout>
+      <DashboardShortcutsHeader
+        title="Workspace Command Center"
+        description="Compose each section independently and persist shortcut order."
+      />
+      <DashboardShortcutsActionsSection actions={actions} />
+      <DashboardShortcutsGridSection
+        shortcuts={orderedShortcuts}
+        draggingId={draggingId}
+        onDragStart={handleDragStart}
+        onDrop={handleDrop}
+        onDragEnd={handleDragEnd}
+      />
+      <DashboardShortcutsFooter text="Composable footer area for status and hints." />
+    </DashboardShortcutsLayout>
+  );
+}
+```
+
+## Props
+
+### `DashboardShortcutsLayout`
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` | `ReactNode` | Composed sections to render. |
+| `className` | `string` (optional) | Additional classes for root wrapper. |
+
+### `DashboardShortcutsHeader`
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `title` | `string` (optional) | Header title text. |
+| `description` | `string` (optional) | Supporting description text. |
+
+### `DashboardShortcutsActionsSection`
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `actions` | `DashboardAction[]` | Large action button list. |
+
+### `DashboardShortcutsGridSection`
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `shortcuts` | `ShortcutItem[]` | Ordered shortcuts to render. |
+| `draggingId` | `string \| null` | Current dragging item id. |
+| `onDragStart` | `(id: string) => void` | Start drag handler. |
+| `onDrop` | `(targetId: string) => void` | Drop handler for reorder. |
+| `onDragEnd` | `() => void` | Drag end cleanup handler. |
+
+### `DashboardShortcutsFooter`
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `text` | `string` (optional) | Footer text content. |
+
+### `useDashboardShortcutsState`
+
+| Input | Type | Description |
+| --- | --- | --- |
+| `shortcuts` | `ShortcutItem[]` | Source shortcut list used for ordering and rendering. |
+| `actions` | `DashboardAction[]` | Action list used for keyboard shortcut mapping. |
+| `storageKey` | `string` (optional) | localStorage key for persisted shortcut order. |
+
+Returns:
+
+- `orderedShortcuts`
+- `draggingId`
+- `handleDragStart`
+- `handleDrop`
+- `handleDragEnd`
+
+## Notes
+
+- The page is intentionally **composable-first**: each section can be replaced or reordered.
+- Keyboard handlers ignore input/textarea/contentEditable targets to avoid accidental triggers while typing.
+- The reorder state is persisted with `localStorage` via `useDashboardShortcutsState`.

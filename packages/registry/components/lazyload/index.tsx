@@ -16,6 +16,7 @@ export const LazyLoad: React.FC<LazyLoadProps> = ({
   placeholder = null,
   once = true,
   animation = "none",
+  ...rest
 }) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -57,6 +58,7 @@ export const LazyLoad: React.FC<LazyLoadProps> = ({
       ref={ref}
       className={`${className ?? ""} ${animationClass}`}
       data-visible={isVisible}
+      {...rest}
     >
       {isVisible ? children : placeholder}
     </div>
