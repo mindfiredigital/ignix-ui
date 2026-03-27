@@ -24,7 +24,7 @@ export const ContactFormDemo = () => {
   };
 
   const buildCode = () => {
-    return `import { ContactForm } from "@ignix-ui/contactform";
+    return `import { ContactForm } from "@ignix-ui/contact-form";
 
 <ToastProvider>
     <ContactForm
