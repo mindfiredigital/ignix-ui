@@ -1427,7 +1427,7 @@
         "textarea",
         "button",
         "input",
-        "file-upload",
+        "fileupload",
         "toast"
       ],
       "files": {
