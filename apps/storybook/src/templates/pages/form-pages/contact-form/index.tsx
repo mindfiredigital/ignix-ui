@@ -306,10 +306,10 @@ function Header({
 }) {
   return (
     <motion.div variants={itemVariants} className="text-center space-y-2">
-     <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-500 to-pink-500 bg-clip-text text-transparent">
+     <p className="text-3xl font-bold text-primary bg-clip-text">
         {title}
-      </h2>
-      <p className="text-sm text-muted-foreground max-w-sm mx-auto">{description}</p>
+      </p>
+      <span className="text-sm text-muted-foreground max-w-sm mx-auto">{description}</span>
     </motion.div>
   );
 }
@@ -340,7 +340,7 @@ function Field({
         onChange={(value: string) => updateField(name, value)}
       />
       {error && (
-        <div className="text-sm text-red-500 flex items-center gap-2">
+        <div className="text-sm text-red-700 flex items-center gap-2">
           <ExclamationTriangleIcon/>
           {error}
         </div>
@@ -371,6 +371,7 @@ function FileUploadField() {
 
   return (
     <FileUpload
+      buttonVariant="primary"
       onFilesChange={(files) => {
         const file = files?.[0] ?? null;
         updateField("file", file);
@@ -385,7 +386,7 @@ function Actions() {
     <motion.div variants={itemVariants}>
      <Button
         type="submit"
-        className="w-full bg-gradient-to-r from-indigo-500 to-pink-500 text-white shadow-lg"
+        className="w-full  text-white shadow-lg"
         disabled={status === "loading"}
       >
         {status === "loading" ? "Sending..." : "Send Message"}
