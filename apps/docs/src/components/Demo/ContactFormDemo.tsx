@@ -9,12 +9,9 @@ import { ContactForm } from "../UI/contact-form";
 import { cn } from "@site/src/utils/cn";
 import { ToastProvider } from "../UI/toast";
 
-
 type Variant = "default" | "background" | "split";
 
-
 export const ContactFormDemo = () => {
-
   const [variant, setVariant] = useState<Variant>("default");
   const [submitted, setSubmitted] = useState<any>(null);
 
@@ -25,27 +22,28 @@ export const ContactFormDemo = () => {
     setSubmitted(data);
   };
 
-
   const buildCode = () => {
     return `import { ContactForm } from "@ignix-ui/contactform";
 
-<ContactForm
-  variant="${variant}"
-  onSubmit={async (data) => {
-    console.log(data);
-  }}
->
-  <ContactForm.Header />
-
-  <ContactForm.Content>
-    <ContactForm.Field name="name" label="Name" />
-    <ContactForm.Field name="email" label="Email" />
-    <ContactForm.Field name="subject" label="Subject" />
-    <ContactForm.Textarea name="message" />
-  </ContactForm.Content>
-
-  <ContactForm.Actions />
-</ContactForm>`;
+<ToastProvider>
+    <ContactForm
+      variant="${variant}"
+      onSubmit={async (data) => {
+        console.log(data);
+      }}
+    >
+    <ContactForm.Header />
+    <ContactForm.Content>
+      <ContactForm.Field name="name" label="Name" />
+      <ContactForm.Field name="email" label="Email" />
+      <ContactForm.Field name="subject" label="Subject" />
+      <ContactForm.Textarea name="message" />
+      <ContactForm.FileUpload />
+    </ContactForm.Content>
+    <ContactForm.Actions />
+  </ContactForm>
+</ToastProvider>
+`;
   };
 
 
@@ -68,20 +66,17 @@ export const ContactFormDemo = () => {
             <ContactForm
               variant={variant}
               backgroundImage="https://images.unsplash.com/photo-1506744038136-46273834b3fb"
-            //   sideImage="https://images.unsplash.com/photo-1492724441997-5dc865305da7"
-              sideImage="https://images.unsplash.com/photo-1556761175-4b46a572b786"
+                sideImage="https://images.unsplash.com/photo-1556761175-4b46a572b786"
               onSubmit={handleSubmit}
             >
               <ContactForm.Header />
-
               <ContactForm.Content>
                 <ContactForm.Field name="name" label="Name" />
                 <ContactForm.Field name="email" label="Email" />
                 <ContactForm.Field name="subject" label="Subject" />
-                <ContactForm.FileUpload />
                 <ContactForm.Textarea name="message" />
+                <ContactForm.FileUpload />
               </ContactForm.Content>
-
               <ContactForm.Actions />
             </ContactForm>
             </ToastProvider>
