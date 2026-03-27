@@ -1432,7 +1432,7 @@
       ],
       "files": {
         "main": {
-          "path": "templates/sections/contact-form/index.tsx",
+          "path": "templates/pages/contact-form/index.tsx",
           "type": "template"
         }
       }
