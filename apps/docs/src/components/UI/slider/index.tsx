@@ -55,6 +55,7 @@ export interface SliderProps extends React.ComponentPropsWithoutRef<typeof Slide
   size?: 'sm' | 'md' | 'lg';
   showTooltip?: boolean;
   glowEffect?: boolean;
+  orientation?: 'horizontal' | 'vertical';
 }
 
 // Enhanced variants styling with premium effects
@@ -196,7 +197,7 @@ const variantStyles: Record<
       'transition-all duration-300',
       'before:absolute before:inset-0 before:rounded-full',
       'before:bg-gradient-to-br before:from-white/20 before:via-white/5 before:to-transparent',
-      'before:pointer-events-none'
+      'before:pointer-events-none',
     ),
     range: cn(
       'absolute h-full rounded-full',
@@ -538,42 +539,39 @@ const getAnimationProps = (type: SliderAnimationType, duration = 0.3): MotionPro
         },
       };
     case 'spring':
-      return {
-        initial: { x: -8 },
-        animate: { x: 0 },
-        transition: {
-          type: 'spring',
-          stiffness: 400,
-          damping: 15,
-          repeat: Infinity,
-          repeatType: "reverse",
-          repeatDelay: 0.5
-        },
+      return { 
+        animate: { scale: [1, 1.08, 1] }, 
+        transition: { 
+          type: 'spring', 
+          stiffness: 400, 
+          damping: 15, 
+          repeat: Infinity, 
+          repeatType: 'reverse', 
+          repeatDelay: 0.5 
+        } 
       };
     case 'elastic':
-      return {
-        initial: { x: -15 },
-        animate: { x: 0 },
-        transition: {
-          type: 'spring',
-          stiffness: 600,
-          damping: 8,
-          repeat: Infinity,
-          repeatType: "reverse",
-          repeatDelay: 0.8
-        },
+      return { 
+        animate: { scale: [1, 1.2, 0.9, 1] }, 
+        transition: { 
+          type: 'spring', 
+          stiffness: 600, 
+          damping: 8, 
+          repeat: Infinity, 
+          repeatType: 'loop', 
+          repeatDelay: 0.8 
+        } 
       };
     case 'parallax':
-      return {
-        initial: { x: -12, opacity: 0.7 },
-        animate: { x: 0, opacity: 1 },
+      return { 
+        animate: { scale: [1, 1.1, 1], opacity: [1, 0.7, 1] }, 
         transition: { 
           duration: duration * 2, 
           delay: duration * 0.1, 
-          repeat: Infinity,
-          repeatType: "reverse",
-          ease: [0.4, 0, 0.2, 1]
-        },
+          repeat: Infinity, 
+          repeatType: 'loop', 
+          ease: [0.4, 0, 0.2, 1] 
+        }
       };
     case 'flip':
       return {
@@ -712,117 +710,123 @@ const Slider = React.forwardRef<React.ComponentRef<typeof SliderPrimitive.Root>,
       size = 'md',
       showTooltip = false,
       glowEffect = false,
+      orientation = 'horizontal',
       ...props
     },
     ref
   ) => {
-    const [value, setValue] = React.useState<number[]>(props.defaultValue || props.value || [0]);
+    const isVertical = orientation === 'vertical';
+
+    const isControlled = props.value !== undefined;
+    const [uncontrolledValue, setUncontrolledValue] = React.useState<number[]>(
+      props.defaultValue ?? [0]
+    );
     const [isHovered, setIsHovered] = React.useState(false);
+    const displayValue = isControlled ? props.value! : uncontrolledValue;
+ 
     const styles = variantStyles[variant];
     const animationProps = getAnimationProps(animationType, animationDuration);
 
-    // Size configurations
-    const sizeConfig = {
-      sm: { root: 'py-2', multiplier: 0.8 },
-      md: { root: 'py-3', multiplier: 1 },
-      lg: { root: 'py-4', multiplier: 1.2 }
-    };
+    const sizeMultiplier = { sm: 0.8, md: 1, lg: 1.2 }[size];
 
-    React.useEffect(() => {
-      if (props.value) {
-        setValue(props.value);
-      }
-    }, [props.value]);
+    const wrapperClass = isVertical
+      ? cn('flex flex-col items-center gap-3', 
+        { 
+          'px-2': size === 'sm', 
+          'px-3': size === 'md', 
+          'px-4': size === 'lg' 
+        }
+      )
+      : cn('w-full space-y-3',               
+        { 
+          'py-2': size === 'sm', 
+          'py-3': size === 'md', 
+          'py-4': size === 'lg' 
+        }
+      );
+    const rootVerticalClass = 'flex flex-col items-center h-full min-h-[200px]';
 
     const handleValueChange = (newValue: number[]) => {
-      setValue(newValue);
+      if (!isControlled) setUncontrolledValue(newValue);
       props.onValueChange?.(newValue);
     };
 
     return (
-      <div 
-        className={cn("w-full space-y-3", sizeConfig[size].root)}
+      <div
+        className={wrapperClass}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
         <SliderPrimitive.Root
           ref={ref}
-          className={cn(styles.root, className)}
+          className={cn(
+            styles.root,
+            isVertical && rootVerticalClass,
+            className
+          )}
+          orientation={orientation}
           onValueChange={handleValueChange}
           {...props}
         >
           <MotionTrack
-            className={cn(styles.track, trackClassName)}
-            style={{ 
-              transform: `scale(${sizeConfig[size].multiplier})`,
-              transformOrigin: 'center'
-            }}
+            className={cn(
+              styles.track,
+              isVertical && 'h-full w-2',
+              trackClassName
+            )}
+            style={!isVertical ? { transform: `scale(${sizeMultiplier})`, transformOrigin: 'center' } : undefined}
             animate={
               animationType === 'breathe'
-                ? {
-                    boxShadow: [
-                      'inset 0 0 0 rgba(0,0,0,0.2)',
-                      'inset 0 0 12px rgba(0,0,0,0.4)',
-                      'inset 0 0 0 rgba(0,0,0,0.2)',
-                    ],
-                  }
+                ? { boxShadow: ['inset 0 0 0 rgba(0,0,0,0.2)', 'inset 0 0 12px rgba(0,0,0,0.4)', 'inset 0 0 0 rgba(0,0,0,0.2)'] }
                 : undefined
             }
             transition={
               animationType === 'breathe'
-                ? {
-                    repeat: Infinity,
-                    duration: 4,
-                    ease: "easeInOut",
-                    repeatType: "loop",
-                  }
+                ? { repeat: Infinity, duration: 4, ease: 'easeInOut', repeatType: 'loop' }
                 : undefined
             }
-            whileHover={{
-              scale: sizeConfig[size].multiplier * 1.02,
-              transition: { duration: 0.2 }
-            }}
+            whileHover={!isVertical ? { scale: sizeMultiplier * 1.02, transition: { duration: 0.2 } } : undefined}
           >
             <MotionRange
-              className={cn(styles.range, rangeClassName)}
+              className={cn(
+                styles.range,
+                isVertical && 'w-full',
+                rangeClassName
+              )}
               {...(animationType !== 'none' ? animationProps : {})}
               style={{
                 ...(glowEffect && {
-                  boxShadow: `0 0 20px rgba(59, 130, 246, ${isHovered ? '0.4' : '0.2'})`
-                })
+                  boxShadow: `0 0 20px rgba(59, 130, 246, ${isHovered ? '0.4' : '0.2'})`,
+                }),
               }}
             />
           </MotionTrack>
 
-          {value.map((val, index) => (
+          {displayValue.map((val, index) => (
             <MotionThumb
               key={index}
               className={cn(styles.thumb, thumbClassName)}
-              style={{ 
-                transform: `scale(${sizeConfig[size].multiplier})`,
-                transformOrigin: 'center'
-              }}
+              style={{ transform: `scale(${sizeMultiplier})`, transformOrigin: 'center' }}
               {...(animationType !== 'none' ? animationProps : {})}
-              whileHover={{
-                scale: sizeConfig[size].multiplier * 1.15,
-                transition: { type: "spring", stiffness: 400, damping: 15 }
-              }}
-              whileTap={{
-                scale: sizeConfig[size].multiplier * 0.9,
-                transition: { type: "spring", stiffness: 600, damping: 20 }
-              }}
+              whileHover={{ scale: sizeMultiplier * 1.15, transition: { type: 'spring', stiffness: 400, damping: 15 } }}
+              whileTap={{ scale: sizeMultiplier * 0.9, transition: { type: 'spring', stiffness: 600, damping: 20 } }}
             >
               {/* Tooltip */}
               {showTooltip && isHovered && (
-                <motion.div
-                  className="absolute -top-12 left-1/2 transform -translate-x-1/2 px-2 py-1 bg-popover text-popover-foreground text-xs rounded-md shadow-lg border border-border/40 backdrop-blur-sm"
-                  initial={{ opacity: 0, y: 10, scale: 0.8 }}
+                <motion.div                 
+                  className={cn(
+                    'absolute px-2 py-1 bg-popover text-popover-foreground text-xs rounded-md shadow-lg border border-border/40 backdrop-blur-sm pointer-events-none',
+                  isVertical
+                    ? 'right-full top-1/2 -translate-y-1/2 mr-2'
+                    : '-top-12 left-1/2 -translate-x-1/2'
+                  )}
+                  initial={{ opacity: 0, scale: 0.8, ...(isVertical ? { x: 6 } : { y: 10 }) }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 10, scale: 0.8 }}
+                  exit={{ opacity: 0, scale: 0.8, ...(isVertical ? { x: 6 } : { y: 10 }) }}
                   transition={{ duration: 0.2 }}
                 >
                   {valuePrefix}{val}{valueSuffix}
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-2 border-r-2 border-t-2 border-transparent border-t-border/40" />
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-border/40" />
                 </motion.div>
               )}
             </MotionThumb>
@@ -837,7 +841,7 @@ const Slider = React.forwardRef<React.ComponentRef<typeof SliderPrimitive.Root>,
             transition={{ duration: 0.3 }}
           >
             {valuePrefix}
-            {value.join(', ')}
+            {displayValue.join(', ')}
             {valueSuffix}
           </motion.div>
         )}
