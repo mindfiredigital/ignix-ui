@@ -8,40 +8,11 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import { Tooltip } from '@site/src/components/UI/tooltip';
 import { Button } from '@site/src/components/UI/button';
-
-## Overview
+import TooltipDemo from '@site/src/components/Demo/TooltipDemo';
 
 The Tooltip component provides additional information when users hover over or focus on an element. Built with Radix UI and Framer Motion, it supports various animations, themes, and appearance styles.
 
-## Preview
-
-<Tabs defaultValue="preview">
-  <TabItem value="preview" label="Preview" default>
-    <div className="w-full p-8 rounded-lg border flex items-center justify-center">
-      <Tooltip content="Hi, I am a tooltip">
-        <Button className="flex items-center gap-2 justify-center">
-          Hover me
-        </Button>
-      </Tooltip>
-    </div>
-  </TabItem>
-  <TabItem value="code" label="Code">
-    ```tsx
-    import { Tooltip } from '@ignix-ui/tooltip';
-    import { Button } from '@ignix-ui/button';
-
-    function TooltipDemo() {
-      return (
-        <Tooltip content="Hi, I am a tooltip">
-          <Button>
-            Hover me
-          </Button>
-        </Tooltip>
-      );
-    }
-    ```
-  </TabItem>
-</Tabs>
+<TooltipDemo />
 
 ## Installation
 
@@ -53,14 +24,13 @@ The Tooltip component provides additional information when users hover over or f
   </TabItem>
   <TabItem value="manual" label="manual" className="max-h-[500px] overflow-y-auto">
 
-    ```tsx
+```tsx
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { motion, AnimatePresence } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../utils/cn";
 import { ReactNode, useState } from "react";
 
-// Define animation variants
 const motionVariants = {
   fade: {
     initial: { opacity: 0 },
@@ -111,8 +81,8 @@ const tooltipVariants = cva(
         light: "bg-white text-zinc-900 border-zinc-200",
         slate: "bg-slate-800 text-white border-slate-700",
         default: "bg-white text-gray-900",
-        transparent: "bg-transparent text-transparent",
-        glass: "bg-white/10 backdrop-blur-lg text-blue-200",
+        transparent: "bg-transparent border-transparent",        
+        glass: "bg-white/10 backdrop-blur-lg text-blue-300",
         gradient: "bg-gradient-to-r from-blue-500 to-purple-500 text-white",
         primary: "bg-blue-400 text-white",
       },
@@ -167,8 +137,7 @@ export const Tooltip = ({
     </TooltipPrimitive.Provider>
   );
 };
-
-    ```
+```
   </TabItem>
 </Tabs>
 
@@ -186,8 +155,13 @@ function MyComponent() {
 }
 ```
 
-import TooltipDemo from '@site/src/components/Demo/TooltipDemo';
+## Props
 
-## Features
-
-<TooltipDemo />
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `content` | `ReactNode` | — | The tooltip content — accepts a string or any React element |
+| `children` | `ReactNode` | — | The trigger element the tooltip is anchored to |
+| `animation` | `"fade" \| "scale" \| "slideUp" \| "slideDown" \| "slideLeft" \| "slideRight"` | `"fade"` | Entrance and exit animation style |
+| `bg` | `"dark" \| "light" \| "slate" \| "default" \| "transparent" \| "glass" \| "gradient" \| "primary"` | `"dark"` | Background colour theme of the tooltip bubble |
+| `rounded` | `"sm" \| "md" \| "full"` | `"sm"` | Border radius of the tooltip bubble |
+| `className` | `string` | — | Additional CSS classes applied to the tooltip bubble |
