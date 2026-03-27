@@ -261,7 +261,8 @@
               "type": "category",
               "label": "Forms",
               "items": [
-                "templates/pages/forms/dynamic-form"
+                "templates/pages/forms/dynamic-form",
+                "templates/pages/forms/contact-form"
               ]
             }
           ]                      
