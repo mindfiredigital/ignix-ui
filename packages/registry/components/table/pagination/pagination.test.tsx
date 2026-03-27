@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import React, { ReactNode } from "react";
-import { Pagination, type PaginationProps } from "../pagination/index";
+import { Pagination, type PaginationProps } from "./index";
 
 vi.mock("@radix-ui/themes", () => ({
   Text: ({ children, ...rest }: { children: React.ReactNode; [key: string]: unknown }): React.ReactElement =>

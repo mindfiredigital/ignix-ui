@@ -2,6 +2,10 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { Table, type TableProps } from "./index";
 
+const noop = () => {
+  // intentional noop for Storybook
+};
+
 const meta: Meta<typeof Table> = {
   title: "Components/Table",
   component: Table,
@@ -14,10 +18,10 @@ const meta: Meta<typeof Table> = {
 An animated, sortable data table built on Radix UI Themes with built-in pagination.
 
 **Key features:**
-- **Sorting** – click any column header to toggle \`asc ↔ desc\`; the \`applySort\` callback receives the key and new direction.
-- **Animation variants** – \`fade\`, \`slide\`, \`scale\`, \`flip\`, \`elastic\` via Framer Motion.
-- **Visual knobs** – \`showStripes\`, \`showBorders\`, \`showHoverEffects\`, \`glow\`, \`size\`, \`variant\`.
-- **Pagination** – integrated \`<Pagination />\` driven by \`currentPage\`, \`totalPages\`, and \`onPageChange\`.
+- **Sorting** - click any column header to toggle \`asc ↔ desc\`; the \`applySort\` callback receives the key and new direction.
+- **Animation variants** - \`fade\`, \`slide\`, \`scale\`, \`flip\`, \`elastic\` via Framer Motion.
+- **Visual knobs** - \`showStripes\`, \`showBorders\`, \`showHoverEffects\`, \`glow\`, \`size\`, \`variant\`.
+- **Pagination** - integrated \`<Pagination />\` driven by \`currentPage\`, \`totalPages\`, and \`onPageChange\`.
         `,
       },
     },
@@ -234,6 +238,8 @@ export const EmptyState: Story = {
         data={[]}
         currentPage={1}
         totalPages={1}
+        applySort={noop}
+        onPageChange={noop}
       />
       <div className="mt-4 flex flex-col items-center gap-2 py-8 text-center">
         <p className="text-sm font-medium text-gray-600">No records found</p>
@@ -257,6 +263,8 @@ export const SinglePage: Story = {
         data={data.slice(0, 2)}
         currentPage={1}
         totalPages={1}
+        applySort={noop}
+        onPageChange={noop}
       />
     </div>
   ),

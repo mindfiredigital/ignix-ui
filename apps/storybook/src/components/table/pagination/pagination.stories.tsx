@@ -12,10 +12,10 @@ const meta: Meta<typeof Pagination> = {
       description: {
         component: `
 A fully accessible, keyboard-navigable pagination component that supports:
-- **Smart ellipsis** – collapses distant page ranges into "…" to keep the UI compact.
-- **Sibling control** – tune how many page numbers appear around the active page via \`siblingCount\`.
-- **Navigation shortcuts** – jump directly to the first or last page.
-- **Aria compliant** – \`aria-label\` on nav buttons and \`aria-current="page"\` on the active page.
+- **Smart ellipsis** - collapses distant page ranges into "…" to keep the UI compact.
+- **Sibling control** - tune how many page numbers appear around the active page via \`siblingCount\`.
+- **Navigation shortcuts** - jump directly to the first or last page.
+- **Aria compliant** - \`aria-label\` on nav buttons and \`aria-current="page"\` on the active page.
         `,
       },
     },
@@ -232,5 +232,5 @@ export const SiblingCountComparison: Story = {
       </div>
     );
   },
-  args: {} as any,
+  args: {},
 };

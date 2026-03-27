@@ -3,12 +3,16 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeAll, beforeEach } from "vitest";
 import { Table, type TableProps } from "./index";
 
+const mockObserve = vi.fn();
+const mockUnobserve = vi.fn();
+const mockDisconnect = vi.fn();
+
 beforeAll(() => {
   if (typeof globalThis.ResizeObserver === "undefined") {
     globalThis.ResizeObserver = class ResizeObserver {
-      observe() { vi.fn(); }
-      unobserve() { vi.fn(); }
-      disconnect() { vi.fn(); }
+      observe = mockObserve;
+      unobserve = mockUnobserve;
+      disconnect = mockDisconnect;
     };
   }
 });
@@ -94,6 +98,11 @@ const defaultProps = {
   totalPages: 3,
   onPageChange: vi.fn(),
 };
+
+beforeEach(() => {
+  defaultProps.applySort.mockClear();
+  defaultProps.onPageChange.mockClear();
+});
 
 const renderTable = (
   overrides: Partial<typeof defaultProps & Record<string, unknown>> = {}
