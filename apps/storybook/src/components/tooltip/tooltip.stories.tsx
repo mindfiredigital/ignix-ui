@@ -126,7 +126,7 @@ export const BgTransparent: Story = {
 export const AllBgVariants: Story = {
   render: () => (
     <div className="flex flex-wrap gap-3">
-      {(["dark", "light", "slate", "default", "glass", "gradient", "primary"] as const).map(
+      {(["dark", "light", "slate", "default", "transparent", "glass", "gradient", "primary"] as const).map(
         (bg) => (
           <Tooltip key={bg} content={`bg: ${bg}`} bg={bg}>
             <button className="px-3 py-1.5 rounded-md bg-zinc-800 text-xs text-zinc-300 border border-zinc-700 hover:bg-zinc-700 transition-colors capitalize">
