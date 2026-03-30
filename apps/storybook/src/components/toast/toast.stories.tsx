@@ -410,48 +410,6 @@ export const NonDismissible: Story = {
   ),
 };
 
-export const CustomGradientColor: Story = {
-  name: 'Custom Gradient Color',
-  decorators: [withProvider('top-right')],
-  render: () => {
-    const { addToast } = useToast();
-    const swatches = [
-      { label: 'Rose',    color: 'hsl(346, 87%, 54%)' },
-      { label: 'Violet',  color: 'hsl(258, 90%, 62%)' },
-      { label: 'Cyan',    color: 'hsl(188, 94%, 43%)' },
-      { label: 'Lime',    color: 'hsl(84,  81%, 44%)' },
-    ];
-    return (
-      <div className="flex flex-col items-center gap-4 p-8">
-        <h2 className="text-lg font-semibold text-slate-800 mb-2">Custom Gradient Colours</h2>
-        <div className="flex gap-3">
-          {swatches.map(({ label, color }) => (
-            <button
-              key={label}
-              onClick={() =>
-                addToast({
-                  message: `Custom gradient – ${label}`,
-                  variant: 'default',
-                  animation: 'slide',
-                  appearance: 'gradient',
-                  gradientColor: color,
-                })
-              }
-              style={{ background: color }}
-              className="
-                px-4 py-2 rounded-lg text-sm font-semibold text-white
-                transition-all duration-150 active:scale-95 shadow-sm
-              "
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
-    );
-  },
-};
-
 export const MaxToastsStack: Story = {
   name: 'Max Toasts / Stack Overflow',
   decorators: [withProvider('top-right', 3)],
