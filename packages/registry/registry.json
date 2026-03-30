@@ -22,6 +22,25 @@
         }
       }
     },
+    "advanced-search-form": {
+      "name": "AdvancedSearchForm",
+      "description": "A form component for advanced search functionality with multiple filter options.",
+      "dependencies": [
+        "lucide-react", 
+        "class-variance-authority",
+        "framer-motion"
+      ],
+      "componentDependencies": [
+        "typography",
+        "datePicker", "checkbox"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/advanced-search-form/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "aspectRatio": {
       "name": "AspectRatio",
       "description": "A responsive container that maintains a consistent aspect ratio for its content",
