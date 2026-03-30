@@ -91,7 +91,8 @@
             "components/drawer",
             "components/navbar",
             "components/sidebar",
-            "components/stepper"            
+            "components/stepper",
+            "components/tab"            
           ]
         },
         {
@@ -262,7 +263,9 @@
               "type": "category",
               "label": "Forms",
               "items": [
-                "templates/pages/forms/dynamic-form"
+                "templates/pages/forms/dynamic-form",
+                "templates/pages/forms/advanced-search-form"
+
               ]
             }
           ]                      
