@@ -2,8 +2,7 @@
 
 import type React from "react";
 import { useState, useRef, useEffect } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import type { Variants } from "framer-motion";
+import { motion, type Variants, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { cn } from "../../../utils/cn";
 
 interface AnimatedTextareaProps {
@@ -36,7 +35,6 @@ interface TextareaVariant {
   container?: Variants;
 }
 
-// Enhanced particle creation with better physics
 const createAdvancedParticles = (container: HTMLElement, count = 12) => {
   const particles: HTMLElement[] = [];
   
@@ -55,7 +53,6 @@ const createAdvancedParticles = (container: HTMLElement, count = 12) => {
     particle.style.top = `${Math.random() * 100}%`;
     particle.style.boxShadow = `0 0 ${size * 2}px rgba(59, 130, 246, 0.6)`;
     
-    // Enhanced animation
     particle.style.animation = `particleFloat ${Math.random() * 3 + 2}s ease-in-out infinite`;
     particle.style.animationDelay = `${Math.random() * 2}s`;
     
@@ -99,13 +96,11 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
   const particleRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Advanced mouse tracking for premium effects
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const rotateX = useSpring(useTransform(mouseY, [-100, 100], [2, -2]));
   const rotateY = useSpring(useTransform(mouseX, [-100, 100], [-2, 2]));
 
-  // Size configurations
   const sizeConfig = {
     sm: { 
       textarea: "min-h-[80px] px-3 py-2 text-sm", 
@@ -147,7 +142,6 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
     
     onChange?.(newValue);
     
-    // Auto-resize functionality
     if ((variant === "expandable" || variant === "smoothExpand" || autoResize) && textareaRef.current) {
       const textarea = textareaRef.current;
       textarea.style.height = 'auto';
@@ -167,7 +161,6 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
     mouseY.set((e.clientY - centerY) * 0.3);
   };
 
-  // Auto-resize effect
   useEffect(() => {
     if ((variant === "expandable" || variant === "smoothExpand" || autoResize) && textareaRef.current) {
       const textarea = textareaRef.current;
@@ -179,7 +172,6 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
     }
   }, [value, variant, autoResize, config.minHeight, maxRows, minRows]);
 
-  // Enhanced particle effects
   useEffect(() => {
     if (variant === "particleField" && particleRef.current && isFocused) {
       const interval = setInterval(() => {
@@ -196,7 +188,6 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
   const hasValue = value.length > 0;
   const isActive = isFocused || hasValue;
 
-  // Character count logic
   const characterCount = value.length;
   const isNearLimit = maxLength && characterCount > maxLength * 0.8;
   const isOverLimit = maxLength && characterCount > maxLength;
@@ -222,7 +213,6 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
       }}
       variants={variants.container}
     >
-      {/* Enhanced Background Effects */}
       {(variant === "glassmorphism" || variant === "premiumGlass") && (
         <motion.div
           className="absolute inset-0 bg-gradient-to-br from-white/10 via-white/5 to-transparent backdrop-blur-xl rounded-2xl border border-white/20 dark:border-white/10"
@@ -232,7 +222,6 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
         />
       )}
 
-      {/* Premium Shimmer Effect */}
       {(variant === "luxuryShimmer" || variant === "gradientBorder") && (
         <motion.div
           className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/20 to-transparent -skew-x-12 rounded-xl"
@@ -247,7 +236,6 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
         />
       )}
 
-      {/* Enhanced glow effect */}
       {glowEffect && isActive && (
         <motion.div
           className="absolute inset-0 rounded-xl opacity-30"
@@ -268,7 +256,6 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
         />
       )}
 
-      {/* Enhanced Animated Label */}
       <motion.label
         className={cn(
           "absolute left-4 pointer-events-none transition-colors duration-300 z-10 origin-left",
@@ -287,9 +274,7 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
         {placeholder}
       </motion.label>
 
-      {/* Textarea Container */}
       <div className="relative">
-        {/* Leading Icon */}
         {Icon && (
           <motion.div
             className={cn(
@@ -308,11 +293,9 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
           </motion.div>
         )}
 
-        {/* Enhanced Textarea */}
         <motion.textarea
           ref={textareaRef}
           className={cn(
-            // Base enhanced styles
             "w-full bg-background/90 backdrop-blur-sm border border-border/60 rounded-xl resize-none",
             "text-foreground placeholder:text-transparent transition-all duration-300",
             "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/60",
@@ -320,17 +303,13 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
             "shadow-sm hover:shadow-md focus:shadow-lg",
             "shadow-black/5 dark:shadow-white/5",
             
-            // Size configuration
             config.textarea,
             
-            // Icon padding
             Icon && "pl-10",
             
-            // Status variants
             error && "border-red-500/60 focus:border-red-500 focus:ring-red-500/20",
             success && "border-emerald-500/60 focus:border-emerald-500 focus:ring-emerald-500/20",
             
-            // Theme adaptations
             "dark:bg-background/60 dark:border-border/40",
             "hover:border-border/80 dark:hover:border-border/60",
             
@@ -353,7 +332,6 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
           rows={minRows}
         />
 
-        {/* Enhanced Particle Field */}
         {variant === "particleField" && (
           <motion.div
             ref={particleRef}
@@ -364,7 +342,6 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
           />
         )}
 
-        {/* Enhanced Character Count */}
         {(variant === "characterCount" || showCharacterCount) && (
           <motion.div
             className={cn(
@@ -385,7 +362,6 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
           </motion.div>
         )}
 
-        {/* Enhanced Line Highlight */}
         {variant === "lineHighlight" && value && (
           <motion.div
             className="absolute left-0 w-full h-6 bg-gradient-to-r from-primary/10 to-primary/5 pointer-events-none rounded"
@@ -398,7 +374,6 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
           />
         )}
 
-        {/* Ripple Effect */}
         {variant === "rippleEffect" && isActive && (
           <motion.div
             className="absolute inset-0 rounded-xl pointer-events-none"
@@ -422,7 +397,6 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
   );
 };
 
-// Enhanced textarea variants (ALL existing variants with premium improvements)
 const textareaVariants: Record<string, TextareaVariant> = {
   clean: {
     container: {

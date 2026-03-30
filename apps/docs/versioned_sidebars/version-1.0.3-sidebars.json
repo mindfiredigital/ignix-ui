@@ -263,7 +263,8 @@
               "label": "Forms",
               "items": [
                 "templates/pages/forms/dynamic-form",
-                "templates/pages/forms/contact-form"
+                "templates/pages/forms/contact-form",
+                "templates/pages/forms/advanced-search-form"
               ]
             }
           ]                      
