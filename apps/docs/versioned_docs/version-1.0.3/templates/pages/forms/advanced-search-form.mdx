@@ -1,0 +1,93 @@
+---
+sidebar_position: 10
+title: Advanced Search Form
+description: A powerful, feature-rich search component with faceted filtering, saved searches, export capabilities, and real-time results.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import {
+    AdvancedSearchFormDemo
+} from '@site/src/components/Demo/AdvancedSearchFormDemo';
+
+A comprehensive search interface that combines powerful filtering, saved searches, faceted navigation, and export capabilities. Perfect for admin dashboards, user management systems, and data exploration tools. Features include real-time filtering, saved search management, multiple export formats, theme customization, and comprehensive debugging tools.
+
+## Example Usage
+<AdvancedSearchFormDemo />
+
+## Installation
+
+<Tabs>
+    <TabItem value="cli" label="CLI" default>
+        ```bash
+        ignix add component advancedSearch
+        ```
+    </TabItem>
+</Tabs>
+
+## Props
+
+### SearchProvider Props
+| Prop | Type | Default | Description |
+|-----|-----|-----|-----|
+| `children` | `React.ReactNode` | `Required` |	Child components to render inside provider |
+| `initialFilters` |	`Partial<FilterState>` |	`{}` |	Initial filter values
+| `onSearch` |	`(filters: FilterState, results: User[]) => void` |	`—` |	Callback when search is performed
+| `onExport`	| `(options: ExportOptions, data: User[]) => Promise<void>` | `—`	| Custom export handler
+| `variant`	| `"default" \| "vibrant" \| "ocean" \| "forest" \| "sunset"` |	`"default"` |	Visual theme variant
+|`cardVariant` |	`"default" \| "glass" \| "elevated" \| "border"` |	`"default"` |	Style of cards
+|`pageSize` |	`number` |	`10`	| Number of results per page
+|`debounceMs` |	`number` |	`300`	| Debounce delay for search
+|`theme` |	`"light" | "dark" | "system"`	| `"system"` |	Theme preference
+|`debug` |	`boolean` |	`false` |	Enable debug panel
+|`className` |	`string` |	`—` |	Extra classes for root
+|`containerClassName`| `string`	| `—`	| Extra classes for container
+
+### SearchHeader Props
+| Prop | Type | Default | Description |
+|-----|-----|-----|-----|
+| title	string	"Advanced Search"	Header title
+description	string	"Filter and find users with precision"	Header description
+icon	React.ReactNode	—	Custom icon
+children	React.ReactNode	—	Custom header content
+className	string	—	Extra CSS classes
+showExport	boolean	true	Show export button
+showSave	boolean	true	Show save search button
+onSaveClick	() => void	—	Save button click handler
+### SearchFilters Props
+Prop	Type	Default	Description
+className	string	—	Extra CSS classes
+expanded	boolean	—	Controlled expanded state
+onExpandedChange	(expanded: boolean) => void	—	Expanded state change handler
+showTags	boolean	true	Show tags filter section
+showDateRange	boolean	true	Show date range filter
+showBooleanFilters	boolean	true	Show boolean filters
+### ### SearchResults Props
+Prop	Type	Default	Description
+className	string	—	Extra CSS classes
+showAvatar	boolean	true	Show user avatars
+showEmail	boolean	true	Show email column
+showTags	boolean	true	Show tags column
+showStatus	boolean	true	Show status column
+showRole	boolean	true	Show role column
+showDate	boolean	true	Show creation date column
+onRowClick	(user: User) => void	—	Row click handler
+### SearchPagination Props
+Prop	Type	Default	Description
+className	string	—	Extra CSS classes
+showPageSize	boolean	true	Show page size selector
+### ExportButton Props
+Prop	Type	Default	Description
+onExport	(format: 'csv' | 'excel' | 'json') => void	—	Export handler
+className	string	—	Extra CSS classes
+### SaveSearchModal Props
+Prop	Type	Default	Description
+isOpen	boolean	Required	Modal visibility state
+onClose	() => void	Required	Close handler
+onSave	(name: string, description?: string) => void	Required	Save handler
+### ThemeToggle Props
+Prop	Type	Default	Description
+className	string	—	Extra CSS classes
+### SearchDebugger Props
+Prop	Type	Default	Description
+className	string	—	Extra CSS classes
