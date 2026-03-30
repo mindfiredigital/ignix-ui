@@ -99,27 +99,42 @@ export const Square: Story = {
   },
 };
 
+const VariantSwitch = ({ variant }: { variant: string }) => {
+  const [checked, setChecked] = useState(false);
+  return (
+    <Labeled
+      variant={variant as any}
+      checked={checked}
+      onCheckedChange={setChecked}
+      label={variant}
+    />
+  );
+};
+
 export const AllVariants: Story = {
   name: "All variants",
   render: () => {
     const variants = ["default", "large", "small", "pill", "square", "slim", "ios", "material"] as const;
     return (
       <div className="flex flex-col gap-4">
-        {variants.map((variant) => {
-          const [checked, setChecked] = useState(false);
-          return (
-            <Labeled
-              key={variant}
-              variant={variant}
-              checked={checked}
-              onCheckedChange={setChecked}
-              label={variant}
-            />
-          );
-        })}
+        {variants.map((variant) => (
+           <VariantSwitch key={variant} variant={variant} />
+        ))}
       </div>
     );
   },
+};
+
+const AnimationSwitch = ({ animation }: { animation: string }) => {
+  const [checked, setChecked] = useState(false);
+  return (
+    <Labeled
+      animation={animation as any}
+      checked={checked}
+      onCheckedChange={setChecked}
+      label={animation}
+    />
+  );
 };
 
 export const AllAnimations: Story = {
@@ -128,18 +143,9 @@ export const AllAnimations: Story = {
     const anims = ["default", "bounce", "scale", "rotate", "fade", "elastic", "pulse", "shake", "flip", "jelly", "glow"] as const;
     return (
       <div className="grid grid-cols-2 gap-4">
-        {anims.map((animation) => {
-          const [checked, setChecked] = useState(false);
-          return (
-            <Labeled
-              key={animation}
-              animation={animation}
-              checked={checked}
-              onCheckedChange={setChecked}
-              label={animation}
-            />
-          );
-        })}
+        {anims.map((animation) => (
+          <AnimationSwitch key={animation} animation={animation} />
+        ))}
       </div>
     );
   },

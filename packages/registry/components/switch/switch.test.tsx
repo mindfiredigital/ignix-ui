@@ -106,6 +106,21 @@ describe("Switch", () => {
     });
   });
 
+  describe("glowEffect", () => {
+  it("renders glow element when glowEffect is true and checked", () => {
+    const onCheckedChange = vi.fn();
+    render(<Switch glowEffect checked onCheckedChange={onCheckedChange} />);
+    const glowElement = document.querySelector('[style*="radial-gradient"]');
+    expect(glowElement).toBeInTheDocument();
+  });
+
+  it("does not render glow element when unchecked", () => {
+    render(<Switch glowEffect checked={false} />);
+    const glowElement = document.querySelector('[style*="radial-gradient"]');
+    expect(glowElement).not.toBeInTheDocument();
+  });
+});
+
   describe("accessibility", () => {
     it("is keyboard focusable", () => {
       render(<Switch />);
