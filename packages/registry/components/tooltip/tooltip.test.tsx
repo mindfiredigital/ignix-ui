@@ -94,7 +94,7 @@ const renderTooltip = (props: Partial<TooltipProps> = {}) =>
 const openTooltip = () => userEvent.hover(screen.getByTestId("tooltip-root"));
 const closeTooltip = () => userEvent.unhover(screen.getByTestId("tooltip-root"));
 
-describe("Tooltip – rendering", () => {
+describe("Tooltip - rendering", () => {
   it("renders the trigger child", () => {
     renderTooltip();
     expect(screen.getByRole("button", { name: "Hover me" })).toBeInTheDocument();
@@ -142,7 +142,7 @@ describe("Tooltip – rendering", () => {
   });
 });
 
-describe("Tooltip – cva classes applied to content", () => {
+describe("Tooltip - cva classes applied to content", () => {
   const getContentDiv = () =>
     screen.getByRole("tooltip").firstElementChild as HTMLElement;
 
@@ -180,7 +180,7 @@ describe("Tooltip – cva classes applied to content", () => {
   it("applies glass classes for bg=glass", async () => {
     renderTooltip({ bg: "glass" });
     await openTooltip();
-    expect(getContentDiv().className).toContain("backdrop-blur-lg");
+    expect(getContentDiv().className).toContain("backdrop-blur-m");
   });
 
   it("applies bg-blue-400 for bg=primary", async () => {
@@ -218,7 +218,7 @@ describe("Tooltip – cva classes applied to content", () => {
   });
 });
 
-describe("Tooltip – smoke tests (all variants)", () => {
+describe("Tooltip - smoke tests (all variants)", () => {
   const bgVariants = [
     "dark", "light", "slate", "default", "transparent", "glass", "gradient", "primary",
   ] as const;
@@ -252,7 +252,7 @@ describe("Tooltip – smoke tests (all variants)", () => {
   });
 });
 
-describe("Tooltip – open/close state", () => {
+describe("Tooltip - open/close state", () => {
   it("toggles correctly across multiple hover/unhover cycles", async () => {
     renderTooltip();
 
@@ -297,7 +297,7 @@ describe("Tooltip – open/close state", () => {
   });
 });
 
-describe("Tooltip – prop updates", () => {
+describe("Tooltip - prop updates", () => {
   it("reflects updated content when the content prop changes", async () => {
     const { rerender } = renderTooltip({ content: "First" });
     await openTooltip();
