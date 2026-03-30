@@ -803,3 +803,33 @@ function MyComponent() {
   return <button onClick={showNotification}>Show Toast</button>;
 }
 ```
+
+## Props 
+
+### ToastProvider Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | - | Content to wrap with the toast context provider |
+| `maxToasts` | `number` | `5` | Maximum number of toasts displayed simultaneously |
+| `defaultPosition` | `'top-right' \| 'top-left' \| 'bottom-right' \| 'bottom-left' \| 'top-center' \| 'bottom-center'` | `'top-right'` | Default screen position for all toasts |
+
+### ToastDataArgs Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `message` | `string` | - | Text content displayed inside the toast |
+| `variant` | `'success' \| 'error' \| 'warning' \| 'info' \| 'default'` | - | Visual variant controlling color scheme and default icon |
+| `animation` | `'slide' \| 'fade' \| 'bounce' \| 'pop' \| 'elastic' \| 'flip'` | - | Entry and exit animation style |
+| `appearance` | `'glow' \| 'gradient' \| 'glassmorphism' \| 'premium' \| 'neon'` | `'premium'` | Visual style treatment applied to the toast surface |
+| `mode` | `'dark' \| 'light'` | `'light'` | Color mode override for toast text |
+| `icon` | `ReactNode` | - | Custom icon to replace the default variant icon |
+| `duration` | `number` | `4000` | Auto-dismiss delay in milliseconds. Set to `0` to disable |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Controls the width and padding of the toast |
+| `position` | `'top-right' \| 'top-left' \| 'bottom-right' \| 'bottom-left' \| 'top-center' \| 'bottom-center'` | `defaultPosition` | Per-toast position override |
+| `showProgress` | `boolean` | `true` | Shows an animated progress bar indicating time remaining |
+| `pauseOnHover` | `boolean` | `true` | Pauses the auto-dismiss timer when hovered |
+| `dismissible` | `boolean` | `true` | Renders a close button to manually dismiss the toast |
+| `priority` | `'low' \| 'normal' \| 'high' \| 'urgent'` | `'normal'` | Urgent toasts are pushed to the front of the stack |
+| `gradientColor` | `string` | variant color | Custom CSS color used for gradient and glow effects |
+| `actionButton` | `{ label: string; onClick: () => void }` | - | Optional inline action button rendered below the message |
