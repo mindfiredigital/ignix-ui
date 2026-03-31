@@ -51,6 +51,79 @@ const meta: Meta = {
       },
     },
   },
+  argTypes: {
+    message: {
+      control: 'text',
+      description: 'Main notification text displayed in the toast.',
+    },
+
+    variant: {
+      control: 'select',
+      options: ['default', 'success', 'error', 'warning', 'info'],
+      description: 'Semantic colour variant.',
+      defaultValue: { summary: 'default' } ,
+    },
+
+    animation: {
+      control: 'select',
+      options: ['slide', 'fade', 'bounce', 'pop', 'elastic', 'flip'],
+      description: 'Enter / exit animation style.',
+      defaultValue: { summary: 'slide' },
+    },
+
+    appearance: {
+      control: 'select',
+      options: ['glow', 'gradient', 'glassmorphism', 'premium', 'neon'],
+      description: 'Visual style preset applied on top of the variant.',
+      defaultValue: { summary: 'premium' } ,
+    },
+    size: {
+      control: 'select',
+      options: ['sm', 'md', 'lg'],
+      description: 'Toast size.',
+      defaultValue: { summary: 'md' } ,
+    },
+    position: {
+      control: 'select',
+      options: [
+        'top-right',
+        'top-left',
+        'top-center',
+        'bottom-right',
+        'bottom-left',
+        'bottom-center',
+      ],
+      description: 'Screen corner / edge where the toast appears.',
+      defaultValue: { summary: 'top-right' },
+    },
+    showProgress: {
+      control: 'boolean',
+      description: 'Show a countdown progress bar at the bottom of the toast.',
+      defaultValue: { summary: 'true' },
+    },
+    duration: {
+      control: { type: 'number', min: 0, max: 15000, step: 500 },
+      description: 'Auto-dismiss delay in milliseconds. `0` = never dismiss.',
+      defaultValue: { summary: '4000' },
+    },
+    pauseOnHover: {
+      control: 'boolean',
+      description: 'Pause the auto-dismiss timer while the cursor is over the toast.',
+      defaultValue: { summary: 'true' },
+    },
+    dismissible: {
+      control: 'boolean',
+      description: 'Whether the user can manually close the toast.',
+      defaultValue: { summary: 'true' },
+    },
+    priority: {
+      control: 'select',
+      options: ['low', 'normal', 'high', 'urgent'],
+      description:
+        'Determines insertion order in the stack. `urgent` always jumps to the top.',
+      defaultValue: { summary: 'normal' },
+    },
+  },
 };
 
 export default meta;
@@ -68,9 +141,9 @@ export const Variants: Story = {
           {(
             [
               { variant: 'success', message: 'Changes saved successfully!' },
-              { variant: 'error',   message: 'Something went wrong. Please retry.' },
+              { variant: 'error', message: 'Something went wrong. Please retry.' },
               { variant: 'warning', message: 'You are approaching your storage limit.' },
-              { variant: 'info',    message: 'A new update is available.' },
+              { variant: 'info', message: 'A new update is available.' },
             ] as { variant: ToastDataArgs['variant']; message: string }[]
           ).map(({ variant, message }) => (
             <button
@@ -87,9 +160,9 @@ export const Variants: Story = {
                 px-4 py-2 rounded-lg text-sm font-semibold capitalize
                 transition-all duration-150 active:scale-95 shadow-sm
                 ${variant === 'success' ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : ''}
-                ${variant === 'error'   ? 'bg-red-600   hover:bg-red-700   text-white' : ''}
-                ${variant === 'warning' ? 'bg-amber-500 hover:bg-amber-600  text-white' : ''}
-                ${variant === 'info'    ? 'bg-blue-600  hover:bg-blue-700   text-white' : ''}
+                ${variant === 'error' ? 'bg-red-600 hover:bg-red-700 text-white' : ''}
+                ${variant === 'warning' ? 'bg-amber-500 hover:bg-amber-600 text-white' : ''}
+                ${variant === 'info' ? 'bg-blue-600 hover:bg-blue-700 text-white' : ''}
               `}
             >
               {variant}
@@ -298,7 +371,7 @@ export const CustomIcon: Story = {
           variant: 'success',
           animation: 'bounce',
           appearance: 'premium',
-          icon: <span className="text-xl leading-none"></span>,
+          icon: <span className="text-xl leading-none">✅</span>,
         }}
       />
     </div>
@@ -314,9 +387,9 @@ export const PriorityLevels: Story = {
       'low', 'normal', 'high', 'urgent',
     ];
     const colourMap: Record<string, string> = {
-      low:    'bg-slate-500 hover:bg-slate-600',
+      low: 'bg-slate-500 hover:bg-slate-600',
       normal: 'bg-blue-600  hover:bg-blue-700',
-      high:   'bg-orange-500 hover:bg-orange-600',
+      high: 'bg-orange-500 hover:bg-orange-600',
       urgent: 'bg-red-600   hover:bg-red-700',
     };
     return (
@@ -416,17 +489,18 @@ export const MaxToastsStack: Story = {
   render: () => {
     const { addToast, clearAll } = useToast();
     const variants: ToastDataArgs['variant'][] = ['success', 'error', 'warning', 'info'];
-    let counter = 0;
+    const counterRef = React.useRef(0);
     return (
       <div className="flex flex-col items-center gap-4 p-8">
         <h2 className="text-lg font-semibold text-slate-800 mb-2">Stack (max 3)</h2>
         <div className="flex gap-3">
           <button
             onClick={() => {
-              const v = variants[counter % variants.length];
-              counter++;
+              const next = counterRef.current + 1;
+              const v = variants[counterRef.current % variants.length];
+              counterRef.current = next;
               addToast({
-                message: `Toast #${counter} – variant: ${v}`,
+                message: `Toast #${next} - variant: ${v}`,
                 variant: v!,
                 animation: 'slide',
                 appearance: 'premium',

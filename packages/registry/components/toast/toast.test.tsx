@@ -461,7 +461,7 @@ describe('ToastContext direct usage', () => {
     const ContextAdder = () => {
       const ctx = React.useContext(ToastContext)!;
       React.useEffect(() => {
-        (ref as React.MutableRefObject<ToastManagerRef>).current = ctx;
+        (ref as React.RefObject<ToastManagerRef>).current = ctx;
       });
       return null;
     };
