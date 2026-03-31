@@ -88,14 +88,18 @@ vi.mock("@ignix-ui/toast/use-toast", () => ({
 /* ================= TEST SETUP ================= */
 
 const setup = (props = {}) => {
+  const defaultProps = {
+    onSubmit: vi.fn().mockResolvedValue(undefined), // ✅ default mock
+  };
   return render(
-    <ContactForm {...props}>
+    <ContactForm {...defaultProps} {...props}>
       <ContactForm.Header />
       <ContactForm.Content>
         <ContactForm.Field name="name" label="Name" />
         <ContactForm.Field name="email" label="Email" />
         <ContactForm.Field name="subject" label="Subject" />
         <ContactForm.Textarea name="message" />
+        <ContactForm.FileUpload />
       </ContactForm.Content>
       <ContactForm.Actions />
     </ContactForm>
