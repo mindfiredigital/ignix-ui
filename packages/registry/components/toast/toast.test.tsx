@@ -633,4 +633,4 @@ describe('ToastProvider defaultPosition', () => {
     expect(wrapper?.className).toMatch(/top-4/);
     expect(wrapper?.className).toMatch(/left-1\/2/);
   });
-});2
+});

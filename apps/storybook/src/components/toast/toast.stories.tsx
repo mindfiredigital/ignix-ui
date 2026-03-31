@@ -98,7 +98,7 @@ const meta: Meta = {
     },
     showProgress: {
       control: 'boolean',
-      description: 'Show a countdown progress bar at the bottom of the toast.',
+      description: 'Show a countdown progress bar at the top of the toast.',
       defaultValue: { summary: 'true' },
     },
     duration: {
@@ -221,7 +221,7 @@ export const Appearances: Story = {
       <div className="flex flex-col items-center gap-4 p-8">
         <h2 className="text-lg font-semibold text-slate-800 mb-2">Appearance Presets</h2>
         <div className="flex gap-3">
-          {(['premium', 'gradient'] as ToastDataArgs['appearance'][]).map((appearance) => (
+          {(['premium', 'gradient', 'glassmorphism', 'neon', 'glow'] as ToastDataArgs['appearance'][]).map((appearance) => (
             <button
               key={appearance}
               onClick={() =>
