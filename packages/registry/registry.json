@@ -516,10 +516,10 @@
         }
       }
     },
-    "steppers": {
-      "name": "Steppers",
-      "description": "An animated steppers component with different variants",
-      "dependencies": ["framer-motion", "lucide-react", "class-variance-authority"],
+    "stepper": {
+      "name": "stepper",
+      "description": "An animated stepper component with different variants",
+      "dependencies": ["framer-motion", "class-variance-authority"],
       "files": {
         "main": {
           "path": "components/stepper/index.tsx",
@@ -1133,6 +1133,23 @@
       "files": {
         "main": {
           "path": "templates/pages/dashboard-overview/index.tsx",
+          "type": "template"
+        }
+      }
+    },
+    "dashboard-shortcuts-page": {
+      "name": "dashboard-shortcuts-page",
+      "description": "A composable dashboard shortcuts template with large action buttons, icon-backed shortcut grid, keyboard hints, and persisted drag-and-drop customization.",
+      "dependencies": [
+        "@radix-ui/react-icons"
+      ],
+      "componentDependencies": [
+        "button",
+        "card"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/dashboard-shortcuts-page/index.tsx",
           "type": "template"
         }
       }

@@ -554,7 +554,7 @@ const getAnimationProps = (type: SliderAnimationType, duration = 0.3): MotionPro
       return { 
         animate: { scale: [1, 1.2, 0.9, 1] }, 
         transition: { 
-          type: 'elastic', 
+          type: 'spring', 
           stiffness: 600, 
           damping: 8, 
           repeat: Infinity, 
@@ -717,16 +717,13 @@ const Slider = React.forwardRef<React.ComponentRef<typeof SliderPrimitive.Root>,
   ) => {
     const isVertical = orientation === 'vertical';
 
-    const initialValue = props.value ?? props.defaultValue ?? [0];
-    const [displayValue, setDisplayValue] = React.useState<number[]>(initialValue);
+    const isControlled = props.value !== undefined;
+    const [uncontrolledValue, setUncontrolledValue] = React.useState<number[]>(
+      props.defaultValue ?? [0]
+    );
     const [isHovered, setIsHovered] = React.useState(false);
-
-    const prevValueProp = React.useRef(props.value);
-    if (props.value !== undefined && props.value !== prevValueProp.current) {
-      prevValueProp.current = props.value;
-      setDisplayValue(props.value);
-    }
-
+    const displayValue = isControlled ? props.value! : uncontrolledValue;
+ 
     const styles = variantStyles[variant];
     const animationProps = getAnimationProps(animationType, animationDuration);
 
@@ -750,7 +747,7 @@ const Slider = React.forwardRef<React.ComponentRef<typeof SliderPrimitive.Root>,
     const rootVerticalClass = 'flex flex-col items-center h-full min-h-[200px]';
 
     const handleValueChange = (newValue: number[]) => {
-      setDisplayValue(newValue);
+      if (!isControlled) setUncontrolledValue(newValue);
       props.onValueChange?.(newValue);
     };
 
@@ -816,11 +813,16 @@ const Slider = React.forwardRef<React.ComponentRef<typeof SliderPrimitive.Root>,
             >
               {/* Tooltip */}
               {showTooltip && isHovered && (
-                <motion.div
-                  className="absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap px-2 py-1 bg-popover text-popover-foreground text-xs rounded-md shadow-lg border border-border/40 backdrop-blur-sm pointer-events-none"
-                  initial={{ opacity: 0, y: 6, scale: 0.8 }}
+                <motion.div                 
+                  className={cn(
+                    'absolute px-2 py-1 bg-popover text-popover-foreground text-xs rounded-md shadow-lg border border-border/40 backdrop-blur-sm pointer-events-none',
+                  isVertical
+                    ? 'right-full top-1/2 -translate-y-1/2 mr-2'
+                    : '-top-12 left-1/2 -translate-x-1/2'
+                  )}
+                  initial={{ opacity: 0, scale: 0.8, ...(isVertical ? { x: 6 } : { y: 10 }) }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 6, scale: 0.8 }}
+                  exit={{ opacity: 0, scale: 0.8, ...(isVertical ? { x: 6 } : { y: 10 }) }}
                   transition={{ duration: 0.2 }}
                 >
                   {valuePrefix}{val}{valueSuffix}
