@@ -208,11 +208,19 @@ const filterGroupVariants = cva("", {
 /* ============================================
    RESPONSIVE HOOK
 ============================================ */
+type UseResponsiveReturn = {
+    isMobile: boolean;
+    isTablet: boolean;
+    isDesktop: boolean;
+    hasMounted: boolean;
+};
 
-const useResponsive = (mobileBreakpoint = 768, tabletBreakpoint = 1024) => {
+
+const useResponsive = (mobileBreakpoint = 768, tabletBreakpoint = 1024): UseResponsiveReturn => {
     const [isMobile, setIsMobile] = React.useState(false);
     const [isTablet, setIsTablet] = React.useState(false);
-    const [isDesktop, setIsDesktop] = React.useState(false);
+    const [isDesktop, setIsDesktop] = React.useState(true); // SSR-safe default
+    const [hasMounted, setHasMounted] = React.useState(false);
 
     React.useEffect(() => {
         const checkScreenSize = (): void => {
@@ -223,11 +231,13 @@ const useResponsive = (mobileBreakpoint = 768, tabletBreakpoint = 1024) => {
         };
 
         checkScreenSize();
-        window.addEventListener('resize', checkScreenSize);
-        return (): void => window.removeEventListener('resize', checkScreenSize);
+        setHasMounted(true);
+
+        window.addEventListener("resize", checkScreenSize);
+        return (): void => window.removeEventListener("resize", checkScreenSize);
     }, [mobileBreakpoint, tabletBreakpoint]);
 
-    return { isMobile, isTablet, isDesktop };
+    return { isMobile, isTablet, isDesktop, hasMounted };
 };
 
 /* ============================================
@@ -244,31 +254,64 @@ const parseDate = (dateStr: string): Date | null => {
     return isNaN(date.getTime()) ? null : date;
 };
 
-const getDateRangeFromPreset = (preset: DateRangePreset): { start: Date; end: Date } => {
+const getDateRangeFromPreset = (
+    preset: DateRangePreset
+): { start: Date; end: Date } => {
     const now = new Date();
     const start = new Date();
 
     switch (preset) {
         case "today":
-            return { start: now, end: now };
+            return {
+                start: new Date(now),
+                end: new Date(now),
+            };
+
         case "yesterday":
             start.setDate(now.getDate() - 1);
-            return { start, end: start };
+            return {
+                start: new Date(start),
+                end: new Date(start),
+            };
+
         case "last7days":
             start.setDate(now.getDate() - 7);
-            return { start, end: now };
+            return {
+                start: new Date(start),
+                end: new Date(now),
+            };
+
         case "last30days":
             start.setDate(now.getDate() - 30);
-            return { start, end: now };
+            return {
+                start: new Date(start),
+                end: new Date(now),
+            };
+
         case "last90days":
             start.setDate(now.getDate() - 90);
-            return { start, end: now };
+            return {
+                start: new Date(start),
+                end: new Date(now),
+            };
+
         case "thisMonth":
-            return { start: new Date(now.getFullYear(), now.getMonth(), 1), end: now };
+            return {
+                start: new Date(now.getFullYear(), now.getMonth(), 1),
+                end: new Date(now),
+            };
+
         case "lastMonth":
-            return { start: new Date(now.getFullYear(), now.getMonth() - 1, 1), end: new Date(now.getFullYear(), now.getMonth(), 0) };
+            return {
+                start: new Date(now.getFullYear(), now.getMonth() - 1, 1),
+                end: new Date(now.getFullYear(), now.getMonth(), 0),
+            };
+
         default:
-            return { start: now, end: now };
+            return {
+                start: new Date(now),
+                end: new Date(now),
+            };
     }
 };
 
@@ -289,39 +332,21 @@ export const SearchTextFilter: React.FC<SearchTextFilterProps> = ({
     onChange,
     className,
 }) => {
-    const { theme, autoApply, debounceMs, isMobile } = useSearch();
+    const { theme, autoApply, isMobile } = useSearch();
     const [localValue, setLocalValue] = React.useState(value || "");
-    const debounceTimer = React.useRef<NodeJS.Timeout | undefined>(undefined);
 
     React.useEffect(() => {
-        if (autoApply && debounceMs > 0) {
-            if (debounceTimer.current) clearTimeout(debounceTimer.current);
-            debounceTimer.current = setTimeout(() => {
-                onChange(localValue);
-            }, debounceMs);
-        }
-    }, [localValue, autoApply, debounceMs, onChange]);
-
-    React.useEffect(() => {
-        return (): void => {
-            if (debounceTimer.current) clearTimeout(debounceTimer.current);
-        };
-    }, []);
-
-    React.useEffect(() => {
-        if (value !== localValue) {
-            setLocalValue(value || "");
-        }
-    }, [value, localValue]);
+        setLocalValue(value || "");
+    }, [value]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
         const newValue = e.target.value;
         setLocalValue(newValue);
-        if (!autoApply) {
+
+        if (autoApply) {
             onChange(newValue);
         }
     };
-
     return (
         <div className={cn(
             "flex flex-col gap-2",
@@ -349,8 +374,7 @@ export const SearchTextFilter: React.FC<SearchTextFilterProps> = ({
                     isMobile ? "text-sm px-2 py-1.5" : "text-base",
                     theme === "dark"
                         ? "bg-gray-800 border-gray-700 text-white focus:ring-blue-500 focus:border-blue-500"
-                        : "bg-white border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500",
-                    className
+                        : "bg-white border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500"
                 )}
             />
         </div>
@@ -398,8 +422,7 @@ export const SearchSelectFilter: React.FC<SearchSelectFilterProps> = ({
                     isMobile ? "text-sm px-2 py-1.5" : "text-base",
                     theme === "dark"
                         ? "bg-gray-800 border-gray-700 text-white focus:ring-blue-500"
-                        : "bg-white border-gray-300 text-gray-900 focus:ring-blue-500",
-                    className
+                        : "bg-white border-gray-300 text-gray-900 focus:ring-blue-500"
                 )}
             >
                 <option value="">All</option>
@@ -478,23 +501,27 @@ export const SearchMultiSelectFilter: React.FC<SearchMultiSelectFilterProps> = (
             >
                 {filter.label}
             </Typography>
-            <div
+            <button
+                type="button"
                 onClick={(): void => setIsOpen(!isOpen)}
                 className={cn(
-                    "px-3 py-2 rounded-lg border cursor-pointer focus:outline-none focus:ring-2 transition-all",
+                    "px-3 py-2 rounded-lg border transition-all",
+                    "focus:outline-none focus:ring-2",
                     isMobile ? "text-sm px-2 py-1.5" : "text-base",
                     theme === "dark"
                         ? "bg-gray-800 border-gray-700 text-white focus:ring-blue-500"
                         : "bg-white border-gray-300 text-gray-900 focus:ring-blue-500",
                     selectedLabels.length > 0 && "ring-2 ring-blue-500"
                 )}
+                aria-expanded={isOpen}
+                aria-haspopup="listbox"
             >
                 <Typography variant="body-small" color="inherit">
                     {selectedLabels.length > 0
                         ? `${selectedLabels.length} selected`
                         : "Select options..."}
                 </Typography>
-            </div>
+            </button>
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
@@ -552,10 +579,10 @@ export const SearchDateRangeFilter: React.FC<SearchDateRangeFilterProps> = ({
     onChange,
     className,
 }) => {
-    const { theme, isMobile, autoApply, debounceMs } = useSearch();
+    const { theme, isMobile } = useSearch();
     const [preset, setPreset] = React.useState<DateRangePreset | undefined>(value.preset);
     const [showDatePicker, setShowDatePicker] = React.useState(false);
-    const debounceTimer = React.useRef<NodeJS.Timeout | undefined>(undefined);
+    // const debounceTimer = React.useRef<NodeJS.Timeout | undefined>(undefined);
 
     const datePickerValue = React.useMemo(() => {
         if (value.start || value.end) {
@@ -579,14 +606,8 @@ export const SearchDateRangeFilter: React.FC<SearchDateRangeFilterProps> = ({
                 preset: newPreset,
             };
 
-            if (autoApply && debounceMs > 0) {
-                if (debounceTimer.current) clearTimeout(debounceTimer.current);
-                debounceTimer.current = setTimeout(() => {
-                    onChange(newValue);
-                }, debounceMs);
-            } else {
-                onChange(newValue);
-            }
+            onChange(newValue);
+
         } else {
             setShowDatePicker(true);
         }
@@ -610,25 +631,12 @@ export const SearchDateRangeFilter: React.FC<SearchDateRangeFilterProps> = ({
 
         setPreset("custom");
 
-        if (autoApply && debounceMs > 0) {
-            if (debounceTimer.current) clearTimeout(debounceTimer.current);
-            debounceTimer.current = setTimeout(() => {
-                onChange(newValue);
-            }, debounceMs);
-        } else {
-            onChange(newValue);
-        }
+        onChange(newValue);
 
         if (newRange.start && newRange.end) {
             setTimeout(() => setShowDatePicker(false), 300);
         }
     };
-
-    React.useEffect(() => {
-        return (): void => {
-            if (debounceTimer.current) clearTimeout(debounceTimer.current);
-        };
-    }, []);
 
     const displayText = React.useMemo(() => {
         if (value.start && value.end) {
@@ -641,6 +649,26 @@ export const SearchDateRangeFilter: React.FC<SearchDateRangeFilterProps> = ({
         if (value.end) return `Until ${value.end}`;
         return filter.placeholder || "Select date range";
     }, [value, filter.placeholder]);
+
+    const datePickerRef = React.useRef<HTMLDivElement>(null);
+    React.useEffect(() => {
+        const handleClickOutside = (event: MouseEvent): void => {
+            if (
+                datePickerRef.current &&
+                !datePickerRef.current.contains(event.target as Node)
+            ) {
+                setShowDatePicker(false);
+            }
+        };
+
+        if (showDatePicker) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+
+        return (): void => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [showDatePicker]);
 
     return (
         <div className={cn(
@@ -708,6 +736,7 @@ export const SearchDateRangeFilter: React.FC<SearchDateRangeFilterProps> = ({
                 <AnimatePresence>
                     {showDatePicker && (
                         <motion.div
+                            ref={datePickerRef}
                             initial={{ opacity: 0, y: -10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
@@ -823,37 +852,32 @@ export const SearchNumericRangeFilter: React.FC<SearchNumericRangeFilterProps> =
     onChange,
     className,
 }) => {
-    const { theme, autoApply, debounceMs, isMobile } = useSearch();
+    const { theme, autoApply, isMobile } = useSearch();
     const [localMin, setLocalMin] = React.useState(value.min?.toString() || "");
     const [localMax, setLocalMax] = React.useState(value.max?.toString() || "");
-    const debounceTimer = React.useRef<NodeJS.Timeout | undefined>(undefined);
-
-    React.useEffect(() => {
-        if (autoApply && debounceMs > 0) {
-            if (debounceTimer.current) clearTimeout(debounceTimer.current);
-            debounceTimer.current = setTimeout(() => {
-                onChange({
-                    min: localMin ? Number(localMin) : undefined,
-                    max: localMax ? Number(localMax) : undefined,
-                });
-            }, debounceMs);
-        }
-    }, [localMin, localMax, autoApply, debounceMs, onChange]);
-
-    React.useEffect(() => {
-        return (): void => {
-            if (debounceTimer.current) clearTimeout(debounceTimer.current);
-        };
-    }, []);
 
     const handleChange = (field: "min" | "max", val: string): void => {
         if (field === "min") setLocalMin(val);
         else setLocalMax(val);
 
-        if (!autoApply) {
+        if (autoApply) {
             onChange({
-                min: field === "min" && val ? Number(val) : value.min,
-                max: field === "max" && val ? Number(val) : value.max,
+                min:
+                    field === "min"
+                        ? val
+                            ? Number(val)
+                            : undefined
+                        : localMin
+                            ? Number(localMin)
+                            : undefined,
+                max:
+                    field === "max"
+                        ? val
+                            ? Number(val)
+                            : undefined
+                        : localMax
+                            ? Number(localMax)
+                            : undefined,
             });
         }
     };
@@ -966,15 +990,11 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
     children,
     className,
 }) => {
-    const { filters, layout, activeFilters, setActiveFilters, autoApply, onSearch, isMobile, filtersCollapsed, setFiltersCollapsed, theme } = useSearch();
+    const { filters, layout, activeFilters, setActiveFilters, isMobile, filtersCollapsed, setFiltersCollapsed, theme } = useSearch();
 
     const handleFilterChange = (filterId: string, value: FilterValue): void => {
         const newFilters = { ...activeFilters, [filterId]: value };
         setActiveFilters(newFilters);
-
-        if (autoApply && onSearch) {
-            onSearch(newFilters);
-        }
     };
 
     if (layout === "collapsible" && isMobile) {
@@ -1100,13 +1120,16 @@ export const SearchActions: React.FC<SearchActionsProps> = ({
         }
     };
 
+    const EXPORT_FORMATS = ["csv", "excel", "json"] as const;
     const handleExport = (): void => {
-        if (onExport) onExport();
-        else if (contextOnExport) {
-            const format = prompt("Export format (csv/excel/json):", "csv") as ExportFormat;
-            if (format && ["csv", "excel", "json"].includes(format)) {
-                contextOnExport(activeFilters, format);
-            }
+        if (onExport) return onExport();
+
+        if (!contextOnExport) return;
+
+        const formatInput = prompt("Export format (csv/excel/json):", "csv");
+
+        if (formatInput && EXPORT_FORMATS.includes(formatInput as ExportFormat)) {
+            contextOnExport(activeFilters, formatInput as ExportFormat);
         }
     };
 
@@ -1283,19 +1306,14 @@ export interface SearchFacetedHintsProps {
 
 export const SearchFacetedHints: React.FC<SearchFacetedHintsProps> = ({
     categories: propCategories,
-    onSelect,
     className,
 }) => {
-    const { theme, facetedCategories: contextCategories, activeFilters, setActiveFilters, onSearch, autoApply, isMobile } = useSearch();
+    const { theme, facetedCategories: contextCategories, activeFilters, setActiveFilters, isMobile } = useSearch();
     const categories = propCategories || contextCategories || [];
 
     const handleSelect = (categoryId: string, value: string): void => {
-        if (onSelect) onSelect(categoryId, value);
-        else {
-            const newFilters = { ...activeFilters, [categoryId]: [value] };
-            setActiveFilters(newFilters);
-            if (autoApply && onSearch) onSearch(newFilters);
-        }
+        const newFilters = { ...activeFilters, [categoryId]: [value] };
+        setActiveFilters(newFilters);
     };
 
     if (categories.length === 0) return null;

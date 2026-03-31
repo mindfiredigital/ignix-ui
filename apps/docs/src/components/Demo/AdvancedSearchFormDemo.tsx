@@ -207,7 +207,16 @@ const convertToJSON = (data: any[], filename: string) => {
     URL.revokeObjectURL(url);
 };
 
-// Convert data to Excel
+const escapeHTML = (value: any) => {
+    if (value === null || value === undefined) return '';
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+};
+
 const convertToExcel = (data: any[], filename: string) => {
     if (!data || data.length === 0) {
         alert('No data to export');
@@ -215,30 +224,56 @@ const convertToExcel = (data: any[], filename: string) => {
     }
 
     const headers = Object.keys(data[0]);
-    let html = '<html><head><meta charset="UTF-8"><title>Export</title></head><body><table border="1">';
-    html += '<thead><tr>';
-    headers.forEach(header => {
-        html += `<th>${header}</th>`;
-    });
-    html += '</thead></thead><tbody>';
+
+    let html = `
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Export</title>
+        </head>
+        <body>
+            <table border="1">
+                <thead>
+                    <tr>
+                        ${headers.map(h => `<th>${escapeHTML(h)}</th>`).join('')}
+                    </tr>
+                </thead>
+                <tbody>
+    `;
 
     data.forEach(row => {
         html += '<tr>';
         headers.forEach(header => {
-            html += `<td>${row[header] !== undefined && row[header] !== null ? row[header] : ''}</td>`;
+            let value = row[header];
+
+            // Handle objects/arrays
+            if (typeof value === 'object') {
+                value = JSON.stringify(value);
+            }
+
+            html += `<td>${escapeHTML(value)}</td>`;
         });
         html += '</tr>';
     });
-    html += '</tbody></table></body></html>';
+
+    html += `
+                </tbody>
+            </table>
+        </body>
+        </html>
+    `;
 
     const blob = new Blob([html], { type: 'application/vnd.ms-excel' });
-    const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `${filename}.xls`);
+    link.download = `${filename}.xls`;
+
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+
     URL.revokeObjectURL(url);
 };
 
@@ -262,8 +297,6 @@ export const AdvancedSearchFormDemo = (): JSX.Element => {
         setIsSearching(true);
 
         let results = [...mockUsers];
-
-        console.log("Applying filters:", JSON.stringify(activeFilters, null, 2));
 
         // Name filter
         if (activeFilters.name && activeFilters.name.trim()) {
@@ -796,6 +829,49 @@ function AdvancedSearchDemo() {
         };
     }, [theme]);
 
+
+    const menuRef = React.useRef<HTMLDivElement | null>(null);
+    const [focusedIndex, setFocusedIndex] = React.useState<number>(-1);
+    React.useEffect(() => {
+        if (!showExportMenu) return;
+
+        const handleClickOutside = (e: MouseEvent) => {
+            if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+                setShowExportMenu(false);
+            }
+        };
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                setShowExportMenu(false);
+            }
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                setFocusedIndex((prev) => (prev + 1) % 3);
+            }
+
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                setFocusedIndex((prev) => (prev - 1 + 3) % 3);
+            }
+
+            if (e.key === 'Enter' && focusedIndex !== -1) {
+                const options = ['csv', 'excel', 'json'];
+                handleExport(options[focusedIndex]);
+                setShowExportMenu(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [showExportMenu, focusedIndex]);
+
     return (
         <div>
             {/* Theme Selector */}
@@ -906,39 +982,45 @@ function AdvancedSearchDemo() {
                                         />
 
                                         {/* Custom Export Dropdown */}
-                                        <div style={{ position: 'relative' }}>
+                                        <div style={{ position: 'relative' }} ref={menuRef}>
                                             <button
-                                                onClick={(): void => setShowExportMenu(!showExportMenu)}
+                                                onClick={() => setShowExportMenu(!showExportMenu)}
                                                 style={styles.exportButton}
+                                                aria-haspopup="menu"
+                                                aria-expanded={showExportMenu}
                                             >
                                                 Export ▼
                                             </button>
                                             {showExportMenu && (
-                                                <div style={styles.exportMenu}>
-                                                    <button
-                                                        onClick={(): void => handleExport('csv')}
-                                                        style={styles.exportMenuItem}
-                                                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = theme === 'dark' ? '#334155' : '#f1f5f9'}
-                                                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                                                    >
-                                                        CSV
-                                                    </button>
-                                                    <button
-                                                        onClick={(): void => handleExport('excel')}
-                                                        style={styles.exportMenuItem}
-                                                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = theme === 'dark' ? '#334155' : '#f1f5f9'}
-                                                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                                                    >
-                                                        Excel
-                                                    </button>
-                                                    <button
-                                                        onClick={(): void => handleExport('json')}
-                                                        style={{ ...styles.exportMenuItem, borderBottomLeftRadius: '8px', borderBottomRightRadius: '8px' }}
-                                                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = theme === 'dark' ? '#334155' : '#f1f5f9'}
-                                                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                                                    >
-                                                        JSON
-                                                    </button>
+                                                <div style={styles.exportMenu} role='menu'>
+                                                    {['csv', 'excel', 'json'].map((type, index) => (
+                                                        <button
+                                                            key={type}
+                                                            role="menuitem"
+                                                            tabIndex={0}
+                                                            onClick={() => handleExport(type)}
+                                                            style={{
+                                                                ...styles.exportMenuItem,
+                                                                backgroundColor:
+                                                                    focusedIndex === index
+                                                                        ? (theme === 'dark' ? '#334155' : '#f1f5f9')
+                                                                        : 'transparent',
+                                                                ...(index === 2 && {
+                                                                    borderBottomLeftRadius: '8px',
+                                                                    borderBottomRightRadius: '8px',
+                                                                }),
+                                                            }}
+                                                            onMouseEnter={(e) =>
+                                                            (e.currentTarget.style.backgroundColor =
+                                                                theme === 'dark' ? '#334155' : '#f1f5f9')
+                                                            }
+                                                            onMouseLeave={(e) =>
+                                                                (e.currentTarget.style.backgroundColor = 'transparent')
+                                                            }
+                                                        >
+                                                            {type.toUpperCase()}
+                                                        </button>
+                                                    ))}
                                                 </div>
                                             )}
                                         </div>

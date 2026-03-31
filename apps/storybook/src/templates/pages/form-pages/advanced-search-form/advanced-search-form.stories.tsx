@@ -24,7 +24,7 @@ import {
     type NumericRangeValue as ComponentNumericRangeValue,
     type SavedSearch as ComponentSavedSearch,
 } from ".";
-import { useState } from "react";
+import React, { useState } from "react";
 import { cn } from "../../../../../utils/cn";
 
 // Type definitions
@@ -1145,7 +1145,6 @@ export const RealTimeSearchWithDebounce: Story = {
         const [searchTerm, setSearchTerm] = useState("");
         const [results, setResults] = useState<User[]>(mockUsers);
         const [isTyping, setIsTyping] = useState(false);
-        const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
         const textFilter: TextFilterConfig = { id: "search", label: "Search Users", type: "text", placeholder: "Start typing to search..." };
 
@@ -1157,12 +1156,26 @@ export const RealTimeSearchWithDebounce: Story = {
             setResults(filtered);
         };
 
+        const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
+        React.useEffect(() => {
+            return () => {
+                if (timeoutRef.current) {
+                    clearTimeout(timeoutRef.current);
+                }
+            };
+        }, []);
         const handleChange = (val: string) => {
             setSearchTerm(val);
             setIsTyping(true);
-            if (timeoutId) clearTimeout(timeoutId);
-            const newTimeoutId = setTimeout(() => handleSearch(val), 300);
-            setTimeoutId(newTimeoutId);
+
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+
+            timeoutRef.current = setTimeout(() => {
+                handleSearch(val);
+            }, 300);
         };
 
         return (
@@ -1279,7 +1292,8 @@ export const FilterChipsActiveFilters: Story = {
                                             {getFilterLabel(key, v)}
                                             <button
                                                 onClick={() => removeFilter(key, v)}
-                                                className="hover:text-blue-600 focus:outline-none"
+                                                className="hover:text-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 rounded-full"
+                                                aria-label={`Remove ${getFilterLabel(key, v)} filter`}
                                             >
                                                 ×
                                             </button>
