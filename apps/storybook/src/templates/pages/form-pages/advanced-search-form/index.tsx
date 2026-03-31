@@ -326,6 +326,19 @@ export interface SearchTextFilterProps {
     className?: string;
 }
 
+/**
+ * Text input filter component for searching/filtering text values
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <SearchTextFilter
+ *   filter={{ id: 'name', label: 'Name', type: 'text' }}
+ *   value="John"
+ *   onChange={(value) => console.log(value)}
+ * />
+ * ```
+ */
 export const SearchTextFilter: React.FC<SearchTextFilterProps> = ({
     filter,
     value,
@@ -390,6 +403,24 @@ export interface SearchSelectFilterProps {
     className?: string;
 }
 
+/**
+ * Select dropdown filter component for single selection from predefined options
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <SearchSelectFilter
+ *   filter={{
+ *     id: 'status',
+ *     label: 'Status',
+ *     type: 'select',
+ *     options: [{ value: 'active', label: 'Active' }]
+ *   }}
+ *   value="active"
+ *   onChange={(value) => console.log(value)}
+ * />
+ * ```
+ */
 export const SearchSelectFilter: React.FC<SearchSelectFilterProps> = ({
     filter,
     value,
@@ -445,6 +476,24 @@ export interface SearchMultiSelectFilterProps {
     className?: string;
 }
 
+/**
+ * Multi-select filter component for selecting multiple options from a list
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <SearchMultiSelectFilter
+ *   filter={{
+ *     id: 'tags',
+ *     label: 'Tags',
+ *     type: 'multi-select',
+ *     options: [{ value: 'react', label: 'React' }]
+ *   }}
+ *   value={['react']}
+ *   onChange={(values) => console.log(values)}
+ * />
+ * ```
+ */
 export const SearchMultiSelectFilter: React.FC<SearchMultiSelectFilterProps> = ({
     filter,
     value = [],
@@ -573,6 +622,24 @@ export interface SearchDateRangeFilterProps {
     className?: string;
 }
 
+/**
+ * Date range filter component with preset options and custom date picker
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <SearchDateRangeFilter
+ *   filter={{
+ *     id: 'date',
+ *     label: 'Date Range',
+ *     type: 'date-range',
+ *     presets: ['today', 'last7days']
+ *   }}
+ *   value={{ start: '2024-01-01', end: '2024-01-31' }}
+ *   onChange={(value) => console.log(value)}
+ * />
+ * ```
+ */
 export const SearchDateRangeFilter: React.FC<SearchDateRangeFilterProps> = ({
     filter,
     value = {},
@@ -777,6 +844,24 @@ export interface SearchCheckboxFilterProps {
     className?: string;
 }
 
+/**
+ * Checkbox group filter component for selecting multiple boolean options
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <SearchCheckboxFilter
+ *   filter={{
+ *     id: 'categories',
+ *     label: 'Categories',
+ *     type: 'checkbox',
+ *     options: [{ value: 'tech', label: 'Technology' }]
+ *   }}
+ *   value={['tech']}
+ *   onChange={(values) => console.log(values)}
+ * />
+ * ```
+ */
 export const SearchCheckboxFilter: React.FC<SearchCheckboxFilterProps> = ({
     filter,
     value = [],
@@ -846,6 +931,25 @@ export interface SearchNumericRangeFilterProps {
     className?: string;
 }
 
+/**
+ * Numeric range filter component with min/max inputs for filtering numeric values
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <SearchNumericRangeFilter
+ *   filter={{
+ *     id: 'price',
+ *     label: 'Price Range',
+ *     type: 'numeric-range',
+ *     min: 0,
+ *     max: 1000
+ *   }}
+ *   value={{ min: 100, max: 500 }}
+ *   onChange={(value) => console.log(value)}
+ * />
+ * ```
+ */
 export const SearchNumericRangeFilter: React.FC<SearchNumericRangeFilterProps> = ({
     filter,
     value = {},
@@ -951,6 +1055,19 @@ export interface SearchFilterRendererProps {
     className?: string;
 }
 
+/**
+ * Dynamic filter renderer that renders the appropriate filter component based on filter type
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <SearchFilterRenderer
+ *   filter={textFilter}
+ *   value="search term"
+ *   onChange={(value) => console.log(value)}
+ * />
+ * ```
+ */
 export const SearchFilterRenderer: React.FC<SearchFilterRendererProps> = ({
     filter,
     value,
@@ -986,6 +1103,17 @@ export interface SearchFiltersProps {
     className?: string;
 }
 
+/**
+ * Container component that renders all filter inputs
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <SearchFilters>
+ *   <CustomFilter />
+ * </SearchFilters>
+ * ```
+ */
 export const SearchFilters: React.FC<SearchFiltersProps> = ({
     children,
     className,
@@ -1080,6 +1208,19 @@ export interface SearchActionsProps {
     className?: string;
 }
 
+/**
+ * Action buttons component for applying, resetting, saving, and exporting filters
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <SearchActions
+ *   showApply={true}
+ *   showReset={true}
+ *   onApply={() => console.log('Apply clicked')}
+ * />
+ * ```
+ */
 export const SearchActions: React.FC<SearchActionsProps> = ({
     onApply,
     onReset,
@@ -1216,6 +1357,19 @@ export interface SearchSavedSearchesProps {
     className?: string;
 }
 
+/**
+ * Component that displays and manages saved searches
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <SearchSavedSearches
+ *   searches={savedSearches}
+ *   onApply={(search) => console.log('Apply', search)}
+ *   onDelete={(id) => console.log('Delete', id)}
+ * />
+ * ```
+ */
 export const SearchSavedSearches: React.FC<SearchSavedSearchesProps> = ({
     searches: propSearches,
     onApply,
@@ -1304,6 +1458,20 @@ export interface SearchFacetedHintsProps {
     className?: string;
 }
 
+/**
+ * Component that displays faceted navigation hints/categories for refining search results
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <SearchFacetedHints
+ *   categories={[
+ *     { id: 'category', label: 'Category', options: [...] }
+ *   ]}
+ *   onSelect={(categoryId, value) => console.log(categoryId, value)}
+ * />
+ * ```
+ */
 export const SearchFacetedHints: React.FC<SearchFacetedHintsProps> = ({
     categories: propCategories,
     className,
@@ -1377,6 +1545,15 @@ export interface SearchResultsCountProps {
     className?: string;
 }
 
+/**
+ * Component that displays the number of search results
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <SearchResultsCount count={42} total={100} />
+ * ```
+ */
 export const SearchResultsCount: React.FC<SearchResultsCountProps> = ({
     count: propCount,
     total: propTotal,
@@ -1406,6 +1583,25 @@ SearchResultsCount.displayName = "SearchResultsCount";
    MAIN COMPONENT
 ============================================ */
 
+/**
+ * Main Advanced Search Form component that provides a complete search interface with filters, actions, and results display
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <AdvancedSearchForm
+ *   variant="default"
+ *   layout="stacked"
+ *   filters={filters}
+ *   onSearch={(filters) => console.log('Search:', filters)}
+ *   autoApply={true}
+ *   showExport={true}
+ * >
+ *   <AdvancedSearchForm.Filters />
+ *   <AdvancedSearchForm.Actions />
+ * </AdvancedSearchForm>
+ * ```
+ */
 export const AdvancedSearchFormRoot: React.FC<AdvancedSearchFormProps> = ({
     variant = "default",
     layout = "stacked",
