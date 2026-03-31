@@ -5,6 +5,17 @@ import { ToastProvider } from "../../../../components/toast";
 const meta: Meta<typeof ContactForm> = {
   title: "Templates/Pages/Forms/ContactForm",
   component: ContactForm,
+  argTypes: {
+    variant: {
+      control: "select",
+      options: ["default", "background", "split"],
+    },
+    sideImagePosition: {
+      control: "select", 
+      options: ["left", "right"],
+      if: { arg: "variant", eq: "split" },
+    },
+  },
 };
 
 export default meta;

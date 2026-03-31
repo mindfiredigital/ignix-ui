@@ -404,7 +404,7 @@ function Actions() {
     <motion.div variants={itemVariants}>
      <Button
         type="submit"
-        className="w-full  text-white shadow-lg"
+        className="w-full text-white shadow-lg"
         disabled={status === "loading"}
       >
         {status === "loading" ? "Sending..." : "Send Message"}
@@ -424,5 +424,3 @@ export const ContactForm = Object.assign(Root, {
   Actions,
   Base: ContactFormBase,
 });
-
-

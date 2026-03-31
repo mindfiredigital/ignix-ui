@@ -10,13 +10,20 @@ import { cn } from "@site/src/utils/cn";
 import { ToastProvider } from "../UI/toast";
 
 type Variant = "default" | "background" | "split";
+type FormData = {
+  name?: string;
+  email?: string;
+  subject?: string;
+  message?: string;
+  file?: File | null;
+};
 
 export const ContactFormDemo = () => {
   const [variant, setVariant] = useState<Variant>("default");
   const [sideImagePosition, setSideImagePosition] = useState<"left" | "right">("left");
-  const [submitted, setSubmitted] = useState<any>(null);
+  const [submitted, setSubmitted] = useState<FormData | null>(null);
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: FormData) => {
 
     await new Promise((res) => setTimeout(res, 1200));
 

@@ -12,8 +12,7 @@ import { ContactForm } from ".";
 vi.mock("framer-motion", () => ({
   motion: {
     div: ({ children, ...props }: any) => {
-      const {...rest } = props;
-      return <div {...rest}>{children}</div>;
+      return <div {...props}>{children}</div>;
     },
   },
   AnimatePresence: ({ children }: any) => <>{children}</>,
