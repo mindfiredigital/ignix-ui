@@ -512,32 +512,48 @@ export const ToastProvider = ({
     [maxToasts, defaultPosition]
   );
 
+  const positionGroups = toasts.reduce<Record<string, ToastContainerData[]>>(
+    (acc, toast) => {
+      const pos = toast.position ?? defaultPosition;
+      if (!acc[pos]) acc[pos] = [];
+      acc[pos].push(toast);
+      return acc;
+    },
+    {}
+  );
+
   return (
     <ToastContext.Provider value={{ addToast, removeToast, clearAll }}>
       {children}
-      <div
-        className={cn(
-          'fixed flex flex-col gap-3 pointer-events-none',
-          'z-[9999]',
-          positionConfig[defaultPosition]
-        )}
-      >
-        <AnimatePresence initial={false}>
-          {toasts.map((toast, index) => (
-            <motion.div key={toast.id} layout="position" className="pointer-events-auto">
-              <Toast
-                {...toast}
-                index={index}
-                onClose={removeToast}
-                timeoutMapRef={timeoutMapRef}
-              />
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
+      {(Object.entries(positionGroups) as [keyof typeof positionConfig, ToastContainerData[]][]).map(
+        ([position, group]) => (
+          <div
+            key={position}
+            className={cn(
+              'fixed flex flex-col gap-3 pointer-events-none z-[9999]',
+              positionConfig[position]
+            )}
+          >
+            <AnimatePresence initial={false}>
+              {group.map((toast, index) => (
+                <motion.div key={toast.id} layout="position" className="pointer-events-auto">
+                  <Toast
+                    {...toast}
+                    index={index}
+                    onClose={removeToast}
+                    timeoutMapRef={timeoutMapRef}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        )
+      )}
     </ToastContext.Provider>
   );
 };
+
+const TICK = 50;
 
 const Toast = ({
   message,
@@ -560,8 +576,64 @@ const Toast = ({
   const [isPaused, setIsPaused] = useState(false);
   const [progress, setProgress] = useState(100);
 
-  const progressRef = useRef<number>(100);
-  const intervalRef = useRef<ReturnType<typeof setInterval>>(null);
+  const remainingRef = useRef<number>(duration);
+  const lastTickRef = useRef<number>(Date.now());
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const scheduleTimeout = useCallback(
+    (remaining: number) => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => onClose(id), remaining);
+      timeoutMapRef.current?.set(id, timeoutRef.current);
+    },
+    [id, onClose, timeoutMapRef]
+  );
+  useEffect(() => {
+    if (!showProgress || duration <= 0 || isPaused) return;
+
+    lastTickRef.current = Date.now();
+
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const elapsed = now - lastTickRef.current;
+      lastTickRef.current = now;
+
+      remainingRef.current = Math.max(0, remainingRef.current - elapsed);
+      setProgress((remainingRef.current / duration) * 100);
+    }, TICK);
+
+    return () => clearInterval(interval);
+  }, [isPaused, duration, showProgress]);
+
+  useEffect(() => {
+    if (duration <= 0) return;
+
+    if (isPaused) {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+        timeoutMapRef.current?.delete(id);
+      }
+    } else {
+      scheduleTimeout(remainingRef.current);
+    }
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+        timeoutMapRef.current?.delete(id);
+      }
+    };
+  }, [isPaused, duration, id, scheduleTimeout, timeoutMapRef]);
+
+  const handleMouseEnter = () => {
+    if (pauseOnHover) setIsPaused(true);
+  };
+
+  const handleMouseLeave = () => {
+    if (pauseOnHover) setIsPaused(false);
+  };
 
   const getDefaultIcon = (variant: ToastVariantTypes) => {
     const iconClass = 'h-5 w-5';
@@ -581,50 +653,6 @@ const Toast = ({
 
   const displayIcon = icon || getDefaultIcon(variant);
   const styles = getEnhancedVariantStyles(appearance, variant, size);
-
-  useEffect(() => {
-    if (!showProgress || duration <= 0) return;
-
-    const interval = 50;
-    const step = (100 / duration) * interval;
-
-    intervalRef.current = setInterval(() => {
-      if (!isPaused) {
-        progressRef.current = Math.max(0, progressRef.current - step);
-        setProgress(progressRef.current);
-
-        if (progressRef.current <= 0) {
-          onClose(id);
-        }
-      }
-    }, interval);
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [duration, isPaused, showProgress, id, onClose]);
-
-  useEffect(() => {
-    if (duration <= 0) return;
-
-    const timeoutId = setTimeout(() => onClose(id), duration);
-    timeoutMapRef.current?.set(id, timeoutId);
-
-    return () => {
-      clearTimeout(timeoutId);
-      timeoutMapRef.current?.delete(id);
-    };
-  }, [duration, id, onClose, timeoutMapRef]);
-
-  const handleMouseEnter = () => {
-    if (pauseOnHover) setIsPaused(true);
-  };
-
-  const handleMouseLeave = () => {
-    if (pauseOnHover) setIsPaused(false);
-  };
 
   return (
     <motion.div

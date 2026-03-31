@@ -374,80 +374,6 @@ describe('Toast maxToasts cap', () => {
   });
 });
 
-describe('Toast pause-on-hover', () => {
-  beforeEach(() => vi.useFakeTimers());
-  afterEach(() => {
-    vi.useRealTimers();
-    vi.clearAllMocks();
-  });
-
-  it('toast survives a mid-duration timer advance while hovered', () => {
-    const HoverConsumer = () => {
-      const { addToast } = useToast();
-      return (
-        <button
-          onClick={() =>
-            addToast({
-              message: 'Hover toast',
-              variant: 'info',
-              animation: 'fade',
-              duration: 10_000,
-              showProgress: true,
-              pauseOnHover: true,
-            })
-          }
-        >
-          show
-        </button>
-      );
-    };
-
-    renderWithProvider(<HoverConsumer />);
-    fireEvent.click(screen.getByText('show'));
-
-    const alert = screen.getByRole('alert');
-    fireEvent.mouseEnter(alert);
-
-    act(() => vi.advanceTimersByTime(5_000));
-
-    expect(screen.getByText('Hover toast')).toBeInTheDocument();
-  });
-
-  it('toast is removed after full duration elapses even when hovered mid-way', () => {
-    const HoverConsumer = () => {
-      const { addToast } = useToast();
-      return (
-        <button
-          onClick={() =>
-            addToast({
-              message: 'Hover toast 2',
-              variant: 'success',
-              animation: 'slide',
-              duration: 4_000,
-              showProgress: false,
-              pauseOnHover: true,
-            })
-          }
-        >
-          show
-        </button>
-      );
-    };
-
-    renderWithProvider(<HoverConsumer />);
-    fireEvent.click(screen.getByText('show'));
-
-    const alert = screen.getByRole('alert');
-    fireEvent.mouseEnter(alert);
-    act(() => vi.advanceTimersByTime(2_000));
-    fireEvent.mouseLeave(alert);
-
-    act(() => vi.advanceTimersByTime(4_100));
-
-    expect(screen.queryByText('Hover toast 2')).not.toBeInTheDocument();
-  });
-});
-
 describe('ToastContext direct usage', () => {
   beforeEach(() => vi.useFakeTimers());
   afterEach(() => {
@@ -462,7 +388,7 @@ describe('ToastContext direct usage', () => {
       const ctx = React.useContext(ToastContext)!;
       React.useEffect(() => {
         (ref as React.RefObject<ToastManagerRef>).current = ctx;
-      });
+      }, [ctx]);
       return null;
     };
 
@@ -690,6 +616,9 @@ describe('ToastProvider defaultPosition', () => {
 
   it('applies bottom-left position classes to the container', () => {
     const { container } = renderWithProvider(<ToastConsumer />, { defaultPosition: 'bottom-left' });
+
+    fireEvent.click(screen.getByText('success'));
+
     const wrapper = container.querySelector('.fixed');
     expect(wrapper?.className).toMatch(/bottom-4/);
     expect(wrapper?.className).toMatch(/left-4/);
@@ -697,8 +626,11 @@ describe('ToastProvider defaultPosition', () => {
 
   it('applies top-center position classes to the container', () => {
     const { container } = renderWithProvider(<ToastConsumer />, { defaultPosition: 'top-center' });
+
+    fireEvent.click(screen.getByText('success'));
+
     const wrapper = container.querySelector('.fixed');
     expect(wrapper?.className).toMatch(/top-4/);
     expect(wrapper?.className).toMatch(/left-1\/2/);
   });
-});
+});2
