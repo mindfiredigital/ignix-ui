@@ -14,7 +14,11 @@ type Story = StoryObj<typeof ContactForm>;
 export const Default: Story = {
   render: () => (
     <ToastProvider>
-      <ContactForm>
+      <ContactForm
+        onSubmit={async (data) => {
+          console.log("Form submitted:", data);
+        }} 
+      >
         <ContactForm.Header />
         <ContactForm.Content>
           <ContactForm.Field name="name" label="Name" />
@@ -35,6 +39,9 @@ export const WithBackground: Story = {
       <ContactForm
         variant="background"
         backgroundImage="https://images.unsplash.com/photo-1519389950473-47ba0277781c"
+        onSubmit={async (data) => {
+          console.log("Form submitted:", data);
+        }}
       >
         <ContactForm.Header />
         <ContactForm.Content>
@@ -56,11 +63,15 @@ export const SplitLayout: Story = {
       <ContactForm
         variant="split"
         sideImage="https://images.unsplash.com/photo-1492724441997-5dc865305da7"
+        onSubmit={async (data) => {
+          console.log("Form submitted:", data);
+        }}
       >
         <ContactForm.Header />
         <ContactForm.Content>
           <ContactForm.Field name="name" label="Name" />
           <ContactForm.Field name="email" label="Email" />
+          <ContactForm.Field name="subject" label="Subject" />
           <ContactForm.Textarea name="message" />
           <ContactForm.FileUpload />
           <ContactForm.Actions />

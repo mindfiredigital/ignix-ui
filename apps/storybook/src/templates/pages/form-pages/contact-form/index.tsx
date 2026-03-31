@@ -32,7 +32,7 @@ type ContactFormProps = {
   variant?: "default" | "background" | "split";
   backgroundImage?: string;
   sideImage?: string;
-  onSubmit?: (data: FormData) => Promise<void> | void;
+  onSubmit: (data: FormData) => Promise<void> | void;
   onError?: (err: unknown) => void;
   onSuccess?: () => void;
   sideImagePosition?: "left" | "right";
@@ -133,7 +133,7 @@ function ContactFormBase({
   onSuccess,
 }: {
   children: React.ReactNode;
-  onSubmit?: (data: FormData) => Promise<void> | void;
+  onSubmit: (data: FormData) => Promise<void> | void;
   onError?: (err: unknown) => void;
   onSuccess?: () => void;
 }) {
@@ -185,7 +185,7 @@ function ContactFormBase({
     
     try {
       setStatus("loading");
-      await onSubmit?.(normalizedData);
+      await onSubmit(normalizedData);
       setStatus("success");
 
       if (onSuccess) {
