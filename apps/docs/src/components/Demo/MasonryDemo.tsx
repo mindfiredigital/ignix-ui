@@ -26,6 +26,8 @@ const MasonryDemo = () => {
   ];
 
   const codeString = `
+import Masonry from '@ignix-ui/masonry';
+
 <Masonry 
   columns={${columns}}
   mobile={${mobile}}

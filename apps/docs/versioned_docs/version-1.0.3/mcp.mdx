@@ -1,0 +1,245 @@
+---
+
+title: Ignix MCP Server
+
+description: Use the Ignix MCP server to browse, search, and install components, themes, and templates from registries.
+
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+The Ignix MCP Server allows AI assistants to interact with Ignix registries. You can browse available components, search for specific ones, and install them directly into your project using natural language.
+
+---
+
+## Quick Start
+
+Select your MCP client and follow the instructions to configure the ignix MCP server.
+
+<Tabs defaultValue="Cursor">
+  <TabItem value="Cursor">
+      **Run the following command** in your project:
+
+
+      ```bash
+      npx ignix mcp init --client cursor
+      ```
+
+      Open **Cursor Settings → MCP**, enable the Ignix server, and restart Cursor.
+
+      Try the following prompts:
+
+      * Show me all available Ignix components
+      * Add button and card components
+      * Create a landing page using Ignix
+  </TabItem>
+  <TabItem value="VS Code">
+      **Run the following command** in your project:
+
+      ```bash
+      npx ignix mcp init --client vscode
+      ```
+
+      Open `.vscode/mcp.json` and click **Start** next to Ignix.
+
+      Try with GitHub Copilot:
+
+      * Show all Ignix components
+      * Install a hero section
+      * Build a contact form
+  </TabItem>
+  <TabItem value="Claude Code">
+      **Run the following command** in your project:
+
+      ```bash
+      npx ignix mcp init --client claude
+      ```
+
+      Restart Claude Code and run `/mcp`.
+
+      Try:
+
+      * List all components
+      * Add login form
+      * Build dashboard layout
+  </TabItem>
+  <TabItem value="Codex">
+
+      ```bash
+      npx ignix mcp init --client codex
+      ```
+
+      Then manually add:
+
+      ```toml
+      [mcp_servers.ignix]
+      command = "npx"
+      args = ["ignix", "mcp"]
+      ```
+
+      Restart Codex and test prompts.
+  </TabItem>
+</Tabs>
+
+---
+
+## What is MCP?
+
+[Model Context Protocol (MCP)](https://modelcontextprotocol.io) is an open protocol that enables AI assistants to securely connect to external tools and data sources.
+
+With Ignix MCP, your AI assistant can:
+
+* **Browse Components** — List all available UI components
+* **Search Components** — Find components across registries
+* **Install via Natural Language** — "add login form"
+* **Install Themes & Templates**
+* **Work with Multiple Registries**
+
+
+---
+
+## How It Works
+
+The MCP server acts as a bridge between your AI assistant, Ignix CLI, and registries.
+
+1. **Registry Connection** → Connects to configured registries
+2. **Natural Language Input** → User prompt
+3. **AI Processing** → Converts prompt to tool calls
+4. **CLI Execution** → Ignix CLI runs commands
+5. **Installation** → Components added to project
+
+---
+
+## Available MCP Tools
+
+### Project Tools
+
+* **get_version** → Returns CLI + MCP version
+* **check_compatibility** → Validates environment
+* **init_project** → Initializes project
+* **create_react_project** → Creates a new React + TypeScript + Tailwind project (used in empty directories)
+
+### Component Tools
+
+* **list_components** → List all available components (source of truth)
+* **search_components** → Search components by keyword (recommended before install)
+* **install_component** → Install components into your project
+
+### Template Tools
+
+* **list_templates** → List all available templates (complete pages/layouts)
+* **search_templates** → Search templates by keyword
+* **install_template** → Install templates into your project
+
+### Theme Tools
+* **list_themes** → List all available themes
+* **install_theme** → Install themes into your project
+
+
+---
+
+## Configuration
+
+You can manually configure MCP servers depending on your client.
+
+### Cursor
+
+```json title=".cursor/mcp.json"
+{
+  "mcpServers": {
+    "ignix": {
+      "command": "npx",
+      "args": ["ignix", "mcp"]
+    }
+  }
+}
+```
+
+### VS Code
+
+```json title=".vscode/mcp.json"
+{
+  "servers": {
+    "ignix": {
+      "command": "npx",
+      "args": ["ignix", "mcp"]
+    }
+  }
+}
+```
+
+### Claude Code
+
+```json title=".mcp.json"
+{
+  "mcpServers": {
+    "ignix": {
+      "command": "npx",
+      "args": ["ignix", "mcp"]
+    }
+  }
+}
+```
+
+
+---
+
+## Example Prompts
+
+### Browse & Search
+
+* Show me all Ignix components
+* Find login form
+
+### Install
+
+* Add button component
+* Install hero section
+* Create dashboard layout
+
+### Namespaces
+
+* Install @internal/auth-form
+* Show components from @ignix
+* Build landing page using hero + features
+
+---
+
+## Troubleshooting
+
+### MCP Not Responding
+
+1. Check MCP configuration
+2. Restart MCP client
+3. Ensure Ignix CLI is installed
+4. Check network access
+
+
+### Registry Issues
+
+1. Verify `ignix.config.json`
+2. Check registry URL
+
+### Installation Failures
+
+1. Ensure project is initialized
+2. Check directory structure
+3. Verify permissions
+4. Install dependencies
+
+### Empty Project Issue
+
+If MCP fails in an empty directory:
+
+```bash
+npm create vite@latest .
+```
+
+or
+
+```bash
+npx create-react-app my-app
+```
+
+Then retry MCP commands.

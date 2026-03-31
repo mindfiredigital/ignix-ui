@@ -46,6 +46,8 @@ const ForgotPasswordDemo = () => {
   const [headerAnimation, setHeaderAnimation] = useState<ForgotPasswordHeaderAnimation>('fadeUp');
 
   const codeString = `
+import { ForgotPasswordPage } from '@ignix-ui/forgotpassword';
+
 <ForgotPasswordPage
   forgotPasswordHeader={{
     head: "Forgot Password",

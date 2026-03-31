@@ -6,14 +6,6 @@ import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../../utils/cn';
 
-export interface ButtonProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onDrag'>,
-  VariantProps<typeof buttonVariants> {
-  asChild?: boolean;
-  animationVariant?: string;
-  children?: React.ReactNode;
-}
-
 const buttonVariants = cva(
   'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
   {
@@ -30,9 +22,9 @@ const buttonVariants = cva(
         link: 'text-primary underline-offset-4 hover:underline',
         subtle: 'bg-accent text-accent-foreground hover:bg-accent/80',
         elevated: 'bg-background shadow-md hover:shadow-lg',
-        glass: 'bg-black/10 backdrop-blur-lg text-white hover:bg-black/20',
+        glass: 'bg-black/10 backdrop-blur-lg text-primary hover:bg-black/20',
         neon: 'bg-pink-500 text-white shadow-lg shadow-pink-500/50 hover:bg-pink-600',
-        pill: 'rounded-full px-6 py-2 bg-pill text-white hover:bg-pill/90',
+        pill: 'rounded-full',
         none: '',
       },
       size: {
@@ -54,6 +46,16 @@ const buttonVariants = cva(
     },
   }
 );
+
+export type ButtonVariant = VariantProps<typeof buttonVariants>['variant'];
+
+export interface ButtonProps
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onDrag'>,
+  VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+  animationVariant?: string;
+  children?: React.ReactNode;
+}
 
 const animations = {
   bounce: {
@@ -294,7 +296,11 @@ const ninaTextVariants = {
   hover: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { delay: i * 0.045, duration: 0.3, ease: [0.75, 0, 0.125, 1] },
+    transition: {
+      delay: i * 0.045,
+      duration: 0.3,
+      ease: [0.75, 0, 0.125, 1] as [number, number, number, number],
+    },
   }),
 };
 
@@ -303,9 +309,12 @@ const ninaBeforeVariants = {
   hover: {
     opacity: 0,
     y: 20,
-    transition: { duration: 0.3, ease: [0.75, 0, 0.125, 1] },
+    transition: {
+      duration: 0.3,
+      ease: [0.75, 0, 0.125, 1] as [number, number, number, number],
+    },
   },
-};
+} as const;
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, animationVariant, children, ...props }, ref) => {

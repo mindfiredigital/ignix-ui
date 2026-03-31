@@ -37,18 +37,17 @@ import {
     GitHubLogoIcon,
     CubeIcon,
     BookmarkIcon,
-    CheckboxIcon,
+    MixIcon,
+    SpeakerLoudIcon,
 } from '@radix-ui/react-icons';
 import { cn } from '@site/src/utils/cn';
 import { Button } from '@site/src/components/UI/button';
 
-// Types for our variant selectors
 type ThemeVariant = 'default' | 'vibrant' | 'pastel' | 'neon' | 'earthy' | 'ocean' | 'sunset' | 'forest' | 'galaxy' | 'candy' | 'dark';
 type CardVariant = 'default' | 'glass' | 'border' | 'elevated' | 'neon' | 'vibrant';
 type AnimationIntensity = 'subtle' | 'moderate' | 'high';
 type FormType = 'registration' | 'business' | 'developer' | 'survey' | 'health' | 'checkout' | 'job' | 'travel' | 'education';
 
-// Theme options - Added 'dark' option
 const themeOptions = [
     { value: 'default', label: 'Default' },
     { value: 'vibrant', label: 'Vibrant' },
@@ -159,10 +158,10 @@ const confirmPasswordValidation = (value: string | boolean | number | undefined,
 };
 
 // ==============================
-// FORM TYPE CONFIGURATIONS
+// FORM TYPE CONFIGURATIONS WITH CONDITIONAL FIELDS
 // ==============================
 
-// 1. User Registration Form
+// 1. User Registration Form - with Account Type selection
 const registrationFields: DynamicFormField[] = [
     {
         id: 'name',
@@ -208,6 +207,59 @@ const registrationFields: DynamicFormField[] = [
         }
     },
     {
+        id: 'accountType',
+        name: 'accountType',
+        label: 'Account Type',
+        type: 'radio',
+        required: true,
+        icon: MixIcon,
+        colSpan: 'full',
+        options: [
+            { value: 'personal', label: 'Personal Account' },
+            { value: 'business', label: 'Business Account' },
+            { value: 'premium', label: 'Premium Account' }
+        ],
+        conditionalFields: [
+            {
+                fieldId: 'companyName',
+                condition: { field: 'accountType', operator: 'equals', value: 'business' }
+            },
+            {
+                fieldId: 'premiumFeatures',
+                condition: { field: 'accountType', operator: 'equals', value: 'premium' }
+            }
+        ]
+    },
+    {
+        id: 'companyName',
+        name: 'companyName',
+        label: 'Company Name',
+        type: 'text',
+        placeholder: 'Enter your company name',
+        icon: HomeIcon,
+        colSpan: 'full',
+        conditions: [{ field: 'accountType', operator: 'equals', value: 'business' }],
+        required: true,
+        textValidation: { minLength: 2 }
+    },
+    {
+        id: 'premiumFeatures',
+        name: 'premiumFeatures',
+        label: 'Premium Features',
+        type: 'select',
+        placeholder: 'Select premium features',
+        icon: StarIcon,
+        colSpan: 'full',
+        conditions: [{ field: 'accountType', operator: 'equals', value: 'premium' }],
+        required: true,
+        options: [
+            { value: 'analytics', label: 'Advanced Analytics' },
+            { value: 'support', label: 'Priority Support' },
+            { value: 'custom', label: 'Custom Branding' },
+            { value: 'api', label: 'API Access' }
+        ]
+    },
+    {
         id: 'dob',
         name: 'dob',
         label: 'Date of Birth',
@@ -244,22 +296,44 @@ const registrationFields: DynamicFormField[] = [
         validation: confirmPasswordValidation
     },
     {
-        id: 'twoFactor',
-        name: 'twoFactor',
-        label: 'Enable Two-Factor Authentication',
+        id: 'newsletter',
+        name: 'newsletter',
+        label: 'Subscribe to Newsletter',
         type: 'checkbox',
-        icon: LockClosedIcon,
+        icon: HeartIcon,
         colSpan: 'full',
-        defaultValue: false
+        defaultValue: false,
+        conditionalFields: [
+            {
+                fieldId: 'newsletterFrequency',
+                condition: { field: 'newsletter', operator: 'equals', value: true }
+            }
+        ]
+    },
+    {
+        id: 'newsletterFrequency',
+        name: 'newsletterFrequency',
+        label: 'Newsletter Frequency',
+        type: 'select',
+        placeholder: 'How often?',
+        icon: ClockIcon,
+        colSpan: 'full',
+        options: [
+            { value: 'daily', label: 'Daily' },
+            { value: 'weekly', label: 'Weekly' },
+            { value: 'monthly', label: 'Monthly' },
+        ],
+        conditions: [{ field: 'newsletter', operator: 'equals', value: true }]
     }
 ];
 
 const registrationSections = [
     { title: 'Personal Information', description: 'Tell us about yourself', fields: ['name', 'email', 'phone', 'dob'] },
-    { title: 'Account Security', description: 'Secure your account', fields: ['password', 'confirmPassword', 'twoFactor'] }
+    { title: 'Account Type', description: 'Choose your account type', fields: ['accountType', 'companyName', 'premiumFeatures'] },
+    { title: 'Account Security', description: 'Secure your account', fields: ['password', 'confirmPassword', 'newsletter', 'newsletterFrequency'] }
 ];
 
-// 2. Business Onboarding Form
+// 2. Business Onboarding Form - with Business Type selection
 const businessFields: DynamicFormField[] = [
     {
         id: 'companyName',
@@ -275,18 +349,64 @@ const businessFields: DynamicFormField[] = [
         id: 'businessType',
         name: 'businessType',
         label: 'Business Type',
-        type: 'select',
+        type: 'radio',
         placeholder: 'Select business type',
         required: true,
         icon: LayersIcon,
-        colSpan: 'half',
+        colSpan: 'full',
         options: [
-            { value: 'sole', label: 'Sole Proprietorship' },
-            { value: 'partnership', label: 'Partnership' },
             { value: 'llc', label: 'LLC' },
             { value: 'corporation', label: 'Corporation' },
+            { value: 'partnership', label: 'Partnership' },
             { value: 'nonprofit', label: 'Non-Profit' }
+        ],
+        conditionalFields: [
+            {
+                fieldId: 'llcDetails',
+                condition: { field: 'businessType', operator: 'equals', value: 'llc' }
+            },
+            {
+                fieldId: 'corpDetails',
+                condition: { field: 'businessType', operator: 'equals', value: 'corporation' }
+            },
+            {
+                fieldId: 'nonprofitDetails',
+                condition: { field: 'businessType', operator: 'equals', value: 'nonprofit' }
+            }
         ]
+    },
+    {
+        id: 'llcDetails',
+        name: 'llcDetails',
+        label: 'LLC Operating Agreement',
+        type: 'textarea',
+        placeholder: 'Describe your operating agreement',
+        icon: ReaderIcon,
+        colSpan: 'full',
+        conditions: [{ field: 'businessType', operator: 'equals', value: 'llc' }],
+        required: true
+    },
+    {
+        id: 'corpDetails',
+        name: 'corpDetails',
+        label: 'Corporate Bylaws',
+        type: 'textarea',
+        placeholder: 'Describe your corporate bylaws',
+        icon: ReaderIcon,
+        colSpan: 'full',
+        conditions: [{ field: 'businessType', operator: 'equals', value: 'corporation' }],
+        required: true
+    },
+    {
+        id: 'nonprofitDetails',
+        name: 'nonprofitDetails',
+        label: 'Non-Profit Charter',
+        type: 'textarea',
+        placeholder: 'Describe your non-profit charter',
+        icon: HeartIcon,
+        colSpan: 'full',
+        conditions: [{ field: 'businessType', operator: 'equals', value: 'nonprofit' }],
+        required: true
     },
     {
         id: 'registrationNumber',
@@ -305,7 +425,7 @@ const businessFields: DynamicFormField[] = [
         placeholder: 'XX-XXXXXXX',
         required: true,
         icon: IdCardIcon,
-        colSpan: 'full',
+        colSpan: 'half',
         textValidation: { pattern: /^\d{2}-\d{7}$/, message: 'Format: XX-XXXXXXX' }
     },
     {
@@ -362,33 +482,36 @@ const businessFields: DynamicFormField[] = [
         ]
     },
     {
+        id: 'hasBusinessEmail',
+        name: 'hasBusinessEmail',
+        label: 'Do you have a dedicated business email?',
+        type: 'radio',
+        icon: EnvelopeClosedIcon,
+        colSpan: 'full',
+        defaultValue: 'no',
+        options: [
+            { value: 'yes', label: 'Yes' },
+            { value: 'no', label: 'No' }
+        ],
+        conditionalFields: [
+            {
+                fieldId: 'businessEmail',
+                condition: { field: 'hasBusinessEmail', operator: 'equals', value: 'yes' }
+            }
+        ]
+    },
+    {
         id: 'businessEmail',
         name: 'businessEmail',
         label: 'Business Email',
         type: 'email',
         placeholder: 'business@company.com',
-        required: true,
         icon: EnvelopeClosedIcon,
-        colSpan: 'half',
-        validation: (value) => {
-            if (typeof value === 'string') {
-                return validateEmail(value);
-            }
-            return undefined;
-        }
-    },
-    {
-        id: 'businessPhone',
-        name: 'businessPhone',
-        label: 'Business Phone',
-        type: 'tel',
-        placeholder: '+1 (555) 123-4567',
-        required: true,
-        icon: MobileIcon,
-        colSpan: 'half',
+        colSpan: 'full',
+        conditions: [{ field: 'hasBusinessEmail', operator: 'equals', value: 'yes' }],
         validation: (value) => {
             if (typeof value === 'string' && value) {
-                return validatePhone(value);
+                return validateEmail(value);
             }
             return undefined;
         }
@@ -396,12 +519,12 @@ const businessFields: DynamicFormField[] = [
 ];
 
 const businessSections = [
-    { title: 'Company Details', description: 'Basic company information', fields: ['companyName', 'businessType', 'registrationNumber', 'taxId'] },
+    { title: 'Company Details', description: 'Basic company information', fields: ['companyName', 'businessType', 'llcDetails', 'corpDetails', 'nonprofitDetails', 'registrationNumber', 'taxId'] },
     { title: 'Business Address', description: 'Your business location', fields: ['address', 'city', 'state', 'postalCode', 'country'] },
-    { title: 'Contact Information', description: 'How to reach your business', fields: ['businessEmail', 'businessPhone'] }
+    { title: 'Contact Information', description: 'How to reach your business', fields: ['hasBusinessEmail', 'businessEmail'] }
 ];
 
-// 3. Developer Profile Form
+// 3. Developer Profile Form - with Experience Level
 const developerFields: DynamicFormField[] = [
     {
         id: 'fullName',
@@ -412,6 +535,52 @@ const developerFields: DynamicFormField[] = [
         required: true,
         icon: PersonIcon,
         colSpan: 'full'
+    },
+    {
+        id: 'experienceLevel',
+        name: 'experienceLevel',
+        label: 'Experience Level',
+        type: 'radio',
+        required: true,
+        icon: RocketIcon,
+        colSpan: 'full',
+        options: [
+            { value: 'junior', label: 'Junior (0-2 years)' },
+            { value: 'mid', label: 'Mid-Level (3-5 years)' },
+            { value: 'senior', label: 'Senior (6+ years)' }
+        ],
+        conditionalFields: [
+            {
+                fieldId: 'juniorDetails',
+                condition: { field: 'experienceLevel', operator: 'equals', value: 'junior' }
+            },
+            {
+                fieldId: 'seniorDetails',
+                condition: { field: 'experienceLevel', operator: 'equals', value: 'senior' }
+            }
+        ]
+    },
+    {
+        id: 'juniorDetails',
+        name: 'juniorDetails',
+        label: 'Education & Bootcamps',
+        type: 'textarea',
+        placeholder: 'List your education, bootcamps, and learning resources',
+        icon: BookmarkIcon,
+        colSpan: 'full',
+        conditions: [{ field: 'experienceLevel', operator: 'equals', value: 'junior' }],
+        required: true
+    },
+    {
+        id: 'seniorDetails',
+        name: 'seniorDetails',
+        label: 'Leadership & Architecture Experience',
+        type: 'textarea',
+        placeholder: 'Describe your experience leading teams and designing systems',
+        icon: StarIcon,
+        colSpan: 'full',
+        conditions: [{ field: 'experienceLevel', operator: 'equals', value: 'senior' }],
+        required: true
     },
     {
         id: 'github',
@@ -438,21 +607,6 @@ const developerFields: DynamicFormField[] = [
         }
     },
     {
-        id: 'portfolio',
-        name: 'portfolio',
-        label: 'Portfolio Website',
-        type: 'url',
-        placeholder: 'https://johndoe.dev',
-        icon: GlobeIcon,
-        colSpan: 'full',
-        validation: (value) => {
-            if (typeof value === 'string' && value) {
-                return validateUrl(value);
-            }
-            return undefined;
-        }
-    },
-    {
         id: 'primaryLanguage',
         name: 'primaryLanguage',
         label: 'Primary Programming Language',
@@ -471,17 +625,6 @@ const developerFields: DynamicFormField[] = [
         ]
     },
     {
-        id: 'yearsExperience',
-        name: 'yearsExperience',
-        label: 'Years of Experience',
-        type: 'number',
-        placeholder: '5',
-        required: true,
-        icon: ClockIcon,
-        colSpan: 'half',
-        numberValidation: { min: 0, max: 50 }
-    },
-    {
         id: 'technologies',
         name: 'technologies',
         label: 'Technologies & Tools',
@@ -494,11 +637,12 @@ const developerFields: DynamicFormField[] = [
 ];
 
 const developerSections = [
-    { title: 'Basic Info', description: 'Your personal details', fields: ['fullName', 'github', 'linkedin', 'portfolio'] },
-    { title: 'Skills & Experience', description: 'Your technical expertise', fields: ['primaryLanguage', 'yearsExperience', 'technologies'] }
+    { title: 'Basic Info', description: 'Your personal details', fields: ['fullName', 'experienceLevel', 'juniorDetails', 'seniorDetails'] },
+    { title: 'Professional Profiles', description: 'Your online presence', fields: ['github', 'linkedin'] },
+    { title: 'Skills & Experience', description: 'Your technical expertise', fields: ['primaryLanguage', 'technologies'] }
 ];
 
-// 4. Survey & Feedback Form
+// 4. Survey & Feedback Form - with conditional follow-up
 const surveyFields: DynamicFormField[] = [
     {
         id: 'satisfaction',
@@ -513,7 +657,24 @@ const surveyFields: DynamicFormField[] = [
             { value: 'somewhat', label: 'Somewhat Satisfied' },
             { value: 'neutral', label: 'Neutral' },
             { value: 'unsatisfied', label: 'Unsatisfied' }
+        ],
+        conditionalFields: [
+            {
+                fieldId: 'improvementFeedback',
+                condition: { field: 'satisfaction', operator: 'equals', value: 'unsatisfied' }
+            }
         ]
+    },
+    {
+        id: 'improvementFeedback',
+        name: 'improvementFeedback',
+        label: 'How can we improve?',
+        type: 'textarea',
+        placeholder: 'Please tell us what we could do better...',
+        icon: ChatBubbleIcon,
+        colSpan: 'full',
+        conditions: [{ field: 'satisfaction', operator: 'equals', value: 'unsatisfied' }],
+        required: true
     },
     {
         id: 'recommendation',
@@ -545,6 +706,34 @@ const surveyFields: DynamicFormField[] = [
             {
                 fieldId: 'contactEmail',
                 condition: { field: 'contactPermission', operator: 'equals', value: true }
+            },
+            {
+                fieldId: 'contactMethod',
+                condition: { field: 'contactPermission', operator: 'equals', value: true }
+            }
+        ]
+    },
+    {
+        id: 'contactMethod',
+        name: 'contactMethod',
+        label: 'Preferred Contact Method',
+        type: 'radio',
+        icon: SpeakerLoudIcon,
+        colSpan: 'half',
+        options: [
+            { value: 'email', label: 'Email' },
+            { value: 'phone', label: 'Phone' }
+        ],
+        conditions: [{ field: 'contactPermission', operator: 'equals', value: true }],
+        defaultValue: 'email',
+        conditionalFields: [
+            {
+                fieldId: 'contactEmail',
+                condition: { field: 'contactMethod', operator: 'equals', value: 'email' }
+            },
+            {
+                fieldId: 'contactPhone',
+                condition: { field: 'contactMethod', operator: 'equals', value: 'phone' }
             }
         ]
     },
@@ -556,10 +745,32 @@ const surveyFields: DynamicFormField[] = [
         placeholder: 'your@email.com',
         icon: EnvelopeClosedIcon,
         colSpan: 'half',
-        conditions: [{ field: 'contactPermission', operator: 'equals', value: true }],
+        conditions: [
+            { field: 'contactPermission', operator: 'equals', value: true },
+            { field: 'contactMethod', operator: 'equals', value: 'email' }
+        ],
         validation: (value) => {
             if (typeof value === 'string' && value) {
                 return validateEmail(value);
+            }
+            return undefined;
+        }
+    },
+    {
+        id: 'contactPhone',
+        name: 'contactPhone',
+        label: 'Contact Phone',
+        type: 'tel',
+        placeholder: '+1 (555) 123-4567',
+        icon: MobileIcon,
+        colSpan: 'half',
+        conditions: [
+            { field: 'contactPermission', operator: 'equals', value: true },
+            { field: 'contactMethod', operator: 'equals', value: 'phone' }
+        ],
+        validation: (value) => {
+            if (typeof value === 'string' && value) {
+                return validatePhone(value);
             }
             return undefined;
         }
@@ -567,12 +778,12 @@ const surveyFields: DynamicFormField[] = [
 ];
 
 const surveySections = [
-    { title: 'Experience Rating', description: 'How was your experience?', fields: ['satisfaction', 'recommendation'] },
+    { title: 'Experience Rating', description: 'How was your experience?', fields: ['satisfaction', 'improvementFeedback', 'recommendation'] },
     { title: 'Detailed Feedback', description: 'Tell us more', fields: ['feedback'] },
-    { title: 'Follow-up', description: 'Optional contact information', fields: ['contactPermission', 'contactEmail'] }
+    { title: 'Follow-up', description: 'Optional contact information', fields: ['contactPermission', 'contactMethod', 'contactEmail', 'contactPhone'] }
 ];
 
-// 5. Health & Fitness Form
+// 5. Health & Fitness Form - with conditional goals
 const healthFields: DynamicFormField[] = [
     {
         id: 'age',
@@ -629,16 +840,91 @@ const healthFields: DynamicFormField[] = [
             { value: 'muscle-gain', label: 'Muscle Gain' },
             { value: 'endurance', label: 'Endurance' },
             { value: 'general', label: 'General Health' }
+        ],
+        conditionalFields: [
+            {
+                fieldId: 'weightLossDetails',
+                condition: { field: 'primaryGoal', operator: 'equals', value: 'weight-loss' }
+            },
+            {
+                fieldId: 'muscleGainDetails',
+                condition: { field: 'primaryGoal', operator: 'equals', value: 'muscle-gain' }
+            },
+            {
+                fieldId: 'enduranceDetails',
+                condition: { field: 'primaryGoal', operator: 'equals', value: 'endurance' }
+            }
         ]
+    },
+    {
+        id: 'weightLossDetails',
+        name: 'weightLossDetails',
+        label: 'Target Weight Loss',
+        type: 'number',
+        placeholder: 'How many pounds?',
+        icon: StarIcon,
+        colSpan: 'half',
+        conditions: [{ field: 'primaryGoal', operator: 'equals', value: 'weight-loss' }],
+        numberValidation: { min: 1, max: 200 }
+    },
+    {
+        id: 'muscleGainDetails',
+        name: 'muscleGainDetails',
+        label: 'Target Muscle Groups',
+        type: 'textarea',
+        placeholder: 'Which muscle groups do you want to focus on?',
+        icon: LightningBoltIcon,
+        colSpan: 'half',
+        conditions: [{ field: 'primaryGoal', operator: 'equals', value: 'muscle-gain' }]
+    },
+    {
+        id: 'enduranceDetails',
+        name: 'enduranceDetails',
+        label: 'Endurance Goals',
+        type: 'textarea',
+        placeholder: 'Describe your endurance goals (run distance, time, etc.)',
+        icon: RocketIcon,
+        colSpan: 'half',
+        conditions: [{ field: 'primaryGoal', operator: 'equals', value: 'endurance' }]
+    },
+    {
+        id: 'dietaryRestrictions',
+        name: 'dietaryRestrictions',
+        label: 'Do you have dietary restrictions?',
+        type: 'radio',
+        icon: HeartIcon,
+        colSpan: 'full',
+        defaultValue: 'no',
+        options: [
+            { value: 'yes', label: 'Yes' },
+            { value: 'no', label: 'No' }
+        ],
+        conditionalFields: [
+            {
+                fieldId: 'dietaryDetails',
+                condition: { field: 'dietaryRestrictions', operator: 'equals', value: 'yes' }
+            }
+        ]
+    },
+    {
+        id: 'dietaryDetails',
+        name: 'dietaryDetails',
+        label: 'Dietary Restrictions Details',
+        type: 'textarea',
+        placeholder: 'Please describe your dietary restrictions...',
+        icon: HeartIcon,
+        colSpan: 'full',
+        conditions: [{ field: 'dietaryRestrictions', operator: 'equals', value: 'yes' }]
     }
 ];
 
 const healthSections = [
-    { title: 'Personal Stats', description: 'Basic information', fields: ['age', 'gender'] },
-    { title: 'Activity & Goals', description: 'Your fitness journey', fields: ['activityLevel', 'primaryGoal'] }
+    { title: 'Personal Stats', description: 'Basic information', fields: ['age', 'gender', 'activityLevel'] },
+    { title: 'Fitness Goals', description: 'Your fitness journey', fields: ['primaryGoal', 'weightLossDetails', 'muscleGainDetails', 'enduranceDetails'] },
+    { title: 'Health Considerations', description: 'Additional health information', fields: ['dietaryRestrictions', 'dietaryDetails'] }
 ];
 
-// 6. E-commerce Checkout Form
+// 6. E-commerce Checkout Form - with shipping options
 const checkoutFields: DynamicFormField[] = [
     {
         id: 'email',
@@ -665,6 +951,51 @@ const checkoutFields: DynamicFormField[] = [
         required: true,
         icon: PersonIcon,
         colSpan: 'full'
+    },
+    {
+        id: 'shippingMethod',
+        name: 'shippingMethod',
+        label: 'Shipping Method',
+        type: 'radio',
+        required: true,
+        icon: RocketIcon,
+        colSpan: 'full',
+        options: [
+            { value: 'standard', label: 'Standard (5-7 business days)' },
+            { value: 'express', label: 'Express (2-3 business days)' },
+            { value: 'overnight', label: 'Overnight (1 business day)' }
+        ],
+        defaultValue: 'standard',
+        conditionalFields: [
+            {
+                fieldId: 'expressInstructions',
+                condition: { field: 'shippingMethod', operator: 'equals', value: 'express' }
+            },
+            {
+                fieldId: 'overnightInstructions',
+                condition: { field: 'shippingMethod', operator: 'equals', value: 'overnight' }
+            }
+        ]
+    },
+    {
+        id: 'expressInstructions',
+        name: 'expressInstructions',
+        label: 'Express Shipping Notes',
+        type: 'textarea',
+        placeholder: 'Any special instructions for express delivery?',
+        icon: ChatBubbleIcon,
+        colSpan: 'full',
+        conditions: [{ field: 'shippingMethod', operator: 'equals', value: 'express' }]
+    },
+    {
+        id: 'overnightInstructions',
+        name: 'overnightInstructions',
+        label: 'Overnight Shipping Notes',
+        type: 'textarea',
+        placeholder: 'Any special instructions for overnight delivery?',
+        icon: ChatBubbleIcon,
+        colSpan: 'full',
+        conditions: [{ field: 'shippingMethod', operator: 'equals', value: 'overnight' }]
     },
     {
         id: 'shippingAddress',
@@ -704,6 +1035,31 @@ const checkoutFields: DynamicFormField[] = [
         colSpan: 'third'
     },
     {
+        id: 'giftOption',
+        name: 'giftOption',
+        label: 'This is a gift',
+        type: 'checkbox',
+        icon: HeartIcon,
+        colSpan: 'half',
+        defaultValue: false,
+        conditionalFields: [
+            {
+                fieldId: 'giftMessage',
+                condition: { field: 'giftOption', operator: 'equals', value: true }
+            }
+        ]
+    },
+    {
+        id: 'giftMessage',
+        name: 'giftMessage',
+        label: 'Gift Message',
+        type: 'textarea',
+        placeholder: 'Enter your gift message...',
+        icon: HeartIcon,
+        colSpan: 'half',
+        conditions: [{ field: 'giftOption', operator: 'equals', value: true }]
+    },
+    {
         id: 'paymentMethod',
         name: 'paymentMethod',
         label: 'Payment Method',
@@ -720,11 +1076,12 @@ const checkoutFields: DynamicFormField[] = [
 
 const checkoutSections = [
     { title: 'Contact Information', description: 'Where to send updates', fields: ['email'] },
-    { title: 'Shipping Address', description: 'Where to ship your order', fields: ['shippingName', 'shippingAddress', 'shippingCity', 'shippingState', 'shippingZip'] },
+    { title: 'Shipping Address', description: 'Where to ship your order', fields: ['shippingName', 'shippingMethod', 'expressInstructions', 'overnightInstructions', 'shippingAddress', 'shippingCity', 'shippingState', 'shippingZip'] },
+    { title: 'Gift Options', description: 'Make it special', fields: ['giftOption', 'giftMessage'] },
     { title: 'Payment Method', description: 'How you\'ll pay', fields: ['paymentMethod'] }
 ];
 
-// 7. Job Application Form
+// 7. Job Application Form - with conditional questions
 const jobFields: DynamicFormField[] = [
     {
         id: 'firstName',
@@ -774,8 +1131,56 @@ const jobFields: DynamicFormField[] = [
         options: [
             { value: 'frontend', label: 'Frontend Developer' },
             { value: 'backend', label: 'Backend Developer' },
-            { value: 'fullstack', label: 'Full Stack Developer' }
+            { value: 'fullstack', label: 'Full Stack Developer' },
+            { value: 'devops', label: 'DevOps Engineer' }
+        ],
+        conditionalFields: [
+            {
+                fieldId: 'frontendSkills',
+                condition: { field: 'position', operator: 'equals', value: 'frontend' }
+            },
+            {
+                fieldId: 'backendSkills',
+                condition: { field: 'position', operator: 'equals', value: 'backend' }
+            },
+            {
+                fieldId: 'devopsSkills',
+                condition: { field: 'position', operator: 'equals', value: 'devops' }
+            }
         ]
+    },
+    {
+        id: 'frontendSkills',
+        name: 'frontendSkills',
+        label: 'Frontend Frameworks',
+        type: 'textarea',
+        placeholder: 'List your frontend skills (React, Vue, Angular, etc.)',
+        icon: CubeIcon,
+        colSpan: 'half',
+        conditions: [{ field: 'position', operator: 'equals', value: 'frontend' }],
+        required: true
+    },
+    {
+        id: 'backendSkills',
+        name: 'backendSkills',
+        label: 'Backend Technologies',
+        type: 'textarea',
+        placeholder: 'List your backend skills (Node.js, Python, Java, etc.)',
+        icon: CubeIcon,
+        colSpan: 'half',
+        conditions: [{ field: 'position', operator: 'equals', value: 'backend' }],
+        required: true
+    },
+    {
+        id: 'devopsSkills',
+        name: 'devopsSkills',
+        label: 'DevOps Tools',
+        type: 'textarea',
+        placeholder: 'List your DevOps tools (Docker, Kubernetes, AWS, etc.)',
+        icon: CubeIcon,
+        colSpan: 'half',
+        conditions: [{ field: 'position', operator: 'equals', value: 'devops' }],
+        required: true
     },
     {
         id: 'experience',
@@ -789,24 +1194,58 @@ const jobFields: DynamicFormField[] = [
         numberValidation: { min: 0, max: 50 }
     },
     {
-        id: 'skills',
-        name: 'skills',
-        label: 'Skills',
+        id: 'remoteWork',
+        name: 'remoteWork',
+        label: 'Are you open to remote work?',
+        type: 'radio',
+        icon: GlobeIcon,
+        colSpan: 'full',
+        defaultValue: 'yes',
+        options: [
+            { value: 'yes', label: 'Yes' },
+            { value: 'no', label: 'No' },
+            { value: 'hybrid', label: 'Hybrid' }
+        ],
+        conditionalFields: [
+            {
+                fieldId: 'remotePreferences',
+                condition: { field: 'remoteWork', operator: 'equals', value: 'yes' }
+            },
+            {
+                fieldId: 'hybridPreferences',
+                condition: { field: 'remoteWork', operator: 'equals', value: 'hybrid' }
+            }
+        ]
+    },
+    {
+        id: 'remotePreferences',
+        name: 'remotePreferences',
+        label: 'Remote Work Preferences',
         type: 'textarea',
-        placeholder: 'List your key skills...',
-        required: true,
-        icon: CubeIcon,
-        colSpan: 'full'
+        placeholder: 'Describe your remote work setup and preferences...',
+        icon: GlobeIcon,
+        colSpan: 'full',
+        conditions: [{ field: 'remoteWork', operator: 'equals', value: 'yes' }]
+    },
+    {
+        id: 'hybridPreferences',
+        name: 'hybridPreferences',
+        label: 'Hybrid Work Preferences',
+        type: 'textarea',
+        placeholder: 'Describe your ideal hybrid work arrangement...',
+        icon: GlobeIcon,
+        colSpan: 'full',
+        conditions: [{ field: 'remoteWork', operator: 'equals', value: 'hybrid' }]
     }
 ];
 
 const jobSections = [
     { title: 'Personal Details', description: 'Your contact information', fields: ['firstName', 'lastName', 'email'] },
-    { title: 'Position Details', description: 'The role you\'re applying for', fields: ['position', 'experience'] },
-    { title: 'Qualifications', description: 'Your skills and expertise', fields: ['skills'] }
+    { title: 'Position Details', description: 'The role you\'re applying for', fields: ['position', 'frontendSkills', 'backendSkills', 'devopsSkills', 'experience'] },
+    { title: 'Work Preferences', description: 'Your work style', fields: ['remoteWork', 'remotePreferences', 'hybridPreferences'] }
 ];
 
-// 8. Travel Booking Form
+// 8. Travel Booking Form - with enhanced conditional logic
 const travelFields: DynamicFormField[] = [
     {
         id: 'tripType',
@@ -818,12 +1257,17 @@ const travelFields: DynamicFormField[] = [
         colSpan: 'full',
         options: [
             { value: 'roundtrip', label: 'Round Trip' },
-            { value: 'oneway', label: 'One Way' }
+            { value: 'oneway', label: 'One Way' },
+            { value: 'multicity', label: 'Multi-City' }
         ],
         conditionalFields: [
             {
                 fieldId: 'returnDate',
                 condition: { field: 'tripType', operator: 'equals', value: 'roundtrip' }
+            },
+            {
+                fieldId: 'multiCityDetails',
+                condition: { field: 'tripType', operator: 'equals', value: 'multicity' }
             }
         ]
     },
@@ -863,7 +1307,19 @@ const travelFields: DynamicFormField[] = [
         type: 'date',
         icon: ClockIcon,
         colSpan: 'half',
-        conditions: [{ field: 'tripType', operator: 'equals', value: 'roundtrip' }]
+        conditions: [{ field: 'tripType', operator: 'equals', value: 'roundtrip' }],
+        required: true
+    },
+    {
+        id: 'multiCityDetails',
+        name: 'multiCityDetails',
+        label: 'Multi-City Itinerary',
+        type: 'textarea',
+        placeholder: 'List your cities and dates (e.g., NYC → London (June 1), London → Paris (June 5))',
+        icon: GlobeIcon,
+        colSpan: 'full',
+        conditions: [{ field: 'tripType', operator: 'equals', value: 'multicity' }],
+        required: true
     },
     {
         id: 'passengers',
@@ -873,16 +1329,80 @@ const travelFields: DynamicFormField[] = [
         placeholder: '1',
         required: true,
         icon: PersonIcon,
+        colSpan: 'half',
+        numberValidation: { min: 1, max: 9 },
+        conditionalFields: [
+            {
+                fieldId: 'passengerDetails',
+                condition: { field: 'passengers', operator: 'greaterThan', value: 1 }
+            }
+        ]
+    },
+    {
+        id: 'passengerDetails',
+        name: 'passengerDetails',
+        label: 'Passenger Names',
+        type: 'textarea',
+        placeholder: 'Enter names of all passengers',
+        icon: PersonIcon,
+        colSpan: 'half',
+        conditions: [{ field: 'passengers', operator: 'greaterThan', value: 1 }],
+        required: true
+    },
+    {
+        id: 'travelClass',
+        name: 'travelClass',
+        label: 'Travel Class',
+        type: 'radio',
+        required: true,
+        icon: RocketIcon,
         colSpan: 'full',
-        numberValidation: { min: 1, max: 9 }
+        options: [
+            { value: 'economy', label: 'Economy' },
+            { value: 'premium', label: 'Premium Economy' },
+            { value: 'business', label: 'Business' },
+            { value: 'first', label: 'First Class' }
+        ],
+        conditionalFields: [
+            {
+                fieldId: 'businessLounge',
+                condition: { field: 'travelClass', operator: 'equals', value: 'business' }
+            },
+            {
+                fieldId: 'firstClassAmenities',
+                condition: { field: 'travelClass', operator: 'equals', value: 'first' }
+            }
+        ]
+    },
+    {
+        id: 'businessLounge',
+        name: 'businessLounge',
+        label: 'Lounge Access Preference',
+        type: 'checkbox',
+        icon: HeartIcon,
+        colSpan: 'full',
+        defaultValue: false,
+        conditions: [{ field: 'travelClass', operator: 'equals', value: 'business' }]
+    },
+    {
+        id: 'firstClassAmenities',
+        name: 'firstClassAmenities',
+        label: 'Special Amenities Request',
+        type: 'textarea',
+        placeholder: 'Any special requests for first class?',
+        icon: StarIcon,
+        colSpan: 'full',
+        conditions: [{ field: 'travelClass', operator: 'equals', value: 'first' }]
     }
 ];
 
 const travelSections = [
-    { title: 'Trip Details', description: 'Your journey information', fields: ['tripType', 'origin', 'destination', 'departureDate', 'returnDate', 'passengers'] }
+    { title: 'Trip Details', description: 'Your journey information', fields: ['tripType', 'origin', 'destination', 'departureDate', 'returnDate', 'multiCityDetails'] },
+    { title: 'Passenger Information', description: 'Who\'s traveling', fields: ['passengers', 'passengerDetails'] },
+    { title: 'Travel Preferences', description: 'Your comfort level', fields: ['travelClass', 'businessLounge', 'firstClassAmenities'] }
 ];
 
-// 9. Education Enrollment Form
+// 9. Education Enrollment Form - with conditional courses
 const educationFields: DynamicFormField[] = [
     {
         id: 'studentName',
@@ -931,31 +1451,124 @@ const educationFields: DynamicFormField[] = [
         options: [
             { value: 'highschool', label: 'High School' },
             { value: 'bachelors', label: 'Bachelor\'s Degree' },
-            { value: 'masters', label: 'Master\'s Degree' }
+            { value: 'masters', label: 'Master\'s Degree' },
+            { value: 'phd', label: 'PhD' }
+        ],
+        conditionalFields: [
+            {
+                fieldId: 'highschoolDetails',
+                condition: { field: 'educationLevel', operator: 'equals', value: 'highschool' }
+            },
+            {
+                fieldId: 'graduateDetails',
+                condition: { field: 'educationLevel', operator: 'equals', value: 'masters' }
+            },
+            {
+                fieldId: 'phdDetails',
+                condition: { field: 'educationLevel', operator: 'equals', value: 'phd' }
+            }
         ]
     },
     {
-        id: 'courses',
-        name: 'courses',
-        label: 'Select Courses',
-        type: 'checkbox',
-        icon: CheckboxIcon,
+        id: 'highschoolDetails',
+        name: 'highschoolDetails',
+        label: 'High School Information',
+        type: 'textarea',
+        placeholder: 'Enter your high school name and graduation year',
+        icon: BookmarkIcon,
+        colSpan: 'full',
+        conditions: [{ field: 'educationLevel', operator: 'equals', value: 'highschool' }]
+    },
+    {
+        id: 'graduateDetails',
+        name: 'graduateDetails',
+        label: 'Previous Degree Information',
+        type: 'textarea',
+        placeholder: 'Enter your bachelor\'s degree details',
+        icon: BookmarkIcon,
+        colSpan: 'full',
+        conditions: [{ field: 'educationLevel', operator: 'equals', value: 'masters' }]
+    },
+    {
+        id: 'phdDetails',
+        name: 'phdDetails',
+        label: 'Research Area',
+        type: 'textarea',
+        placeholder: 'Describe your research interests',
+        icon: StarIcon,
+        colSpan: 'full',
+        conditions: [{ field: 'educationLevel', operator: 'equals', value: 'phd' }]
+    },
+    {
+        id: 'enrollmentType',
+        name: 'enrollmentType',
+        label: 'Enrollment Type',
+        type: 'radio',
+        required: true,
+        icon: LayersIcon,
         colSpan: 'full',
         options: [
-            { value: 'cs101', label: 'Computer Science 101' },
-            { value: 'math201', label: 'Advanced Mathematics' },
-            { value: 'bus301', label: 'Business Management' }
+            { value: 'fulltime', label: 'Full Time' },
+            { value: 'parttime', label: 'Part Time' },
+            { value: 'online', label: 'Online' }
+        ],
+        conditionalFields: [
+            {
+                fieldId: 'courseLoad',
+                condition: { field: 'enrollmentType', operator: 'equals', value: 'parttime' }
+            }
         ]
+    },
+    {
+        id: 'courseLoad',
+        name: 'courseLoad',
+        label: 'Desired Course Load',
+        type: 'number',
+        placeholder: 'Number of courses per semester',
+        icon: ClockIcon,
+        colSpan: 'full',
+        conditions: [{ field: 'enrollmentType', operator: 'equals', value: 'parttime' }],
+        numberValidation: { min: 1, max: 3 }
+    },
+    {
+        id: 'financialAid',
+        name: 'financialAid',
+        label: 'Applying for Financial Aid?',
+        type: 'radio',
+        icon: HeartIcon,
+        colSpan: 'full',
+        defaultValue: 'no',
+        options: [
+            { value: 'yes', label: 'Yes' },
+            { value: 'no', label: 'No' }
+        ],
+        conditionalFields: [
+            {
+                fieldId: 'aidDetails',
+                condition: { field: 'financialAid', operator: 'equals', value: 'yes' }
+            }
+        ]
+    },
+    {
+        id: 'aidDetails',
+        name: 'aidDetails',
+        label: 'Financial Aid Information',
+        type: 'textarea',
+        placeholder: 'Please provide details about your financial aid requirements',
+        icon: HeartIcon,
+        colSpan: 'full',
+        conditions: [{ field: 'financialAid', operator: 'equals', value: 'yes' }]
     }
 ];
 
 const educationSections = [
-    { title: 'Student Info', description: 'Your personal information', fields: ['studentName', 'studentEmail', 'dateOfBirth', 'educationLevel'] },
-    { title: 'Course Selection', description: 'Choose your courses', fields: ['courses'] }
+    { title: 'Student Info', description: 'Your personal information', fields: ['studentName', 'studentEmail', 'dateOfBirth'] },
+    { title: 'Education Background', description: 'Your academic history', fields: ['educationLevel', 'highschoolDetails', 'graduateDetails', 'phdDetails'] },
+    { title: 'Enrollment Details', description: 'Your study preferences', fields: ['enrollmentType', 'courseLoad', 'financialAid', 'aidDetails'] }
 ];
 
 // Map form types to their configurations
-const formConfigs = {
+const formConfigs: Record<FormType, { fields: DynamicFormField[]; sections: { title: string; description: string; fields: string[] }[] }> = {
     registration: { fields: registrationFields, sections: registrationSections },
     business: { fields: businessFields, sections: businessSections },
     developer: { fields: developerFields, sections: developerSections },
@@ -968,9 +1581,9 @@ const formConfigs = {
 };
 
 // Handle submit
-const handleSubmit = async (data: any) => {
-    console.log('Form submitted:', data);
-    await new Promise(resolve => setTimeout(resolve, 1500));
+const handleSubmit = async (data: FormValues): Promise<void> => {
+    alert(`Form submitted: ${JSON.stringify(data)}`);
+    await new Promise<void>((resolve) => setTimeout(resolve, 1500));
 };
 
 // ==============================
@@ -980,7 +1593,6 @@ const handleSubmit = async (data: any) => {
 export const DynamicFormDemo = () => {
     const { colorMode } = useColorMode();
 
-    // Core state
     const [formType, setFormType] = useState<FormType>('registration');
     const [themeVariant, setThemeVariant] = useState<ThemeVariant>(
         colorMode === 'dark' ? 'dark' : 'default'
@@ -1018,7 +1630,6 @@ export const DynamicFormDemo = () => {
         setAnimationKey((k) => k + 1);
     }, [formType, themeVariant, cardVariant, animationIntensity]);
 
-    // Handle theme change
     const handleThemeChange = (value: string) => {
         setThemeVariant(value as ThemeVariant);
         setDarkMode(value === 'dark' || value === 'galaxy' || value === 'candy' || value === 'neon');
@@ -1039,19 +1650,6 @@ export const DynamicFormDemo = () => {
         const iconName = iconNames[formType];
         const config = formConfigs[formType];
 
-        // Create a simplified example based on the first few fields
-        const exampleFields = config.fields.slice(0, 3).map(field => ({
-            id: field.id,
-            name: field.name,
-            label: field.label,
-            type: field.type,
-            required: field.required,
-            ...(field.options ? { options: field.options.slice(0, 2) } : {}),
-            ...(field.colSpan ? { colSpan: field.colSpan } : {}),
-            ...(field.icon ? { icon: field.icon } : {}),
-            ...(field.validation ? { validation: '(value) => { /* validation logic */ }' } : {})
-        }));
-
         const props = [
             `fields={${formType}Fields}`,
             `onSubmit={handleSubmit}`,
@@ -1065,7 +1663,113 @@ export const DynamicFormDemo = () => {
             formType === 'registration' ? 'Create Account' :
                 formType === 'job' ? 'Submit Application' :
                     formType === 'survey' ? 'Submit Feedback' :
-                        'Submit';
+                        formType === 'travel' ? 'Book Now' :
+                            formType === 'education' ? 'Enroll Now' :
+                                'Submit';
+
+        // Build field strings manually
+        const fieldStrings = config.fields.slice(0, 5).map(field => {
+            let fieldStr = `    {
+        id: '${field.id}',
+        name: '${field.name}',
+        label: '${field.label}',
+        type: '${field.type}',
+        required: ${field.required},`;
+
+            if (field.colSpan) {
+                fieldStr += `\n        colSpan: '${field.colSpan}',`;
+            }
+
+            if (field.icon) {
+                const iconMap: Record<string, string> = {
+                    PersonIcon: 'PersonIcon',
+                    EnvelopeClosedIcon: 'EnvelopeClosedIcon',
+                    LockClosedIcon: 'LockClosedIcon',
+                    HeartIcon: 'HeartIcon',
+                    HomeIcon: 'HomeIcon',
+                    RocketIcon: 'RocketIcon',
+                    LightningBoltIcon: 'LightningBoltIcon',
+                    GlobeIcon: 'GlobeIcon',
+                    LayersIcon: 'LayersIcon',
+                    IdCardIcon: 'IdCardIcon',
+                    StarIcon: 'StarIcon',
+                    DrawingPinIcon: 'DrawingPinIcon',
+                    ClockIcon: 'ClockIcon',
+                    ReaderIcon: 'ReaderIcon',
+                    ChatBubbleIcon: 'ChatBubbleIcon',
+                    MobileIcon: 'MobileIcon',
+                    CardStackIcon: 'CardStackIcon',
+                    LinkedInLogoIcon: 'LinkedInLogoIcon',
+                    GitHubLogoIcon: 'GitHubLogoIcon',
+                    CubeIcon: 'CubeIcon',
+                    BookmarkIcon: 'BookmarkIcon',
+                    MixIcon: 'MixIcon',
+                    SpeakerLoudIcon: 'SpeakerLoudIcon',
+                };
+
+                const iconName = field.icon ||
+                    Object.keys(iconMap).find(key => field.icon.toString().includes(key)) ||
+                    'PersonIcon';
+                fieldStr += `\n        icon: ${iconName},`;
+            }
+
+            if (field.options) {
+                fieldStr += `\n        options: [`;
+                field.options.forEach((opt) => {
+                    fieldStr += `\n            { value: '${opt.value}', label: '${opt.label}' },`;
+                });
+                fieldStr += `\n        ],`;
+            }
+
+            if (field.conditionalFields) {
+                fieldStr += `\n        conditionalFields: [`;
+                field.conditionalFields.forEach((cf) => {
+                    fieldStr += `\n            {`;
+                    fieldStr += `\n                fieldId: '${cf.fieldId}',`;
+                    fieldStr += `\n                condition: {`;
+                    fieldStr += `\n                    field: '${cf.condition.field}',`;
+                    fieldStr += `\n                    operator: '${cf.condition.operator}',`;
+
+                    const valueStr = typeof cf.condition.value === 'string'
+                        ? `'${cf.condition.value}'`
+                        : cf.condition.value;
+                    fieldStr += `\n                    value: ${valueStr}`;
+
+                    fieldStr += `\n                }`;
+                    fieldStr += `\n            },`;
+                });
+                fieldStr += `\n        ],`;
+            }
+
+            if (field.conditions) {
+                fieldStr += `\n        conditions: [`;
+                field.conditions.forEach((cond) => {
+                    fieldStr += `\n            {`;
+                    fieldStr += `\n                field: '${cond.field}',`;
+                    fieldStr += `\n                operator: '${cond.operator}',`;
+
+                    const valueStr = typeof cond.value === 'string'
+                        ? `'${cond.value}'`
+                        : cond.value;
+                    fieldStr += `\n                value: ${valueStr}`;
+
+                    fieldStr += `\n            },`;
+                });
+                fieldStr += `\n        ],`;
+            }
+
+            fieldStr += `\n    },`;
+            return fieldStr;
+        }).join('\n');
+
+        // Build section fields string
+        const sectionFields1 = config.sections && config.sections[0]
+            ? config.sections[0].fields.map(f => `'${f}'`).join(', ')
+            : '';
+
+        const sectionFields2 = config.sections && config.sections[1]
+            ? config.sections[1].fields.map(f => `'${f}'`).join(', ')
+            : '';
 
         return `import {
     DynamicForm,
@@ -1076,43 +1780,53 @@ export const DynamicFormDemo = () => {
     DynamicNavigation,
     ThemeToggle,
     type DynamicFormField,
-} from '../UI/dynamic-form';
+} from '@ignix-ui/dynamicform';
 import {
     ${iconName},
     PersonIcon,
     EnvelopeClosedIcon,
     LockClosedIcon,
     HeartIcon,
+    MixIcon,
+    HomeIcon,
+    LayersIcon,
+    RocketIcon,
+    GlobeIcon,
+    StarIcon,
+    ClockIcon,
+    ReaderIcon,
+    ChatBubbleIcon,
+    MobileIcon,
+    CardStackIcon,
+    LinkedInLogoIcon,
+    GitHubLogoIcon,
+    CubeIcon,
+    BookmarkIcon,
+    DrawingPinIcon,
+    SpeakerLoudIcon,
+    LightningBoltIcon,
+    IdCardIcon,
 } from '@radix-ui/react-icons';
 
-// Fields configuration (${formType} form example)
+// Fields configuration with conditional logic (${formType} form example)
 const ${formType}Fields: DynamicFormField[] = [
-    ${exampleFields.map(field => `{
-        id: '${field.id}',
-        name: '${field.name}',
-        label: '${field.label}',
-        type: '${field.type}',
-        required: ${field.required},
-        ${field.colSpan ? `colSpan: '${field.colSpan}',` : ''}
-        ${field.icon ? `icon: ${field.icon},` : ''}
-        ${field.options ? `options: ${JSON.stringify(field.options, null, 8).replace(/"([^"]+)":/g, '$1:')},` : ''}
-        ${field.validation ? `validation: (value) => {
-            // Add your validation logic here
-            if (!value) return 'This field is required';
-            return undefined;
-        },` : ''}
-    },`).join('\n    ')}
+${fieldStrings}
     // Add more fields as needed
 ];
 
 // Optional: Define sections for organization
 const ${formType}Sections = [
     {
-        title: 'Section Title',
-        description: 'Section description',
-        fields: ['fieldId1', 'fieldId2'],
+        title: '${config.sections && config.sections[0] ? config.sections[0].title : 'Section 1'}',
+        description: '${config.sections && config.sections[0] ? config.sections[0].description : 'Description'}',
+        fields: [${sectionFields1}],
     },
-    // Add more sections
+    {
+        title: '${config.sections && config.sections[1] ? config.sections[1].title : 'Section 2'}',
+        description: '${config.sections && config.sections[1] ? config.sections[1].description : 'Description'}',
+        fields: [${sectionFields2}],
+    },
+    // Add more sections as needed
 ];
 
 <DynamicForm
@@ -1120,7 +1834,7 @@ const ${formType}Sections = [
 >
     <DynamicHeader
         title="${formType.charAt(0).toUpperCase() + formType.slice(1)} Form"
-        description="Please fill in your details"
+        description="Please fill in your details - watch fields appear based on your selections"
         icon={<${iconName} className="w-6 h-6" />}
         gradient
         animated
@@ -1189,19 +1903,7 @@ const ${formType}Sections = [
             {/* Feature Toggles */}
             <div className={cn(
                 "flex flex-row items-center justify-end gap-2 px-2 flex-wrap",
-                darkMode ? "bg-gray-900 text-gray-200" : "bg-gray-50 text-gray-700"
             )}>
-
-                <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                        type="checkbox"
-                        checked={showCancelButton}
-                        onChange={(e) => setShowCancelButton(e.target.checked)}
-                        className="rounded text-primary"
-                    />
-                    <span className="text-sm">Cancel Button</span>
-                </label>
-
                 <label className="flex items-center gap-2 cursor-pointer">
                     <input
                         type="checkbox"
@@ -1221,7 +1923,6 @@ const ${formType}Sections = [
                     />
                     <span className="text-sm">Field Count</span>
                 </label>
-
             </div>
 
             {/* Loading State Controls */}
@@ -1291,7 +1992,7 @@ const ${formType}Sections = [
                         >
                             <DynamicHeader
                                 title={`${formType.charAt(0).toUpperCase() + formType.slice(1)} Form`}
-                                description={`Complete your ${formType} information below`}
+                                description={`Complete your ${formType} information below - watch fields appear based on your selections`}
                                 icon={<CurrentIcon className="w-6 h-6" />}
                                 gradient
                                 animated
@@ -1333,7 +2034,7 @@ const ${formType}Sections = [
                                 }
                                 showCancelButton={showCancelButton}
                                 cancelButtonLabel="Cancel"
-                                onCancel={() => console.log('Form cancelled')}
+                                onCancel={() => alert('Form cancelled')}
                             />
 
                             {showThemeToggle && <ThemeToggle />}

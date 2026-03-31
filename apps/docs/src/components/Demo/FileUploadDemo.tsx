@@ -11,7 +11,7 @@ const FileUploadFullDemo = () => {
   };
 
   const codeString = `
-import { FileUpload } from '@mindfiredigital/ignix-ui';
+import { FileUpload } from '@ignix-ui/fileupload';
 import { useState } from 'react';
 
 function FileUploadDemo() {
@@ -115,7 +115,7 @@ const FileUploadMinimalDemo = () => {
   };
 
   const codeString = `
-import { FileUpload } from '@mindfiredigital/ignix-ui';
+import { FileUpload } from '@ignix-ui/fileupload';
 import { useState } from 'react';
 
 function MinimalUploadExample() {

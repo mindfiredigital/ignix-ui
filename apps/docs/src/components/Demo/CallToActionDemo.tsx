@@ -1,5 +1,3 @@
-
-
 import React, { useState } from 'react';
 import {
     CTABanner,
@@ -17,7 +15,8 @@ import {
     NewsletterHeading,
     NewsletterSubheading,
     DemoFormHeading,
-    DemoFormSubheading
+    DemoFormSubheading,
+    CTABannerProps
 } from '../UI/call-to-action';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -29,7 +28,6 @@ import { useColorMode } from '@docusaurus/theme-common';
 type VariantType = 'default' | 'primary' | 'secondary' | 'accent' | 'muted' | 'gradient' | 'glass' | 'dark' | 'light';
 type ImagePositionType = 'left' | 'right';
 type FormType = 'banner' | 'newsletter' | 'contact-form' | 'demo-request';
-
 
 // Helper function to get theme-aware variant based on color mode
 const getThemeAwareVariant = (demoType: string, colorMode: 'light' | 'dark'): VariantType => {
@@ -102,7 +100,7 @@ const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light'
                     buttonVariant="primary"
                     layout="inline"
                     onSubmit={async (email) => {
-                        console.log('Newsletter subscription:', email);
+                        alert(`Subscribed to newsletter: ${email}`);
                     }}
                 >
                     <NewsletterHeading>Stay in the Loop</NewsletterHeading>
@@ -126,7 +124,7 @@ const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light'
                     maxMessageLength={1000}
                     layout="vertical"
                     onSubmit={async (data) => {
-                        console.log('Contact form submitted:', data);
+                        alert(`Contact form submitted: ${JSON.stringify(data)}`);
                     }}
                 >
                     <ContactFormHeading>Get In Touch</ContactFormHeading>
@@ -149,7 +147,7 @@ const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light'
                     requirePhone={false}
                     layout="two-column"
                     onSubmit={async (data) => {
-                        console.log('Demo request submitted:', data);
+                        alert(`Demo request submitted: ${JSON.stringify(data)}`);
                     }}
                 >
                     <DemoFormHeading>See Our Platform Live</DemoFormHeading>
@@ -162,8 +160,12 @@ const renderFormContent = (formType: FormType, theme: 'light' | 'dark' = 'light'
     }
 };
 
+type CodeSnippetProps = Partial<{
+    imagePosition: ImagePositionType;
+}>;
+
 // Helper function to get code snippet
-const getCodeSnippet = (formType: FormType, demoType: string, variant: VariantType, additionalProps: any = {}) => {
+const getCodeSnippet = (formType: FormType, demoType: string, variant: VariantType, additionalProps: CodeSnippetProps = {}) => {
     // Build props string dynamically
     const props: string[] = [
         `variant="${variant}"`,
@@ -226,7 +228,7 @@ const getCodeSnippet = (formType: FormType, demoType: string, variant: VariantTy
     }
 
     const importStatement = formType === 'banner'
-        ? `import { CTABanner, CTABannerContent } from '../UI/call-to-action';`
+        ? `import { CTABanner, CTABannerContent } from '@ignix-ui/calltoaction';`
         : formType === 'newsletter'
             ? `import { CTABanner, CTABannerContent, CTABannerNewsletter, NewsletterHeading, NewsletterSubheading } from '../UI/call-to-action';`
             : formType === 'contact-form'
@@ -346,21 +348,21 @@ const CTABannerDemo = ({
 
     // Initialize variant based on theme
     const [variant, setVariant] = useState<VariantType>(
-        getThemeAwareVariant(demoType, colorMode)
+        getThemeAwareVariant(demoType, colorMode as 'light' | 'dark')
     );
     const [formType, setFormType] = useState<FormType>('banner');
     const [imagePosition, setImagePosition] = useState<ImagePositionType>('right');
 
-    const theme = variant === 'dark' || variant === 'gradient' || (demoType === 'background-image' && variant === 'dark') ? 'dark' : 'light';
+    const theme = (variant as string) === 'dark' || (variant as string) === 'gradient' || (demoType === 'background-image' && (variant as string) === 'dark') ? 'dark' : 'light';
 
     // Update variant when color mode changes
     React.useEffect(() => {
-        setVariant(getThemeAwareVariant(demoType, colorMode));
+        setVariant(getThemeAwareVariant(demoType, colorMode as 'light' | 'dark'));
     }, [colorMode, demoType]);
 
 
     const renderBanner = () => {
-        const bannerProps: any = {
+        const bannerProps: Partial<CTABannerProps> = {
             variant,
             layout: demoType === 'split' ? 'split' : 'centered',
             contentAlign: demoType === 'split' ? 'left' : 'center',
@@ -419,10 +421,7 @@ const CTABannerDemo = ({
             </div>
 
             <div className="flex flex-wrap gap-4 justify-end items-center">
-
-
                 <div className="flex flex-row items-center gap-2">
-
                     <VariantSelector
                         variants={['banner', 'newsletter', 'contact-form', 'demo-request']}
                         selectedVariant={formType}
@@ -436,16 +435,13 @@ const CTABannerDemo = ({
                         }}
                     />
                     {demoType === 'split' && (
-                        <div className="space-y-2">
-                            <VariantSelector
-                                variants={['left', 'right']}
-                                selectedVariant={imagePosition}
-                                onSelectVariant={(value) => setImagePosition(value as ImagePositionType)}
-                                type="Image Position"
-                            />
-                        </div>
+                        <VariantSelector
+                            variants={['left', 'right']}
+                            selectedVariant={imagePosition}
+                            onSelectVariant={(value) => setImagePosition(value as ImagePositionType)}
+                            type="Image Position"
+                        />
                     )}
-
                 </div>
             </div>
 
@@ -471,35 +467,35 @@ const CTABannerDemo = ({
     );
 };
 
-// Export the four demos
+// Export the four demos with all required props
 export const CenteredDemo = () => (
     <CTABannerDemo
-        // title="1. Centered Layout"
-        // description="Classic centered layout perfect for most use cases. Content is centered with equal padding on all sides."
+        title="1. Centered Layout"
+        description="Classic centered layout perfect for most use cases. Content is centered with equal padding on all sides."
         demoType="centered"
     />
 );
 
 export const SplitDemo = () => (
     <CTABannerDemo
-        // title="2. Split Layout"
-        // description="Split layout with content on one side and an image on the other. Great for visual storytelling."
+        title="2. Split Layout"
+        description="Split layout with content on one side and an image on the other. Great for visual storytelling."
         demoType="split"
     />
 );
 
 export const BackgroundImageDemo = () => (
     <CTABannerDemo
-        // title="3. Background Image"
-        // description="Full-width background image with optional overlay. Creates a visually striking call-to-action."
+        title="3. Background Image"
+        description="Full-width background image with optional overlay. Creates a visually striking call-to-action."
         demoType="background-image"
     />
 );
 
 export const GradientBackgroundDemo = () => (
     <CTABannerDemo
-        // title="4. Gradient Background"
-        // description="Gradient overlay over a background image for modern, eye-catching designs."
+        title="4. Gradient Background"
+        description="Gradient overlay over a background image for modern, eye-catching designs."
         demoType="gradient-background"
     />
 );

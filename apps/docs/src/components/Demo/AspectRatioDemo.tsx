@@ -13,7 +13,7 @@ const AspectRatioDemo = () => {
   const [maxWidth, setMaxWidth] = useState('400px');
 
   const codeString = `
-  import { AspectRatio } from '@ignix-ui';
+  import { AspectRatio } from '@ignix-ui/aspectratio';
 
   function MyComponent() {
     return (

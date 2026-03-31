@@ -20,7 +20,6 @@ const buttonVariants = [
   { value: 'elevated', label: 'Elevated' },
   { value: 'glass', label: 'Glass' },
   { value: 'neon', label: 'Neon' },
-  { value: 'pill', label: 'Pill' },
   { value: 'none', label: 'None' },
 ];
 
@@ -76,6 +75,8 @@ const ButtonDemo = () => {
   const [animationVariant, setAnimationVariant] = useState('');
 
   const codeString = `
+import { Button } from '@ignix-ui/button';
+
 <Button 
   variant="${variant}" 
   size="${size}" 

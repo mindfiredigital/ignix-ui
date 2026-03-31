@@ -7,6 +7,8 @@ import CodeBlock from '@theme/CodeBlock';
 const ApiKeysPageDemo = () => {
 
     const codeString = `
+import { ApiKeysPage } from '@ignix-ui/apikeys';
+
 const keys = [
     {
         id: '1',

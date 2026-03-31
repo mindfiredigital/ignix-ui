@@ -1,5 +1,5 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { motion, MotionProps } from "framer-motion";
+import { motion} from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../utils/cn";
 import { ReactNode } from "react";
@@ -21,7 +21,7 @@ const dropdownVariants = cva("z-50 min-w-[10rem] border p-2 shadow-lg ml-[10px] 
     bg: {
       default: "bg-background text-foreground",
       dark: "bg-card text-card-foreground",
-      transparent: "bg-transparent.",
+      transparent: "bg-transparent",
       glass: "bg-white/10 backdrop-blur-lg text-[var(--color-glass-text)]",
       gradient: "bg-gradient-to-r from-[var(--color-gradient-from-dropdown)] to-[var(--color-gradient-to-dropdown)] text-white",
       primary: "bg-primary text-primary-foreground",
@@ -66,10 +66,13 @@ const animations = {
 type AnimationVariant = keyof typeof animations;
 
 interface DropdownProps extends VariantProps<typeof dropdownVariants> {
-  children: MotionProps['children'];
+  children: ReactNode;
   trigger: ReactNode;
   animation?: AnimationVariant;
   className?: string;
+  side?: "top" | "bottom" | "left" | "right";
+  sideOffset?: number;
+  align?: "start" | "center" | "end";
 }
 
 export const Dropdown = ({
@@ -80,12 +83,15 @@ export const Dropdown = ({
   rounded,
   bg,
   className,
+  side = "bottom",
+  sideOffset = 8,
+  align = "center",
 }: DropdownProps) => {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>{trigger}</DropdownMenu.Trigger>
       <DropdownMenu.Portal>
-        <DropdownMenu.Content asChild sideOffset={8}>
+        <DropdownMenu.Content asChild sideOffset={sideOffset} side={side} align={align}>
           <motion.div
             variants={animations[animation]}
             initial="initial"

@@ -23,13 +23,18 @@ const sliderVariants = [
   'shadow',
 ];
 const sliderAnimations = ['none', 'slide', 'fade', 'flip', 'scale', 'breathe', 'rainbow', 'pulse', 'zoom', 'spring', 'elastic', 'parallax', 'morph', 'hover', 'bounce', 'wave'];
+const sliderOrientation = ['horizontal', 'vertical'];
 
 const SliderDemo = () => {
   const [variant, setVariant] = useState('default');
   const [animation, setAnimation] = useState('slide');
+  const [orientation, setOrientation] = useState('horizontal');
 
   const codeString = `
+import { Slider } from '@ignix-ui/slider';
+
 <Slider
+  key={"${variant}-${animation}"}
   defaultValue={[50]}
   max={100}
   step={1}
@@ -37,6 +42,7 @@ const SliderDemo = () => {
   animationType="${animation}"
   showValue
   valueSuffix="%"
+  orientation="${orientation}"
 />
 `;
 
@@ -55,12 +61,19 @@ const SliderDemo = () => {
           onSelectVariant={setAnimation}
           type="Animation"
         />
+        <VariantSelector 
+          variants={sliderOrientation}
+          selectedVariant={orientation}
+          onSelectVariant={setOrientation}
+          type="Orientation"
+        />
       </div>
       <Tabs>
         <TabItem value="preview" label="Preview">
           <div className="w-full p-8 space-y-8 border rounded-lg mt-4">
             <div className="p-6 rounded-lg">
               <Slider
+                key={`${variant}-${animation}`}
                 defaultValue={[50]}
                 max={100}
                 step={1}
@@ -68,6 +81,7 @@ const SliderDemo = () => {
                 animationType={animation as any}
                 showValue
                 valueSuffix="%"
+                orientation={orientation as any}
               />
             </div>
           </div>

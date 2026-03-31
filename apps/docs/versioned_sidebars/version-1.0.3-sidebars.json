@@ -7,7 +7,7 @@
         "type": "doc",
         "id": "introduction"
       },
-      "items": ["introduction", "installation"]
+      "items": ["introduction", "installation", "mcp"]
     },
     {
       "type": "category",
@@ -91,7 +91,8 @@
             "components/drawer",
             "components/navbar",
             "components/sidebar",
-            "components/stepper"            
+            "components/stepper",
+            "components/tab"            
           ]
         },
         {
@@ -246,22 +247,26 @@
               "label": "Dashboard",
               "items": [
                 "templates/pages/dashboard/dashboard-overview-page",
-                "templates/pages/dashboard/analytics-dashboard-page"
+                "templates/pages/dashboard/analytics-dashboard-page",
+                "templates/pages/dashboard/dashboard-shortcuts-page"
               ]
             },
             {
               "type": "category",
               "label": "Error Pages",
               "items": [
-                "templates/pages/error-page"
+                "templates/pages/error-page",
+                "templates/pages/maintenance-page"
               ]
             },
             {
               "type": "category",
               "label": "Forms",
               "items": [
-                "templates/pages/forms/multi-step-form",
-                "templates/pages/forms/dynamic-form"
+                "templates/pages/forms/advanced-search-form",
+                "templates/pages/forms/dynamic-form",
+                "templates/pages/forms/multi-step-form"
+
               ]
             }
           ]                      

@@ -1,6 +1,6 @@
 {
   "name": "@mindfiredigital/ignix-ui",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "private": false,
   "description": "Ignix UI component library",
   "type": "commonjs",
@@ -63,5 +63,13 @@
       "require": "./dist/index.js",
       "default": "./dist/index.js"
     }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mindfiredigital/ignix-ui"
+  },
+  "homepage": "https://mindfiredigital.github.io/ignix-ui",
+  "bugs": {
+    "url": "https://github.com/mindfiredigital/ignix-ui/issues"
   }
 }

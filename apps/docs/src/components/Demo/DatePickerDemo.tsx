@@ -68,12 +68,12 @@ export const BasicDatePickerDemo = () => {
     const { colorMode } = useColorMode();
     const [date, setDate] = useState<Date | null>(null);
     // Handler for single date picker
-    const handleSingleDateChange = (date: Date | null) => {
+    const handleSingleDateChange = (date: Date | null): void => {
         setDate(date);
     };
 
     const codeString = `
-import { DatePicker } from '@mindfiredigital/ignix-ui';
+import DatePicker from '@ignix-ui/datepicker';
 
 function MyComponent() {
   const [date, setDate] = useState<Date | null>(null);
@@ -133,12 +133,12 @@ export const RangeDatePickerDemo = () => {
     });
 
     // Handler for range date picker
-    const handleRangeDateChange = (range: { start: Date | null; end: Date | null }) => {
+    const handleRangeDateChange = (range: { start: Date | null; end: Date | null }): void => {
         setRange(range);
     };
 
     const codeString = `
-import { DatePicker } from '@mindfiredigital/ignix-ui';
+import DatePicker from '@ignix-ui/datepicker';
 
 function MyComponent() {
   const [range, setRange] = useState({ start: null, end: null });
@@ -373,12 +373,12 @@ export const PopupPositionsDemo = () => {
     );
 };
 
-// Demo 6: Hotel Booking Example
+// Demo 6: Hotel Booking Example - FIXED
 export const HotelBookingDemo = () => {
     const { colorMode } = useColorMode();
     const [booking, setBooking] = useState({
-        checkIn: null as Date | null,
-        checkOut: null as Date | null,
+        start: null as Date | null,
+        end: null as Date | null,
     });
 
     const today = new Date();
@@ -398,13 +398,13 @@ export const HotelBookingDemo = () => {
             return date;
         }
         return null;
-    }).filter(Boolean);
+    }).filter(Boolean) as Date[];
 
     // Handler for booking date range change
     const handleBookingChange = (newRange: { start: Date | null; end: Date | null }) => {
         setBooking({
-            checkIn: newRange.start,
-            checkOut: newRange.end
+            start: newRange.start,
+            end: newRange.end
         });
     };
 
@@ -424,8 +424,8 @@ function HotelBooking() {
 
   const handleBookingChange = (newRange: { start: Date | null; end: Date | null }) => {
     setBooking({
-      checkIn: newRange.start,
-      checkOut: newRange.end
+      start: newRange.start,
+      end: newRange.end
     });
   };
 
@@ -458,7 +458,6 @@ function HotelBooking() {
             code={codeString}
         >
             <div className="space-y-6 max-w-2xl">
-
                 <DatePicker
                     themeMode={colorMode as 'light' | 'dark'}
                     variant="range"
@@ -478,7 +477,7 @@ function HotelBooking() {
                     format="MMM DD, YYYY"
                 />
 
-                {booking.checkIn && booking.checkOut && (
+                {booking.start && booking.end && (
                     <div className="p-4 border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 rounded-lg">
                         <Typography variant="h6" weight="semibold" className="text-green-800 dark:text-green-300 mb-2">
                             Booking Summary
@@ -487,7 +486,7 @@ function HotelBooking() {
                             <div>
                                 <Typography variant="caption" className="text-gray-500 dark:text-gray-400">Check-in</Typography>
                                 <Typography variant="body" className="font-medium">
-                                    {booking.checkIn.toLocaleDateString('en-US', {
+                                    {booking.start.toLocaleDateString('en-US', {
                                         weekday: 'short',
                                         month: 'short',
                                         day: 'numeric'
@@ -497,7 +496,7 @@ function HotelBooking() {
                             <div>
                                 <Typography variant="caption" className="text-gray-500 dark:text-gray-400">Check-out</Typography>
                                 <Typography variant="body" className="font-medium">
-                                    {booking.checkOut.toLocaleDateString('en-US', {
+                                    {booking.end.toLocaleDateString('en-US', {
                                         weekday: 'short',
                                         month: 'short',
                                         day: 'numeric'
@@ -507,27 +506,17 @@ function HotelBooking() {
                             <div className="col-span-2">
                                 <Typography variant="caption" className="text-gray-500 dark:text-gray-400">Total Nights</Typography>
                                 <Typography variant="body" weight="bold" className="text-green-600 dark:text-green-400">
-                                    {Math.ceil((booking.checkOut.getTime() - booking.checkIn.getTime()) / (1000 * 60 * 60 * 24))} nights
+                                    {Math.ceil((booking.end.getTime() - booking.start.getTime()) / (1000 * 60 * 60 * 24))} nights
                                 </Typography>
                             </div>
                         </div>
                     </div>
                 )}
-
-                {/* <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded">
-                    <Typography variant="body-small" weight="medium" className="mb-1">Features demonstrated:</Typography>
-                    <ul className="list-disc pl-5 space-y-1">
-                        <Typography variant="caption" as="li">Date range selection</Typography>
-                        <Typography variant="caption" as="li">Min/max date constraints</Typography>
-                        <Typography variant="caption" as="li">Disabled dates (weekends)</Typography>
-                        <Typography variant="caption" as="li">Today and Clear buttons</Typography>
-                        <Typography variant="caption" as="li">Custom date format (MMM DD, YYYY)</Typography>
-                    </ul>
-                </div> */}
             </div>
         </DemoSection>
     );
 };
+
 // Demo 8: Validation Examples
 export const ValidationExamplesDemo = () => {
     const { colorMode } = useColorMode();
@@ -611,14 +600,14 @@ export const ValidationExamplesDemo = () => {
     );
 };
 
-// Demo 9: Interactive Playground
+// Demo 9: Interactive Playground - FIXED
 export const DatePickerPlayground = () => {
-    const [config, setConfig] = useState({
-        variant: 'single' as 'single' | 'range',
-        size: 'md' as 'sm' | 'md' | 'lg' | 'xl',
-        themeMode: 'dark' as 'light' | 'dark',
-        colorScheme: 'blue' as string,
-        popupPosition: 'bottom-left' as string,
+    const [config, setConfig] = useState<PlaygroundConfig>({
+        variant: 'single',
+        size: 'md',
+        themeMode: 'dark',
+        colorScheme: 'blue',
+        popupPosition: 'bottom-left',
         showIcon: true,
         todayButton: true,
         clearButton: true,
@@ -632,16 +621,20 @@ export const DatePickerPlayground = () => {
         end: null
     });
 
-    const handleConfigChange = (key: string, value: any) => {
+    const handleConfigChange = <K extends keyof PlaygroundConfig>(
+        key: K,
+        value: PlaygroundConfig[K]
+    ): void => {
         setConfig(prev => ({ ...prev, [key]: value }));
     };
+
     // Handler for single date picker
-    const handleSingleDateChange = (date: Date | null) => {
+    const handleSingleDateChange = (date: Date | null): void => {
         setDate(date);
     };
 
     // Handler for range date picker
-    const handleRangeDateChange = (range: { start: Date | null; end: Date | null }) => {
+    const handleRangeDateChange = (range: { start: Date | null; end: Date | null }): void => {
         setRange(range);
     };
 
@@ -657,7 +650,7 @@ export const DatePickerPlayground = () => {
                         <Typography variant="caption" weight="medium">Variant</Typography>
                         <select
                             value={config.variant}
-                            onChange={(e) => handleConfigChange('variant', e.target.value)}
+                            onChange={(e) => handleConfigChange('variant', e.target.value as 'single' | 'range')}
                             className="w-full px-3 py-1.5 text-sm border rounded"
                         >
                             <option value="single">Single Date</option>
@@ -669,7 +662,7 @@ export const DatePickerPlayground = () => {
                         <Typography variant="caption" weight="medium">Size</Typography>
                         <select
                             value={config.size}
-                            onChange={(e) => handleConfigChange('size', e.target.value)}
+                            onChange={(e) => handleConfigChange('size', e.target.value as 'sm' | 'md' | 'lg' | 'xl')}
                             className="w-full px-3 py-1.5 text-sm border rounded"
                         >
                             {sizeOptions.map(option => (
@@ -682,7 +675,7 @@ export const DatePickerPlayground = () => {
                         <Typography variant="caption" weight="medium">Color Scheme</Typography>
                         <select
                             value={config.colorScheme}
-                            onChange={(e) => handleConfigChange('colorScheme', e.target.value)}
+                            onChange={(e) => handleConfigChange('colorScheme', e.target.value as 'blue' | 'green' | 'purple' | 'orange' | 'slate' | 'rose')}
                             className="w-full px-3 py-1.5 text-sm border rounded"
                         >
                             {colorSchemeOptions.map(option => (
@@ -695,7 +688,7 @@ export const DatePickerPlayground = () => {
                         <Typography variant="caption" weight="medium">Popup Position</Typography>
                         <select
                             value={config.popupPosition}
-                            onChange={(e) => handleConfigChange('popupPosition', e.target.value)}
+                            onChange={(e) => handleConfigChange('popupPosition', e.target.value as 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right' | 'left' | 'right')}
                             className="w-full px-3 py-1.5 text-sm border rounded"
                         >
                             {popupPositionOptions.map(option => (
@@ -794,7 +787,18 @@ export const DatePickerPlayground = () => {
     );
 };
 
-
+type PlaygroundConfig = {
+    variant: 'single' | 'range';
+    size: 'sm' | 'md' | 'lg' | 'xl';
+    themeMode: 'light' | 'dark';
+    colorScheme: string;
+    popupPosition: string;
+    showIcon: boolean;
+    todayButton: boolean;
+    clearButton: boolean;
+    required: boolean;
+    disabled: boolean;
+};
 
 export const ControlledDatePickerDemo = () => {
     const { colorMode } = useColorMode();
@@ -815,7 +819,7 @@ export const ControlledDatePickerDemo = () => {
     };
 
     const singleCodeString = `import { useState } from 'react';
-import { DatePicker } from '@mindfiredigital/ignix-ui';
+import DatePicker from '@ignix-ui/datepicker';
 
 function SingleDateExample() {
   const [date, setDate] = useState<Date | null>(null);
@@ -837,7 +841,7 @@ function SingleDateExample() {
 
 
     const rangeCodeString = `import { useState } from 'react';
-import { DatePicker } from '@mindfiredigital/ignix-ui';
+import DatePicker from '@ignix-ui/datepicker';
 
 function RangeDateExample() {
   const [range, setRange] = useState({ 

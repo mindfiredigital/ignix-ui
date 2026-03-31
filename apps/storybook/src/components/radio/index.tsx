@@ -14,21 +14,35 @@ export interface RadioOption {
   disabled?: boolean;
 }
 
+const radioGroupVariants = cva("flex gap-2", {
+  variants: {
+    direction: {
+      vertical: "flex-col",
+      horizontal: "flex-row",
+    },
+  },
+  defaultVariants: {
+    direction: "vertical",
+  },
+});
+
 export interface RadioGroupProps
   extends Omit<
     React.InputHTMLAttributes<HTMLInputElement>,
     "size" | "onChange" | "defaultValue"
   >,
-  VariantProps<typeof radioItemVariants> {
+  VariantProps<typeof radioItemVariants>,
+  VariantProps<typeof radioGroupVariants> {
   name?: string;
   options: RadioOption[];
-  value?: string;                // 👈 optional now
-  defaultValue?: string;         // 👈 NEW (Radix-style)
+  value?: string;
+  defaultValue?: string;
   onChange?: (value: string) => void;
   disabled?: boolean;
   labelPosition?: "left" | "right";
   checkedVariant?: "default" | "classic" | "surface";
   animationVariant?: "bounce" | "scale" | "pulse" | "glow" | "shake" | "flip" | "nina";
+  className?: string;
 }
 
 /* ----------------------------------------
@@ -51,8 +65,6 @@ const radioItemVariants = cva(
           "border-destructive data-[state=checked]:bg-destructive data-[state=checked]:border-destructive",
         outline:
           "border-input data-[state=checked]:bg-primary data-[state=checked]:border-primary",
-        subtle:
-          "border-muted data-[state=checked]:bg-accent data-[state=checked]:border-accent",
         neon:
           "border-pink-500 data-[state=checked]:bg-pink-500 data-[state=checked]:border-pink-500 shadow shadow-pink-500/40",
       },
@@ -94,8 +106,6 @@ const radioOppositeItemVariants = cva(
           "border-destructive",
         outline:
           "border-input",
-        subtle:
-          "border-muted",
         neon:
           "border-pink-500",
       },
@@ -158,8 +168,6 @@ const radioIndicatorDefaultVariants = cva(
           "border-destructive data-[state=checked]:bg-destructive data-[state=checked]:border-destructive",
         outline:
           "border-input data-[state=checked]:bg-primary data-[state=checked]:border-primary",
-        subtle:
-          "border-muted data-[state=checked]:bg-accent data-[state=checked]:border-accent",
         neon:
           "border-pink-500 data-[state=checked]:bg-pink-500 data-[state=checked]:border-pink-500 shadow shadow-pink-500/40",
       },
@@ -181,7 +189,7 @@ const radioIndicatorDefaultVariants = cva(
 /* ----------------------------------------
  * Motion Variants
  * ------------------------------------- */
-export const radioMotionVariants: Record<string, Variants> = {
+const radioMotionVariants: Record<string, Variants> = {
   bounce: {
     unchecked: { scale: 1 },
     checked: {
@@ -252,6 +260,8 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
   labelPosition = "right",
   checkedVariant = "surface",
   animationVariant = "bounce",
+  className,
+  direction = "vertical",
 }) => {
   const isControlled = value !== undefined;
 
@@ -280,7 +290,7 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
         }
         onChange?.(val);
       }}
-      className="flex flex-col gap-2"
+      className={cn(radioGroupVariants({ direction }), className)}
     >
       {options.map((opt) => (
         <label
@@ -297,10 +307,10 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
           )}
 
           <motion.div
-            variants={radioMotionVariants[animationVariant]}
+            variants={radioMotionVariants[animationVariant] || radioMotionVariants.bounce}
             initial="unchecked"
             animate={currentValue === opt.value ? "checked" : "unchecked"}
-            className="rounded-full"
+            className="inline-flex items-center justify-center rounded-full w-fit h-fit m-0 p-0 leading-none"
           >
             <RadixRadio.Item
               value={opt.value}
@@ -319,23 +329,11 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
               )}
             >
               {checkedVariant === "surface" && (
-                <RadixRadio.Indicator
-                  forceMount
-                  className={cn(
-                    "flex items-center justify-center",
-                    radioIndicatorVariants({ size })
-                  )}
-                />
+                <RadixRadio.Indicator forceMount className={cn("flex items-center justify-center", radioIndicatorVariants({ size }))} />
               )}
 
               {checkedVariant === "default" && (
-                <RadixRadio.Indicator
-                  forceMount
-                  className={cn(
-                    "flex items-center justify-center",
-                    radioIndicatorDefaultVariants({ variant, size })
-                  )}
-                />
+                <RadixRadio.Indicator forceMount className={cn("flex items-center justify-center", radioIndicatorDefaultVariants({ variant, size }))} />
               )}
             </RadixRadio.Item>
           </motion.div>

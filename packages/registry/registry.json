@@ -109,6 +109,17 @@
         }
       }
     },
+    "carousel": {
+      "name": "Carousel",
+      "description": " A flexible carousel component with navigation controls, dots indicators, thumbnails, animations, and responsive support.",
+      "dependencies": ["framer-motion", "lucide-react"],
+      "files": {
+        "main": {
+          "path": "components/carousel/index.tsx",
+          "type": "component"
+        }
+      }
+    },
     "dynamicForm": {
       "name": "DynamicForm",
       "description": "A dynamic form component that generates form fields based on a JSON schema, enabling easy form creation and validation.",
@@ -152,7 +163,7 @@
       }
     },
     "responsive-grid": {
-      "name": "Responsive Grid",
+      "name": "ResponsiveGrid",
       "description": "A flexible grid layout component with responsive columns, gaps, equal-height option, and animations (fade, stagger, scale).",
       "dependencies": ["framer-motion"],
       "files": {
@@ -197,6 +208,18 @@
         "main": {
           "path": "components/layouts/masonry/index.tsx",
           "type": "component"
+        }
+      }
+    },
+    "maintenance-page": {
+      "name": "MaintenancePage ",
+      "description": "A customizable maintenance page template with multiple animation variants, designed to display clear messaging, ETA.",
+      "dependencies": ["lucide-react", "framer-motion", "class-variance-authority"],
+      "componentDependencies": ["button", "typography"],
+      "files": {
+        "main": {
+          "path": "templates/pages/maintenance-page/index.tsx",
+          "type": "template"
         }
       }
     },
@@ -336,7 +359,7 @@
     "sidebar": {
       "name": "Sidebar",
       "description": "A collapsible sidebar component with animation",
-      "dependencies": ["framer-motion", "lucide-react", "class-variance-authority"],
+      "dependencies": ["framer-motion", "@radix-ui/react-icons", "class-variance-authority"],
       "files": {
         "main": {
           "path": "components/sidebar/index.tsx",
@@ -509,10 +532,10 @@
         }
       }
     },
-    "steppers": {
-      "name": "Steppers",
-      "description": "An animated steppers component with different variants",
-      "dependencies": ["framer-motion", "lucide-react", "class-variance-authority"],
+    "stepper": {
+      "name": "stepper",
+      "description": "An animated stepper component with different variants",
+      "dependencies": ["framer-motion", "class-variance-authority"],
       "files": {
         "main": {
           "path": "components/stepper/index.tsx",
@@ -814,7 +837,7 @@
         }
       }
     },
-    "forgotPassword": {
+    "forgot-password": {
       "name": "forgotPassword",
       "description": "A fully responsive and customizable Forgot Password component with an input field and submit button, built to support secure in-app password reset processes.",
       "dependencies": [
@@ -885,7 +908,7 @@
         }
       }
     },
-    "otpVerification": {
+    "otp-verification": {
       "name": "otpVerification",
       "description": "A fully responsive OTP (One-Time Password) verification component that provides configurable input length, animations, themes, auto-focus behavior, and paste-to-autofill support.",
       "dependencies": [
@@ -1126,6 +1149,23 @@
       "files": {
         "main": {
           "path": "templates/pages/dashboard-overview/index.tsx",
+          "type": "template"
+        }
+      }
+    },
+    "dashboard-shortcuts-page": {
+      "name": "dashboard-shortcuts-page",
+      "description": "A composable dashboard shortcuts template with large action buttons, icon-backed shortcut grid, keyboard hints, and persisted drag-and-drop customization.",
+      "dependencies": [
+        "@radix-ui/react-icons"
+      ],
+      "componentDependencies": [
+        "button",
+        "card"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/dashboard-shortcuts-page/index.tsx",
           "type": "template"
         }
       }
@@ -1378,6 +1418,16 @@
       "files": {
         "main": {
           "path": "templates/sections/faq-accordion/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "split": {
+      "name": "Split",
+      "description": "component simplifies the creation of two-column layouts such as sidebars with content, image and text sections, or dashboard layouts. It supports ratios, gaps, responsive stacking, and optional resizing.",
+      "files": {
+        "main": {
+          "path": "components/layouts/split/index.tsx",
           "type": "component"
         }
       }

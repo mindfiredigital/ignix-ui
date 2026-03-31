@@ -9,8 +9,6 @@ import TabItem from '@theme/TabItem';
 import { AspectRatio } from '@site/src/components/UI/aspect-ratio';
 import AspectRatioDemo from '@site/src/components/Demo/AspectRatioDemo';
 
-## Overview
-
 The **AspectRatio** component ensures that its children maintain a specific width-to-height ratio, making it ideal for videos, images, or placeholders that need to be consistently sized across devices.
 
 ## Preview
@@ -25,7 +23,7 @@ The **AspectRatio** component ensures that its children maintain a specific widt
   </TabItem>
   <TabItem value="code" label="Code">
     ```tsx
-    import { AspectRatio } from '@ignix-ui';
+    import { AspectRatio } from '@ignix-ui/aspectratio';
 
     function MyComponent() {
       return (
@@ -43,7 +41,7 @@ The **AspectRatio** component ensures that its children maintain a specific widt
 <Tabs>
   <TabItem value="cli" label="CLI" default>
     ```bash
-    ignix add component aspect-ratio
+    ignix add component aspectratio
     ```
   </TabItem>
   <TabItem value="manual" label="manual" className="max-h-[500px] overflow-y-auto">
@@ -75,12 +73,14 @@ const AspectRatio = React.forwardRef<HTMLDivElement, AspectRatioProps>(
     const isAspectRatioSupported =
       typeof CSS !== 'undefined' && CSS.supports('aspect-ratio', '1/1');
 
-    const computedMaxWidth =
-      typeof maxWidth === 'number' ? `${maxWidth}px` : maxWidth;
+    const computedWidth =
+      typeof maxWidth === 'number' ? `${maxWidth}px` : (maxWidth ?? '100%');
 
     const containerStyle: React.CSSProperties = {
-      width: '100%',
-      maxWidth: computedMaxWidth,
+      position: 'relative',
+      width: computedWidth,
+      maxWidth: '100%',
+      aspectRatio: `${w} / ${h}`,
       ...style,
     };
 
@@ -128,7 +128,11 @@ const AspectRatio = React.forwardRef<HTMLDivElement, AspectRatioProps>(
         style={containerStyle}
         {...props}
       >
+      {isAspectRatioSupported ? (
+        enhancedChildren
+      ) : (
         <div style={contentStyle}>{enhancedChildren}</div>
+      )}
       </div>
     );
   }
@@ -147,7 +151,7 @@ export { AspectRatio };
 Import the component:
 
 ```tsx
-import { AspectRatio } from '@ignix-ui';
+import { AspectRatio } from '@ignix-ui/aspectratio';
 ```
 ## Basic Usage
 
@@ -161,6 +165,10 @@ function BasicAspectRatio() {
 }
 ```
 
-## Variants
+## Props
 
-<AspectRatioDemo/>
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `ratio` | `"1:1" \| "4:3" \| "16:9" \| "21:9" \| string` | `"1:1"` | The width-to-height ratio. Accepts any custom `"W:H"` string |
+| `maxWidth` | `string \| number` | - | Maximum width of the container. (e.g. `"50%"`, `"30rem"`, `"400px"`). Numbers are auto-converted to `px` |
+| `children` | `React.ReactNode` | **required** | Content rendered inside the ratio container. Direct `<img>` children automatically receive `object-cover w-full h-full` |

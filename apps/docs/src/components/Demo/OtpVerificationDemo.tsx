@@ -35,6 +35,8 @@ const OtpVerificationDemo = () => {
   }, [type]);
 
   const codeString = `
+    import { OTPVerificationPage } from '@ignix-ui/otpverification';
+
     <OTPVerificationPage
       variant= "${variant}"
       length= {${Number(otpLength)}}
