@@ -233,7 +233,6 @@ function ContactFormBase({
         icon: <InfoCircledIcon className="w-5 h-5" />
       });
     }
-    }
   };
 
   return (
