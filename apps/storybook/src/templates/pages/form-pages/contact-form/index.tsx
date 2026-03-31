@@ -183,21 +183,9 @@ function ContactFormBase({
       message: data.message?.trim(),
     };
     
+    setStatus("loading");
     try {
-      setStatus("loading");
       await onSubmit(normalizedData);
-      setStatus("success");
-
-      if (onSuccess) {
-        onSuccess();
-      } else {
-        toast?.addToast({
-          message: "Message sent successfully!",
-          variant: "success",
-          animation: "slide",
-          icon: <InfoCircledIcon className="w-5 h-5" />
-        });
-      }
     } catch (err) {
       setStatus("error");
       if (onError) {
@@ -210,6 +198,20 @@ function ContactFormBase({
           icon: <InfoCircledIcon className="w-5 h-5" />
         });
       }
+      return;
+    }
+
+    setStatus("success");
+    if (onSuccess) {
+      onSuccess();
+    } else {
+      toast?.addToast({
+        message: "Message sent successfully!",
+        variant: "success",
+        animation: "slide",
+        icon: <InfoCircledIcon className="w-5 h-5" />
+      });
+    }
     }
   };
 
