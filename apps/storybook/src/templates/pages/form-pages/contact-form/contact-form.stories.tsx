@@ -26,6 +26,7 @@ export const Default: Story = {
   render: () => (
     <ToastProvider>
       <ContactForm
+        variant="default"
         onSubmit={async (data) => {
           console.log("Form submitted:", data);
         }} 

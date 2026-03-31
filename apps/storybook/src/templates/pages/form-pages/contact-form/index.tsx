@@ -27,15 +27,36 @@ type ValidationErrors = {
   message?: string;
 };
 
-type ContactFormProps = {
-  children: React.ReactNode;
-  variant?: "default" | "background" | "split";
-  backgroundImage?: string;
-  sideImage?: string;
-  onSubmit: (data: FormData) => Promise<void> | void;
-  onError?: (err: unknown) => void;
-  onSuccess?: () => void;
-  sideImagePosition?: "left" | "right";
+type ContactFormProps = 
+  | {
+      children: React.ReactNode;
+      variant: "default";
+      backgroundImage?: never;
+      sideImage?: never;
+      sideImagePosition?: never;
+      onSubmit: (data: FormData) => Promise<void> | void;
+      onError?: (err: unknown) => void;
+      onSuccess?: () => void;
+    }
+  | {
+      children: React.ReactNode;
+      variant: "background";
+      backgroundImage: string;
+      sideImage?: never;
+      sideImagePosition?: never;
+      onSubmit: (data: FormData) => Promise<void> | void;
+      onError?: (err: unknown) => void;
+      onSuccess?: () => void;
+    }
+  | {
+      children: React.ReactNode;
+      variant: "split";
+      backgroundImage?: never;
+      sideImage: string;
+      sideImagePosition?: "left" | "right";
+      onSubmit: (data: FormData) => Promise<void> | void;
+      onError?: (err: unknown) => void;
+      onSuccess?: () => void;
 };
 
 

@@ -55,6 +55,29 @@ import { ToastProvider } from "@ignix-ui/toast";
 `;
   };
 
+  const getVariantProps = () => {
+    switch (variant) {
+      case "background":
+        return {
+          variant: "background" as const,
+          backgroundImage:
+            "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
+        };
+  
+      case "split":
+        return {
+          variant: "split" as const,
+          sideImage:
+            "https://images.unsplash.com/photo-1556761175-4b46a572b786",
+          sideImagePosition,
+        };
+  
+      default:
+        return {
+          variant: "default" as const,
+        };
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -85,11 +108,8 @@ import { ToastProvider } from "@ignix-ui/toast";
         <TabItem value="preview" label="Preview">
             <ToastProvider>
             <ContactForm
-              variant={variant}
-              backgroundImage="https://images.unsplash.com/photo-1506744038136-46273834b3fb"
-              sideImage="https://images.unsplash.com/photo-1556761175-4b46a572b786"
+               {...getVariantProps()}
               onSubmit={handleSubmit}
-              sideImagePosition={sideImagePosition}
             >
               <ContactForm.Header />
               <ContactForm.Content>

@@ -88,7 +88,8 @@ vi.mock("@ignix-ui/toast/use-toast", () => ({
 
 const setup = (props = {}) => {
   const defaultProps = {
-    onSubmit: vi.fn().mockResolvedValue(undefined), // ✅ default mock
+    variant: "default" as const,
+    onSubmit: vi.fn().mockResolvedValue(undefined),
   };
   return render(
     <ContactForm {...defaultProps} {...props}>
