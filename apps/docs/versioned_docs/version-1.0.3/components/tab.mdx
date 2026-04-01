@@ -7,39 +7,11 @@ description: A flexible and animated tab component for displaying content and ca
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import { Tabs as TabsComponent } from '@site/src/components/UI/tab';
-
-## Overview
+import TabDemo from '@site/src/components/Demo/TabDemo';
 
 The Tabs component is a versatile navigation interface that allows users to switch between different views within the same context. Built with Framer Motion for smooth animations and powered by Class Variance Authority for flexible styling, it provides multiple variants and themes for different design needs.
 
-## Preview
-
-<Tabs defaultValue="preview">
-  <TabItem value="preview" label="Preview" default>
-    <div className="w-full p-8 space-y-8 rounded-lg border shadow-lg">
-      <div className="p-6 rounded-lg">
-        <TabsComponent
-          options={["Home", "Profile", "Settings", "About"]}
-          selected={0}
-        />
-      </div>
-    </div>
-  </TabItem>
-  <TabItem value="code" label="Code">
-    ```tsx
-    import { Tabs } from './components/ui';
-
-    function TabsDemo() {
-      return (
-        <Tabs
-          options={["Home", "Profile", "Settings", "About"]}
-          selected={0}
-        />
-      );
-    }
-    ```
-  </TabItem>
-</Tabs>
+<TabDemo />
 
 ## Installation
 
@@ -180,7 +152,7 @@ export const Tabs: React.FC<TabsProps> = ({
 Import the component:
 
 ```tsx
-import { Tabs } from './components/ui';
+import { Tabs } from '@ignix-ui/tab';
 ```
 
 ### Basic Usage
@@ -197,8 +169,14 @@ function BasicTabs() {
 }
 ```
 
-import TabDemo from '@site/src/components/Demo/TabDemo';
+## Props
 
-## Variants
-
-<TabDemo />
+| Prop | Type | Default | Description |
+|-----|-----|-----|-----|
+| `options` | `string[]` | **required** | Array of tab labels to render |
+| `selected` | `number` | `0` | Index of the initially selected tab |
+| `value` | `(index: number) => void` | `undefined` | Callback fired with the index of the newly selected tab |
+| `variant` | `'underline' \| 'filled' \| 'pill' \| 'outline' \| 'ghost' \| 'shadow' \| 'gradient' \| 'glow' \| 'block'` | `'underline'` | Visual style of the tab strip |
+| `theme` | `'light' \| 'dark' \| 'glass' \| 'glassDark' \| 'glassLight' \| 'glassGradient' \| 'glassGradientDark'` | `undefined` | Color theme applied to the tab container |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Font size of the tab labels |
+| `className` | `string` | `undefined` | Additional Tailwind classes applied to the tab container |

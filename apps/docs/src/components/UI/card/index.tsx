@@ -9,28 +9,28 @@ const cardAnimations = {
   fadeIn: {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] }
+    transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] }
   },
   slideUp: {
     initial: { opacity: 0, y: 60, scale: 0.95 },
     animate: { opacity: 1, y: 0, scale: 1 },
-    transition: { duration: 0.7, ease: [0.4, 0, 0.2, 1] }
+    transition: { duration: 0.7, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] }
   },
   scaleIn: {
     initial: { opacity: 0, scale: 0.8, rotateX: 15 },
     animate: { opacity: 1, scale: 1, rotateX: 0 },
-    transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] }
+    transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] }
   },
   flipIn: {
     initial: { opacity: 0, rotateY: -90, scale: 0.8 },
     animate: { opacity: 1, rotateY: 0, scale: 1 },
-    transition: { duration: 0.8, ease: [0.4, 0, 0.2, 1] }
+    transition: { duration: 0.8, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] }
   },
   bounceIn: {
     initial: { opacity: 0, scale: 0.3, y: 50 },
     animate: { opacity: 1, scale: 1, y: 0 },
     transition: { 
-      type: "spring", 
+      type: "spring" as const,  
       stiffness: 300, 
       damping: 20,
       duration: 0.8 
@@ -39,7 +39,7 @@ const cardAnimations = {
   floatIn: {
     initial: { opacity: 0, y: 100, rotateX: 45 },
     animate: { opacity: 1, y: 0, rotateX: 0 },
-    transition: { duration: 0.8, ease: [0.68, -0.55, 0.265, 1.55] }
+    transition: { duration: 0.8, ease: [0.68, -0.55, 0.265, 1.55] as [number, number, number, number] }
   }
 };
 

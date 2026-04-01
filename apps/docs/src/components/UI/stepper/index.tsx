@@ -7,7 +7,7 @@ interface Step {
 
 interface StepperProps {
   steps: Step[];
-  activeStep: number; // 0-based index
+  activeStep: number; 
   className?: string;
 }
 
@@ -25,7 +25,7 @@ export const Stepper = ({ steps, activeStep, className }: StepperProps) => {
           >
             {/* Line connector */}
             {index !== steps.length - 1 && (
-              <div className="absolute top-4 left-1/2 w-full h-0.5 bg-zinc-300 dark:bg-zinc-700 z-0 transform translate-x-1/2" />
+              <div className="absolute top-4 left-1/2 w-full h-0.5 bg-zinc-300 dark:bg-zinc-700 z-0" />
             )}
 
             {/* Step circle */}
