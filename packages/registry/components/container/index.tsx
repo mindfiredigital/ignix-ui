@@ -20,7 +20,7 @@ const sizeClasses: Record<ContainerSize, string> = {
   normal: "max-w-md",
   large: "max-w-3xl",
   full: "max-w-full",
-  readable: "max-w-prose", // good for long text
+  readable: "max-w-prose",
 };
 
 const paddingClasses: Record<ContainerPadding, string> = {
@@ -49,16 +49,13 @@ export function Container({
   className,
   ...props
 }: ContainerProps) {
-  // Handle maxWidth - support both predefined classes and custom values as inline styles
   const maxWidthStyle: React.CSSProperties = {};
   let widthClass = sizeClasses[size];
   
   if (maxWidth) {
     if (typeof maxWidth === 'string' && maxWidth in maxWidthClasses) {
-      // Use predefined class
       widthClass = maxWidthClasses[maxWidth as keyof typeof maxWidthClasses];
     } else {
-      // Apply custom value as inline style
       if (typeof maxWidth === 'number') {
         maxWidthStyle.maxWidth = `${maxWidth}px`;
       } else {

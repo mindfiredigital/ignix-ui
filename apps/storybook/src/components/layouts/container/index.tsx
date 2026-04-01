@@ -1,9 +1,9 @@
-import { cn } from '../../../../utils/cn';
+import { cn } from "../../../../utils/cn";
 import * as React from "react";
 
 export type ContainerSize = "small" | "normal" | "large" | "full" | "readable";
 export type ContainerPadding = "none" | "small" | "normal" | "large" | "xl";
-export type MaxWidth = "sm" | "md" | "lg" | "xl" | "full" | string; // allow custom
+export type MaxWidth = "sm" | "md" | "lg" | "xl" | "full" | string; 
 
 interface ContainerProps {
   children: React.ReactNode;
@@ -20,7 +20,7 @@ const sizeClasses: Record<ContainerSize, string> = {
   normal: "max-w-md",
   large: "max-w-3xl",
   full: "max-w-full",
-  readable: "max-w-prose", // good for long text
+  readable: "max-w-prose",
 };
 
 const paddingClasses: Record<ContainerPadding, string> = {
@@ -49,10 +49,20 @@ export function Container({
   className,
   ...props
 }: ContainerProps) {
-  // If maxWidth is provided, it takes precedence over size
-  const widthClass = maxWidth 
-    ? (typeof maxWidth === 'string' ? maxWidthClasses[maxWidth as keyof typeof maxWidthClasses] : maxWidth)
-    : sizeClasses[size];
+  const maxWidthStyle: React.CSSProperties = {};
+  let widthClass = sizeClasses[size];
+  
+  if (maxWidth) {
+    if (typeof maxWidth === 'string' && maxWidth in maxWidthClasses) {
+      widthClass = maxWidthClasses[maxWidth as keyof typeof maxWidthClasses];
+    } else {
+      if (typeof maxWidth === 'number') {
+        maxWidthStyle.maxWidth = `${maxWidth}px`;
+      } else {
+        maxWidthStyle.maxWidth = maxWidth;
+      }
+    }
+  }
 
   return (
     <div
@@ -64,9 +74,11 @@ export function Container({
         responsive && "px-4 sm:px-6 lg:px-8",
         className
       )}
+      style={maxWidthStyle}
       {...props}
     >
       {children}
     </div>
   );
 }
+ 
