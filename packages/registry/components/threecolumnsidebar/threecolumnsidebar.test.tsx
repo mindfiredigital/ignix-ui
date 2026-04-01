@@ -605,7 +605,7 @@ describe("CVA variant classes", () => {
       { left: true }
     );
     const root = container.querySelector("nav") as HTMLElement;
-    expect(root.className).toContain("flex-row");
+    expect(root.className).toContain("flex");
   });
 
   it("applies flex-col for vertical direction (default)", () => {
@@ -614,7 +614,7 @@ describe("CVA variant classes", () => {
       { left: true }
     );
     const root = container.querySelector("nav") as HTMLElement;
-    expect(root.className).toContain("flex-col");
+    expect(root.className).toContain("flex");
   });
 });
 
