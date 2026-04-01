@@ -391,9 +391,22 @@ export const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
     const [previousValue, setPreviousValue] = useState<number>(value ?? 0);
     const [animationVersion, setAnimationVersion] = useState<number>(0);
     const [clickedIndex, setClickedIndex] = useState<number | null>(null);
-    const prevAnimationTypeRef = useRef<AnimationType>(animationType);    
+    const prevAnimationTypeRef = useRef<AnimationType>(animationType);
+    // Ref to track the clicked-index reset timeout so it can be cleared on unmount
+    const clickedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const currentValue = value !== undefined ? value : internalValue;
     
+    // Clear any pending timeout when the component unmounts to prevent
+    // "state update on unmounted component" / "window is not defined" errors
+    // in test environments where jsdom tears down before the 400ms fires.
+    useEffect(() => {
+      return () => {
+        if (clickedTimeoutRef.current) {
+          clearTimeout(clickedTimeoutRef.current);
+        }
+      };
+    }, []);
+
     // Increment version when animationType changes to force remount (only for emojis)
     useEffect(() => {
       if (prevAnimationTypeRef.current !== animationType) {
@@ -478,13 +491,11 @@ export const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
         
         const newValue = isHalf ? index + 0.5 : index + 1;
         
-        if (useEmoji) {
-          setClickedIndex(index);
-          setTimeout(() => setClickedIndex(null), 400);
-        } else {
-          setClickedIndex(index);
-          setTimeout(() => setClickedIndex(null), 400);
+        setClickedIndex(index);
+        if (clickedTimeoutRef.current) {
+          clearTimeout(clickedTimeoutRef.current);
         }
+        clickedTimeoutRef.current = setTimeout(() => setClickedIndex(null), 400);
         
         if (useEmoji && onEmojiSelect) {
           const selectedEmoji = getEmojiForIndex(index, true) || emoji || '⭐';
