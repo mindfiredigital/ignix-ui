@@ -53,6 +53,8 @@ const ProfilePageDemo = () => {
     };
 
     const codeString = `
+import { ProfilePage } from '@ignix-ui/profile';
+
 <ProfilePage
     variant="dark"
     darkMode={true}

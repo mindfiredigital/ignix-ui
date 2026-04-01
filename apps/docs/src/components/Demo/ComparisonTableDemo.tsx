@@ -78,6 +78,8 @@ const ComparisonTableDemo = () => {
   const [mobileBreakpoint, setMobileBreakpoint] = useState<ComparisonTableMobileBreakpoints>("md");
 
   const codeString = `
+    import { ComparisonTable } from '@ignix-ui/comparisontable';
+
     const features = [
     { id: 1, label: "Components" },
     { id: 2, label: "Theme" },

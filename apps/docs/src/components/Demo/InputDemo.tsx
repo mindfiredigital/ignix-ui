@@ -57,6 +57,8 @@ const InputDemo = () => {
   const [value, setValue] = useState('');
 
   const codeString = `
+import AnimatedInput from '@ignix-ui/input';
+
 <AnimatedInput
   placeholder="Type something..."
   variant="${variant}"

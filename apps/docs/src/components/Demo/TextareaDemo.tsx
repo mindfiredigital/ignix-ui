@@ -30,6 +30,8 @@ const TextareaDemo = () => {
   const [value, setValue] = useState('');
 
   const codeString = `
+import AnimatedTextarea from '@ignix-ui/textarea';
+
 <AnimatedTextarea
   placeholder="Type something..."
   variant="${variant}"

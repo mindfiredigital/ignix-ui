@@ -7,33 +7,11 @@ description: A flexible and animated switch component for displaying content and
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import { Switch } from '@site/src/components/UI/switch';
-
-## Overview
+import SwitchDemo from '@site/src/components/Demo/SwitchDemo';
 
 The Switch component is a toggleable form control built on top of Radix UI's Switch Primitive, enhanced with beautiful animations using Framer Motion. It provides a user-friendly way to toggle between two states with smooth transitions and various visual styles.
 
-## Preview
-
-<Tabs defaultValue="preview">
-  <TabItem value="preview" label="Preview" default>
-    <div className="w-full p-8 space-y-8 border rounded-lg">
-      <div className="p-6 rounded-lg">
-          <Switch />
-      </div>
-    </div>
-  </TabItem>
-  <TabItem value="code" label="Code">
-    ```tsx
-    import { Switch } from './components/ui';
-
-    function SwitchDemo() {
-      return (
-          <Switch />
-      );
-    }
-    ```
-  </TabItem>
-</Tabs>
+<SwitchDemo />
 
 ## Installation
 
@@ -45,16 +23,15 @@ The Switch component is a toggleable form control built on top of Radix UI's Swi
   </TabItem>
   <TabItem value="manual" label="manual" className="max-h-[500px] overflow-y-auto">
 
-    ```tsx
+```tsx
 'use client';
 
 import { useState } from 'react';
 import * as React from 'react';
 import * as SwitchPrimitives from '@radix-ui/react-switch';
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import { cn } from '../../../utils/cn';
 
-// Enhanced animations with premium effects
 const animations = {
   default: {
     checked: { 
@@ -147,7 +124,7 @@ const animations = {
       transition: { 
         duration: 0.4, 
         ease: [0.4, 0, 0.2, 1],
-        type: 'tween' // Using tween for opacity/filter animations
+        type: 'tween'
       },
     },
     unchecked: {
@@ -158,7 +135,7 @@ const animations = {
       transition: { 
         duration: 0.4, 
         ease: [0.4, 0, 0.2, 1],
-        type: 'tween' // Using tween for opacity/filter animations
+        type: 'tween'
       },
     },
   },
@@ -278,9 +255,8 @@ const animations = {
       transition: { duration: 0.8, ease: "easeInOut" },
     },
   },
-};
+} as const;
 
-// Enhanced variants with premium styling
 const variants = {
   default: {
     root: cn(
@@ -490,7 +466,7 @@ const Switch = React.forwardRef<React.ComponentRef<typeof SwitchPrimitives.Root>
         ...animations[animation].checked,
         x: thumbOffset,
       },
-    };
+    } as unknown as Variants;
 
     React.useEffect(() => {
       if (props.checked !== undefined) {
@@ -505,7 +481,6 @@ const Switch = React.forwardRef<React.ComponentRef<typeof SwitchPrimitives.Root>
 
     return (
       <div className="relative inline-block">
-        {/* Enhanced glow effect */}
         {glowEffect && isChecked && (
           <motion.div
             className="absolute inset-0 rounded-full opacity-30"
@@ -576,7 +551,6 @@ const Switch = React.forwardRef<React.ComponentRef<typeof SwitchPrimitives.Root>
                 transition: { duration: 0.1 }
               }}
             >
-              {/* Thumb shimmer effect */}
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 pointer-events-none rounded-[inherit]"
                 animate={{
@@ -597,11 +571,12 @@ const Switch = React.forwardRef<React.ComponentRef<typeof SwitchPrimitives.Root>
     );
   }
 );
+
 Switch.displayName = SwitchPrimitives.Root.displayName;
 
 export { Switch };
 
-    ```
+```
   </TabItem>
 </Tabs>
 
@@ -610,7 +585,7 @@ export { Switch };
 Import the component:
 
 ```tsx
-import { Switch } from './components/ui';
+import { Switch } from '@ignix-ui/switch';
 ```
 
 ### Basic Usage
@@ -621,9 +596,12 @@ function BasicSwitch() {
 }
 ```
 
-import SwitchDemo from '@site/src/components/Demo/SwitchDemo';
+## Props
 
-## Variants
-
-<SwitchDemo />
-
+| Prop | Type | Default | Description |
+|-----|-----|-----|-----|
+| `variant` | `'default' \| 'large' \| 'small' \| 'pill' \| 'square' \| 'slim' \| 'ios' \| 'material'` | `'default'` | Visual style of the switch |
+| `animation` | `'default' \| 'bounce' \| 'scale' \| 'rotate' \| 'fade' \| 'elastic' \| 'pulse' \| 'shake' \| 'flip' \| 'jelly' \| 'glow'` | `'default'` | Animation applied to the thumb when toggling |
+| `glowEffect` | `boolean` | `false` | When `true`, renders an animated radial glow behind the switch when checked |
+| `thumbClassName` | `string` |  `-`  | Additional Tailwind classes applied to the thumb element |
+| `className` | `string` |  `-`  | Additional Tailwind classes applied to the root switch element |

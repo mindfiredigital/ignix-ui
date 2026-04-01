@@ -84,6 +84,7 @@ const BillingPageDemo = () => {
     ];
 
   const codeString = `
+    import { BillingPage } from "@ignix-ui/billingpage";
     const plans = [
       {
         name: "Starter",

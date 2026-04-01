@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Switch } from '@site/src/components/UI/switch';
 import VariantSelector from './VariantSelector';
@@ -35,6 +34,8 @@ const SwitchDemo = () => {
   const [animation, setAnimation] = useState('default');
 
   const codeString = `
+import { Switch } from '@ignix-ui/switch';
+
 <Switch variant="${variant}" animation="${animation}" defaultChecked />
 `;
 

@@ -7,41 +7,11 @@ description: A flexible and animated spinner component for displaying loading st
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import { Spinner } from '@site/src/components/UI/spinner';
-
-## Overview
+import SpinnerDemo from '@site/src/components/Demo/SpinnerDemo';
 
 The Spinner component is a versatile loading indicator that comes with multiple variants and customization options. Built with Framer Motion, it provides smooth animations and various styles to indicate loading states in your application.
 
-## Preview
-
-<Tabs defaultValue="preview">
-  <TabItem value="preview" label="Preview" default>
-    <div className="w-full p-8 space-y-8 border rounded-lg">
-      <div className=" p-6 rounded-lg">
-        <div className="flex items-center justify-center gap-8">
-          <Spinner size={40} color="border-primary" />
-          <Spinner size={40} variant="bars" color="bg-primary" />
-          <Spinner size={40} variant="dots-bounce" color="bg-primary" />
-        </div>
-      </div>
-    </div>
-  </TabItem>
-  <TabItem value="code" label="Code">
-    ```tsx
-    import { Spinner } from './components/ui';
-
-    function SpinnerDemo() {
-      return (
-        <div className="flex items-center gap-8">
-          <Spinner size={40} color="border-primary" />
-          <Spinner size={40} variant="bars" color="bg-primary" />
-          <Spinner size={40} variant="dots-bounce" color="bg-primary" />
-        </div>
-      );
-    }
-    ```
-  </TabItem>
-</Tabs>
+<SpinnerDemo />
 
 ## Installation
 
@@ -53,7 +23,7 @@ The Spinner component is a versatile loading indicator that comes with multiple 
   </TabItem>
   <TabItem value="manual" label="manual" className="max-h-[500px] overflow-y-auto">
 
-    ```tsx
+```tsx
 import { motion } from "framer-motion";
 import { cn } from "../../../utils/cn";
 
@@ -92,7 +62,7 @@ export const Spinner = ({
                 color
               )}
               style={{
-                transform: `rotate(${angle}deg) translateY(-140%)`, // increased from -50% to -140%
+                transform: `rotate(${angle}deg) translateY(-140%)`, 
                 transformOrigin: "center",
               }}
               animate={{
@@ -114,7 +84,7 @@ export const Spinner = ({
   if (variant === "dots-bounce") {
     const dotSize = thickness;
     const gap = dotSize * 1.8;
-    const dots = Array.from({ length: 5 }); // increased from 4 to 5
+    const dots = Array.from({ length: 5 }); 
 
     return (
       <div
@@ -197,7 +167,7 @@ export const Spinner = ({
   );
 };
 
-    ```
+```
   </TabItem>
 </Tabs>
 
@@ -206,7 +176,7 @@ export const Spinner = ({
 Import the component:
 
 ```tsx
-import { Spinner } from './components/ui';
+import { Spinner } from '@ignix-ui/spinner';
 ```
 
 ### Basic Usage
@@ -217,12 +187,6 @@ function BasicSpinner() {
 }
 ```
 
-import SpinnerDemo from '@site/src/components/Demo/SpinnerDemo';
-
-## Variants
-
-<SpinnerDemo />
-
 ## Customization
 
 ### Custom Styling
@@ -230,6 +194,8 @@ import SpinnerDemo from '@site/src/components/Demo/SpinnerDemo';
 You can customize the appearance using Tailwind CSS classes:
 
 ```tsx
+import { Spinner } from '@ignix-ui/spinner';
+
 <Spinner
   className="my-4"
   size={50}
@@ -237,3 +203,13 @@ You can customize the appearance using Tailwind CSS classes:
   thickness={6}
 />
 ```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `'default' \| 'bars' \| 'dots-bounce'` | `'default'` | Visual style of the spinner. |
+| `size` | `number` | `40` | Width and height in px. |
+| `thickness` | `number` | `4` | Border width in px for `default`; dot diameter in px for `dots-bounce`. Not used by `bars` |
+| `color` | `string` | `'primary'` | Tailwind class applied to the spinner element. Raw CSS color values are not supported |
+| `className` | `string` | `''` | Additional Tailwind classes applied to the outermost container element |

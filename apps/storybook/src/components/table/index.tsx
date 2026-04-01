@@ -59,7 +59,7 @@ const contentAnimations = {
     exit: { opacity: 0, scale: 0.3, rotate: 10 },
     transition: { type: "spring", stiffness: 300, damping: 20, duration: 0.8 },
   },
-};
+} as const;
 
 const sizeConfigs = {
   sm: { fontSize: "text-sm", padding: "py-1 px-2", headingFontSize: "text-sm" },

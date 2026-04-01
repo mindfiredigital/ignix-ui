@@ -39,6 +39,8 @@ const TemplateSideBarLayoutDemo = (props: Props) => {
   const OptimisedTemplate = props.layout.charAt(0).toUpperCase() + props.layout.slice(1) 
   
   const codeString = `
+import { Sidebar${OptimisedTemplate}Layout } from '@ignix-ui/sidebar-${props.layout}-layout';
+
 <Sidebar${OptimisedTemplate}Layout
   variant="${variant}"
   sidebarWidth="${width}"

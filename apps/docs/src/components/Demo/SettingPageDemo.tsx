@@ -20,6 +20,8 @@ const animationVariants = ["none", "fade", "slide", "scale", "spring", "stagger"
 const SettingsPageBasicDemo = () => {
 
   const codeString = `
+  import { SettingsPage } from '@ignix-ui/settingpage';
+
   <I18nProvider
     value={{
       language,
@@ -63,6 +65,8 @@ const SettingsPageDemo = () => {
   const [animationVariant, setAnimationVariant] = useState("fade");
 
   const codeString = `
+  import { SettingsPage } from '@ignix-ui/settingpage';
+
   <SettingsPage
     dialogAnimation= "${dialogAnimation}" 
     dropDownAnimation= "${dropDownAnimation}"
@@ -188,6 +192,8 @@ const SettingsPageDemoWithLayout = () => {
   ];
 
   const codeString = `
+  import { SettingsPage } from '@ignix-ui/settingpage';
+
   <SideBarLeftLayout
     variant="default"
     sidebarWidth="default"

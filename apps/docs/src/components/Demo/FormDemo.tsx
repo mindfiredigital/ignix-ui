@@ -51,8 +51,9 @@ const FormDemo = () => {
     mobile: 1,
   });
 
-  const codeString = `import { Form, FormField, InputWrapper } from './components/ui/form';
-import { Button } from './components/ui/button';
+  const codeString = `
+import { Form, FormField, InputWrapper } from '@ignix-ui/form';
+import { Button } from '@ignix-ui/button';
 
 function ContactForm() {
   return (

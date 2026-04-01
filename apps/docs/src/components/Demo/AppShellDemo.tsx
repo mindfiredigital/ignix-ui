@@ -67,7 +67,7 @@ const AppShellDemo = () => {
   );
 
   const codeString = `
-import AppShell from './components/ui/app-shell';
+import AppShell from '@ignix-ui/appshell';
 import Logo from './components/Logo';
 import UserProfile from './components/UserProfile';
 import NavItems from './components/NavItems';

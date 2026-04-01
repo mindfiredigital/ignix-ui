@@ -75,6 +75,8 @@ const ButtonDemo = () => {
   const [animationVariant, setAnimationVariant] = useState('');
 
   const codeString = `
+import { Button } from '@ignix-ui/button';
+
 <Button 
   variant="${variant}" 
   size="${size}" 
