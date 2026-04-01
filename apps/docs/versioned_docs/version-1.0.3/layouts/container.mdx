@@ -8,18 +8,11 @@ import Container from '@site/src/components/UI/container';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-## Overview
-
 The Container component is a flexible layout component that constrains content width, adds consistent padding, and handles responsive behavior. It's perfect for creating readable content areas with proper spacing.
-
-## Preview
-
-Try out the Container component with different settings:
 
 import ContainerDemo from '@site/src/components/Demo/ContainerDemo';
 
 <ContainerDemo />
-
 
 ## Installation
 
@@ -31,13 +24,13 @@ import ContainerDemo from '@site/src/components/Demo/ContainerDemo';
   </TabItem>
   <TabItem value="manual" label="manual" className="max-h-[500px] overflow-y-auto">
 
-    ```tsx
+```tsx
 import { cn } from '../../../utils/cn';
 import * as React from "react";
 
 export type ContainerSize = "small" | "normal" | "large" | "full" | "readable";
 export type ContainerPadding = "none" | "small" | "normal" | "large" | "xl";
-export type MaxWidth = "sm" | "md" | "lg" | "xl" | "full" | string; // allow custom
+export type MaxWidth = "sm" | "md" | "lg" | "xl" | "full" | string; 
 
 interface ContainerProps {
   children: React.ReactNode;
@@ -54,7 +47,7 @@ const sizeClasses: Record<ContainerSize, string> = {
   normal: "max-w-md",
   large: "max-w-3xl",
   full: "max-w-full",
-  readable: "max-w-prose", // good for long text
+  readable: "max-w-prose", 
 };
 
 const paddingClasses: Record<ContainerPadding, string> = {
@@ -83,10 +76,20 @@ export function Container({
   className,
   ...props
 }: ContainerProps) {
-  // If maxWidth is provided, it takes precedence over size
-  const widthClass = maxWidth 
-    ? (typeof maxWidth === 'string' ? maxWidthClasses[maxWidth as keyof typeof maxWidthClasses] : maxWidth)
-    : sizeClasses[size];
+  const maxWidthStyle: React.CSSProperties = {};
+  let widthClass = sizeClasses[size];
+  
+  if (maxWidth) {
+    if (typeof maxWidth === 'string' && maxWidth in maxWidthClasses) {
+      widthClass = maxWidthClasses[maxWidth as keyof typeof maxWidthClasses];
+    } else {
+      if (typeof maxWidth === 'number') {
+        maxWidthStyle.maxWidth = `${maxWidth}px`;
+      } else {
+        maxWidthStyle.maxWidth = maxWidth;
+      }
+    }
+  }
 
   return (
     <div
@@ -98,14 +101,14 @@ export function Container({
         responsive && "px-4 sm:px-6 lg:px-8",
         className
       )}
+      style={maxWidthStyle}
       {...props}
     >
       {children}
     </div>
   );
 }
-
-    ```
+```
   </TabItem>
 </Tabs>
 
@@ -114,13 +117,13 @@ export function Container({
 Import the component:
 
 ```tsx
-import { Container } from './components/ui';
+import { Container } from "@ignix-ui/container";
 ```
 
 ## Basic Usage
 
 ```tsx
-import { Container } from './components/ui';
+import { Container } from "@ignix-ui/container";
 
 function MyComponent() {
   return (
@@ -130,18 +133,6 @@ function MyComponent() {
   );
 }
 ```
-
-## Props
-
-| Prop      | Type                                | Default   | Description                                      |
-|-----------|-------------------------------------|-----------|--------------------------------------------------|
-| size      | 'small' \| 'normal' \| 'large' \| 'full' \| 'readable' | 'normal' | Controls the maximum width of the container      |
-| center    | boolean                             | true      | Whether to center the container horizontally    |
-| padding   | 'none' \| 'small' \| 'normal' \| 'large' \| 'xl' | 'normal' | Controls the padding around the content         |
-| maxWidth  | 'sm' \| 'md' \| 'lg' \| 'xl' \| 'full' \| string | 'lg' | Custom max-width for the container (overrides size) |
-| responsive | boolean                            | true      | Adds responsive padding on the sides            |
-| className | string                              | ''        | Additional CSS classes                          |
-| children  | ReactNode                           | -         | Content to be rendered inside the container     |
 
 ## Examples
 
@@ -177,6 +168,17 @@ function MyComponent() {
 <Container maxWidth="md">Medium max width</Container>
 <Container maxWidth="800px">Custom pixel width</Container>
 ```
+## Props
+
+| Prop      | Type                                | Default   | Description                                      |
+|-----------|-------------------------------------|-----------|--------------------------------------------------|
+| size      | ` "small" \| "normal" \| "large" \| "full" \| "readable" ` | `"normal"` | Controls the maximum width of the container      |
+| center    | `boolean`                             | `true`      | Whether to center the container horizontally    |
+| padding   | ` "none \| small \| normal \| large \| xl" ` | `"normal"` | Controls the padding around the content         |
+| maxWidth  | ` "sm \| md \| lg \| xl \| full \| string" ` | `"lg"` | Custom max-width for the container (overrides size) |
+| responsive | `boolean`                            | `true`      | Adds responsive padding on the sides            |
+| className | `string`                              | `''`        | Additional CSS classes                          |
+| children  | `ReactNode`                           | `-`         | Content to be rendered inside the container     |
 
 ## Best Practices
 
