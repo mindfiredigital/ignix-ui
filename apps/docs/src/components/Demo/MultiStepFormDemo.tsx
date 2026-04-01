@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import type { JSX } from 'react';
 import {
     MultiStepForm,
     type FormStep,
@@ -12,9 +13,9 @@ import { useColorMode } from '@docusaurus/theme-common';
 import {
     PersonIcon,
     EnvelopeClosedIcon,
-    ReaderIcon,           // Replaces BriefcaseIcon (for documents/role)
-    LapTimerIcon,         // Replaces BarChartIcon (for experience/time)
-    ChatBubbleIcon,       // Replaces PhoneIcon (for messages/contact)
+    ReaderIcon,
+    LapTimerIcon,
+    ChatBubbleIcon,
     LockClosedIcon,
     CalendarIcon,
     CardStackIcon,
@@ -27,10 +28,10 @@ import {
     HeartIcon,
     FileTextIcon,
     CodeIcon,
-    DrawingPinIcon,       // Replaces MapPinIcon
-    CrumpledPaperIcon,    // Replaces BuildingIcon (for location/building)
-    BookmarkIcon,         // Replaces BookOpenIcon (for education)
-    PlusIcon,             // Replaces HashIcon (for quantity/count)
+    DrawingPinIcon,
+    CrumpledPaperIcon,
+    BookmarkIcon,
+    PlusIcon,
     CheckCircledIcon,
     CheckIcon,
     LightningBoltIcon,
@@ -236,7 +237,7 @@ const onboardingSteps: FormStep[] = [
                 required: true,
                 icon: PersonIcon,
                 colSpan: 'half',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string' && value.length < 2) {
                         return 'First name must be at least 2 characters';
                     }
@@ -252,7 +253,7 @@ const onboardingSteps: FormStep[] = [
                 required: true,
                 icon: PersonIcon,
                 colSpan: 'half',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string' && value.length < 2) {
                         return 'Last name must be at least 2 characters';
                     }
@@ -268,7 +269,7 @@ const onboardingSteps: FormStep[] = [
                 required: true,
                 icon: EnvelopeClosedIcon,
                 colSpan: 'full',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string') {
                         return validateEmail(value);
                     }
@@ -321,7 +322,7 @@ const onboardingSteps: FormStep[] = [
                 required: false,
                 icon: FileTextIcon,
                 colSpan: 'full',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string' && value.length > 500) {
                         return 'Bio must be less than 500 characters';
                     }
@@ -381,7 +382,7 @@ const registrationSteps: FormStep[] = [
                 required: true,
                 icon: PersonIcon,
                 colSpan: 'full',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string') {
                         if (value.length < 3) {
                             return 'Username must be at least 3 characters';
@@ -402,7 +403,7 @@ const registrationSteps: FormStep[] = [
                 required: true,
                 icon: EnvelopeClosedIcon,
                 colSpan: 'full',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string') {
                         return validateEmail(value);
                     }
@@ -422,7 +423,7 @@ const registrationSteps: FormStep[] = [
                 required: true,
                 icon: LockClosedIcon,
                 colSpan: 'half',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string') {
                         return validatePassword(value);
                     }
@@ -440,7 +441,7 @@ const registrationSteps: FormStep[] = [
                 colSpan: 'half',
             },
         ],
-        validation: (values) => {
+        validation: (values): Record<string, string> => {
             const errors: Record<string, string> = {};
             if (values.password !== values.confirmPassword) {
                 errors.confirmPassword = 'Passwords do not match';
@@ -462,7 +463,7 @@ const registrationSteps: FormStep[] = [
                 required: true,
                 icon: PersonIcon,
                 colSpan: 'half',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string' && value.length < 2) {
                         return 'First name must be at least 2 characters';
                     }
@@ -478,7 +479,7 @@ const registrationSteps: FormStep[] = [
                 required: true,
                 icon: PersonIcon,
                 colSpan: 'half',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string' && value.length < 2) {
                         return 'Last name must be at least 2 characters';
                     }
@@ -494,7 +495,7 @@ const registrationSteps: FormStep[] = [
                 required: false,
                 icon: ChatBubbleIcon,
                 colSpan: 'half',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string' && value) {
                         return validatePhone(value);
                     }
@@ -564,7 +565,7 @@ const paymentSteps: FormStep[] = [
                 required: true,
                 icon: PersonIcon,
                 colSpan: 'full',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string' && value.length < 3) {
                         return 'Please enter your full name';
                     }
@@ -580,7 +581,7 @@ const paymentSteps: FormStep[] = [
                 required: true,
                 icon: HomeIcon,
                 colSpan: 'full',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string' && value.length < 5) {
                         return 'Please enter a valid address';
                     }
@@ -596,7 +597,7 @@ const paymentSteps: FormStep[] = [
                 required: true,
                 icon: CrumpledPaperIcon,
                 colSpan: 'half',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string' && value.length < 2) {
                         return 'Please enter a valid city';
                     }
@@ -612,7 +613,7 @@ const paymentSteps: FormStep[] = [
                 required: true,
                 icon: DrawingPinIcon,
                 colSpan: 'half',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string' && value.length < 2) {
                         return 'Please enter a valid state';
                     }
@@ -628,7 +629,7 @@ const paymentSteps: FormStep[] = [
                 required: true,
                 icon: LayersIcon,
                 colSpan: 'half',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string' && !/^\d{5}(-\d{4})?$/.test(value)) {
                         return 'Please enter a valid ZIP code';
                     }
@@ -644,7 +645,7 @@ const paymentSteps: FormStep[] = [
                 required: true,
                 icon: GlobeIcon,
                 colSpan: 'half',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string' && value.length < 2) {
                         return 'Please enter a valid country';
                     }
@@ -667,7 +668,7 @@ const paymentSteps: FormStep[] = [
                 required: true,
                 icon: CardStackIcon,
                 colSpan: 'full',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string') {
                         return validateCreditCard(value);
                     }
@@ -683,7 +684,7 @@ const paymentSteps: FormStep[] = [
                 required: true,
                 icon: PersonIcon,
                 colSpan: 'full',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string' && value.length < 3) {
                         return 'Please enter the name on card';
                     }
@@ -699,7 +700,7 @@ const paymentSteps: FormStep[] = [
                 required: true,
                 icon: CalendarIcon,
                 colSpan: 'half',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string') {
                         return validateExpiry(value);
                     }
@@ -715,7 +716,7 @@ const paymentSteps: FormStep[] = [
                 required: true,
                 icon: LockClosedIcon,
                 colSpan: 'half',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string') {
                         return validateCVV(value);
                     }
@@ -739,7 +740,7 @@ const paymentSteps: FormStep[] = [
                 defaultValue: false,
                 icon: CheckIcon,
                 colSpan: 'full',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (!value) {
                         return 'You must agree to the terms';
                     }
@@ -777,7 +778,7 @@ const jobSteps: FormStep[] = [
                 required: true,
                 icon: PersonIcon,
                 colSpan: 'full',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string' && value.length < 3) {
                         return 'Please enter your full name';
                     }
@@ -793,7 +794,7 @@ const jobSteps: FormStep[] = [
                 required: true,
                 icon: EnvelopeClosedIcon,
                 colSpan: 'half',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string') {
                         return validateEmail(value);
                     }
@@ -809,7 +810,7 @@ const jobSteps: FormStep[] = [
                 required: true,
                 icon: ChatBubbleIcon,
                 colSpan: 'half',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string') {
                         return validatePhone(value);
                     }
@@ -825,7 +826,7 @@ const jobSteps: FormStep[] = [
                 required: true,
                 icon: DrawingPinIcon,
                 colSpan: 'full',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string' && value.length < 3) {
                         return 'Please enter your location';
                     }
@@ -897,7 +898,7 @@ const jobSteps: FormStep[] = [
                 required: true,
                 icon: CodeIcon,
                 colSpan: 'full',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string') {
                         const skills = value.split(',').filter(s => s.trim().length > 0);
                         if (skills.length < 3) {
@@ -923,7 +924,7 @@ const jobSteps: FormStep[] = [
                 required: false,
                 icon: GlobeIcon,
                 colSpan: 'full',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string' && value) {
                         return validateUrl(value);
                     }
@@ -939,7 +940,7 @@ const jobSteps: FormStep[] = [
                 required: false,
                 icon: GitHubLogoIcon,
                 colSpan: 'full',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string' && value) {
                         return validateUrl(value);
                     }
@@ -955,7 +956,7 @@ const jobSteps: FormStep[] = [
                 required: false,
                 icon: LinkedInLogoIcon,
                 colSpan: 'full',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string' && value) {
                         return validateUrl(value);
                     }
@@ -978,7 +979,7 @@ const jobSteps: FormStep[] = [
                 required: true,
                 icon: FileTextIcon,
                 colSpan: 'full',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string') {
                         if (value.length < 50) {
                             return 'Cover letter must be at least 50 characters';
@@ -1010,7 +1011,7 @@ const jobSteps: FormStep[] = [
                 required: true,
                 icon: CalendarIcon,
                 colSpan: 'full',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string' && value) {
                         const startDate = new Date(value);
                         const today = new Date();
@@ -1041,7 +1042,7 @@ const eventSteps: FormStep[] = [
                 required: true,
                 icon: PersonIcon,
                 colSpan: 'full',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string' && value.length < 3) {
                         return 'Please enter your full name';
                     }
@@ -1057,7 +1058,7 @@ const eventSteps: FormStep[] = [
                 required: true,
                 icon: EnvelopeClosedIcon,
                 colSpan: 'full',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string') {
                         return validateEmail(value);
                     }
@@ -1181,7 +1182,7 @@ const eventSteps: FormStep[] = [
                 colSpan: 'full',
             },
         ],
-        validation: (values) => {
+        validation: (values): Record<string, string> => {
             const errors: Record<string, string> = {};
             const selectedWorkshops = ['workshop1', 'workshop2', 'workshop3'].filter(w => values[w]);
             if (selectedWorkshops.length === 0) {
@@ -1208,7 +1209,7 @@ const profileSteps: FormStep[] = [
                 required: true,
                 icon: PersonIcon,
                 colSpan: 'full',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string') {
                         if (value.length < 3) {
                             return 'Display name must be at least 3 characters';
@@ -1229,7 +1230,7 @@ const profileSteps: FormStep[] = [
                 required: false,
                 icon: FileTextIcon,
                 colSpan: 'full',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string' && value.length > 500) {
                         return 'Bio must be less than 500 characters';
                     }
@@ -1255,7 +1256,7 @@ const profileSteps: FormStep[] = [
                 required: false,
                 icon: GlobeIcon,
                 colSpan: 'half',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string' && value) {
                         return validateUrl(value);
                     }
@@ -1278,7 +1279,7 @@ const profileSteps: FormStep[] = [
                 required: false,
                 icon: LinkedInLogoIcon,
                 colSpan: 'full',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string' && value) {
                         return validateUrl(value);
                     }
@@ -1294,7 +1295,7 @@ const profileSteps: FormStep[] = [
                 required: false,
                 icon: GitHubLogoIcon,
                 colSpan: 'full',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string' && value) {
                         return validateUrl(value);
                     }
@@ -1310,7 +1311,7 @@ const profileSteps: FormStep[] = [
                 required: false,
                 icon: LinkedInLogoIcon,
                 colSpan: 'full',
-                validation: (value) => {
+                validation: (value): string | undefined => {
                     if (typeof value === 'string' && value) {
                         return validateUrl(value);
                     }
@@ -1354,12 +1355,12 @@ const profileSteps: FormStep[] = [
 ];
 
 // Helper component
-const Step = ({ _step, children }: { step: number; children: React.ReactNode }) => {
+const Step = ({ step: _step, children }: { step: number; children: React.ReactNode }): JSX.Element => {
     return <>{children}</>;
 };
 
 // Handle submit
-const handleSubmit = async (data: any) => {
+const handleSubmit = async (data: any): Promise<void> => {
     console.log('Form submitted:', data);
     await new Promise(resolve => setTimeout(resolve, 1500));
 };
@@ -1368,7 +1369,7 @@ const handleSubmit = async (data: any) => {
 // MAIN COMPREHENSIVE DEMO
 // ==============================
 
-export const MultiStepFormDemo = () => {
+export const MultiStepFormDemo = (): JSX.Element => {
     const { colorMode } = useColorMode();
 
     // Core state
@@ -1409,7 +1410,7 @@ export const MultiStepFormDemo = () => {
     }, [formType, themeVariant, animationVariant, inputVariant, buttonVariant]);
 
     // Handle theme change
-    const handleThemeChange = (value: string) => {
+    const handleThemeChange = (value: string): void => {
         setThemeVariant(value as ThemeVariant);
         setDarkMode(value === 'dark');
         setUserChangedTheme(true);
@@ -1431,7 +1432,7 @@ export const MultiStepFormDemo = () => {
     const steps = getCurrentSteps();
     const CurrentIcon = formIcons[formType];
 
-    const buildCodeString = () => {
+    const buildCodeString = (): string => {
         const iconName = iconNames[formType];
         const currentSteps = getCurrentSteps();
 
@@ -1557,7 +1558,7 @@ const ${formType}Steps: FormStep[] = [
                     <VariantSelector
                         variants={formTypeOptions.map(o => o.value)}
                         selectedVariant={formType}
-                        onSelectVariant={(value) => setFormType(value as FormType)}
+                        onSelectVariant={(value): void => setFormType(value as FormType)}
                         type="Form Type"
                         variantLabels={Object.fromEntries(formTypeOptions.map(o => [o.value, o.label]))}
                     />
@@ -1577,7 +1578,7 @@ const ${formType}Steps: FormStep[] = [
                     <VariantSelector
                         variants={animationTypes as unknown as string[]}
                         selectedVariant={animationVariant}
-                        onSelectVariant={(value) => setAnimationVariant(value as AnimationVariant)}
+                        onSelectVariant={(value): void => setAnimationVariant(value as AnimationVariant)}
                         type="Animation"
                         variantLabels={{
                             fadeUp: 'Fade Up',
@@ -1593,7 +1594,7 @@ const ${formType}Steps: FormStep[] = [
                     <VariantSelector
                         variants={inputVariantOptions.map(o => o.value)}
                         selectedVariant={inputVariant}
-                        onSelectVariant={(value) => setInputVariant(value as InputVariant)}
+                        onSelectVariant={(value): void => setInputVariant(value as InputVariant)}
                         type="Input"
                         variantLabels={Object.fromEntries(inputVariantOptions.map(o => [o.value, o.label]))}
                     />
@@ -1603,7 +1604,7 @@ const ${formType}Steps: FormStep[] = [
                     <VariantSelector
                         variants={buttonVariantOptions.map(o => o.value)}
                         selectedVariant={buttonVariant}
-                        onSelectVariant={(value) => setButtonVariant(value as ButtonVariant)}
+                        onSelectVariant={(value): void => setButtonVariant(value as ButtonVariant)}
                         type="Button"
                         variantLabels={Object.fromEntries(buttonVariantOptions.map(o => [o.value, o.label]))}
                     />
@@ -1618,7 +1619,7 @@ const ${formType}Steps: FormStep[] = [
                     <input
                         type="checkbox"
                         checked={showReviewStep}
-                        onChange={(e) => setShowReviewStep(e.target.checked)}
+                        onChange={(e): void => setShowReviewStep(e.target.checked)}
                         className="rounded text-primary"
                     />
                     <span className={cn(
@@ -1631,7 +1632,7 @@ const ${formType}Steps: FormStep[] = [
                     <input
                         type="checkbox"
                         checked={showStepIndicator}
-                        onChange={(e) => setShowStepIndicator(e.target.checked)}
+                        onChange={(e): void => setShowStepIndicator(e.target.checked)}
                         className="rounded text-primary"
                     />
                     <span className={cn(
@@ -1644,7 +1645,7 @@ const ${formType}Steps: FormStep[] = [
                     <input
                         type="checkbox"
                         checked={showCancelButton}
-                        onChange={(e) => setShowCancelButton(e.target.checked)}
+                        onChange={(e): void => setShowCancelButton(e.target.checked)}
                         className="rounded text-primary"
                     />
                     <span className={cn(
@@ -1657,7 +1658,7 @@ const ${formType}Steps: FormStep[] = [
                     <input
                         type="checkbox"
                         checked={showSuccessNotification}
-                        onChange={(e) => setShowSuccessNotification(e.target.checked)}
+                        onChange={(e): void => setShowSuccessNotification(e.target.checked)}
                         className="rounded text-primary"
                     />
                     <span className={cn(
@@ -1670,7 +1671,7 @@ const ${formType}Steps: FormStep[] = [
                     <input
                         type="checkbox"
                         checked={darkMode}
-                        onChange={(e) => {
+                        onChange={(e): void => {
                             setDarkMode(e.target.checked);
                             setThemeVariant(e.target.checked ? 'dark' : 'default');
                             setUserChangedTheme(true);
@@ -1689,7 +1690,7 @@ const ${formType}Steps: FormStep[] = [
                 <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setIsSubmitting(!isSubmitting)}
+                    onClick={(): void => setIsSubmitting(!isSubmitting)}
                     className="cursor-pointer mx-1"
                 >
                     {isSubmitting ? 'Stop Submitting' : 'Show Submitting State'}
@@ -1697,7 +1698,7 @@ const ${formType}Steps: FormStep[] = [
                 <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => {
+                    onClick={(): void => {
                         setFormType('onboarding');
                         setThemeVariant('default');
                         setAnimationVariant('fadeUp');

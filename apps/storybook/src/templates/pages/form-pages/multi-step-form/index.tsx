@@ -1346,7 +1346,7 @@ export interface MultiStepNavigationProps {
     className?: string;
 }
 // Add this type alias near your other types
-export type ButtonVariant = "default" | "link" | "primary" | "secondary" | "success" | "warning" | "none" | "danger" | "outline" | "ghost" | "subtle" | "elevated" | "glass" | "neon" | "pill";
+export type ButtonVariant = "default" | "link" | "primary" | "secondary" | "success" | "warning" | "none" | "danger" | "outline" | "ghost" | "subtle" | "elevated" | "glass" | "neon";
 
 /**
  * MultiStepNavigation - Navigation controls for moving between form steps
