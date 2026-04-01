@@ -6,7 +6,7 @@ import {
   ExclamationTriangleIcon,
   InfoCircledIcon,
 } from '@radix-ui/react-icons';
-import { ToastVariantTypes, ToastAnimationTypes } from './types';
+import type { ToastVariantTypes, ToastAnimationTypes } from './types';
 import { cn } from '../../../utils/cn';
 
 interface ToastContainerData {
@@ -40,7 +40,7 @@ interface ToastContainerData {
 interface ToastNotificationProps extends ToastContainerData {
   onClose: (id: number) => void;
   timeoutMapRef: React.RefObject<Map<number, ReturnType<typeof setTimeout>>>;
-  index: number; // Add index for proper positioning
+  index: number;
 }
 
 export type ToastDataArgs = Omit<ToastContainerData, 'id'>;
@@ -53,40 +53,39 @@ export interface ToastManagerRef {
 
 const variantColors = {
   success: {
-    primary: 'hsl(142.1, 76.2%, 36.3%)',
-    secondary: 'hsl(142.1, 70.6%, 45.3%)',
-    light: 'hsl(143, 85%, 96%)',
-    dark: 'hsl(144.9, 80.4%, 10%)',
+    primary: 'var(--success-dark)',
+    secondary: 'var(--success-light)',
+    light: 'var(--success-light)',
+    dark: 'var(--success-dark)',
   },
   error: {
-    primary: 'hsl(0, 84.2%, 60.2%)',
-    secondary: 'hsl(0, 84.2%, 60.2%)',
-    light: 'hsl(0, 100%, 98%)',
-    dark: 'hsl(0, 72.2%, 50.6%)',
+    primary: 'var(--destructive-light)',
+    secondary: 'var(--destructive-light)',
+    light: 'var(--destructive-light)',
+    dark: 'var(--destructive-dark)',
   },
   warning: {
-    primary: 'hsl(38, 92%, 50%)',
-    secondary: 'hsl(32, 94.6%, 43.7%)',
-    light: 'hsl(48, 100%, 96.1%)',
-    dark: 'hsl(20, 90.2%, 48.2%)',
+    primary: 'var(--warning-dark)',
+    secondary: 'var(--warning-light)',
+    light: 'var(--warning-light)',
+    dark: 'var(--warning-dark)',
   },
   info: {
-    primary: 'hsl(221.2, 83.2%, 53.3%)',
-    secondary: 'hsl(222.2, 89.8%, 61.8%)',
-    light: 'hsl(210, 100%, 98%)',
-    dark: 'hsl(224.3, 76.3%, 48%)',
+    primary: 'var(--info)',
+    secondary: 'var(--info-light)',
+    light: 'var(--info-light)',
+    dark: 'var(--info-dark)',
   },
   default: {
-    primary: 'rgb(100, 116, 139)',
-    secondary: 'rgb(71, 85, 105)',
-    light: 'rgb(248, 250, 252)',
-    dark: 'rgb(51, 65, 85)',
+    primary: 'var(--muted-foreground)',
+    secondary: 'var(--muted)',
+    light: 'var(--muted)',
+    dark: 'var(--muted-foreground)',
   },
 };
 
 export const ToastContext = React.createContext<ToastManagerRef | undefined>(undefined);
 
-// FIXED: Enhanced animation variants with proper positioning
 const animationVariants: Record<ToastAnimationTypes, Variants> = {
   slide: {
     hidden: {
@@ -105,7 +104,7 @@ const animationVariants: Record<ToastAnimationTypes, Variants> = {
         stiffness: 300,
         damping: 25,
         mass: 0.8,
-        delay: index * 0.1, // Stagger animation based on position
+        delay: index * 0.1,
       },
     }),
     exit: {
@@ -181,7 +180,7 @@ const animationVariants: Record<ToastAnimationTypes, Variants> = {
     },
     visible: (index: number) => ({
       opacity: 1,
-      scale: [0, 1.1, 1],
+      scale: 1,
       filter: 'brightness(1)',
       transition: {
         type: 'spring',
@@ -209,7 +208,7 @@ const animationVariants: Record<ToastAnimationTypes, Variants> = {
     },
     visible: (index: number) => ({
       opacity: 1,
-      scale: [0, 1.2, 0.9, 1.05, 1],
+      scale: 1,
       x: 0,
       transition: {
         type: 'spring',
@@ -258,12 +257,12 @@ const animationVariants: Record<ToastAnimationTypes, Variants> = {
   },
 };
 
-// Enhanced variant styles (same as before)
-// Helper function to get enhanced variant styles
+const withAlpha = (cssVar: string, alpha: number): string =>
+  `color-mix(in srgb, ${cssVar} ${Math.round(alpha * 100)}%, transparent)`;
+
 const getEnhancedVariantStyles = (
   appearance: ToastContainerData['appearance'],
   variant: ToastVariantTypes,
-  gradientColor: string,
   size: 'sm' | 'md' | 'lg' = 'md'
 ): { className: string; style: React.CSSProperties } => {
   const sizeStyles = {
@@ -283,65 +282,104 @@ const getEnhancedVariantStyles = (
   switch (appearance) {
     case 'premium':
       return {
-        className: cn(
-          baseStyles,
-          'bg-gradient-to-br from-background to-muted/20',
-          'border-border/40 shadow-2xl'
-        ),
+        className: cn(baseStyles, 'shadow-2xl'),
         style: {
-          background: `
-            linear-gradient(135deg,
-              ${colors.light} 0%,
-              ${colors.primary}10 50%,
-              ${colors.secondary}10 100%
-            )
-          `,
+          background: `linear-gradient(135deg, var(--card) 0%, ${withAlpha(colors.primary, 0.08)} 100%)`,
+          border: `1px solid ${withAlpha(colors.primary, 0.25)}`,
           borderLeft: `4px solid ${colors.primary}`,
           boxShadow: `
-            0 20px 25px -5px rgba(0,0,0,0.1),
-            0 10px 10px -5px rgba(0,0,0,0.04),
-            0 0 0 1px ${colors.primary}20,
-            inset 0 1px 0 rgba(255,255,255,0.1)
+            0 20px 25px -5px ${withAlpha(colors.primary, 0.18)},
+            0 8px 10px -6px ${withAlpha(colors.primary, 0.1)},
+            inset 0 1px 0 ${withAlpha('var(--primary-foreground)', 0.06)}
           `,
+          color: 'var(--card-foreground)',
         },
       };
-      
 
     case 'gradient':
-    default: {
-      const parsedColor = gradientColor.includes('rgb') ? gradientColor : colors.primary;
       return {
-        className: baseStyles,
+        className: cn(baseStyles, 'border-0'),
         style: {
-          borderLeft: `4px solid ${parsedColor}`,
-          background: `
-            linear-gradient(135deg, 
-              ${createEnhancedGradient(parsedColor)} 0%, 
-              ${parsedColor}20 100%
-            )
-          `,
+          background: `linear-gradient(135deg, ${withAlpha(colors.primary, 0.9)} 0%, ${withAlpha(colors.secondary, 0.95)} 100%)`,
+          border: `1px solid ${withAlpha(colors.primary, 0.3)}`,
           boxShadow: `
-            0 10px 15px -3px rgba(0,0,0,0.1),
-            0 4px 6px -2px rgba(0,0,0,0.05),
-            0 0 0 1px ${parsedColor}20
+            0 12px 28px -5px ${withAlpha(colors.primary, 0.5)},
+            0 4px 10px -5px ${withAlpha(colors.primary, 0.3)},
+            inset 0 1px 0 rgba(255,255,255,0.2),
+            inset 0 -1px 0 rgba(0,0,0,0.1)
           `,
-          color: 'hsl(0, 0%, 100%)', // Ensure text is always readable
+          color: 'var(--primary-foreground)',
         },
       };
-    }
+
+    case 'glassmorphism':
+      return {
+        className: cn(baseStyles),
+        style: {
+          background: `linear-gradient(135deg, ${withAlpha('var(--card)', 0.6)} 0%, ${withAlpha(colors.primary, 0.08)} 100%)`,
+          backdropFilter: 'blur(16px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+          border: `1px solid ${withAlpha('var(--border)', 0.6)}`,
+          borderTop: `1px solid ${withAlpha('var(--border)', 0.8)}`,
+          borderLeft: `2px solid ${withAlpha(colors.primary, 0.5)}`,
+          boxShadow: `
+            0 8px 32px -4px ${withAlpha(colors.primary, 0.2)},
+            0 2px 8px -2px ${withAlpha('var(--foreground)', 0.1)},
+            inset 0 1px 0 ${withAlpha('var(--primary-foreground)', 0.08)}
+          `,
+          color: 'var(--card-foreground)',
+        },
+      };
+
+    case 'neon':
+      return {
+        className: cn(baseStyles),
+        style: {
+          background: `linear-gradient(135deg, var(--background) 0%, ${withAlpha(colors.primary, 0.15)} 100%)`,
+          border: `1px solid ${withAlpha(colors.primary, 0.7)}`,
+          borderLeft: `3px solid ${colors.primary}`,
+          boxShadow: `
+            0 0 0 1px ${withAlpha(colors.primary, 0.3)},
+            0 0 12px 2px ${withAlpha(colors.primary, 0.35)},
+            0 0 30px 4px ${withAlpha(colors.primary, 0.15)},
+            inset 0 0 20px 0px ${withAlpha(colors.primary, 0.07)}
+          `,
+          color: 'var(--foreground)',
+          textShadow: `0 0 8px ${withAlpha(colors.primary, 0.8)}`,
+        },
+      };
+
+    case 'glow':
+      return {
+        className: cn(baseStyles, 'shadow-2xl'),
+        style: {
+          background: `linear-gradient(135deg, var(--card) 0%, ${withAlpha(colors.primary, 0.06)} 50%)`,
+          border: `1px solid ${withAlpha(colors.primary, 0.3)}`,
+          boxShadow: `
+            0 0 0 1px ${withAlpha(colors.primary, 0.15)},
+            0 0 20px 4px ${withAlpha(colors.primary, 0.25)},
+            0 0 60px 8px ${withAlpha(colors.primary, 0.1)},
+            0 10px 25px -5px ${withAlpha(colors.primary, 0.3)},
+            inset 0 1px 0 ${withAlpha('var(--primary-foreground)', 0.06)}
+          `,
+          color: 'var(--card-foreground)',
+        },
+      };
+
+    default:
+      return {
+        className: cn(baseStyles, 'shadow-xl'),
+        style: {
+          background: 'var(--card)',
+          border: `1px solid ${withAlpha(colors.primary, 0.2)}`,
+          borderLeft: `4px solid ${colors.primary}`,
+          boxShadow: `0 10px 15px -3px ${withAlpha(colors.primary, 0.1)}`,
+          color: 'var(--card-foreground)',
+        },
+      };
   }
 };
 
-const createEnhancedGradient = (color: string) => {
-  if (!color.includes('rgb')) return 'rgba(59, 130, 246, 0.1)';
-
-  const arr = color.slice(color.indexOf('(') + 1, color.indexOf(')')).split(',');
-  if (arr.length > 3) arr.pop();
-
-  return `rgba(${arr.join(',')}, 0.08)`;
-};
-
-// FIXED: Position configurations
 const positionConfig = {
   'top-right': 'top-4 right-4',
   'top-left': 'top-4 left-4',
@@ -387,7 +425,7 @@ export const ToastProvider = ({
         mode,
         icon,
         appearance = 'premium',
-        gradientColor = 'var(--primary)',
+        gradientColor,
         duration = 4000,
         size = 'md',
         position = defaultPosition,
@@ -406,7 +444,10 @@ export const ToastProvider = ({
         mode,
         icon,
         appearance,
-        gradientColor,
+        gradientColor:
+          gradientColor ??
+          variantColors[variant as keyof typeof variantColors]?.primary ??
+          variantColors.default.primary,
         duration,
         size,
         position,
@@ -418,26 +459,23 @@ export const ToastProvider = ({
       };
 
       setToasts((prevToasts) => {
-        // FIXED: Always add new toasts to the beginning (top)
         let updatedToasts = [newToast, ...prevToasts];
 
-        // Handle priority-based insertion
         if (priority === 'urgent') {
           const urgentToasts = [newToast];
           const nonUrgentToasts = prevToasts.filter((t) => t.priority !== 'urgent');
           updatedToasts = [...urgentToasts, ...nonUrgentToasts];
         }
 
-        // Remove excess toasts from the end (bottom)
         if (updatedToasts.length > maxToasts) {
-          const toRemove = updatedToasts.slice(maxToasts);
-          toRemove.forEach((toast) => {
-            const timeout = timeoutMapRef.current.get(toast.id);
+          const overflow = updatedToasts[maxToasts];
+          if (overflow) {
+            const timeout = timeoutMapRef.current.get(overflow.id);
             if (timeout) {
               clearTimeout(timeout);
-              timeoutMapRef.current.delete(toast.id);
+              timeoutMapRef.current.delete(overflow.id);
             }
-          });
+          }
           updatedToasts = updatedToasts.slice(0, maxToasts);
         }
 
@@ -447,47 +485,49 @@ export const ToastProvider = ({
     [maxToasts, defaultPosition]
   );
 
+  const positionGroups = toasts.reduce<Record<string, ToastContainerData[]>>(
+    (acc, toast) => {
+      const pos = toast.position ?? defaultPosition;
+      if (!acc[pos]) acc[pos] = [];
+      acc[pos].push(toast);
+      return acc;
+    },
+    {}
+  );
+
   return (
     <ToastContext.Provider value={{ addToast, removeToast, clearAll }}>
       {children}
-      {/* FIXED: Container with proper flex layout */}
-      <div
-        className={cn(
-          'fixed flex flex-col gap-3 pointer-events-none',
-          'z-[9999]', // Increased z-index to ensure it's above other content
-          positionConfig[defaultPosition],
-          'backdrop-blur-sm'
-        )}
-        style={
-          {
-            '--primary': variantColors.default.primary,
-            '--primary-foreground': 'hsl(0, 0%, 100%)',
-          } as React.CSSProperties
-        }
-      >
-        {/* FIXED: Use proper AnimatePresence with layout */}
-        <AnimatePresence mode="popLayout" initial={false}>
-          {toasts.map((toast, index) => (
-            <motion.div
-              key={toast.id}
-              layout // CRITICAL: This ensures proper repositioning
-              className="pointer-events-auto"
-            >
-              <Toast
-                {...toast}
-                index={index} // Pass index for staggered animations
-                onClose={removeToast}
-                timeoutMapRef={timeoutMapRef}
-              />
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
+      {(Object.entries(positionGroups) as [keyof typeof positionConfig, ToastContainerData[]][]).map(
+        ([position, group]) => (
+          <div
+            key={position}
+            className={cn(
+              'fixed flex flex-col gap-3 pointer-events-none z-[9999]',
+              positionConfig[position]
+            )}
+          >
+            <AnimatePresence initial={false}>
+              {group.map((toast, index) => (
+                <motion.div key={toast.id} layout="position" className="pointer-events-auto">
+                  <Toast
+                    {...toast}
+                    index={index}
+                    onClose={removeToast}
+                    timeoutMapRef={timeoutMapRef}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        )
+      )}
     </ToastContext.Provider>
   );
 };
 
-// FIXED: Enhanced Toast Component with proper index handling
+const TICK = 50;
+
 const Toast = ({
   message,
   onClose,
@@ -497,102 +537,106 @@ const Toast = ({
   mode = 'light',
   icon,
   appearance = 'premium',
-  gradientColor = 'rgb(59, 130, 246)',
   duration = 4000,
   size = 'md',
   showProgress = true,
   pauseOnHover = true,
   actionButton,
   dismissible = true,
-  index, // FIXED: Accept index prop
+  index,
   timeoutMapRef,
 }: ToastNotificationProps) => {
   const [isPaused, setIsPaused] = useState(false);
   const [progress, setProgress] = useState(100);
 
-  const progressRef = useRef<number>(100);
-  const intervalRef = useRef<ReturnType<typeof setInterval>>(null);
+  const remainingRef = useRef<number>(duration);
+  const lastTickRef = useRef<number>(Date.now());
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Default icons for variants
+  const scheduleTimeout = useCallback(
+    (remaining: number) => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => onClose(id), remaining);
+      timeoutMapRef.current?.set(id, timeoutRef.current);
+    },
+    [id, onClose, timeoutMapRef]
+  );
+  useEffect(() => {
+    if (!showProgress || duration <= 0 || isPaused) return;
+
+    lastTickRef.current = Date.now();
+
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const elapsed = now - lastTickRef.current;
+      lastTickRef.current = now;
+
+      remainingRef.current = Math.max(0, remainingRef.current - elapsed);
+      setProgress((remainingRef.current / duration) * 100);
+    }, TICK);
+
+    return () => clearInterval(interval);
+  }, [isPaused, duration, showProgress]);
+
+  useEffect(() => {
+    if (duration <= 0) return;
+
+    if (isPaused) {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+        timeoutMapRef.current?.delete(id);
+      }
+    } else {
+      scheduleTimeout(remainingRef.current);
+    }
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+        timeoutMapRef.current?.delete(id);
+      }
+    };
+  }, [isPaused, duration, id, scheduleTimeout, timeoutMapRef]);
+
+  const handleMouseEnter = () => {
+    if (pauseOnHover) setIsPaused(true);
+  };
+
+  const handleMouseLeave = () => {
+    if (pauseOnHover) setIsPaused(false);
+  };
+
   const getDefaultIcon = (variant: ToastVariantTypes) => {
     const iconClass = 'h-5 w-5';
     switch (variant) {
       case 'success':
-        return <CheckCircledIcon className={cn(iconClass, 'text-emerald-500')} />;
+        return <CheckCircledIcon className={iconClass} style={{ color: 'var(--success-light)' }} />;
       case 'error':
-        return <CrossCircledIcon className={cn(iconClass, 'text-red-500')} />;
+        return <CrossCircledIcon className={iconClass} style={{ color: 'var(--destructive-light)' }} />;
       case 'warning':
-        return <ExclamationTriangleIcon className={cn(iconClass, 'text-amber-500')} />;
+        return <ExclamationTriangleIcon className={iconClass} style={{ color: 'var(--warning-light)' }} />;
       case 'info':
-        return <InfoCircledIcon className={cn(iconClass, 'text-blue-500')} />;
+        return <InfoCircledIcon className={iconClass} style={{ color: 'var(--info-light)' }} />;
       default:
-        return <InfoCircledIcon className={cn(iconClass, 'text-(var(--primary))')} />;
+        return <InfoCircledIcon className={iconClass} style={{ color: 'var(--primary)' }} />;
     }
   };
 
   const displayIcon = icon || getDefaultIcon(variant);
-  const styles = getEnhancedVariantStyles(appearance, variant, gradientColor, size);
-
-  // Progress bar logic
-  useEffect(() => {
-    if (!showProgress || duration <= 0) return;
-
-    const interval = 50;
-    const step = (100 / duration) * interval;
-
-    intervalRef.current = setInterval(() => {
-      if (!isPaused) {
-        progressRef.current = Math.max(0, progressRef.current - step);
-        setProgress(progressRef.current);
-
-        if (progressRef.current <= 0) {
-          onClose(id);
-        }
-      }
-    }, interval);
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [duration, isPaused, showProgress, id, onClose]);
-
-  // Auto-close timeout
-  useEffect(() => {
-    if (duration <= 0) return;
-
-    const timeoutId = setTimeout(() => onClose(id), duration);
-    timeoutMapRef.current?.set(id, timeoutId);
-
-    return () => {
-      clearTimeout(timeoutId);
-      timeoutMapRef.current?.delete(id);
-    };
-  }, [duration, id, onClose, timeoutMapRef]);
-
-  const handleMouseEnter = () => {
-    if (pauseOnHover) {
-      setIsPaused(true);
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (pauseOnHover) {
-      setIsPaused(false);
-    }
-  };
+  const styles = getEnhancedVariantStyles(appearance, variant, size);
 
   return (
     <motion.div
       className={styles.className}
-      style={styles.style}
+      style={{ ...styles.style, pointerEvents: 'auto' }}
       variants={animationVariants[animation]}
       initial="hidden"
       animate="visible"
       exit="exit"
-      custom={index} // FIXED: Pass index to animation variants
-      layout="position" // FIXED: Only animate position changes
+      custom={index}
+      layout="position"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       whileHover={{
@@ -602,10 +646,10 @@ const Toast = ({
       aria-live="assertive"
       role="alert"
     >
-      {/* Progress Bar */}
       {showProgress && duration > 0 && (
         <motion.div
-          className="absolute top-0 left-0 h-1 bg-gradient-to-r from-primary/60 to-primary rounded-t-xl"
+          className="absolute top-0 left-0 h-1 rounded-t-xl"
+          style={{ background: 'rgba(0,0,0,0.2)' }}
           initial={{ width: '100%' }}
           animate={{ width: `${progress}%` }}
           transition={{ duration: 0.1, ease: 'linear' }}
@@ -613,7 +657,6 @@ const Toast = ({
       )}
 
       <div className="flex items-start gap-3 relative z-[1]">
-        {/* Icon */}
         <motion.div
           className="flex-shrink-0 mt-0.5"
           initial={{ scale: 0, rotate: -180 }}
@@ -628,13 +671,10 @@ const Toast = ({
           {displayIcon}
         </motion.div>
 
-        {/* Content */}
         <div className="flex-1 min-w-0">
           <motion.p
-            className={cn(
-              'text-sm font-medium leading-relaxed',
-              mode === 'dark' ? 'text-card-foreground' : 'text-foreground'
-            )}
+            className="text-sm font-medium leading-relaxed"
+            style={{ color: mode === 'dark' ? 'var(--foreground)' : 'inherit' }}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -642,14 +682,10 @@ const Toast = ({
             {message}
           </motion.p>
 
-          {/* Action Button */}
           {actionButton && (
             <motion.button
-              className={cn(
-                'mt-2 px-3 py-1 text-xs font-medium rounded-md',
-                'bg-primary/10 hover:bg-primary/20 text-primary',
-                'transition-colors duration-200'
-              )}
+              className="mt-2 px-3 py-1 text-xs font-medium rounded-md transition-colors duration-200"
+              style={{ background: withAlpha('var(--foreground)', 0.1), color: 'inherit' }}
               onClick={actionButton.onClick}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -662,19 +698,19 @@ const Toast = ({
           )}
         </div>
 
-        {/* Close Button */}
         {dismissible && (
           <motion.button
             onClick={() => onClose(id)}
-            className={cn(
-              'flex-shrink-0 p-1 rounded-md transition-all duration-200',
-              'hover:bg-black/10 dark:hover:bg-white/10',
-              'text-muted-foreground hover:text-foreground'
-            )}
+            className="flex-shrink-0 p-1 rounded-md transition-all duration-200"
+            style={{
+              color: 'inherit',
+              opacity: 0.6,
+              background: 'transparent',
+            }}
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.4 }}
-            whileHover={{ scale: 1.1 }}
+            whileHover={{ scale: 1.1, background: withAlpha('var(--foreground)', 0.1) }}
             whileTap={{ scale: 0.9 }}
             aria-label="Close notification"
           >
@@ -686,7 +722,6 @@ const Toast = ({
   );
 };
 
-// Enhanced hook for using toasts
 export const useToast = () => {
   const context = React.useContext(ToastContext);
   if (!context) {
