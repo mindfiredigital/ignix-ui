@@ -30,35 +30,35 @@ describe("Spacer", () => {
   });
 
   describe("token sizes — horizontal direction", () => {
-    it("horizontal direction applies w-0 alongside height class", () => {
+    it("horizontal direction applies h-0 alongside height class", () => {
       const { container } = render(<Spacer size="md" direction="horizontal" />);
       expect(container.firstChild).toHaveClass("h-0");
     });
   });
 
-describe("custom sizes", () => {
-  it("applies inline height for custom string size (vertical)", () => {
-    const { container } = render(<Spacer size={"48px" as any} direction="vertical" />);
-    expect(container.firstChild).toHaveStyle({ height: "48px" });
-    expect(container.firstChild).not.toHaveStyle({ width: "48px" });
-  });
+  describe("custom sizes", () => {
+    it("applies inline height for custom string size (vertical)", () => {
+      const { container } = render(<Spacer size={"48px" as any} direction="vertical" />);
+      expect(container.firstChild).toHaveStyle({ height: "48px" });
+      expect(container.firstChild).not.toHaveStyle({ width: "48px" });
+    });
 
-  it("applies inline width for custom string size (horizontal)", () => {
-    const { container } = render(<Spacer size={"2rem" as any} direction="horizontal" />);
-    expect(container.firstChild).toHaveStyle({ width: "2rem" });
-    expect(container.firstChild).not.toHaveStyle({ height: "2rem" });
-  });
+    it("applies inline width for custom string size (horizontal)", () => {
+      const { container } = render(<Spacer size={"2rem" as any} direction="horizontal" />);
+      expect(container.firstChild).toHaveStyle({ width: "2rem" });
+      expect(container.firstChild).not.toHaveStyle({ height: "2rem" });
+    });
 
-  it("applies both dimensions for direction='both'", () => {
-    const { container } = render(<Spacer size={"32px" as any} direction="both" />);
-    expect(container.firstChild).toHaveStyle({ height: "32px", width: "32px" });
-  });
+    it("applies both dimensions for direction='both'", () => {
+      const { container } = render(<Spacer size={"32px" as any} direction="both" />);
+      expect(container.firstChild).toHaveStyle({ height: "32px", width: "32px" });
+    });
 
-  it("converts bare numeric string to px", () => {
-    const { container } = render(<Spacer size={"16" as any} direction="vertical" />);
-    expect(container.firstChild).toHaveStyle({ height: "16px" });
+    it("converts bare numeric string to px", () => {
+      const { container } = render(<Spacer size={"16" as any} direction="vertical" />);
+      expect(container.firstChild).toHaveStyle({ height: "16px" });
+    });
   });
-});
 
   describe("custom className", () => {
     it("merges custom className", () => {
