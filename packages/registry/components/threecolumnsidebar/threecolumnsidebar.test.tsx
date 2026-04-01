@@ -604,7 +604,7 @@ describe("CVA variant classes", () => {
       <ThreeColumnSidebar links={defaultLinks} position="left" direction="horizontal" />,
       { left: true }
     );
-    const root = container.querySelector("div") as HTMLElement;
+    const root = container.querySelector("nav") as HTMLElement;
     expect(root.className).toContain("flex-row");
   });
 
@@ -613,7 +613,7 @@ describe("CVA variant classes", () => {
       <ThreeColumnSidebar links={defaultLinks} position="left" direction="vertical" />,
       { left: true }
     );
-    const root = container.querySelector("div") as HTMLElement;
+    const root = container.querySelector("nav") as HTMLElement;
     expect(root.className).toContain("flex-col");
   });
 });
