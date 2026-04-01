@@ -1,53 +1,112 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
-import React from "react";
 import { Container } from "./index";
 
-describe("Container", () => {
-  it("renders children correctly", () => {
-    render(<Container>hello world</Container>);
-    expect(screen.getByText("hello world")).toBeInTheDocument();
+const getRoot = () => screen.getByTestId("container");
+
+function renderContainer(props = {}, children = <span>content</span>) {
+  return render(
+    <Container data-testid="container" {...props}>
+      {children}
+    </Container>
+  );
+}
+
+describe("Container rendering", () => {
+  it("renders children", () => {
+    renderContainer({}, <p>Hello World</p>);
+    expect(screen.getByText("Hello World")).toBeInTheDocument();
   });
 
-  it("applies size classes", () => {
-    const { container } = render(<Container size="large">content</Container>);
-    expect(container.firstChild).toHaveClass("max-w-3xl");
+  it("renders a <div> by default", () => {
+    renderContainer();
+    expect(getRoot().tagName).toBe("DIV");
   });
 
-  it("applies padding classes", () => {
-    const { container } = render(<Container padding="xl">content</Container>);
-    expect(container.firstChild).toHaveClass("p-8");
+  it("always carries the w-full class", () => {
+    renderContainer();
+    expect(getRoot()).toHaveClass("w-full");
+  });
+});
+
+describe("Container size prop", () => {
+  const cases: Array<[string, string]> = [
+    ["small", "max-w-sm"],
+    ["normal", "max-w-md"],
+    ["large", "max-w-3xl"],
+    ["full", "max-w-full"],
+    ["readable", "max-w-prose"],
+  ];
+
+  it.each(cases)('size="%s" applies class "%s"', (size, expected) => {
+    renderContainer({ size });
+    expect(getRoot()).toHaveClass(expected);
   });
 
-  it("applies maxWidth predefined class", () => {
-    const { container } = render(<Container maxWidth="sm">content</Container>);
-    expect(container.firstChild).toHaveClass("max-w-sm");
+  it('defaults to size="normal" (max-w-md)', () => {
+    renderContainer();
+    expect(getRoot()).toHaveClass("max-w-md");
+  });
+});
+
+describe("Container padding prop", () => {
+  const cases: Array<[string, string]> = [
+    ["none", "p-0"],
+    ["small", "p-2"],
+    ["normal", "p-4"],
+    ["large", "p-6"],
+    ["xl", "p-8"],
+  ];
+
+  it.each(cases)('padding="%s" applies class "%s"', (padding, expected) => {
+    renderContainer({ padding });
+    expect(getRoot()).toHaveClass(expected);
   });
 
-  it("applies custom maxWidth as inline style", () => {
-    const { container } = render(
-      <Container maxWidth="700px">content</Container>
-    );
-    expect(container.firstChild).toHaveStyle({ maxWidth: "700px" });
+  it('defaults to padding="normal" (p-4)', () => {
+    renderContainer();
+    expect(getRoot()).toHaveClass("p-4");
+  });
+});
+
+describe("Container center prop", () => {
+  it("applies mx-auto when center=true (default)", () => {
+    renderContainer();
+    expect(getRoot()).toHaveClass("mx-auto");
   });
 
-  it("applies responsive padding when enabled", () => {
-    const { container } = render(<Container responsive>content</Container>);
-    expect(container.firstChild).toHaveClass("px-4", "sm:px-6", "lg:px-8");
+  it("does NOT apply mx-auto when center=false", () => {
+    renderContainer({ center: false });
+    expect(getRoot()).not.toHaveClass("mx-auto");
+  });
+});
+
+describe("Container responsive prop", () => {
+  it("applies responsive padding classes when responsive=true (default)", () => {
+    renderContainer();
+    const el = getRoot();
+    expect(el).toHaveClass("px-4");
+    expect(el).toHaveClass("sm:px-6");
+    expect(el).toHaveClass("lg:px-8");
   });
 
-  it("centers container when center=true", () => {
-    const { container } = render(<Container center>content</Container>);
-    expect(container.firstChild).toHaveClass("mx-auto");
+  it("omits responsive padding classes when responsive=false", () => {
+    renderContainer({ responsive: false });
+    const el = getRoot();
+    expect(el).not.toHaveClass("px-4");
+    expect(el).not.toHaveClass("sm:px-6");
+    expect(el).not.toHaveClass("lg:px-8");
+  });
+});
+
+describe("Container maxWidth prop (custom string)", () => {
+  it("applies custom string as inline style", () => {
+    renderContainer({ maxWidth: "720px" });
+    expect(getRoot().style.maxWidth).toBe("720px");
   });
 
-  it("allows passing additional props", () => {
-    render(
-      <Container data-testid="custom" id="test-id">
-        content
-      </Container>
-    );
-    const el = screen.getByTestId("custom");
-    expect(el).toHaveAttribute("id", "test-id");
+  it("applies a rem string as inline style", () => {
+    renderContainer({ maxWidth: "48rem" });
+    expect(getRoot().style.maxWidth).toBe("48rem");
   });
 });
