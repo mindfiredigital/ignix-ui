@@ -13,7 +13,10 @@ export class TemplateService {
   private registryService = new RegistryService();
   private dependencyService = new DependencyService();
   private componentService = new ComponentService();
-  private config = loadConfig();
+
+  private async getConfig(): Promise<ReturnType<typeof loadConfig>> {
+    return await loadConfig();
+  }
 
   private silent = false;
 
@@ -33,7 +36,7 @@ export class TemplateService {
     logger.info(`[Template] Starting install: ${name}`);
 
     try {
-      const config = await this.config;
+      const config = await this.getConfig();
 
       const templateConfig = await this.registryService.getTemplateConfig(name);
 

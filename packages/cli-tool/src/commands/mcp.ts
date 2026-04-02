@@ -20,9 +20,8 @@ const __dirname = path.dirname(__filename);
 
 // Look for mcp.json in multiple locations
 const possiblePaths = [
-  path.resolve(__dirname, '../../mcp.json'), // relative to cli-tool/dist
-  path.resolve(__dirname, '../../../mcp.json'), // relative to project root
   path.resolve(process.cwd(), 'mcp.json'), // current working directory
+  path.resolve(__dirname, '../mcp.json'), // relative to cli-tool/dist
 ];
 
 let MCP_CONFIG_PATH = '';
