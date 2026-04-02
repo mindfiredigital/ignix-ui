@@ -8,19 +8,19 @@ Whether prototyping or scaling a large app, Ignix UI gives a polished foundation
 
 ## Why Ignix UI
 
-* **Built for Speed**
+- **Built for Speed**
   Opinionated defaults, smart APIs, and accessible by default components that accelerate development.
 
-* **Design System Ready**
+- **Design System Ready**
   Consistent design tokens, themes, and patterns that scale with your team's needs.
 
-* **Built-in Animations**
+- **Built-in Animations**
   Fluid interactions with a built in motion layer no extra setup required.
 
-* **Type-Safe**
+- **Type-Safe**
   Built with TypeScript for rich, discoverable props and better IntelliSense support.
 
-* **Tailwind-Native**
+- **Tailwind-Native**
   Seamless integration with Tailwind CSS, featuring smart class merging that respects custom styles.
 
 ## Installation
