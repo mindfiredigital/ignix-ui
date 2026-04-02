@@ -1,132 +1,145 @@
 import TabItem from "@theme/TabItem";
 import Tabs from "@theme/Tabs";
 import CodeBlock from "@theme/CodeBlock";
-import { useEffect, useState } from "react";
-import VariantSelector from "./VariantSelector";
-import { BillingPage } from "../UI/billing-page";
-import { Crown, Gem, X } from "lucide-react";
-import { FaCcAmex, FaCcMastercard, FaCcPaypal, FaCcVisa } from "react-icons/fa";
-import { Card } from "../UI/card";
-import { Typography } from "../UI/typography";
-import { Button } from "../UI/button";
-
-const variants = [ "default", "dark", "light"];
-const animations = ["none", "fadeIn", "slideUp", "scaleIn", "flipIn", "bounceIn", "floatIn"];
+import { useState } from "react";
+import { X, CreditCard, Wallet, Banknote, Coins } from "lucide-react";
+import { BillingPage } from "@site/src/components/UI/billing-page";
+import { Card } from "@site/src/components/UI/card";
+import { Typography } from "@site/src/components/UI/typography";
+import { Button } from "@site/src/components/UI/button";
 
 const BillingPageDemo = () => {
-  const [animation, setAnimation] = useState<string>("fadeIn");
-  const [variant, setVariant] = useState<string>("default");
   const [open, setOpen] = useState<boolean>(false)
-  const [animationKey, setAnimationKey] = useState<number>(0)
-
-  useEffect(() => {
-    setAnimationKey((k) => k + 1)
-  }, [animation])
 
   const AVAILABLE_PAYMENT_METHODS = [
     {
       id: "visa",
       label: "Visa",
-      icon: FaCcVisa,
+      icon: CreditCard,
     },
     {
       id: "mastercard",
       label: "Mastercard",
-      icon: FaCcMastercard,
+      icon: Wallet,
     },
     {
       id: "amex",
       label: "American Express",
-      icon: FaCcAmex,
+      icon: Banknote,
     },
     {
       id: "paypal",
       label: "PayPal",
-      icon: FaCcPaypal,
+      icon: Coins,
     },
   ]
-  const features = [
-    { id: 1, label: "Components" },
-    { id: 2, label: "Theme" },
-    { id: 3, label: "Support" },
-    { id: 4, label: "API Access" },
-    { id: 5, label: "Customisation" },
-    { id: 6, label: "SLA" },
-  ]
-  const plans = [
-    {
-      id: 1,
-      icon: Gem,
-      name: "Basic",
-      price: "$199",
-      featureMap: {
-        1: true,
-        2: false,
-        3: "Email",
-        4: false,
-        5: "Limited",
-        6: null,
+   const plans = [
+      {
+        name: "Starter",
+        price: {
+          monthly: "$FREE /mo",
+        },
+        description: "Perfect for getting started",
+        features: [
+          { label: "Disk Space 128 GB" },
+          { label: "Bandwidth 15 GB" },
+          { label: "Databases 1" },
+          { label: "License", available: false },
+        ],
+        ctaLabel: "Sign Up",
+        recommended: false,
       },
-    },
-    {
-      id: 2,
-      name: "Standard",
-      icon: Crown,
-      price: "$399",
-      featureMap: {
-        1: true,
-        2: true,
-        3: "Chat",
-        4: true,
-        5: "Full",
-        6: "24h",
+      {
+        name: "Standard",
+        price: {
+          monthly: "$19.99 /mo",
+          annual: "$15.99 /mo",
+        },
+        description: "For growing teams",
+        features: [
+          { label: "Storage 20GB" },
+          { label: "Databases 20" },
+          { label: "License" },
+          { label: "Email Accounts" },
+        ],
+        ctaLabel: "Subscribe",
+        recommended: true,
       },
-    },
-    {
-      id: 3,
-      name: "Premium",
-      price: "$899",
-      recommended: true,
-      featureMap: {
-        1: true,
-        2: true,
-        3: "24/7 Priority",
-        4: true,
-        5: "Unlimited",
-        6: "4h",
-      },
-    },
-  ];
+      {
+        name: "Enterprise",
+        price: {
+          monthly: "$29.99 /mo",
+          annual: "$23.99 /mo",
+        },
+        description: "For organizations",
+        features: [
+          { label: "Storage 50GB" },
+          { label: "Databases 50" },
+          { label: "License" },
+          { label: "Email Accounts" },
+        ],
+        ctaLabel: "Check Now",
+        recommended: false,
+      }
+    ];
 
   const codeString = `
-    import { BillingPage } from '@ignix-ui/billingpage';
-
-    const AVAILABLE_PAYMENT_METHODS = [
+    import { BillingPage } from "@ignix-ui/billingpage";
+    const plans = [
       {
-        id: "visa",
-        label: "Visa",
-        icon: FaCcVisa,
+        name: "Starter",
+        price: {
+          monthly: "$FREE /mo",
+        },
+        description: "Perfect for getting started",
+        features: [
+          { label: "Disk Space 128 GB" },
+          { label: "Bandwidth 15 GB" },
+          { label: "Databases 1" },
+          { label: "License", available: false },
+        ],
+        ctaLabel: "Sign Up",
+        recommended: false,
       },
       {
-        id: "mastercard",
-        label: "Mastercard",
-        icon: FaCcMastercard,
+        name: "Standard",
+        price: {
+          monthly: "$19.99 /mo",
+          annual: "$15.99 /mo",
+        },
+        description: "For growing teams",
+        features: [
+          { label: "Storage 20GB" },
+          { label: "Databases 20" },
+          { label: "License" },
+          { label: "Email Accounts" },
+        ],
+        ctaLabel: "Subscribe",
+        recommended: true,
       },
       {
-        id: "amex",
-        label: "American Express",
-        icon: FaCcAmex,
-      },
-      {
-        id: "paypal",
-        label: "PayPal",
-        icon: FaCcPaypal,
-      },
-    ]
+        name: "Enterprise",
+        price: {
+          monthly: "$29.99 /mo",
+          annual: "$23.99 /mo",
+        },
+        description: "For organizations",
+        features: [
+          { label: "Storage 50GB" },
+          { label: "Databases 50" },
+          { label: "License" },
+          { label: "Email Accounts" },
+        ],
+        ctaLabel: "Check Now",
+        recommended: false,
+      }
+    ];
     <BillingPage
       renewalDate={new Date("2025-03-21")}
-      animation="${animation}"
-      variant="${variant}"
+      currentPlanIndex={1}
+      subscriptionStatus="active"
+      billingCycle="monthly"
+      plans={plans}
       invoices={[
         {
           id: "1",
@@ -171,9 +184,6 @@ const BillingPageDemo = () => {
           status: "Paid",
         },
       ]}
-      onInvoiceView={(invoice) => console.log("View", invoice.id)}
-      onInvoiceDownload={(invoice) => console.log("Download", invoice.id)}
-      onInvoiceDelete={(invoice) => console.log("Delete", invoice.id)}
       apiUsage={{
         label: "API Calls",
         used: 41000,
@@ -191,11 +201,8 @@ const BillingPageDemo = () => {
         used: 8,
         total: 10,
       }}
-      onCancelSubscription={() => {
-        console.log("Cancel subscription")
-      }}
       card={{
-        brand: FaCcVisa,
+        brand: CreditCard,
         cardNumber: "4242424242424242",
         expiryMonth: "12",
         expiryYear: "26",
@@ -253,37 +260,15 @@ const BillingPageDemo = () => {
 
   return (
     <div className="space-y-6 mb-8">
-      <div className="flex flex-wrap gap-3 justify-start sm:justify-end">
-        <div className="space-y-2">
-          <VariantSelector
-            variants={variants}
-            selectedVariant={variant}
-            onSelectVariant={setVariant}
-            type="Variant"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <VariantSelector
-            variants={animations}
-            selectedVariant={animation}
-            onSelectVariant={setAnimation}
-            type="Animation"
-          />
-        </div>
-
-      </div>
-
       <Tabs>
         <TabItem value="preview" label="Preview">
-          <div className="border rounded-lg overflow-hidden p-4">
+          <div className="border border-gray-300 rounded-lg overflow-hidden p-4">
             <BillingPage
-              key={animationKey}
-              animation={animation as any}
               renewalDate={new Date("2025-03-21")}
-              variant={variant as any}
+              currentPlanIndex={1}
+              subscriptionStatus="active"
+              billingCycle="monthly"
               plans={plans}
-              features={features}
               invoices={[
                 {
                   id: "1",
@@ -328,9 +313,6 @@ const BillingPageDemo = () => {
                   status: "Paid",
                 },
               ]}
-              onInvoiceView={(invoice) => console.log("View", invoice.id)}
-              onInvoiceDownload={(invoice) => console.log("Download", invoice.id)}
-              onInvoiceDelete={(invoice) => console.log("Delete", invoice.id)}
               apiUsage={{
                 label: "API Calls",
                 used: 41000,
@@ -348,11 +330,8 @@ const BillingPageDemo = () => {
                 used: 8,
                 total: 10,
               }}
-              onCancelSubscription={() => {
-                console.log("Cancel subscription")
-              }}
               card={{
-                brand: FaCcVisa,
+                brand: CreditCard,
                 cardNumber: "4242424242424242",
                 expiryMonth: "12",
                 expiryYear: "26",

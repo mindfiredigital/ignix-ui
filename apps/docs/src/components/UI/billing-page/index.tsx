@@ -2,64 +2,29 @@ import React, { useState } from "react"
 import type { LucideIcon } from "lucide-react"
 import {
   Activity,
-  Ban,
-  Banknote,
-  Building2,
+  AlertTriangle,
   Check,
-  ChevronRight,
+  CheckCircle2,
+  Clock,
   Download,
-  Eye,
   FileText,
   MoveLeft,
   MoveRight,
-  Shield,
-  Trash2,
-  Users,
+  Pencil,
+  XCircle,
 } from "lucide-react"
-import { cva, type VariantProps } from "class-variance-authority"
-import { Avatar } from "../avatar"
-import { Breadcrumbs } from "../breadcrumbs"
-import { Button } from "../button"
-import { Card } from "../card"
-import { Typography } from "../typography"
-import { useDialog } from "../dialog-box/use-dialog"
-import { DialogProvider } from "../dialog-box"
-import { ComparisonTable } from "../comparison-table"
 import { cn } from "@site/src/utils/cn"
-
-/** -------------------------------- Variants -------------------------------- */
-const ModernPricingGridVariant = cva("", {
-  variants: {
-    variant: {
-      dark: "bg-zinc-800 text-white",
-      default: "bg-gradient-to-br from-blue-950 via-slate-900 to-black text-white",
-      light: "border bg-white text-black",
-    },
-  },
-  defaultVariants: {
-    variant: "dark",
-  },
-})
-
-const BillingIconVariant = cva("", {
-  variants: {
-    variant: {
-      dark: "bg-gray-200 text-gray-700",
-      default: "bg-gray-200 text-gray-700",
-      light: "bg-success/90 text-white",
-    },
-  },
-  defaultVariants: {
-    variant: "dark",
-  },
-})
+import { Avatar } from "@site/src/components/UI/avatar"
+import { Button } from "@site/src/components/UI/button"
+import { Card } from "@site/src/components/UI/card"
+import { Typography } from "@site/src/components/UI/typography"
+import { useDialog } from "@site/src/components/UI/dialog-box/use-dialog"
+import { DialogProvider } from "@site/src/components/UI/dialog-box"
+import { PricingGrid, type PricingTier } from "@site/src/components/UI/pricing-grid"
+import { ButtonWithIcon } from "@site/src/components/UI/button-with-icon"
 
 /** --------------------------------- Types ---------------------------------- */
 export type FeatureValue = boolean | string | number | null
-
-export interface BillingVariantProps {
-  variant?: VariantProps<typeof ModernPricingGridVariant>["variant"]
-}
 
 export interface Feature {
   id: number
@@ -89,35 +54,34 @@ export interface PricingPlan {
   ctaLabel?: string
 }
 
-export interface GlassCardProps extends BillingVariantProps, AnimationInteractionProps { 
-  children: React.ReactNode
-  className?: string 
-}
-
 export interface AnimationInteractionProps {
   animation?: "none"| "fadeIn"| "slideUp"| "scaleIn"| "flipIn"| "bounceIn"| "floatIn"
   interactive?: "none"| "hover"| "press"| "lift"| "tilt"| "glow"
 }
 
-export interface ActivePlanProps extends BillingVariantProps, AnimationInteractionProps {
-  plan: PlanProps
-  features: Feature[] 
+export type SubscriptionStatus = "active" | "trial" | "canceled" | "past_due" | "expired" | "pending"
+
+export interface ActivePlanProps extends AnimationInteractionProps {
+  plan: PricingTier
   renewalDate: Date
-  onUpgrade?: () => void
+  status?: SubscriptionStatus
+  billingCycle?: "monthly" | "yearly"
 }
 
 export interface CardDetails {
-  brand: React.ElementType
+  brand: LucideIcon
   cardNumber: string // full number (never rendered)
   expiryMonth?: string
   expiryYear?: string
   cardHolderName?: string
 }
 
-export interface PaymentMethodProps extends BillingVariantProps, AnimationInteractionProps {
+export interface PaymentMethodProps extends AnimationInteractionProps {
   card: CardDetails
+  nextBillingDate?: Date
   onUpdate?: () => void
   onCancelSubscription?: () => void
+  onSubscriptionCancelled?: () => void
 }
 
 export interface Invoice {
@@ -126,13 +90,13 @@ export interface Invoice {
   date: string
   amount: string
   status: "Paid" | "Pending" | "Failed"
+  invoiceNumber?: string
+  downloadUrl?: string
 }
 
-export interface BillingTableProps extends BillingVariantProps, AnimationInteractionProps {
+export interface BillingTableProps extends AnimationInteractionProps {
   invoices?: Invoice[]
-  onView?: (invoice: Invoice) => void
   onDownload?: (invoice: Invoice) => void
-  onDelete?: (invoice: Invoice) => void
 }
 
 export interface UsageMetric {
@@ -143,13 +107,7 @@ export interface UsageMetric {
   gradient?: string
 }
 
-export interface UpdatePaymentMethodModalProps {
-  open: boolean
-  onClose: () => void
-  onSelect?: (methodId: string) => void
-}
-
-export interface UsageOverviewProps extends BillingVariantProps, AnimationInteractionProps {
+export interface UsageOverviewProps extends AnimationInteractionProps {
   title?: string
   description?: string
   apiUsage?: UsageMetric
@@ -157,146 +115,375 @@ export interface UsageOverviewProps extends BillingVariantProps, AnimationIntera
   seatsUsage?: UsageMetric
 }
 
-export interface BillingPageProps extends BillingVariantProps , UsageOverviewProps, PaymentMethodProps, AnimationInteractionProps{
+export interface BillingPageProps extends UsageOverviewProps, PaymentMethodProps, AnimationInteractionProps{
   headerTitle?: string
   headerIcon?: LucideIcon
-  features?: Feature[]
-  plans?: PlanProps[]
-  currentPlanId?: number
+  plans?: PricingTier[]
+  currentPlanIndex?: number
   renewalDate?: Date
+  subscriptionStatus?: SubscriptionStatus
+  billingCycle?: "monthly" | "yearly"
 
   showcurrentPlanId?: boolean
   showUsageOverview?: boolean
   showPricing?: boolean
   showBillingTable?: boolean
 
-  pricingTitle?: string
-  pricingDescription?: string
-
-  /** Payment Method (composed, not inherited) */
-  paymentMethod?: PaymentMethodProps
-
-  /** Usage */
-  usageOverview?: UsageOverviewProps
-
   /** Billing */
   invoices?: Invoice[]
-  onInvoiceView?: (invoice: Invoice) => void
   onInvoiceDownload?: (invoice: Invoice) => void
-  onInvoiceDelete?: (invoice: Invoice) => void
 
-   /** Radix-style intent callback */
+  /** Radix-style intent callback */
   onUpdatePaymentMethod?: () => void
 
   /** Optional render slot (consumer-owned UI) */
   renderUpdatePaymentMethod?: () => React.ReactNode
-  layout?: "type1" | "type2"
+  
+  /** Show skeleton loaders instead of content */
+  isLoading?: boolean
 }
 
-/** ------------------------------ Glass Card -------------------------------- */
-export const GlassCard: React.FC<GlassCardProps> = React.memo(({ children, variant,className, animation, interactive }) => {
+/** ---------------------------- Loading Components --------------------------- */
+const CurrentPlanCardSkeleton = () => {
+  const cardClassName = "rounded-2xl border border-border/50 bg-background shadow-lg"
+  
   return (
-    <Card
-      className={cn(
-        "relative rounded-2xl p-[1px]",
-        ModernPricingGridVariant({ variant }),
-        className
-      )}
-      animation={animation} interactive={interactive}
-    >
-      <div className="rounded-2xl backdrop-blur-xl p-5">{children}</div>
+    <Card variant="default" className={cardClassName}>
+      <div className="p-6">
+        <div className="animate-pulse space-y-4">
+          {/* Header */}
+          <div className="flex items-start justify-between">
+            <div className="flex-1 space-y-2">
+              <div className="h-7 bg-muted rounded w-1/2"></div>
+              <div className="h-4 bg-muted rounded w-1/3"></div>
+            </div>
+            <div className="h-8 bg-muted rounded w-20"></div>
+          </div>
+          {/* Features */}
+          <div className="space-y-3">
+            <div className="h-4 bg-muted rounded w-full"></div>
+            <div className="h-4 bg-muted rounded w-5/6"></div>
+            <div className="h-4 bg-muted rounded w-4/6"></div>
+          </div>
+          {/* Billing Date */}
+          <div className="pt-4 border-t border-border/50 space-y-2">
+            <div className="h-3 bg-muted rounded w-1/3"></div>
+            <div className="h-4 bg-muted rounded w-1/2"></div>
+          </div>
+        </div>
+      </div>
     </Card>
   )
-})
+}
+
+const UsageOverviewCardSkeleton = () => {
+  const cardClassName = "rounded-2xl border border-border/50 bg-background shadow-lg"
+  
+  return (
+    <Card variant="default" className={cardClassName}>
+      <div className="p-6">
+        <div className="animate-pulse space-y-6">
+          {/* Header */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-muted rounded-lg"></div>
+            <div className="flex-1 space-y-2">
+              <div className="h-5 bg-muted rounded w-1/3"></div>
+              <div className="h-3 bg-muted rounded w-2/3"></div>
+            </div>
+          </div>
+          {/* Usage Items */}
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <div className="h-4 bg-muted rounded w-1/4"></div>
+                <div className="h-4 bg-muted rounded w-1/5"></div>
+              </div>
+              <div className="h-2.5 bg-muted rounded-full"></div>
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <div className="h-4 bg-muted rounded w-1/4"></div>
+                <div className="h-4 bg-muted rounded w-1/5"></div>
+              </div>
+              <div className="h-2.5 bg-muted rounded-full"></div>
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <div className="h-4 bg-muted rounded w-1/4"></div>
+                <div className="h-4 bg-muted rounded w-1/5"></div>
+              </div>
+              <div className="h-2.5 bg-muted rounded-full"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Card>
+  )
+}
+
+const BillingTableSkeleton = () => {
+  const cardClassName = "rounded-2xl border border-border/50 bg-background shadow-lg"
+  
+  return (
+    <Card variant="default" className={cardClassName}>
+      <div className="p-6">
+        <div className="animate-pulse space-y-4">
+          {/* Header */}
+          <div className="space-y-2">
+            <div className="h-6 bg-muted rounded w-1/4"></div>
+            <div className="h-4 bg-muted rounded w-1/3"></div>
+          </div>
+          {/* Table */}
+          <div className="space-y-3">
+            {/* Table Header */}
+            <div className="grid grid-cols-4 gap-4 pb-2 border-b border-border/50">
+              <div className="h-4 bg-muted rounded"></div>
+              <div className="h-4 bg-muted rounded"></div>
+              <div className="h-4 bg-muted rounded"></div>
+              <div className="h-4 bg-muted rounded"></div>
+            </div>
+            {/* Table Rows */}
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="grid grid-cols-4 gap-4 py-3">
+                <div className="h-4 bg-muted rounded w-3/4"></div>
+                <div className="h-4 bg-muted rounded w-1/2"></div>
+                <div className="h-4 bg-muted rounded w-1/3"></div>
+                <div className="h-8 bg-muted rounded w-16"></div>
+              </div>
+            ))}
+          </div>
+          {/* Pagination */}
+          <div className="flex items-center justify-between pt-4 border-t border-border/50">
+            <div className="h-4 bg-muted rounded w-24"></div>
+            <div className="flex gap-2">
+              <div className="h-8 bg-muted rounded w-8"></div>
+              <div className="h-8 bg-muted rounded w-8"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Card>
+  )
+}
+
+const PaymentMethodCardSkeleton = () => {
+  const cardClassName = "rounded-2xl border border-border/50 bg-background shadow-lg"
+  
+  return (
+    <Card variant="default" className={cardClassName}>
+      <div className="p-6">
+        <div className="animate-pulse space-y-6">
+          {/* Header */}
+          <div className="space-y-2">
+            <div className="h-5 bg-muted rounded w-1/3"></div>
+            <div className="h-3 bg-muted rounded w-1/2"></div>
+          </div>
+          {/* Card Display */}
+          <div className="flex items-center gap-4 p-4 rounded-xl bg-muted/30 border border-border/50">
+            <div className="w-12 h-12 bg-muted rounded-lg"></div>
+            <div className="flex-1 space-y-2">
+              <div className="h-5 bg-muted rounded w-2/3"></div>
+              <div className="h-3 bg-muted rounded w-1/3"></div>
+            </div>
+          </div>
+          {/* Button */}
+          <div className="h-10 bg-muted rounded w-full"></div>
+        </div>
+      </div>
+    </Card>
+  )
+}
+
+const PricingGridSkeleton = () => {
+  const containerClassName = "space-y-4 rounded-lg border border-border bg-background/50 p-6"
+  
+  return (
+    <div className={containerClassName}>
+      <div className="animate-pulse space-y-6">
+        {/* Header */}
+        <div className="space-y-2 text-center">
+          <div className="h-8 bg-muted rounded w-1/3 mx-auto"></div>
+          <div className="h-4 bg-muted rounded w-2/3 mx-auto"></div>
+        </div>
+        {/* Toggle */}
+        <div className="flex justify-center">
+          <div className="h-10 bg-muted rounded-full w-48"></div>
+        </div>
+        {/* Pricing Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="border border-border/50 rounded-xl p-6 space-y-4">
+              <div className="h-6 bg-muted rounded w-1/2"></div>
+              <div className="h-10 bg-muted rounded w-3/4"></div>
+              <div className="h-4 bg-muted rounded w-full"></div>
+              <div className="space-y-2 pt-4">
+                {[1, 2, 3, 4].map((j) => (
+                  <div key={j} className="h-4 bg-muted rounded"></div>
+                ))}
+              </div>
+              <div className="h-10 bg-muted rounded w-full mt-4"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
 
 /** ---------------------------- Current Plan -------------------------------- */
-export const CurrentPlanCard: React.FC<ActivePlanProps> = React.memo(
-  ({ plan, features, renewalDate, variant, onUpgrade, animation, interactive }: ActivePlanProps) => {
-    
-    if (!plan) return null
-    return (
-      <GlassCard variant={variant} animation={animation} interactive={interactive}>
-        {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mt-3">
-          <div className="flex items-center gap-3">
-            <div
-              className={cn(
-                "flex items-center justify-center rounded-full",
-                "w-10 h-10 sm:w-12 sm:h-12",
-                BillingIconVariant({ variant })
-              )}
-            >
-              {plan.icon && <plan.icon className="w-6 h-6 sm:w-8 sm:h-8" />}
-            </div>
+const getStatusConfig = (status: SubscriptionStatus) => {
+  switch (status) {
+    case "active":
+      return {
+        label: "Active",
+        type: "success" as const,
+        icon: CheckCircle2,
+        className: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+      }
+    case "trial":
+      return {
+        label: "Trial",
+        type: "warning" as const,
+        icon: Clock,
+        className: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+      }
+    case "canceled":
+      return {
+        label: "Canceled",
+        type: "error" as const,
+        icon: XCircle,
+        className: "bg-red-500/20 text-red-400 border-red-500/30",
+      }
+    case "past_due":
+      return {
+        label: "Past Due",
+        type: "error" as const,
+        icon: AlertTriangle,
+        className: "bg-orange-500/20 text-orange-400 border-orange-500/30",
+      }
+    case "expired":
+      return {
+        label: "Expired",
+        type: "error" as const,
+        icon: XCircle,
+        className: "bg-gray-500/20 text-gray-400 border-gray-500/30",
+      }
+    case "pending":
+      return {
+        label: "Pending",
+        type: "warning" as const,
+        icon: Clock,
+        className: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+      }
+    default:
+      return {
+        label: "Active",
+        type: "success" as const,
+        icon: CheckCircle2,
+        className: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+      }
+  }
+}
 
-            <p className="font-semibold text-xl sm:text-2xl lg:text-3xl">
-              {plan.name}
-            </p>
+export const CurrentPlanCard: React.FC<ActivePlanProps> = React.memo(
+  ({ plan, renewalDate, status = "active", billingCycle = "monthly" }: ActivePlanProps) => {
+    if (!plan) return null
+    
+    const statusConfig = getStatusConfig(status)
+    const StatusIcon = statusConfig.icon
+    
+    const cardClassName = "rounded-2xl border border-border/50 bg-background shadow-lg hover:shadow-xl transition-all duration-300"
+    
+    const currentPrice = billingCycle === "monthly" 
+      ? plan.price.monthly 
+      : (plan.price.annual || plan.price.monthly)
+    
+    const priceValue = currentPrice.split('/')[0].trim()
+    
+    return (
+      <Card variant="default" className={cardClassName}>
+        <div className="p-6">
+          {/* Header */}
+          <div className="flex items-start justify-between mb-6">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-2">
+                <h3 className="text-2xl font-bold text-foreground">
+                  {plan.name} Plan
+                </h3>
+                {/* Subscription Status Badge */}
+                <div className={cn(
+                  "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wide",
+                  statusConfig.className
+                )}>
+                  <StatusIcon className="w-3 h-3" />
+                  <span>{statusConfig.label}</span>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground mb-4">
+                You are currently on the {plan.name} plan.
+              </p>
+            </div>
+            
+            {/* Price */}
+            <div className="text-right">
+              <div className="text-3xl font-bold text-foreground">
+                {priceValue}
+              </div>
+              <div className="text-sm text-muted-foreground">
+                per {billingCycle === "monthly" ? "month" : "year"}
+              </div>
+            </div>
           </div>
 
-          {renewalDate && (
-            <Button
-              size="pill"
-              variant="outline"
-              animationVariant="scaleHeartbeat"
-              className="w-auto lg:w-full md:text-wrap text-xs lg:text-md hover:cursor-pointer"
-            >
-              Billing Date:&nbsp;
-              {renewalDate.toLocaleDateString(undefined, {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
+          {/* Features */}
+          <div className="mb-6">
+            <ul className="space-y-3">
+              {plan.features.map((feature, i) => {
+                const Icon = Check
+                const isAvailable = feature.available !== false
+
+                return (
+                  <li key={`${feature.label}-${i}`} className="flex items-center gap-3">
+                    <div className={cn(
+                      "flex items-center justify-center w-5 h-5 rounded-full",
+                      isAvailable 
+                        ? "bg-purple-100 dark:bg-purple-900/30" 
+                        : "bg-gray-100 dark:bg-gray-800"
+                    )}>
+                      <Icon className={cn(
+                        "h-3.5 w-3.5",
+                        isAvailable 
+                          ? "text-purple-600 dark:text-purple-400" 
+                          : "text-gray-400 dark:text-gray-500"
+                      )} />
+                    </div>
+                    <span className={cn(
+                      "text-sm",
+                      isAvailable ? "text-foreground" : "text-muted-foreground line-through"
+                    )}>
+                      {feature.label}
+                    </span>
+                  </li>
+                )
               })}
-            </Button>
+            </ul>
+          </div>
+
+          {/* Next Billing Date */}
+          {renewalDate && (
+            <div className="pt-4 border-t border-border/50">
+              <p className="text-sm text-muted-foreground mb-1">Next Billing Date</p>
+              <p className="text-base font-semibold text-foreground">
+                {renewalDate.toLocaleDateString(undefined, {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </p>
+            </div>
           )}
         </div>
-
-        {/* Price */}
-        <div className="mt-4 flex items-end gap-2">
-          <h2 className="text-xl sm:text-2xl font-bold">{plan.price}</h2>
-        </div>
-
-        {/* Features */}
-        <ul className="space-y-3 text-md md:text-lg mt-4">
-          {features.map((feature, i) => {
-            const Icon = feature.icon ?? Check
-            const value = plan.featureMap[feature.id]
-
-            return (
-              <li key={i} className="flex gap-3 items-start">
-                <Icon className="h-4 w-4 mt-1 shrink-0" />
-                <span>
-                  {feature.label}
-                  {typeof value === "string" || typeof value === "number" ? (
-                    <span className="text-zinc-200 ml-1 text-left">
-                      : {value}
-                    </span>
-                  ) : null}
-                </span>
-              </li>
-            )
-          })}
-        </ul>
-
-        {/* Actions */}
-        <div className="mt-6 flex flex-col lg:flex-row gap-2 md:gap-2 lg:gap-3">
-          <Button
-            variant="success"
-            size="wide"
-            className="w-full sm:w-auto hover:cursor-pointer" 
-            onClick={onUpgrade}
-          >
-            Upgrade 
-          </Button>
-          <Button
-            variant="outline"
-            size="wide"
-            className="w-full sm:w-auto hover:cursor-pointer"
-          >
-            Downgrade 
-          </Button>
-        </div>
-      </GlassCard>
+      </Card>
     )
   }
 )
@@ -304,150 +491,101 @@ export const CurrentPlanCard: React.FC<ActivePlanProps> = React.memo(
 /** --------------------------- Usage Overview ------------------------------- */
 export const UsageOverviewCard: React.FC<UsageOverviewProps> = React.memo(
   ({
-    variant,
-    title = "Usage Overview",
-    description = "Your monthly consumption report.",
+    title = "Usage Details",
+    description = "Your resource consumption this billing cycle.",
     apiUsage,
     storageUsage,
     seatsUsage,
-    animation,
-    interactive
   }) => {
-    const apiPercent = React.useMemo(() => {
-      if (!apiUsage) return 0
-      return Math.min(100, Math.round((apiUsage.used / apiUsage.total) * 100))
-    }, [apiUsage])
+    const apiPercent = apiUsage ? Math.min(100, Math.round((apiUsage.used / apiUsage.total) * 100)) : 0
+    const storagePercent = storageUsage ? Math.min(100, Math.round((storageUsage.used / storageUsage.total) * 100)) : 0
+    const seatsPercent = seatsUsage ? Math.min(100, Math.round((seatsUsage.used / seatsUsage.total) * 100)) : 0
 
-    const storagePercent = React.useMemo(() => {
-      if (!storageUsage) return 0
-      return Math.min(100, Math.round((storageUsage.used / storageUsage.total) * 100))
-      }, [storageUsage])
-
-    const storageDashOffset = React.useMemo(() => {
-      if(!storagePercent) return 0
-      return 213 - (213 * storagePercent) / 100
-    },[storagePercent])
+    const cardClassName = "rounded-2xl border border-border/50 bg-background shadow-lg hover:shadow-xl transition-all duration-300"
 
     return (
-      <GlassCard variant={variant} animation={animation} interactive={interactive}>
-        {/* Header */}
-        <div className="flex flex-row gap-3">
-          <div
-            className={cn(
-              "flex items-center justify-center w-12 h-12 rounded-full",
-              BillingIconVariant({ variant })
-            )}
-          >
-            <Activity className="w-8 h-8" />
-          </div>
-          <div>
-            <Typography variant="h2" className="font-medium text-md">
-              {title}
-            </Typography>
-            <Typography variant="h6">{description}</Typography>
-          </div>
-        </div>
-
-        {/* API Usage */}
-        {apiUsage && (
-          <div className="mt-6">
-            <div className="flex justify-between text-sm mb-1">
-              <span className="text-zinc-400 font-semibold">
-                {apiUsage.label}
-              </span>
-              <span className="text-zinc-300 font-semibold">
-                {apiPercent}% · {apiUsage.used.toLocaleString()} /{" "}
-                {apiUsage.total.toLocaleString()} {apiUsage.unit}
-              </span>
+      <Card variant="default" className={cardClassName}>
+        <div className="p-6">
+          {/* Header */}
+          <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30">
+              <Activity className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             </div>
-            <div className="h-2 rounded-full bg-zinc-800 overflow-hidden">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400"
-                style={{ width: `${apiPercent}%` }}
-              />
-            </div>
-          </div>
-        )}
-
-        {/* Storage Usage */}
-        {storageUsage && (
-          <div className="flex items-center justify-between mt-6">
             <div>
-              <p className="text-sm text-zinc-400 font-semibold">
-                {storageUsage.label}
-              </p>
-              <p className="text-2xl font-semibold mt-1">
-                {storagePercent}%
-              </p>
-              <p className="text-sm text-zinc-500">
-                {storageUsage.used}
-                {storageUsage.unit} / {storageUsage.total}
-                {storageUsage.unit}
-              </p>
-            </div>
-
-            {/* Circular Indicator */}
-            <div className="relative w-20 h-20">
-              <svg className="w-full h-full rotate-[-90deg]">
-                <circle
-                  cx="40"
-                  cy="40"
-                  r="34"
-                  stroke="currentColor"
-                  strokeWidth="6"
-                  fill="none"
-                  className="text-zinc-800"
-                />
-                <circle
-                  cx="40"
-                  cy="40"
-                  r="34"
-                  stroke="url(#grad)"
-                  strokeWidth="6"
-                  fill="none"
-                  strokeDasharray="213"
-                  strokeDashoffset={storageDashOffset}
-                  strokeLinecap="round"
-                />
-                <defs>
-                  <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="#34d399" />
-                    <stop offset="100%" stopColor="#22d3ee" />
-                  </linearGradient>
-                </defs>
-              </svg>
+              <h3 className="text-lg font-bold text-foreground mb-1">{title}</h3>
+              <p className="text-sm text-muted-foreground">{description}</p>
             </div>
           </div>
-        )}
 
-        {/* Seats Usage */}
-        {seatsUsage && (
-          <div className="mt-6 mb-4 flex justify-between text-sm">
-            <div className="flex flex-row gap-2">
-              <Users className="h-4 w-4 text-zinc-400" />
-              <span className="text-zinc-400 font-bold">
-                {seatsUsage.label}
-              </span>
+          {/* API Usage */}
+          {apiUsage && (
+            <div className="mb-6">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm font-medium text-foreground">
+                  {apiUsage.label}
+                </span>
+                <span className="text-sm font-semibold text-muted-foreground">
+                  {apiUsage.used.toLocaleString()} / {apiUsage.total.toLocaleString()} {apiUsage.unit}
+                </span>
+              </div>
+              <div className="relative h-2.5 rounded-full bg-muted overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-purple-500 transition-all duration-500"
+                  style={{ width: `${apiPercent}%` }}
+                />
+              </div>
             </div>
-            <span className="font-medium">
-              {seatsUsage.used} / {seatsUsage.total}
-            </span>
-          </div>
-        )}
-      </GlassCard>
+          )}
+
+          {/* Seats Usage */}
+          {seatsUsage && (
+            <div className="mb-6">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm font-medium text-foreground">
+                  {seatsUsage.label}
+                </span>
+                <span className="text-sm font-semibold text-muted-foreground">
+                  {seatsUsage.used} / {seatsUsage.total}
+                </span>
+              </div>
+              <div className="relative h-2.5 rounded-full bg-muted overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-purple-500 transition-all duration-500"
+                  style={{ width: `${seatsPercent}%` }}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Storage Usage */}
+          {storageUsage && (
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm font-medium text-foreground">
+                  {storageUsage.label} ({storageUsage.unit})
+                </span>
+                <span className="text-sm font-semibold text-muted-foreground">
+                  {storageUsage.used} / {storageUsage.total} {storageUsage.unit}
+                </span>
+              </div>
+              <div className="relative h-2.5 rounded-full bg-muted overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-purple-500 transition-all duration-500"
+                  style={{ width: `${storagePercent}%` }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      </Card>
     )
   }
 )
 
 /** ------------------------------ Billing Table ----------------------------- */
 export const BillingTable: React.FC<BillingTableProps> = React.memo(({
-  variant,
   invoices = [],
-  onView,
   onDownload,
-  onDelete,
-  animation,
-  interactive
 }) => {
   const ITEMS_PER_PAGE = 3
   const [currentPage, setCurrentPage] = useState(1)
@@ -460,125 +598,104 @@ export const BillingTable: React.FC<BillingTableProps> = React.memo(({
   const handlePrev = () => setCurrentPage((prev) => Math.max(prev - 1, 1))
   const handleNext = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages))
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Paid":
-        return "text-green-500 font-semibold"
-      case "Failed":
-        return "text-red-500 font-semibold"
-      case "Pending":
-        return "text-yellow-500 font-semibold"
-      default:
-        return "text-zinc-400"
-    }
-  }
-
-  const handleView = React.useCallback(
-    (inv: Invoice) => onView?.(inv),
-    [onView]
-  )
-
-  const handleDownload = React.useCallback(
-    (inv: Invoice) => onDownload?.(inv),
-    [onDownload]
-  )
-
-  const handleDelete = React.useCallback(
-    (inv: Invoice) => onDelete?.(inv),
-    [onDelete]
-  )
+  const cardClassName = "rounded-2xl border border-border/50 bg-background shadow-lg hover:shadow-xl transition-all duration-300"
 
   return (
-    <GlassCard variant={variant} animation={animation} interactive={interactive}>
-      <div className="flex flex-row items-center gap-3 mt-3 ml-3">
-        <div className={cn("flex items-center justify-center w-10 h-10 rounded-full", BillingIconVariant({ variant }))}>
-          <FileText className="w-6 h-6" />
+    <Card variant="default" className={cardClassName}>
+      <div className="p-6">
+        <div className="mb-6">
+          <h3 className="text-lg font-bold text-foreground mb-1">Billing History</h3>
+          <p className="text-sm text-muted-foreground">View and download your past invoices.</p>
         </div>
-        <Typography variant="h4" className="font-semibold">
-          Billing History
-        </Typography>
-      </div>
 
-      <div className="w-full overflow-x-auto mt-0 md:mt-4 ">
-        <table className="min-w-full w-full text-md">
-          <thead>
-            <tr className="text-left text-zinc-400">
-              <th className="py-2 px-2 md:px-4">Plan</th>
-              <th className="hidden sm:table-cell py-2 px-2 md:px-4">Date</th>
-              <th className="py-2 px-4 text-right">Amount</th>
-              <th className="hidden sm:table-cell py-2 px-2 md:px-4">Status</th>
-              <th className="py-2 px-4 text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentInvoices.length === 0 && (
-              <tr>
-                <td colSpan={5} className="py-6 text-center text-muted-foreground">
-                  No billing history available
-                </td>
+        <div className="w-full overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left border-b border-border/50">
+                <th className="py-3 px-4 font-semibold text-foreground">Date</th>
+                <th className="py-3 px-4 font-semibold text-foreground">Amount</th>
+                <th className="py-3 px-4 font-semibold text-foreground">Status</th>
+                <th className="py-3 px-4 font-semibold text-foreground">Invoice</th>
               </tr>
-            )}
-            {currentInvoices.map((inv) => (
-              <tr key={inv.id} className="border-b border-border">
-                <td className="py-2 px-2 md:px-4">{inv.plan}</td>
-                <td className="hidden sm:table-cell py-2 px-2 md:px-4">{inv.date}</td>
-                <td className="py-2 px-4 text-right font-medium">{inv.amount}</td>
-                <td className={`hidden sm:table-cell py-2 px-4 ${getStatusColor(inv.status)}`}>{inv.status}</td>
-                <td className="py-2 px-2 sm:px-4 sm:py-0">
-                  <div className="flex flex-row md:flex-row gap-1">
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="hover:cursor-pointer"
-                      aria-label="view-invoice"
-                      disabled={!onView}
-                      onClick={() => handleView(inv)}
-                    >
-                      <Eye className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="hover:cursor-pointer"
-                      aria-label="download-invoice"
-                      disabled={!onDownload}
-                      onClick={() => handleDownload(inv)}
-                    >
-                      <Download className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      aria-label="delete-invoice"
-                      disabled={!onDelete}
-                      onClick={() => handleDelete(inv)}
-                      className="hover:cursor-pointer"
-                    >
-                      <Trash2 className="w-4 h-4 text-red-400" />
-                    </Button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex justify-end gap-2 mt-4">
-          <Button size="sm" variant="outline" className="hover:cursor-pointer" disabled={currentPage === 1} onClick={handlePrev}>
-            <MoveLeft />
-          </Button>
-          <Typography className="flex items-center gap-1 text-sm">
-            Page {currentPage} of {totalPages}
-          </Typography>
-          <Button size="sm" variant="outline" className="hover:cursor-pointer" disabled={currentPage === totalPages} onClick={handleNext}>
-            <MoveRight />
-          </Button>
+            </thead>
+            <tbody className="divide-y divide-border/30">
+              {currentInvoices.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="py-12 text-center">
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center">
+                        <FileText className="w-8 h-8 text-muted-foreground opacity-50" />
+                      </div>
+                      <p className="text-muted-foreground font-medium">No billing history available</p>
+                    </div>
+                  </td>
+                </tr>
+              )}
+              {currentInvoices.map((inv) => (
+                <tr key={inv.id} className="hover:bg-muted/20 transition-colors">
+                  <td className="py-3 px-4 text-foreground">{inv.date}</td>
+                  <td className="py-3 px-4 font-semibold text-foreground">{inv.amount}</td>
+                  <td className="py-3 px-4">
+                    <span className={cn(
+                      "inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-semibold",
+                      inv.status === "Paid" && "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
+                      inv.status === "Pending" && "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
+                      inv.status === "Failed" && "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                    )}>
+                      {inv.status === "Paid" && <CheckCircle2 className="w-3 h-3" />}
+                      {inv.status === "Pending" && <Clock className="w-3 h-3" />}
+                      {inv.status === "Failed" && <XCircle className="w-3 h-3" />}
+                      {inv.status}
+                    </span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 text-xs"
+                        onClick={() => onDownload?.(inv)}
+                        disabled={!onDownload}
+                      >
+                        <Download className="w-3 h-3 mr-1" />
+                        PDF
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-      )}
-    </GlassCard>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between gap-4 mt-6 pt-6 border-t border-border/50">
+            <p className="text-sm text-muted-foreground">
+              Page {currentPage} of {totalPages}
+            </p>
+            <div className="flex items-center gap-2">
+              <Button 
+                size="sm" 
+                variant="outline" 
+                disabled={currentPage === 1} 
+                onClick={handlePrev}
+              >
+                <MoveLeft className="w-4 h-4" />
+              </Button>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                disabled={currentPage === totalPages} 
+                onClick={handleNext}
+              >
+                <MoveRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    </Card>
   )
 })
 
@@ -588,101 +705,143 @@ const getLast4 = (cardNumber: string) =>
 
 export const PaymentMethodCard: React.FC<PaymentMethodProps> = React.memo(({
   card,
-  variant,
   onUpdate,
   onCancelSubscription,
-  animation,
-  interactive
+  nextBillingDate,
+  onSubscriptionCancelled,
 }) => {
   const BrandIcon = card.brand
   const last4 = getLast4(card.cardNumber)
   const { openDialog } = useDialog();
+  const [isCancelled, setIsCancelled] = useState<boolean>(false)
+
+  // Auto-dismiss cancellation message after 3 seconds
+  React.useEffect(() => {
+    if (isCancelled) {
+      const timer = setTimeout(() => {
+        setIsCancelled(false)
+      }, 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [isCancelled])
+
+  const cardClassName = "rounded-2xl border border-border/50 bg-background shadow-lg hover:shadow-xl transition-all duration-300"
 
   return (
-    <GlassCard variant={variant} className="max-w-sm" animation={animation} interactive={interactive}>
-      <div className="flex flex-row gap-2">
-        <div className={cn("flex items-center justify-center w-10 h-10 rounded-full",BillingIconVariant({variant}))}> 
-          <Banknote className="w-6 h-6" /> 
-        </div> 
-        <Typography variant="h3" className="mb-4 font-semibold"> Payment Method </Typography> 
-      </div>
-      <div className="flex items-center gap-3 mb-4">
-        <BrandIcon className={cn("w-9 h-9 p-1", BillingIconVariant({variant}))} />
-        <div>
-          <p className="text-md text-zinc-600">
-            •••• •••• •••• {last4}
-          </p>
-          {(card.expiryMonth && card.expiryYear) && (
-            <p className="text-sm text-zinc-600">
-              Expires {card.expiryMonth}/{card.expiryYear}
+    <Card variant="default" className={cardClassName}>
+      <div className="p-6">
+        <div className="mb-6">
+          <h3 className="text-lg font-bold text-foreground mb-1">Payment Method</h3>
+          <p className="text-sm text-muted-foreground">Your current payment details.</p>
+        </div>
+        
+        {/* Card Display */}
+        <div className="flex items-center gap-4 mb-6 p-4 rounded-xl bg-muted/30 border border-border/50">
+          <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-background">
+            <BrandIcon className="w-8 h-8 text-foreground" />
+          </div>
+          <div className="flex-1">
+            <p className="text-base font-semibold text-foreground mb-1">
+              VISA •••• •••• •••• {last4}
             </p>
-          )}
-        </div>
-      </div>
-
-      <Button
-        variant="success"
-        size="md"
-        className="hover:cursor-pointer"
-        onClick={onUpdate}
-      >
-        Update Payment Method
-      </Button>
-
-      {onCancelSubscription && (
-        <div className="mt-3 text-center">
-          <div className="flex flex-row gap-2">
-          <div
-            className={cn(
-              "flex items-center justify-center w-6 h-6 rounded-full",
-              BillingIconVariant({ variant })
+            {(card.expiryMonth && card.expiryYear) && (
+              <p className="text-sm text-muted-foreground">
+                Expires {card.expiryMonth}/{card.expiryYear}
+              </p>
             )}
-          >
-            <Ban className="w-4 h-4" />
           </div>
-          <button
-            className="text-md text-zinc-600 hover:text-red-400 transition hover:cursor-pointer"
-            onClick={() => openDialog({
-              title: 'Alert',
-              content: 'Confirm Subscription Cancellation',
-              dialogType: 'confirm',
-              animationKey: 'popIn',
-              confirmationCallBack: () => {
-                onCancelSubscription?.()
-              },
-            })}
-          >
-            Cancel Subscription
-          </button>
-          </div>
-          <Typography variant="body-small" className="text-zinc-500 text-left">
-            Your plan remains active until the end of the billing cycle.
-          </Typography>
         </div>
-      )}
-    </GlassCard>
+
+        <ButtonWithIcon
+          variant="primary"
+          size="md"
+          className="w-full"
+          icon={<Pencil />}
+          onClick={onUpdate}
+        >
+          Update Payment Details
+        </ButtonWithIcon>
+
+      </div>
+      
+      {/* Danger Zone / Cancellation Success Message */}
+      <div className="mt-6 border-border/50">
+        {isCancelled ? (
+          <div className="bg-emerald-50 dark:bg-emerald-900/20 p-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+              <p className="text-sm font-medium text-emerald-900 dark:text-emerald-100">
+                Subscription cancelled.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="p-4 border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/10">
+            <div className="flex items-start gap-3 mb-3">
+              <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 shrink-0" />
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-red-900 dark:text-red-100 mb-1">Danger Zone</p>
+                <p className="text-sm text-red-700 dark:text-red-300 mb-4">
+                  Permanently cancel your subscription. This action takes effect at the end of your current billing cycle.
+                </p>
+                <ButtonWithIcon
+                  variant="danger"
+                  size="md"
+                  className="w-full text-white"
+                  icon={<XCircle />}
+                  onClick={() => {
+                    if (onCancelSubscription) {
+                      openDialog({
+                        title: 'Cancel Subscription',
+                        content: `Are you sure you want to cancel your subscription? Your subscription will remain active until ${nextBillingDate?.toLocaleDateString() || 'the end of your billing cycle'}. You'll lose access to premium features after cancellation, but you can reactivate anytime before the end of your billing period.`,
+                        dialogType: 'confirm',
+                        animationKey: 'popIn',
+                        confirmationCallBack: () => {
+                          onCancelSubscription()
+                          onSubscriptionCancelled?.()
+                          setIsCancelled(true)
+                        },
+                      })
+                    } else {
+                      openDialog({
+                        title: 'Cancel Subscription',
+                        content: `Are you sure you want to cancel your subscription? Your subscription will remain active until ${nextBillingDate?.toLocaleDateString() || 'the end of your billing cycle'}. You'll lose access to premium features after cancellation, but you can reactivate anytime before the end of your billing period.`,
+                        dialogType: 'confirm',
+                        animationKey: 'popIn',
+                      confirmationCallBack: () => {
+                        onSubscriptionCancelled?.()
+                        setIsCancelled(true)
+                      },
+                      })
+                    }
+                  }}
+                >
+                  Cancel Subscription
+                </ButtonWithIcon>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </Card>
   )
 })
 
 /** ---------------------------- Billing Content ----------------------------- */
 export const BillingContent:React.FC<BillingPageProps> = ({
-  headerTitle = "OpenSrc",
-  headerIcon = Building2,
+  headerTitle,
+  headerIcon,
   plans,
-  features,
   showcurrentPlanId = true,
   showUsageOverview = true,
-  showPricing = false,
+  showPricing = true,
   showBillingTable = true,
-  pricingTitle = "Simple Pricing",
-  pricingDescription = "Choose the plan that works best for you",
-  variant = "dark",
-  currentPlanId = 1,
+  currentPlanIndex = 0,
   renewalDate,
+  subscriptionStatus = "active",
+  billingCycle = "monthly",
   invoices,
-  onInvoiceView,
   onInvoiceDownload,
-  onInvoiceDelete,
   apiUsage,
   storageUsage,
   seatsUsage,
@@ -690,132 +849,125 @@ export const BillingContent:React.FC<BillingPageProps> = ({
   onUpdatePaymentMethod,
   renderUpdatePaymentMethod,
   card,
-  animation = "slideUp",
-  interactive = "hover",
+  isLoading = false,
 }) => {
   const Icon = headerIcon
-  const [showPricingTable, setShowPricingTable] = useState<boolean>(false)
   const pricingRef = React.useRef<HTMLDivElement | null>(null)
-  const activePlan = React.useMemo(
-    () => plans?.find(p => p.id === currentPlanId),
-    [plans, currentPlanId]
-  )
   
-  const handleUpgrade = React.useCallback(() => {
-    setShowPricingTable(true)
-  }, [])
-
-  React.useLayoutEffect(() => {
-    if (!showPricingTable) return
-
-    pricingRef.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    })
-  }, [showPricingTable])
-
-  const activePlanFeatures = React.useMemo(() => {
-    if (!features || !activePlan) return []
-
-    return features.filter((f) => {
-      const value = activePlan.featureMap[f.id]
-      return (value)
-    })
-  }, [features, activePlan])
+  const activePlan = plans?.[currentPlanIndex]
+  
+  // Use plans directly as pricingTiers since they're already in PricingTier format
+  const pricingTiers: PricingTier[] = React.useMemo(() => {
+    if (!plans) return []
+    
+    return plans.map((tier, index) => ({
+      ...tier,
+      ctaLabel: tier.ctaLabel || (index === currentPlanIndex ? "Current Plan" : "Upgrade"),
+      cardColor: tier.cardColor || "",
+    }));
+  }, [plans, currentPlanIndex])
 
   return (
-    <>
-      { headerTitle && <header className="border-b border-border p-4 flex justify-between">
-        <div className="flex items-center gap-3">
-          <Icon className="w-5 h-5" />
-          <Typography variant="h2" className="font-bold">{headerTitle}</Typography>
-        </div>
-        <Avatar size="lg" />
-      </header> }
+    <div className="min-h-screen bg-background">
+      { headerTitle && (
+        <header className="border-b border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {Icon && <Icon className="w-5 h-5 text-muted-foreground" />}
+              <Typography variant="h2" className="font-bold text-xl sm:text-2xl text-foreground">{headerTitle}</Typography>
+            </div>
+            <Avatar size="lg" />
+          </div>
+        </header>
+      ) }
 
-      <main className="max-w-7xl mx-auto p-1 space-y-4 ">
-        <Breadcrumbs
-          items={[
-            { label: "Settings", href: "#" },
-            { label: "Billing", href: "#" },
-          ]}
-          separatorIcon={ChevronRight}
-        />
-
-        <div className={cn("flex gap-3 p-4 rounded bg-primary/5 border", ModernPricingGridVariant({variant}))}>
-          <Shield className="w-5 h-5" />
-          <Typography variant="body-small" className="text-md">
-            Billing information is securely managed.
-          </Typography>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        {/* Page Header */}
+        <div>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Billing & Subscription</h1>
+          <p className="text-muted-foreground">Manage your plan, payment methods, and billing history.</p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-[auto_1fr] gap-4">
-          {showcurrentPlanId && activePlan && renewalDate && 
-            <CurrentPlanCard plan={activePlan} features={activePlanFeatures} renewalDate={renewalDate} variant={variant} onUpgrade={handleUpgrade} animation={animation} interactive={interactive}/>
-          }
-          {showUsageOverview && (
-            <UsageOverviewCard
-              variant={variant}
-              apiUsage={apiUsage}
-              storageUsage={storageUsage}
-              seatsUsage={seatsUsage}
-              animation={animation} 
-              interactive={interactive}
-            />
+
+        {/* Current Plan and Usage */}
+        <div className="grid md:grid-cols-2 gap-6">
+          {isLoading ? (
+            <>
+              {showcurrentPlanId && <CurrentPlanCardSkeleton />}
+              {showUsageOverview && <UsageOverviewCardSkeleton />}
+            </>
+          ) : (
+            <>
+              {showcurrentPlanId && activePlan && renewalDate && (
+                <CurrentPlanCard 
+                  plan={activePlan} 
+                  renewalDate={renewalDate} 
+                  status={subscriptionStatus}
+                  billingCycle={billingCycle}
+                />
+              )}
+              {showUsageOverview && (
+                <UsageOverviewCard
+                  apiUsage={apiUsage}
+                  storageUsage={storageUsage}
+                  seatsUsage={seatsUsage}
+                />
+              )}
+            </>
           )}
         </div>
 
-        {(showPricingTable || showPricing) && (
-          <div ref={pricingRef}>
-            <ComparisonTable
-              title={pricingTitle}
-              description={pricingDescription}
-              features={features ?? []}
-              plans={plans ?? []}
-              variant={variant ?? "default"}
-              mobileBreakpoint="md"
-              animation={animation}
-              interactive={interactive}
-              onCtaClick={(plan) => {
-                console.log(plan.id)
-              }}
-              currentPlanId={currentPlanId}
-            />
+        {/* Plan & Pricing Section */}
+        {showPricing && (
+          <div 
+            ref={pricingRef} 
+            className="space-y-4 rounded-lg border border-border bg-background/50"
+          >
+            {isLoading ? (
+              <PricingGridSkeleton />
+            ) : (
+              <PricingGrid
+                title="Plan & Pricing"
+                description="Choose the plan that fits your needs. You can upgrade or downgrade at any time."
+                tiers={pricingTiers}
+                showToggle={true}
+                scaleRecommended
+              />
+            )}
           </div>
         )}
 
-        <div className="grid gap-2 lg:grid-cols-[auto_1fr] items-stretch">
-          {/* Billing Table — FIRST on mobile & iPad */}
-          {showBillingTable && (
-            <div className="order-1 lg:order-2">
-              <BillingTable
-                variant={variant}
-                invoices={invoices ?? []}
-                onView={onInvoiceView}
-                onDownload={onInvoiceDownload}
-                onDelete={onInvoiceDelete}
-                animation={animation}
-                interactive={interactive}
-              />
-            </div>
+        {/* Payment Method and Billing History */}
+        <div className="grid gap-6 lg:grid-cols-2 items-start">
+          {isLoading ? (
+            <>
+              <PaymentMethodCardSkeleton />
+              {showBillingTable && <BillingTableSkeleton />}
+            </>
+          ) : (
+            <>
+              {card && (
+                <PaymentMethodCard
+                  card={card}
+                  nextBillingDate={renewalDate}
+                  onUpdate={onUpdatePaymentMethod}
+                  onCancelSubscription={onCancelSubscription}
+                />
+              )}
+              
+              {showBillingTable && invoices && invoices.length > 0 && (
+                <BillingTable
+                  invoices={invoices}
+                  onDownload={onInvoiceDownload}
+                />
+              )}
+            </>
           )}
-
-          {/* Payment Method — SECOND on mobile & iPad */}
-          <div className="order-2 lg:order-1">
-            <PaymentMethodCard
-              variant={variant}
-              card={card}
-              onUpdate={onUpdatePaymentMethod}
-              onCancelSubscription={onCancelSubscription}
-              animation={animation}
-              interactive={interactive}
-            />
-          </div>
-        
         </div>
+        
         {renderUpdatePaymentMethod?.()}
       </main>
-    </>
+    </div>
   )
 }
 

@@ -28,15 +28,15 @@ const radioGroupVariants = cva("flex gap-2", {
 
 export interface RadioGroupProps
   extends Omit<
-      React.InputHTMLAttributes<HTMLInputElement>,
-      "size" | "onChange" | "defaultValue"
-    >,
-    VariantProps<typeof radioItemVariants>,
-    VariantProps<typeof radioGroupVariants> {
+    React.InputHTMLAttributes<HTMLInputElement>,
+    "size" | "onChange" | "defaultValue"
+  >,
+  VariantProps<typeof radioItemVariants>,
+  VariantProps<typeof radioGroupVariants> {
   name?: string;
   options: RadioOption[];
-  value?: string;                
-  defaultValue?: string;         
+  value?: string;
+  defaultValue?: string;
   onChange?: (value: string) => void;
   disabled?: boolean;
   labelPosition?: "left" | "right";
@@ -189,7 +189,7 @@ const radioIndicatorDefaultVariants = cva(
 /* ----------------------------------------
  * Motion Variants
  * ------------------------------------- */
-export const radioMotionVariants: Record<string, Variants> = {
+const radioMotionVariants: Record<string, Variants> = {
   bounce: {
     unchecked: { scale: 1 },
     checked: {
@@ -267,9 +267,9 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
 
   const [internalValue, setInternalValue] = React.useState<string>(
     value ??
-      defaultValue ??
-      options.find((o) => !o.disabled)?.value ??
-      ""
+    defaultValue ??
+    options.find((o) => !o.disabled)?.value ??
+    ""
   );
 
   React.useEffect(() => {
@@ -317,23 +317,23 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
               disabled={disabled || opt.disabled}
               className={cn(
                 checkedVariant !== "default" ?
-                radioItemVariants({
-                  variant,
-                  size,
-                  disabled: disabled || opt.disabled,
-                }) : radioOppositeItemVariants({
-                  variant,
-                  size,
-                  disabled: disabled || opt.disabled,
-                })
+                  radioItemVariants({
+                    variant,
+                    size,
+                    disabled: disabled || opt.disabled,
+                  }) : radioOppositeItemVariants({
+                    variant,
+                    size,
+                    disabled: disabled || opt.disabled,
+                  })
               )}
             >
               {checkedVariant === "surface" && (
-                <RadixRadio.Indicator forceMount className={cn("flex items-center justify-center", radioIndicatorVariants({ size }))}/>
+                <RadixRadio.Indicator forceMount className={cn("flex items-center justify-center", radioIndicatorVariants({ size }))} />
               )}
 
               {checkedVariant === "default" && (
-                <RadixRadio.Indicator forceMount className={cn("flex items-center justify-center", radioIndicatorDefaultVariants({ variant, size }))}/>
+                <RadixRadio.Indicator forceMount className={cn("flex items-center justify-center", radioIndicatorDefaultVariants({ variant, size }))} />
               )}
             </RadixRadio.Item>
           </motion.div>
