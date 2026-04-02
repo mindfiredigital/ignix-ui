@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, type Transition } from 'framer-motion';
 import { cva, type VariantProps } from 'class-variance-authority';
 import {
     ArrowRight,
@@ -69,6 +69,7 @@ interface CTAContextType {
     contentAlign: 'left' | 'center' | 'right';
     variant: string;
     imagePosition: 'left' | 'right';
+    imageVariant: 'light' | 'dark' | 'default';
     isVisible: boolean;
     animationDelay: number;
     animationType: 'fade' | 'slide' | 'scale';
@@ -391,12 +392,12 @@ export const CTABannerContent: React.FC<{
         slide: {
             initial: { opacity: 0, y: 40 },
             animate: { opacity: 1, y: 0 },
-            transition: { duration: 0.8, delay: animationDelay, ease: "easeOut" }
+            transition: { duration: 0.8, delay: animationDelay, ease: "easeOut" } as Transition
         },
         scale: {
             initial: { opacity: 0, scale: 0.95 },
             animate: { opacity: 1, scale: 1 },
-            transition: { duration: 0.7, delay: animationDelay, ease: "backOut" }
+            transition: { duration: 0.8, delay: animationDelay, ease: "easeOut" } as Transition
         }
     }[animationType];
 
@@ -1677,7 +1678,8 @@ export const CTABannerContactForm: React.FC<{
                             </div>
 
                             {/* Subject Field - Full width */}
-                            <div className={layout === 'compact' ? 'md:col-span-2' : ''}>
+                            <div className="col-span-1 md:col-span-2">
+
                                 <label htmlFor="contact-subject" className="block mb-2">
                                     <Typography
                                         variant="small"
@@ -2233,7 +2235,7 @@ export const CTABanner: React.FC<CTABannerProps> = ({
 
     // Image Options
     imagePosition = "right",
-    // imageVariant = "default",
+    imageVariant = "default",
 
     // Theme
     theme,
@@ -2305,6 +2307,7 @@ export const CTABanner: React.FC<CTABannerProps> = ({
         contentAlign,
         variant: typeof variant === 'string' ? variant : 'default',
         imagePosition,
+        imageVariant: imageVariant || 'default',
         isVisible,
         animationDelay,
         animationType,

@@ -39,7 +39,7 @@
       "dependencies": ["framer-motion"],
       "files": {
         "main": {
-          "path": "components/box/index.tsx",
+          "path": "components/layouts/box/index.tsx",
           "type": "component"
         }
       }
@@ -134,7 +134,7 @@
       ],
       "files": {
         "main": {
-          "path": "templates/sections/dynamic-form/index.tsx",
+          "path": "templates/pages/dynamic-form/index.tsx",
           "type": "template"
         }
       }
@@ -1114,17 +1114,15 @@
       "description": "",
       "dependencies": [
         "framer-motion",
-        "react-icons",
         "lucide-react",
         "class-variance-authority"
       ],
       "componentDependencies": [
         "avatar",
-        "button",
-        "breadcrumbs",
+        "buttonWithIcon",
         "typography",
         "card",
-        "comparisonTable",
+        "pricingGrid",
         "dialogBox"
       ],
       "files": {
@@ -1429,6 +1427,27 @@
         "main": {
           "path": "components/layouts/split/index.tsx",
           "type": "component"
+        }
+      }
+    },
+    "contact-form": {
+      "name": "contact-form",
+      "description": "A Contact Form Page that allows users to submit inquiries, feedback, or support requests. The form collects basic contact details and a message, with an option to attach a file.",
+      "dependencies": [
+        "@radix-ui/react-icons", 
+        "framer-motion"
+      ],
+      "componentDependencies": [
+        "textarea",
+        "button",
+        "input",
+        "fileUpload",
+        "toast"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/contact-form/index.tsx",
+          "type": "template"
         }
       }
     }

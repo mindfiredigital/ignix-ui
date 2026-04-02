@@ -1,6 +1,6 @@
 {
   "name": "@mindfiredigital/ignix-ui",
-  "version": "1.0.7",
+  "version": "1.4.1",
   "private": false,
   "description": "Ignix UI component library",
   "type": "commonjs",
@@ -13,7 +13,7 @@
   },
   "files": [
     "dist",
-    " README.md"
+    "README.md"
   ],
   "scripts": {
     "build": "tsup",
@@ -26,11 +26,13 @@
     "ignix-ui",
     "themes",
     "react",
+    "nextjs",
+    "ui-library",
     "components",
     "ui",
     "animation"
   ],
-  "author": "Deepak Yadav",
+  "author": "Mindfire Digital",
   "license": "MIT",
   "dependencies": {
     "clsx": "^2.1.1",

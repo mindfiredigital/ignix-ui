@@ -1,5 +1,5 @@
 const path = require('path');
-const validScopes = ['cli', 'docs', 'release', 'component', 'registry', 'storybook', 'cli-tool'];
+const validScopes = ['cli', 'docs', 'release', 'component', 'registry', 'storybook', 'cli-tool', 'ui'];
 const scopeMultiPlugin = require(path.resolve(__dirname, 'commitlint-plugin-scope-multi.cjs'));
 
 module.exports = {

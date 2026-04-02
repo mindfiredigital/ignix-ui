@@ -8,11 +8,7 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import BillingPageDemo from '@site/src/components/Demo/BillingPageDemo';
 
-## Overview
-
-A comprehensive **Billing management page** that allows users to view and manage their subscription, payment methods, and billing history. It includes current plan details with renewal information, usage overview metrics, and a full invoice history with actions for viewing, downloading, or deleting invoices. Users can securely update their payment method, cancel subscriptions with confirmation, and upgrade or change plans via an integrated pricing grid. The layout is fully responsive, optimized for mobile, tablet, and desktop experiences, and supports multiple visual themes, animations, and interaction styles. An extensible modal system enables custom payment update flows while maintaining secure, user-controlled interactions.
-
-## Preview
+A comprehensive **Billing management page** that allows users to view and manage their subscription, payment methods, and billing history. It includes current plan details with renewal information, usage overview metrics, and a full invoice history with actions for viewing, downloading, or deleting invoices.
 
 <BillingPageDemo />
 
@@ -862,8 +858,8 @@ export const BillingPage:React.FC<BillingPageProps> = (props) => {
   )
 }
 
-  ```
-  </TabItem>
+```
+</TabItem>
 </Tabs>
 
 ## Usage
@@ -876,11 +872,11 @@ import {
   FaCcAmex,
   FaCcPaypal,
 } from "react-icons/fa"
-import { Home, Settings2, Proportions, X } from "lucide-react"
-import { BillingPage } from '@ignix-ui/billingpage'
-import { Button } from "@ignix-ui/button"
-import { Card } from "@ignix-ui/card"
-import { Typography } from "@ignix-ui/typography"
+import { Gem, Crown, X } from "lucide-react"
+import { BillingPage } from "@ignix-ui/billing-page"
+import { Button } from "@src/components/button"
+import { Card } from "@src/components/card"
+import { Typography } from "@src/components/typography"
 
 /* ----------------------------------
  * Static Data
@@ -893,38 +889,59 @@ const AVAILABLE_PAYMENT_METHODS = [
   { id: "paypal", label: "PayPal", icon: FaCcPaypal },
 ]
 
+const FEATURES = [
+  { id: 1, label: "Components" },
+  { id: 2, label: "Theme" },
+  { id: 3, label: "Support" },
+  { id: 4, label: "API Access" },
+  { id: 5, label: "Customisation" },
+  { id: 6, label: "SLA" },
+]
+
 const PLANS = [
   {
     id: 1,
-    name: "Starter",
-    price: "$0/month",
+    name: "Basic",
+    price: "$199/month",
     icon: Home,
-    ctaLabel: "Get Started",
-    features: [
-      { label: "1 Project", available: true },
-      { label: "Community Support", available: true },
-    ],
+    featureMap: {
+      1: true,
+      2: false,
+      3: "Email",
+      4: false,
+      5: "Limited",
+      6: null,
+    },
   },
   {
     id: 2,
-    name: "Pro",
-    price: "$29/month",
+    name: "Standard",
+    price: "$399/month",
     icon: Settings2,
-    highlighted: true,
-    ctaLabel: "Upgrade",
-    features: [
-      { label: "Unlimited Projects", available: true },
-      { label: "Priority Support", available: true },
-    ],
+    recommended: true,
+    featureMap: {
+      1: true,
+      2: true,
+      3: "Chat",
+      4: true,
+      5: "Full",
+      6: "24h",
+    },
   },
   {
     id: 3,
-    name: "Enterprise",
-    price: "$99/month",
+    name: "Premium",
+    price: "$899/month",
     icon: Proportions,
-    highlighted: true,
-    ctaLabel: "Contact Sales",
-    features: [{ label: "Custom Integrations", available: true }],
+    recommended: true,
+    featureMap: {
+      1: true,
+      2: true,
+      3: "24/7 Priority",
+      4: true,
+      5: "Unlimited",
+      6: "4h",
+    },
   },
 ]
 
@@ -945,24 +962,12 @@ export default function BillingDemo() {
    * Handlers (defined as const)
    * ---------------------------------- */
 
-  const handleInvoiceView = useCallback((invoice) => {
-    //write your logic here
-    console.log("View invoice:", invoice.id)
-  }, [])
-
   const handleInvoiceDownload = useCallback((invoice) => {
     //write your logic here
-    console.log("Download invoice:", invoice.id)
-  }, [])
-
-  const handleInvoiceDelete = useCallback((invoice) => {
-    //write your logic here
-    console.log("Delete invoice:", invoice.id)
   }, [])
 
   const handleCancelSubscription = useCallback(() => {
     //write your logic here
-    console.log("Cancel subscription")
   }, [])
 
   const handleUpdatePaymentMethod = useCallback(() => {
@@ -970,8 +975,8 @@ export default function BillingDemo() {
   }, [])
 
   const handleSelectPaymentMethod = useCallback((methodId: string) => {
-    console.log("Selected payment method:", methodId)
     //write your logic here
+    setPaymentModalOpen(false)
   }, [])
 
   /* ----------------------------------
@@ -981,10 +986,13 @@ export default function BillingDemo() {
   return (
     <BillingPage
       /* ---- Plan & Billing ---- */
-      variant="dark"
       animation="fadeIn"
       renewalDate={new Date("2025-03-21")}
+      currentPlanId={2}
+      subscriptionStatus="active"
+      billingCycle="monthly"
       plans={PLANS}
+      features={FEATURES}
       invoices={INVOICES}
 
       /* ---- Usage Meters ---- */
@@ -993,9 +1001,7 @@ export default function BillingDemo() {
       seatsUsage={{ label: "Active Seats", used: 8, total: 10 }}
 
       /* ---- Invoice Actions ---- */
-      onInvoiceView={handleInvoiceView}
       onInvoiceDownload={handleInvoiceDownload}
-      onInvoiceDelete={handleInvoiceDelete}
 
       /* ---- Subscription ---- */
       onCancelSubscription={handleCancelSubscription}
@@ -1068,7 +1074,6 @@ export default function BillingDemo() {
 |------|------|---------|-------------|
 | `headerTitle` | `string` | `"OpenSrc"` | Title displayed in the billing page header. |
 | `headerIcon` | `LucideIcon` | `Building2` | Icon shown next to the header title. |
-| `variant` | `"dark" \| "default" \| "light"` | `"dark"` | Visual theme variant applied across all billing components. |
 
 ---
 
@@ -1077,12 +1082,14 @@ export default function BillingDemo() {
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `plans` | `PlanProps[]` | `[]` | Available subscription plans displayed in the pricing grid. |
-| `currentPlan` | `number` | `1` | ID of the currently active plan. |
+| `features` | `Feature[]` | `[]` | List of features available across plans. |
+| `currentPlanId` | `number` | `0` | ID of the currently active plan. |
 | `renewalDate` | `Date` | — | Next billing or renewal date for the active plan. |
-| `showCurrentPlan` | `boolean` | `true` | Toggles visibility of the active plan card. |
+| `subscriptionStatus` | `"active" \| "trial" \| "canceled" \| "past_due" \| "expired" \| "pending"` | `"active"` | Current subscription status. |
+| `billingCycle` | `"monthly" \| "yearly"` | `"monthly"` | Billing cycle for the current plan. |
+| `showcurrentPlanId` | `boolean` | `true` | Toggles visibility of the active plan card. |
 | `showPricing` | `boolean` | `false` | Forces the pricing grid to be visible. |
-| `pricingTitle` | `string` | `"Simple Pricing"` | Title displayed above the pricing grid. |
-| `pricingDescription` | `string` | `"Choose the plan that works best for you"` | Description shown under the pricing title. |
+| `isLoading` | `boolean` | `false` | Shows skeleton loaders instead of content. |
 
 ---
 
@@ -1104,6 +1111,7 @@ export default function BillingDemo() {
 | `card` | `CardDetails` | — | Active payment card details (brand, masked number, expiry). |
 | `onUpdatePaymentMethod` | `() => void` | — | Triggered when the user clicks **Update Payment Method**. |
 | `onCancelSubscription` | `() => void` | — | Fired after confirming subscription cancellation. |
+| `onSubscriptionCancelled` | `() => void` | — | Called after subscription is successfully cancelled. |
 | `renderUpdatePaymentMethod` | `() => ReactNode` | — | Optional render slot for a custom payment update modal or flow. |
 
 ---
@@ -1114,9 +1122,7 @@ export default function BillingDemo() {
 |------|------|---------|-------------|
 | `showBillingTable` | `boolean` | `true` | Toggles the billing history table. |
 | `invoices` | `Invoice[]` | `[]` | List of billing invoices displayed in the table. |
-| `onInvoiceView` | `(invoice: Invoice) => void` | — | Called when an invoice is viewed. |
 | `onInvoiceDownload` | `(invoice: Invoice) => void` | — | Called when an invoice is downloaded. |
-| `onInvoiceDelete` | `(invoice: Invoice) => void` | — | Called when an invoice is deleted. |
 
 ---
 
@@ -1124,7 +1130,7 @@ export default function BillingDemo() {
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `animation` | `"none" \| "fadeIn" \| "slideUp" \| "scaleIn" \| "flipIn" \| "bounceIn" \| "floatIn"` | `"slideUp"` | Page-wide and card-level animation style. |
+| `animation` | `"none" \| "fadeIn" \| "slideUp" \| "scaleIn" \| "flipIn" \| "bounceIn" \| "floatIn"` | `"fadeIn"` | Page-wide and card-level animation style. |
 
 ---
 
@@ -1134,11 +1140,11 @@ export default function BillingDemo() {
 |------|------|-------------|
 | `id` | `number` | Unique identifier for the plan. |
 | `name` | `string` | Plan display name. |
-| `icon` | `React.ElementType` | Optional icon shown with the plan. |
-| `price` | `string` | Price label displayed to the user. |
-| `features` | `Feature[]` | List of plan features and availability. |
+| `icon` | `LucideIcon` | Optional icon shown with the plan. |
+| `price` | `string` | Price label displayed to the user (e.g., "$199/month"). |
+| `featureMap` | `Record<number, FeatureValue>` | Map of feature IDs to their values (boolean, string, number, or null). |
 | `ctaLabel` | `string` | Custom label for the call-to-action button. |
-| `onCtaClick` | `(plan: PlanProps) => void` | Triggered when the plan CTA is clicked. |
+| `recommended` | `boolean` | Whether this plan is recommended. |
 
 ---
 
