@@ -1,5 +1,11 @@
 # @mindfiredigital/ignix-ui
 
+## 1.4.0
+
+### Minor Changes
+
+- Merge pull request #748 from mindfiredigital/development
+
 ## 1.3.0
 
 ### Minor Changes
