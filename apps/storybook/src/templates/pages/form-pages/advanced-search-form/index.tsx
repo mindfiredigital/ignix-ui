@@ -1,1451 +1,610 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { cva, type VariantProps } from 'class-variance-authority';
-import {
-    MagnifyingGlassIcon,
-    DownloadIcon,
-    ResetIcon,
-    BookmarkIcon,
-    BookmarkFilledIcon,
-    ChevronDownIcon,
-    ChevronLeftIcon,
-    ChevronRightIcon,
-    Cross2Icon,
-    CheckIcon,
-    SunIcon,
-    MoonIcon,
-    PersonIcon,
-    CalendarIcon,
-    SymbolIcon,
-    FileTextIcon,
-    FileIcon,
-    GitHubLogoIcon,
-    UpdateIcon,
-} from '@radix-ui/react-icons';
-import { cn } from '../../../../../utils/cn';
-import { Button } from '../../../../components/button';
-import { Typography } from '../../../../components/typography';
+"use client";
+
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "../../../../../utils/cn";
+import { Typography } from "../../../../components/typography";
+import DatePicker from "../../../../components/date-picker";
+import { Checkbox } from "../../../../components/checkbox";
 
 /* ============================================
    TYPES & INTERFACES
 ============================================ */
 
-export type UserStatus = 'Active' | 'Inactive' | 'Pending' | 'Suspended';
-export type UserRole = 'Admin' | 'Teacher' | 'Student' | 'Moderator' | 'Guest';
-export type TagType = 'Premium' | 'New' | 'Verified' | 'Beta' | 'VIP' | 'Trial' | 'Enterprise' | 'Pro' | 'Basic';
+export type FilterType = "text" | "select" | "multi-select" | "date-range" | "checkbox" | "numeric-range";
+export type DateRangePreset = "today" | "yesterday" | "last7days" | "last30days" | "last90days" | "thisMonth" | "lastMonth" | "custom";
+export type ExportFormat = "csv" | "excel" | "json";
+export type SearchVariant = "default" | "dark" | "light";
+export type LayoutVariant = "inline" | "stacked" | "collapsible";
+export type Breakpoint = "mobile" | "tablet" | "desktop";
 
-export interface User {
-    id: string;
-    name: string;
-    email: string;
-    role: UserRole;
-    status: UserStatus;
-    tags: TagType[];
-    createdAt: string;
-    lastActive?: string;
-    avatar?: string;
-    verified: boolean;
-    premium: boolean;
-    country?: string;
-    company?: string;
-    phone?: string;
+export interface FilterOption {
+    value: string;
+    label: string;
+    count?: number;
 }
+
+export interface BaseFilterConfig {
+    id: string;
+    label: string;
+    type: FilterType;
+    placeholder?: string;
+    defaultValue?: string | string[] | { start?: string; end?: string; preset?: DateRangePreset } | { min?: number; max?: number };
+    required?: boolean;
+    fullWidthOnMobile?: boolean;
+}
+
+export interface TextFilterConfig extends BaseFilterConfig {
+    type: "text";
+}
+
+export interface SelectFilterConfig extends BaseFilterConfig {
+    type: "select";
+    options: FilterOption[];
+}
+
+export interface MultiSelectFilterConfig extends BaseFilterConfig {
+    type: "multi-select";
+    options: FilterOption[];
+    checkboxProps?: Omit<React.ComponentProps<typeof Checkbox>, 'checked' | 'onChange' | 'label'>;
+}
+
+export interface DateRangeFilterConfig extends BaseFilterConfig {
+    type: "date-range";
+    presets?: DateRangePreset[];
+    datePickerProps?: Omit<React.ComponentProps<typeof DatePicker>, 'value' | 'onChange' | 'variant' | 'themeMode'>;
+}
+
+export interface CheckboxFilterConfig extends BaseFilterConfig {
+    type: "checkbox";
+    options: FilterOption[];
+    checkboxProps?: Omit<React.ComponentProps<typeof Checkbox>, 'checked' | 'onChange' | 'label'>;
+}
+
+export interface NumericRangeFilterConfig extends BaseFilterConfig {
+    type: "numeric-range";
+    min?: number;
+    max?: number;
+    step?: number;
+}
+
+export type FilterConfig =
+    | TextFilterConfig
+    | SelectFilterConfig
+    | MultiSelectFilterConfig
+    | DateRangeFilterConfig
+    | CheckboxFilterConfig
+    | NumericRangeFilterConfig;
 
 export interface SavedSearch {
     id: string;
     name: string;
-    description?: string;
-    filters: FilterState;
-    createdAt: string;
-    lastUsed?: string;
-    isPinned?: boolean;
-    shared?: boolean;
-    owner?: string;
+    filters: Record<string, FilterValue>;
+    createdAt?: Date;
 }
 
-export interface FilterState {
-    name: string;
-    role: UserRole | '';
-    status: UserStatus | '';
-    tags: TagType[];
-    dateFrom: string;
-    dateTo: string;
-    verifiedOnly: boolean;
-    premiumOnly: boolean;
-    country?: string;
-    company?: string;
-    sortBy?: 'name' | 'email' | 'role' | 'status' | 'createdAt' | 'lastActive';
-    sortOrder?: 'asc' | 'desc';
-}
-
-export interface FacetCount {
-    value: string;
-    count: number;
-    selected: boolean;
-}
-
-export interface FacetGroup {
+export interface FacetedCategory {
     id: string;
     label: string;
-    icon?: React.ElementType;
-    counts: FacetCount[];
+    options: FilterOption[];
 }
 
-export interface ExportOptions {
-    format: 'csv' | 'excel' | 'json' | 'pdf';
-    includeFields: string[];
-    filename?: string;
-    delimiter?: string;
+export interface DateRangeValue {
+    start?: string;
+    end?: string;
+    preset?: DateRangePreset;
 }
 
-export interface SearchContextType {
-    filters: FilterState;
-    results: User[];
-    totalCount: number;
-    filteredCount: number;
-    savedSearches: SavedSearch[];
-    facets: FacetGroup[];
-    isLoading: boolean;
-    error: string | null;
-    page: number;
-    pageSize: number;
-    totalPages: number;
+export interface NumericRangeValue {
+    min?: number;
+    max?: number;
+}
 
-    updateFilters: (updates: Partial<FilterState>) => void;
-    resetFilters: () => void;
-    applySavedSearch: (search: SavedSearch) => void;
-    saveCurrentSearch: (name: string, description?: string) => void;
-    deleteSavedSearch: (id: string) => void;
-    togglePinSavedSearch: (id: string) => void;
-    exportResults: (options: ExportOptions) => Promise<void>;
-    setPage: (page: number) => void;
-    clearError: () => void;
+export type FilterValue =
+    | string
+    | string[]
+    | DateRangeValue
+    | NumericRangeValue
+    | undefined;
+
+export interface AdvancedSearchFormProps extends VariantProps<typeof searchContainerVariants> {
+    variant?: SearchVariant;
+    layout?: LayoutVariant;
+    filters?: FilterConfig[];
+    facetedCategories?: FacetedCategory[];
+    onSearch?: (filters: Record<string, FilterValue>) => void;
+    onExport?: (filters: Record<string, FilterValue>, format: ExportFormat) => void;
+    onSaveSearch?: (search: SavedSearch) => void;
+    onDeleteSearch?: (searchId: string) => void;
+    initialFilters?: Record<string, FilterValue>;
+    savedSearches?: SavedSearch[];
+    resultsCount?: number;
+    totalResults?: number;
+    autoApply?: boolean;
+    debounceMs?: number;
+    showExport?: boolean;
+    showSaveSearch?: boolean;
+    showReset?: boolean;
+    showFaceted?: boolean;
+    showResultsCount?: boolean;
+    className?: string;
+    children?: React.ReactNode;
+    ariaLabel?: string;
+    mobileBreakpoint?: number;
+    tabletBreakpoint?: number;
+    defaultCollapsedOnMobile?: boolean;
+}
+
+interface SearchContextType {
+    variant: SearchVariant;
+    layout: LayoutVariant;
+    filters: FilterConfig[];
+    activeFilters: Record<string, FilterValue>;
+    setActiveFilters: React.Dispatch<React.SetStateAction<Record<string, FilterValue>>>;
+    onSearch?: (filters: Record<string, FilterValue>) => void;
+    autoApply: boolean;
+    debounceMs: number;
+    theme: "light" | "dark";
+    isMobile: boolean;
+    isTablet: boolean;
+    isDesktop: boolean;
+    filtersCollapsed: boolean;
+    setFiltersCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
+    resultsCount?: number;
+    totalResults?: number;
+    savedSearches?: SavedSearch[];
+    onSaveSearch?: (search: SavedSearch) => void;
+    onExport?: (filters: Record<string, FilterValue>, format: ExportFormat) => void;
+    facetedCategories?: FacetedCategory[];
 }
 
 const SearchContext = React.createContext<SearchContextType | undefined>(undefined);
 
-const useSearchContext = () => {
+const useSearch = (): SearchContextType => {
     const context = React.useContext(SearchContext);
     if (!context) {
-        throw new Error('Search components must be used within a SearchProvider');
+        throw new Error("Search components must be used within AdvancedSearchForm");
     }
     return context;
 };
 
 /* ============================================
-   VARIANTS & ANIMATIONS
+   VARIANTS
 ============================================ */
 
-const SearchVariants = cva("min-h-screen transition-all duration-500", {
+const searchContainerVariants = cva("w-full transition-all duration-300", {
     variants: {
         variant: {
-            default: "bg-gradient-to-br from-background via-background to-secondary/5 text-foreground",
-            vibrant: "bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 dark:from-purple-950 dark:via-pink-950 dark:to-orange-950 text-foreground",
-            ocean: "bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-50 dark:from-cyan-950 dark:via-blue-950 dark:to-indigo-950 text-foreground",
-            forest: "bg-gradient-to-br from-green-50 via-teal-50 to-lime-50 dark:from-green-950 dark:via-teal-950 dark:to-lime-950 text-foreground",
-            sunset: "bg-gradient-to-br from-orange-50 via-rose-50 to-purple-50 dark:from-orange-950 dark:via-rose-950 dark:to-purple-950 text-foreground",
+            default: "bg-white text-gray-900",
+            dark: "bg-gray-950 text-white",
+            light: "bg-gray-50 text-gray-900",
+        },
+        layout: {
+            inline: "space-y-4",
+            stacked: "space-y-6",
+            collapsible: "",
         },
     },
     defaultVariants: {
         variant: "default",
+        layout: "stacked",
     },
 });
 
-const CardVariants = cva("rounded-xl overflow-hidden transition-all duration-300", {
+const filterGroupVariants = cva("", {
     variants: {
-        variant: {
-            default: "bg-card/90 backdrop-blur-sm shadow-lg border border-border/50",
-            glass: "bg-card/70 backdrop-blur-md shadow-xl border border-white/20 dark:border-white/10",
-            elevated: "bg-card shadow-xl hover:shadow-2xl",
-            border: "bg-card border-2 border-primary/20",
+        layout: {
+            inline: "flex flex-wrap gap-4 items-end",
+            stacked: "space-y-4",
+            collapsible: "space-y-4",
         },
     },
     defaultVariants: {
-        variant: "default",
+        layout: "stacked",
     },
 });
 
-// Animation variants
-const scaleIn = {
-    initial: { opacity: 0, scale: 0.95 },
-    animate: { opacity: 1, scale: 1 },
-    exit: { opacity: 0, scale: 0.9 },
-    transition: { duration: 0.2 }
+/* ============================================
+   RESPONSIVE HOOK
+============================================ */
+type UseResponsiveReturn = {
+    isMobile: boolean;
+    isTablet: boolean;
+    isDesktop: boolean;
+    hasMounted: boolean;
 };
 
-/* ============================================
-   MOCK DATA GENERATION
-============================================ */
 
-const generateMockUsers = (count: number): User[] => {
-    const firstNames = ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve', 'Frank', 'Grace', 'Henry', 'Ivy', 'Jack', 'Karen', 'Leo', 'Mia', 'Noah', 'Olivia', 'Paul', 'Quinn', 'Ryan', 'Sara', 'Tom', 'Uma', 'Vera', 'Will', 'Xena', 'Yuri', 'Zara'];
-    const lastNames = ['Johnson', 'Smith', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin'];
-    const roles: UserRole[] = ['Admin', 'Teacher', 'Student', 'Moderator', 'Guest'];
-    const statuses: UserStatus[] = ['Active', 'Inactive', 'Pending', 'Suspended'];
-    const tags: TagType[] = ['Premium', 'New', 'Verified', 'Beta', 'VIP', 'Trial', 'Enterprise', 'Pro', 'Basic'];
-    const countries = ['USA', 'UK', 'Canada', 'Australia', 'Germany', 'France', 'Japan', 'Brazil', 'India', 'China'];
-    const companies = ['Google', 'Microsoft', 'Apple', 'Amazon', 'Facebook', 'Netflix', 'Tesla', 'Adobe', 'Salesforce', 'Oracle'];
+const useResponsive = (mobileBreakpoint = 768, tabletBreakpoint = 1024): UseResponsiveReturn => {
+    const [isMobile, setIsMobile] = React.useState(false);
+    const [isTablet, setIsTablet] = React.useState(false);
+    const [isDesktop, setIsDesktop] = React.useState(true); // SSR-safe default
+    const [hasMounted, setHasMounted] = React.useState(false);
 
-    const users: User[] = [];
-
-    for (let i = 0; i < count; i++) {
-        const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
-        const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-        const createdAt = new Date(Date.now() - Math.floor(Math.random() * 365 * 24 * 60 * 60 * 1000));
-        const lastActive = new Date(createdAt.getTime() + Math.floor(Math.random() * 30 * 24 * 60 * 60 * 1000));
-
-        const userTags: TagType[] = [];
-        const numTags = Math.floor(Math.random() * 4);
-        for (let j = 0; j < numTags; j++) {
-            const tag = tags[Math.floor(Math.random() * tags.length)];
-            if (!userTags.includes(tag)) userTags.push(tag);
-        }
-
-        users.push({
-            id: `user-${i + 1}`,
-            name: `${firstName} ${lastName}`,
-            email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@example.com`,
-            role: roles[Math.floor(Math.random() * roles.length)],
-            status: statuses[Math.floor(Math.random() * statuses.length)],
-            tags: userTags,
-            createdAt: createdAt.toISOString().split('T')[0],
-            lastActive: Math.random() > 0.3 ? lastActive.toISOString().split('T')[0] : undefined,
-            verified: Math.random() > 0.4,
-            premium: Math.random() > 0.7,
-            country: Math.random() > 0.5 ? countries[Math.floor(Math.random() * countries.length)] : undefined,
-            company: Math.random() > 0.6 ? companies[Math.floor(Math.random() * companies.length)] : undefined,
-            phone: Math.random() > 0.5 ? `+1 ${Math.floor(Math.random() * 900 + 100)}-${Math.floor(Math.random() * 900 + 100)}-${Math.floor(Math.random() * 9000 + 1000)}` : undefined,
-            avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${firstName}+${lastName}`,
-        });
-    }
-
-    return users;
-};
-
-const mockUsers = generateMockUsers(156);
-
-const mockSavedSearches: SavedSearch[] = [
-    {
-        id: '1',
-        name: 'Active Admins',
-        description: 'All active administrators',
-        filters: { name: '', role: 'Admin', status: 'Active', tags: [], dateFrom: '', dateTo: '', verifiedOnly: false, premiumOnly: false },
-        createdAt: '2024-01-15',
-        lastUsed: '2024-03-20',
-        isPinned: true,
-    },
-    {
-        id: '2',
-        name: 'Recent Users',
-        description: 'Users joined in last 30 days',
-        filters: { name: '', role: '', status: '', tags: [], dateFrom: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], dateTo: '', verifiedOnly: false, premiumOnly: false },
-        createdAt: '2024-02-01',
-        lastUsed: '2024-03-18',
-    },
-    {
-        id: '3',
-        name: 'Premium Students',
-        description: 'Students with premium access',
-        filters: { name: '', role: 'Student', status: '', tags: ['Premium'], dateFrom: '', dateTo: '', verifiedOnly: false, premiumOnly: true },
-        createdAt: '2024-02-15',
-        lastUsed: '2024-03-15',
-        isPinned: true,
-    },
-    {
-        id: '4',
-        name: 'Inactive Accounts',
-        description: 'Users not active for 90+ days',
-        filters: { name: '', role: '', status: 'Inactive', tags: [], dateFrom: '', dateTo: '', verifiedOnly: false, premiumOnly: false },
-        createdAt: '2024-03-01',
-    },
-];
-
-/* ============================================
-   SEARCH PROVIDER
-============================================ */
-
-export interface SearchProviderProps {
-    children: React.ReactNode;
-    initialFilters?: Partial<FilterState>;
-    onSearch?: (filters: FilterState, results: User[]) => void;
-    onExport?: (options: ExportOptions, data: User[]) => Promise<void>;
-    variant?: VariantProps<typeof SearchVariants>["variant"];
-    cardVariant?: VariantProps<typeof CardVariants>["variant"];
-    pageSize?: number;
-    debounceMs?: number;
-    theme?: 'light' | 'dark' | 'system';
-    debug?: boolean;
-    className?: string;
-    containerClassName?: string;
-}
-
-const SearchProvider: React.FC<SearchProviderProps> & {
-    Header: typeof SearchHeader;
-    Tabs: typeof SearchTabs;
-    Filters: typeof SearchFilters;
-    Results: typeof SearchResults;
-    Pagination: typeof SearchPagination;
-    ExportButton: typeof ExportButton;
-    SaveSearchModal: typeof SaveSearchModal;
-    ThemeToggle: typeof ThemeToggle;
-    Debugger: typeof SearchDebugger;
-} = ({
-    children,
-    initialFilters = {},
-    onSearch,
-    onExport,
-    variant = "default",
-    pageSize = 10,
-    debounceMs = 300,
-    theme: initialTheme = 'system',
-    debug = false,
-    className,
-    containerClassName,
-}) => {
-        const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(() => {
-            if (initialTheme !== 'system') return initialTheme;
-            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        });
-
-        const [filters, setFilters] = useState<FilterState>(() => ({
-            name: '',
-            role: '',
-            status: '',
-            tags: [],
-            dateFrom: '',
-            dateTo: '',
-            verifiedOnly: false,
-            premiumOnly: false,
-            country: '',
-            company: '',
-            sortBy: 'createdAt',
-            sortOrder: 'desc',
-            ...initialFilters,
-        }));
-
-        const [results, setResults] = useState<User[]>([]);
-        const [filteredCount, setFilteredCount] = useState(0);
-        const [isLoading, setIsLoading] = useState(false);
-        const [error, setError] = useState<string | null>(null);
-        const [page, setPage] = useState(0);
-        const [savedSearches, setSavedSearches] = useState<SavedSearch[]>(mockSavedSearches);
-
-        // Handle system theme changes
-        useEffect(() => {
-            if (initialTheme !== 'system') return;
-
-            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-            const handler = (e: MediaQueryListEvent) => {
-                setCurrentTheme(e.matches ? 'dark' : 'light');
-            };
-
-            mediaQuery.addEventListener('change', handler);
-            return () => mediaQuery.removeEventListener('change', handler);
-        }, [initialTheme]);
-
-        // Filter users
-        useEffect(() => {
-            const filterUsers = () => {
-                setIsLoading(true);
-                setError(null);
-
-                try {
-                    // Simulate API delay
-                    setTimeout(() => {
-                        const filtered = mockUsers.filter(user => {
-                            // Name filter
-                            if (filters.name && !user.name.toLowerCase().includes(filters.name.toLowerCase())) {
-                                return false;
-                            }
-
-                            // Role filter
-                            if (filters.role && user.role !== filters.role) {
-                                return false;
-                            }
-
-                            // Status filter
-                            if (filters.status && user.status !== filters.status) {
-                                return false;
-                            }
-
-                            // Tags filter
-                            if (filters.tags.length > 0) {
-                                if (!filters.tags.some(tag => user.tags.includes(tag))) {
-                                    return false;
-                                }
-                            }
-
-                            // Date range filter
-                            if (filters.dateFrom && user.createdAt < filters.dateFrom) {
-                                return false;
-                            }
-                            if (filters.dateTo && user.createdAt > filters.dateTo) {
-                                return false;
-                            }
-
-                            // Boolean filters
-                            if (filters.verifiedOnly && !user.verified) {
-                                return false;
-                            }
-                            if (filters.premiumOnly && !user.premium) {
-                                return false;
-                            }
-
-                            // Country filter
-                            if (filters.country && user.country !== filters.country) {
-                                return false;
-                            }
-
-                            // Company filter
-                            if (filters.company && user.company !== filters.company) {
-                                return false;
-                            }
-
-                            return true;
-                        });
-
-                        // Sort results
-                        if (filters.sortBy) {
-                            filtered.sort((a, b) => {
-                                const aVal = a[filters.sortBy!];
-                                const bVal = b[filters.sortBy!];
-
-                                if (typeof aVal === 'string' && typeof bVal === 'string') {
-                                    return filters.sortOrder === 'asc'
-                                        ? aVal.localeCompare(bVal)
-                                        : bVal.localeCompare(aVal);
-                                }
-                                return 0;
-                            });
-                        }
-
-                        setResults(filtered);
-                        setFilteredCount(filtered.length);
-                        setPage(0); // Reset to first page on new filters
-                        setIsLoading(false);
-
-                        onSearch?.(filters, filtered);
-                    }, debounceMs);
-                } catch (err) {
-                    setError(err instanceof Error ? err.message : 'An error occurred while filtering');
-                    setIsLoading(false);
-                }
-            };
-
-            filterUsers();
-        }, [filters, debounceMs, onSearch]);
-
-        const updateFilters = useCallback((updates: Partial<FilterState>) => {
-            setFilters(prev => ({ ...prev, ...updates }));
-        }, []);
-
-        const resetFilters = useCallback(() => {
-            setFilters({
-                name: '',
-                role: '',
-                status: '',
-                tags: [],
-                dateFrom: '',
-                dateTo: '',
-                verifiedOnly: false,
-                premiumOnly: false,
-                country: '',
-                company: '',
-                sortBy: 'createdAt',
-                sortOrder: 'desc',
-            });
-        }, []);
-
-        const applySavedSearch = useCallback((search: SavedSearch) => {
-            setFilters(search.filters);
-
-            // Update last used
-            setSavedSearches(prev =>
-                prev.map(s => s.id === search.id
-                    ? { ...s, lastUsed: new Date().toISOString().split('T')[0] }
-                    : s
-                )
-            );
-        }, []);
-
-        const saveCurrentSearch = useCallback((name: string, description?: string) => {
-            const newSearch: SavedSearch = {
-                id: Date.now().toString(),
-                name,
-                description,
-                filters: { ...filters },
-                createdAt: new Date().toISOString().split('T')[0],
-            };
-            setSavedSearches(prev => [...prev, newSearch]);
-        }, [filters]);
-
-        const deleteSavedSearch = useCallback((id: string) => {
-            setSavedSearches(prev => prev.filter(s => s.id !== id));
-        }, []);
-
-        const togglePinSavedSearch = useCallback((id: string) => {
-            setSavedSearches(prev =>
-                prev.map(s => s.id === id
-                    ? { ...s, isPinned: !s.isPinned }
-                    : s
-                )
-            );
-        }, []);
-
-        const exportResults = useCallback(async (options: ExportOptions) => {
-            if (onExport) {
-                await onExport(options, results);
-            } else {
-                // Default export handling
-                const data = results.map(user => {
-                    const filtered: Record<string, any> = {};
-                    options.includeFields.forEach(field => {
-                        filtered[field] = user[field as keyof User];
-                    });
-                    return filtered;
-                });
-
-                if (options.format === 'csv') {
-                    const headers = Object.keys(data[0] || {}).join(options.delimiter || ',');
-                    const rows = data.map(row => Object.values(row).join(options.delimiter || ','));
-                    const csv = [headers, ...rows].join('\n');
-
-                    const blob = new Blob([csv], { type: 'text/csv' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = options.filename || `export-${new Date().toISOString().split('T')[0]}.csv`;
-                    a.click();
-                    URL.revokeObjectURL(url);
-                } else if (options.format === 'json') {
-                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = options.filename || `export-${new Date().toISOString().split('T')[0]}.json`;
-                    a.click();
-                    URL.revokeObjectURL(url);
-                }
-            }
-        }, [results, onExport]);
-
-        const clearError = useCallback(() => setError(null), []);
-
-        const facets = useMemo((): FacetGroup[] => {
-            const roleCounts: Record<string, number> = {};
-            const statusCounts: Record<string, number> = {};
-            const tagCounts: Record<string, number> = {};
-
-            mockUsers.forEach(user => {
-                // Role counts
-                roleCounts[user.role] = (roleCounts[user.role] || 0) + 1;
-
-                // Status counts
-                statusCounts[user.status] = (statusCounts[user.status] || 0) + 1;
-
-                // Tag counts
-                user.tags.forEach(tag => {
-                    tagCounts[tag] = (tagCounts[tag] || 0) + 1;
-                });
-            });
-
-            return [
-                {
-                    id: 'role',
-                    label: 'Role',
-                    icon: PersonIcon,
-                    counts: Object.entries(roleCounts).map(([value, count]) => ({
-                        value,
-                        count,
-                        selected: filters.role === value,
-                    })),
-                },
-                {
-                    id: 'status',
-                    label: 'Status',
-                    icon: UpdateIcon,
-                    counts: Object.entries(statusCounts).map(([value, count]) => ({
-                        value,
-                        count,
-                        selected: filters.status === value,
-                    })),
-                },
-                {
-                    id: 'tags',
-                    label: 'Tags',
-                    icon: SymbolIcon,
-                    counts: Object.entries(tagCounts).map(([value, count]) => ({
-                        value,
-                        count,
-                        selected: filters.tags.includes(value as TagType),
-                    })),
-                },
-            ];
-        }, [filters]);
-
-        const totalCount = mockUsers.length;
-        const totalPages = Math.ceil(filteredCount / pageSize);
-
-        const contextValue: SearchContextType = {
-            filters,
-            results,
-            totalCount,
-            filteredCount,
-            savedSearches,
-            facets,
-            isLoading,
-            error,
-            page,
-            pageSize,
-            totalPages,
-            updateFilters,
-            resetFilters,
-            applySavedSearch,
-            saveCurrentSearch,
-            deleteSavedSearch,
-            togglePinSavedSearch,
-            exportResults,
-            setPage,
-            clearError,
+    React.useEffect(() => {
+        const checkScreenSize = (): void => {
+            const width = window.innerWidth;
+            setIsMobile(width < mobileBreakpoint);
+            setIsTablet(width >= mobileBreakpoint && width < tabletBreakpoint);
+            setIsDesktop(width >= tabletBreakpoint);
         };
 
-        if (debug) {
-            console.log('Search Context:', { filters, results, filteredCount, isLoading });
+        checkScreenSize();
+        setHasMounted(true);
+
+        window.addEventListener("resize", checkScreenSize);
+        return (): void => window.removeEventListener("resize", checkScreenSize);
+    }, [mobileBreakpoint, tabletBreakpoint]);
+
+    return { isMobile, isTablet, isDesktop, hasMounted };
+};
+
+/* ============================================
+   UTILITY FUNCTIONS
+============================================ */
+
+const formatDate = (date: Date): string => {
+    return date.toISOString().split('T')[0];
+};
+
+const parseDate = (dateStr: string): Date | null => {
+    if (!dateStr) return null;
+    const date = new Date(dateStr);
+    return isNaN(date.getTime()) ? null : date;
+};
+
+const getDateRangeFromPreset = (
+    preset: DateRangePreset
+): { start: Date; end: Date } => {
+    const now = new Date();
+    const start = new Date();
+
+    switch (preset) {
+        case "today":
+            return {
+                start: new Date(now),
+                end: new Date(now),
+            };
+
+        case "yesterday":
+            start.setDate(now.getDate() - 1);
+            return {
+                start: new Date(start),
+                end: new Date(start),
+            };
+
+        case "last7days":
+            start.setDate(now.getDate() - 7);
+            return {
+                start: new Date(start),
+                end: new Date(now),
+            };
+
+        case "last30days":
+            start.setDate(now.getDate() - 30);
+            return {
+                start: new Date(start),
+                end: new Date(now),
+            };
+
+        case "last90days":
+            start.setDate(now.getDate() - 90);
+            return {
+                start: new Date(start),
+                end: new Date(now),
+            };
+
+        case "thisMonth":
+            return {
+                start: new Date(now.getFullYear(), now.getMonth(), 1),
+                end: new Date(now),
+            };
+
+        case "lastMonth":
+            return {
+                start: new Date(now.getFullYear(), now.getMonth() - 1, 1),
+                end: new Date(now.getFullYear(), now.getMonth(), 0),
+            };
+
+        default:
+            return {
+                start: new Date(now),
+                end: new Date(now),
+            };
+    }
+};
+
+/* ============================================
+   FILTER COMPONENTS
+============================================ */
+
+export interface SearchTextFilterProps {
+    filter: TextFilterConfig;
+    value: string;
+    onChange: (value: string) => void;
+    className?: string;
+}
+
+/**
+ * Text input filter component for searching/filtering text values
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <SearchTextFilter
+ *   filter={{ id: 'name', label: 'Name', type: 'text' }}
+ *   value="John"
+ *   onChange={(value) => console.log(value)}
+ * />
+ * ```
+ */
+export const SearchTextFilter: React.FC<SearchTextFilterProps> = ({
+    filter,
+    value,
+    onChange,
+    className,
+}) => {
+    const { theme, autoApply, isMobile } = useSearch();
+    const [localValue, setLocalValue] = React.useState(value || "");
+
+    React.useEffect(() => {
+        setLocalValue(value || "");
+    }, [value]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+        const newValue = e.target.value;
+        setLocalValue(newValue);
+
+        if (autoApply) {
+            onChange(newValue);
         }
-
-        return (
-            <SearchContext.Provider value={contextValue}>
-                <div className={cn(
-                    SearchVariants({ variant }),
-                    currentTheme === 'dark' && "dark",
-                    className
-                )}>
-                    <main className={cn("container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8", containerClassName)}>
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5 }}
-                            className="space-y-6"
-                        >
-                            {children}
-                        </motion.div>
-                    </main>
-
-                    {debug && <SearchDebugger />}
-                    <ThemeToggle />
-                </div>
-            </SearchContext.Provider>
-        );
     };
-
-/* ============================================
-   HEADER COMPONENT
-============================================ */
-
-export interface SearchHeaderProps {
-    title?: string;
-    description?: string;
-    icon?: React.ReactNode;
-    children?: React.ReactNode;
-    className?: string;
-    showExport?: boolean;
-    showSave?: boolean;
-    onExportClick?: () => void;
-    onSaveClick?: () => void;
-}
-
-const SearchHeader: React.FC<SearchHeaderProps> = ({
-    title = "Advanced Search",
-    description = "Filter and find users with precision",
-    icon,
-    children,
-    className,
-    showExport = true,
-    showSave = true,
-    onSaveClick,
-}) => {
-    const { exportResults } = useSearchContext();
-
-    const handleExport = async () => {
-        await exportResults({
-            format: 'csv',
-            includeFields: ['name', 'email', 'role', 'status', 'createdAt', 'verified', 'premium'],
-            filename: `users-export-${new Date().toISOString().split('T')[0]}.csv`,
-        });
-    };
-
-    if (children) {
-        return (
-            <header className={cn(
-                "flex items-center justify-between pb-6 border-b border-border/50",
-                className
-            )}>
-                {children}
-            </header>
-        );
-    }
-
     return (
-        <motion.header
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={cn("flex items-center justify-between pb-6 border-b border-border/50", className)}
-        >
-            <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                    {icon || <MagnifyingGlassIcon className="h-5 w-5 text-primary" />}
-                </div>
-                <div>
-                    <h1 className="text-2xl font-semibold tracking-tight text-foreground">{title}</h1>
-                    <p className="text-sm text-muted-foreground">{description}</p>
-                </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-                {showSave && onSaveClick && (
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={onSaveClick}
-                        className="gap-2"
-                    >
-                        <BookmarkIcon className="h-4 w-4" />
-                        Save Search
-                    </Button>
-                )}
-
-                {showExport && (
-                    <ExportButton onExport={handleExport} />
-                )}
-            </div>
-        </motion.header>
-    );
-};
-
-/* ============================================
-   TABS COMPONENT
-============================================ */
-
-export interface SearchTabsProps {
-    children?: React.ReactNode;
-    className?: string;
-}
-
-const SearchTabs: React.FC<SearchTabsProps> = ({ children, className }) => {
-    const { savedSearches, applySavedSearch } = useSearchContext();
-
-    const pinnedSearches = savedSearches.filter(s => s.isPinned);
-    const recentSearches = [...savedSearches]
-        .filter(s => s.lastUsed)
-        .sort((a, b) => (b.lastUsed || '').localeCompare(a.lastUsed || ''))
-        .slice(0, 3);
-
-    if (children) {
-        return <div className={cn("mb-6", className)}>{children}</div>;
-    }
-
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className={cn("flex items-center gap-2 flex-wrap", className)}
-        >
-            <span className="text-xs font-medium text-muted-foreground mr-2">
-                Saved:
-            </span>
-
-            {/* Pinned searches */}
-            {pinnedSearches.map((search) => (
-                <motion.button
-                    key={search.id}
-                    whileHover={{ scale: 1.05, y: -1 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => applySavedSearch(search)}
-                    className="px-3 py-1.5 rounded-full text-xs font-medium bg-primary/10 text-primary hover:bg-primary/20 transition-colors flex items-center gap-1.5"
-                >
-                    <BookmarkFilledIcon className="h-3 w-3" />
-                    {search.name}
-                </motion.button>
-            ))}
-
-            {/* Recent searches */}
-            {recentSearches.map((search) => (
-                <motion.button
-                    key={search.id}
-                    whileHover={{ scale: 1.05, y: -1 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => applySavedSearch(search)}
-                    className="px-3 py-1.5 rounded-full text-xs font-medium bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors"
-                >
-                    {search.name}
-                </motion.button>
-            ))}
-
-            {/* Show all saved count */}
-            {savedSearches.length > pinnedSearches.length + recentSearches.length && (
-                <span className="text-xs text-muted-foreground">
-                    +{savedSearches.length - pinnedSearches.length - recentSearches.length} more
-                </span>
-            )}
-        </motion.div>
-    );
-};
-
-/* ============================================
-   FILTERS COMPONENT
-============================================ */
-
-export interface SearchFiltersProps {
-    className?: string;
-    expanded?: boolean;
-    onExpandedChange?: (expanded: boolean) => void;
-    showTags?: boolean;
-    showDateRange?: boolean;
-    showBooleanFilters?: boolean;
-}
-
-const SearchFilters: React.FC<SearchFiltersProps> = ({
-    className,
-    expanded: controlledExpanded,
-    onExpandedChange,
-    showTags = true,
-    showDateRange = true,
-    showBooleanFilters = true,
-}) => {
-    const { filters, updateFilters, resetFilters } = useSearchContext();
-    const [internalExpanded, setInternalExpanded] = useState(true);
-
-    const expanded = controlledExpanded ?? internalExpanded;
-    const setExpanded = onExpandedChange ?? setInternalExpanded;
-
-    const roles: UserRole[] = ['Admin', 'Teacher', 'Student', 'Moderator', 'Guest'];
-    const statuses: UserStatus[] = ['Active', 'Inactive', 'Pending', 'Suspended'];
-    const tags: TagType[] = ['Premium', 'New', 'Verified', 'Beta', 'VIP', 'Trial', 'Enterprise', 'Pro', 'Basic'];
-
-    const activeFilterCount = [
-        filters.name,
-        filters.role,
-        filters.status,
-        ...filters.tags,
-        filters.dateFrom,
-        filters.dateTo,
-        filters.verifiedOnly && 'verified',
-        filters.premiumOnly && 'premium',
-        filters.country,
-        filters.company,
-    ].filter(Boolean).length;
-
-    const handleTagToggle = (tag: TagType) => {
-        const newTags = filters.tags.includes(tag)
-            ? filters.tags.filter(t => t !== tag)
-            : [...filters.tags, tag];
-        updateFilters({ tags: newTags });
-    };
-
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 }}
-            className={cn(
-                CardVariants({ variant: 'default' }),
-                "overflow-hidden",
-                className
-            )}
-        >
-            {/* Header */}
-            <button
-                onClick={() => setExpanded(!expanded)}
-                className="w-full flex items-center justify-between px-5 py-4 hover:bg-accent/30 transition-colors"
+        <div className={cn(
+            "flex flex-col gap-2",
+            filter.fullWidthOnMobile !== false && isMobile && "w-full",
+            className
+        )}>
+            <Typography
+                variant="label"
+                weight="medium"
+                as="label"
+                color={theme === "dark" ? "secondary" : "default"}
+                className={isMobile ? "text-xs" : ""}
             >
-                <div className="flex items-center gap-2.5">
-                    <MagnifyingGlassIcon className="h-4 w-4 text-primary" />
-                    <span className="font-semibold text-sm text-foreground">Filters</span>
-                    {activeFilterCount > 0 && (
-                        <motion.span
-                            initial={{ scale: 0.8 }}
-                            animate={{ scale: 1 }}
-                            className="h-5 w-5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center"
-                        >
-                            {activeFilterCount}
-                        </motion.span>
-                    )}
-                </div>
-                <motion.div animate={{ rotate: expanded ? 180 : 0 }} transition={{ duration: 0.2 }}>
-                    <ChevronDownIcon className="h-4 w-4 text-muted-foreground" />
-                </motion.div>
-            </button>
-
-            <AnimatePresence initial={false}>
-                {expanded && (
-                    <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.25, ease: "easeInOut" }}
-                        className="overflow-hidden"
-                    >
-                        <div className="px-5 pb-5 space-y-4">
-                            {/* Name search */}
-                            <div className="space-y-1.5">
-                                <label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-                                    <PersonIcon className="h-3 w-3" /> Name
-                                </label>
-                                <div className="relative">
-                                    <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                                    <input
-                                        type="text"
-                                        placeholder="Search by name..."
-                                        value={filters.name}
-                                        onChange={(e) => updateFilters({ name: e.target.value })}
-                                        className="w-full h-9 pl-9 pr-8 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
-                                    />
-                                    {filters.name && (
-                                        <button
-                                            onClick={() => updateFilters({ name: '' })}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                                        >
-                                            <Cross2Icon className="h-3 w-3" />
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Role and Status */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                <div className="space-y-1.5">
-                                    <label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-                                        <PersonIcon className="h-3 w-3" /> Role
-                                    </label>
-                                    <select
-                                        value={filters.role}
-                                        onChange={(e) => updateFilters({ role: e.target.value as UserRole })}
-                                        className="w-full h-9 px-3 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
-                                    >
-                                        <option value="">All Roles</option>
-                                        {roles.map((role) => (
-                                            <option key={role} value={role}>{role}</option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                <div className="space-y-1.5">
-                                    <label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-                                        <UpdateIcon className="h-3 w-3" /> Status
-                                    </label>
-                                    <select
-                                        value={filters.status}
-                                        onChange={(e) => updateFilters({ status: e.target.value as UserStatus })}
-                                        className="w-full h-9 px-3 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
-                                    >
-                                        <option value="">All Statuses</option>
-                                        {statuses.map((status) => (
-                                            <option key={status} value={status}>{status}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                            </div>
-
-                            {/* Tags */}
-                            {showTags && (
-                                <div className="space-y-1.5">
-                                    <label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-                                        <SymbolIcon className="h-3 w-3" /> Tags
-                                    </label>
-                                    <div className="flex flex-wrap gap-2">
-                                        {tags.map((tag) => {
-                                            const active = filters.tags.includes(tag);
-                                            return (
-                                                <motion.button
-                                                    key={tag}
-                                                    whileHover={{ scale: 1.04 }}
-                                                    whileTap={{ scale: 0.96 }}
-                                                    onClick={() => handleTagToggle(tag)}
-                                                    className={cn(
-                                                        "px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-all",
-                                                        active
-                                                            ? "bg-primary text-primary-foreground"
-                                                            : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                                                    )}
-                                                >
-                                                    {active && <CheckIcon className="h-3 w-3" />}
-                                                    {tag}
-                                                </motion.button>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Date Range */}
-                            {showDateRange && (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                    <div className="space-y-1.5">
-                                        <label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-                                            <CalendarIcon className="h-3 w-3" /> From Date
-                                        </label>
-                                        <div className="relative">
-                                            <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                                            <input
-                                                type="date"
-                                                value={filters.dateFrom}
-                                                onChange={(e) => updateFilters({ dateFrom: e.target.value })}
-                                                className="w-full h-9 pl-9 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="space-y-1.5">
-                                        <label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-                                            <CalendarIcon className="h-3 w-3" /> To Date
-                                        </label>
-                                        <div className="relative">
-                                            <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                                            <input
-                                                type="date"
-                                                value={filters.dateTo}
-                                                onChange={(e) => updateFilters({ dateTo: e.target.value })}
-                                                className="w-full h-9 pl-9 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Boolean Filters */}
-                            {showBooleanFilters && (
-                                <div className="flex items-center gap-6">
-                                    <label className="flex items-center gap-2 text-sm cursor-pointer group">
-                                        <input
-                                            type="checkbox"
-                                            checked={filters.verifiedOnly}
-                                            onChange={(e) => updateFilters({ verifiedOnly: e.target.checked })}
-                                            className="rounded border-border text-primary focus:ring-primary/30 h-4 w-4"
-                                        />
-                                        <span className="text-muted-foreground group-hover:text-foreground transition-colors">
-                                            Verified only
-                                        </span>
-                                    </label>
-                                    <label className="flex items-center gap-2 text-sm cursor-pointer group">
-                                        <input
-                                            type="checkbox"
-                                            checked={filters.premiumOnly}
-                                            onChange={(e) => updateFilters({ premiumOnly: e.target.checked })}
-                                            className="rounded border-border text-primary focus:ring-primary/30 h-4 w-4"
-                                        />
-                                        <span className="text-muted-foreground group-hover:text-foreground transition-colors">
-                                            Premium only
-                                        </span>
-                                    </label>
-                                </div>
-                            )}
-
-                            {/* Action Buttons */}
-                            <div className="flex items-center gap-2 pt-2">
-                                <Button
-                                    variant="default"
-                                    size="sm"
-                                    onClick={() => updateFilters(filters)}
-                                    className="gap-2"
-                                >
-                                    <MagnifyingGlassIcon className="h-3.5 w-3.5" />
-                                    Apply Filters
-                                </Button>
-                                <Button
-                                    variant="secondary"
-                                    size="sm"
-                                    onClick={resetFilters}
-                                    className="gap-2"
-                                >
-                                    <ResetIcon className="h-3.5 w-3.5" />
-                                    Reset
-                                </Button>
-                            </div>
-                        </div>
-                    </motion.div>
+                {filter.label}
+                {filter.required && <span className="text-red-500 ml-1">*</span>}
+            </Typography>
+            <input
+                id={filter.id}
+                type="text"
+                value={localValue}
+                onChange={handleChange}
+                placeholder={filter.placeholder}
+                className={cn(
+                    "px-3 py-2 rounded-lg border focus:outline-none focus:ring-2 transition-all",
+                    isMobile ? "text-sm px-2 py-1.5" : "text-base",
+                    theme === "dark"
+                        ? "bg-gray-800 border-gray-700 text-white focus:ring-blue-500 focus:border-blue-500"
+                        : "bg-white border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500"
                 )}
-            </AnimatePresence>
-        </motion.div>
-    );
-};
-
-/* ============================================
-   RESULTS COMPONENT
-============================================ */
-
-export interface SearchResultsProps {
-    className?: string;
-    showAvatar?: boolean;
-    showEmail?: boolean;
-    showTags?: boolean;
-    showStatus?: boolean;
-    showRole?: boolean;
-    showDate?: boolean;
-    onRowClick?: (user: User) => void;
-}
-
-const SearchResults: React.FC<SearchResultsProps> = ({
-    className,
-    showAvatar = true,
-    showEmail = true,
-    showTags = true,
-    showStatus = true,
-    showRole = true,
-    showDate = true,
-    onRowClick,
-}) => {
-    const { results, isLoading, page, pageSize, updateFilters, filters } = useSearchContext();
-
-    const startIndex = page * pageSize;
-    const endIndex = Math.min(startIndex + pageSize, results.length);
-    const pageResults = results.slice(startIndex, endIndex);
-
-    const handleSort = (field: 'name' | 'email' | 'role' | 'status' | 'createdAt') => {
-        const newOrder = filters.sortBy === field && filters.sortOrder === 'asc' ? 'desc' : 'asc';
-        updateFilters({ sortBy: field, sortOrder: newOrder });
-    };
-
-    const getSortIcon = (field: string) => {
-        if (filters.sortBy !== field) return null;
-        return filters.sortOrder === 'asc' ? '↑' : '↓';
-    };
-
-    if (isLoading) {
-        return (
-            <div className={cn(CardVariants({ variant: 'default' }), "p-8", className)}>
-                <div className="space-y-4">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                        <div key={i} className="flex items-center gap-4">
-                            {showAvatar && <div className="h-10 w-10 rounded-full bg-muted animate-pulse" />}
-                            <div className="flex-1 space-y-2">
-                                <div className="h-4 bg-muted rounded animate-pulse w-1/3" />
-                                <div className="h-3 bg-muted rounded animate-pulse w-1/2" />
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        );
-    }
-
-    if (results.length === 0) {
-        return (
-            <div className={cn(CardVariants({ variant: 'default' }), "p-12 text-center", className)}>
-                <MagnifyingGlassIcon className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-                <Typography variant="h6" weight="semibold" className="mb-2 text-foreground">
-                    No results found
-                </Typography>
-                <Typography variant="body-small" color="muted">
-                    Try adjusting your filters or search criteria
-                </Typography>
-            </div>
-        );
-    }
-
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25 }}
-            className={cn(CardVariants({ variant: 'default' }), "overflow-hidden", className)}
-        >
-            {/* Results header */}
-            <div className="px-5 py-3 border-b border-border/50 flex items-center justify-between">
-                <div className="text-sm text-muted-foreground">
-                    Results: <span className="font-semibold text-foreground">{results.length}</span> users
-                </div>
-                <div className="text-xs text-muted-foreground">
-                    Showing {startIndex + 1}-{endIndex} of {results.length}
-                </div>
-            </div>
-
-            {/* Results table */}
-            <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                    <thead>
-                        <tr className="border-b border-border/50 bg-muted/30">
-                            {showAvatar && <th className="px-5 py-3 text-left w-12"></th>}
-                            <th
-                                className="px-5 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-foreground transition-colors"
-                                onClick={() => handleSort('name')}
-                            >
-                                Name {getSortIcon('name')}
-                            </th>
-                            {showEmail && (
-                                <th
-                                    className="px-5 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-foreground transition-colors"
-                                    onClick={() => handleSort('email')}
-                                >
-                                    Email {getSortIcon('email')}
-                                </th>
-                            )}
-                            {showRole && (
-                                <th
-                                    className="px-5 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-foreground transition-colors"
-                                    onClick={() => handleSort('role')}
-                                >
-                                    Role {getSortIcon('role')}
-                                </th>
-                            )}
-                            {showStatus && (
-                                <th
-                                    className="px-5 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-foreground transition-colors"
-                                    onClick={() => handleSort('status')}
-                                >
-                                    Status {getSortIcon('status')}
-                                </th>
-                            )}
-                            {showTags && <th className="px-5 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Tags</th>}
-                            {showDate && (
-                                <th
-                                    className="px-5 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-foreground transition-colors"
-                                    onClick={() => handleSort('createdAt')}
-                                >
-                                    Created {getSortIcon('createdAt')}
-                                </th>
-                            )}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <AnimatePresence mode="popLayout">
-                            {pageResults.map((user, index) => (
-                                <motion.tr
-                                    key={user.id}
-                                    initial={{ opacity: 0, y: 4 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -4 }}
-                                    transition={{ delay: index * 0.02 }}
-                                    className="border-b border-border/30 hover:bg-accent/40 transition-colors cursor-pointer group"
-                                    onClick={() => onRowClick?.(user)}
-                                >
-                                    {showAvatar && (
-                                        <td className="px-5 py-3">
-                                            <img
-                                                src={user.avatar}
-                                                alt={user.name}
-                                                className="h-8 w-8 rounded-full bg-muted"
-                                                onError={(e) => {
-                                                    (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${user.name}&background=6366f1&color=fff`;
-                                                }}
-                                            />
-                                        </td>
-                                    )}
-                                    <td className="px-5 py-3">
-                                        <div className="font-medium text-foreground group-hover:text-primary transition-colors">
-                                            {user.name}
-                                        </div>
-                                        {user.verified && (
-                                            <span className="text-xs text-green-600 dark:text-green-400">✓ Verified</span>
-                                        )}
-                                    </td>
-                                    {showEmail && (
-                                        <td className="px-5 py-3 text-muted-foreground">
-                                            {user.email}
-                                        </td>
-                                    )}
-                                    {showRole && (
-                                        <td className="px-5 py-3">
-                                            <span className="px-2 py-1 rounded-full bg-secondary text-secondary-foreground text-[11px] font-medium">
-                                                {user.role}
-                                            </span>
-                                        </td>
-                                    )}
-                                    {showStatus && (
-                                        <td className="px-5 py-3">
-                                            <span className="flex items-center gap-1.5">
-                                                <span className={cn(
-                                                    "w-2 h-2 rounded-full",
-                                                    user.status === 'Active' && "bg-green-500",
-                                                    user.status === 'Inactive' && "bg-gray-400",
-                                                    user.status === 'Pending' && "bg-yellow-500",
-                                                    user.status === 'Suspended' && "bg-red-500",
-                                                )} />
-                                                <span className={cn(
-                                                    user.status === 'Active' && "text-green-600 dark:text-green-400",
-                                                    user.status === 'Inactive' && "text-muted-foreground",
-                                                    user.status === 'Pending' && "text-yellow-600 dark:text-yellow-400",
-                                                    user.status === 'Suspended' && "text-red-600 dark:text-red-400",
-                                                )}>
-                                                    {user.status}
-                                                </span>
-                                            </span>
-                                        </td>
-                                    )}
-                                    {showTags && (
-                                        <td className="px-5 py-3">
-                                            <div className="flex gap-1 flex-wrap">
-                                                {user.tags.slice(0, 2).map(tag => (
-                                                    <span
-                                                        key={tag}
-                                                        className="px-1.5 py-0.5 rounded-full bg-secondary text-secondary-foreground text-[10px] font-medium"
-                                                    >
-                                                        {tag}
-                                                    </span>
-                                                ))}
-                                                {user.tags.length > 2 && (
-                                                    <span className="text-[10px] text-muted-foreground">
-                                                        +{user.tags.length - 2}
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </td>
-                                    )}
-                                    {showDate && (
-                                        <td className="px-5 py-3 text-muted-foreground font-mono text-xs">
-                                            {new Date(user.createdAt).toLocaleDateString('en-GB')}
-                                        </td>
-                                    )}
-                                </motion.tr>
-                            ))}
-                        </AnimatePresence>
-                    </tbody>
-                </table>
-            </div>
-        </motion.div>
-    );
-};
-
-/* ============================================
-   PAGINATION COMPONENT
-============================================ */
-
-export interface SearchPaginationProps {
-    className?: string;
-    showPageSize?: boolean;
-}
-
-const SearchPagination: React.FC<SearchPaginationProps> = ({ className, showPageSize = true }) => {
-    const { page, setPage, totalPages, filteredCount } = useSearchContext();
-
-    if (totalPages <= 1) return null;
-
-    const getPageNumbers = () => {
-        const pages = [];
-        const maxVisible = 5;
-        let start = Math.max(0, Math.min(page - 2, totalPages - maxVisible));
-        const end = Math.min(start + maxVisible, totalPages);
-
-        if (end - start < maxVisible) {
-            start = Math.max(0, end - maxVisible);
-        }
-
-        for (let i = start; i < end; i++) {
-            pages.push(i);
-        }
-        return pages;
-    };
-
-    return (
-        <div className={cn("flex items-center justify-between", className)}>
-            <div className="text-sm text-muted-foreground">
-                {showPageSize && (
-                    <span>{filteredCount} total results</span>
-                )}
-            </div>
-
-            <div className="flex items-center gap-1">
-                <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    disabled={page === 0}
-                    onClick={() => setPage(page - 1)}
-                    className="h-8 w-8 rounded-lg flex items-center justify-center hover:bg-accent disabled:opacity-30 transition-colors text-foreground"
-                >
-                    <ChevronLeftIcon className="h-4 w-4" />
-                </motion.button>
-
-                {getPageNumbers().map((p) => (
-                    <motion.button
-                        key={p}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => setPage(p)}
-                        className={cn(
-                            "h-8 w-8 rounded-lg text-xs font-medium flex items-center justify-center transition-colors",
-                            p === page
-                                ? "bg-primary text-primary-foreground"
-                                : "hover:bg-accent text-muted-foreground"
-                        )}
-                    >
-                        {p + 1}
-                    </motion.button>
-                ))}
-
-                <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    disabled={page >= totalPages - 1}
-                    onClick={() => setPage(page + 1)}
-                    className="h-8 w-8 rounded-lg flex items-center justify-center hover:bg-accent disabled:opacity-30 transition-colors text-foreground"
-                >
-                    <ChevronRightIcon className="h-4 w-4" />
-                </motion.button>
-            </div>
+            />
         </div>
     );
 };
 
-/* ============================================
-   EXPORT BUTTON COMPONENT
-============================================ */
+SearchTextFilter.displayName = "SearchTextFilter";
 
-export interface ExportButtonProps {
-    onExport?: (format: 'csv' | 'excel' | 'json') => void;
+export interface SearchSelectFilterProps {
+    filter: SelectFilterConfig;
+    value: string;
+    onChange: (value: string) => void;
     className?: string;
 }
 
-const ExportButton: React.FC<ExportButtonProps> = ({ onExport, className }) => {
-    const [open, setOpen] = useState(false);
-    const ref = React.useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const handler = (e: MouseEvent) => {
-            if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-        };
-        document.addEventListener('mousedown', handler);
-        return () => document.removeEventListener('mousedown', handler);
-    }, []);
+/**
+ * Select dropdown filter component for single selection from predefined options
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <SearchSelectFilter
+ *   filter={{
+ *     id: 'status',
+ *     label: 'Status',
+ *     type: 'select',
+ *     options: [{ value: 'active', label: 'Active' }]
+ *   }}
+ *   value="active"
+ *   onChange={(value) => console.log(value)}
+ * />
+ * ```
+ */
+export const SearchSelectFilter: React.FC<SearchSelectFilterProps> = ({
+    filter,
+    value,
+    onChange,
+    className,
+}) => {
+    const { theme, isMobile } = useSearch();
 
     return (
-        <div className="relative" ref={ref}>
-            <Button
-                variant="default"
-                size="sm"
-                onClick={() => setOpen(!open)}
-                className={cn("gap-2", className)}
+        <div className={cn(
+            "flex flex-col gap-2",
+            filter.fullWidthOnMobile !== false && isMobile && "w-full",
+            className
+        )}>
+            <Typography
+                variant="label"
+                weight="medium"
+                as="label"
+                color={theme === "dark" ? "secondary" : "default"}
+                className={isMobile ? "text-xs" : ""}
             >
-                <DownloadIcon className="h-4 w-4" />
-                Export
-            </Button>
+                {filter.label}
+            </Typography>
+            <select
+                id={filter.id}
+                value={value || ""}
+                onChange={(e): void => onChange(e.target.value)}
+                className={cn(
+                    "px-3 py-2 rounded-lg border focus:outline-none focus:ring-2 transition-all cursor-pointer",
+                    isMobile ? "text-sm px-2 py-1.5" : "text-base",
+                    theme === "dark"
+                        ? "bg-gray-800 border-gray-700 text-white focus:ring-blue-500"
+                        : "bg-white border-gray-300 text-gray-900 focus:ring-blue-500"
+                )}
+            >
+                <option value="">All</option>
+                {filter.options.map((option) => (
+                    <option key={option.value} value={option.value}>
+                        {option.label} {option.count !== undefined && `(${option.count})`}
+                    </option>
+                ))}
+            </select>
+        </div>
+    );
+};
 
+SearchSelectFilter.displayName = "SearchSelectFilter";
+
+export interface SearchMultiSelectFilterProps {
+    filter: MultiSelectFilterConfig;
+    value: string[];
+    onChange: (value: string[]) => void;
+    className?: string;
+}
+
+/**
+ * Multi-select filter component for selecting multiple options from a list
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <SearchMultiSelectFilter
+ *   filter={{
+ *     id: 'tags',
+ *     label: 'Tags',
+ *     type: 'multi-select',
+ *     options: [{ value: 'react', label: 'React' }]
+ *   }}
+ *   value={['react']}
+ *   onChange={(values) => console.log(values)}
+ * />
+ * ```
+ */
+export const SearchMultiSelectFilter: React.FC<SearchMultiSelectFilterProps> = ({
+    filter,
+    value = [],
+    onChange,
+    className,
+}) => {
+    const { theme, isMobile } = useSearch();
+    const [isOpen, setIsOpen] = React.useState(false);
+    const dropdownRef = React.useRef<HTMLDivElement>(null);
+
+    React.useEffect(() => {
+        const handleClickOutside = (event: MouseEvent): void => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return (): void => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const toggleOption = (optionValue: string): void => {
+        const newValue = value.includes(optionValue)
+            ? value.filter(v => v !== optionValue)
+            : [...value, optionValue];
+        onChange(newValue);
+    };
+
+    const selectedLabels = filter.options
+        .filter(opt => value.includes(opt.value))
+        .map(opt => opt.label);
+
+    // Fix: Add explicit return types with proper literal types
+    const getCheckboxSize = (): "xs" | "sm" | "md" | "lg" | "xl" => {
+        if (isMobile) return "sm";
+        return "md";
+    };
+
+    const getCheckboxVariant = (): "default" | "primary" | "success" | "warning" | "danger" | "outline" | "subtle" | "glass" | "neon" => {
+        if (theme === "dark") return "glass";
+        return "default";
+    };
+
+    return (
+        <div className={cn(
+            "flex flex-col gap-2 relative",
+            filter.fullWidthOnMobile !== false && isMobile && "w-full",
+            className
+        )} ref={dropdownRef}>
+            <Typography
+                variant="label"
+                weight="medium"
+                color={theme === "dark" ? "secondary" : "default"}
+                className={isMobile ? "text-xs" : ""}
+            >
+                {filter.label}
+            </Typography>
+            <button
+                type="button"
+                onClick={(): void => setIsOpen(!isOpen)}
+                className={cn(
+                    "px-3 py-2 rounded-lg border transition-all",
+                    "focus:outline-none focus:ring-2",
+                    isMobile ? "text-sm px-2 py-1.5" : "text-base",
+                    theme === "dark"
+                        ? "bg-gray-800 border-gray-700 text-white focus:ring-blue-500"
+                        : "bg-white border-gray-300 text-gray-900 focus:ring-blue-500",
+                    selectedLabels.length > 0 && "ring-2 ring-blue-500"
+                )}
+                aria-expanded={isOpen}
+                aria-haspopup="listbox"
+            >
+                <Typography variant="body-small" color="inherit">
+                    {selectedLabels.length > 0
+                        ? `${selectedLabels.length} selected`
+                        : "Select options..."}
+                </Typography>
+            </button>
             <AnimatePresence>
-                {open && (
+                {isOpen && (
                     <motion.div
-                        initial={{ opacity: 0, y: -4, scale: 0.96 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -4, scale: 0.96 }}
-                        transition={{ duration: 0.15 }}
-                        className="absolute right-0 top-full mt-2 w-48 bg-card border border-border rounded-lg shadow-lg p-1 z-50"
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.2 }}
+                        className={cn(
+                            "absolute top-full left-0 right-0 mt-1 rounded-lg border shadow-lg z-50 overflow-y-auto",
+                            isMobile ? "max-h-48" : "max-h-64",
+                            theme === "dark"
+                                ? "bg-gray-800 border-gray-700"
+                                : "bg-white border-gray-200"
+                        )}
                     >
-                        {[
-                            { icon: FileTextIcon, label: 'Export CSV', format: 'csv' as const },
-                            { icon: FileIcon, label: 'Export Excel', format: 'excel' as const },
-                            { icon: GitHubLogoIcon, label: 'Export JSON', format: 'json' as const },
-                        ].map((item) => (
-                            <motion.button
-                                key={item.label}
-                                whileHover={{ x: 2 }}
-                                onClick={() => {
-                                    onExport?.(item.format);
-                                    setOpen(false);
-                                }}
-                                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-accent transition-colors text-left text-foreground"
+                        {filter.options.map((option) => (
+                            <div
+                                key={option.value}
+                                className={cn(
+                                    "px-3 py-2",
+                                    theme === "dark"
+                                        ? "hover:bg-gray-700"
+                                        : "hover:bg-gray-100"
+                                )}
                             >
-                                <item.icon className="h-4 w-4 text-muted-foreground" />
-                                <div>
-                                    <div className="font-medium">{item.label}</div>
-                                </div>
-                            </motion.button>
+                                <Checkbox
+                                    label={`${option.label} ${option.count !== undefined ? `(${option.count})` : ""}`}
+                                    checked={value.includes(option.value)}
+                                    onChange={(): void => toggleOption(option.value)}
+                                    size={getCheckboxSize()}
+                                    variant={getCheckboxVariant()}
+                                    {...(filter.checkboxProps || {})}
+                                />
+                            </div>
                         ))}
                     </motion.div>
                 )}
@@ -1454,267 +613,1133 @@ const ExportButton: React.FC<ExportButtonProps> = ({ onExport, className }) => {
     );
 };
 
-/* ============================================
-   SAVE SEARCH MODAL
-============================================ */
+SearchMultiSelectFilter.displayName = "SearchMultiSelectFilter";
 
-export interface SaveSearchModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    onSave: (name: string, description?: string) => void;
-}
-
-const SaveSearchModal: React.FC<SaveSearchModalProps> = ({ isOpen, onClose, onSave }) => {
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
-    const { filters } = useSearchContext();
-
-    if (!isOpen) return null;
-
-    const activeFilterCount = [
-        filters.name,
-        filters.role,
-        filters.status,
-        ...filters.tags,
-        filters.dateFrom,
-        filters.dateTo,
-        filters.verifiedOnly && 'verified',
-        filters.premiumOnly && 'premium',
-    ].filter(Boolean).length;
-
-    return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-            onClick={onClose}
-        >
-            <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                className="bg-card border border-border rounded-xl max-w-md w-full p-6"
-                onClick={(e) => e.stopPropagation()}
-            >
-                <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold text-foreground">Save Search</h3>
-                    <button onClick={onClose} className="p-1 hover:bg-accent rounded">
-                        <Cross2Icon className="h-4 w-4 text-foreground" />
-                    </button>
-                </div>
-
-                <div className="space-y-4">
-                    <div>
-                        <label className="text-sm font-medium block mb-1.5 text-foreground">Search Name</label>
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            placeholder="e.g., Active Premium Users"
-                            className="w-full h-10 px-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
-                            autoFocus
-                        />
-                    </div>
-
-                    <div>
-                        <label className="text-sm font-medium block mb-1.5 text-foreground">Description (optional)</label>
-                        <textarea
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            placeholder="Brief description of this search..."
-                            rows={2}
-                            className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
-                        />
-                    </div>
-
-                    <div className="bg-secondary/50 rounded-lg p-3">
-                        <div className="text-sm font-medium mb-2 text-foreground">Current Filters ({activeFilterCount})</div>
-                        <div className="space-y-1 text-xs text-muted-foreground">
-                            {filters.name && <div>• Name: {filters.name}</div>}
-                            {filters.role && <div>• Role: {filters.role}</div>}
-                            {filters.status && <div>• Status: {filters.status}</div>}
-                            {filters.tags.length > 0 && <div>• Tags: {filters.tags.join(', ')}</div>}
-                            {filters.dateFrom && <div>• From: {filters.dateFrom}</div>}
-                            {filters.dateTo && <div>• To: {filters.dateTo}</div>}
-                            {filters.verifiedOnly && <div>• Verified only</div>}
-                            {filters.premiumOnly && <div>• Premium only</div>}
-                        </div>
-                    </div>
-
-                    <div className="flex gap-2 pt-2">
-                        <Button
-                            variant="default"
-                            onClick={() => {
-                                if (name.trim()) {
-                                    onSave(name, description);
-                                    setName('');
-                                    setDescription('');
-                                    onClose();
-                                }
-                            }}
-                            disabled={!name.trim()}
-                            className="flex-1"
-                        >
-                            Save Search
-                        </Button>
-                        <Button
-                            variant="outline"
-                            onClick={onClose}
-                            className="flex-1"
-                        >
-                            Cancel
-                        </Button>
-                    </div>
-                </div>
-            </motion.div>
-        </motion.div>
-    );
-};
-
-/* ============================================
-   THEME TOGGLE COMPONENT
-============================================ */
-
-export interface ThemeToggleProps {
+export interface SearchDateRangeFilterProps {
+    filter: DateRangeFilterConfig;
+    value: DateRangeValue;
+    onChange: (value: DateRangeValue) => void;
     className?: string;
 }
 
-const ThemeToggle: React.FC<ThemeToggleProps> = ({ className }) => {
-    const [isDark, setIsDark] = useState(false);
+/**
+ * Date range filter component with preset options and custom date picker
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <SearchDateRangeFilter
+ *   filter={{
+ *     id: 'date',
+ *     label: 'Date Range',
+ *     type: 'date-range',
+ *     presets: ['today', 'last7days']
+ *   }}
+ *   value={{ start: '2024-01-01', end: '2024-01-31' }}
+ *   onChange={(value) => console.log(value)}
+ * />
+ * ```
+ */
+export const SearchDateRangeFilter: React.FC<SearchDateRangeFilterProps> = ({
+    filter,
+    value = {},
+    onChange,
+    className,
+}) => {
+    const { theme, isMobile } = useSearch();
+    const [preset, setPreset] = React.useState<DateRangePreset | undefined>(value.preset);
+    const [showDatePicker, setShowDatePicker] = React.useState(false);
+    // const debounceTimer = React.useRef<NodeJS.Timeout | undefined>(undefined);
 
-    useEffect(() => {
-        const isDarkMode = document.documentElement.classList.contains('dark');
-        setIsDark(isDarkMode);
-    }, []);
-
-    const toggleTheme = () => {
-        if (isDark) {
-            document.documentElement.classList.remove('dark');
-        } else {
-            document.documentElement.classList.add('dark');
+    const datePickerValue = React.useMemo(() => {
+        if (value.start || value.end) {
+            return {
+                start: value.start ? parseDate(value.start) : null,
+                end: value.end ? parseDate(value.end) : null,
+            };
         }
-        setIsDark(!isDark);
+        return { start: null, end: null };
+    }, [value.start, value.end]);
+
+    const presets: DateRangePreset[] = filter.presets || ["today", "yesterday", "last7days", "last30days", "thisMonth"];
+
+    const handlePresetChange = (newPreset: DateRangePreset): void => {
+        setPreset(newPreset);
+        if (newPreset !== "custom") {
+            const range = getDateRangeFromPreset(newPreset);
+            const newValue = {
+                start: formatDate(range.start),
+                end: formatDate(range.end),
+                preset: newPreset,
+            };
+
+            onChange(newValue);
+
+        } else {
+            setShowDatePicker(true);
+        }
     };
 
+    const handleDatePickerChange = (range: { start: Date | null; end: Date | null } | Date | null): void => {
+        let newRange: { start: Date | null; end: Date | null };
+
+        if (range && typeof range === 'object' && 'start' in range && 'end' in range) {
+            newRange = range;
+        } else {
+            const date = range as Date | null;
+            newRange = { start: date, end: date };
+        }
+
+        const newValue: DateRangeValue = {
+            start: newRange.start ? formatDate(newRange.start) : undefined,
+            end: newRange.end ? formatDate(newRange.end) : undefined,
+            preset: "custom",
+        };
+
+        setPreset("custom");
+
+        onChange(newValue);
+
+        if (newRange.start && newRange.end) {
+            setTimeout(() => setShowDatePicker(false), 300);
+        }
+    };
+
+    const displayText = React.useMemo(() => {
+        if (value.start && value.end) {
+            if (value.start === value.end) {
+                return value.start;
+            }
+            return `${value.start} → ${value.end}`;
+        }
+        if (value.start) return `From ${value.start}`;
+        if (value.end) return `Until ${value.end}`;
+        return filter.placeholder || "Select date range";
+    }, [value, filter.placeholder]);
+
+    const datePickerRef = React.useRef<HTMLDivElement>(null);
+    React.useEffect(() => {
+        const handleClickOutside = (event: MouseEvent): void => {
+            if (
+                datePickerRef.current &&
+                !datePickerRef.current.contains(event.target as Node)
+            ) {
+                setShowDatePicker(false);
+            }
+        };
+
+        if (showDatePicker) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+
+        return (): void => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [showDatePicker]);
+
     return (
-        <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={toggleTheme}
-            className={cn(
-                "fixed bottom-4 right-4 p-3 rounded-full bg-primary/10 hover:bg-primary/20 backdrop-blur-sm border border-primary/20 transition-all duration-300 z-50",
-                className
-            )}
-            aria-label="Toggle theme"
-        >
-            {isDark ? <SunIcon className="w-5 h-5 text-primary" /> : <MoonIcon className="w-5 h-5 text-primary" />}
-        </motion.button>
-    );
-};
-
-/* ============================================
-   DEBUGGER COMPONENT
-============================================ */
-
-export interface SearchDebuggerProps {
-    className?: string;
-}
-
-const SearchDebugger: React.FC<SearchDebuggerProps> = ({ className }) => {
-    const { filters, results, filteredCount, isLoading, error, page, totalPages } = useSearchContext();
-    const [isOpen, setIsOpen] = useState(false);
-
-    return (
-        <div className={cn("fixed bottom-4 left-4 z-50", className)}>
-            <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+        <div className={cn(
+            "flex flex-col gap-2 relative",
+            filter.fullWidthOnMobile !== false && isMobile && "w-full",
+            className
+        )}>
+            <Typography
+                variant="label"
+                weight="medium"
+                color={theme === "dark" ? "secondary" : "default"}
+                className={isMobile ? "text-xs" : ""}
             >
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setIsOpen(!isOpen)}
-                    className="shadow-lg"
-                >
-                    {isOpen ? 'Hide Debug' : 'Show Debug'}
-                </Button>
-            </motion.div>
+                {filter.label}
+            </Typography>
 
-            <AnimatePresence>
-                {isOpen && (
-                    <motion.div
-                        {...scaleIn}
-                        className="absolute bottom-12 left-0 w-96 bg-card border border-border rounded-lg shadow-xl p-4 max-h-[500px] overflow-auto"
+            <div className={cn(
+                "flex flex-wrap gap-2 mb-2",
+                isMobile && "gap-1"
+            )}>
+                {presets.map((p) => (
+                    <button
+                        key={p}
+                        onClick={(): void => handlePresetChange(p)}
+                        className={cn(
+                            "rounded-lg transition-all whitespace-nowrap",
+                            isMobile ? "px-2 py-1 text-xs" : "px-3 py-1 text-sm",
+                            preset === p
+                                ? "bg-blue-500 text-white"
+                                : theme === "dark"
+                                    ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        )}
                     >
-                        <Typography variant="h6" weight="bold" className="mb-4 text-foreground">
-                            Search Debugger
+                        <Typography variant="caption" weight="medium" color="inherit">
+                            {p === "today" && "Today"}
+                            {p === "yesterday" && "Yesterday"}
+                            {p === "last7days" && (isMobile ? "7d" : "Last 7 Days")}
+                            {p === "last30days" && (isMobile ? "30d" : "Last 30 Days")}
+                            {p === "last90days" && (isMobile ? "90d" : "Last 90 Days")}
+                            {p === "thisMonth" && (isMobile ? "Month" : "This Month")}
+                            {p === "lastMonth" && (isMobile ? "Last" : "Last Month")}
                         </Typography>
+                    </button>
+                ))}
+            </div>
 
-                        <div className="space-y-4">
-                            <div>
-                                <Typography variant="label" weight="semibold" className="block mb-2 text-foreground">
-                                    Filters:
-                                </Typography>
-                                <pre className="bg-secondary/30 p-2 rounded text-xs overflow-auto text-foreground">
-                                    {JSON.stringify(filters, null, 2)}
-                                </pre>
-                            </div>
+            <div className="relative">
+                <div
+                    onClick={(): void => setShowDatePicker(!showDatePicker)}
+                    className={cn(
+                        "px-3 py-2 rounded-lg border cursor-pointer focus:outline-none focus:ring-2 transition-all",
+                        isMobile ? "text-sm px-2 py-1.5" : "text-base",
+                        theme === "dark"
+                            ? "bg-gray-800 border-gray-700 text-white focus:ring-blue-500"
+                            : "bg-white border-gray-300 text-gray-900 focus:ring-blue-500",
+                        preset === "custom" && "ring-2 ring-blue-500"
+                    )}
+                >
+                    <Typography variant="body-small" color="inherit">
+                        {displayText}
+                    </Typography>
+                </div>
 
-                            <div>
-                                <Typography variant="label" weight="semibold" className="block mb-2 text-foreground">
-                                    Results:
-                                </Typography>
-                                <div className="bg-secondary/30 p-2 rounded text-xs text-foreground">
-                                    <div>Total: {results.length}</div>
-                                    <div>Filtered: {filteredCount}</div>
-                                    <div>Page: {page + 1} / {totalPages}</div>
-                                    <div>Loading: {isLoading ? 'Yes' : 'No'}</div>
-                                    {error && <div className="text-destructive">Error: {error}</div>}
-                                </div>
-                            </div>
-
-                            {results.length > 0 && (
-                                <div>
-                                    <Typography variant="label" weight="semibold" className="block mb-2 text-foreground">
-                                        First 3 Results:
-                                    </Typography>
-                                    <pre className="bg-secondary/30 p-2 rounded text-xs overflow-auto text-foreground">
-                                        {JSON.stringify(results.slice(0, 3), null, 2)}
-                                    </pre>
-                                </div>
+                <AnimatePresence>
+                    {showDatePicker && (
+                        <motion.div
+                            ref={datePickerRef}
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.2 }}
+                            className={cn(
+                                "absolute z-50 mt-2",
+                                isMobile ? "left-0 right-0" : "left-0"
                             )}
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                        >
+                            <DatePicker
+                                variant="range"
+                                value={datePickerValue}
+                                onChange={handleDatePickerChange}
+                                themeMode={theme}
+                                colorScheme="blue"
+                                format="YYYY-MM-DD"
+                                placeholder={['Start date', 'End date']}
+                                size={isMobile ? 'sm' : 'md'}
+                                autoClose={false}
+                                todayButton={true}
+                                clearButton={true}
+                                {...(filter.datePickerProps || {})}
+                            />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
         </div>
     );
 };
 
+SearchDateRangeFilter.displayName = "SearchDateRangeFilter";
+
+export interface SearchCheckboxFilterProps {
+    filter: CheckboxFilterConfig;
+    value: string[];
+    onChange: (value: string[]) => void;
+    className?: string;
+}
+
+/**
+ * Checkbox group filter component for selecting multiple boolean options
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <SearchCheckboxFilter
+ *   filter={{
+ *     id: 'categories',
+ *     label: 'Categories',
+ *     type: 'checkbox',
+ *     options: [{ value: 'tech', label: 'Technology' }]
+ *   }}
+ *   value={['tech']}
+ *   onChange={(values) => console.log(values)}
+ * />
+ * ```
+ */
+export const SearchCheckboxFilter: React.FC<SearchCheckboxFilterProps> = ({
+    filter,
+    value = [],
+    onChange,
+    className,
+}) => {
+    const { theme, isMobile } = useSearch();
+
+    const toggleOption = (optionValue: string, checked: boolean): void => {
+        const newValue = checked
+            ? [...value, optionValue]
+            : value.filter(v => v !== optionValue);
+        onChange(newValue);
+    };
+
+    // Fix: Add explicit return types with proper literal types
+    const getCheckboxSize = (): "xs" | "sm" | "md" | "lg" | "xl" => {
+        if (isMobile) return "sm";
+        return "md";
+    };
+
+    const getCheckboxVariant = (): "default" | "primary" | "success" | "warning" | "danger" | "outline" | "subtle" | "glass" | "neon" => {
+        if (theme === "dark") return "glass";
+        return "default";
+    };
+
+    return (
+        <div className={cn(
+            "flex flex-col gap-2",
+            filter.fullWidthOnMobile !== false && isMobile && "w-full",
+            className
+        )}>
+            <Typography
+                variant="label"
+                weight="medium"
+                color={theme === "dark" ? "secondary" : "default"}
+                className={isMobile ? "text-xs" : ""}
+            >
+                {filter.label}
+            </Typography>
+            <div className={cn(
+                "space-y-2",
+                isMobile && "space-y-1.5"
+            )}>
+                {filter.options.map((option) => (
+                    <Checkbox
+                        key={option.value}
+                        label={`${option.label} ${option.count !== undefined ? `(${option.count})` : ""}`}
+                        checked={value.includes(option.value)}
+                        onChange={(checked: boolean): void => toggleOption(option.value, checked)}
+                        size={getCheckboxSize()}
+                        variant={getCheckboxVariant()}
+                        {...(filter.checkboxProps || {})}
+                    />
+                ))}
+            </div>
+        </div>
+    );
+};
+
+SearchCheckboxFilter.displayName = "SearchCheckboxFilter";
+
+export interface SearchNumericRangeFilterProps {
+    filter: NumericRangeFilterConfig;
+    value: NumericRangeValue;
+    onChange: (value: NumericRangeValue) => void;
+    className?: string;
+}
+
+/**
+ * Numeric range filter component with min/max inputs for filtering numeric values
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <SearchNumericRangeFilter
+ *   filter={{
+ *     id: 'price',
+ *     label: 'Price Range',
+ *     type: 'numeric-range',
+ *     min: 0,
+ *     max: 1000
+ *   }}
+ *   value={{ min: 100, max: 500 }}
+ *   onChange={(value) => console.log(value)}
+ * />
+ * ```
+ */
+export const SearchNumericRangeFilter: React.FC<SearchNumericRangeFilterProps> = ({
+    filter,
+    value = {},
+    onChange,
+    className,
+}) => {
+    const { theme, autoApply, isMobile } = useSearch();
+    const [localMin, setLocalMin] = React.useState(value.min?.toString() || "");
+    const [localMax, setLocalMax] = React.useState(value.max?.toString() || "");
+
+    const handleChange = (field: "min" | "max", val: string): void => {
+        if (field === "min") setLocalMin(val);
+        else setLocalMax(val);
+
+        if (autoApply) {
+            onChange({
+                min:
+                    field === "min"
+                        ? val
+                            ? Number(val)
+                            : undefined
+                        : localMin
+                            ? Number(localMin)
+                            : undefined,
+                max:
+                    field === "max"
+                        ? val
+                            ? Number(val)
+                            : undefined
+                        : localMax
+                            ? Number(localMax)
+                            : undefined,
+            });
+        }
+    };
+
+    return (
+        <div className={cn(
+            "flex flex-col gap-2",
+            filter.fullWidthOnMobile !== false && isMobile && "w-full",
+            className
+        )}>
+            <Typography
+                variant="label"
+                weight="medium"
+                color={theme === "dark" ? "secondary" : "default"}
+                className={isMobile ? "text-xs" : ""}
+            >
+                {filter.label}
+            </Typography>
+            <div className={cn(
+                "flex gap-2 items-center",
+                isMobile && "flex-col"
+            )}>
+                <input
+                    type="number"
+                    value={localMin}
+                    onChange={(e): void => handleChange("min", e.target.value)}
+                    placeholder={`Min${filter.min !== undefined ? ` (${filter.min})` : ""}`}
+                    step={filter.step || 1}
+                    min={filter.min}
+                    max={filter.max}
+                    className={cn(
+                        "flex-1 px-3 py-2 rounded-lg border focus:outline-none focus:ring-2",
+                        isMobile ? "text-sm px-2 py-1.5 w-full" : "text-base",
+                        theme === "dark"
+                            ? "bg-gray-800 border-gray-700 text-white focus:ring-blue-500"
+                            : "bg-white border-gray-300 text-gray-900 focus:ring-blue-500"
+                    )}
+                />
+                {!isMobile && <Typography variant="body" color="muted">to</Typography>}
+                <input
+                    type="number"
+                    value={localMax}
+                    onChange={(e): void => handleChange("max", e.target.value)}
+                    placeholder={`Max${filter.max !== undefined ? ` (${filter.max})` : ""}`}
+                    step={filter.step || 1}
+                    min={filter.min}
+                    max={filter.max}
+                    className={cn(
+                        "flex-1 px-3 py-2 rounded-lg border focus:outline-none focus:ring-2",
+                        isMobile ? "text-sm px-2 py-1.5 w-full mt-2" : "text-base",
+                        theme === "dark"
+                            ? "bg-gray-800 border-gray-700 text-white focus:ring-blue-500"
+                            : "bg-white border-gray-300 text-gray-900 focus:ring-blue-500"
+                    )}
+                />
+            </div>
+        </div>
+    );
+};
+
+SearchNumericRangeFilter.displayName = "SearchNumericRangeFilter";
+
 /* ============================================
-   ASSIGN COMPOUND COMPONENTS
+   FILTER RENDERER
 ============================================ */
 
-SearchProvider.Header = SearchHeader;
-SearchProvider.Tabs = SearchTabs;
-SearchProvider.Filters = SearchFilters;
-SearchProvider.Results = SearchResults;
-SearchProvider.Pagination = SearchPagination;
-SearchProvider.ExportButton = ExportButton;
-SearchProvider.SaveSearchModal = SaveSearchModal;
-SearchProvider.ThemeToggle = ThemeToggle;
-SearchProvider.Debugger = SearchDebugger;
+export interface SearchFilterRendererProps {
+    filter: FilterConfig;
+    value: FilterValue;
+    onChange: (value: FilterValue) => void;
+    className?: string;
+}
 
-export {
-    SearchProvider,
-    SearchHeader,
-    SearchTabs,
-    SearchFilters,
-    SearchResults,
-    SearchPagination,
-    ExportButton,
-    SaveSearchModal,
-    ThemeToggle,
-    SearchDebugger,
+/**
+ * Dynamic filter renderer that renders the appropriate filter component based on filter type
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <SearchFilterRenderer
+ *   filter={textFilter}
+ *   value="search term"
+ *   onChange={(value) => console.log(value)}
+ * />
+ * ```
+ */
+export const SearchFilterRenderer: React.FC<SearchFilterRendererProps> = ({
+    filter,
+    value,
+    onChange,
+    className,
+}) => {
+    switch (filter.type) {
+        case "text":
+            return <SearchTextFilter filter={filter} value={value as string || ""} onChange={onChange as (value: string) => void} className={className} />;
+        case "select":
+            return <SearchSelectFilter filter={filter} value={value as string || ""} onChange={onChange as (value: string) => void} className={className} />;
+        case "multi-select":
+            return <SearchMultiSelectFilter filter={filter} value={value as string[] || []} onChange={onChange as (value: string[]) => void} className={className} />;
+        case "date-range":
+            return <SearchDateRangeFilter filter={filter} value={value as DateRangeValue || {}} onChange={onChange as (value: DateRangeValue) => void} className={className} />;
+        case "checkbox":
+            return <SearchCheckboxFilter filter={filter} value={value as string[] || []} onChange={onChange as (value: string[]) => void} className={className} />;
+        case "numeric-range":
+            return <SearchNumericRangeFilter filter={filter} value={value as NumericRangeValue || {}} onChange={onChange as (value: NumericRangeValue) => void} className={className} />;
+        default:
+            return null;
+    }
 };
+
+SearchFilterRenderer.displayName = "SearchFilterRenderer";
+
+/* ============================================
+   SUB-COMPONENTS
+============================================ */
+
+export interface SearchFiltersProps {
+    children?: React.ReactNode;
+    className?: string;
+}
+
+/**
+ * Container component that renders all filter inputs
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <SearchFilters>
+ *   <CustomFilter />
+ * </SearchFilters>
+ * ```
+ */
+export const SearchFilters: React.FC<SearchFiltersProps> = ({
+    children,
+    className,
+}) => {
+    const { filters, layout, activeFilters, setActiveFilters, isMobile, filtersCollapsed, setFiltersCollapsed, theme } = useSearch();
+
+    const handleFilterChange = (filterId: string, value: FilterValue): void => {
+        const newFilters = { ...activeFilters, [filterId]: value };
+        setActiveFilters(newFilters);
+    };
+
+    if (layout === "collapsible" && isMobile) {
+        return (
+            <div className="space-y-3">
+                <button
+                    onClick={(): void => setFiltersCollapsed(!filtersCollapsed)}
+                    className={cn(
+                        "w-full flex items-center justify-between px-4 py-2 rounded-lg transition-all",
+                        "font-medium text-sm",
+                        theme === "dark"
+                            ? "bg-gray-800 text-gray-200 hover:bg-gray-700"
+                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    )}
+                >
+                    <Typography variant="body-small" weight="medium" color="inherit">
+                        Filter Options
+                    </Typography>
+                    <Typography variant="body" color="inherit">
+                        {filtersCollapsed ? "▼" : "▲"}
+                    </Typography>
+                </button>
+
+                <AnimatePresence>
+                    {!filtersCollapsed && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="overflow-hidden"
+                        >
+                            <div className={cn(
+                                filterGroupVariants({ layout }),
+                                "pt-2",
+                                className
+                            )}>
+                                {children ? children : filters.map((filter) => (
+                                    <SearchFilterRenderer
+                                        key={filter.id}
+                                        filter={filter}
+                                        value={activeFilters[filter.id]}
+                                        onChange={(value: FilterValue): void => handleFilterChange(filter.id, value)}
+                                    />
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+        );
+    }
+
+    return (
+        <div className={cn(
+            filterGroupVariants({ layout }),
+            isMobile && "space-y-3",
+            className
+        )}>
+            {children ? children : filters.map((filter) => (
+                <SearchFilterRenderer
+                    key={filter.id}
+                    filter={filter}
+                    value={activeFilters[filter.id]}
+                    onChange={(value: FilterValue): void => handleFilterChange(filter.id, value)}
+                />
+            ))}
+        </div>
+    );
+};
+
+SearchFilters.displayName = "SearchFilters";
+
+export interface SearchActionsProps {
+    onApply?: () => void;
+    onReset?: () => void;
+    onSave?: () => void;
+    onExport?: () => void;
+    showApply?: boolean;
+    showReset?: boolean;
+    showSave?: boolean;
+    showExport?: boolean;
+    className?: string;
+}
+
+/**
+ * Action buttons component for applying, resetting, saving, and exporting filters
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <SearchActions
+ *   showApply={true}
+ *   showReset={true}
+ *   onApply={() => console.log('Apply clicked')}
+ * />
+ * ```
+ */
+export const SearchActions: React.FC<SearchActionsProps> = ({
+    onApply,
+    onReset,
+    onSave,
+    onExport,
+    showApply = true,
+    showReset = true,
+    showSave = true,
+    showExport = true,
+    className,
+}) => {
+    const { theme, autoApply, activeFilters, setActiveFilters, onSearch, onSaveSearch: contextOnSave, onExport: contextOnExport, isMobile } = useSearch();
+
+    const handleApply = (): void => {
+        if (onApply) onApply();
+        else if (onSearch) onSearch(activeFilters);
+    };
+
+    const handleReset = (): void => {
+        const resetFilters: Record<string, FilterValue> = {};
+        setActiveFilters(resetFilters);
+        if (onReset) onReset();
+        else if (onSearch) onSearch(resetFilters);
+    };
+
+    const handleSave = (): void => {
+        if (onSave) onSave();
+        else if (contextOnSave) {
+            const name = prompt("Enter a name for this search:");
+            if (name) {
+                contextOnSave({
+                    id: Date.now().toString(),
+                    name,
+                    filters: activeFilters,
+                    createdAt: new Date(),
+                });
+            }
+        }
+    };
+
+    const EXPORT_FORMATS = ["csv", "excel", "json"] as const;
+    const handleExport = (): void => {
+        if (onExport) return onExport();
+
+        if (!contextOnExport) return;
+
+        const formatInput = prompt("Export format (csv/excel/json):", "csv");
+
+        if (formatInput && EXPORT_FORMATS.includes(formatInput as ExportFormat)) {
+            contextOnExport(activeFilters, formatInput as ExportFormat);
+        }
+    };
+
+    if (!showApply && !showReset && !showSave && !showExport) return null;
+
+    return (
+        <div className={cn(
+            "flex flex-wrap gap-3",
+            isMobile && "gap-2",
+            className
+        )}>
+            {showApply && !autoApply && (
+                <button
+                    onClick={handleApply}
+                    className={cn(
+                        "rounded-lg font-medium transition-all",
+                        isMobile ? "px-3 py-1.5 text-sm" : "px-4 py-2",
+                        "bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    )}
+                >
+                    <Typography variant={isMobile ? "small" : "body"} weight="medium" color="inherit">
+                        Apply Filters
+                    </Typography>
+                </button>
+            )}
+            {showReset && (
+                <button
+                    onClick={handleReset}
+                    className={cn(
+                        "rounded-lg font-medium transition-all",
+                        isMobile ? "px-3 py-1.5 text-sm" : "px-4 py-2",
+                        theme === "dark"
+                            ? "bg-gray-800 text-gray-300 hover:bg-gray-700 focus:ring-2 focus:ring-gray-500"
+                            : "bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-2 focus:ring-gray-400"
+                    )}
+                >
+                    <Typography variant={isMobile ? "small" : "body"} weight="medium" color="inherit">
+                        Reset
+                    </Typography>
+                </button>
+            )}
+            {showSave && (
+                <button
+                    onClick={handleSave}
+                    className={cn(
+                        "rounded-lg font-medium transition-all",
+                        isMobile ? "px-3 py-1.5 text-sm" : "px-4 py-2",
+                        theme === "dark"
+                            ? "bg-gray-800 text-gray-300 hover:bg-gray-700 focus:ring-2 focus:ring-gray-500"
+                            : "bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-2 focus:ring-gray-400"
+                    )}
+                >
+                    <Typography variant={isMobile ? "small" : "body"} weight="medium" color="inherit">
+                        Save Search
+                    </Typography>
+                </button>
+            )}
+            {showExport && (
+                <button
+                    onClick={handleExport}
+                    className={cn(
+                        "rounded-lg font-medium transition-all",
+                        isMobile ? "px-3 py-1.5 text-sm" : "px-4 py-2",
+                        theme === "dark"
+                            ? "bg-gray-800 text-gray-300 hover:bg-gray-700 focus:ring-2 focus:ring-gray-500"
+                            : "bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-2 focus:ring-gray-400"
+                    )}
+                >
+                    <Typography variant={isMobile ? "small" : "body"} weight="medium" color="inherit">
+                        Export
+                    </Typography>
+                </button>
+            )}
+        </div>
+    );
+};
+
+SearchActions.displayName = "SearchActions";
+
+export interface SearchSavedSearchesProps {
+    searches?: SavedSearch[];
+    onApply?: (search: SavedSearch) => void;
+    onDelete?: (searchId: string) => void;
+    className?: string;
+}
+
+/**
+ * Component that displays and manages saved searches
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <SearchSavedSearches
+ *   searches={savedSearches}
+ *   onApply={(search) => console.log('Apply', search)}
+ *   onDelete={(id) => console.log('Delete', id)}
+ * />
+ * ```
+ */
+export const SearchSavedSearches: React.FC<SearchSavedSearchesProps> = ({
+    searches: propSearches,
+    onApply,
+    onDelete,
+    className,
+}) => {
+    const { theme, savedSearches: contextSearches, setActiveFilters, onSearch, isMobile } = useSearch();
+    const searches = propSearches || contextSearches || [];
+
+    const handleApply = (search: SavedSearch): void => {
+        if (onApply) onApply(search);
+        else {
+            setActiveFilters(search.filters);
+            if (onSearch) onSearch(search.filters);
+        }
+    };
+
+    const handleDelete = (searchId: string): void => {
+        if (onDelete) onDelete(searchId);
+    };
+
+    if (searches.length === 0) return null;
+
+    return (
+        <div className={cn("space-y-2", className)}>
+            <Typography
+                variant="label"
+                weight="medium"
+                color={theme === "dark" ? "secondary" : "default"}
+                className={isMobile ? "text-xs" : ""}
+            >
+                Saved Searches
+            </Typography>
+            <div className={cn(
+                "space-y-1 my-3",
+                isMobile && "space-y-2"
+            )}>
+                {searches.map((search) => (
+                    <div
+                        key={search.id}
+                        className={cn(
+                            "flex items-center justify-between rounded-lg transition-colors",
+                            isMobile ? "p-2" : "p-2",
+                            theme === "dark"
+                                ? "bg-gray-800 hover:bg-gray-700"
+                                : "bg-gray-50 hover:bg-gray-100"
+                        )}
+                    >
+                        <button
+                            onClick={(): void => handleApply(search)}
+                            className="flex-1 text-left"
+                        >
+                            <Typography variant="body-small" color={theme === "dark" ? "secondary" : "default"}>
+                                {search.name}
+                            </Typography>
+                        </button>
+                        {onDelete && (
+                            <button
+                                onClick={(): void => handleDelete(search.id)}
+                                className={cn(
+                                    "ml-2 p-1 rounded transition-colors",
+                                    isMobile ? "text-lg" : "text-base",
+                                    theme === "dark"
+                                        ? "text-gray-500 hover:text-red-400"
+                                        : "text-gray-400 hover:text-red-500"
+                                )}
+                                aria-label={`Delete ${search.name}`}
+                            >
+                                <Typography variant="body" color="inherit">
+                                    ×
+                                </Typography>
+                            </button>
+                        )}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+SearchSavedSearches.displayName = "SearchSavedSearches";
+
+export interface SearchFacetedHintsProps {
+    categories?: FacetedCategory[];
+    onSelect?: (categoryId: string, value: string) => void;
+    className?: string;
+}
+
+/**
+ * Component that displays faceted navigation hints/categories for refining search results
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <SearchFacetedHints
+ *   categories={[
+ *     { id: 'category', label: 'Category', options: [...] }
+ *   ]}
+ *   onSelect={(categoryId, value) => console.log(categoryId, value)}
+ * />
+ * ```
+ */
+export const SearchFacetedHints: React.FC<SearchFacetedHintsProps> = ({
+    categories: propCategories,
+    className,
+}) => {
+    const { theme, facetedCategories: contextCategories, activeFilters, setActiveFilters, isMobile } = useSearch();
+    const categories = propCategories || contextCategories || [];
+
+    const handleSelect = (categoryId: string, value: string): void => {
+        const newFilters = { ...activeFilters, [categoryId]: [value] };
+        setActiveFilters(newFilters);
+    };
+
+    if (categories.length === 0) return null;
+
+    return (
+        <div className={cn("space-y-3", className)}>
+            <Typography
+                variant="label"
+                weight="medium"
+                color={theme === "dark" ? "secondary" : "default"}
+                className={isMobile ? "text-xs" : ""}
+            >
+                Refine by
+            </Typography>
+            {categories.map((category) => (
+                <div key={category.id} className="space-y-1 my-3">
+                    <Typography
+                        variant="caption"
+                        weight="semibold"
+                        color="muted"
+                        className={isMobile ? "text-xs" : ""}
+                    >
+                        {category.label}
+                    </Typography>
+                    <div className={cn(
+                        "flex flex-wrap gap-2 my-2",
+                        isMobile && "gap-1.5"
+                    )}>
+                        {category.options.map((option) => (
+                            <button
+                                key={option.value}
+                                onClick={(): void => handleSelect(category.id, option.value)}
+                                className={cn(
+                                    "rounded-full transition-all whitespace-nowrap",
+                                    isMobile ? "px-2 py-1 text-xs" : "px-2.5 py-1 text-xs",
+                                    theme === "dark"
+                                        ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                )}
+                            >
+                                <Typography variant="caption" weight="medium" color="inherit">
+                                    {option.label}
+                                    {option.count !== undefined && (
+                                        <span className="ml-1 opacity-75">({option.count})</span>
+                                    )}
+                                </Typography>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+};
+
+SearchFacetedHints.displayName = "SearchFacetedHints";
+
+export interface SearchResultsCountProps {
+    count?: number;
+    total?: number;
+    className?: string;
+}
+
+/**
+ * Component that displays the number of search results
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <SearchResultsCount count={42} total={100} />
+ * ```
+ */
+export const SearchResultsCount: React.FC<SearchResultsCountProps> = ({
+    count: propCount,
+    total: propTotal,
+    className,
+}) => {
+    const { resultsCount, totalResults, isMobile } = useSearch();
+    const count = propCount !== undefined ? propCount : resultsCount;
+    const total = propTotal !== undefined ? propTotal : totalResults;
+
+    if (count === undefined) return null;
+
+    return (
+        <Typography
+            variant={isMobile ? "caption" : "body-small"}
+            color="muted"
+            className={className}
+        >
+            Showing {count.toLocaleString()} results
+            {total !== undefined && total !== count && ` of ${total.toLocaleString()}`}
+        </Typography>
+    );
+};
+
+SearchResultsCount.displayName = "SearchResultsCount";
+
+/* ============================================
+   MAIN COMPONENT
+============================================ */
+
+/**
+ * Main Advanced Search Form component that provides a complete search interface with filters, actions, and results display
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <AdvancedSearchForm
+ *   variant="default"
+ *   layout="stacked"
+ *   filters={filters}
+ *   onSearch={(filters) => console.log('Search:', filters)}
+ *   autoApply={true}
+ *   showExport={true}
+ * >
+ *   <AdvancedSearchForm.Filters />
+ *   <AdvancedSearchForm.Actions />
+ * </AdvancedSearchForm>
+ * ```
+ */
+export const AdvancedSearchFormRoot: React.FC<AdvancedSearchFormProps> = ({
+    variant = "default",
+    layout = "stacked",
+    filters = [],
+    facetedCategories,
+    onSearch,
+    onExport,
+    onSaveSearch,
+    onDeleteSearch,
+    initialFilters = {},
+    savedSearches = [],
+    resultsCount,
+    totalResults,
+    autoApply = false,
+    debounceMs = 300,
+    showExport = true,
+    showSaveSearch = true,
+    showReset = true,
+    showFaceted = true,
+    showResultsCount = true,
+    className,
+    children,
+    ariaLabel = "Advanced search form",
+    mobileBreakpoint = 768,
+    tabletBreakpoint = 1024,
+    defaultCollapsedOnMobile = true,
+}) => {
+    const [activeFilters, setActiveFilters] = React.useState<Record<string, FilterValue>>(initialFilters);
+    const [filtersCollapsed, setFiltersCollapsed] = React.useState(defaultCollapsedOnMobile);
+    const theme: "light" | "dark" = variant === "dark" ? "dark" : "light";
+    const { isMobile, isTablet, isDesktop } = useResponsive(mobileBreakpoint, tabletBreakpoint);
+
+    React.useEffect(() => {
+        if (autoApply && onSearch) {
+            const timer = setTimeout(() => {
+                onSearch(activeFilters);
+            }, debounceMs);
+            return (): void => clearTimeout(timer);
+        }
+    }, [activeFilters, autoApply, debounceMs, onSearch]);
+
+    React.useEffect(() => {
+        if (!isMobile) {
+            setFiltersCollapsed(false);
+        } else if (defaultCollapsedOnMobile) {
+            setFiltersCollapsed(true);
+        }
+    }, [isMobile, defaultCollapsedOnMobile]);
+
+    const contextValue: SearchContextType = {
+        variant,
+        layout,
+        filters,
+        activeFilters,
+        setActiveFilters,
+        onSearch,
+        autoApply,
+        debounceMs,
+        theme,
+        isMobile,
+        isTablet,
+        isDesktop,
+        filtersCollapsed,
+        setFiltersCollapsed,
+        resultsCount,
+        totalResults,
+        savedSearches,
+        onSaveSearch,
+        facetedCategories,
+        onExport,
+    };
+
+    const hasFaceted = showFaceted && (facetedCategories?.length || (filters as FilterConfig[]).some(f => f.type === "checkbox"));
+
+    return (
+        <SearchContext.Provider value={contextValue}>
+            <div
+                className={cn(
+                    searchContainerVariants({ variant, layout }),
+                    "rounded-lg",
+                    isMobile ? "p-4" : isTablet ? "p-5" : "p-6",
+                    className
+                )}
+                aria-label={ariaLabel}
+                role="search"
+            >
+                <div className={cn(
+                    "space-y-6",
+                    isMobile && "space-y-4"
+                )}>
+                    {children ? (
+                        children
+                    ) : (
+                        <>
+                            <SearchFilters />
+                            <div className={cn(
+                                "flex flex-wrap justify-between items-start gap-4",
+                                isMobile && "flex-col-reverse gap-3"
+                            )}>
+                                <SearchActions
+                                    showApply={!autoApply}
+                                    showReset={showReset}
+                                    showSave={showSaveSearch}
+                                    showExport={showExport}
+                                />
+                                {showResultsCount && (
+                                    <SearchResultsCount count={resultsCount} total={totalResults} />
+                                )}
+                            </div>
+                            {savedSearches.length > 0 && <SearchSavedSearches searches={savedSearches} onDelete={onDeleteSearch} />}
+                            {hasFaceted && <SearchFacetedHints categories={facetedCategories} />}
+                        </>
+                    )}
+                </div>
+            </div>
+        </SearchContext.Provider>
+    );
+};
+
+AdvancedSearchFormRoot.displayName = "AdvancedSearchForm";
+
+/* ============================================
+   EXPORTS
+============================================ */
+
+export const AdvancedSearchForm = Object.assign(AdvancedSearchFormRoot, {
+    Filters: SearchFilters,
+    Actions: SearchActions,
+    SavedSearches: SearchSavedSearches,
+    FacetedHints: SearchFacetedHints,
+    ResultsCount: SearchResultsCount,
+    TextFilter: SearchTextFilter,
+    SelectFilter: SearchSelectFilter,
+    MultiSelectFilter: SearchMultiSelectFilter,
+    DateRangeFilter: SearchDateRangeFilter,
+    CheckboxFilter: SearchCheckboxFilter,
+    NumericRangeFilter: SearchNumericRangeFilter,
+    FilterRenderer: SearchFilterRenderer,
+});
+
+export default AdvancedSearchForm;

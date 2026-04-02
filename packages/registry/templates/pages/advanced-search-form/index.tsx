@@ -3,10 +3,10 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@site/src/utils/cn";
-import { Typography } from "@site/src/components/UI/typography";
-import DatePicker from "@site/src/components/UI/date-picker";
-import { Checkbox } from "@site/src/components/UI/checkbox";
+import { cn } from "../../../utils/cn";
+import { Typography } from "@ignix-ui/typography";
+import DatePicker from "@ignix-ui/date-picker";
+import { Checkbox } from "@ignix-ui/checkbox";
 
 /* ============================================
    TYPES & INTERFACES
