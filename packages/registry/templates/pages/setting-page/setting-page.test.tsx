@@ -82,6 +82,18 @@ import { SettingsPage } from ".";
    TESTS
 ======================= */
 
+const mockLocalStorage = (() => {
+  let store: Record<string, string> = {};
+  return {
+    getItem: vi.fn((key: string) => store[key] || null),
+    setItem: vi.fn((key: string, value: string) => { store[key] = value.toString(); }),
+    removeItem: vi.fn((key: string) => { delete store[key]; }),
+    clear: vi.fn(() => { store = {}; })
+  };
+})();
+
+Object.defineProperty(window, 'localStorage', { value: mockLocalStorage });
+
 describe("SettingsPage", () => {
   beforeEach(() => {
     localStorage.clear();
@@ -137,7 +149,7 @@ describe("SettingsPage", () => {
 
   it("toggles notifications and fires callback", () => {
     const onNotificationChange = vi.fn();
-    
+
     render(
       <SettingsPage
         notificationOptions={[

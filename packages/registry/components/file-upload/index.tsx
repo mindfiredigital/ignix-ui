@@ -589,8 +589,8 @@ const FileList: React.FC<FileListProps> = ({
 
     // Simple Avatar component
     const Avatar: React.FC<{
-        size: string;
-        shape: string;
+        size: 'xs' | 'sm' | 'md' | 'lg';
+        shape: 'circle' | 'square' | 'rounded' | 'hexagon' | 'diamond';
         src?: string;
         alt: string;
         className?: string;

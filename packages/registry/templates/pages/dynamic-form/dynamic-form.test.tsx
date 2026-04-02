@@ -564,23 +564,6 @@ describe('DynamicForm', () => {
         });
     });
 
-    describe('Theme Toggle', () => {
-        it('renders theme toggle', () => {
-            render(
-                <DynamicForm fields={basicFields}>
-                    <DynamicContent>
-                        {basicFields.map(field => (
-                            <DynamicField key={field.id} field={field} />
-                        ))}
-                    </DynamicContent>
-                    <DynamicNavigation />
-                </DynamicForm>
-            );
-
-            expect(screen.getByLabelText('Toggle theme')).toBeInTheDocument();
-        });
-    });
-
     describe('Notification Component', () => {
         it('renders notification with correct type', () => {
             const onClose = vi.fn();

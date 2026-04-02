@@ -101,6 +101,18 @@ function getShortcutButtonsInOrder() {
 /*                                   Tests                                    */
 /* -------------------------------------------------------------------------- */
 
+const mockLocalStorage = (() => {
+  let store: Record<string, string> = {};
+  return {
+    getItem: vi.fn((key: string) => store[key] || null),
+    setItem: vi.fn((key: string, value: string) => { store[key] = value.toString(); }),
+    removeItem: vi.fn((key: string) => { delete store[key]; }),
+    clear: vi.fn(() => { store = {}; })
+  };
+})();
+
+Object.defineProperty(window, 'localStorage', { value: mockLocalStorage });
+
 describe("DashboardShortcutsPage (registry template)", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
@@ -225,7 +237,7 @@ describe("DashboardShortcutsPage (registry template)", () => {
 
   it("supports drag-and-drop reordering and persists order to localStorage", async () => {
     const storageKey = "test.shortcuts.order";
-    const setItemSpy = vi.spyOn(window.localStorage.__proto__, "setItem");
+    const setItemSpy = vi.spyOn(window.localStorage, "setItem");
 
     render(
       <DashboardShortcutsPage

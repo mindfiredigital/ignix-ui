@@ -144,7 +144,7 @@ export const CenteredVsNotCentered: Story = {
   render: () => (
     <div className="min-h-screen bg-slate-100 py-10 space-y-6">
       <p className="px-6 text-xs font-mono text-slate-500 tracking-widest">
-        center=true 
+        center=true
       </p>
       <Container size="normal" center={true} className="bg-white border border-slate-200 rounded-xl shadow-sm">
         <ArticleContent />
@@ -163,14 +163,14 @@ export const CenteredVsNotCentered: Story = {
 export const Responsive: Story = {
   name: "Responsive",
   render: () => (
-      <div>
-        <p className="px-4 mb-2 text-xs font-mono text-amber-700 uppercase tracking-widest">
-          responsive=true
-        </p>
-        <Container size="large" responsive={true} className="bg-white border border-amber-200 rounded-xl shadow-sm">
-          <CardGrid />
-        </Container>
-      </div>
+    <div>
+      <p className="px-4 mb-2 text-xs font-mono text-amber-700 uppercase tracking-widest">
+        responsive=true
+      </p>
+      <Container size="large" responsive={true} className="bg-white border border-amber-200 rounded-xl shadow-sm">
+        <CardGrid />
+      </Container>
+    </div>
   ),
 };
 
@@ -190,7 +190,7 @@ export const MaxWidthPredefinedKeys: Story = {
 };
 
 export const ClassNamePassthrough: Story = {
-  name: "Paasing custom classnames",
+  name: "Passing custom classnames",
   render: () => (
     <div className="min-h-screen bg-slate-100 py-12 space-y-6">
       <Container
