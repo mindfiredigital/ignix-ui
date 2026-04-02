@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import React from "react"
 import { BillingPage } from "."
-import { Home, Settings2, Proportions, X, Crown } from "lucide-react"
-import { FaCcAmex, FaCcMastercard, FaCcPaypal, FaCcVisa } from "react-icons/fa"
-
-import { Card } from "../../../../components/card"
-import { Typography } from "../../../../components/typography"
-import { Button } from "../../../../components/button"
+import { 
+  Home, 
+  Settings2, 
+  Proportions, 
+  Crown, 
+  CreditCard,
+} from "lucide-react"
 
 /* -------------------------------------------------------------------------------------------------
  * Comparison-first data (single source of truth)
@@ -72,8 +72,10 @@ const meta: Meta<typeof BillingPage> = {
 
     features: features,
     plans: plans,
-    currentPlanId: 1,
+    currentPlanId: 2,
     renewalDate: new Date("2025-03-21"),
+    subscriptionStatus: "active",
+    billingCycle: "monthly",
 
     showUsageOverview: true,
     showPricing: true,
@@ -84,36 +86,41 @@ const meta: Meta<typeof BillingPage> = {
         id: "1",
         plan: "Pro Annual",
         date: "Jan 21, 2025",
-        amount: "$21",
+        amount: "$29.00",
         status: "Pending",
+        invoiceNumber: "INV-2025-001",
       },
       {
         id: "2",
         plan: "Pro Annual",
         date: "Dec 21, 2024",
-        amount: "$22",
+        amount: "$29.00",
         status: "Failed",
+        invoiceNumber: "INV-2024-012",
       },
       {
         id: "5",
         plan: "Pro Annual",
-        date: "Dec 21, 2024",
-        amount: "$22",
+        date: "Nov 21, 2024",
+        amount: "$29.00",
         status: "Paid",
+        invoiceNumber: "INV-2024-011",
       },
-        {
+      {
         id: "3",
         plan: "Pro Annual",
-        date: "Dec 21, 2024",
-        amount: "$22",
+        date: "Oct 21, 2024",
+        amount: "$29.00",
         status: "Paid",
+        invoiceNumber: "INV-2024-010",
       },
       {
         id: "4",
         plan: "Pro Annual",
-        date: "Dec 21, 2024",
-        amount: "$22",
+        date: "Sep 21, 2024",
+        amount: "$29.00",
         status: "Paid",
+        invoiceNumber: "INV-2024-009",
       },
     ],
 
@@ -138,27 +145,28 @@ const meta: Meta<typeof BillingPage> = {
     },
 
     card: {
-      brand: FaCcVisa,
+      brand: CreditCard,
       cardNumber: "4242424242424242",
       expiryMonth: "12",
       expiryYear: "26",
+      cardHolderName: "John Doe",
     },
-
-    onInvoiceView: invoice => console.log("View", invoice.id),
-    onInvoiceDownload: invoice => console.log("Download", invoice.id),
-    onInvoiceDelete: invoice => console.log("Delete", invoice.id),
-
-    onCancelSubscription: () => console.log("Cancel subscription"),
   },
 
   argTypes: {
-    variant: {
-      control: "select",
-      options: ["default", "dark", "light"],
-    },
     animation: {
       control: "select",
       options: ["none", "fadeIn", "slideUp", "scaleIn", "flipIn", "bounceIn", "floatIn"],
+    },
+    subscriptionStatus: {
+      control: "select",
+      options: ["active", "trial", "canceled", "past_due", "expired", "pending"],
+      description: "Current subscription status",
+    },
+    billingCycle: {
+      control: "select",
+      options: ["monthly", "yearly"],
+      description: "Billing cycle frequency",
     },
   },
 }
@@ -170,90 +178,178 @@ type Story = StoryObj<typeof BillingPage>
  * Stories
  * ------------------------------------------------------------------------------------------------- */
 
+export const LazyLoadingDemo: Story = {
+  args: {
+    ...meta.args,
+    headerTitle: "Lazy Loading Demo",
+    headerIcon: Crown,
+    currentPlanId: 2,
+    subscriptionStatus: "active",
+    billingCycle: "monthly",
+    renewalDate: new Date("2025-04-15"),
+    showUsageOverview: true,
+    showPricing: true,
+    showBillingTable: true,
+    apiUsage: {
+      label: "API Calls",
+      used: 25000,
+      total: 50000,
+      unit: "",
+    },
+    storageUsage: {
+      label: "Storage",
+      used: 50,
+      total: 100,
+      unit: "GB",
+    },
+    seatsUsage: {
+      label: "Active Seats",
+      used: 5,
+      total: 10,
+    },
+    invoices: [
+      {
+        id: "1",
+        plan: "Pro Monthly",
+        date: "Mar 21, 2025",
+        amount: "$29.00",
+        status: "Paid",
+        invoiceNumber: "INV-2025-003",
+      },
+      {
+        id: "2",
+        plan: "Pro Monthly",
+        date: "Feb 21, 2025",
+        amount: "$29.00",
+        status: "Paid",
+        invoiceNumber: "INV-2025-002",
+      },
+      {
+        id: "3",
+        plan: "Pro Monthly",
+        date: "Jan 21, 2025",
+        amount: "$29.00",
+        status: "Paid",
+        invoiceNumber: "INV-2025-001",
+      },
+    ],
+    plans: [
+      {
+        id: 1,
+        name: "Starter",
+        price: "$0/month",
+        icon: Home,
+        ctaLabel: "Get Started",
+        featureMap: {
+          1: "email",
+          2: false,
+          3: false,
+        },
+      },
+      {
+        id: 2,
+        name: "Pro",
+        price: "$29/month",
+        icon: Settings2,
+        ctaLabel: "Upgrade",
+        featureMap: {
+          1: true,
+          2: true,
+          3: false,
+        },
+      },
+      {
+        id: 3,
+        name: "Enterprise",
+        price: "$99/month",
+        icon: Proportions,
+        recommended: true,
+        ctaLabel: "Contact Sales",
+        featureMap: {
+          1: true,
+          2: true,
+          3: true,
+        },
+      },
+    ],
+    features: [
+      { id: 1, label: "Projects" },
+      { id: 2, label: "Support" },
+      { id: 3, label: "Integrations" },
+    ],
+  }
+}
+
+export const SkeletonLoaders: Story = {
+  args: {
+    ...meta.args,
+    isLoading: true,
+    headerTitle: "Loading State",
+    headerIcon: Crown,
+    showUsageOverview: true,
+    showPricing: true,
+    showBillingTable: true,
+  }
+}
+
 export const Default: Story = {
-  args: { variant: "default" },
+  args: {},
 }
 
-export const Minimal: Story = {
-  args: { 
-    variant: "default", 
-    showPricing: false },
-}
-
-export const Dark: Story = {
-  args: { variant: "dark" },
-}
-
-export const Light: Story = {
-  args: { variant: "light" },
-}
-
-/* -------------------------------------------------------------------------------------------------
- * Modal example (headless / consumer-controlled)
- * ------------------------------------------------------------------------------------------------- */
-
-export const Modal: Story = {
-  render: args => {
-    const [open, setOpen] = React.useState(false)
-
-    const AVAILABLE_PAYMENT_METHODS = [
-      { id: "visa", label: "Visa", icon: FaCcVisa },
-      { id: "mastercard", label: "Mastercard", icon: FaCcMastercard },
-      { id: "amex", label: "American Express", icon: FaCcAmex },
-      { id: "paypal", label: "PayPal", icon: FaCcPaypal },
-    ]
-
-    return (
-      <>
-        <BillingPage
-          {...args}
-          onUpdatePaymentMethod={() => setOpen(true)}
-          renderUpdatePaymentMethod={() =>
-            open ? (
-              <div
-                className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
-                onClick={() => setOpen(false)}
-              >
-                <Card
-                  className="w-full max-w-md p-6"
-                  onClick={e => e.stopPropagation()}
-                >
-                  <div className="flex justify-between items-center mb-4">
-                    <Typography variant="h6">Select Payment Method</Typography>
-                    <Button size="icon" variant="ghost" onClick={() => setOpen(false)}>
-                      <X className="w-4 h-4" />
-                    </Button>
-                  </div>
-
-                  <div className="space-y-3">
-                    {AVAILABLE_PAYMENT_METHODS.map(method => {
-                      const Icon = method.icon
-                      return (
-                        <button
-                          key={method.id}
-                          className="w-full flex items-center gap-4 rounded-lg border p-3 hover:bg-muted"
-                          onClick={() => setOpen(false)}
-                        >
-                          <Icon className="w-8 h-8" />
-                          <span className="font-medium">{method.label}</span>
-                        </button>
-                      )
-                    })}
-                  </div>
-
-                  <Typography variant="body-small" className="mt-4 text-zinc-500">
-                    Demo selector — no real payment data.
-                  </Typography>
-                </Card>
-              </div>
-            ) : null
-          }
-        />
-      </>
-    )
+export const DifferentSubscriptionStatus: Story = {
+  args: {
+    ...meta.args,
+    subscriptionStatus: "trial",
+    currentPlanId: 1,
+    renewalDate: new Date("2025-04-15"),
   },
 }
 
-export const onCancelSubscription: Story = {
-  args: { variant: "default" },
+export const CanceledSubscription: Story = {
+  args: {
+    ...meta.args,
+    subscriptionStatus: "canceled",
+    currentPlanId: 2,
+  },
 }
+
+export const NoPricingSection: Story = {
+  args: {
+    ...meta.args,
+    showPricing: false,
+  },
+}
+
+export const NoUsageOverview: Story = {
+  args: {
+    ...meta.args,
+    showUsageOverview: false,
+  },
+}
+
+export const NoBillingTable: Story = {
+  args: {
+    ...meta.args,
+    showBillingTable: false,
+  },
+}
+
+// export const DarkTheme: Story = {
+//   args: {
+//     ...meta.args,
+//     headerTitle: "Billing Dashboard",
+//     headerIcon: Crown,
+//   },
+//   parameters: {
+//     backgrounds: {
+//       default: "dark",
+//     },
+//   },
+//   decorators: [
+//     (Story) => (
+//       <div className="dark bg-slate-950 min-h-screen">
+//         <Story />
+//       </div>
+//     ),
+//   ],
+// }

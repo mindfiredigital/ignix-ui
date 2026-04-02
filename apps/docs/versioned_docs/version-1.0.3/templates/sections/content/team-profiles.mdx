@@ -7,7 +7,6 @@ description: A flexible team profiles section with multiple card variants, grid 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import {
-    BasicTeamDemo,
     AdvancedTeamDemo,
 } from '@site/src/components/Demo/TeamProfilesDemo';
 import { TeamProfiles, TeamHeader, TeamGrid, MemberCard, MemberPhoto, MemberContent, MemberName, MemberRole, MemberBio, MemberSocialLinks } from '@site/src/components/UI/team-profiles';
@@ -15,10 +14,7 @@ import { Users, Award, MapPin, User, UserCircle } from 'lucide-react';
 
 The TeamProfiles component is a comprehensive, customizable team showcase section that displays team members in a professional grid layout. It features multiple card styles, flexible grid configurations, theme variants, and advanced features like modal views and animations.
 
-## Basic Usage
-<BasicTeamDemo />
-
-## Advanced Variants
+## Preview
 <AdvancedTeamDemo />
 
 
@@ -27,7 +23,7 @@ The TeamProfiles component is a comprehensive, customizable team showcase sectio
 <Tabs>
   <TabItem value="cli" label="CLI" default>
     ```bash
-    ignix add component teamprofiles
+    ignix add component teamProfiles
     ```
   </TabItem>
   <TabItem value="manual" label="Manual">
@@ -1736,7 +1732,7 @@ interface TeamMember {
 
 ```
 
-## Base Usage
+## Basic Usage
 
 ```tsx
 import {

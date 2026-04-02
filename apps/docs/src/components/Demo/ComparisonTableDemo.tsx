@@ -9,10 +9,15 @@ import {
 } from "lucide-react"
 import { ComparisonTable } from "../UI/comparison-table";
 
-const variants = [ "default", "dark", "light"];
-const animations = ["none", "fadeIn", "slideUp", "scaleIn", "flipIn", "bounceIn", "floatIn"];
-const interactives = ["none", "hover", "press", "lift", "tilt", "glow"];
-const mobileBreakpoints = ["sm", "md", "lg"];
+const variants = [ "default", "dark", "light"] as const;
+const animations = ["none", "fadeIn", "slideUp", "scaleIn", "flipIn", "bounceIn", "floatIn"] as const;
+const interactives = ["none", "hover", "press", "lift", "tilt", "glow"] as const;
+const mobileBreakpoints = ["sm", "md", "lg"] as const;
+
+type ComparisonTableVariant = typeof variants[number];
+type ComparisonTableAnimations = typeof animations[number];
+type ComparisonTableInteractives = typeof interactives[number];
+type ComparisonTableMobileBreakpoints = typeof mobileBreakpoints[number];
 
 const ComparisonTableDemo = () => {
   const features = [
@@ -67,14 +72,10 @@ const ComparisonTableDemo = () => {
       },
     },
   ];
-  const [animation, setAnimation] = useState<string>("fadeIn");
-  const [interactive, setInteractive] = useState<string>("press");
-  const [variant, setVariant] = useState<string>("default");
-  const [mobileBreakpoint, setMobileBreakpoint] = useState<string>("md");
-  const handleClick = (plans) => {
-    console.log(plans.name);
-    // your plan action goes here
-  };
+  const [animation, setAnimation] = useState<ComparisonTableAnimations>("fadeIn");
+  const [interactive, setInteractive] = useState<ComparisonTableInteractives>("press");
+  const [variant, setVariant] = useState<ComparisonTableVariant>("default");
+  const [mobileBreakpoint, setMobileBreakpoint] = useState<ComparisonTableMobileBreakpoints>("md");
 
   const codeString = `
     import { ComparisonTable } from '@ignix-ui/comparisontable';
@@ -134,7 +135,6 @@ const ComparisonTableDemo = () => {
   ];
 
   const handleClick = (plans) => {
-    console.log(plans.name);
     // your plan action goes here
   };
   <ComparisonTable 
@@ -153,36 +153,36 @@ const ComparisonTableDemo = () => {
       <div className="flex flex-wrap gap-4 justify-start sm:justify-end">
         <div className="space-y-2">
           <VariantSelector
-            variants={variants}
+            variants={[...variants]}
             selectedVariant={variant}
-            onSelectVariant={setVariant}
+            onSelectVariant={(v) => setVariant(v as ComparisonTableVariant)}
             type="Variant"
           />
         </div>
 
         <div className="space-y-2">
           <VariantSelector
-            variants={animations}
+            variants={[...animations]}
             selectedVariant={animation}
-            onSelectVariant={setAnimation}
+            onSelectVariant={(v) => setAnimation(v as ComparisonTableAnimations)}
             type="Animation"
           />
         </div>
 
         <div className="space-y-2">
           <VariantSelector
-            variants={interactives}
+            variants={[...interactives]}
             selectedVariant={interactive}
-            onSelectVariant={setInteractive}
+            onSelectVariant={(v) => setInteractive(v as ComparisonTableInteractives)}
             type="Interactive"
           />
         </div>
 
         <div className="space-y-2">
           <VariantSelector
-            variants={mobileBreakpoints}
+            variants={[...mobileBreakpoints]}
             selectedVariant={mobileBreakpoint}
-            onSelectVariant={setMobileBreakpoint}
+            onSelectVariant={(v) => setMobileBreakpoint(v as ComparisonTableMobileBreakpoints)}
             type="Mobile Break Point"
           />
         </div>
@@ -196,11 +196,10 @@ const ComparisonTableDemo = () => {
               key={`${animation}-${interactive}-${variant}`}
               features={features}
               plans={plans} 
-              onCtaClick={(plans) => handleClick(plans)}
-              variant={variant as any}
-              animation={animation as any}
-              interactive={interactive as any}
-              mobileBreakpoint={mobileBreakpoint as any}
+              variant={variant}
+              animation={animation}
+              interactive={interactive}
+              mobileBreakpoint={mobileBreakpoint}
             />
           </div>
         </TabItem>

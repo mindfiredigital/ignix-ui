@@ -1,13 +1,19 @@
 {
   "name": "@mindfiredigital/ignix-cli",
   "version": "1.0.8",
+  "private": false,
   "description": "CLI tool for the Ignix UI component library",
   "type": "commonjs",
   "bin": {
     "ignix": "./dist/index.js"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+   },
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "scripts": {
     "build": "tsup",
@@ -16,14 +22,17 @@
     "clean": "rimraf dist",
     "lint": "eslint src --ext .ts"
   },
-  "keywords": [
+ "keywords": [
     "ignix-ui",
-    "cli",
+    "themes",
+    "react",
+    "nextjs",
+    "ui-library",
     "components",
     "ui",
-    "react"
+    "animation"
   ],
-  "author": "Ignix UI Team",
+  "author": "Mindfire Digital",
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",

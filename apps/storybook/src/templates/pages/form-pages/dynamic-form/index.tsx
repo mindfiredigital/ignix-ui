@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import type { Variants } from "framer-motion";
 import { cva, type VariantProps } from 'class-variance-authority';
 import {
     CheckIcon,
@@ -13,8 +14,6 @@ import {
     InfoCircledIcon,
     ChevronDownIcon,
     MagicWandIcon,
-    SunIcon,
-    MoonIcon,
     RocketIcon,
 } from '@radix-ui/react-icons';
 import { cn } from '../../../../../utils/cn';
@@ -133,7 +132,7 @@ interface DynamicFormContextType {
 
 const DynamicFormContext = React.createContext<DynamicFormContextType | undefined>(undefined);
 
-const useDynamicForm = () => {
+const useDynamicForm = (): DynamicFormContextType => {
     const context = React.useContext(DynamicFormContext);
     if (!context) {
         throw new Error('DynamicForm components must be used within a DynamicForm provider');
@@ -158,6 +157,7 @@ const DynamicFormVariants = cva("min-h-screen transition-all duration-500", {
             forest: "bg-gradient-to-br from-green-50 via-teal-50 to-lime-50 dark:from-green-950 dark:via-teal-950 dark:to-lime-950 text-foreground",
             galaxy: "bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white",
             candy: "bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-300 dark:from-pink-700 dark:via-purple-700 dark:to-indigo-700",
+            dark: "bg-gray-950 text-white",
         },
     },
     defaultVariants: {
@@ -292,46 +292,6 @@ const evaluateCondition = (condition: Condition, allValues: FormValues): boolean
 };
 
 /* ============================================
-   INPUT COMPONENT
-============================================ */
-
-// interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-//     icon?: React.ElementType;
-//     error?: string;
-//     variant?: string;
-// }
-
-// const Input: React.FC<InputProps> = ({
-//     icon: Icon,
-//     error,
-//     className,
-//     variant = 'default',
-//     ...props
-// }) => {
-//     return (
-//         <div className="relative">
-//             {Icon && (
-//                 <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-//                     <Icon className="w-4 h-4" />
-//                 </div>
-//             )}
-//             <input
-//                 className={cn(
-//                     "w-full px-4 py-3 rounded-lg transition-all duration-300",
-//                     "bg-background border-2",
-//                     Icon && "pl-10",
-//                     error ? "border-destructive/50 focus:border-destructive" : "border-border focus:border-primary",
-//                     "focus:outline-none focus:ring-4 focus:ring-primary/20",
-//                     "text-foreground placeholder:text-muted-foreground",
-//                     className
-//                 )}
-//                 {...props}
-//             />
-//         </div>
-//     );
-// };
-
-/* ============================================
    MAIN PROVIDER COMPONENT
 ============================================ */
 
@@ -414,7 +374,6 @@ const DynamicForm: React.FC<DynamicFormProps> & {
     Section: typeof DynamicSection;
     Notification: typeof DynamicNotification;
     Debugger: typeof DynamicDebugger;
-    ThemeToggle: typeof ThemeToggle;
 } = ({
     children,
     fields,
@@ -473,12 +432,12 @@ const DynamicForm: React.FC<DynamicFormProps> & {
             if (initialTheme !== 'system') return;
 
             const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-            const handler = (e: MediaQueryListEvent) => {
+            const handler = (e: MediaQueryListEvent): void => {
                 setCurrentTheme(e.matches ? 'dark' : 'light');
             };
 
             mediaQuery.addEventListener('change', handler);
-            return () => mediaQuery.removeEventListener('change', handler);
+            return (): void => mediaQuery.removeEventListener('change', handler);
         }, [initialTheme]);
 
         const visibleFields = useMemo(() => {
@@ -653,7 +612,7 @@ const DynamicForm: React.FC<DynamicFormProps> & {
             // setPreservedValues({});
         }, [fields, initialData]);
 
-        const submitForm = async () => {
+        const submitForm = async (): Promise<void> => {
             if (!onSubmit) return;
 
             if (!validateForm()) {
@@ -749,6 +708,7 @@ const DynamicForm: React.FC<DynamicFormProps> & {
         return (
             <DynamicFormContext.Provider value={contextValue}>
                 <div className={cn(
+                    "py-10",
                     DynamicFormVariants({ variant }),
                     currentTheme === 'dark' && "dark",
                     className
@@ -757,7 +717,7 @@ const DynamicForm: React.FC<DynamicFormProps> & {
                         <DynamicNotification
                             type={notification.type}
                             message={notification.message}
-                            onClose={() => setNotification(null)}
+                            onClose={(): void => setNotification(null)}
                             duration={notification.duration}
                             icon={notification.icon}
                         />
@@ -776,8 +736,6 @@ const DynamicForm: React.FC<DynamicFormProps> & {
                         </motion.div>
                     </main>
 
-                    {/* Theme Toggle Button */}
-                    <ThemeToggle />
                 </div>
             </DynamicFormContext.Provider>
         );
@@ -842,7 +800,7 @@ const DynamicHeader: React.FC<DynamicHeaderProps> = ({
     if (children) {
         return (
             <header className={cn(
-                "sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-border",
+                "bg-background/80 border-b border-border",
                 animated && "transition-all duration-300",
                 className
             )}>
@@ -857,7 +815,7 @@ const DynamicHeader: React.FC<DynamicHeaderProps> = ({
 
     return (
         <header className={cn(
-            "sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-border",
+            "z-10 bg-background/20 p-3 backdrop-blur-md border-b border-border",
             animated && "transition-all duration-300",
             className
         )}>
@@ -954,7 +912,7 @@ const DynamicContent: React.FC<DynamicContentProps> = ({
 }) => {
     const { fields, visibleFields, colorScheme } = useDynamicForm();
 
-    const getCardGradient = () => {
+    const getCardGradient = (): string => {
         const gradients = {
             default: "bg-card",
             vibrant: "bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5",
@@ -968,7 +926,7 @@ const DynamicContent: React.FC<DynamicContentProps> = ({
         return gradients[colorScheme as keyof typeof gradients] || gradients.default;
     };
 
-    const renderFields = () => {
+    const renderFields = (): React.ReactNode => {
         return React.Children.map(children, child => {
             if (React.isValidElement(child) && child.type === DynamicField) {
                 const field = (child.props as { field: DynamicFormField }).field;
@@ -1092,7 +1050,7 @@ const DynamicField: React.FC<DynamicFieldProps> = ({
 
     if (!isVisible) return null;
 
-    const getAnimationVariant = () => {
+    const getAnimationVariant = (): Variants => {
         switch (animationVariant) {
             case 'slide': return slideInFromLeft;
             case 'scale': return scaleIn;
@@ -1101,7 +1059,7 @@ const DynamicField: React.FC<DynamicFieldProps> = ({
         }
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>): void => {
         let val: FieldValue;
 
         if (e.target.type === 'checkbox') {
@@ -1114,15 +1072,15 @@ const DynamicField: React.FC<DynamicFieldProps> = ({
         setLocalError(undefined);
     };
 
-    const handleBlur = () => {
+    const handleBlur = (): void => {
         setIsFocused(false);
     };
 
-    const handleFocus = () => {
+    const handleFocus = (): void => {
         setIsFocused(true);
     };
 
-    const renderField = () => {
+    const renderField = (): React.ReactNode => {
         const commonClasses = cn(
             "w-full px-4 py-3 rounded-lg transition-all duration-300",
             "bg-background border-2",
@@ -1143,8 +1101,8 @@ const DynamicField: React.FC<DynamicFieldProps> = ({
                         onChange={handleChange}
                         onBlur={handleBlur}
                         onFocus={handleFocus}
-                        onMouseEnter={() => setIsHovered(true)}
-                        onMouseLeave={() => setIsHovered(false)}
+                        onMouseEnter={(): void => setIsHovered(true)}
+                        onMouseLeave={(): void => setIsHovered(false)}
                         placeholder={field.placeholder}
                         required={field.required}
                         rows={4}
@@ -1162,8 +1120,8 @@ const DynamicField: React.FC<DynamicFieldProps> = ({
                             onChange={handleChange}
                             onBlur={handleBlur}
                             onFocus={handleFocus}
-                            onMouseEnter={() => setIsHovered(true)}
-                            onMouseLeave={() => setIsHovered(false)}
+                            onMouseEnter={(): void => setIsHovered(true)}
+                            onMouseLeave={(): void => setIsHovered(false)}
                             required={field.required}
                             className={cn(commonClasses, "appearance-none pr-10")}
                         >
@@ -1246,8 +1204,8 @@ const DynamicField: React.FC<DynamicFieldProps> = ({
                             onChange={handleChange}
                             onBlur={handleBlur}
                             onFocus={handleFocus}
-                            onMouseEnter={() => setIsHovered(true)}
-                            onMouseLeave={() => setIsHovered(false)}
+                            onMouseEnter={(): void => setIsHovered(true)}
+                            onMouseLeave={(): void => setIsHovered(false)}
                             placeholder={field.placeholder || field.label}
                             required={field.required}
                             className={cn(commonClasses, "pr-10")}
@@ -1259,7 +1217,7 @@ const DynamicField: React.FC<DynamicFieldProps> = ({
                         )}
                         <motion.button
                             type="button"
-                            onClick={() => setShowPassword(!showPassword)}
+                            onClick={(): void => setShowPassword(!showPassword)}
                             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.95 }}
@@ -1328,8 +1286,8 @@ const DynamicField: React.FC<DynamicFieldProps> = ({
                             onChange={handleChange}
                             onBlur={handleBlur}
                             onFocus={handleFocus}
-                            onMouseEnter={() => setIsHovered(true)}
-                            onMouseLeave={() => setIsHovered(false)}
+                            onMouseEnter={(): void => setIsHovered(true)}
+                            onMouseLeave={(): void => setIsHovered(false)}
                             placeholder={field.placeholder || field.label}
                             required={field.required}
                             className={cn(commonClasses)}
@@ -1481,8 +1439,8 @@ const DynamicSection: React.FC<DynamicSectionProps> = ({
         <motion.section
             {...scaleIn}
             layout
-            onHoverStart={() => setIsHovered(true)}
-            onHoverEnd={() => setIsHovered(false)}
+            onHoverStart={(): void => setIsHovered(true)}
+            onHoverEnd={(): void => setIsHovered(false)}
             className={cn(
                 "border border-border rounded-xl overflow-hidden",
                 gradient && "bg-gradient-to-br from-primary/5 via-transparent to-secondary/5",
@@ -1496,7 +1454,11 @@ const DynamicSection: React.FC<DynamicSectionProps> = ({
                         "px-6 py-4 bg-secondary/30 border-b border-border",
                         collapsible && "cursor-pointer hover:bg-secondary/50 transition-colors"
                     )}
-                    onClick={() => collapsible && setIsCollapsed(!isCollapsed)}
+                    onClick={(): void => {
+                        if (collapsible) {
+                            setIsCollapsed(!isCollapsed);
+                        }
+                    }}
                     whileHover={collapsible ? { backgroundColor: 'rgba(var(--secondary), 0.5)' } : {}}
                 >
                     <div className="flex items-center justify-between">
@@ -1673,7 +1635,7 @@ const DynamicNavigation: React.FC<DynamicNavigationProps> = ({
                     transition={{ duration: 0.3, repeat: isSubmitting ? Infinity : 0 }}
                 >
                     <Button
-                        variant={buttonVariant as 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'outline' | 'ghost' | 'subtle' | 'elevated' | 'glass' | 'neon' | 'pill'}
+                        variant={buttonVariant as 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'outline' | 'ghost' | 'subtle' | 'elevated' | 'glass' | 'neon'}
                         onClick={submitForm}
                         disabled={isSubmitting}
                         className={cn(
@@ -1742,7 +1704,7 @@ const DynamicNotification: React.FC<DynamicNotificationProps> = ({
             onClose();
         }, duration);
 
-        return () => clearTimeout(timer);
+        return (): void => clearTimeout(timer);
     }, [duration, onClose]);
 
     const icons = {
@@ -1816,7 +1778,7 @@ const DynamicDebugger: React.FC<DynamicDebuggerProps> = ({ className }) => {
                 <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setIsOpen(!isOpen)}
+                    onClick={(): void => setIsOpen(!isOpen)}
                     className="shadow-lg"
                 >
                     {isOpen ? 'Hide Debug' : 'Show Debug'}
@@ -1901,28 +1863,6 @@ export interface ThemeToggleProps {
     className?: string;
 }
 
-const ThemeToggle: React.FC<ThemeToggleProps> = ({ className }) => {
-    const { theme } = useDynamicForm();
-
-    return (
-        <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            className={cn(
-                "fixed bottom-4 right-4 p-3 rounded-full bg-primary/10 hover:bg-primary/20 backdrop-blur-sm border border-primary/20 transition-all duration-300 z-50",
-                className
-            )}
-            aria-label="Toggle theme"
-        >
-            {theme === 'light' ? (
-                <MoonIcon className="w-5 h-5 text-primary" />
-            ) : (
-                <SunIcon className="w-5 h-5 text-primary" />
-            )}
-        </motion.button>
-    );
-};
-
 /* ============================================
    ASSIGN COMPOUND COMPONENTS
 ============================================ */
@@ -1934,7 +1874,6 @@ DynamicForm.Section = DynamicSection;
 DynamicForm.Navigation = DynamicNavigation;
 DynamicForm.Notification = DynamicNotification;
 DynamicForm.Debugger = DynamicDebugger;
-DynamicForm.ThemeToggle = ThemeToggle;
 
 export {
     DynamicForm,
@@ -1945,5 +1884,4 @@ export {
     DynamicNavigation,
     DynamicNotification,
     DynamicDebugger,
-    ThemeToggle,
 };

@@ -39,7 +39,7 @@
       "dependencies": ["framer-motion"],
       "files": {
         "main": {
-          "path": "components/box/index.tsx",
+          "path": "components/layouts/box/index.tsx",
           "type": "component"
         }
       }
@@ -437,6 +437,22 @@
         "main": {
           "path": "components/modals/index.tsx",
           "type": "component"
+        }
+      }
+    },
+    "multiStepForm": {
+      "name": "MultiStepForm",
+      "description": "A multi-step form component to guide users through complex processes with step indicators, navigation controls, validation, and review screens. Supports linear and non-linear flows, customizable button labels, and optional cancel functionality.",
+      "dependencies": ["framer-motion", "lucide-react", "class-variance-authority"],
+      "componentDependencies": [
+        "button",
+        "input",
+        "typography"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/multi-step-form/index.tsx",
+          "type": "template"
         }
       }
     },
@@ -1098,17 +1114,15 @@
       "description": "",
       "dependencies": [
         "framer-motion",
-        "react-icons",
         "lucide-react",
         "class-variance-authority"
       ],
       "componentDependencies": [
         "avatar",
-        "button",
-        "breadcrumbs",
+        "buttonWithIcon",
         "typography",
         "card",
-        "comparisonTable",
+        "pricingGrid",
         "dialogBox"
       ],
       "files": {

@@ -29,11 +29,6 @@ const meta: Meta<typeof ForgotPasswordPage> = {
                 "typewriter", "magnetic", "pulse", "borderBeam", "ripple", "particleField", "tilt3D"],
       description: "Input box animated theme",
     },
-    animationVariant: {
-      control: "select",
-      options: ["bounce", "bounceSlow", "bounceFast", "bounceSmooth", "bounceJelly", "rotateClockwiseSlow" , "rotateClockwiseFast", "rotateAntiClockwiseSlow", "rotateAntiClockwiseFast", "rotatePingPong", "scaleUp", "scaleDown", "scaleHeartBeat", "flipX", "flipY", "flipY", "flipCard", "fadeBlink", "fadeInOut", "press3D", "press3DSoft", "press3DHard", "press3DPop", "press3DDepth", "spinSlow"],
-      description: "Animation Variant for button" 
-    },
     headerAnimation: {
       control: "select",
       options: ["fadeUp", "scaleIn", "slideLeft", "slideRight", "flipIn"],
@@ -51,7 +46,6 @@ type Story = StoryObj<typeof ForgotPasswordPage>;
 export const BasicCenter: Story = {
   args: {
     inputVariant: "clean",
-    animationVariant: "bounceSlow",
     headerAnimation: "slideLeft",
     navigateToLabel: "Return to Login",
     formCardHeader: (
@@ -109,12 +103,6 @@ export const WithCaptcha: Story = {
           />
         }
         captchaVerified={verified}
-        onSubmit={(email) => {
-          console.log("Submitted email:", email);
-        }}
-        onNavigateTo={() => {
-          console.log("Navigate to login");
-        }}
       />
     );
   },
@@ -125,17 +113,10 @@ export const DarkTheme: Story = {
   args: {
     variant: "dark",
     inputVariant: "clean",
-    animationVariant: "press3D",
     headerAnimation: "fadeUp",
     forgotPasswordHeader: {
       head: "Forgot Password",
       para: "Enter your email address and we'll send you a reset link."
-    },
-    onSubmit: (email) => {
-      console.log("Submitted email:", email);
-    },
-    onNavigateTo: () => {
-      console.log("Navigate to login");
     }
   },
 };
@@ -144,7 +125,6 @@ export const DarkTheme: Story = {
 export const Interactive: Story = {
   args: {
     inputVariant: "shimmer",
-    animationVariant: "press3D",
     headerAnimation: "scaleIn",
     forgotPasswordHeader: {
       head: "Forgot Password?",
@@ -152,12 +132,6 @@ export const Interactive: Story = {
     },
     submitbuttonLabel: "Send Reset Email",
     navigateToLabel: "Return to Login",
-    onSubmit: (email) => {
-      console.log("Submitted email:", email);
-    },
-    onNavigateTo: () => {
-      console.log("Navigate to login");
-    }
   },
 };
 
@@ -168,7 +142,6 @@ export const LoadingState: Story = {
       <ForgotPasswordPage
         variant="default"
         inputVariant="clean"
-        animationVariant="press3D"
         headerAnimation="fadeUp"
         forgotPasswordHeader={{
           head: "Forgot Password",
@@ -176,15 +149,6 @@ export const LoadingState: Story = {
         }}
         submitbuttonLabel="Send Reset Link"
         navigateToLabel="Back to Login"
-        onSubmit={async (email) => {
-          console.log("Submitting email:", email);
-          // Simulate API call with 3 second delay
-          await new Promise((resolve) => setTimeout(resolve, 3000));
-          console.log("Email sent successfully!");
-        }}
-        onNavigateTo={() => {
-          console.log("Navigate to login");
-        }}
       />
     );
   },
@@ -197,7 +161,6 @@ export const LoadingStateDark: Story = {
       <ForgotPasswordPage
         variant="dark"
         inputVariant="borderGlow"
-        animationVariant="press3D"
         headerAnimation="scaleIn"
         forgotPasswordHeader={{
           head: "Reset Your Password",
@@ -205,15 +168,6 @@ export const LoadingStateDark: Story = {
         }}
         submitbuttonLabel="Send Reset Email"
         navigateToLabel="Back to Login"
-        onSubmit={async (email) => {
-          console.log("Submitting email:", email);
-          // Simulate API call with 3 second delay
-          await new Promise((resolve) => setTimeout(resolve, 3000));
-          console.log("Email sent successfully!");
-        }}
-        onNavigateTo={() => {
-          console.log("Navigate to login");
-        }}
       />
     );
   },
