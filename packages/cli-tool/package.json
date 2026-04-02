@@ -1,13 +1,19 @@
 {
   "name": "@mindfiredigital/ignix-cli",
   "version": "1.0.8",
+  "private": false,
   "description": "CLI tool for the Ignix UI component library",
   "type": "commonjs",
   "bin": {
     "ignix": "./dist/index.js"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+   },
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "scripts": {
     "build": "tsup",
