@@ -108,7 +108,7 @@ import { ToastProvider } from "@ignix-ui/toast";
         <TabItem value="preview" label="Preview">
             <ToastProvider>
             <ContactForm
-               {...getVariantProps()}
+               {...(getVariantProps() as any)}
               onSubmit={handleSubmit}
             >
               <ContactForm.Header />

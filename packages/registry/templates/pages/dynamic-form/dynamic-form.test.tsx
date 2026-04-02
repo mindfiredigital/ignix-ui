@@ -130,7 +130,8 @@ const mockContextValue = {
 };
 
 vi.mock('./index', async (importOriginal) => {
-    const actual = await importOriginal();
+    const actual = await importOriginal<typeof import('./index')>();
+
     return {
         ...actual,
         useDynamicForm: () => mockContextValue,
