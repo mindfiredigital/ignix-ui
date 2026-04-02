@@ -1,6 +1,6 @@
 {
   "name": "@mindfiredigital/ignix-ui",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "private": false,
   "description": "Ignix UI component library",
   "type": "commonjs",
