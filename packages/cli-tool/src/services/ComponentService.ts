@@ -11,7 +11,10 @@ import { DependencyService } from './DependencyService';
 export class ComponentService {
   private registryService = new RegistryService();
   private dependencyService = new DependencyService();
-  private config = loadConfig();
+
+  private async getConfig(): Promise<ReturnType<typeof loadConfig>> {
+    return await loadConfig();
+  }
 
   private silent = false;
   public setSilent(value: boolean): void {
@@ -30,7 +33,7 @@ export class ComponentService {
       : ora(`Installing component: ${name}...`).start();
 
     try {
-      const config = await this.config;
+      const config = await this.getConfig();
       const componentConfig = await this.registryService.getComponentConfig(name);
 
       if (!componentConfig) {

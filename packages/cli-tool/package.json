@@ -10,10 +10,11 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public"
-   },
+  },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "mcp.json"
   ],
   "scripts": {
     "build": "tsup",
@@ -22,7 +23,7 @@
     "clean": "rimraf dist",
     "lint": "eslint src --ext .ts"
   },
- "keywords": [
+  "keywords": [
     "ignix-ui",
     "themes",
     "react",
