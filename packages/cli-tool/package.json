@@ -1,6 +1,6 @@
 {
   "name": "@mindfiredigital/ignix-cli",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "private": false,
   "description": "CLI tool for the Ignix UI component library",
   "type": "commonjs",
@@ -10,7 +10,7 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public"
-   },
+  },
   "files": [
     "dist",
     "README.md"
@@ -22,7 +22,7 @@
     "clean": "rimraf dist",
     "lint": "eslint src --ext .ts"
   },
- "keywords": [
+  "keywords": [
     "ignix-ui",
     "themes",
     "react",
