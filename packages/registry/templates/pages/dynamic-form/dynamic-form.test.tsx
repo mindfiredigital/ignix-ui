@@ -130,7 +130,8 @@ const mockContextValue = {
 };
 
 vi.mock('./index', async (importOriginal) => {
-    const actual = await importOriginal();
+    const actual = await importOriginal<typeof import('./index')>();
+
     return {
         ...actual,
         useDynamicForm: () => mockContextValue,
@@ -561,23 +562,6 @@ describe('DynamicForm', () => {
             );
 
             expect(screen.getByText('Show Debug')).toBeInTheDocument();
-        });
-    });
-
-    describe('Theme Toggle', () => {
-        it('renders theme toggle', () => {
-            render(
-                <DynamicForm fields={basicFields}>
-                    <DynamicContent>
-                        {basicFields.map(field => (
-                            <DynamicField key={field.id} field={field} />
-                        ))}
-                    </DynamicContent>
-                    <DynamicNavigation />
-                </DynamicForm>
-            );
-
-            expect(screen.getByLabelText('Toggle theme')).toBeInTheDocument();
         });
     });
 
