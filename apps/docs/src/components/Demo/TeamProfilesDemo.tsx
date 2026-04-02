@@ -253,127 +253,7 @@ const renderMemberPhoto = (member: TeamMember, photoStyle: PhotoStyle) => {
     }
 };
 
-// ==============================
-// BASIC TEAM DEMO
-// ==============================
-export const BasicTeamDemo = () => {
-    const { colorMode } = useColorMode();
-    const [theme, setTheme] = useState<'light' | 'dark'>(colorMode === 'dark' ? 'dark' : 'light');
 
-    // Update theme when color mode changes
-    useEffect(() => {
-        setTheme(colorMode === 'dark' ? 'dark' : 'light');
-    }, [colorMode]);
-
-    // Build code string
-    const codeString = `import {
-    TeamProfiles,
-    TeamHeader,
-    TeamGrid,
-    MemberCard,
-    MemberPhoto,
-    MemberContent,
-    MemberName,
-    MemberRole,
-    MemberBio,
-    MemberSocialLinks,
-} from '@ignix-ui/teamprofiles';
-
-const teamMembers = [
-    {
-        id: "1",
-        name: "Alex Chen",
-        role: "CEO & Co-Founder",
-        bio: "Former tech lead with 10+ years of experience...",
-        photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a",
-        socialLinks: [
-            { platform: "linkedin", url: "https://linkedin.com/in/alexchen" },
-            { platform: "twitter", url: "https://twitter.com/alexchen" },
-        ],
-    },
-    // ... more members
-];
-
-<TeamProfiles
-    variant="${theme}"
-    cardVariant="default"
-    enableHover={true}
->
-    <TeamHeader
-        title="Our Core Team"
-        subtitle="Meet the talented people behind our success"
-    />
-    <TeamGrid columns={{ mobile: 1, tablet: 2, desktop: 3 }}>
-        {teamMembers.slice(0, 3).map((member) => (
-            <MemberCard key={member.id} member={member}>
-                <MemberPhoto
-                    src={member.photo}
-                    initials={member.name.split(' ').map(n => n[0]).join('')}
-                />
-                <MemberContent>
-                    <MemberName>{member.name}</MemberName>
-                    <MemberRole>{member.role}</MemberRole>
-                    <MemberBio>{member.bio}</MemberBio>
-                    <MemberSocialLinks links={member.socialLinks} />
-                </MemberContent>
-            </MemberCard>
-        ))}
-    </TeamGrid>
-</TeamProfiles>`;
-
-    return (
-        <div className="space-y-4">
-            <Tabs>
-                <TabItem value="preview" label="Preview">
-                    <div className="border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden mt-4">
-                        <TeamProfiles
-                            key={`basic-${0}`}
-                            variant={theme}
-                            cardVariant={'default'}
-                            enableHover={true}
-                        >
-                            <TeamHeader
-                                title="Our Core Team"
-                                subtitle="Meet the talented people behind our success"
-                            />
-                            <TeamGrid columns={{ mobile: 1, tablet: 2, desktop: 3 }}>
-                                {sampleTeamMembers.slice(0, 3).map((member) => (
-                                    <MemberCard key={member.id} member={member}>
-                                        <MemberPhoto
-                                            src={member.photo}
-                                            alt={member.photoAlt || member.name}
-                                            initials={member.name.split(' ').map(n => n[0]).join('')}
-                                        />
-                                        <MemberContent>
-                                            <MemberName>{member.name}</MemberName>
-                                            <MemberRole>{member.role}</MemberRole>
-                                            <MemberBio>{member.bio}</MemberBio>
-                                            {/* {showSocial && ( */}
-                                            <MemberSocialLinks
-                                                links={member.socialLinks || []}
-                                                memberId={member.id}
-                                                memberName={member.name}
-                                            />
-                                            {/* )} */}
-                                        </MemberContent>
-                                    </MemberCard>
-                                ))}
-                            </TeamGrid>
-                        </TeamProfiles>
-                    </div>
-                </TabItem>
-
-                <TabItem value="code" label="Code">
-                    <div className="mt-4">
-                        <CodeBlock language="tsx" className="text-sm">
-                            {codeString}
-                        </CodeBlock>
-                    </div>
-                </TabItem>
-            </Tabs>
-        </div>
-    );
-};
 export const AdvancedTeamDemo = () => {
     const { colorMode } = useColorMode();
 
@@ -552,9 +432,6 @@ import { Button } from '@ignix-ui/button';
 
     return (
         <div className="space-y-4">
-            {/* Theme indicator and reset button */}
-
-
             {/* First row of controls - Using VariantSelector */}
             <div className="flex flex-wrap gap-4 justify-start sm:justify-end">
                 <div className="space-y-2">
@@ -563,7 +440,6 @@ import { Button } from '@ignix-ui/button';
                         selectedVariant={sectionVariant}
                         onSelectVariant={handleThemeChange}
                         type="Section Theme"
-                    // variantLabels={Object.fromEntries(sectionThemeOptions.map(o => [o.value, o.label]))}
                     />
                 </div>
 
@@ -573,7 +449,6 @@ import { Button } from '@ignix-ui/button';
                         selectedVariant={cardVariant}
                         onSelectVariant={(value) => setCardVariant(value as CardVariant)}
                         type="Card Style"
-                    // variantLabels={Object.fromEntries(cardVariantOptions.map(o => [o.value, o.label]))}
                     />
                 </div>
 
@@ -583,7 +458,6 @@ import { Button } from '@ignix-ui/button';
                         selectedVariant={columns}
                         onSelectVariant={(value) => setColumns(value as GridColumns)}
                         type="Columns"
-                    // variantLabels={Object.fromEntries(columnOptions.map(o => [o.value, o.label]))}
                     />
                 </div>
             </div>
@@ -596,7 +470,6 @@ import { Button } from '@ignix-ui/button';
                         selectedVariant={photoStyle}
                         onSelectVariant={(value) => setPhotoStyle(value as PhotoStyle)}
                         type="Photo Style"
-                    // variantLabels={Object.fromEntries(photoStyleOptions.map(o => [o.value, o.label]))}
                     />
                 </div>
 
@@ -606,12 +479,6 @@ import { Button } from '@ignix-ui/button';
                         selectedVariant={animationType}
                         onSelectVariant={(value) => setAnimationType(value as AnimationType)}
                         type="Animation"
-                    // variantLabels={{
-                    //     'fade': 'Fade',
-                    //     'slide': 'Slide',
-                    //     'scale': 'Scale',
-                    //     'stagger': 'Stagger'
-                    // }}
                     />
                 </div>
 
@@ -621,7 +488,6 @@ import { Button } from '@ignix-ui/button';
                         selectedVariant={backgroundType}
                         onSelectVariant={(value) => setBackgroundType(value as BackgroundType)}
                         type="Background"
-                    // variantLabels={Object.fromEntries(backgroundOptions.map(o => [o.value, o.label]))}
                     />
                 </div>
             </div>
