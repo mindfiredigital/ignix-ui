@@ -1,6 +1,7 @@
 import { cn } from "../../../../../utils/cn";
 import { useMemo, useState } from "react";
 import { Badge } from "../../../../components/badge";
+import { Card } from "../../../../components/card";
 
 //Types
 export type TimelineStatus = "completed" | "in_progress" | "pending";
@@ -78,7 +79,7 @@ export function TimelineItemCard({
 }) {
     if (variant === "minimal") {
         return (
-            <article className="group relative py-1">
+            <Card variant="minimal" className="group relative py-1 border-0 shadow-none hover:bg-transparent">
                 <div className="flex items-baseline justify-between gap-3">
                     <div className="min-w-0">
                         {item.meta && (
@@ -102,13 +103,13 @@ export function TimelineItemCard({
                 <div className="mt-2">
                     <StatusBadge status={item.status} />
                 </div>
-            </article>
+            </Card>
         );
     }
 
     if (variant === "compact") {
         return (
-            <article className="group relative rounded-xl border border-border/60 bg-card/60 px-4 py-3 transition-colors hover:border-primary/40">
+            <Card variant="outline" className="group relative px-4 py-3 hover:border-primary/40">
                 <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0 flex items-center gap-3">
                         <h3 className="font-display text-sm font-semibold text-foreground truncate">
@@ -120,27 +121,63 @@ export function TimelineItemCard({
                     </div>
                     <StatusBadge status={item.status} />
                 </div>
-            </article>
+            </Card>
         );
     }
 
     if (variant === "glow") {
+        const glowStyles = {
+            completed: {
+                blob: "bg-success",
+                border: "border-success/30 hover:border-success/60",
+                text: "text-success",
+                bg: "from-success/10 via-success/5 to-transparent",
+            },
+            in_progress: {
+                blob: "bg-warning",
+                border: "border-warning/30 hover:border-warning/60",
+                text: "text-warning",
+                bg: "from-warning/10 via-warning/5 to-transparent",
+            },
+            pending: {
+                blob: "bg-info",
+                border: "border-info/30 hover:border-info/60",
+                text: "text-info",
+                bg: "from-info/10 via-info/5 to-transparent",
+            },
+        };
+        const s = glowStyles[item.status];
+
         return (
-            <article
-                className="group relative overflow-hidden rounded-2xl border border-primary/20 p-5 transition-all hover:border-primary/60"
-                style={{
-                    background:
-                        "linear-gradient(135deg, color-mix(in oklab, var(--card) 92%, transparent), color-mix(in oklab, var(--primary) 8%, var(--card)))",
-                }}
+            <Card
+                variant="default"
+                className={cn(
+                    "group relative overflow-hidden p-5 transition-all duration-500 bg-gradient-to-br backdrop-blur-xl shadow-lg hover:shadow-xl",
+                    s.border,
+                    s.bg
+                )}
             >
+                {/* Top Right Blob */}
                 <span
                     aria-hidden
-                    className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-primary opacity-20 blur-3xl"
+                    className={cn(
+                        "pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full opacity-20 blur-[3rem] transition-opacity duration-500 group-hover:opacity-40",
+                        s.blob
+                    )}
                 />
-                <div className="relative flex items-start justify-between gap-3">
+                {/* Bottom Left Blob */}
+                <span
+                    aria-hidden
+                    className={cn(
+                        "pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full opacity-10 blur-[3rem] transition-opacity duration-500 group-hover:opacity-30",
+                        s.blob
+                    )}
+                />
+                
+                <div className="relative z-10 flex items-start justify-between gap-3">
                     <div className="min-w-0">
                         {item.meta && (
-                            <p className="mb-1 font-display text-[11px] uppercase tracking-[0.18em] text-primary">
+                            <p className={cn("mb-1 font-display text-[11px] uppercase tracking-[0.18em]", s.text)}>
                                 {item.meta}
                             </p>
                         )}
@@ -154,17 +191,29 @@ export function TimelineItemCard({
                     <StatusBadge status={item.status} />
                 </div>
                 {item.description && (
-                    <p className="relative mt-3 text-sm leading-relaxed text-muted-foreground">
+                    <p className="relative z-10 mt-3 text-sm leading-relaxed text-muted-foreground">
                         {item.description}
                     </p>
                 )}
-            </article>
+            </Card>
         );
     }
 
     // default
+    const cardStyles = {
+        completed: "bg-success/5 border-success/20 border-l-success hover:border-success/40",
+        in_progress: "bg-warning/5 border-warning/20 border-l-warning hover:border-warning/40",
+        pending: "bg-card/80 border-border border-l-muted-foreground hover:border-primary/50",
+    };
+
     return (
-        <article className="group relative rounded-2xl border border-border bg-card/80 p-5 backdrop-blur-sm transition-colors hover:border-primary/50">
+        <Card
+            variant="default"
+            className={cn(
+                "group relative border-l-4 p-5 backdrop-blur-sm transition-all rounded-2xl shadow-none hover:shadow-md",
+                cardStyles[item.status]
+            )}
+        >
             <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                     {item.meta && (
@@ -186,7 +235,7 @@ export function TimelineItemCard({
                     {item.description}
                 </p>
             )}
-        </article>
+        </Card>
     );
 }
 
