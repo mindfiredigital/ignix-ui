@@ -266,7 +266,7 @@ export const FilterPresetPending: Story = {
 /* -------------------------------------------------------------------------- */
 
 export const SingleStatus: Story = {
-    name: "Edge / Single status (all completed)",
+    name: "Single status (all completed)",
     parameters: {
         docs: {
             description: {
@@ -285,7 +285,7 @@ export const SingleStatus: Story = {
 };
 
 export const AllPending: Story = {
-    name: "Edge / All pending",
+    name: "All pending",
     parameters: {
         docs: {
             description: {
@@ -302,25 +302,8 @@ export const AllPending: Story = {
     },
 };
 
-export const NoMeta: Story = {
-    name: "Edge / No meta labels",
-    parameters: {
-        docs: {
-            description: {
-                story: "Items without a `meta` field — the milestone label row should be absent.",
-            },
-        },
-    },
-    args: {
-        items: MINIMAL_ITEMS,
-        variant: "default",
-        orientation: "vertical",
-        showFilters: false,
-    },
-};
-
 export const EmptyFilterResult: Story = {
-    name: "Edge / Empty filter result",
+    name: "Empty filter result",
     parameters: {
         docs: {
             description: {

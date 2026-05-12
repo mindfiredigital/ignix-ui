@@ -265,6 +265,13 @@ export function TimelineNode({
     );
 }
 
+const NODE_OFFSET: Record<TimelineVariant, { v: string; h: string }> = {
+    default: { v: "-left-[31px]", h: "-top-[29px]" },
+    minimal: { v: "-left-[29px]", h: "-top-[27px]" },
+    compact: { v: "-left-[30px]", h: "-top-[28px]" },
+    glow: { v: "-left-[32px]", h: "-top-[30px]" },
+};
+
 //Skeleton Components
 
 export function TimelineItemSkeleton({ variant = "default" }: { variant?: TimelineVariant }) {
@@ -320,7 +327,7 @@ export function TimelineSkeleton({
                     />
                     {Array.from({ length: count }).map((_, i) => (
                         <div key={i} className={cn("relative shrink-0", width)}>
-                            <span className="absolute -top-[26px] left-5">
+                            <span className={cn("absolute left-5", NODE_OFFSET[variant].h)}>
                                 <span className={cn("block shrink-0 rounded-full bg-muted animate-pulse", NODE_SIZE[variant])} />
                             </span>
                             <TimelineItemSkeleton variant={variant} />
@@ -335,7 +342,7 @@ export function TimelineSkeleton({
         <div className={cn("relative ml-2 border-l border-border/50 pl-6", spacing)}>
             {Array.from({ length: count }).map((_, i) => (
                 <div key={i} className="relative">
-                    <span className={cn("absolute -left-[31px]", nodeTop)}>
+                    <span className={cn("absolute", NODE_OFFSET[variant].v, nodeTop)}>
                         <span className={cn("block shrink-0 rounded-full bg-muted animate-pulse", NODE_SIZE[variant])} />
                     </span>
                     <TimelineItemSkeleton variant={variant} />
@@ -522,7 +529,7 @@ function VerticalTimeline({
                     className="relative animate-in fade-in slide-in-from-left-2"
                     style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both" }}
                 >
-                    <span className={cn("absolute -left-[31px]", nodeTop)}>
+                    <span className={cn("absolute", NODE_OFFSET[variant].v, nodeTop)}>
                         <TimelineNode status={item.status} variant={variant} />
                     </span>
                     <TimelineItemCard item={item} variant={variant} />
@@ -563,7 +570,7 @@ function HorizontalTimeline({
                                 animationFillMode: "both",
                             }}
                         >
-                            <span className="absolute -top-[26px] left-5">
+                            <span className={cn("absolute left-5", NODE_OFFSET[variant].h)}>
                                 <TimelineNode status={item.status} variant={variant} />
                             </span>
                             <TimelineItemCard item={item} variant={variant} />
