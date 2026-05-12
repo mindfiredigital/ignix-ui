@@ -169,7 +169,7 @@ export function TimelineItemCard({
                 <span
                     aria-hidden
                     className={cn(
-                        "pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full opacity-10 blur-[3rem] transition-opacity duration-500 group-hover:opacity-30",
+                        "pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full opacity-10 blur-[3rem] transition-opacity duration-500 group-hover:opacity-30 dark:opacity-20",
                         s.blob
                     )}
                 />
@@ -177,7 +177,7 @@ export function TimelineItemCard({
                 <div className="relative z-10 flex items-start justify-between gap-3">
                     <div className="min-w-0">
                         {item.meta && (
-                            <p className={cn("mb-1 font-display text-[11px] uppercase tracking-[0.18em]", s.text)}>
+                            <p className={cn("mb-1 font-display text-[11px] uppercase tracking-[0.18em] dark:brightness-125", s.text)}>
                                 {item.meta}
                             </p>
                         )}
@@ -191,7 +191,7 @@ export function TimelineItemCard({
                     <StatusBadge status={item.status} />
                 </div>
                 {item.description && (
-                    <p className="relative z-10 mt-3 text-sm leading-relaxed text-muted-foreground">
+                    <p className="relative z-10 mt-3 text-sm leading-relaxed text-muted-foreground dark:text-muted-foreground/90">
                         {item.description}
                     </p>
                 )}
@@ -201,9 +201,9 @@ export function TimelineItemCard({
 
     // default
     const cardStyles = {
-        completed: "bg-success/5 border-success/20 border-l-success hover:border-success/40",
-        in_progress: "bg-warning/5 border-warning/20 border-l-warning hover:border-warning/40",
-        pending: "bg-card/80 border-border border-l-muted-foreground hover:border-primary/50",
+        completed: "bg-success/5 border-success/20 border-l-success hover:border-success/40 dark:bg-success/10 dark:border-success/30",
+        in_progress: "bg-warning/5 border-warning/20 border-l-warning hover:border-warning/40 dark:bg-warning/10 dark:border-warning/30",
+        pending: "bg-card/80 border-border border-l-muted-foreground hover:border-primary/50 dark:bg-card/40 dark:border-border/60",
     };
 
     return (
@@ -262,6 +262,86 @@ export function TimelineNode({
                 NODE_RING[status],
             )}
         />
+    );
+}
+
+//Skeleton Components
+
+export function TimelineItemSkeleton({ variant = "default" }: { variant?: TimelineVariant }) {
+    return (
+        <Card
+            variant={variant === "minimal" ? "minimal" : variant === "compact" ? "outline" : "default"}
+            className={cn(
+                "relative overflow-hidden border-border/50",
+                variant === "default" && "p-5 border-l-4 border-l-muted",
+                variant === "compact" && "px-4 py-3",
+                variant === "glow" && "p-5",
+                variant === "minimal" && "py-1 border-0 shadow-none"
+            )}
+        >
+            <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-foreground/5 to-transparent" />
+            <div className="flex items-start justify-between gap-3">
+                <div className="space-y-2 flex-1">
+                    <div className="h-4 w-3/4 rounded-md bg-muted/60 animate-pulse" />
+                    <div className="h-3 w-1/4 rounded-md bg-muted/60 animate-pulse" />
+                </div>
+                <div className="h-6 w-16 rounded-full bg-muted/60 animate-pulse" />
+            </div>
+            {variant !== "compact" && (
+                <div className="mt-3 space-y-2">
+                    <div className="h-3 w-full rounded-md bg-muted/60 animate-pulse" />
+                    <div className="h-3 w-5/6 rounded-md bg-muted/60 animate-pulse" />
+                </div>
+            )}
+        </Card>
+    );
+}
+
+export function TimelineSkeleton({
+    count = 3,
+    variant = "default",
+    orientation = "vertical"
+}: {
+    count?: number;
+    variant?: TimelineVariant;
+    orientation?: "vertical" | "horizontal";
+}) {
+    const spacing = variant === "compact" ? "space-y-3" : variant === "minimal" ? "space-y-5" : "space-y-6";
+    const nodeTop = variant === "compact" ? "top-3.5" : variant === "minimal" ? "top-1.5" : "top-5";
+    const width = variant === "compact" ? "w-[260px]" : variant === "minimal" ? "w-[280px]" : "w-[320px]";
+
+    if (orientation === "horizontal") {
+        return (
+            <div className="relative overflow-hidden">
+                <div className="flex gap-6 pt-10">
+                    <span
+                        aria-hidden
+                        className="pointer-events-none absolute left-0 right-0 top-[18px] h-px bg-border/50"
+                    />
+                    {Array.from({ length: count }).map((_, i) => (
+                        <div key={i} className={cn("relative shrink-0", width)}>
+                            <span className="absolute -top-[26px] left-5">
+                                <span className={cn("block shrink-0 rounded-full bg-muted animate-pulse", NODE_SIZE[variant])} />
+                            </span>
+                            <TimelineItemSkeleton variant={variant} />
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className={cn("relative ml-2 border-l border-border/50 pl-6", spacing)}>
+            {Array.from({ length: count }).map((_, i) => (
+                <div key={i} className="relative">
+                    <span className={cn("absolute -left-[31px]", nodeTop)}>
+                        <span className={cn("block shrink-0 rounded-full bg-muted animate-pulse", NODE_SIZE[variant])} />
+                    </span>
+                    <TimelineItemSkeleton variant={variant} />
+                </div>
+            ))}
+        </div>
     );
 }
 
@@ -327,6 +407,8 @@ export interface TimelineProps {
     variant?: TimelineVariant;
     defaultFilter?: TimelineFilter;
     showFilters?: boolean;
+    isLoading?: boolean;
+    skeletonCount?: number;
 }
 
 export function Timeline({
@@ -335,6 +417,8 @@ export function Timeline({
     variant = "default",
     defaultFilter = "all",
     showFilters = true,
+    isLoading = false,
+    skeletonCount = 3,
 }: TimelineProps) {
     const [filter, setFilter] = useState<TimelineFilter>(defaultFilter);
 
@@ -355,6 +439,30 @@ export function Timeline({
         orientation === "vertical" || orientation === "auto";
     const showHorizontal =
         orientation === "horizontal" || orientation === "auto";
+
+    if (isLoading) {
+        return (
+            <div className="space-y-8">
+                {showFilters && (
+                    <div className="flex gap-2">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                            <div key={i} className="h-9 w-24 rounded-full bg-muted/60 animate-pulse" />
+                        ))}
+                    </div>
+                )}
+                {showVertical && (
+                    <div className={cn("block", orientation === "auto" && "md:hidden")}>
+                        <TimelineSkeleton count={skeletonCount} variant={variant} orientation="vertical" />
+                    </div>
+                )}
+                {showHorizontal && (
+                    <div className={cn(orientation === "auto" ? "hidden md:block" : "block")}>
+                        <TimelineSkeleton count={skeletonCount} variant={variant} orientation="horizontal" />
+                    </div>
+                )}
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-8">

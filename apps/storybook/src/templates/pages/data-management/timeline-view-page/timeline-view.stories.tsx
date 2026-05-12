@@ -137,6 +137,14 @@ const meta: Meta<typeof Timeline> = {
             control: "boolean",
             description: "Show or hide the filter pill row.",
         },
+        isLoading: {
+            control: "boolean",
+            description: "Show the shimmer skeleton loading state.",
+        },
+        skeletonCount: {
+            control: "number",
+            description: "Number of skeleton cards to show.",
+        },
     },
 };
 
@@ -328,4 +336,74 @@ export const EmptyFilterResult: Story = {
         showFilters: true,
         defaultFilter: "in_progress",
     },
+};
+
+/* -------------------------------------------------------------------------- */
+/*  Loading                                                                    */
+/* -------------------------------------------------------------------------- */
+
+export const Loading: Story = {
+    name: "Loading / Shimmer Skeleton",
+    args: {
+        ...Default.args,
+        isLoading: true,
+        skeletonCount: 3,
+    },
+};
+
+/* -------------------------------------------------------------------------- */
+/*  Dark Mode                                                                  */
+/* -------------------------------------------------------------------------- */
+
+export const DarkModeDefault: Story = {
+    name: "Theme / Dark Mode — Default",
+    parameters: {
+        backgrounds: { default: "dark" },
+    },
+    args: {
+        ...Default.args,
+    },
+    decorators: [
+        (Story) => (
+            <div className="dark bg-slate-950 p-8 rounded-xl -m-8 min-h-[400px]">
+                <Story />
+            </div>
+        ),
+    ],
+};
+
+export const DarkModeGlow: Story = {
+    name: "Theme / Dark Mode — Glow",
+    parameters: {
+        backgrounds: { default: "dark" },
+    },
+    args: {
+        ...Default.args,
+        variant: "glow",
+    },
+    decorators: [
+        (Story) => (
+            <div className="dark bg-slate-950 p-8 rounded-xl -m-8 min-h-[400px]">
+                <Story />
+            </div>
+        ),
+    ],
+};
+
+export const DarkModeLoading: Story = {
+    name: "Theme / Dark Mode — Loading",
+    parameters: {
+        backgrounds: { default: "dark" },
+    },
+    args: {
+        ...Default.args,
+        isLoading: true,
+    },
+    decorators: [
+        (Story) => (
+            <div className="dark bg-slate-950 p-8 rounded-xl -m-8 min-h-[400px]">
+                <Story />
+            </div>
+        ),
+    ],
 };
