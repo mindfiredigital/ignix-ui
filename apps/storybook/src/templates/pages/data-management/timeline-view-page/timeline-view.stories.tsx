@@ -358,6 +358,7 @@ export const Loading: Story = {
 export const DarkModeDefault: Story = {
     name: "Theme / Dark Mode — Default",
     parameters: {
+        layout: "fullscreen",
         backgrounds: { default: "dark" },
     },
     args: {
@@ -365,8 +366,10 @@ export const DarkModeDefault: Story = {
     },
     decorators: [
         (Story) => (
-            <div className="dark bg-slate-950 p-8 rounded-xl -m-8 min-h-[400px]">
-                <Story />
+            <div className="dark min-h-screen bg-slate-950 text-foreground">
+                <div className="p-8">
+                    <Story />
+                </div>
             </div>
         ),
     ],
@@ -375,6 +378,7 @@ export const DarkModeDefault: Story = {
 export const DarkModeGlow: Story = {
     name: "Theme / Dark Mode — Glow",
     parameters: {
+        layout: "fullscreen",
         backgrounds: { default: "dark" },
     },
     args: {
@@ -383,8 +387,10 @@ export const DarkModeGlow: Story = {
     },
     decorators: [
         (Story) => (
-            <div className="dark bg-slate-950 p-8 rounded-xl -m-8 min-h-[400px]">
-                <Story />
+            <div className="dark min-h-screen bg-slate-950 text-foreground">
+                <div className="p-8">
+                    <Story />
+                </div>
             </div>
         ),
     ],
@@ -393,6 +399,7 @@ export const DarkModeGlow: Story = {
 export const DarkModeLoading: Story = {
     name: "Theme / Dark Mode — Loading",
     parameters: {
+        layout: "fullscreen",
         backgrounds: { default: "dark" },
     },
     args: {
@@ -401,8 +408,10 @@ export const DarkModeLoading: Story = {
     },
     decorators: [
         (Story) => (
-            <div className="dark bg-slate-950 p-8 rounded-xl -m-8 min-h-[400px]">
-                <Story />
+            <div className="dark min-h-screen bg-slate-950 text-foreground">
+                <div className="p-8">
+                    <Story />
+                </div>
             </div>
         ),
     ],
