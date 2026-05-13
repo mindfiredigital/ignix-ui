@@ -322,6 +322,70 @@ export const EmptyFilterResult: Story = {
 };
 
 /* -------------------------------------------------------------------------- */
+/*  Details Drawer                                                             */
+/* -------------------------------------------------------------------------- */
+
+export const ClickToOpenDrawer: Story = {
+    name: "Details / Click to open drawer",
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    "Each card is interactive — click or press Enter/Space to open a side drawer with full item details. Press Escape or click the overlay to close.",
+            },
+        },
+    },
+    args: {
+        ...Default.args,
+        orientation: "vertical",
+        enableDetails: true,
+    },
+};
+
+export const DrawerCustomBody: Story = {
+    name: "Details / Custom drawer body",
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    "Pass `renderDetails` to render a fully custom body inside the drawer for the selected item.",
+            },
+        },
+    },
+    args: {
+        ...Default.args,
+        orientation: "vertical",
+        enableDetails: true,
+        renderDetails: (item) => (
+            <div className="space-y-3">
+                <p className="text-sm text-muted-foreground">
+                    Custom render prop. You can render anything here.
+                </p>
+                <pre className="rounded-md bg-muted/40 p-3 text-xs overflow-auto">
+                    {JSON.stringify(item, null, 2)}
+                </pre>
+            </div>
+        ),
+    },
+};
+
+export const DrawerDisabled: Story = {
+    name: "Details / Disabled (static cards)",
+    parameters: {
+        docs: {
+            description: {
+                story: "Set `enableDetails={false}` to render non-interactive cards.",
+            },
+        },
+    },
+    args: {
+        ...Default.args,
+        orientation: "vertical",
+        enableDetails: false,
+    },
+};
+
+/* -------------------------------------------------------------------------- */
 /*  Loading                                                                    */
 /* -------------------------------------------------------------------------- */
 

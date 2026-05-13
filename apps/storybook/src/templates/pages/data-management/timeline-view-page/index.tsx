@@ -2,6 +2,7 @@ import { cn } from "../../../../../utils/cn";
 import { useMemo, useState } from "react";
 import { Badge } from "../../../../components/badge";
 import { Card } from "../../../../components/card";
+import { Drawer } from "../../../../components/drawer";
 
 //Types
 export type TimelineStatus = "completed" | "in_progress" | "pending";
@@ -73,13 +74,41 @@ function formatDate(iso: string) {
 export function TimelineItemCard({
     item,
     variant = "default",
+    onClick,
 }: {
     item: TimelineItem;
     variant?: TimelineVariant;
+    onClick?: (item: TimelineItem) => void;
 }) {
+    const interactive = !!onClick;
+    const interactiveProps = interactive
+        ? {
+              role: "button" as const,
+              tabIndex: 0,
+              onClick: () => onClick?.(item),
+              onKeyDown: (e: React.KeyboardEvent) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      onClick?.(item);
+                  }
+              },
+              "aria-label": `Open details for ${item.title}`,
+          }
+        : {};
+    const interactiveCls = interactive
+        ? "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        : "";
+
     if (variant === "minimal") {
         return (
-            <Card variant="minimal" className="group relative py-1 border-0 shadow-none hover:bg-transparent">
+            <Card
+                variant="minimal"
+                className={cn(
+                    "group relative py-1 border-0 shadow-none hover:bg-transparent",
+                    interactiveCls,
+                )}
+                {...interactiveProps}
+            >
                 <div className="flex items-baseline justify-between gap-3">
                     <div className="min-w-0">
                         {item.meta && (
@@ -109,7 +138,14 @@ export function TimelineItemCard({
 
     if (variant === "compact") {
         return (
-            <Card variant="outline" className="group relative px-4 py-3 hover:border-primary/40">
+            <Card
+                variant="outline"
+                className={cn(
+                    "group relative px-4 py-3 hover:border-primary/40",
+                    interactiveCls,
+                )}
+                {...interactiveProps}
+            >
                 <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0 flex items-center gap-3">
                         <h3 className="font-display text-sm font-semibold text-foreground truncate">
@@ -154,8 +190,10 @@ export function TimelineItemCard({
                 className={cn(
                     "group relative overflow-hidden p-5 transition-all duration-500 bg-gradient-to-br backdrop-blur-xl shadow-lg hover:shadow-xl",
                     s.border,
-                    s.bg
+                    s.bg,
+                    interactiveCls,
                 )}
+                {...interactiveProps}
             >
                 {/* Top Right Blob */}
                 <span
@@ -211,8 +249,10 @@ export function TimelineItemCard({
             variant="default"
             className={cn(
                 "group relative border-l-4 p-5 backdrop-blur-sm transition-all rounded-2xl shadow-none hover:shadow-md",
-                cardStyles[item.status]
+                cardStyles[item.status],
+                interactiveCls,
             )}
+            {...interactiveProps}
         >
             <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -416,6 +456,22 @@ export interface TimelineProps {
     showFilters?: boolean;
     isLoading?: boolean;
     skeletonCount?: number;
+    /**
+     * Enable click-to-open details drawer. Defaults to `true`.
+     * Set to `false` to render non-interactive cards.
+     */
+    enableDetails?: boolean;
+    /**
+     * Optional handler invoked when an item is clicked. When provided,
+     * the built-in drawer is suppressed and the parent controls behavior.
+     */
+    onItemClick?: (item: TimelineItem) => void;
+    /**
+     * Render prop for custom drawer body content. Receives the selected item.
+     */
+    renderDetails?: (item: TimelineItem) => React.ReactNode;
+    /** Drawer position. Default: `right`. */
+    drawerPosition?: "left" | "right" | "top" | "bottom";
 }
 
 export function Timeline({
@@ -426,8 +482,16 @@ export function Timeline({
     showFilters = true,
     isLoading = false,
     skeletonCount = 3,
+    enableDetails = true,
+    onItemClick,
+    renderDetails,
+    drawerPosition = "right",
 }: TimelineProps) {
     const [filter, setFilter] = useState<TimelineFilter>(defaultFilter);
+    const [selectedItem, setSelectedItem] = useState<TimelineItem | null>(null);
+
+    const handleItemClick =
+        onItemClick ?? (enableDetails ? (item: TimelineItem) => setSelectedItem(item) : undefined);
 
     const sorted = useMemo(
         () =>
@@ -490,7 +554,11 @@ export function Timeline({
                                 orientation === "auto" && "md:hidden",
                             )}
                         >
-                            <VerticalTimeline items={visible} variant={variant} />
+                            <VerticalTimeline
+                                items={visible}
+                                variant={variant}
+                                onItemClick={handleItemClick}
+                            />
                         </div>
                     )}
                     {showHorizontal && (
@@ -499,11 +567,191 @@ export function Timeline({
                                 orientation === "auto" ? "hidden md:block" : "block",
                             )}
                         >
-                            <HorizontalTimeline items={visible} variant={variant} />
+                            <HorizontalTimeline
+                                items={visible}
+                                variant={variant}
+                                onItemClick={handleItemClick}
+                            />
                         </div>
                     )}
                 </>
             )}
+
+            {enableDetails && !onItemClick && (
+                <TimelineDetailsDrawer
+                    item={selectedItem}
+                    onClose={() => setSelectedItem(null)}
+                    position={drawerPosition}
+                    renderDetails={renderDetails}
+                />
+            )}
+        </div>
+    );
+}
+
+function TimelineDetailsDrawer({
+    item,
+    onClose,
+    position,
+    renderDetails,
+}: {
+    item: TimelineItem | null;
+    onClose: () => void;
+    position: "left" | "right" | "top" | "bottom";
+    renderDetails?: (item: TimelineItem) => React.ReactNode;
+}) {
+    return (
+        <Drawer
+            isOpen={item !== null}
+            onClose={onClose}
+            position={position}
+            size="420px"
+            title={item?.title ?? ""}
+        >
+            {item && (renderDetails ? renderDetails(item) : <DefaultTimelineDetails item={item} />)}
+        </Drawer>
+    );
+}
+
+const STATUS_ACCENT: Record<TimelineStatus, string> = {
+    completed: "from-success/60 via-success/20 to-transparent",
+    in_progress: "from-warning/60 via-warning/20 to-transparent",
+    pending: "from-muted-foreground/40 via-muted-foreground/10 to-transparent",
+};
+
+function DetailSection({
+    label,
+    icon,
+    children,
+}: {
+    label: string;
+    icon?: React.ReactNode;
+    children: React.ReactNode;
+}) {
+    return (
+        <div className="rounded-xl border border-border/60 bg-card/40 p-4">
+            <div className="flex items-center gap-2 mb-2">
+                {icon && (
+                    <span className="text-muted-foreground" aria-hidden>
+                        {icon}
+                    </span>
+                )}
+                <p className="font-display text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                    {label}
+                </p>
+            </div>
+            {children}
+        </div>
+    );
+}
+
+function DefaultTimelineDetails({ item }: { item: TimelineItem }) {
+    return (
+        <div className="-mx-4 -mt-4">
+            {/* Status accent strip */}
+            <div
+                aria-hidden
+                className={cn(
+                    "h-1 w-full bg-gradient-to-r",
+                    STATUS_ACCENT[item.status],
+                )}
+            />
+
+            <div className="space-y-4 p-4">
+                {/* Header row: status badge left, date right — baseline aligned */}
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                    <StatusBadge status={item.status} />
+                    <time
+                        dateTime={item.date}
+                        className="inline-flex items-center gap-1.5 text-xs tabular-nums text-muted-foreground"
+                    >
+                        <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            aria-hidden
+                        >
+                            <rect x="3" y="4" width="18" height="18" rx="2" />
+                            <path d="M16 2v4M8 2v4M3 10h18" />
+                        </svg>
+                        {formatDate(item.date)}
+                    </time>
+                </div>
+
+                {item.meta && (
+                    <DetailSection
+                        label="Stage"
+                        icon={
+                            <svg
+                                width="14"
+                                height="14"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            >
+                                <path d="M4 4h16v6H4zM4 14h16v6H4z" />
+                            </svg>
+                        }
+                    >
+                        <p className="text-sm font-medium text-foreground">{item.meta}</p>
+                    </DetailSection>
+                )}
+
+                {item.description && (
+                    <DetailSection
+                        label="Description"
+                        icon={
+                            <svg
+                                width="14"
+                                height="14"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            >
+                                <path d="M4 6h16M4 12h16M4 18h10" />
+                            </svg>
+                        }
+                    >
+                        <p className="text-sm leading-relaxed text-foreground/90">
+                            {item.description}
+                        </p>
+                    </DetailSection>
+                )}
+
+                <DetailSection
+                    label="Item ID"
+                    icon={
+                        <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        >
+                            <path d="M9 12h6M12 9v6" />
+                            <circle cx="12" cy="12" r="9" />
+                        </svg>
+                    }
+                >
+                    <code className="inline-block rounded-md bg-muted/60 px-2 py-1 font-mono text-xs text-foreground">
+                        {item.id}
+                    </code>
+                </DetailSection>
+            </div>
         </div>
     );
 }
@@ -511,9 +759,11 @@ export function Timeline({
 function VerticalTimeline({
     items,
     variant,
+    onItemClick,
 }: {
     items: TimelineItem[];
     variant: TimelineVariant;
+    onItemClick?: (item: TimelineItem) => void;
 }) {
     const spacing = variant === "compact" ? "space-y-3" : variant === "minimal" ? "space-y-5" : "space-y-6";
     const nodeTop = variant === "compact" ? "top-3.5" : variant === "minimal" ? "top-1.5" : "top-5";
@@ -532,7 +782,7 @@ function VerticalTimeline({
                     <span className={cn("absolute", NODE_OFFSET[variant].v, nodeTop)}>
                         <TimelineNode status={item.status} variant={variant} />
                     </span>
-                    <TimelineItemCard item={item} variant={variant} />
+                    <TimelineItemCard item={item} variant={variant} onClick={onItemClick} />
                 </li>
             ))}
         </ol>
@@ -542,9 +792,11 @@ function VerticalTimeline({
 function HorizontalTimeline({
     items,
     variant,
+    onItemClick,
 }: {
     items: TimelineItem[];
     variant: TimelineVariant;
+    onItemClick?: (item: TimelineItem) => void;
 }) {
     const width = variant === "compact" ? "w-[260px]" : variant === "minimal" ? "w-[280px]" : "w-[320px]";
     return (
@@ -573,7 +825,7 @@ function HorizontalTimeline({
                             <span className={cn("absolute left-5", NODE_OFFSET[variant].h)}>
                                 <TimelineNode status={item.status} variant={variant} />
                             </span>
-                            <TimelineItemCard item={item} variant={variant} />
+                            <TimelineItemCard item={item} variant={variant} onClick={onItemClick} />
                         </li>
                     ))}
                     <li aria-hidden className="w-2 shrink-0" />
