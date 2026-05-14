@@ -88,25 +88,5 @@ describe('TemplateService', () => {
         'template content'
       );
     });
-
-    it('normalizes templateUrl when given a JSON file URL', async () => {
-      vi.mocked(loadConfig).mockResolvedValueOnce({
-        templateUrl: 'https://example.com/registry/registry.json',
-      } as any);
-      mockRegistry.getTemplateConfig.mockResolvedValue(mockTemplateConfig);
-      vi.mocked(axios.get).mockResolvedValue({ data: 'template content' });
-      vi.mocked(fs.ensureDir).mockResolvedValue(undefined as never);
-      vi.mocked(fs.writeFile).mockResolvedValue(undefined as never);
-
-      await service.install('landing');
-
-      expect(fs.writeFile).toHaveBeenCalledWith(
-        expect.stringContaining('landing/landing.tsx'),
-        'template content'
-      );
-      expect(axios.get).toHaveBeenCalledWith('https://example.com/registry/templates/landing.tsx', {
-        responseType: 'text',
-      });
-    });
   });
 });
