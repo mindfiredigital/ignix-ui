@@ -83,17 +83,17 @@ export function TimelineItemCard({
     const interactive = !!onClick;
     const interactiveProps = interactive
         ? {
-              role: "button" as const,
-              tabIndex: 0,
-              onClick: () => onClick?.(item),
-              onKeyDown: (e: React.KeyboardEvent) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      onClick?.(item);
-                  }
-              },
-              "aria-label": `Open details for ${item.title}`,
-          }
+            role: "button" as const,
+            tabIndex: 0,
+            onClick: () => onClick?.(item),
+            onKeyDown: (e: React.KeyboardEvent) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onClick?.(item);
+                }
+            },
+            "aria-label": `Open details for ${item.title}`,
+        }
         : {};
     const interactiveCls = interactive
         ? "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
@@ -211,7 +211,7 @@ export function TimelineItemCard({
                         s.blob
                     )}
                 />
-                
+
                 <div className="relative z-10 flex items-start justify-between gap-3">
                     <div className="min-w-0">
                         {item.meta && (
@@ -456,21 +456,9 @@ export interface TimelineProps {
     showFilters?: boolean;
     isLoading?: boolean;
     skeletonCount?: number;
-    /**
-     * Enable click-to-open details drawer. Defaults to `true`.
-     * Set to `false` to render non-interactive cards.
-     */
     enableDetails?: boolean;
-    /**
-     * Optional handler invoked when an item is clicked. When provided,
-     * the built-in drawer is suppressed and the parent controls behavior.
-     */
     onItemClick?: (item: TimelineItem) => void;
-    /**
-     * Render prop for custom drawer body content. Receives the selected item.
-     */
     renderDetails?: (item: TimelineItem) => React.ReactNode;
-    /** Drawer position. Default: `right`. */
     drawerPosition?: "left" | "right" | "top" | "bottom";
 }
 

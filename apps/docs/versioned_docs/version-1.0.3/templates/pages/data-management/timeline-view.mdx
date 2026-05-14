@@ -22,7 +22,7 @@ A flexible timeline component for milestones, release histories, audit logs, pro
     </TabItem>
     <TabItem value="manual" label="Manual" className="max-h-[500px] overflow-y-auto">
     ```tsx
-import { cn } from "@site/src/utils/cn";
+import { cn } from "../../utils/cn";
 import { useMemo, useState } from "react";
 import { Badge } from "../badge";
 import { Card } from "../card";
@@ -472,13 +472,9 @@ export interface TimelineProps {
     showFilters?: boolean;
     isLoading?: boolean;
     skeletonCount?: number;
-    /** Enable click-to-open details drawer. Defaults to true. */
     enableDetails?: boolean;
-    /** Parent-controlled click handler. Suppresses built-in drawer when provided. */
     onItemClick?: (item: TimelineItem) => void;
-    /** Render prop for custom drawer body. */
     renderDetails?: (item: TimelineItem) => React.ReactNode;
-    /** Drawer position. Default: right. */
     drawerPosition?: "left" | "right" | "top" | "bottom";
 }
 
@@ -807,35 +803,7 @@ export function Example() {
 | `showFilters` | `boolean` | `true` | Show or hide the filter pill row. |
 | `isLoading` | `boolean` | `false` | Show shimmer skeleton state. |
 | `skeletonCount` | `number` | `3` | Number of skeleton cards rendered when `isLoading`. |
-| `enableDetails` | `boolean` | `true` | Enable built-in click-to-open detail drawer. Set `false` for static cards. |
-| `onItemClick` | `(item: TimelineItem) => void` | `-` | Parent-controlled click handler. Suppresses built-in drawer when provided. |
+| `enableDetails` | `boolean` | `true` | Enable built-in click-to-open detail drawer. |
+| `onItemClick` | `(item: TimelineItem) => void` | `-` | Parent-controlled click handler. |
 | `renderDetails` | `(item: TimelineItem) => ReactNode` | `-` | Render prop for custom drawer body content. |
 | `drawerPosition` | `"left" \| "right" \| "top" \| "bottom"` | `"right"` | Position of the detail drawer. |
-
-### TimelineItem fields
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | `string` | Unique item id. Used for React keys. |
-| `title` | `string` | Headline shown in the card and drawer header. |
-| `description` | `string` | Optional secondary line below the title. |
-| `date` | `string` | ISO date string. Drives sorting and the formatted date label. |
-| `status` | `"completed" \| "in_progress" \| "pending"` | Status used for color coding, the node ring, and the status badge. |
-| `meta` | `string` | Optional small uppercase label rendered above the title (e.g. `"Milestone 01"`). |
-
-### TimelineStatus
-
-| Value | Visual | Description |
-|-------|--------|-------------|
-| `completed` | Success / green | Completed item. Filled node with success ring. |
-| `in_progress` | Warning / amber | Active item. Pulsing node with warning ring. |
-| `pending` | Neutral / muted | Future item. Hollow node with muted ring. |
-
-### TimelineVariant
-
-| Value | Description |
-|-------|-------------|
-| `default` | Status-tinted card with colored left border and badge. |
-| `minimal` | Borderless, low-chrome layout. Best for dense timelines. |
-| `compact` | Single-line card with title, date, and status only. |
-| `glow` | Glassmorphic card with gradient and ambient color blobs matching status. |

@@ -1,8 +1,8 @@
-import { cn } from "@site/src/utils/cn";
+import { cn } from "packages/utils/cn";
 import { useMemo, useState } from "react";
-import { Badge } from "../badge";
-import { Card } from "../card";
-import { Drawer } from "../drawer"
+import { Badge } from '../../../components/badge'
+import { Card } from "../../../components/card";
+import { Drawer } from "../../../components/drawer";
 
 //Types
 export type TimelineStatus = "completed" | "in_progress" | "pending";
@@ -756,10 +756,7 @@ function VerticalTimeline({
     const spacing = variant === "compact" ? "space-y-3" : variant === "minimal" ? "space-y-5" : "space-y-6";
     const nodeTop = variant === "compact" ? "top-3.5" : variant === "minimal" ? "top-1.5" : "top-5";
     return (
-        <ol
-            className={cn("relative ml-2 border-l border-border list-none", spacing)}
-            style={{ paddingLeft: "1.5rem", marginTop: 0, marginBottom: 0 }}
-        >
+        <ol className={cn("relative ml-2 border-l border-border pl-6", spacing)}>
             <span
                 aria-hidden
                 className="pointer-events-none absolute left-0 top-0 h-full w-px bg-gradient-to-b from-primary via-primary/50 to-transparent opacity-70"
@@ -768,7 +765,7 @@ function VerticalTimeline({
                 <li
                     key={item.id}
                     className="relative animate-in fade-in slide-in-from-left-2"
-                    style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both", marginTop: 0 }}
+                    style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both" }}
                 >
                     <span className={cn("absolute", NODE_OFFSET[variant].v, nodeTop)}>
                         <TimelineNode status={item.status} variant={variant} />
