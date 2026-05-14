@@ -270,7 +270,8 @@
               "items": [
                 "templates/pages/data-management/data-table",
                 "templates/pages/data-management/calendar-view",
-                "templates/pages/data-management/list-view-page"
+                "templates/pages/data-management/list-view-page",
+                "templates/pages/data-management/timeline-view"
               ]
             }
           ]

@@ -1,8 +1,32 @@
-import { cn } from "../../../../../utils/cn";
+---
+sidebar_position: 3
+title: Timeline View
+description: A filterable, sortable timeline that renders vertically or horizontally with four visual variants, three status states, click-to-open detail drawer, and a shimmer loading state.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import TimelineViewPageDemo from '@site/src/components/Demo/TimelineViewPageDemo';
+
+A flexible timeline component for milestones, release histories, audit logs, project plans, and onboarding flows. Ships with four visual variants (`default`, `minimal`, `compact`, `glow`), responsive vertical/horizontal layouts, status-based color coding, filter pills with live counts, a shimmer skeleton loading state, and a built-in click-to-open detail drawer with custom render-prop support.
+
+<TimelineViewPageDemo />
+
+## Installation
+
+<Tabs>
+    <TabItem value="cli" label="CLI" default>
+        ```bash
+        ignix add component timeline-view-page
+        ```
+    </TabItem>
+    <TabItem value="manual" label="Manual" className="max-h-[500px] overflow-y-auto">
+    ```tsx
+import { cn } from "@site/src/utils/cn";
 import { useMemo, useState } from "react";
-import { Badge } from "../../../../components/badge";
-import { Card } from "../../../../components/card";
-import { Drawer } from "../../../../components/drawer";
+import { Badge } from "../badge";
+import { Card } from "../card";
+import { Drawer } from "../drawer";
 
 //Types
 export type TimelineStatus = "completed" | "in_progress" | "pending";
@@ -27,8 +51,6 @@ export const STATUS_LABELS: Record<TimelineStatus, string> = {
     pending: "Pending",
 };
 
-// Constants
-
 export function StatusBadge({
     status,
     className,
@@ -52,13 +74,9 @@ export function StatusBadge({
     );
 }
 
-//Timeline Item Component
-
 const NODE_RING: Record<TimelineStatus, string> = {
-    completed:
-        "bg-success border-success ring-4 ring-success/25",
-    in_progress:
-        "bg-warning border-warning animate-pulse ring-4 ring-warning/25",
+    completed: "bg-success border-success ring-4 ring-success/25",
+    in_progress: "bg-warning border-warning animate-pulse ring-4 ring-warning/25",
     pending: "bg-card border-muted-foreground",
 };
 
@@ -195,7 +213,6 @@ export function TimelineItemCard({
                 )}
                 {...interactiveProps}
             >
-                {/* Top Right Blob */}
                 <span
                     aria-hidden
                     className={cn(
@@ -203,7 +220,6 @@ export function TimelineItemCard({
                         s.blob
                     )}
                 />
-                {/* Bottom Left Blob */}
                 <span
                     aria-hidden
                     className={cn(
@@ -211,7 +227,7 @@ export function TimelineItemCard({
                         s.blob
                     )}
                 />
-                
+
                 <div className="relative z-10 flex items-start justify-between gap-3">
                     <div className="min-w-0">
                         {item.meta && (
@@ -347,7 +363,7 @@ export function TimelineItemSkeleton({ variant = "default" }: { variant?: Timeli
 export function TimelineSkeleton({
     count = 3,
     variant = "default",
-    orientation = "vertical"
+    orientation = "vertical",
 }: {
     count?: number;
     variant?: TimelineVariant;
@@ -456,21 +472,13 @@ export interface TimelineProps {
     showFilters?: boolean;
     isLoading?: boolean;
     skeletonCount?: number;
-    /**
-     * Enable click-to-open details drawer. Defaults to `true`.
-     * Set to `false` to render non-interactive cards.
-     */
+    /** Enable click-to-open details drawer. Defaults to true. */
     enableDetails?: boolean;
-    /**
-     * Optional handler invoked when an item is clicked. When provided,
-     * the built-in drawer is suppressed and the parent controls behavior.
-     */
+    /** Parent-controlled click handler. Suppresses built-in drawer when provided. */
     onItemClick?: (item: TimelineItem) => void;
-    /**
-     * Render prop for custom drawer body content. Receives the selected item.
-     */
+    /** Render prop for custom drawer body. */
     renderDetails?: (item: TimelineItem) => React.ReactNode;
-    /** Drawer position. Default: `right`. */
+    /** Drawer position. Default: right. */
     drawerPosition?: "left" | "right" | "top" | "bottom";
 }
 
@@ -506,10 +514,8 @@ export function Timeline({
         [sorted, filter],
     );
 
-    const showVertical =
-        orientation === "vertical" || orientation === "auto";
-    const showHorizontal =
-        orientation === "horizontal" || orientation === "auto";
+    const showVertical = orientation === "vertical" || orientation === "auto";
+    const showHorizontal = orientation === "horizontal" || orientation === "auto";
 
     if (isLoading) {
         return (
@@ -548,30 +554,13 @@ export function Timeline({
             ) : (
                 <>
                     {showVertical && (
-                        <div
-                            className={cn(
-                                "block",
-                                orientation === "auto" && "md:hidden",
-                            )}
-                        >
-                            <VerticalTimeline
-                                items={visible}
-                                variant={variant}
-                                onItemClick={handleItemClick}
-                            />
+                        <div className={cn("block", orientation === "auto" && "md:hidden")}>
+                            <VerticalTimeline items={visible} variant={variant} onItemClick={handleItemClick} />
                         </div>
                     )}
                     {showHorizontal && (
-                        <div
-                            className={cn(
-                                orientation === "auto" ? "hidden md:block" : "block",
-                            )}
-                        >
-                            <HorizontalTimeline
-                                items={visible}
-                                variant={variant}
-                                onItemClick={handleItemClick}
-                            />
+                        <div className={cn(orientation === "auto" ? "hidden md:block" : "block")}>
+                            <HorizontalTimeline items={visible} variant={variant} onItemClick={handleItemClick} />
                         </div>
                     )}
                 </>
@@ -631,11 +620,7 @@ function DetailSection({
     return (
         <div className="rounded-xl border border-border/60 bg-card/40 p-4">
             <div className="flex items-center gap-2 mb-2">
-                {icon && (
-                    <span className="text-muted-foreground" aria-hidden>
-                        {icon}
-                    </span>
-                )}
+                {icon && <span className="text-muted-foreground" aria-hidden>{icon}</span>}
                 <p className="font-display text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                     {label}
                 </p>
@@ -648,105 +633,36 @@ function DetailSection({
 function DefaultTimelineDetails({ item }: { item: TimelineItem }) {
     return (
         <div className="-mx-4 -mt-4">
-            {/* Status accent strip */}
             <div
                 aria-hidden
-                className={cn(
-                    "h-1 w-full bg-gradient-to-r",
-                    STATUS_ACCENT[item.status],
-                )}
+                className={cn("h-1 w-full bg-gradient-to-r", STATUS_ACCENT[item.status])}
             />
-
             <div className="space-y-4 p-4">
-                {/* Header row: status badge left, date right — baseline aligned */}
                 <div className="flex items-center justify-between gap-3 flex-wrap">
                     <StatusBadge status={item.status} />
                     <time
                         dateTime={item.date}
                         className="inline-flex items-center gap-1.5 text-xs tabular-nums text-muted-foreground"
                     >
-                        <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            aria-hidden
-                        >
-                            <rect x="3" y="4" width="18" height="18" rx="2" />
-                            <path d="M16 2v4M8 2v4M3 10h18" />
-                        </svg>
                         {formatDate(item.date)}
                     </time>
                 </div>
 
                 {item.meta && (
-                    <DetailSection
-                        label="Stage"
-                        icon={
-                            <svg
-                                width="14"
-                                height="14"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <path d="M4 4h16v6H4zM4 14h16v6H4z" />
-                            </svg>
-                        }
-                    >
+                    <DetailSection label="Stage">
                         <p className="text-sm font-medium text-foreground">{item.meta}</p>
                     </DetailSection>
                 )}
 
                 {item.description && (
-                    <DetailSection
-                        label="Description"
-                        icon={
-                            <svg
-                                width="14"
-                                height="14"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <path d="M4 6h16M4 12h16M4 18h10" />
-                            </svg>
-                        }
-                    >
+                    <DetailSection label="Description">
                         <p className="text-sm leading-relaxed text-foreground/90">
                             {item.description}
                         </p>
                     </DetailSection>
                 )}
 
-                <DetailSection
-                    label="Item ID"
-                    icon={
-                        <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <path d="M9 12h6M12 9v6" />
-                            <circle cx="12" cy="12" r="9" />
-                        </svg>
-                    }
-                >
+                <DetailSection label="Item ID">
                     <code className="inline-block rounded-md bg-muted/60 px-2 py-1 font-mono text-xs text-foreground">
                         {item.id}
                     </code>
@@ -768,7 +684,10 @@ function VerticalTimeline({
     const spacing = variant === "compact" ? "space-y-3" : variant === "minimal" ? "space-y-5" : "space-y-6";
     const nodeTop = variant === "compact" ? "top-3.5" : variant === "minimal" ? "top-1.5" : "top-5";
     return (
-        <ol className={cn("relative ml-2 border-l border-border pl-6", spacing)}>
+        <ol
+            className={cn("relative ml-2 border-l border-border list-none", spacing)}
+            style={{ paddingLeft: "1.5rem", marginTop: 0, marginBottom: 0 }}
+        >
             <span
                 aria-hidden
                 className="pointer-events-none absolute left-0 top-0 h-full w-px bg-gradient-to-b from-primary via-primary/50 to-transparent opacity-70"
@@ -777,7 +696,7 @@ function VerticalTimeline({
                 <li
                     key={item.id}
                     className="relative animate-in fade-in slide-in-from-left-2"
-                    style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both" }}
+                    style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both", marginTop: 0 }}
                 >
                     <span className={cn("absolute", NODE_OFFSET[variant].v, nodeTop)}>
                         <TimelineNode status={item.status} variant={variant} />
@@ -817,10 +736,7 @@ function HorizontalTimeline({
                                 "relative shrink-0 snap-start animate-in fade-in slide-in-from-bottom-2",
                                 width,
                             )}
-                            style={{
-                                animationDelay: `${i * 60}ms`,
-                                animationFillMode: "both",
-                            }}
+                            style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both" }}
                         >
                             <span className={cn("absolute left-5", NODE_OFFSET[variant].h)}>
                                 <TimelineNode status={item.status} variant={variant} />
@@ -834,3 +750,92 @@ function HorizontalTimeline({
         </div>
     );
 }
+    ```
+    </TabItem>
+</Tabs>
+
+## Usage
+
+```tsx
+import { Timeline, type TimelineItem } from "@ignix-ui/timeline-view-page";
+```
+### Basic Usage
+```tsx
+const items: TimelineItem[] = [
+    {
+        id: "1",
+        title: "Project kickoff",
+        description: "Aligned on goals and milestones.",
+        date: "2025-09-04",
+        status: "completed",
+        meta: "Milestone 01",
+    },
+    {
+        id: "2",
+        title: "Public launch",
+        description: "Marketing site live, payments enabled.",
+        date: "2026-04-22",
+        status: "in_progress",
+        meta: "Milestone 02",
+    },
+];
+
+export function Example() {
+    return (
+        <Timeline
+            items={items}
+            variant="default"
+            orientation="auto"
+            defaultFilter="all"
+            showFilters
+            enableDetails
+        />
+    );
+}
+```
+
+## Props
+
+### Timeline Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `TimelineItem[]` | `Required` | Items rendered on the timeline. Auto-sorted ascending by `date`. |
+| `orientation` | `"auto" \| "vertical" \| "horizontal"` | `"auto"` | `"auto"` renders vertical on mobile, horizontal on `md+`. |
+| `variant` | `"default" \| "minimal" \| "compact" \| "glow"` | `"default"` | Visual style of each timeline card. |
+| `defaultFilter` | `"all" \| "completed" \| "in_progress" \| "pending"` | `"all"` | Initial active filter pill. |
+| `showFilters` | `boolean` | `true` | Show or hide the filter pill row. |
+| `isLoading` | `boolean` | `false` | Show shimmer skeleton state. |
+| `skeletonCount` | `number` | `3` | Number of skeleton cards rendered when `isLoading`. |
+| `enableDetails` | `boolean` | `true` | Enable built-in click-to-open detail drawer. Set `false` for static cards. |
+| `onItemClick` | `(item: TimelineItem) => void` | `-` | Parent-controlled click handler. Suppresses built-in drawer when provided. |
+| `renderDetails` | `(item: TimelineItem) => ReactNode` | `-` | Render prop for custom drawer body content. |
+| `drawerPosition` | `"left" \| "right" \| "top" \| "bottom"` | `"right"` | Position of the detail drawer. |
+
+### TimelineItem fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | `string` | Unique item id. Used for React keys. |
+| `title` | `string` | Headline shown in the card and drawer header. |
+| `description` | `string` | Optional secondary line below the title. |
+| `date` | `string` | ISO date string. Drives sorting and the formatted date label. |
+| `status` | `"completed" \| "in_progress" \| "pending"` | Status used for color coding, the node ring, and the status badge. |
+| `meta` | `string` | Optional small uppercase label rendered above the title (e.g. `"Milestone 01"`). |
+
+### TimelineStatus
+
+| Value | Visual | Description |
+|-------|--------|-------------|
+| `completed` | Success / green | Completed item. Filled node with success ring. |
+| `in_progress` | Warning / amber | Active item. Pulsing node with warning ring. |
+| `pending` | Neutral / muted | Future item. Hollow node with muted ring. |
+
+### TimelineVariant
+
+| Value | Description |
+|-------|-------------|
+| `default` | Status-tinted card with colored left border and badge. |
+| `minimal` | Borderless, low-chrome layout. Best for dense timelines. |
+| `compact` | Single-line card with title, date, and status only. |
+| `glow` | Glassmorphic card with gradient and ambient color blobs matching status. |

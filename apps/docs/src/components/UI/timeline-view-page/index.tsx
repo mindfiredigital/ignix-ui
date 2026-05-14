@@ -147,11 +147,11 @@ export function TimelineItemCard({
                 {...interactiveProps}
             >
                 <div className="flex items-center justify-between gap-3">
-                    <div className="min-w-0 flex items-center gap-3">
-                        <h3 className="font-display text-sm font-semibold text-foreground truncate">
+                    <div className="min-w-0 flex items-baseline gap-3">
+                        <h3 className="font-display text-sm font-semibold leading-none text-foreground truncate">
                             {item.title}
                         </h3>
-                        <span className="text-[11px] tabular-nums text-muted-foreground shrink-0">
+                        <span className="text-[11px] leading-none tabular-nums text-muted-foreground shrink-0">
                             {formatDate(item.date)}
                         </span>
                     </div>
@@ -768,7 +768,10 @@ function VerticalTimeline({
     const spacing = variant === "compact" ? "space-y-3" : variant === "minimal" ? "space-y-5" : "space-y-6";
     const nodeTop = variant === "compact" ? "top-3.5" : variant === "minimal" ? "top-1.5" : "top-5";
     return (
-        <ol className={cn("relative ml-2 border-l border-border pl-6", spacing)}>
+        <ol
+            className={cn("relative ml-2 border-l border-border list-none", spacing)}
+            style={{ paddingLeft: "1.5rem", marginTop: 0, marginBottom: 0 }}
+        >
             <span
                 aria-hidden
                 className="pointer-events-none absolute left-0 top-0 h-full w-px bg-gradient-to-b from-primary via-primary/50 to-transparent opacity-70"
@@ -777,7 +780,7 @@ function VerticalTimeline({
                 <li
                     key={item.id}
                     className="relative animate-in fade-in slide-in-from-left-2"
-                    style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both" }}
+                    style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both", marginTop: 0 }}
                 >
                     <span className={cn("absolute", NODE_OFFSET[variant].v, nodeTop)}>
                         <TimelineNode status={item.status} variant={variant} />
