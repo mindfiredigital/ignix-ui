@@ -1,4 +1,4 @@
-import { cn } from "packages/utils/cn";
+import { cn } from "../../../utils/cn";
 import { useMemo, useState } from "react";
 import { Badge } from '../../../components/badge'
 import { Card } from "../../../components/card";
