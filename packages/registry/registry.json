@@ -1789,6 +1789,25 @@
           "type": "template"
         }
       }
+    },
+    "timeline-view-page": {
+      "name": "timeline-view-page",
+      "description": "A visually engaging timeline view template that displays events in chronological order with support for grouping, filtering, and responsive design.",
+      "dependencies": [
+        "@radix-ui/react-icons",
+        "framer-motion"
+      ],
+      "componentDependencies": [
+        "badge",
+        "button",
+        "drawer"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/timeline-view-page/index.tsx",
+          "type": "template"
+        }
+      }
     }
   }
 }
