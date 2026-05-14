@@ -80,10 +80,6 @@ export class TemplateService {
 
       let baseUrl = config.templateLayoutUrl || config.templateUrl || '';
 
-      if (baseUrl && baseUrl.endsWith('.json')) {
-        baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf('/'));
-      }
-
       if (!baseUrl) {
         baseUrl = config.registryUrl?.replace('/registry.json', '') || '';
         if (!baseUrl || baseUrl === config.registryUrl) {
