@@ -74,20 +74,8 @@ export class TemplateService {
       //--------------------------------------------------
       spinner && (spinner.text = 'Downloading template files...');
 
-      const templateLayoutDir =
-        typeof config.templateLayoutDir === 'string' && config.templateLayoutDir.trim().length > 0
-          ? config.templateLayoutDir
-          : typeof config.templatesDir === 'string' && config.templatesDir.trim().length > 0
-          ? config.templatesDir
-          : 'src/templates';
-
-      if (!templateLayoutDir || typeof templateLayoutDir !== 'string') {
-        throw new Error(
-          'Invalid template layout directory in config. Please check your `ignix.config.js`.'
-        );
-      }
-
-      const templateDir = path.resolve(process.cwd(), templateLayoutDir, name.toLowerCase());
+      const templateLayoutDir = config.templateLayoutDir || config.templatesDir || 'src/templates';
+      const templateDir = path.resolve(templateLayoutDir, name.toLowerCase());
       await fs.ensureDir(templateDir);
 
       let baseUrl = config.templateLayoutUrl || config.templateUrl || '';
@@ -120,8 +108,8 @@ export class TemplateService {
 
       for (const fileKey in templateConfig.files) {
         const fileInfo = templateConfig.files[fileKey];
-        if (!fileInfo || typeof fileInfo.path !== 'string' || fileInfo.path.trim().length === 0) {
-          logger.warn(`[Template] Missing or invalid file info for ${fileKey} in template ${name}`);
+        if (!fileInfo || !fileInfo.path) {
+          logger.warn(`[Template] Missing file info for ${fileKey} in template ${name}`);
           continue;
         }
 
@@ -133,11 +121,6 @@ export class TemplateService {
         });
 
         const fileName = path.basename(fileInfo.path);
-        if (!fileName) {
-          logger.warn(`[Template] Invalid file name for ${fileKey} in template ${name}`);
-          continue;
-        }
-
         const filePath = path.join(templateDir, fileName);
 
         await fs.writeFile(filePath, content);

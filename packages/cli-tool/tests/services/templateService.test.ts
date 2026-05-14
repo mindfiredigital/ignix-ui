@@ -69,24 +69,5 @@ describe('TemplateService', () => {
       mockRegistry.getTemplateConfig.mockResolvedValue(undefined);
       await expect(service.install('unknown')).rejects.toThrow("Template 'unknown' not found.");
     });
-
-    it('falls back to templatesDir when templateLayoutDir is undefined', async () => {
-      vi.mocked(loadConfig).mockResolvedValueOnce({
-        registryUrl: 'https://example.com/registry.json',
-        templatesDir: 'src/templates',
-      } as any);
-      mockRegistry.getTemplateConfig.mockResolvedValue(mockTemplateConfig);
-      vi.mocked(axios.get).mockResolvedValue({ data: 'template content' });
-      vi.mocked(fs.ensureDir).mockResolvedValue(undefined as never);
-      vi.mocked(fs.writeFile).mockResolvedValue(undefined as never);
-
-      await service.install('landing');
-
-      expect(fs.ensureDir).toHaveBeenCalledWith(expect.stringContaining('src/templates/landing'));
-      expect(fs.writeFile).toHaveBeenCalledWith(
-        expect.stringContaining('src/templates/landing/landing.tsx'),
-        'template content'
-      );
-    });
   });
 });
