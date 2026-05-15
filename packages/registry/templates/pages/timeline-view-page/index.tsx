@@ -62,8 +62,16 @@ const NODE_RING: Record<TimelineStatus, string> = {
     pending: "bg-card border-muted-foreground",
 };
 
+function parseDateInput(value: string): Date {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+        const [y, m, d] = value.split("-").map(Number);
+        return new Date(y, (m ?? 1) - 1, d ?? 1);
+    }
+    return new Date(value);
+}
+
 function formatDate(iso: string) {
-    const d = new Date(iso);
+    const d = parseDateInput(iso);
     return d.toLocaleDateString(undefined, {
         month: "short",
         day: "numeric",
@@ -484,7 +492,7 @@ export function Timeline({
     const sorted = useMemo(
         () =>
             [...items].sort(
-                (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+                (a, b) => parseDateInput(a.date).getTime() - parseDateInput(b.date).getTime(),
             ),
         [items],
     );
