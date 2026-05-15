@@ -184,7 +184,7 @@
       transform: translateX(100%);
     }
   }
-  --animation-shimmer: shimmer 2s infinite;
+  --animate-shimmer: shimmer 2s infinite;
 }
 
 /* scrollbar css - three column layout */
