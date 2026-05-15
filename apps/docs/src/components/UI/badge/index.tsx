@@ -58,6 +58,10 @@ const Badge: React.FC<BadgeProps> = ({
     };
 
     const animationVariants: Record<string, Variants> = {
+        none: {
+            initial: {},
+            animate: {},
+        },
         pulse: {
             initial: { scale: 1 },
             animate: {
