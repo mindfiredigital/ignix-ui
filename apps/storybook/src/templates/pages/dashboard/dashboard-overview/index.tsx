@@ -18,7 +18,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../../../../components/card";
-import DatePicker from "../../../../components/date-picker";
+import { DatePicker } from "../../../../components/date-picker";
 import type { DateRange } from "../../../../components/date-picker";
 import { Pagination } from "../../../../components/table/pagination";
 

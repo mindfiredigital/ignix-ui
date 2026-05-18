@@ -2,7 +2,7 @@ import * as React from 'react';
 import { motion, AnimatePresence, type HTMLMotionProps, type Variants } from 'framer-motion';
 import type { ComponentPropsWithoutRef, MouseEvent } from 'react';
 import { X } from 'lucide-react';
-import { cn } from '@site/src/utils/cn';
+import { cn } from '../../../utils/cn';
 
 export type ModalColorScheme =
   | 'primary'
@@ -37,11 +37,11 @@ export interface ModalProps {
   showCloseButton?: boolean;
   closeOnOverlayClick?: boolean;
   closeOnEscape?: boolean;
-  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
-  colorScheme?: ModalColorScheme;
-  colorOverrides?: ModalColorOverrides;
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
   headerIcon?: React.ReactNode;
   headerIconClassName?: string;
+  colorScheme?: ModalColorScheme;
+  colorOverrides?: ModalColorOverrides;
   className?: string;
   overlayClassName?: string;
   headerClassName?: string;
@@ -87,6 +87,7 @@ const sizeConfig: Record<NonNullable<ModalProps['size']>, string> = {
   md: 'max-w-md',
   lg: 'max-w-lg',
   xl: 'max-w-xl',
+  '2xl': 'max-w-2xl',
   full: 'max-w-full',
 };
 
@@ -318,6 +319,7 @@ export const ModalContent = React.memo<ModalContentProps>(
       <motion.div
         className={cn(
           defaultContentBase,
+          'before:from-primary/5',
           sizeClass,
           className
         )}
@@ -496,7 +498,7 @@ type ModalComponentType = React.MemoExoticComponent<(props: ModalProps) => React
   colorSchemeConfig: Record<ModalColorScheme, ModalColorSchemeConfig>;
 };
 
-const ModalComponent = React.memo<ModalProps>(
+const ModalComponent = React.memo(
   ({
     isOpen,
     onClose,
@@ -557,7 +559,6 @@ const ModalComponent = React.memo<ModalProps>(
       () => cn(schemeClasses.confirmButton, colorOverrides?.confirmButton),
       [schemeClasses.confirmButton, colorOverrides?.confirmButton]
     );
-
     const handleEscapeKey = React.useCallback(
       (event: KeyboardEvent) => {
         if (event.key === 'Escape' && closeOnEscape && isOpen) {
@@ -582,7 +583,6 @@ const ModalComponent = React.memo<ModalProps>(
     const handleCloseClick = React.useCallback(() => {
       onClose();
     }, [onClose]);
-
     const handleConfirmClick = React.useCallback(() => {
       onConfirm?.();
       onClose();
@@ -607,7 +607,8 @@ const ModalComponent = React.memo<ModalProps>(
               size={size}
               className={contentClassName}
             >
-              {(title || showCloseButton || headerIcon) && (
+              {/* Header */}
+              {(title || showCloseButton) && (
                 <ModalHeader
                   title={title}
                   icon={headerIcon}
@@ -619,8 +620,10 @@ const ModalComponent = React.memo<ModalProps>(
                 />
               )}
 
+              {/* Body */}
               <ModalBody className={bodyClasses}>{children}</ModalBody>
 
+              {/* Footer */}
               {showFooter && (
                 <ModalFooter
                   className={footerClasses}
@@ -642,9 +645,8 @@ const ModalComponent = React.memo<ModalProps>(
 
 ModalComponent.colorSchemeConfig = colorSchemeConfig;
 
-export const Modal = ModalComponent;
+const Modal = ModalComponent;
 
 Modal.displayName = 'Modal';
 
-export default Modal;
-
+export { Modal };

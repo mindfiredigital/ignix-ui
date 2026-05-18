@@ -1080,12 +1080,12 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     dropzoneText = 'Drag & drop files here or click to browse',
     showFileList = true,
     disabled = false,
-    validateFile,
+    validateFile: customValidate,
     className,
     buttonVariant = 'primary',
     simulateUpload = false,
     imageAvatarShape = 'circle',
-    imageAvatarSize = 'md',
+    imageAvatarSize = 'md'
 }) => {
     const {
         files,
@@ -1104,7 +1104,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         maxFiles,
         maxSize,
         accept,
-        validateFile,
+        validateFile: customValidate,
         simulateUpload,
         onFilesChange
     });
@@ -1169,5 +1169,3 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         </div>
     );
 };
-
-export default FileUpload;

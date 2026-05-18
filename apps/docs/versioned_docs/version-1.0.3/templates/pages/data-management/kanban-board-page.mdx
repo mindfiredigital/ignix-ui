@@ -1,0 +1,1688 @@
+---
+sidebar_position: 3
+title: Kanban Board
+description: A fully interactive Kanban board with drag-and-drop columns, card management, priority filtering, full-text search, labels, assignees, due-date tracking, file attachments, and toast notifications.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { KanbanBoardDemo } from '@site/src/components/Demo/KanbanBoardDemo';
+import CodeBlock from '@theme/CodeBlock';
+
+The **KanbanBoard** component delivers a complete project management experience out of the box. It ships with drag-and-drop card reordering across columns, a rich card editor modal (title, description, priority, labels with color picker, assignees, due dates, and file attachments), full-text search, priority-based filtering, column management (add, rename, clear, delete), skeleton loading, and integrated toast notifications — all zero-config with sensible defaults.
+
+<KanbanBoardDemo />
+
+## Installation
+
+<Tabs>
+<TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component kanban-board-page
+    ```
+</TabItem>
+<TabItem value="manual" label="Manual" className="max-h-[500px] overflow-y-auto">
+    **Component dependencies:** `button`, `input`, `textarea`, `modals`, `date-picker`, `dropdown`, `file-upload`, `toast`
+
+```tsx
+import React, {
+    createContext,
+    useCallback,
+    useContext,
+    useEffect,
+    useMemo,
+    useReducer,
+    useRef,
+    useState,
+    memo,
+    type ReactNode,
+    type KeyboardEvent,
+    type DragEvent,
+} from "react";
+import {
+    CalendarIcon as Calendar,
+    EraserIcon as Eraser,
+    MixerHorizontalIcon as Filter,
+    DashboardIcon as LayoutGrid,
+    ChatBubbleIcon as MessageSquare,
+    DotsHorizontalIcon as MoreHorizontal,
+    Link2Icon as Paperclip,
+    Pencil2Icon as Pencil,
+    PlusIcon as Plus,
+    MagnifyingGlassIcon as Search,
+    TrashIcon as Trash2,
+    Cross2Icon as X,
+} from "@radix-ui/react-icons";
+
+import { cn } from "../../../../../utils/cn";
+import { Button } from "../../../../components/button";
+import { AnimatedInput as Input } from "../../../../components/input";
+import Textarea from "../../../../components/textarea";
+import { Modal } from "../../../../components/modals";
+import { DatePicker } from "../../../../components/date-picker";
+import {
+    Dropdown,
+    DropdownItem,
+    DropdownLabel,
+    DropdownSeparator,
+    DropdownCheckboxItem,
+} from "../../../../components/dropdown";
+import { FileUpload } from "../../../../components/file-upload";
+import { ToastProvider, useToast } from "../../../../components/toast";
+import { ChevronDown, Check } from "lucide-react";
+
+// TYPES
+
+export type Priority = "urgent" | "high" | "medium" | "low";
+
+export type LabelColor =
+    | "red"
+    | "rose"
+    | "amber"
+    | "emerald"
+    | "sky"
+    | "violet"
+    | "slate";
+
+export interface Label {
+    id: string;
+    name: string;
+    color: LabelColor;
+}
+
+export interface Assignee {
+    id: string;
+    name: string;
+}
+
+export interface Card {
+    id: string;
+    title: string;
+    description?: string;
+    priority: Priority;
+    labels: Label[];
+    assignees: Assignee[];
+    dueDate?: string;
+    comments?: number;
+    attachments?: number;
+}
+
+export interface Column {
+    id: string;
+    title: string;
+    accent: LabelColor;
+    cardIds: string[];
+}
+
+export interface BoardState {
+    columns: Column[];
+    cards: Record<string, Card>;
+    search: string;
+    priorityFilter: Priority | "all";
+}
+
+// SEED / ID UTILS
+
+const uid = () => Math.random().toString(36).slice(2, 10);
+export const newId = uid;
+
+export function createSeed(): BoardState {
+    return {
+        cards: {},
+        columns: [
+            { id: uid(), title: "To Do", accent: "rose", cardIds: [] },
+            { id: uid(), title: "In Progress", accent: "amber", cardIds: [] },
+            { id: uid(), title: "Done", accent: "emerald", cardIds: [] },
+        ],
+        search: "",
+        priorityFilter: "all",
+    };
+}
+
+// UTILS
+
+export const LABEL_COLORS: LabelColor[] = [
+    "red", "rose", "amber", "emerald", "sky", "violet", "slate",
+];
+
+export const labelClasses: Record<LabelColor, string> = {
+    red: "bg-label-red/12 text-label-red ring-label-red/25",
+    rose: "bg-label-rose/12 text-label-rose ring-label-rose/25",
+    amber: "bg-label-amber/15 text-label-amber ring-label-amber/30",
+    emerald: "bg-label-emerald/12 text-label-emerald ring-label-emerald/25",
+    sky: "bg-label-sky/12 text-label-sky ring-label-sky/25",
+    violet: "bg-label-violet/12 text-label-violet ring-label-violet/25",
+    slate: "bg-label-slate/12 text-label-slate ring-label-slate/25",
+};
+
+export const labelDot: Record<LabelColor, string> = {
+    red: "bg-label-red",
+    rose: "bg-label-rose",
+    amber: "bg-label-amber",
+    emerald: "bg-label-emerald",
+    sky: "bg-label-sky",
+    violet: "bg-label-violet",
+    slate: "bg-label-slate",
+};
+
+export const priorityMeta: Record<Priority, { label: string; bar: string; chip: string }> = {
+    urgent: {
+        label: "Urgent",
+        bar: "bg-priority-urgent",
+        chip: "bg-priority-urgent/10 text-priority-urgent ring-priority-urgent/25",
+    },
+    high: {
+        label: "High",
+        bar: "bg-priority-high",
+        chip: "bg-priority-high/10 text-priority-high ring-priority-high/25",
+    },
+    medium: {
+        label: "Medium",
+        bar: "bg-priority-medium",
+        chip: "bg-priority-medium/15 text-priority-medium ring-priority-medium/30",
+    },
+    low: {
+        label: "Low",
+        bar: "bg-priority-low",
+        chip: "bg-priority-low/15 text-priority-low ring-priority-low/30",
+    },
+};
+
+export function initials(name: string): string {
+    return name
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((p) => p[0]?.toUpperCase() ?? "")
+        .join("");
+}
+
+const AVATAR_COLORS = [
+    "bg-label-rose text-white",
+    "bg-label-amber text-white",
+    "bg-label-emerald text-white",
+    "bg-label-sky text-white",
+    "bg-label-violet text-white",
+    "bg-label-red text-white",
+];
+
+export function avatarColor(name: string): string {
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
+    return AVATAR_COLORS[hash % AVATAR_COLORS.length];
+}
+
+export function formatDueDate(iso?: string): {
+    text: string;
+    tone: "overdue" | "soon" | "future" | "none";
+} {
+    if (!iso) return { text: "", tone: "none" };
+    const d = new Date(iso);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const target = new Date(d);
+    target.setHours(0, 0, 0, 0);
+    const diffDays = Math.round(
+        (target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    let text: string;
+    if (diffDays === 0) text = "Today";
+    else if (diffDays === 1) text = "Tomorrow";
+    else if (diffDays === -1) text = "Yesterday";
+    else if (diffDays > 1 && diffDays < 7) text = `In ${diffDays} days`;
+    else if (diffDays < -1 && diffDays > -7) text = `${Math.abs(diffDays)}d overdue`;
+    else
+        text = d.toLocaleDateString(undefined, {
+            month: "short",
+            day: "numeric",
+            year:
+                target.getFullYear() === today.getFullYear() ? undefined : "numeric",
+        });
+
+    const tone = diffDays < 0 ? "overdue" : diffDays <= 2 ? "soon" : "future";
+    return { text, tone };
+}
+
+// STORE
+
+type Action =
+    | { type: "setSearch"; value: string }
+    | { type: "setPriorityFilter"; value: Priority | "all" }
+    | { type: "addColumn"; title: string; accent: LabelColor }
+    | { type: "renameColumn"; columnId: string; title: string }
+    | { type: "deleteColumn"; columnId: string }
+    | { type: "clearColumn"; columnId: string }
+    | { type: "addCard"; columnId: string; card: Omit<Card, "id"> }
+    | { type: "updateCard"; card: Card }
+    | { type: "deleteCard"; cardId: string }
+    | { type: "moveCard"; cardId: string; toColumnId: string; toIndex: number };
+
+function reducer(state: BoardState, action: Action): BoardState {
+    switch (action.type) {
+        case "setSearch":
+            return { ...state, search: action.value };
+        case "setPriorityFilter":
+            return { ...state, priorityFilter: action.value };
+        case "addColumn":
+            return {
+                ...state,
+                columns: [
+                    ...state.columns,
+                    { id: newId(), title: action.title, accent: action.accent, cardIds: [] },
+                ],
+            };
+        case "renameColumn":
+            return {
+                ...state,
+                columns: state.columns.map((c) =>
+                    c.id === action.columnId ? { ...c, title: action.title } : c
+                ),
+            };
+        case "deleteColumn": {
+            const col = state.columns.find((c) => c.id === action.columnId);
+            const cards = { ...state.cards };
+            col?.cardIds.forEach((id) => delete cards[id]);
+            return {
+                ...state,
+                columns: state.columns.filter((c) => c.id !== action.columnId),
+                cards,
+            };
+        }
+        case "clearColumn": {
+            const col = state.columns.find((c) => c.id === action.columnId);
+            if (!col) return state;
+            const cards = { ...state.cards };
+            col.cardIds.forEach((id) => delete cards[id]);
+            return {
+                ...state,
+                cards,
+                columns: state.columns.map((c) =>
+                    c.id === action.columnId ? { ...c, cardIds: [] } : c
+                ),
+            };
+        }
+        case "addCard": {
+            const id = newId();
+            const card: Card = { id, ...action.card };
+            return {
+                ...state,
+                cards: { ...state.cards, [id]: card },
+                columns: state.columns.map((c) =>
+                    c.id === action.columnId ? { ...c, cardIds: [...c.cardIds, id] } : c
+                ),
+            };
+        }
+        case "updateCard":
+            return { ...state, cards: { ...state.cards, [action.card.id]: action.card } };
+        case "deleteCard": {
+            const cards = { ...state.cards };
+            delete cards[action.cardId];
+            return {
+                ...state,
+                cards,
+                columns: state.columns.map((c) => ({
+                    ...c,
+                    cardIds: c.cardIds.filter((id) => id !== action.cardId),
+                })),
+            };
+        }
+        case "moveCard": {
+            const fromCol = state.columns.find((c) => c.cardIds.includes(action.cardId));
+            if (!fromCol) return state;
+            const toCol = state.columns.find((c) => c.id === action.toColumnId);
+            if (!toCol) return state;
+
+            const fromIndex = fromCol.cardIds.indexOf(action.cardId);
+            let adjustedIndex = action.toIndex;
+
+            if (fromCol.id === toCol.id && fromIndex < action.toIndex) {
+                adjustedIndex = action.toIndex - 1;
+            }
+
+            const sourceIds = fromCol.cardIds.filter((id) => id !== action.cardId);
+            const targetIds = fromCol.id === toCol.id ? sourceIds : [...toCol.cardIds];
+
+            const insertAt = Math.min(Math.max(adjustedIndex, 0), targetIds.length);
+            targetIds.splice(insertAt, 0, action.cardId);
+
+            return {
+                ...state,
+                columns: state.columns.map((c) => {
+                    if (c.id === fromCol.id && c.id === toCol.id) return { ...c, cardIds: targetIds };
+                    if (c.id === fromCol.id) return { ...c, cardIds: sourceIds };
+                    if (c.id === toCol.id) return { ...c, cardIds: targetIds };
+                    return c;
+                }),
+            };
+        }
+        default:
+            return state;
+    }
+}
+
+const BoardStateContext = createContext<BoardState | null>(null);
+const BoardDispatchContext = createContext<React.Dispatch<Action> | null>(null);
+
+function useVisibleCardIds(column: Column): string[] {
+    const state = useBoardState();
+    return useMemo(() => {
+        const q = state.search.trim().toLowerCase();
+        return column.cardIds.filter((cardId) => {
+            const card = state.cards[cardId];
+            if (!card) return false;
+            if (state.priorityFilter !== "all" && card.priority !== state.priorityFilter)
+                return false;
+            if (!q) return true;
+            const hay = [
+                card.title,
+                card.description ?? "",
+                ...card.labels.map((l) => l.name),
+                ...card.assignees.map((a) => a.name),
+            ]
+                .join(" ")
+                .toLowerCase();
+            return hay.includes(q);
+        });
+    }, [state.cards, state.search, state.priorityFilter, column.cardIds]);
+}
+
+export function BoardProvider({ children, initialState }: { children: ReactNode; initialState?: BoardState }) {
+    const [state, dispatch] = useReducer(reducer, undefined, () => initialState ?? createSeed());
+    return (
+        <BoardDispatchContext.Provider value={dispatch}>
+            <BoardStateContext.Provider value={state}>
+                {children}
+            </BoardStateContext.Provider>
+        </BoardDispatchContext.Provider>
+    );
+}
+
+function useBoardState(): BoardState {
+    const ctx = useContext(BoardStateContext);
+    if (!ctx) throw new Error("useBoardState must be used inside BoardProvider");
+    return ctx;
+}
+
+function useBoardDispatch(): React.Dispatch<Action> {
+    const ctx = useContext(BoardDispatchContext);
+    if (!ctx) throw new Error("useBoardDispatch must be used inside BoardProvider");
+    return ctx;
+}
+
+function useBoard() {
+    const state = useBoardState();
+    const dispatch = useBoardDispatch();
+    return { state, dispatch };
+}
+
+// SkeletonCard
+function SkeletonCard() {
+    return (
+        <div className="relative rounded-xl bg-card border border-border/70 overflow-hidden">
+            <span aria-hidden className="absolute inset-y-0 left-0 w-1 bg-muted animate-pulse" />
+            <div className="pl-4 pr-3.5 py-3.5 space-y-2">
+                {/* label pills */}
+                <div className="flex gap-1.5">
+                    <div className="h-[18px] w-14 rounded-md bg-muted animate-pulse" />
+                    <div className="h-[18px] w-10 rounded-md bg-muted animate-pulse" />
+                </div>
+                {/* title */}
+                <div className="h-3.5 w-full rounded bg-muted animate-pulse" />
+                <div className="h-3.5 w-3/4 rounded bg-muted animate-pulse" />
+                {/* footer */}
+                <div className="flex items-center justify-between pt-1">
+                    <div className="h-5 w-20 rounded-md bg-muted animate-pulse" />
+                    <div className="h-6 w-6 rounded-full bg-muted animate-pulse" />
+                </div>
+            </div>
+        </div>
+    );
+}
+
+//AvatarChip component
+
+interface AvatarChipProps {
+    name: string;
+    size?: "sm" | "md";
+    className?: string;
+}
+
+const AvatarChip = memo(function AvatarChip({ name, size = "sm", className }: AvatarChipProps) {
+    const dim = size === "sm" ? "h-6 w-6 text-[10px]" : "h-8 w-8 text-xs";
+    return (
+        <span
+            title={name}
+            className={cn(
+                "inline-flex items-center justify-center rounded-full font-semibold ring-2 ring-card",
+                dim,
+                avatarColor(name),
+                className
+            )}
+        >
+            {initials(name)}
+        </span>
+    );
+});
+
+// BoardCard component
+
+interface BoardCardProps {
+    card: Card;
+    onOpen: (card: Card) => void;
+    isDragging?: boolean;
+    onDragStart?: (e: DragEvent<HTMLDivElement>) => void;
+    onDragEnd?: (e: DragEvent<HTMLDivElement>) => void;
+    onDragOver?: (e: DragEvent<HTMLDivElement>) => void;
+}
+
+const BoardCard = memo(function BoardCard({
+    card,
+    onOpen,
+    isDragging,
+    onDragStart,
+    onDragEnd,
+    onDragOver,
+}: BoardCardProps) {
+    const due = formatDueDate(card.dueDate);
+    const prio = priorityMeta[card.priority];
+
+    const handleDragOver = useCallback(
+        (e: DragEvent<HTMLDivElement>) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onDragOver?.(e);
+        },
+        [onDragOver]
+    );
+
+    const handleClick = useCallback(
+        (e: React.MouseEvent<HTMLDivElement>) => {
+            if ((e.target as HTMLElement).closest("[data-no-card-open]")) return;
+            onOpen(card);
+        },
+        [card, onOpen]
+    );
+
+    return (
+        <div
+            draggable
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}
+            onDragOver={handleDragOver}
+            onClick={handleClick}
+            className={cn(
+                "group relative cursor-grab active:cursor-grabbing select-none",
+                "rounded-xl bg-card text-card-foreground border border-border/70",
+                "shadow-card hover:shadow-card-hover hover:border-border",
+                "transition-[box-shadow,border-color,opacity] duration-200",
+                "overflow-hidden",
+                isDragging && "opacity-40"
+            )}
+        >
+            <span aria-hidden className={cn("absolute inset-y-0 left-0 w-1", prio.bar)} />
+
+            <div className="pl-4 pr-3.5 py-3.5 pointer-events-none">
+                {card.labels.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mb-2 pointer-events-auto">
+                        {card.labels.map((l) => (
+                            <span
+                                key={l.id}
+                                className={cn(
+                                    "inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10.5px] font-semibold ring-1 ring-inset",
+                                    labelClasses[l.color as LabelColor]
+                                )}
+                            >
+                                {l.name}
+                            </span>
+                        ))}
+                    </div>
+                )}
+
+                {/* title */}
+                <h3 className="font-display font-semibold text-[14.5px] leading-snug text-foreground pointer-events-auto">
+                    {card.title}
+                </h3>
+
+                {/* description */}
+                {card.description && (
+                    <p className="mt-1 text-[12.5px] leading-relaxed text-muted-foreground line-clamp-2 pointer-events-auto">
+                        {card.description}
+                    </p>
+                )}
+
+                {/* footer */}
+                <div className="mt-3 flex items-center justify-between gap-2 pointer-events-auto">
+                    <div className="flex items-center gap-2 text-[11.5px] text-muted-foreground">
+                        {due.text && (
+                            <span
+                                className={cn(
+                                    "inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 font-medium",
+                                    due.tone === "overdue" && "bg-priority-urgent/10 text-priority-urgent",
+                                    due.tone === "soon" && "bg-priority-medium/15 text-priority-medium",
+                                    due.tone === "future" && "bg-muted text-muted-foreground"
+                                )}
+                            >
+                                <Calendar className="h-3 w-3" />
+                                {due.text}
+                            </span>
+                        )}
+                        {!!card.comments && (
+                            <span className="inline-flex items-center gap-1">
+                                <MessageSquare className="h-3 w-3" />
+                                {card.comments}
+                            </span>
+                        )}
+                        {!!card.attachments && (
+                            <span className="inline-flex items-center gap-1">
+                                <Paperclip className="h-3 w-3" />
+                                {card.attachments}
+                            </span>
+                        )}
+                    </div>
+                    {card.assignees.length > 0 && (
+                        <div className="flex -space-x-1.5">
+                            {card.assignees.slice(0, 3).map((a) => (
+                                <AvatarChip key={a.id} name={a.name} />
+                            ))}
+                            {card.assignees.length > 3 && (
+                                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-muted text-[10px] font-semibold text-muted-foreground ring-2 ring-card">
+                                    +{card.assignees.length - 3}
+                                </span>
+                            )}
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+});
+
+// SkeletonColumn — mirrors the column shell exactly
+function SkeletonColumn({ cardCount = 3 }: { cardCount?: number }) {
+    return (
+        <div className="flex h-full w-[320px] shrink-0 flex-col rounded-2xl border border-border/70 bg-board-column">
+            {/* header */}
+            <div className="flex items-center gap-2 px-3.5 pt-3 pb-2">
+                <div className="h-2.5 w-2.5 rounded-full bg-muted animate-pulse shrink-0" />
+                <div className="h-4 w-24 rounded bg-muted animate-pulse" />
+                <div className="ml-auto h-5 w-6 rounded-md bg-muted animate-pulse" />
+            </div>
+            {/* cards */}
+            <div className="flex-1 min-h-0 overflow-hidden px-2.5 pb-2 space-y-2">
+                {Array.from({ length: cardCount }).map((_, i) => (
+                    <SkeletonCard key={i} />
+                ))}
+            </div>
+            {/* footer add button */}
+            <div className="p-2 pt-1">
+                <div className="h-9 w-full rounded-lg bg-muted animate-pulse opacity-50" />
+            </div>
+        </div>
+    );
+}
+
+
+export function BoardSkeleton() {
+    return (
+        <div className="flex h-screen flex-col bg-gradient-board">
+            {/* mirrors the real header */}
+            <header className="flex items-center gap-3 px-5 lg:px-8 py-4 border-b border-border/60 bg-background/70 backdrop-blur-sm">
+                <div className="h-9 w-9 rounded-xl bg-muted animate-pulse" />
+                <div className="space-y-1.5">
+                    <div className="h-4 w-28 rounded bg-muted animate-pulse" />
+                    <div className="h-3 w-20 rounded bg-muted animate-pulse" />
+                </div>
+                <div className="flex-1" />
+                <div className="h-9 w-[400px] rounded-xl bg-muted animate-pulse" />
+                <div className="h-9 w-24 rounded-lg bg-muted animate-pulse" />
+            </header>
+
+            {/* columns */}
+            <main className="flex-1 min-h-0 overflow-hidden">
+                <div className="flex h-full items-start gap-4 px-5 lg:px-8 py-5">
+                    <SkeletonColumn cardCount={4} />
+                    <SkeletonColumn cardCount={2} />
+                    <SkeletonColumn cardCount={3} />
+                </div>
+            </main>
+        </div>
+    );
+}
+
+function HydratedBoard() {
+    const [isHydrated, setIsHydrated] = useState(false);
+
+    useEffect(() => {
+        // One rAF keeps the skeleton visible for a full paint cycle,
+        // preventing any white flash even on fast machines.
+        const id = requestAnimationFrame(() => setIsHydrated(true));
+        return () => cancelAnimationFrame(id);
+    }, []);
+
+    if (!isHydrated) return <BoardSkeleton />;
+    return <BoardInner />;
+}
+
+// CardModal component
+interface CardModalProps {
+    open: boolean;
+    onOpenChange: (v: boolean) => void;
+    mode: "create" | "edit";
+    columnId?: string;
+    card?: Card;
+}
+
+const PRIORITIES_LIST: Priority[] = ["urgent", "high", "medium", "low"];
+
+function CardModal({ open, onOpenChange, mode, columnId, card }: CardModalProps) {
+    const dispatch = useBoardDispatch();
+
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [priority, setPriority] = useState<Priority>("medium");
+    const [labels, setLabels] = useState<Label[]>([]);
+    const [assignees, setAssignees] = useState<Assignee[]>([]);
+    const [dueDate, setDueDate] = useState<Date | undefined>();
+    const [labelDraft, setLabelDraft] = useState("");
+    const [labelColor, setLabelColor] = useState<LabelColor>("rose");
+    const [assigneeDraft, setAssigneeDraft] = useState("");
+    const [attachmentCount, setAttachmentCount] = useState(0);
+
+    const modeRef = useRef(mode);
+    const cardRef = useRef(card);
+    modeRef.current = mode;
+    cardRef.current = card;
+
+    useEffect(() => {
+        if (!open) return;
+        const m = modeRef.current;
+        const c = cardRef.current;
+        if (m === "edit" && c) {
+            setTitle(c.title);
+            setDescription(c.description ?? "");
+            setPriority(c.priority);
+            setLabels(c.labels);
+            setAssignees(c.assignees);
+            setDueDate(c.dueDate ? new Date(c.dueDate) : undefined);
+            setAttachmentCount(c.attachments ?? 0);
+        } else {
+            setTitle("");
+            setDescription("");
+            setPriority("medium");
+            setLabels([]);
+            setAssignees([]);
+            setDueDate(undefined);
+            setAttachmentCount(0);
+        }
+        setLabelDraft("");
+        setLabelColor("rose");
+        setAssigneeDraft("");
+    }, [open]);
+
+    const addLabel = useCallback(() => {
+        const name = labelDraft.trim();
+        if (!name) return;
+        setLabels((s) => [...s, { id: newId(), name, color: labelColor }]);
+        setLabelDraft("");
+    }, [labelDraft, labelColor]);
+
+    const removeLabel = useCallback(
+        (id: string) => setLabels((s) => s.filter((l) => l.id !== id)),
+        []
+    );
+
+    const addAssignee = useCallback(() => {
+        const name = assigneeDraft.trim();
+        if (!name) return;
+        setAssignees((s) => [...s, { id: newId(), name }]);
+        setAssigneeDraft("");
+    }, [assigneeDraft]);
+
+    const removeAssignee = useCallback(
+        (id: string) => setAssignees((s) => s.filter((a) => a.id !== id)),
+        []
+    );
+
+    const handleSave = useCallback(() => {
+        const t = title.trim();
+        if (!t) return;
+        const payload = {
+            title: t,
+            description: description.trim() || undefined,
+            priority,
+            labels,
+            assignees,
+            dueDate: dueDate ? dueDate.toISOString() : undefined,
+            comments: card?.comments,
+            attachments: attachmentCount,
+        };
+        if (mode === "edit" && card) {
+            dispatch({ type: "updateCard", card: { id: card.id, ...payload } });
+        } else if (columnId) {
+            dispatch({ type: "addCard", columnId, card: payload });
+        }
+        onOpenChange(false);
+    }, [title, description, priority, labels, assignees, dueDate, card, mode, columnId, dispatch, onOpenChange]);
+
+    const handleDeleteCard = useCallback(() => {
+        if (!card) return;
+        if (window.confirm("Delete this card?")) {
+            dispatch({ type: "deleteCard", cardId: card.id });
+            onOpenChange(false);
+        }
+    }, [card, dispatch, onOpenChange]);
+
+    const handleClose = useCallback(() => onOpenChange(false), [onOpenChange]);
+
+    const handleLabelKeyDown = useCallback(
+        (e: KeyboardEvent<HTMLInputElement>) => {
+            if (e.key === "Enter") { e.preventDefault(); addLabel(); }
+        },
+        [addLabel]
+    );
+
+    const handleAssigneeKeyDown = useCallback(
+        (e: KeyboardEvent<HTMLInputElement>) => {
+            if (e.key === "Enter") { e.preventDefault(); addAssignee(); }
+        },
+        [addAssignee]
+    );
+
+    return (
+        <Modal
+            isOpen={open}
+            onClose={handleClose}
+            size="2xl"
+            title={mode === "create" ? "Create New Card" : "Edit Card"}
+            showFooter={false}
+        >
+            <div className="space-y-6 py-2">
+                <p className="text-sm text-muted-foreground/80 -mt-4 mb-4">
+                    {mode === "create" ? "Add a new card to your board." : "View and edit card details."}
+                </p>
+
+                <div className="space-y-4">
+                    <div className="space-y-1.5">
+                        <label htmlFor="card-title" className="text-sm font-medium leading-none text-foreground/90">Title</label>
+                        <Input
+                            id="card-title"
+                            variant="clean"
+                            placeholder=""
+                            value={title}
+                            onChange={setTitle}
+                            autoFocus
+                        />
+                    </div>
+
+                    <div className="space-y-1.5">
+                        <label htmlFor="card-desc" className="text-sm font-medium leading-none text-foreground/90">Description</label>
+                        <Textarea
+                            id="card-desc"
+                            variant="clean"
+                            placeholder=""
+                            className="min-h-[100px] resize-none"
+                            value={description}
+                            onChange={(v: string) => setDescription(v)}
+                        />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1.5">
+                            <label className="text-sm font-medium leading-none text-foreground/90">Priority</label>
+                            <Dropdown
+                                trigger={
+                                    <Button variant="outline" size="sm" className="w-full justify-between h-9 px-3 rounded-xl bg-background hover:bg-background/80 shadow-sm text-foreground">
+                                        <span className="inline-flex items-center gap-2">
+                                            <span className={cn("h-2 w-2 rounded-full", priorityMeta[priority].bar)} />
+                                            {priorityMeta[priority].label}
+                                        </span>
+                                        <ChevronDown className="h-4 w-4 opacity-50" />
+                                    </Button>
+                                }
+                                align="start"
+                                className="w-[200px]"
+                            >
+                                {PRIORITIES_LIST.map((p) => (
+                                    <DropdownItem
+                                        key={p}
+                                        onClick={() => setPriority(p)}
+                                        className={cn(
+                                            "flex items-center gap-2",
+                                            priority === p && "bg-accent text-accent-foreground"
+                                        )}
+                                    >
+                                        <span className={cn("h-2 w-2 rounded-full", priorityMeta[p].bar)} />
+                                        {priorityMeta[p].label}
+                                        {priority === p && <Check className="h-4 w-4 ml-auto opacity-70" />}
+                                    </DropdownItem>
+                                ))}
+                            </Dropdown>
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <label className="text-sm font-medium leading-none text-foreground/90">Due date</label>
+                            <DatePicker
+                                value={dueDate}
+                                onChange={(date) => setDueDate(date as Date)}
+                                variant="single"
+                                size="sm"
+                                placeholder="Pick a date"
+                                className="w-full"
+                                inputClassName={cn(
+                                    "w-full justify-start font-normal",
+                                    !dueDate && "text-muted-foreground"
+                                )}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Labels */}
+                    <div className="space-y-1.5">
+                        <label className="text-sm font-medium leading-none text-foreground/90">Labels</label>
+                        <div className="flex flex-wrap gap-1.5 min-h-6">
+                            {labels.length === 0 && (
+                                <span className="text-[12.5px] text-muted-foreground/80">No labels yet.</span>
+                            )}
+                            {labels.map((l) => (
+                                <span
+                                    key={l.id}
+                                    className={cn(
+                                        "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ring-1 ring-inset",
+                                        labelClasses[l.color as LabelColor]
+                                    )}
+                                >
+                                    {l.name}
+                                    <button
+                                        type="button"
+                                        onClick={() => removeLabel(l.id)}
+                                        className="ml-0.5 opacity-70 hover:opacity-100"
+                                    >
+                                        <X className="h-3 w-3" />
+                                    </button>
+                                </span>
+                            ))}
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Input
+                                value={labelDraft}
+                                onChange={setLabelDraft}
+                                variant="clean"
+                                onKeyDown={handleLabelKeyDown}
+                                placeholder=""
+                                className="flex-1 !h-5"
+                            />
+                            <Dropdown
+                                trigger={
+                                    <Button variant="ghost" size="icon" className="h-10 w-10 shrink-0 border border-border/60">
+                                        <Plus className="h-4 w-4" />
+                                    </Button>
+                                }
+                                align="end"
+                                className="w-48 p-2"
+                            >
+                                <div className="grid grid-cols-4 gap-2">
+                                    {LABEL_COLORS.map((color) => (
+                                        <button
+                                            key={color}
+                                            className={cn(
+                                                "h-8 w-8 rounded-full border border-border transition-all hover:scale-110",
+                                                `bg-label-${color}`
+                                            )}
+                                            onClick={() => {
+                                                setLabelColor(color);
+                                                addLabel();
+                                            }}
+                                            title={color}
+                                        />
+                                    ))}
+                                </div>
+                            </Dropdown>
+                        </div>
+                    </div>
+
+                    {/* Assignees */}
+                    <div className="space-y-1.5">
+                        <label className="text-sm font-medium leading-none text-foreground/90">Assignees</label>
+                        <div className="flex flex-wrap gap-1.5 min-h-6">
+                            {assignees.length === 0 && (
+                                <span className="text-[12.5px] text-muted-foreground/80">No one assigned.</span>
+                            )}
+                            {assignees.map((a) => (
+                                <span
+                                    key={a.id}
+                                    className="inline-flex items-center rounded-full bg-secondary px-2 py-0.5 text-[11px] font-medium text-secondary-foreground"
+                                >
+                                    {a.name}
+                                    <button
+                                        type="button"
+                                        onClick={() => removeAssignee(a.id)}
+                                        className="ml-0.5 opacity-70 hover:opacity-100"
+                                    >
+                                        <X className="h-3 w-3" />
+                                    </button>
+                                </span>
+                            ))}
+                        </div>
+                        <Input
+                            value={assigneeDraft}
+                            onChange={setAssigneeDraft}
+                            variant="clean"
+                            onKeyDown={handleAssigneeKeyDown}
+                            placeholder=""
+                        />
+                    </div>
+
+                    {/* Attachments */}
+                    <div className="space-y-1.5">
+                        <label className="text-sm font-medium leading-none text-foreground/90 flex items-center gap-2">
+                            <Paperclip className="h-4 w-4" />
+                            Attachments
+                        </label>
+                        <FileUpload
+                            onFilesChange={(files) => setAttachmentCount(files.length)}
+                            mode="dropzone"
+                            multiple={true}
+                            maxFiles={5}
+                            simulateUpload={true}
+                            buttonText="Select Files"
+                            className="bg-background/50"
+                        />
+                    </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-4 border-t gap-2">
+                    {mode === "edit" ? (
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            onClick={handleDeleteCard}
+                        >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete Card
+                        </Button>
+                    ) : (
+                        <div />
+                    )}
+                    <div className="flex items-center gap-2">
+                        <Button variant="ghost" size="sm" onClick={handleClose}>
+                            Cancel
+                        </Button>
+                        <Button size="sm" className="bg-primary text-background" onClick={handleSave} disabled={!title.trim()}>
+                            {mode === "create" ? "Create Card" : "Save Changes"}
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        </Modal>
+    );
+}
+
+interface BoardColumnProps {
+    column: Column;
+    onAddCard: (columnId: string) => void;
+    onOpenCard: (card: Card) => void;
+    activeCardId: string | null;
+    dropTarget: { columnId: string; index: number } | null;
+    onDragStartCard: (e: DragEvent<HTMLDivElement>, cardId: string) => void;
+    onDragEndCard: (e: DragEvent<HTMLDivElement>) => void;
+    onDragOverColumn: (e: DragEvent<HTMLDivElement>) => void;
+    onDragOverCard: (e: DragEvent<HTMLDivElement>, index: number) => void;
+    onDrop: (e: DragEvent<HTMLDivElement>) => void;
+}
+
+const BoardColumn = memo(function BoardColumn({
+    column,
+    onAddCard,
+    onOpenCard,
+    activeCardId,
+    dropTarget,
+    onDragStartCard,
+    onDragEndCard,
+    onDragOverColumn,
+    onDragOverCard,
+    onDrop,
+}: BoardColumnProps) {
+    const { state, dispatch } = useBoard();
+    const visible = useVisibleCardIds(column);
+
+    const [renaming, setRenaming] = useState(false);
+    const [draftTitle, setDraftTitle] = useState(column.title);
+    const [confirmDelete, setConfirmDelete] = useState(false);
+
+    const totalCount = column.cardIds.length;
+    const visibleCount = visible.length;
+    const filtered = visibleCount !== totalCount;
+
+    const commitRename = useCallback(() => {
+        const t = draftTitle.trim();
+        if (t) dispatch({ type: "renameColumn", columnId: column.id, title: t });
+        setRenaming(false);
+    }, [draftTitle, column.id, dispatch]);
+
+    const handleRenameKeyDown = useCallback(
+        (e: KeyboardEvent<HTMLInputElement>) => {
+            if (e.key === "Enter") commitRename();
+            if (e.key === "Escape") {
+                setDraftTitle(column.title);
+                setRenaming(false);
+            }
+        },
+        [commitRename, column.title]
+    );
+
+    const confirmDeleteColumn = useCallback(() => {
+        dispatch({ type: "deleteColumn", columnId: column.id });
+        setConfirmDelete(false);
+    }, [column.id, dispatch]);
+
+    const handleClearColumn = useCallback(
+        () => dispatch({ type: "clearColumn", columnId: column.id }),
+        [column.id, dispatch]
+    );
+
+    const handleAddCard = useCallback(
+        () => onAddCard(column.id),
+        [column.id, onAddCard]
+    );
+
+    const isDropTargetColumn = dropTarget?.columnId === column.id;
+
+    return (
+        <div
+            onDragOver={onDragOverColumn}
+            onDrop={onDrop}
+            className={cn(
+                "flex h-full w-[320px] shrink-0 flex-col rounded-2xl border border-border/70 bg-board-column",
+                "transition-colors"
+            )}
+        >
+            {/* Header */}
+            <div className="flex items-center justify-between gap-2 px-3.5 pt-3 pb-2">
+                <div className="flex items-center gap-2 min-w-0">
+                    <span className={cn("h-2.5 w-2.5 rounded-full shrink-0", labelDot[column.accent])} />
+                    {renaming ? (
+                        <Input
+                            autoFocus
+                            value={draftTitle}
+                            onChange={setDraftTitle}
+                            variant="clean"
+                            placeholder="Column title"
+                            onBlur={commitRename}
+                            onKeyDown={handleRenameKeyDown}
+                            className="h-7 px-2 py-1 text-sm font-display font-semibold"
+                        />
+                    ) : (
+                        <button
+                            onDoubleClick={() => setRenaming(true)}
+                            className="font-display font-semibold text-[14px] tracking-tight truncate text-foreground"
+                            title="Double-click to rename"
+                        >
+                            {column.title}
+                        </button>
+                    )}
+                    <span
+                        className={cn(
+                            "inline-flex items-center justify-center rounded-md px-1.5 h-5 min-w-[22px] text-[11px] font-semibold",
+                            "bg-muted text-primary tabular-nums"
+                        )}
+                    >
+                        {filtered ? `${visibleCount}/${totalCount}` : totalCount}
+                    </span>
+                </div>
+                <Dropdown
+                    trigger={
+                        <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground">
+                            <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                    }
+                    align="end"
+                    className="w-44"
+                >
+                    <DropdownItem onClick={() => setRenaming(true)}>
+                        <Pencil className="h-4 w-4 mr-2" /> Rename
+                    </DropdownItem>
+                    <DropdownItem
+                        onClick={handleClearColumn}
+                        disabled={totalCount === 0}
+                    >
+                        <Eraser className="h-4 w-4 mr-2" /> Clear cards
+                    </DropdownItem>
+                    <DropdownSeparator />
+                    <DropdownItem
+                        onClick={() => setConfirmDelete(true)}
+                        className="text-destructive focus:text-destructive"
+                        disabled={state.columns.length <= 1}
+                    >
+                        <Trash2 className="h-4 w-4 mr-2" /> Delete column
+                    </DropdownItem>
+                </Dropdown>
+            </div>
+
+            {/* Cards */}
+            <div
+                className={cn(
+                    "flex-1 min-h-0 overflow-y-auto scrollbar-thin px-2.5 pb-2 space-y-2",
+                    "transition-colors rounded-xl",
+                    isDropTargetColumn && "bg-primary/5 ring-1 ring-inset ring-primary/30"
+                )}
+            >
+                {visible.map((id, index) => {
+                    const card = state.cards[id];
+                    if (!card) return null;
+
+                    const showIndicatorBefore = isDropTargetColumn && dropTarget!.index === index;
+
+                    return (
+                        <React.Fragment key={id}>
+                            {showIndicatorBefore && (
+                                <div className="h-1 bg-primary rounded-full w-full my-1 animate-in fade-in" />
+                            )}
+                            <BoardCard
+                                card={card}
+                                onOpen={onOpenCard}
+                                isDragging={activeCardId === id}
+                                onDragStart={(e) => onDragStartCard(e, id)}
+                                onDragEnd={onDragEndCard}
+                                onDragOver={(e) => onDragOverCard(e, index)}
+                            />
+                        </React.Fragment>
+                    );
+                })}
+
+                {isDropTargetColumn && dropTarget!.index === visible.length && (
+                    <div className="h-1 bg-primary rounded-full w-full my-1 animate-in fade-in" />
+                )}
+
+                {visible.length === 0 && (
+                    <div className="px-2 py-8 text-center text-[12.5px] text-muted-foreground/80">
+                        {filtered ? (
+                            <>No cards match your filters.</>
+                        ) : (
+                            <>
+                                <div className="font-medium text-foreground/70">Nothing here yet</div>
+                                <div className="mt-0.5">Add a card to get started.</div>
+                            </>
+                        )}
+                    </div>
+                )}
+            </div>
+
+            {/* Footer */}
+            <div className="p-2 pt-1">
+                <Button
+                    variant="ghost"
+                    onClick={handleAddCard}
+                    className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-muted/70 font-medium"
+                >
+                    <Plus className="h-4 w-4 mr-1.5" /> Add card
+                </Button>
+            </div>
+
+            <Modal
+                isOpen={confirmDelete}
+                onClose={() => setConfirmDelete(false)}
+                title={`Delete "${column.title}"?`}
+                colorScheme="destructive"
+                confirmText="Delete Column"
+                onConfirm={confirmDeleteColumn}
+                cancelText="Cancel"
+                showFooter={true}
+            >
+                <p className="text-sm">
+                    This will permanently remove the column and all its cards.
+                    This action cannot be undone.
+                </p>
+            </Modal>
+        </div>
+    );
+});
+
+// AddColumnComposer component
+
+function AddColumnComposer() {
+    const dispatch = useBoardDispatch();
+    const [open, setOpen] = useState(false);
+    const [title, setTitle] = useState("");
+    const [accent, setAccent] = useState<LabelColor>("rose");
+
+    const submit = useCallback(() => {
+        const t = title.trim();
+        if (!t) return;
+        dispatch({ type: "addColumn", title: t, accent });
+        setTitle("");
+        setAccent("rose");
+        setOpen(false);
+    }, [title, accent, dispatch]);
+
+    const handleKeyDown = useCallback(
+        (e: KeyboardEvent<HTMLInputElement>) => {
+            if (e.key === "Enter") submit();
+            if (e.key === "Escape") setOpen(false);
+        },
+        [submit]
+    );
+
+    if (!open) {
+        return (
+            <button
+                onClick={() => setOpen(true)}
+                className={cn(
+                    "flex h-12 w-[320px] shrink-0 items-center justify-center gap-2 rounded-2xl",
+                    "border border-dashed border-border/80 text-muted-foreground",
+                    "hover:border-primary/50 hover:text-foreground hover:bg-card transition-colors"
+                )}
+            >
+                <Plus className="h-4 w-4" />
+                <span className="font-medium text-sm">Add column</span>
+            </button>
+        );
+    }
+
+    return (
+        <div className="flex h-fit w-[320px] shrink-0 flex-col gap-3 rounded-2xl border border-border bg-board-column p-3 shadow-card">
+            <div className="flex items-center justify-between">
+                <div className="text-sm font-display font-semibold">New column</div>
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7"
+                    onClick={() => setOpen(false)}
+                >
+                    <X className="h-4 w-4" />
+                </Button>
+            </div>
+            <Input
+                autoFocus
+                placeholder=""
+                value={title}
+                onChange={setTitle}
+                variant="clean"
+                onKeyDown={handleKeyDown}
+            />
+            <div>
+                <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-1.5">
+                    Accent
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                    {LABEL_COLORS.map((c) => (
+                        <button
+                            key={c}
+                            onClick={() => setAccent(c)}
+                            className={cn(
+                                "h-6 w-6 rounded-full transition-transform",
+                                labelDot[c],
+                                accent === c
+                                    ? "ring-2 ring-offset-2 ring-offset-board-column ring-foreground/60 scale-110"
+                                    : "hover:scale-110"
+                            )}
+                            aria-label={c}
+                        />
+                    ))}
+                </div>
+            </div>
+            <div className="flex gap-2">
+                <Button onClick={submit} className="flex-1" disabled={!title.trim()}>
+                    Add column
+                </Button>
+            </div>
+        </div>
+    );
+}
+
+// Kanban page
+
+type ModalState =
+    | { open: false }
+    | { open: true; mode: "create"; columnId: string }
+    | { open: true; mode: "edit"; card: Card };
+
+const PRIORITIES_FILTER: Priority[] = ["urgent", "high", "medium", "low"];
+
+function BoardInner() {
+    const { state, dispatch } = useBoard();
+    const toast = useToast();
+
+    const [activeCardId, setActiveCardId] = useState<string | null>(null);
+    const [dropTarget, setDropTarget] = useState<{ columnId: string; index: number } | null>(null);
+    const [modal, setModal] = useState<ModalState>({ open: false });
+
+    const totalCards = useMemo(() => Object.keys(state.cards).length, [state.cards]);
+
+    const handleDragStart = useCallback((e: DragEvent<HTMLDivElement>, cardId: string) => {
+        e.dataTransfer.setData("application/json", JSON.stringify({ cardId }));
+        e.dataTransfer.effectAllowed = "move";
+        setTimeout(() => setActiveCardId(cardId), 0);
+    }, []);
+
+    const handleDragEnd = useCallback((_e: DragEvent<HTMLDivElement>) => {
+        setActiveCardId(null);
+        setDropTarget(null);
+    }, []);
+
+    const handleDragOverColumn = useCallback(
+        (e: DragEvent<HTMLDivElement>, columnId: string) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = "move";
+            const col = state.columns.find((c) => c.id === columnId);
+            if (!col) return;
+            setDropTarget((prev) => {
+                const next = { columnId, index: col.cardIds.length };
+                if (prev?.columnId === next.columnId && prev?.index === next.index) return prev;
+                return next;
+            });
+        },
+        [state.columns]
+    );
+
+    const handleDragOverCard = useCallback(
+        (e: DragEvent<HTMLDivElement>, columnId: string, index: number) => {
+            e.preventDefault();
+            e.stopPropagation();
+            e.dataTransfer.dropEffect = "move";
+            const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+            const isTopHalf = e.clientY < rect.top + rect.height / 2;
+            const nextIndex = isTopHalf ? index : index + 1;
+            setDropTarget((prev) => {
+                if (prev?.columnId === columnId && prev?.index === nextIndex) return prev;
+                return { columnId, index: nextIndex };
+            });
+        },
+        []
+    );
+
+    const handleDrop = useCallback(
+        (e: DragEvent<HTMLDivElement>) => {
+            e.preventDefault();
+            const target = dropTarget;
+            setActiveCardId(null);
+            setDropTarget(null);
+            const dataStr = e.dataTransfer.getData("application/json");
+            if (!dataStr || !target) return;
+            try {
+                const { cardId } = JSON.parse(dataStr) as { cardId: string };
+                if (cardId) {
+                    dispatch({ type: "moveCard", cardId, toColumnId: target.columnId, toIndex: target.index });
+                }
+            } catch {
+                toast.error("Failed to move card: invalid data format");
+            }
+        },
+        [dropTarget, dispatch, toast]
+    );
+
+    const closeModal = useCallback(() => setModal({ open: false }), []);
+
+    const handleSearchChange = useCallback(
+        (v: string) => dispatch({ type: "setSearch", value: v }),
+        [dispatch]
+    );
+
+    const handleClearSearch = useCallback(
+        () => dispatch({ type: "setSearch", value: "" }),
+        [dispatch]
+    );
+
+    const makeColumnHandlers = useCallback(
+        (columnId: string) => ({
+            onDragOverColumn: (e: DragEvent<HTMLDivElement>) => handleDragOverColumn(e, columnId),
+            onDragOverCard: (e: DragEvent<HTMLDivElement>, index: number) => handleDragOverCard(e, columnId, index),
+            onAddCard: (cid: string) => setModal({ open: true, mode: "create", columnId: cid }),
+            onOpenCard: (card: Card) => setModal({ open: true, mode: "edit", card }),
+        }),
+        [handleDragOverColumn, handleDragOverCard]
+    );
+
+    return (
+        <div className="flex h-screen flex-col bg-gradient-board min-w-max">
+            {/* Top bar */}
+            <header className="flex items-center gap-3 px-5 lg:px-8 py-4 border-b border-border/60 bg-background/70 backdrop-blur-sm shrink-0">
+                <div className="flex items-center gap-2.5 mr-2">
+                    <div className="h-9 w-9 rounded-xl bg-gradient-brand grid place-items-center shadow-card">
+                        <LayoutGrid
+                            className="h-4.5 w-4.5 text-primary"
+                            strokeWidth={2.5}
+                        />
+                    </div>
+                    <div className="min-w-0">
+                        <div className="font-display font-bold text-[17px] leading-none text-foreground">
+                            Kanban Board
+                        </div>
+                        <p className="text-[11.5px] text-muted-foreground -mt-0.5">
+                            {state.columns.length} columns · {totalCards} cards
+                        </p>
+                    </div>
+                </div>
+
+                <div className="flex-1 min-w-[200px]" />
+
+                <div className="relative">
+                    <Input
+                        value={state.search}
+                        onChange={handleSearchChange}
+                        placeholder="Search cards…"
+                        variant="clean"
+                        size="sm"
+                        icon={Search}
+                        className="w-[400px] mb-0"
+                        inputClassName="pr-8"
+                    />
+                    {state.search && (
+                        <button
+                            onClick={handleClearSearch}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                            aria-label="Clear search"
+                        >
+                            <X className="h-3.5 w-3.5" />
+                        </button>
+                    )}
+                </div>
+
+                <Dropdown
+                    trigger={
+                        <Button variant="outline" size="sm" className="h-9 gap-1.5 text-foreground">
+                            <Filter className="h-4 w-4" />
+                            {state.priorityFilter === "all"
+                                ? "Priority"
+                                : priorityMeta[state.priorityFilter].label}
+                        </Button>
+                    }
+                    align="end"
+                    className="w-44"
+                >
+                    <DropdownLabel>Filter by priority</DropdownLabel>
+                    <DropdownSeparator />
+                    <DropdownCheckboxItem
+                        checked={state.priorityFilter === "all"}
+                        onCheckedChange={() =>
+                            dispatch({ type: "setPriorityFilter", value: "all" })
+                        }
+                    >
+                        All priorities
+                    </DropdownCheckboxItem>
+                    {PRIORITIES_FILTER.map((p) => (
+                        <DropdownCheckboxItem
+                            key={p}
+                            checked={state.priorityFilter === p}
+                            onCheckedChange={() =>
+                                dispatch({ type: "setPriorityFilter", value: p })
+                            }
+                        >
+                            <span className={cn("h-2 w-2 rounded-full mr-2", priorityMeta[p].bar)} />
+                            {priorityMeta[p].label}
+                        </DropdownCheckboxItem>
+                    ))}
+                </Dropdown>
+            </header>
+
+            {/* Board */}
+            <main className="flex-1 min-h-0 overflow-x-auto overflow-y-hidden scrollbar-thin">
+                <ul role="list" aria-label="Board columns" className="flex h-full items-start gap-4 px-5 lg:px-8 py-5 min-w-max">
+                    {state.columns.map((column) => {
+                        const { onDragOverColumn, onDragOverCard, onAddCard, onOpenCard } =
+                            makeColumnHandlers(column.id);
+                        return (
+                            <BoardColumn
+                                key={column.id}
+                                column={column}
+                                onAddCard={onAddCard}
+                                onOpenCard={onOpenCard}
+                                activeCardId={activeCardId}
+                                dropTarget={dropTarget}
+                                onDragStartCard={handleDragStart}
+                                onDragEndCard={handleDragEnd}
+                                onDragOverColumn={onDragOverColumn}
+                                onDragOverCard={onDragOverCard}
+                                onDrop={handleDrop}
+                            />
+                        );
+                    })}
+                    <AddColumnComposer />
+                </ul>
+            </main>
+
+            <CardModal
+                open={modal.open}
+                onOpenChange={(v) => (v ? null : closeModal())}
+                mode={modal.open ? modal.mode : "create"}
+                columnId={modal.open && modal.mode === "create" ? modal.columnId : undefined}
+                card={modal.open && modal.mode === "edit" ? modal.card : undefined}
+            />
+        </div>
+    );
+}
+
+export const KanbanBoard = ({ initialState }: { initialState?: BoardState } = {}) => (
+    <ToastProvider>
+        <BoardProvider initialState={initialState}>
+            <HydratedBoard />
+        </BoardProvider>
+    </ToastProvider>
+);
+    ```
+</TabItem>
+</Tabs>
+
+
+## Usage
+
+### Basic
+
+```tsx
+import { KanbanBoard } from "@ignix-ui/kanban-board-page";
+
+export default function MyProjectBoard() {
+  return <KanbanBoard />;
+}
+```
+
+### With Toast Notifications
+
+```tsx
+import { KanbanBoard } from "@ignix-ui/kanban-board-page";
+import { ToastProvider } from "@ignix-ui/toast";
+
+export default function App() {
+  return (
+    <ToastProvider maxToasts={3} defaultPosition="bottom-right">
+      <KanbanBoard />
+    </ToastProvider>
+  );
+}
+```
+
+### Skeleton Loading State
+
+```tsx
+import { BoardSkeleton } from "@ignix-ui/kanban-board-page";
+
+// Show during data loading — mirrors the exact board layout
+export default function LoadingState() {
+  return <BoardSkeleton />;
+}
+```
+
+### Using Individual Parts
+
+The component exports its internal types and utilities so you can compose your own board:
+
+```tsx
+import {
+  BoardProvider,
+  BoardSkeleton,
+  KanbanBoard,
+  createSeed,
+  newId,
+  formatDueDate,
+  initials,
+  avatarColor,
+  priorityMeta,
+  labelClasses,
+  labelDot,
+  LABEL_COLORS,
+} from "@ignix-ui/kanban-board-page";
+import type {
+  Priority,
+  LabelColor,
+  Label,
+  Assignee,
+  Card,
+  Column,
+  BoardState,
+} from "@ignix-ui/kanban-board-page";
+```
+
+## Props
+### `KanbanBoardProps`
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `initialState` | `BoardState` | `createSeed()` | Optional initial board state. Defaults to an empty board with 3 standard columns. |
+
+### `Card`
+
+| Property | Type | Description |
+| :--- | :--- | :--- |
+| `id` | `string` | Unique card identifier. |
+| `title` | `string` | Card title (required). |
+| `description` | `string?` | Optional card description. |
+| `priority` | `Priority` | Card priority level. |
+| `labels` | `Label[]` | Array of color-coded labels. |
+| `assignees` | `Assignee[]` | Array of assigned team members. |
+| `dueDate` | `string?` | ISO date string for the due date. |
+| `comments` | `number?` | Number of comments on the card. |
+| `attachments` | `number?` | Number of file attachments. |
+
+### `Column`
+
+| Property | Type | Description |
+| :--- | :--- | :--- |
+| `id` | `string` | Unique column identifier. |
+| `title` | `string` | Column header title. |
+| `accent` | `LabelColor` | Accent color dot next to the title. |
+| `cardIds` | `string[]` | Ordered list of card IDs in this column. |
+
+### `BoardState`
+
+| Property | Type | Description |
+| :--- | :--- | :--- |
+| `columns` | `Column[]` | Ordered array of board columns. |
+| `cards` | `Record<string, Card>` | Map of card ID → card data. |
+| `search` | `string` | Current search query. |
+| `priorityFilter` | `Priority \| "all"` | Active priority filter. |
+
+### `Label`
+
+| Property | Type | Description |
+| :--- | :--- | :--- |
+| `id` | `string` | Unique label identifier. |
+| `name` | `string` | Display name of the label. |
+| `color` | `LabelColor` | Color used for the label badge. |
+
+### `Assignee`
+
+| Property | Type | Description |
+| :--- | :--- | :--- |
+| `id` | `string` | Unique assignee identifier. |
+| `name` | `string` | Full name (initials are derived automatically). |

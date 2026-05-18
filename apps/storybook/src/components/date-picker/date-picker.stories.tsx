@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import DatePicker from './';
+import { useState } from 'react';
+import { DatePicker } from './';
 import { Calendar, Search, Moon, Sun } from 'lucide-react';
 import { Typography } from '../typography';
 import { Button } from '../button';
@@ -114,7 +114,7 @@ export const SingleDatePicker = () => {
         <div className="space-y-4">
             <DatePicker
                 value={date || undefined}
-                onChange={setDate}
+                onChange={(val) => setDate(val as Date | null)}
                 placeholder="Pick a date"
                 label="Select Date"
                 helperText="Choose any date from the calendar"
@@ -138,7 +138,7 @@ export const RangeDatePicker = () => {
             <DatePicker
                 variant="range"
                 value={range}
-                onChange={setRange}
+                onChange={(val) => setRange(val as DateRange)}
                 placeholder={['Start date', 'End date']}
                 label="Select Date Range"
                 helperText="Choose start and end dates"
@@ -553,7 +553,7 @@ export const ComplexExample = () => {
             <DatePicker
                 variant="range"
                 value={selectedRange}
-                onChange={setSelectedRange}
+                onChange={(val) => setSelectedRange(val as DateRange)}
                 placeholder={['Check-in date', 'Check-out date']}
                 label="Booking Dates"
                 helperText="Select your check-in and check-out dates"
@@ -781,7 +781,7 @@ export const MultipleDatePickersForm = () => {
                     Form Data:
                 </Typography>
                 <pre className="text-sm dark:text-gray-400">
-                    {JSON.stringify(formData, (key, value) =>
+                    {JSON.stringify(formData, (_key, value) =>
                         value instanceof Date ? value.toLocaleDateString() : value, 2)}
                 </pre>
             </div>

@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect, useRef, forwardRef } from 'react';
@@ -7,6 +6,25 @@ import { AlertCircle, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '../../../utils/cn';
 import { Typography } from '../typography';
 import { Button } from '../button';
+
+// ========== HOOKS ==========
+function useDocusaurusTheme(): ThemeMode {
+    const [theme, setTheme] = useState<ThemeMode>('light');
+
+    useEffect(() => {
+        if (typeof document === 'undefined') return;
+
+        const root = document.documentElement;
+        const read = () => (root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light') as ThemeMode;
+        setTheme(read());
+
+        const observer = new MutationObserver(() => setTheme(read()));
+        observer.observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+        return () => observer.disconnect();
+    }, []);
+
+    return theme;
+}
 
 // ========== TYPES ==========
 export type DateFormat =
@@ -120,6 +138,7 @@ export interface CalendarViewProps {
     dayNames?: string[];
     todayText?: string;
     clearText?: string;
+    size?: DatePickerSize;
 }
 
 export interface InputFieldProps {
@@ -371,51 +390,51 @@ const COLOR_SCHEMES: Record<ColorScheme, ColorSchemeStyles> = {
 const THEME_MODES: Record<ThemeMode, ThemeModeStyles> = {
     light: {
         bg: {
-            input: 'bg-white',
-            calendar: 'bg-white',
-            disabled: 'bg-gray-100',
+            input: 'bg-background',
+            calendar: 'bg-background',
+            disabled: 'bg-muted/50',
         },
         text: {
-            primary: 'text-gray-900',
-            secondary: 'text-gray-600',
-            muted: 'text-gray-500',
-            disabled: 'text-gray-400',
+            primary: 'text-foreground',
+            secondary: 'text-muted-foreground',
+            muted: 'text-muted-foreground/70',
+            disabled: 'text-muted-foreground/40',
         },
-        border: 'border-gray-200',
-        hover: 'hover:bg-gray-50',
-        calendar: 'shadow-xl border-gray-200 bg-white',
-        weekday: 'text-gray-600',
+        border: 'border-border/60',
+        hover: 'hover:bg-muted/50',
+        calendar: 'shadow-xl border-border/60 bg-background',
+        weekday: 'text-muted-foreground',
         day: {
-            current: 'text-gray-800',
-            nonCurrent: 'text-gray-500',
+            current: 'text-foreground',
+            nonCurrent: 'text-muted-foreground',
         },
-        header: 'text-gray-900',
-        footer: 'border-gray-200',
-        placeholder: 'placeholder:text-gray-500',
+        header: 'text-foreground',
+        footer: 'border-border/60',
+        placeholder: 'placeholder:text-muted-foreground/50',
     },
     dark: {
         bg: {
-            input: 'bg-gray-900',
-            calendar: 'bg-gray-900',
-            disabled: 'bg-gray-800',
+            input: 'bg-background',
+            calendar: 'bg-background',
+            disabled: 'bg-muted/50',
         },
         text: {
-            primary: 'text-gray-100',
-            secondary: 'text-gray-300',
-            muted: 'text-gray-400',
-            disabled: 'text-gray-600',
+            primary: 'text-foreground',
+            secondary: 'text-muted-foreground',
+            muted: 'text-muted-foreground/70',
+            disabled: 'text-muted-foreground/40',
         },
-        border: 'border-gray-700',
-        hover: 'hover:bg-gray-800',
-        calendar: 'shadow-2xl border-gray-700 bg-gray-900',
-        weekday: 'text-gray-400',
+        border: 'border-border/60',
+        hover: 'hover:bg-muted/50',
+        calendar: 'shadow-2xl border-border/60 bg-background',
+        weekday: 'text-muted-foreground',
         day: {
-            current: 'text-gray-200',
-            nonCurrent: 'text-gray-500',
+            current: 'text-foreground',
+            nonCurrent: 'text-muted-foreground',
         },
-        header: 'text-gray-100',
-        footer: 'border-gray-800',
-        placeholder: 'placeholder:text-gray-500',
+        header: 'text-foreground',
+        footer: 'border-border/60',
+        placeholder: 'placeholder:text-muted-foreground/50',
     },
 };
 
@@ -601,7 +620,7 @@ const getPopupPositionClasses = (position: string): string => {
 
 // ========== VARIANTS ==========
 const inputVariants = {
-    base: 'flex items-center gap-2 px-4 border rounded-lg transition-all duration-300 focus-within:shadow-sm',
+    base: 'flex items-center gap-2 px-4 border rounded-xl transition-all duration-300 focus-within:shadow-sm',
     sizes: {
         sm: 'h-9 text-sm px-3',
         md: 'h-11 text-base',
@@ -813,6 +832,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     dayNames = DAY_NAMES,
     todayText = 'Today',
     clearText = 'Clear',
+    size = 'md',
 }) => {
     const themeStyles = getThemeStyles(themeMode);
     const colorStyles = getColorStyles(colorScheme);
@@ -841,7 +861,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({
 
     return (
         <div className={cn(
-            "w-80 p-5 rounded-2xl shadow-xl border",
+            size === 'sm' ? "w-72 p-4" : "w-80 p-5",
+            "rounded-2xl shadow-xl border",
             themeStyles.calendar,
             colorStyles.border[themeMode]
         )}>
@@ -853,12 +874,13 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                     onClick={handlePrevMonth}
                     className={cn(
                         "rounded-xl transition-all duration-300 hover:scale-105 active:scale-95",
+                        size === 'sm' ? "h-8 w-8" : "h-9 w-9",
                         colorStyles.button[themeMode]
                     )}
                     aria-label="Previous month"
                     animationVariant="press3DSoft"
                 >
-                    <ChevronLeft className="w-5 h-5" />
+                    <ChevronLeft className={size === 'sm' ? "w-4 h-4" : "w-5 h-5"} />
                 </Button>
 
                 <div className="flex items-center gap-2">
@@ -877,12 +899,13 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                     onClick={handleNextMonth}
                     className={cn(
                         "rounded-xl transition-all duration-300 hover:scale-105 active:scale-95",
+                        size === 'sm' ? "h-8 w-8" : "h-9 w-9",
                         colorStyles.button[themeMode]
                     )}
                     aria-label="Next month"
                     animationVariant="press3DSoft"
                 >
-                    <ChevronRight className="w-5 h-5" />
+                    <ChevronRight className={size === 'sm' ? "w-4 h-4" : "w-5 h-5"} />
                 </Button>
             </div>
 
@@ -926,7 +949,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                                 onClick={() => !isDisabled && onDateSelect(date)}
                                 disabled={isDisabled}
                                 className={cn(
-                                    "h-11 w-11 rounded-xl text-sm font-medium transition-all duration-300 relative cursor-pointer",
+                                    size === 'sm' ? "h-8 w-8" : "h-11 w-11",
+                                    "rounded-xl text-sm font-medium transition-all duration-300 relative cursor-pointer",
                                     !isCurrent && "opacity-40",
                                     isDisabled && cn("cursor-not-allowed opacity-20", themeStyles.text.disabled),
 
@@ -1070,6 +1094,7 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
             readOnly = false,
             required = false,
             minDate,
+            // themeMode handled below via auto-detection
             maxDate,
             disabledDates,
             highlightDates,
@@ -1080,7 +1105,7 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
             className,
             inputClassName,
             calendarClassName,
-            themeMode = 'light',
+            themeMode: themeModeFromProps,
             colorScheme = 'blue',
             popupPosition = 'bottom-left',
             showIcon = true,
@@ -1099,6 +1124,10 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
         },
         ref
     ) => {
+        // Auto-detect Docusaurus theme when themeMode prop is not provided
+        const autoDetectedTheme = useDocusaurusTheme();
+        const themeMode: ThemeMode = themeModeFromProps ?? autoDetectedTheme;
+
         const isDate = (value: unknown): value is Date => {
             return value instanceof Date;
         };
@@ -1435,6 +1464,7 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                                 dayNames={dayNames}
                                 todayText={todayText}
                                 clearText={clearText}
+                                size={size}
                             />
                         </motion.div>
                     )}
@@ -1471,4 +1501,4 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
 
 DatePicker.displayName = 'DatePicker';
 
-export default DatePicker;
+export { DatePicker };

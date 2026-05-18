@@ -8,10 +8,14 @@ import { cn } from "../../../utils/cn";
 interface AnimatedTextareaProps {
   placeholder: string;
   variant: string;
+  className?: string;
   textareaClassName?: string;
   labelClassName?: string;
   value: string;
+  id?: string;
+  autoFocus?: boolean;
   onChange: (value: string) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   onFocus?: () => void;
   onBlur?: () => void;
   disabled?: boolean;
@@ -37,7 +41,7 @@ interface TextareaVariant {
 
 const createAdvancedParticles = (container: HTMLElement, count = 12) => {
   const particles: HTMLElement[] = [];
-  
+
   for (let i = 0; i < count; i++) {
     const particle = document.createElement("div");
     particle.className = cn(
@@ -45,39 +49,43 @@ const createAdvancedParticles = (container: HTMLElement, count = 12) => {
       "bg-gradient-to-r from-blue-400 to-cyan-400",
       "shadow-lg shadow-blue-400/50"
     );
-    
+
     const size = Math.random() * 4 + 2;
     particle.style.width = `${size}px`;
     particle.style.height = `${size}px`;
     particle.style.left = `${Math.random() * 100}%`;
     particle.style.top = `${Math.random() * 100}%`;
     particle.style.boxShadow = `0 0 ${size * 2}px rgba(59, 130, 246, 0.6)`;
-    
+
     particle.style.animation = `particleFloat ${Math.random() * 3 + 2}s ease-in-out infinite`;
     particle.style.animationDelay = `${Math.random() * 2}s`;
-    
+
     container.appendChild(particle);
     particles.push(particle);
-    
+
     setTimeout(() => {
       if (container.contains(particle)) {
         container.removeChild(particle);
       }
     }, 4000);
   }
-  
+
   return particles;
 };
 
 const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
   placeholder,
   variant,
+  className = "",
   textareaClassName = "",
   labelClassName = "",
   onChange,
+  onKeyDown,
   value,
   onFocus,
   onBlur,
+  id,
+  autoFocus,
   disabled = false,
   error,
   success,
@@ -102,21 +110,21 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
   const rotateY = useSpring(useTransform(mouseX, [-100, 100], [-2, 2]));
 
   const sizeConfig = {
-    sm: { 
-      textarea: "min-h-[80px] px-3 py-2 text-sm", 
-      label: "text-sm", 
+    sm: {
+      textarea: "min-h-[80px] px-3 py-2 text-sm",
+      label: "text-sm",
       icon: "h-4 w-4",
       minHeight: 80
     },
-    md: { 
-      textarea: "min-h-[100px] px-4 py-3 text-base", 
-      label: "text-base", 
+    md: {
+      textarea: "min-h-[100px] px-4 py-3 text-base",
+      label: "text-base",
       icon: "h-5 w-5",
       minHeight: 100
     },
-    lg: { 
-      textarea: "min-h-[120px] px-5 py-4 text-lg", 
-      label: "text-lg", 
+    lg: {
+      textarea: "min-h-[120px] px-5 py-4 text-lg",
+      label: "text-lg",
       icon: "h-6 w-6",
       minHeight: 120
     }
@@ -136,12 +144,12 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (disabled) return;
-    
+
     const newValue = e.target.value;
     if (maxLength && newValue.length > maxLength) return;
-    
+
     onChange?.(newValue);
-    
+
     if ((variant === "expandable" || variant === "smoothExpand" || autoResize) && textareaRef.current) {
       const textarea = textareaRef.current;
       textarea.style.height = 'auto';
@@ -179,7 +187,7 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
           createAdvancedParticles(particleRef.current, 8);
         }
       }, 300);
-      
+
       return () => clearInterval(interval);
     }
   }, [variant, isFocused]);
@@ -197,11 +205,12 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
       ref={containerRef}
       className={cn(
         "relative mb-6 group",
-        disabled && "opacity-60 cursor-not-allowed"
+        disabled && "opacity-60 cursor-not-allowed",
+        className
       )}
       initial="initial"
       animate={isActive ? "animate" : "initial"}
-      style={{ 
+      style={{
         perspective: 2000,
         rotateX: variant === "holographic3D" ? rotateX : undefined,
         rotateY: variant === "holographic3D" ? rotateY : undefined
@@ -283,8 +292,8 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
               config.icon
             )}
             initial={{ scale: 0.8, opacity: 0.6 }}
-            animate={{ 
-              scale: isActive ? 1 : 0.8, 
+            animate={{
+              scale: isActive ? 1 : 0.8,
               opacity: isActive ? 1 : 0.6,
             }}
             transition={{ duration: 0.3 }}
@@ -295,6 +304,8 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
 
         <motion.textarea
           ref={textareaRef}
+          id={id}
+          autoFocus={autoFocus}
           className={cn(
             "w-full bg-background/90 backdrop-blur-sm border border-border/60 rounded-xl resize-none",
             "text-foreground placeholder:text-transparent transition-all duration-300",
@@ -302,29 +313,30 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
             "disabled:cursor-not-allowed disabled:opacity-50",
             "shadow-sm hover:shadow-md focus:shadow-lg",
             "shadow-black/5 dark:shadow-white/5",
-            
+
             config.textarea,
-            
+
             Icon && "pl-10",
-            
+
             error && "border-red-500/60 focus:border-red-500 focus:ring-red-500/20",
             success && "border-emerald-500/60 focus:border-emerald-500 focus:ring-emerald-500/20",
-            
+
             "dark:bg-background/60 dark:border-border/40",
             "hover:border-border/80 dark:hover:border-border/60",
-            
+
             textareaClassName
           )}
           style={{
             height: (variant === "expandable" || variant === "smoothExpand" || autoResize) ? height : undefined,
             minHeight: `${config.minHeight}px`,
-            maxHeight: variant === "expandable" || variant === "smoothExpand" || autoResize 
-              ? `${config.minHeight * maxRows / minRows}px` 
+            maxHeight: variant === "expandable" || variant === "smoothExpand" || autoResize
+              ? `${config.minHeight * maxRows / minRows}px`
               : undefined,
           }}
           onFocus={handleFocus}
           onBlur={handleBlur}
           onChange={handleChange}
+          onKeyDown={onKeyDown}
           value={value}
           disabled={disabled}
           maxLength={maxLength}
@@ -352,7 +364,7 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
               !isNearLimit && "text-muted-foreground"
             )}
             initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ 
+            animate={{
               opacity: isActive ? 1 : 0.7,
               scale: isOverLimit ? 1.1 : 1,
             }}
@@ -405,19 +417,19 @@ const textareaVariants: Record<string, TextareaVariant> = {
     },
     label: {
       initial: { y: 0, scale: 1, color: "#6b7280" },
-      animate: { 
-        y: -32, 
-        scale: 0.85, 
+      animate: {
+        y: -32,
+        scale: 0.85,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 300, damping: 20 }
       },
     },
     textarea: {
-      initial: { 
+      initial: {
         borderColor: "var(--border)",
         boxShadow: "0 1px 3px rgba(0,0,0,0.1)"
       },
-      animate: { 
+      animate: {
         borderColor: "var(--primary)",
         boxShadow: "0 0 0 3px rgba(var(--primary), 0.1), 0 4px 12px rgba(var(--primary), 0.1)"
       },
@@ -427,18 +439,18 @@ const textareaVariants: Record<string, TextareaVariant> = {
   expandable: {
     label: {
       initial: { y: 0, color: "#6b7280" },
-      animate: { 
-        y: -32, 
+      animate: {
+        y: -32,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 300, damping: 20 }
       },
     },
     textarea: {
-      initial: { 
+      initial: {
         borderColor: "var(--border)",
         transform: "scale(1)"
       },
-      animate: { 
+      animate: {
         borderColor: "var(--primary)",
         transform: "scale(1.01)",
         boxShadow: "0 4px 12px rgba(59, 130, 246, 0.15)"
@@ -456,7 +468,7 @@ const textareaVariants: Record<string, TextareaVariant> = {
       },
     },
     textarea: {
-      initial: { 
+      initial: {
         borderColor: "var(--border)",
         boxShadow: "0 1px 3px rgba(0,0,0,0.1)"
       },
@@ -471,18 +483,18 @@ const textareaVariants: Record<string, TextareaVariant> = {
   glowBorder: {
     label: {
       initial: { y: 0, color: "#6b7280" },
-      animate: { 
-        y: -32, 
+      animate: {
+        y: -32,
         color: "var(--primary)",
         textShadow: "0 0 12px rgba(var(--primary), 0.6)"
       },
     },
     textarea: {
-      initial: { 
+      initial: {
         boxShadow: "0 0 0 0 rgba(var(--border), 0)",
         borderColor: "var(--border)"
       },
-      animate: { 
+      animate: {
         boxShadow: "0 0 0 3px rgba(var(--border), 0.3), 0 0 20px rgba(var(--border), 0.2)",
         borderColor: "var(--primary)"
       },
@@ -492,18 +504,18 @@ const textareaVariants: Record<string, TextareaVariant> = {
   characterCount: {
     label: {
       initial: { y: 0, color: "#6b7280" },
-      animate: { 
-        y: -32, 
+      animate: {
+        y: -32,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 300, damping: 20 }
       },
     },
     textarea: {
-      initial: { 
+      initial: {
         paddingBottom: "2.5rem",
         borderColor: "var(--border)"
       },
-      animate: { 
+      animate: {
         borderColor: "var(--primary)",
         boxShadow: "0 4px 12px rgba(var(--primary), 0.15)"
       },
@@ -513,18 +525,18 @@ const textareaVariants: Record<string, TextareaVariant> = {
   lineHighlight: {
     label: {
       initial: { y: 0, color: "#6b7280" },
-      animate: { 
-        y: -32, 
+      animate: {
+        y: -32,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 300, damping: 20 }
       },
     },
     textarea: {
-      initial: { 
+      initial: {
         lineHeight: "1.5",
         borderColor: "var(--border)"
       },
-      animate: { 
+      animate: {
         borderColor: "var(--primary)",
         boxShadow: "0 4px 12px rgba(var(--primary), 0.15)"
       },
@@ -534,14 +546,14 @@ const textareaVariants: Record<string, TextareaVariant> = {
   typewriterSound: {
     label: {
       initial: { y: 0, color: "#6b7280" },
-      animate: { 
-        y: -32, 
+      animate: {
+        y: -32,
         color: "#3b82f6",
         transition: { type: "spring", stiffness: 300, damping: 20 }
       },
     },
     textarea: {
-      initial: { 
+      initial: {
         borderColor: "var(--border)",
         fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace"
       },
@@ -556,18 +568,18 @@ const textareaVariants: Record<string, TextareaVariant> = {
   markdownPreview: {
     label: {
       initial: { y: 0, color: "#6b7280" },
-      animate: { 
-        y: -32, 
+      animate: {
+        y: -32,
         color: "#3b82f6",
         transition: { type: "spring", stiffness: 300, damping: 20 }
       },
     },
     textarea: {
-      initial: { 
+      initial: {
         borderRadius: "12px",
         borderColor: "var(--border)"
       },
-      animate: { 
+      animate: {
         borderRadius: "16px",
         borderColor: "var(--primary)",
         boxShadow: "0 4px 12px rgba(var(--primary), 0.15)"
@@ -578,18 +590,18 @@ const textareaVariants: Record<string, TextareaVariant> = {
   autoComplete: {
     label: {
       initial: { y: 0, color: "#6b7280" },
-      animate: { 
-        y: -32, 
+      animate: {
+        y: -32,
         color: "#3b82f6",
         transition: { type: "spring", stiffness: 300, damping: 20 }
       },
     },
     textarea: {
-      initial: { 
+      initial: {
         backgroundColor: "var(--background)",
         borderColor: "var(--border)"
       },
-      animate: { 
+      animate: {
         backgroundColor: "var(--card)",
         borderColor: "var(--primary)",
         boxShadow: "0 4px 12px rgba(var(--primary), 0.15)"
@@ -600,19 +612,19 @@ const textareaVariants: Record<string, TextareaVariant> = {
   syntaxHighlight: {
     label: {
       initial: { y: 0, color: "#6b7280" },
-      animate: { 
-        y: -32, 
+      animate: {
+        y: -32,
         color: "#3b82f6",
         transition: { type: "spring", stiffness: 300, damping: 20 }
       },
     },
     textarea: {
-      initial: { 
+      initial: {
         fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace",
         borderColor: "var(--border)",
         backgroundColor: "var(--background)"
       },
-      animate: { 
+      animate: {
         borderColor: "var(--primary)",
         boxShadow: "0 4px 12px rgba(var(--primary), 0.15)"
       },
@@ -622,14 +634,14 @@ const textareaVariants: Record<string, TextareaVariant> = {
   rippleEffect: {
     label: {
       initial: { y: 0, color: "#6b7280" },
-      animate: { 
-        y: -32, 
+      animate: {
+        y: -32,
         color: "#3b82f6",
         transition: { type: "spring", stiffness: 300, damping: 20 }
       },
     },
     textarea: {
-      initial: { 
+      initial: {
         transform: "scale(1)",
         borderColor: "var(--border)"
       },
@@ -645,8 +657,8 @@ const textareaVariants: Record<string, TextareaVariant> = {
   gradientBorder: {
     label: {
       initial: { y: 0, color: "#6b7280" },
-      animate: { 
-        y: -32, 
+      animate: {
+        y: -32,
         color: "#3b82f6",
         transition: { type: "spring", stiffness: 300, damping: 20 }
       },
@@ -675,9 +687,9 @@ const textareaVariants: Record<string, TextareaVariant> = {
 
   neonGlow: {
     label: {
-      initial: { 
-        textShadow: "0 0 0px #fff", 
-        color: "var(--primary)" 
+      initial: {
+        textShadow: "0 0 0px #fff",
+        color: "var(--primary)"
       },
       animate: {
         textShadow: "0 0 12px var(--primary), 0 0 24px var(--primary), 0 0 36px var(--primary)",
@@ -686,7 +698,7 @@ const textareaVariants: Record<string, TextareaVariant> = {
       },
     },
     textarea: {
-      initial: { 
+      initial: {
         boxShadow: "0 0 0px #fff",
         borderColor: "var(--border)"
       },
@@ -703,8 +715,8 @@ const textareaVariants: Record<string, TextareaVariant> = {
   particleField: {
     label: {
       initial: { y: 0, color: "#6b7280" },
-      animate: { 
-        y: -32, 
+      animate: {
+        y: -32,
         color: "var(--primary)",
         textShadow: "0 0 12px rgba(var(--primary), 0.4)"
       },
@@ -738,18 +750,18 @@ const textareaVariants: Record<string, TextareaVariant> = {
       },
     },
     textarea: {
-      initial: { 
+      initial: {
         scale: 1,
         borderColor: "var(--border)"
       },
-      animate: { 
+      animate: {
         scale: 1.02,
         borderColor: "var(--primary)",
         boxShadow: "0 4px 12px rgba(var(--primary), 0.15)",
-        transition: { 
-          scale: { 
-            type: "spring", 
-            stiffness: 300, 
+        transition: {
+          scale: {
+            type: "spring",
+            stiffness: 300,
             damping: 15,
             restDelta: 0.001,
             restSpeed: 10
@@ -762,14 +774,14 @@ const textareaVariants: Record<string, TextareaVariant> = {
   wave: {
     label: {
       initial: { y: 0, color: "#6b7280" },
-      animate: { 
-        y: -32, 
+      animate: {
+        y: -32,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 300, damping: 20 }
       },
     },
     textarea: {
-      initial: { 
+      initial: {
         y: 0,
         borderColor: "var(--border)"
       },
@@ -777,8 +789,8 @@ const textareaVariants: Record<string, TextareaVariant> = {
         y: [0, -3, 3, 0],
         borderColor: "var(--primary)",
         boxShadow: "0 4px 12px rgba(var(--primary), 0.15)",
-        transition: { 
-          y: { repeat: Infinity, duration: 2.5, ease: "easeInOut" } 
+        transition: {
+          y: { repeat: Infinity, duration: 2.5, ease: "easeInOut" }
         },
       },
     },
@@ -786,19 +798,19 @@ const textareaVariants: Record<string, TextareaVariant> = {
 
   spotlight: {
     label: {
-      initial: { 
-        y: 0, 
-        filter: "brightness(1)", 
-        color: "var(--primary)" 
+      initial: {
+        y: 0,
+        filter: "brightness(1)",
+        color: "var(--primary)"
       },
-      animate: { 
-        y: -32, 
-        filter: "brightness(1.3) drop-shadow(0 0 8px rgba(var(--primary), 0.5))", 
+      animate: {
+        y: -32,
+        filter: "brightness(1.3) drop-shadow(0 0 8px rgba(var(--primary), 0.5))",
         color: "var(--primary)"
       },
     },
     textarea: {
-      initial: { 
+      initial: {
         filter: "brightness(1)",
         borderColor: "var(--border)"
       },
@@ -806,7 +818,7 @@ const textareaVariants: Record<string, TextareaVariant> = {
         filter: ["brightness(1)", "brightness(1.1)", "brightness(1)"],
         borderColor: "var(--primary)",
         boxShadow: "0 4px 12px rgba(var(--primary), 0.15)",
-        transition: { 
+        transition: {
           filter: { repeat: Infinity, duration: 3, ease: "easeInOut" }
         },
       },
@@ -816,14 +828,14 @@ const textareaVariants: Record<string, TextareaVariant> = {
   liquid: {
     label: {
       initial: { y: 0, color: "#6b7280" },
-      animate: { 
-        y: -32, 
+      animate: {
+        y: -32,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 300, damping: 20 }
       },
     },
     textarea: {
-      initial: { 
+      initial: {
         borderRadius: "12px",
         borderColor: "var(--border)"
       },
@@ -831,8 +843,8 @@ const textareaVariants: Record<string, TextareaVariant> = {
         borderRadius: ["12px", "16px", "20px", "16px", "12px"],
         borderColor: "var(--primary)",
         boxShadow: "0 4px 12px rgba(var(--primary), 0.15)",
-        transition: { 
-          borderRadius: { repeat: Infinity, duration: 4, ease: "easeInOut" } 
+        transition: {
+          borderRadius: { repeat: Infinity, duration: 4, ease: "easeInOut" }
         },
       },
     },
@@ -840,26 +852,26 @@ const textareaVariants: Record<string, TextareaVariant> = {
 
   cosmic: {
     label: {
-      initial: { 
-        y: 0, 
-        rotate: 0, 
+      initial: {
+        y: 0,
+        rotate: 0,
         color: "#6b7280",
         filter: "hue-rotate(0deg)"
       },
-      animate: { 
-        y: -32, 
-        rotate: 360, 
+      animate: {
+        y: -32,
+        rotate: 360,
         color: "#8b5cf6",
         filter: "hue-rotate(360deg)",
         textShadow: "0 0 15px rgba(139, 92, 246, 0.6)",
-        transition: { 
+        transition: {
           rotate: { duration: 2, repeat: Infinity, ease: "linear" },
           filter: { duration: 3, repeat: Infinity, ease: "linear" }
         }
       },
     },
     textarea: {
-      initial: { 
+      initial: {
         scale: 1,
         borderColor: "rgba(139, 92, 246, 0.2)",
         background: "radial-gradient(ellipse at center, rgba(139, 92, 246, 0.05) 0%, transparent 50%)"
@@ -869,8 +881,8 @@ const textareaVariants: Record<string, TextareaVariant> = {
         borderColor: "rgba(139, 92, 246, 0.6)",
         background: "radial-gradient(ellipse at center, rgba(139, 92, 246, 0.1) 0%, rgba(236, 72, 153, 0.05) 50%, transparent 100%)",
         boxShadow: "0 0 25px rgba(139, 92, 246, 0.3)",
-        transition: { 
-          scale: { repeat: Infinity, duration: 3, ease: "easeInOut" } 
+        transition: {
+          scale: { repeat: Infinity, duration: 3, ease: "easeInOut" }
         },
       },
     },
@@ -878,9 +890,9 @@ const textareaVariants: Record<string, TextareaVariant> = {
 
   hologram: {
     label: {
-      initial: { 
-        y: 0, 
-        opacity: 0.8, 
+      initial: {
+        y: 0,
+        opacity: 0.8,
         color: "var(--primary)",
         filter: "blur(0px)"
       },
@@ -890,13 +902,13 @@ const textareaVariants: Record<string, TextareaVariant> = {
         color: "var(--primary)",
         filter: "blur(0px) drop-shadow(0 0 8px rgba(var(--primary), 0.5))",
         textShadow: "0 0 15px rgba(var(--primary), 0.6)",
-        transition: { 
-          opacity: { repeat: Infinity, duration: 2.5, ease: "easeInOut" } 
+        transition: {
+          opacity: { repeat: Infinity, duration: 2.5, ease: "easeInOut" }
         },
       },
     },
     textarea: {
-      initial: { 
+      initial: {
         opacity: 0.9,
         borderColor: "var(--border)"
       },
@@ -904,8 +916,8 @@ const textareaVariants: Record<string, TextareaVariant> = {
         opacity: [0.9, 1, 0.8, 1],
         borderColor: "var(--primary)",
         boxShadow: "0 0 20px rgba(var(--primary), 0.4), inset 0 0 20px rgba(var(--primary), 0.1)",
-        transition: { 
-          opacity: { repeat: Infinity, duration: 2.5, ease: "easeInOut" } 
+        transition: {
+          opacity: { repeat: Infinity, duration: 2.5, ease: "easeInOut" }
         },
       },
     },

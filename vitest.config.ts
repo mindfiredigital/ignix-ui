@@ -6,6 +6,12 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './setupTests.ts',
+    reporters: ['default', ['vitest-sonar-reporter', { outputFile: 'test-report.xml' }]],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'lcov', 'json-summary'],
+      reportsDirectory: './coverage',
+    },
   },
   resolve: {
     alias: {

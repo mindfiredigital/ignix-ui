@@ -8,10 +8,14 @@ import { cn } from "../../../utils/cn";
 interface AnimatedTextareaProps {
   placeholder: string;
   variant: string;
+  className?: string;
   textareaClassName?: string;
   labelClassName?: string;
   value: string;
+  id?: string;
+  autoFocus?: boolean;
   onChange: (value: string) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   onFocus?: () => void;
   onBlur?: () => void;
   disabled?: boolean;
@@ -72,12 +76,16 @@ const createAdvancedParticles = (container: HTMLElement, count = 12) => {
 const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
   placeholder,
   variant,
+  className = "",
   textareaClassName = "",
   labelClassName = "",
   onChange,
+  onKeyDown,
   value,
   onFocus,
   onBlur,
+  id,
+  autoFocus,
   disabled = false,
   error,
   success,
@@ -197,7 +205,8 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
       ref={containerRef}
       className={cn(
         "relative mb-6 group",
-        disabled && "opacity-60 cursor-not-allowed"
+        disabled && "opacity-60 cursor-not-allowed",
+        className
       )}
       initial="initial"
       animate={isActive ? "animate" : "initial"}
@@ -295,6 +304,8 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
 
         <motion.textarea
           ref={textareaRef}
+          id={id}
+          autoFocus={autoFocus}
           className={cn(
             "w-full bg-background/90 backdrop-blur-sm border border-border/60 rounded-xl resize-none",
             "text-foreground placeholder:text-transparent transition-all duration-300",
@@ -325,6 +336,7 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
           onFocus={handleFocus}
           onBlur={handleBlur}
           onChange={handleChange}
+          onKeyDown={onKeyDown}
           value={value}
           disabled={disabled}
           maxLength={maxLength}

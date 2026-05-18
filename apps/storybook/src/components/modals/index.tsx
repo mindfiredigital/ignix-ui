@@ -68,7 +68,7 @@ export interface ModalProps {
   /** Whether pressing Escape closes the modal */
   closeOnEscape?: boolean;
   /** Size variant of the modal */
-  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
   /** Optional icon rendered to the left of the title in the header. */
   headerIcon?: React.ReactNode;
   /** Optional className for the header icon wrapper. */
@@ -164,6 +164,7 @@ const sizeConfig: Record<NonNullable<ModalProps['size']>, string> = {
   md: 'max-w-md',
   lg: 'max-w-lg',
   xl: 'max-w-xl',
+  '2xl': 'max-w-2xl',
   full: 'max-w-full',
 };
 
@@ -468,7 +469,7 @@ export const ModalHeader = React.memo<ModalHeaderProps>(
           {title && (
             <motion.h2
               id="modal-title"
-              className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-black tracking-tight"
+              className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent tracking-tight"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, duration: 0.3 }}
@@ -797,8 +798,8 @@ const ModalComponent = React.memo(
 // can reuse it without needing a separate export.
 ModalComponent.colorSchemeConfig = colorSchemeConfig;
 
-export const Modal = ModalComponent;
+const Modal = ModalComponent;
 
 Modal.displayName = 'Modal';
 
-export default Modal;
+export { Modal };
