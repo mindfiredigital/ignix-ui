@@ -6,8 +6,11 @@ import { motion, type Variants, useMotionValue, useSpring, useTransform } from "
 import { cn } from "../../../utils/cn";
 
 interface AnimatedTextareaProps {
+  id?: string;
+  className?: string;
   placeholder: string;
   variant: string;
+
   textareaClassName?: string;
   labelClassName?: string;
   value: string;
@@ -70,8 +73,11 @@ const createAdvancedParticles = (container: HTMLElement, count = 12) => {
 };
 
 const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
+  id,
+  className,
   placeholder,
   variant,
+
   textareaClassName = "",
   labelClassName = "",
   onChange,
@@ -197,8 +203,10 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
       ref={containerRef}
       className={cn(
         "relative mb-6 group",
-        disabled && "opacity-60 cursor-not-allowed"
+        disabled && "opacity-60 cursor-not-allowed",
+        className
       )}
+
       initial="initial"
       animate={isActive ? "animate" : "initial"}
       style={{ 
@@ -315,7 +323,9 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
             
             textareaClassName
           )}
+          id={id}
           style={{
+
             height: (variant === "expandable" || variant === "smoothExpand" || autoResize) ? height : undefined,
             minHeight: `${config.minHeight}px`,
             maxHeight: variant === "expandable" || variant === "smoothExpand" || autoResize 

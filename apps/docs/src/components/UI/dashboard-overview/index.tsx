@@ -18,8 +18,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../card";
-import DatePicker from "../date-picker";
-import type { DateRange } from "../date-picker";
+import { DatePicker, type DateRange } from "../date-picker";
 import { Pagination } from "../table/pagination";
 
 /**

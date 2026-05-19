@@ -350,6 +350,16 @@ const SignIn: React.FC<SignInProps> = ({
     const [showPassword, setShowPassword] = React.useState(false);
     const [errors, setErrors] = React.useState<Record<string, string>>({});
     const [socialLoading, setSocialLoading] = React.useState<SocialProvider | null>(null);
+    const socialTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    // Cleanup timeout on unmount
+    React.useEffect(() => {
+        return () => {
+            if (socialTimeoutRef.current) {
+                clearTimeout(socialTimeoutRef.current);
+            }
+        };
+    }, []);
 
     const validateForm = (): boolean => {
         const newErrors: Record<string, string> = {};
@@ -412,7 +422,7 @@ const SignIn: React.FC<SignInProps> = ({
         } catch (error) {
             alert(`Social sign-in failed for ${provider}: ${error}`);
         } finally {
-            setTimeout(() => setSocialLoading(null), 500);
+            socialTimeoutRef.current = setTimeout(() => setSocialLoading(null), 500);
         }
     };
 

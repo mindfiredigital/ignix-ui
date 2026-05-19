@@ -10,11 +10,15 @@ import { cn } from "../../../utils/cn";
 interface AnimatedInputProps {
   placeholder: string;
   variant: string;
+  className?: string;
   inputClassName?: string;
   labelClassName?: string;
   value: string;
   type?: string;
+  id?: string;
+  autoFocus?: boolean;
   onChange?: (value: string) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   onFocus?: () => void;
   onBlur?: () => void;
   disabled?: boolean;
@@ -53,7 +57,7 @@ const borderBeamVariants = {
       },
     },
   },
-};
+} as const;
 
 // Enhanced particle creation with better physics
 const createEnhancedParticles = (container: HTMLElement, count = 8) => {
@@ -94,20 +98,24 @@ const createEnhancedParticles = (container: HTMLElement, count = 8) => {
 export const AnimatedInput: React.FC<AnimatedInputProps> = ({
   placeholder,
   variant,
+  className = "",
   inputClassName = "",
   labelClassName = "",
   value,
   onChange,
+  onKeyDown,
+  onFocus,
+  onBlur,
   type = "text",
+  id,
+  autoFocus,
   disabled = false,
-  error,
-  success,
-  successMessage,
+  error = "",
+  success = false,
+  successMessage = "",
   icon: Icon,
   showPasswordToggle = false,
   size = "md",
-  onFocus,
-  onBlur,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -180,7 +188,8 @@ export const AnimatedInput: React.FC<AnimatedInputProps> = ({
       ref={containerRef}
       className={cn(
         "relative mb-6 group",
-        disabled && "opacity-60 cursor-not-allowed"
+        disabled && "opacity-60 cursor-not-allowed",
+        className
       )}
       initial="initial"
       animate={isActive ? "animate" : "initial"}
@@ -199,7 +208,8 @@ export const AnimatedInput: React.FC<AnimatedInputProps> = ({
       {/* Enhanced Label */}
       <motion.label
         className={cn(
-          "absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors duration-300 z-10 origin-left",
+          "absolute top-1/2 -translate-y-1/2 pointer-events-none transition-colors duration-300 z-10 origin-left",
+          Icon ? "left-9" : "left-4",
           "text-muted-foreground group-focus-within:text-primary",
           error && "text-red-500",
           success && "text-emerald-500",
@@ -235,6 +245,8 @@ export const AnimatedInput: React.FC<AnimatedInputProps> = ({
         {/* Enhanced Input Field */}
         <motion.input
           ref={inputRef}
+          id={id}
+          autoFocus={autoFocus}
           type={inputType}
           className={cn(
             // Base enhanced styles
@@ -249,7 +261,7 @@ export const AnimatedInput: React.FC<AnimatedInputProps> = ({
             sizeConfig[size].input,
 
             // Icon padding
-            Icon && "pl-10",
+            Icon && "pl-9",
             (showPasswordToggle || error || success) && "pr-10",
 
             // Status variants
@@ -261,6 +273,7 @@ export const AnimatedInput: React.FC<AnimatedInputProps> = ({
           onFocus={handleFocus}
           onBlur={handleBlur}
           onChange={handleChange}
+          onKeyDown={onKeyDown}
           value={value}
           disabled={disabled}
           variants={variants.input}
@@ -978,27 +991,27 @@ const inputVariants: Record<string, InputVariant> = {
 
   glitch: {
     label: {
-      initial: { skew: 0, y: 0, color: "var(--primary)" },
+      initial: { skewX: 0, y: 0, color: "var(--primary)" },
       animate: {
-        skew: [-8, 8, -4, 4, 0],
+        skewX: [-8, 8, -4, 4, 0],
         y: -32,
         scale: 0.85,
         color: "var(--primary)",
         textShadow: "2px 0 #ff0000, -2px 0 #00ff00",
         transition: {
-          skew: { repeat: Infinity, duration: 0.6, repeatDelay: 2 },
+          skewX: { repeat: Infinity, duration: 0.6, repeatDelay: 2 },
           textShadow: { repeat: Infinity, duration: 0.1, repeatDelay: 2 }
         },
       },
     },
     input: {
-      initial: { skew: 0 },
+      initial: { skewX: 0 },
       animate: {
-        skew: [0, -3, 3, -2, 2, 0],
+        skewX: [0, -3, 3, -2, 2, 0],
         borderColor: "var(--primary)",
         boxShadow: "2px 0 8px var(--primary), -2px 0 8px var(--primary)",
         transition: {
-          skew: { repeat: Infinity, duration: 0.6, repeatDelay: 2 }
+          skewX: { repeat: Infinity, duration: 0.6, repeatDelay: 2 }
         },
       },
     },

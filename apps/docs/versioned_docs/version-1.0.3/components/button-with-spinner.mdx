@@ -30,7 +30,7 @@ The ButtonWithSpinner component is a specialized button that displays a loading 
     ignix add component button-with-spinner
     ```
   </TabItem>
-  <TabItem value="manual" label="Manual" className="max-h-[500px] overflow-y-auto">
+      <TabItem value="manual" label="Manual" className="max-h-[500px] overflow-y-auto">
 
     ```tsx
 'use client';
@@ -70,8 +70,8 @@ export const ButtonWithSpinner = React.forwardRef<
     const getSpinnerColor = (): string => {
       if (spinnerColor) return spinnerColor;
       
-      const darkBackgroundVariants = ['default', 'primary', 'secondary', 'success', 'warning', 'danger', 'pill', 'neon'];
-      const lightBackgroundVariants = ['outline', 'ghost', 'subtle', 'elevated', 'glass'];
+      const darkBackgroundVariants = ['default', 'success', 'warning', 'danger', 'pill', 'neon'];
+      const lightBackgroundVariants = ['primary', 'secondary', 'outline', 'ghost', 'subtle', 'elevated', 'glass'];
       
       if (variant && darkBackgroundVariants.includes(variant)) {
         if (spinnerVariant === 'bars' || spinnerVariant === 'dots-bounce') {
@@ -85,6 +85,7 @@ export const ButtonWithSpinner = React.forwardRef<
         return 'border-primary';
       }
       
+      // Default fallback - assume dark background
       if (spinnerVariant === 'bars' || spinnerVariant === 'dots-bounce') {
         return 'bg-white';
       }
@@ -99,7 +100,7 @@ export const ButtonWithSpinner = React.forwardRef<
         variant={variant}
         {...props}
       >
-        {isLoading && (
+        {isLoading && spinnerVariant !== 'dots-bounce' && (
           <Spinner
             size={spinnerSize}
             variant={spinnerVariant}
@@ -108,6 +109,14 @@ export const ButtonWithSpinner = React.forwardRef<
           />
         )}
         <span>{isLoading ? loadingText : children}</span>
+        {isLoading && spinnerVariant === 'dots-bounce' && (
+          <Spinner
+            size={spinnerSize}
+            variant={spinnerVariant}
+            color={getSpinnerColor()}
+            className="ml-2"
+          />
+        )}
       </Button>
     );
   }

@@ -1789,6 +1789,29 @@
           "type": "template"
         }
       }
+    },
+    "kanban-board-page": {
+      "name": "kanban-board-page",
+      "description": "A fully interactive Kanban board with drag-and-drop columns, card management (create, edit, delete), priority filtering, full-text search, labels with color picker, assignee chips, due-date tracking, file attachments, and toast notifications.",
+      "dependencies": [
+        "@radix-ui/react-icons"
+      ],
+      "componentDependencies": [
+        "button",
+        "input",
+        "textarea",
+        "modals",
+        "date-picker",
+        "dropdown",
+        "file-upload",
+        "toast"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/kanban-board-page/index.tsx",
+          "type": "template"
+        }
+      }
     }
   }
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import DatePicker from '@site/src/components/UI/date-picker';
+import { DatePicker, type DateRange } from '@site/src/components/UI/date-picker';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import CodeBlock from '@theme/CodeBlock';
@@ -68,12 +68,12 @@ export const BasicDatePickerDemo = () => {
     const { colorMode } = useColorMode();
     const [date, setDate] = useState<Date | null>(null);
     // Handler for single date picker
-    const handleSingleDateChange = (date: Date | null): void => {
-        setDate(date);
+    const handleSingleDateChange = (date: Date | DateRange | null): void => {
+        setDate(date as Date | null);
     };
 
     const codeString = `
-import DatePicker from '@ignix-ui/datepicker';
+import { DatePicker } from '@ignix-ui/datepicker';
 
 function MyComponent() {
   const [date, setDate] = useState<Date | null>(null);
@@ -133,12 +133,12 @@ export const RangeDatePickerDemo = () => {
     });
 
     // Handler for range date picker
-    const handleRangeDateChange = (range: { start: Date | null; end: Date | null }): void => {
-        setRange(range);
+    const handleRangeDateChange = (range: Date | DateRange | null): void => {
+        setRange(range as DateRange);
     };
 
     const codeString = `
-import DatePicker from '@ignix-ui/datepicker';
+import { DatePicker } from '@ignix-ui/datepicker';
 
 function MyComponent() {
   const [range, setRange] = useState({ start: null, end: null });
@@ -228,7 +228,7 @@ export const SizeVariantsDemo = () => {
                         size="sm"
                         placeholder="Small date picker"
                         value={dates.sm || undefined}
-                        onChange={(date) => setDates(prev => ({ ...prev, sm: date as Date }))}
+                        onChange={(date) => setDates(prev => ({ ...prev, sm: date as Date | null }))}
                     />
                 </div>
                 <div className="space-y-2">
@@ -238,7 +238,7 @@ export const SizeVariantsDemo = () => {
                         size="md"
                         placeholder="Medium date picker"
                         value={dates.md || undefined}
-                        onChange={(date) => setDates(prev => ({ ...prev, md: date as Date }))}
+                        onChange={(date) => setDates(prev => ({ ...prev, md: date as Date | null }))}
                     />
                 </div>
                 <div className="space-y-2">
@@ -248,7 +248,7 @@ export const SizeVariantsDemo = () => {
                         size="lg"
                         placeholder="Large date picker"
                         value={dates.lg || undefined}
-                        onChange={(date) => setDates(prev => ({ ...prev, lg: date as Date }))}
+                        onChange={(date) => setDates(prev => ({ ...prev, lg: date as Date | null }))}
                     />
                 </div>
                 <div className="space-y-2">
@@ -258,7 +258,7 @@ export const SizeVariantsDemo = () => {
                         size="xl"
                         placeholder="Extra large date picker"
                         value={dates.xl || undefined}
-                        onChange={(date) => setDates(prev => ({ ...prev, xl: date as Date }))}
+                        onChange={(date) => setDates(prev => ({ ...prev, xl: date as Date | null }))}
                     />
                 </div>
             </div>
@@ -356,7 +356,7 @@ export const PopupPositionsDemo = () => {
                                 value={selectedPositions[position.value] || undefined}
                                 onChange={(date) => setSelectedPositions(prev => ({
                                     ...prev,
-                                    [position.value]: date as Date
+                                    [position.value]: date as Date | null
                                 }))}
                             />
                         </div>
@@ -401,10 +401,11 @@ export const HotelBookingDemo = () => {
     }).filter(Boolean) as Date[];
 
     // Handler for booking date range change
-    const handleBookingChange = (newRange: { start: Date | null; end: Date | null }) => {
+    const handleBookingChange = (newRange: Date | DateRange | null) => {
+        const range = newRange as DateRange;
         setBooking({
-            start: newRange.start,
-            end: newRange.end
+            start: range.start,
+            end: range.end
         });
     };
 
@@ -549,7 +550,7 @@ export const ValidationExamplesDemo = () => {
                         required
                         placeholder="Select a date (required)"
                         value={dates.required || undefined}
-                        onChange={(date) => setDates(prev => ({ ...prev, required: date as Date }))}
+                        onChange={(date) => setDates(prev => ({ ...prev, required: date as Date | null }))}
                         helperText="This field must be filled"
                         colorScheme="blue"
                     />
@@ -563,7 +564,7 @@ export const ValidationExamplesDemo = () => {
                         maxDate={nextWeek}
                         placeholder={`Select date within next week`}
                         value={dates.minMax || undefined}
-                        onChange={(date) => setDates(prev => ({ ...prev, minMax: date as Date }))}
+                        onChange={(date) => setDates(prev => ({ ...prev, minMax: date as Date | null }))}
                         helperText={`Dates between ${today.toLocaleDateString()} and ${nextWeek.toLocaleDateString()}`}
                         colorScheme="green"
                     />
@@ -576,7 +577,7 @@ export const ValidationExamplesDemo = () => {
                         disabledDates={disabledDates}
                         placeholder="Select date (some dates disabled)"
                         value={dates.disabled || undefined}
-                        onChange={(date) => setDates(prev => ({ ...prev, disabled: date as Date }))}
+                        onChange={(date) => setDates(prev => ({ ...prev, disabled: date as Date | null }))}
                         helperText="2nd and 4th from today are unavailable"
                         colorScheme="orange"
                     />
@@ -590,7 +591,7 @@ export const ValidationExamplesDemo = () => {
                         errorMessage="Invalid date selected"
                         placeholder="This field has an error"
                         value={dates.error || undefined}
-                        onChange={(date) => setDates(prev => ({ ...prev, error: date as Date }))}
+                        onChange={(date) => setDates(prev => ({ ...prev, error: date as Date | null }))}
                         helperText="Showing error state"
                         colorScheme="rose"
                     />
@@ -819,7 +820,7 @@ export const ControlledDatePickerDemo = () => {
     };
 
     const singleCodeString = `import { useState } from 'react';
-import DatePicker from '@ignix-ui/datepicker';
+import { DatePicker } from '@ignix-ui/datepicker';
 
 function SingleDateExample() {
   const [date, setDate] = useState<Date | null>(null);
@@ -841,7 +842,7 @@ function SingleDateExample() {
 
 
     const rangeCodeString = `import { useState } from 'react';
-import DatePicker from '@ignix-ui/datepicker';
+import { DatePicker } from '@ignix-ui/datepicker';
 
 function RangeDateExample() {
   const [range, setRange] = useState({ 
