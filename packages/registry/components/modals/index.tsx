@@ -68,7 +68,7 @@ export interface ModalProps {
   /** Whether pressing Escape closes the modal */
   closeOnEscape?: boolean;
   /** Size variant of the modal */
-  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
   /** Optional icon rendered to the left of the title in the header. */
   headerIcon?: React.ReactNode;
   /** Optional className for the header icon wrapper. */
@@ -164,6 +164,7 @@ const sizeConfig: Record<NonNullable<ModalProps['size']>, string> = {
   md: 'max-w-md',
   lg: 'max-w-lg',
   xl: 'max-w-xl',
+  '2xl': 'max-w-2xl',
   full: 'max-w-full',
 };
 
@@ -402,7 +403,7 @@ ModalOverlay.displayName = 'ModalOverlay';
  * Handles the main dialog panel, size variants and entrance animation.
  */
 const defaultContentBase =
-  'relative bg-background/95 backdrop-blur-xl rounded-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15),0_0_0_1px_rgba(0,0,0,0.05)] flex flex-col max-h-[90vh] w-full before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:via-transparent before:pointer-events-none after:absolute after:inset-0 after:rounded-2xl after:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)] after:pointer-events-none dark:after:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.03)] border';
+  'relative bg-background/95 backdrop-blur-xl rounded-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15),0_0_0_1px_rgba(0,0,0,0.05)] flex flex-col max-h-[90vh] w-full overflow-hidden before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:via-transparent before:pointer-events-none after:absolute after:inset-0 after:rounded-2xl after:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)] after:pointer-events-none dark:after:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.03)] border';
 
 export const ModalContent = React.memo<ModalContentProps>(
   ({ size = 'md', className, children, onClick, ...props }) => {
@@ -468,7 +469,7 @@ export const ModalHeader = React.memo<ModalHeaderProps>(
           {title && (
             <motion.h2
               id="modal-title"
-              className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-black tracking-tight"
+              className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent tracking-tight"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, duration: 0.3 }}
@@ -596,11 +597,11 @@ ModalFooter.displayName = 'ModalFooter';
 
 /**
  * Modal component with overlay, header, body, footer, and action buttons
- *
+ * 
  * @example
  * ```tsx
  * const [isOpen, setIsOpen] = useState(false);
- *
+ * 
  * <Modal
  *   isOpen={isOpen}
  *   onClose={() => setIsOpen(false)}
@@ -655,7 +656,7 @@ const ModalComponent = React.memo(
     headerClassName,
     bodyClassName,
     footerClassName,
-  }: ModalProps) => {
+  }) => {
     const schemeClasses = React.useMemo(
       () => colorSchemeConfig[colorScheme],
       [colorScheme]
@@ -797,9 +798,8 @@ const ModalComponent = React.memo(
 // can reuse it without needing a separate export.
 ModalComponent.colorSchemeConfig = colorSchemeConfig;
 
-export const Modal = ModalComponent;
+const Modal = ModalComponent;
 
 Modal.displayName = 'Modal';
 
-export default Modal;
-
+export { Modal };

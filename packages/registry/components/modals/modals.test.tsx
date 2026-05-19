@@ -17,7 +17,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import '@testing-library/jest-dom';
 
-import Modal, { Modal as NamedModal, type ModalProps } from './index';
+import { Modal, Modal as NamedModal, type ModalProps } from './index';
 
 // Mock framer-motion to simplify testing by removing animations
 vi.mock('framer-motion', () => ({

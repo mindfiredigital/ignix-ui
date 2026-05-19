@@ -128,6 +128,7 @@ export interface SignUpProps {
         };
     };
 
+
     /** CAPTCHA configuration */
     captchaConfig?: {
         /** Whether CAPTCHA is enabled */
@@ -401,7 +402,7 @@ const checkPasswordStrength = (
     ];
 
     // Filter checks based on config
-    const filteredChecks = checks.filter((check, index) => {
+    const filteredChecks = checks.filter((_check, index) => {
         if (index === 0) return true; // Always check length
         if (index === 1 && config?.requireUppercase === false) return false;
         if (index === 2 && config?.requireLowercase === false) return false;
@@ -478,6 +479,16 @@ const SignUp: React.FC<SignUpProps> = ({
     // const [touched, setTouched] = React.useState<Record<string, boolean>>({});
     const [socialLoading, setSocialLoading] = React.useState<SocialProvider | null>(null);
     const [captchaVerified, setCaptchaVerified] = React.useState(false);
+    const socialTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    // Cleanup timeout on unmount
+    React.useEffect(() => {
+        return () => {
+            if (socialTimeoutRef.current) {
+                clearTimeout(socialTimeoutRef.current);
+            }
+        };
+    }, []);
 
     // Password strength state
     const passwordStrengthResult = React.useMemo(() =>
@@ -553,7 +564,7 @@ const SignUp: React.FC<SignUpProps> = ({
 
         // Mark all fields as touched for validation
         // const allTouched: Record<string, boolean> = {};
-        // Object.keys(formData).forEach(key => {
+        // bOject.keys(formData).forEach(key => {
         //     allTouched[key] = true;
         // });
         // setTouched(allTouched);
@@ -593,12 +604,11 @@ const SignUp: React.FC<SignUpProps> = ({
                     break;
                 default:
                     alert(`Unsupported social provider: ${provider}`);
-
             }
         } catch (error) {
             alert(`Social sign-up failed for ${provider}: ${error}`);
         } finally {
-            setTimeout(() => setSocialLoading(null), 500);
+            socialTimeoutRef.current = setTimeout(() => setSocialLoading(null), 500);
         }
     };
 

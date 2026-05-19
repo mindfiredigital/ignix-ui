@@ -62,6 +62,26 @@
     --dock-icon-hover: #475569;
     --dock-separator: #94a3b8;
     --dock-outlined-dot: #0f172a;
+    
+    /* Kanban Priorities */
+    --priority-urgent: #f43f5e;
+    --priority-high: #f97316;
+    --priority-medium: #0ea5e9;
+    --priority-low: #64748b;
+
+    /* Kanban Labels */
+    --label-red: #ef4444;
+    --label-rose: #f43f5e;
+    --label-amber: #f59e0b;
+    --label-emerald: #10b981;
+    --label-sky: #0ea5e9;
+    --label-violet: #8b5cf6;
+    --label-slate: #64748b;
+
+    /* Kanban Board */
+    --board-bg: linear-gradient(to bottom right, #f8fafc, #f1f5f9);
+    --column-bg: rgba(241, 245, 249, 0.5);
+    --brand-gradient: linear-gradient(135deg, #3b82f6, #8b5cf6);
   }
 
   .dark {
@@ -123,6 +143,11 @@
     --dock-icon-hover: #334155;
     --dock-separator: #475569;
     --dock-outlined-dot: #f1f5f9;
+
+    /* Kanban Board - Dark Mode */
+    --board-bg: linear-gradient(to bottom right, #0f172a, #020617);
+    --column-bg: rgba(30, 41, 59, 0.4);
+    --brand-gradient: linear-gradient(135deg, #60a5fa, #a78bfa);
   }
 }
 
@@ -175,6 +200,26 @@
   --color-dock-icon-hover: var(--dock-icon-hover);
   --color-dock-separator: var(--dock-separator);
   --color-dock-outlined-dot: var(--dock-outlined-dot);
+
+  /* Kanban Priorities */
+  --color-priority-urgent: var(--priority-urgent);
+  --color-priority-high: var(--priority-high);
+  --color-priority-medium: var(--priority-medium);
+  --color-priority-low: var(--priority-low);
+
+  /* Kanban Labels */
+  --color-label-red: var(--label-red);
+  --color-label-rose: var(--label-rose);
+  --color-label-amber: var(--label-amber);
+  --color-label-emerald: var(--label-emerald);
+  --color-label-sky: var(--label-sky);
+  --color-label-violet: var(--label-violet);
+  --color-label-slate: var(--label-slate);
+
+  /* Kanban Board */
+  --color-gradient-board: var(--board-bg);
+  --color-board-column: var(--column-bg);
+  --color-gradient-brand: var(--brand-gradient);
 }
 
 /* scrollbar css - three column layout */

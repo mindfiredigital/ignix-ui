@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../../../../../utils/cn";
 import { Typography } from "../../../../components/typography";
-import DatePicker from "../../../../components/date-picker";
+import { DatePicker } from "../../../../components/date-picker";
 import { Checkbox } from "../../../../components/checkbox";
 
 /* ============================================

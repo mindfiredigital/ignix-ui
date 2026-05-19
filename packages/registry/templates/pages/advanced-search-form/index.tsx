@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../../../utils/cn";
 import { Typography } from "@ignix-ui/typography";
-import DatePicker from "@ignix-ui/date-picker";
+import { DatePicker } from "@ignix-ui/date-picker";
 import { Checkbox } from "@ignix-ui/checkbox";
 
 /* ============================================

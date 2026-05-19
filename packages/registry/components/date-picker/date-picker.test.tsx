@@ -4,7 +4,7 @@ import { render, screen, waitFor, } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import '@testing-library/jest-dom';
-import DatePicker from './';
+import { DatePicker } from './';
 
 // Mock for framer-motion
 vi.mock('framer-motion', () => ({

@@ -85,3 +85,9 @@ packages/*/dist/
 
 # Vercel
 .vercel
+
+#sonarqube
+sonar-project.properties
+sonar-report.html
+test-report.xml
+.scannerwork
