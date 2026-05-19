@@ -2,6 +2,7 @@
 sidebar_position: 4
 title: Button
 description: A customizable button component with variants, sizes, and animations. Includes Button, Button With Spinner, Button With Icon, and Button Group variants.
+toc_max_heading_level: 4
 ---
 
 import Tabs from '@theme/Tabs';
@@ -26,12 +27,12 @@ This documentation covers four types of buttons: the base Button, Button With Sp
 
 <Tabs groupId="button-variant">
   <TabItem value="button" label="Basic Button" default>
-
+### <span className="toc-only">Basic Button</span>
 Buttons allow users to take actions with a single tap. They can be customized with different styles, sizes, and animations.
 
 <ButtonDemo />
 
-## Installation
+#### Installation
 
 <Tabs>
   <TabItem value="cli" label="CLI" default>
@@ -423,7 +424,7 @@ export { Button, buttonVariants };
   </TabItem>
 </Tabs>
 
-## Usage
+#### Usage
 
 Import the component:
 
@@ -431,7 +432,7 @@ Import the component:
 import { Button } from './components/ui';
 ```
 
-### Basic Usage
+#### Basic Usage
 
 ```tsx
 
@@ -442,7 +443,7 @@ function BasicButton() {
 }
 ```
 
-## Props
+#### Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
@@ -460,13 +461,13 @@ function BasicButton() {
 
   <TabItem value="button-with-spinner" label="Button With Spinner">
     
-
+### <span className="toc-only">Button With Spinner</span>
 The ButtonWithSpinner component is a specialized button that displays a loading spinner and changes its text during loading states. It automatically disables the button during loading and intelligently adjusts spinner colors based on the button variant for optimal visibility.
 <br/>
 
 <ButtonWithSpinnerDemo />
 
-## Installation
+#### Installation
 
 <Tabs>
   <TabItem value="cli" label="CLI" default>
@@ -562,7 +563,7 @@ ButtonWithSpinner.displayName = 'ButtonWithSpinner';
   </TabItem>
 </Tabs>
 
-## Usage
+#### Usage
 
 Import the component:
 
@@ -570,7 +571,7 @@ Import the component:
 import { ButtonWithSpinner } from '@site/src/components/UI/button-with-spinner';
 ```
 
-### Basic Usage
+##### Basic Usage
 
 ```tsx
 function BasicButtonWithSpinner() {
@@ -597,7 +598,7 @@ function BasicButtonWithSpinner() {
 }
 ```
 
-### With Custom Loading Text
+##### With Custom Loading Text
 
 ```tsx
 function SaveButton() {
@@ -624,7 +625,7 @@ function SaveButton() {
 }
 ```
 
-### With Different Spinner Variants
+##### With Different Spinner Variants
 
 ```tsx
 function CustomSpinnerButton() {
@@ -658,7 +659,7 @@ function CustomSpinnerButton() {
 }
 ```
 
-## Props
+#### Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
@@ -672,8 +673,8 @@ function CustomSpinnerButton() {
 | `children` | `React.ReactNode` | - | The button text/content to display when not loading. |
 
 
-
-### Example of Form Submission
+#### Examples
+##### Example of Form Submission
 
 ```tsx
 function FormExample() {
@@ -707,7 +708,7 @@ function FormExample() {
 }
 ```
 
-### Example of API Call
+##### Example of API Call
 
 ```tsx
 function ApiCallExample() {
@@ -739,13 +740,13 @@ function ApiCallExample() {
   </TabItem>
   <TabItem value="button-with-icon" label="Button With Icon">
     
-
+### <span className="toc-only">Button With Icon</span>
 The **ButtonWithIcon** component extends the base Button component with comprehensive icon support. It allows you to position icons on the left or right of text, create icon-only buttons, and display loading spinners. This component is perfect for creating intuitive and visually appealing user interfaces.
 
 <br/>
 <ButtonWithIconDemo />
 
-## Installation
+#### Installation
 
 <Tabs>
   <TabItem value="cli" label="CLI" default>
@@ -909,7 +910,7 @@ ButtonWithIcon.displayName = 'ButtonWithIcon';
   </TabItem>
 </Tabs>
 
-## Usage
+#### Usage
 
 Import the component:
 
@@ -917,7 +918,7 @@ Import the component:
 import { ButtonWithIcon } from './components/ui';
 ```
 
-### Basic Usage
+##### Basic Usage
 
 ```tsx
 import { ButtonWithIcon } from './components/ui';
@@ -932,7 +933,7 @@ function BasicButtonWithIcon() {
 }
 ```
 
-## Props
+#### Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
@@ -947,9 +948,9 @@ function BasicButtonWithIcon() {
 
 All other props from the base `Button` component are also supported.
 
-## Examples
+#### Examples
 
-### Icon Left (Default)
+##### Icon Left (Default)
 
 The icon appears before the text. This is the most common pattern for buttons with icons.
 
@@ -959,7 +960,7 @@ The icon appears before the text. This is the most common pattern for buttons wi
 </ButtonWithIcon>
 ```
 
-### Icon Right
+##### Icon Right
 
 The icon appears after the text. Useful for actions like "Next" or "Continue" where the icon indicates direction.
 
@@ -969,7 +970,7 @@ The icon appears after the text. Useful for actions like "Next" or "Continue" wh
 </ButtonWithIcon>
 ```
 
-### Icon Only
+##### Icon Only
 
 Icon-only buttons are compact and space-efficient. Perfect for toolbars, action menus, or when space is limited.
 
@@ -977,7 +978,7 @@ Icon-only buttons are compact and space-efficient. Perfect for toolbars, action 
 <ButtonWithIcon icon={<Settings />} iconPosition="only" />
 ```
 
-### Loading State
+##### Loading State
 
 The loading state automatically disables the button and shows a spinner. Useful for async operations like form submissions or API calls.
 
@@ -987,7 +988,7 @@ The loading state automatically disables the button and shows a spinner. Useful 
 </ButtonWithIcon>
 ```
 
-### Form Submission with Loading
+##### Form Submission with Loading
 
 ```tsx
 import { useState } from 'react';
@@ -1019,12 +1020,12 @@ function FormExample() {
 
   </TabItem>
   <TabItem value="button-group" label="Button Group">
-    
+### <span className="toc-only">Button Group</span>    
 The **ButtonGroup** component groups multiple buttons together with consistent spacing, active state highlighting, and responsive wrapping capabilities. It's perfect for creating filter buttons, toggle groups, size selectors, and other scenarios where you need related buttons grouped together.
 <br/>
 <ButtonGroupDemo />
 
-## Installation
+#### Installation
 
 <Tabs>
   <TabItem value="cli" label="CLI" default>
@@ -1196,7 +1197,7 @@ ButtonGroup.displayName = 'ButtonGroup';
   </TabItem>
 </Tabs>
 
-## Usage
+#### Usage
 
 Import the component:
 
@@ -1204,7 +1205,7 @@ Import the component:
 import { ButtonGroup } from './components/ui';
 ```
 
-### Basic Usage
+##### Basic Usage
 
 ```tsx
 import { ButtonGroup } from './components/ui';
@@ -1227,7 +1228,7 @@ function BasicButtonGroup() {
 }
 ```
 
-## Props
+#### Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
@@ -1242,7 +1243,7 @@ function BasicButtonGroup() {
 | `multiple` | `boolean` | `false` | Allow multiple buttons to be active simultaneously |
 | `activeValues` | `string[]` | `undefined` | Array of active values when multiple selection is enabled |
 
-### ButtonGroupItem
+###### ButtonGroupItem
 
 | Prop | Type | Description |
 |------|------|-------------|
@@ -1253,9 +1254,9 @@ function BasicButtonGroup() {
 | `onClick` | `(value: string, event: MouseEvent) => void` | Click handler for the button |
 | All other `ButtonProps` | - | All other props from the base Button component |
 
-## Examples
+#### Examples
 
-### Controlled Mode
+##### Controlled Mode
 
 Use `activeValue` and `onChange` to control the active state from a parent component.
 
@@ -1283,7 +1284,7 @@ function ControlledButtonGroup() {
 }
 ```
 
-### Uncontrolled Mode
+##### Uncontrolled Mode
 
 Use `defaultValue` to set an initial active value without controlling it.
 
@@ -1304,7 +1305,7 @@ function UncontrolledButtonGroup() {
 }
 ```
 
-### Multiple Selection
+##### Multiple Selection
 
 Enable multiple selection by setting `multiple={true}` and using `activeValues`.
 
@@ -1336,7 +1337,7 @@ function MultipleSelectionButtonGroup() {
 }
 ```
 
-### Filter Buttons
+##### Filter Buttons
 
 Perfect for filtering content by status or category.
 
@@ -1365,7 +1366,7 @@ function FilterButtons() {
 }
 ```
 
-### Size Selector
+##### Size Selector
 
 Use ButtonGroup for selecting sizes or other options.
 
@@ -1395,7 +1396,7 @@ function SizeSelector() {
 }
 ```
 
-### Vertical Orientation
+##### Vertical Orientation
 
 Display buttons vertically instead of horizontally.
 
@@ -1417,7 +1418,7 @@ function VerticalButtonGroup() {
 }
 ```
 
-### Custom Spacing
+##### Custom Spacing
 
 Adjust spacing between buttons using Tailwind spacing classes.
 
@@ -1447,7 +1448,7 @@ function CustomSpacingButtonGroup() {
 }
 ```
 
-### Custom Active Variant
+##### Custom Active Variant
 
 Apply a specific variant to active buttons.
 
@@ -1473,7 +1474,7 @@ function CustomActiveVariantButtonGroup() {
 }
 ```
 
-### Responsive Wrapping
+##### Responsive Wrapping
 
 Buttons automatically wrap to multiple lines on smaller screens when `wrap={true}`.
 
