@@ -139,8 +139,11 @@ export const ButtonWithIcon = React.forwardRef<HTMLButtonElement, ButtonWithIcon
         );
       }
 
-      // Render loading button with spinner and optional text
-      // Text appears after the spinner with margin for spacing
+      // Render loading button with spinner replacing the icon (position follows iconPosition)
+      const spinnerElement = (
+        <Spinner size={spinnerSize} variant="default" className="flex-shrink-0" />
+      );
+
       return (
         <Button
           ref={ref}
@@ -149,8 +152,17 @@ export const ButtonWithIcon = React.forwardRef<HTMLButtonElement, ButtonWithIcon
           className={className}
           {...props}
         >
-          <Spinner size={spinnerSize} variant="default" />
-          {children && <span className="ml-2">{children}</span>}
+          {iconPosition === 'right' ? (
+            <>
+              {children && <span>{children}</span>}
+              {spinnerElement}
+            </>
+          ) : (
+            <>
+              {spinnerElement}
+              {children && <span className="ml-2">{children}</span>}
+            </>
+          )}
         </Button>
       );
     }
