@@ -24,6 +24,14 @@ import {
   ArrowRightCircle,
   AlertTriangle,
   Wrench,
+  CircleAlert,
+  Search,
+  MessageSquare,
+  Calendar,
+  ChartNoAxesGantt,
+  List,
+  Menu,
+  ChartArea
 } from 'lucide-react';
 import { TfiLayoutTab, TfiDashboard } from "react-icons/tfi";
 
@@ -132,7 +140,7 @@ import { TfiLayoutTab, TfiDashboard } from "react-icons/tfi";
   />
 </div>
 
-## Dashboard pages
+## Dashboard 
 <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
   <ComponentCard 
     title="Dashboard Overview Page" 
@@ -170,9 +178,15 @@ import { TfiLayoutTab, TfiDashboard } from "react-icons/tfi";
   
 </div>
 
-## Error Page
+## Error Pages
 
 <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+  <ComponentCard 
+    title="Empty State" 
+    href="/docs/templates/pages/empty-state"
+    description="An empty state page template."
+    icon={CircleAlert}
+  />
   <ComponentCard 
     title="Error page with status code" 
     href="/docs/templates/pages/error-page"
@@ -187,6 +201,79 @@ import { TfiLayoutTab, TfiDashboard } from "react-icons/tfi";
   />
 </div>
 
+## Forms
+<div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+  <ComponentCard
+    title='Advanced Search Form'
+    description='Advanced search form template with multiple filtering options.'
+    icon={Search}
+    href='/docs/templates/pages/forms/advanced-search-form'
+  />
+  <ComponentCard
+    title='Contact Form'
+    description='Contact form template with validation and submission handlers.'
+    icon={MessageSquare}
+    href='/docs/templates/pages/forms/contact-form'
+  />
+    <ComponentCard
+    title='Dynamic Form'
+    description='Dynamic form template with flexible field configurations.'
+    icon={MessageSquare}
+    href='/docs/templates/pages/forms/dynamic-form'
+  />
+    <ComponentCard
+    title='Multi-Step Form'
+    description='Multi-step form template for guided user input processes.'
+    icon={MessageSquare}
+    href='/docs/templates/pages/forms/multi-step-form'
+  />
+    <ComponentCard
+    title='Quiz Form'
+    description='Quiz form template for assessments and surveys.'
+    icon={MessageSquare}
+    href='/docs/templates/pages/forms/quiz-form'
+  />
+</div>
+
+## Data Management
+
+<div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+
+<ComponentCard
+  title='Calendar View'
+  description='Calendar view with multiple views and event handling.'
+  icon={Calendar}
+  href='/docs/templates/pages/data-management/calendar-view'
+/>
+
+<ComponentCard
+  title='Data Table'
+  description='Data table with sorting, filtering, pagination.'
+  icon={Table}
+  href='/docs/templates/pages/data-management/data-table'
+/>
+
+<ComponentCard
+  title='Kanban Board'
+  description='Kanban board featuring drag-and-drop columns and card management.'
+  icon={Columns3}
+  href='/docs/templates/pages/data-management/kanban-board-page'
+/>
+
+<ComponentCard
+  title='List View Page'
+  description='List view page with sorting, filtering, pagination.'
+  icon={List}
+  href='/docs/templates/pages/data-management/list-view-page'
+/>
+
+<ComponentCard
+  title='Timeline View'
+  description='Timeline view featuring chronological event display.'
+  icon={ChartNoAxesGantt}
+  href='/docs/templates/pages/data-management/timeline-view'
+/>
+</div>
 
 ## Sections
 
@@ -203,23 +290,53 @@ import { TfiLayoutTab, TfiDashboard } from "react-icons/tfi";
     description="Feature comparison table for showcasing product differences."
     icon={Columns3}
   />
+
+  <ComponentCard
+    title='FAQ Accordion'
+    description='FAQ accordion with toggle questions and search functionality.'
+    icon={Search}
+    href='/docs/templates/sections/content/faq-accordion'
+  />
   <ComponentCard 
     title="Hero" 
     href="/docs/templates/sections/content/hero"
     description="Hero section template with call-to-action and visual elements."
     icon={Image}
   />
+
+  <ComponentCard
+   title="Mega Menu Multi-Column Dropdown"
+   description="Mega menu dropdown with multiple columns and nested links."
+   icon={Menu}
+   href="/docs/templates/sections/content/mega-menu-multi-column-dropdown"
+  />
+
   <ComponentCard 
     title="Pricing Grid" 
     href="/docs/templates/sections/content/pricing-grid"
     description="Pricing table section with multiple plan options."
     icon={Table}
   />
+
+  <ComponentCard
+    title="Stats Grid"
+    description="Stats grid section with multiple stats display."
+    icon={ChartArea}
+    href="/docs/templates/sections/content/stats-grid"
+  />
+  
   <ComponentCard 
     title="Tab Navigation" 
     href="/docs/templates/sections/content/tab-navigation"
     description="Tab navigation component for organizing content into sections."
     icon={TfiLayoutTab} />
+
+  <ComponentCard
+    title="Team Profiles"
+    description="Team profiles with team members and their roles."
+    icon={User}
+    href="/docs/templates/sections/content/team-profiles"
+  />
 </div>
 
 

@@ -53,6 +53,7 @@ import {
   SquareChartGantt,
   MoreHorizontal,
   ChevronLeft,
+  Columns2
 } from 'lucide-react';
 
 ## Inputs
@@ -87,6 +88,12 @@ import {
     href="/docs/components/file-upload"
     description="Drag-and-drop or click-to-upload file input."
     icon={Upload}
+  />
+  <ComponentCard
+    title="Exploding Input"
+    href="/docs/components/exploding-input"
+    description="Input field that explodes on focus."
+    icon={TextCursorInput}
   />
   <ComponentCard 
     title="Input" 
@@ -153,23 +160,17 @@ import {
     description="Container component for grouping related content."
     icon={Square}
   />
-  {/* <ComponentCard 
+  <ComponentCard 
     title="Carousel" 
     href="/docs/components/carousel"
     description="Used to display and cycle through a group of related content items within a limited space"
     icon={ChevronsLeftRight}
-  /> */}
+  />
   <ComponentCard 
     title="List" 
     href="/docs/components/list"
     description="Display a collection of items in a structured list format."
     icon={ListChecks}
-  />
-  <ComponentCard 
-    title="Modal" 
-    href="/docs/components/modals"
-    description="Display a collection of items in a structured list within a modal dialog."
-    icon={SquareChartGantt}
   />
   <ComponentCard 
     title="Table" 
@@ -213,6 +214,12 @@ import {
     icon={PanelLeft}
   />
   <ComponentCard 
+    title="Floating Dock" 
+    href="/docs/components/floating-dock"
+    description="macOS-style animated navigation dock with magnification."
+    icon={Navigation}
+  />
+  <ComponentCard 
     title="Navbar" 
     href="/docs/components/navbar"
     description="Responsive navigation bar with mobile menu support."
@@ -230,11 +237,11 @@ import {
     description="Step indicator component for multi-step forms and processes."
     icon={ArrowRightCircle}
   />
-  <ComponentCard 
-    title="Floating Dock" 
-    href="/docs/components/floating-dock"
-    description="macOS-style animated navigation dock with magnification."
-    icon={Navigation}
+  <ComponentCard
+    title='Tab'
+    href="/docs/components/tab"
+    description="Tabs component for organizing content into sections."
+    icon={Columns2}
   />
 </div>
 

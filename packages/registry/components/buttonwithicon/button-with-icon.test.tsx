@@ -189,6 +189,32 @@ describe('ButtonWithIcon', () => {
       expect(screen.queryByTestId('test-icon')).not.toBeInTheDocument();
     });
 
+    it('positions spinner after text when loading with iconPosition right', () => {
+      render(
+        <ButtonWithIcon loading={true} iconPosition="right" icon={<TestIcon />}>
+          Processing
+        </ButtonWithIcon>
+      );
+
+      const button = screen.getByRole('button');
+      const childTexts = Array.from(button.children).map((el) => el.textContent);
+      expect(childTexts[0]).toBe('Processing');
+      expect(childTexts[1]).toContain('Loading');
+    });
+
+    it('positions spinner before text when loading with iconPosition left', () => {
+      render(
+        <ButtonWithIcon loading={true} iconPosition="left" icon={<TestIcon />}>
+          Processing
+        </ButtonWithIcon>
+      );
+
+      const button = screen.getByRole('button');
+      const childTexts = Array.from(button.children).map((el) => el.textContent);
+      expect(childTexts[0]).toContain('Loading');
+      expect(childTexts[1]).toBe('Processing');
+    });
+
     it('disables button when loading is true', () => {
       render(
         <ButtonWithIcon loading={true}>
