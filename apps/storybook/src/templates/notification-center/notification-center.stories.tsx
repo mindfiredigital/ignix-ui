@@ -5,14 +5,15 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import React, { useCallback, useState } from "react";
-import { NotificationCenter, NotificationCenterPopup } from "./index";
-import type {
-  NotificationCenterFilterState,
-  NotificationItem,
-  NotificationPriority,
-  NotificationType,
-} from "./types";
+import React, { useCallback, useState, type ReactNode } from "react";
+import {
+  NotificationCenter,
+  NotificationCenterPopup,
+  type NotificationCenterFilterState,
+  type NotificationItem,
+  type NotificationPriority,
+  type NotificationType,
+} from "./index";
 
 /**
  * Storybook meta for the Notification Center popup template.
@@ -134,13 +135,35 @@ function makeDemoNotifications(count: number): NotificationItem[] {
 
 const DEMO_NOTIFICATIONS = makeDemoNotifications(8);
 
+type StoryThemeMode = "light" | "dark";
+
 /**
  * Mock top navigation bar matching the reference screenshot layout.
  */
-function StoryNavBar({ children }: { children: React.ReactNode }) {
+function StoryNavBar({
+  children,
+  mode = "light",
+}: {
+  children: ReactNode;
+  mode?: StoryThemeMode;
+}) {
+  const isDark = mode === "dark";
+
   return (
-    <div className="min-h-[480px] bg-muted/30">
-      <header className="flex items-center justify-between border-b border-border/60 bg-background px-6 py-3 shadow-sm">
+    <div
+      className={
+        isDark
+          ? "dark min-h-[520px] bg-gray-950 text-foreground"
+          : "min-h-[520px] bg-slate-100 text-foreground"
+      }
+    >
+      <header
+        className={
+          isDark
+            ? "flex items-center justify-between border-b border-gray-800 bg-gray-900 px-6 py-3 shadow-sm"
+            : "flex items-center justify-between border-b border-slate-200 bg-white px-6 py-3 shadow-sm"
+        }
+      >
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-md bg-primary/15" aria-hidden />
           <span className="text-sm font-semibold text-foreground">Ignix UI</span>
@@ -149,7 +172,8 @@ function StoryNavBar({ children }: { children: React.ReactNode }) {
       </header>
       <main className="px-6 py-10">
         <p className="text-sm text-muted-foreground">
-          Click the bell icon to open the notification popup.
+          {isDark ? "Dark mode" : "Light mode"} — click the bell to open the
+          notification popup.
         </p>
       </main>
     </div>
@@ -159,9 +183,14 @@ function StoryNavBar({ children }: { children: React.ReactNode }) {
 /**
  * Interactive state for read, flag, and filter actions.
  */
-function InteractivePopup(
-  args: React.ComponentProps<typeof NotificationCenterPopup>,
-) {
+function InteractivePopup({
+  mode = "light",
+  defaultOpen = false,
+  ...args
+}: React.ComponentProps<typeof NotificationCenterPopup> & {
+  mode?: StoryThemeMode;
+  defaultOpen?: boolean;
+}) {
   const [notifications, setNotifications] = useState<NotificationItem[]>(
     () => args.notifications ?? DEMO_NOTIFICATIONS,
   );
@@ -169,6 +198,7 @@ function InteractivePopup(
     type: null,
     priority: null,
   });
+  const [open, setOpen] = useState(defaultOpen);
 
   const handleMarkAsRead = useCallback(
     (id: string) => {
@@ -200,9 +230,11 @@ function InteractivePopup(
   );
 
   return (
-    <StoryNavBar>
+    <StoryNavBar mode={mode}>
       <NotificationCenterPopup
         {...args}
+        open={open}
+        onOpenChange={setOpen}
         notifications={notifications}
         filterState={filter}
         onFilterChange={(next) => {
@@ -226,6 +258,40 @@ export const Default: Story = {
 };
 
 /**
+ * Light theme with the notification panel open for visual review.
+ */
+export const LightMode: Story = {
+  name: "Light mode",
+  render: (args) => <InteractivePopup {...args} mode="light" defaultOpen />,
+  parameters: {
+    backgrounds: { default: "light" },
+    docs: {
+      description: {
+        story:
+          "Notification center on a light page shell. Popup opens by default so read/unread row styles are easy to compare.",
+      },
+    },
+  },
+};
+
+/**
+ * Dark theme with the notification panel open for visual review.
+ */
+export const DarkMode: Story = {
+  name: "Dark mode",
+  render: (args) => <InteractivePopup {...args} mode="dark" defaultOpen />,
+  parameters: {
+    backgrounds: { default: "dark" },
+    docs: {
+      description: {
+        story:
+          "Notification center on a dark page shell using the `.dark` token set. Popup opens by default.",
+      },
+    },
+  },
+};
+
+/**
  * Compound API: assemble Trigger, Content, Header, List, and Footer manually.
  */
 export const Composable: Story = {
@@ -245,7 +311,7 @@ export const Composable: Story = {
     }, []);
 
     return (
-      <StoryNavBar>
+      <StoryNavBar mode="light">
         <NotificationCenter
           notifications={notifications}
           open={open}
@@ -276,7 +342,7 @@ export const MostlyUnread: Story = {
       DEMO_NOTIFICATIONS.map((n, i) => ({ ...n, read: i % 4 === 0 })),
     );
     return (
-      <StoryNavBar>
+      <StoryNavBar mode="light">
         <NotificationCenterPopup {...args} notifications={notifications} />
       </StoryNavBar>
     );
@@ -293,7 +359,7 @@ export const AllRead: Story = {
       DEMO_NOTIFICATIONS.map((n) => ({ ...n, read: true })),
     );
     return (
-      <StoryNavBar>
+      <StoryNavBar mode="light">
         <NotificationCenterPopup {...args} notifications={notifications} />
       </StoryNavBar>
     );

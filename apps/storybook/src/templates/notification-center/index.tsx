@@ -9,11 +9,14 @@
 "use client";
 
 import React, {
+  createContext,
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useRef,
   useState,
+  type ReactNode,
 } from "react";
 import {
   BellIcon,
@@ -35,38 +38,137 @@ import {
   DropdownSeparator,
 } from "../../components/dropdown";
 import { cn } from "../../../utils/cn";
-import {
-  NotificationCenterContext,
-  useNotificationCenter,
-} from "./context";
-import type {
-  NotificationCenterContentProps,
-  NotificationCenterFilterState,
-  NotificationCenterFiltersProps,
-  NotificationCenterFooterProps,
-  NotificationCenterHeaderProps,
-  NotificationCenterItemProps,
-  NotificationCenterListProps,
-  NotificationCenterPopupProps,
-  NotificationCenterProps,
-  NotificationCenterTriggerProps,
-  NotificationItem,
-  NotificationPriority,
-  NotificationType,
-} from "./types";
-import {
-  applyNotificationFilters,
-  formatNotificationTime,
-  getNotificationSource,
-  isNotificationFlagged,
-  TYPE_LABEL,
-} from "./utils";
+
+// =============================================================================
+// TYPES
+// =============================================================================
+
+/** Notification category aligned with common product use cases. */
+export type NotificationType = "product" | "system" | "user";
+
+/** Priority level for triage, filtering, and flag display. */
+export type NotificationPriority = "low" | "medium" | "high" | "critical";
+
+/** A single notification item in the center. */
+export interface NotificationItem {
+  id: string;
+  type: NotificationType;
+  priority: NotificationPriority;
+  title: string;
+  message: string;
+  read: boolean;
+  createdAt: Date;
+  source?: string;
+  contextLabel?: string;
+  flagged?: boolean;
+}
+
+/** Filter state for the notification center. */
+export interface NotificationCenterFilterState {
+  type: NotificationType | null;
+  priority: NotificationPriority | null;
+}
+
+/** Context value shared across compound notification center parts. */
+interface NotificationCenterContextValue {
+  notifications: NotificationItem[];
+  filteredNotifications: NotificationItem[];
+  filter: NotificationCenterFilterState;
+  setFilter: (next: NotificationCenterFilterState) => void;
+  unreadCount: number;
+  now: Date;
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  showFilters: boolean;
+  setShowFilters: (show: boolean) => void;
+  onMarkAsRead?: (id: string) => void;
+  onMarkAllAsRead?: () => void;
+  onToggleFlag?: (id: string) => void;
+  onSeeAll?: () => void;
+  onSettings?: () => void;
+}
+
+/** Props for the notification center root (provider + popover shell). */
+export interface NotificationCenterProps {
+  notifications: NotificationItem[];
+  children: ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  filterState?: NotificationCenterFilterState;
+  onFilterChange?: (next: NotificationCenterFilterState) => void;
+  onMarkAsRead?: (id: string) => void;
+  onMarkAllAsRead?: () => void;
+  onToggleFlag?: (id: string) => void;
+  onSeeAll?: () => void;
+  onSettings?: () => void;
+  className?: string;
+}
+
+export interface NotificationCenterTriggerProps {
+  className?: string;
+}
+
+export interface NotificationCenterContentProps {
+  children: ReactNode;
+  className?: string;
+}
+
+export interface NotificationCenterHeaderProps {
+  title?: string;
+}
+
+export interface NotificationCenterFiltersProps {
+  className?: string;
+}
+
+export interface NotificationCenterListProps {
+  className?: string;
+  maxHeight?: number;
+}
+
+export interface NotificationCenterItemProps {
+  notification: NotificationItem;
+}
+
+export interface NotificationCenterFooterProps {
+  label?: string;
+}
+
+export interface NotificationCenterPopupProps
+  extends Omit<NotificationCenterProps, "children"> {
+  title?: string;
+  seeAllLabel?: string;
+}
+
+// =============================================================================
+// CONTEXT
+// =============================================================================
+
+const NotificationCenterContext =
+  createContext<NotificationCenterContextValue | null>(null);
+
+/** Returns the notification center context from a compound child. */
+function useNotificationCenter(): NotificationCenterContextValue {
+  const context = useContext(NotificationCenterContext);
+  if (!context) {
+    throw new Error(
+      "Notification Center compound components must be used within <NotificationCenter>.",
+    );
+  }
+  return context;
+}
 
 // =============================================================================
 // CONSTANTS
 // =============================================================================
 
 const TYPE_ORDER: NotificationType[] = ["product", "system", "user"];
+
+const TYPE_LABEL: Record<NotificationType, string> = {
+  product: "Product Alerts",
+  system: "System Notices",
+  user: "User Updates",
+};
 
 const PRIORITY_ORDER: NotificationPriority[] = [
   "low",
@@ -83,7 +185,60 @@ const PRIORITY_LABEL: Record<NotificationPriority, string> = {
 };
 
 // =============================================================================
-// HELPERS (internal)
+// UTILS
+// =============================================================================
+
+/** Filters notifications by type and priority. */
+function applyNotificationFilters(
+  items: NotificationItem[],
+  filter: NotificationCenterFilterState,
+): NotificationItem[] {
+  return items.filter((item) => {
+    if (filter.type !== null && item.type !== filter.type) return false;
+    if (filter.priority !== null && item.priority !== filter.priority) {
+      return false;
+    }
+    return true;
+  });
+}
+
+/** Formats a relative timestamp similar to "5 Hours Ago". */
+function formatNotificationTime(date: Date, now: Date): string {
+  const diffMs = now.getTime() - date.getTime();
+  const diffSec = Math.max(0, Math.floor(diffMs / 1000));
+  const minutes = Math.floor(diffSec / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  if (diffSec < 45) return "Just now";
+  if (minutes < 60) {
+    return `${minutes} Minute${minutes === 1 ? "" : "s"} Ago`;
+  }
+  if (hours < 24) {
+    return `${hours} Hour${hours === 1 ? "" : "s"} Ago`;
+  }
+  if (days < 7) {
+    return `${days} Day${days === 1 ? "" : "s"} Ago`;
+  }
+  return date.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+  });
+}
+
+/** Whether the notification should show an active (red) flag. */
+function isNotificationFlagged(item: NotificationItem): boolean {
+  if (item.flagged !== undefined) return item.flagged;
+  return item.priority === "high" || item.priority === "critical";
+}
+
+/** Resolves the display source for metadata line. */
+function getNotificationSource(item: NotificationItem): string {
+  return item.source ?? item.contextLabel ?? TYPE_LABEL[item.type];
+}
+
+// =============================================================================
+// INTERNAL UI HELPERS
 // =============================================================================
 
 /**
@@ -571,7 +726,7 @@ const FilterPill = React.memo(function FilterPill({
 /**
  * A single notification row matching the reference popup layout.
  */
-export const NotificationCenterItem = React.memo(function NotificationCenterItem({
+const NotificationCenterItem = React.memo(function NotificationCenterItem({
   notification,
 }: NotificationCenterItemProps) {
   const { now, onMarkAsRead, onToggleFlag } = useNotificationCenter();
