@@ -5,7 +5,7 @@ import { cn } from "../../../utils/cn";
 type BadgeBaseProps = {
   text?: string;
   type?: "primary" | "secondary" | "success" | "warning" | "error";
-  variant?: "pulse" | "bounce" | "tinypop";
+  variant?: "pulse" | "bounce" | "tinypop" | "none";
   className?: string;
 };
 
@@ -58,6 +58,10 @@ const Badge: React.FC<BadgeProps> = ({
   };
 
   const animationVariants: Record<string, Variants> = {
+    none: {
+      initial: {},
+      animate: {},
+    },
     pulse: {
       initial: { scale: 1 },
       animate: {

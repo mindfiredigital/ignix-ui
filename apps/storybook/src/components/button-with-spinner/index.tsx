@@ -97,9 +97,9 @@ export const ButtonWithSpinner = React.forwardRef<
       if (spinnerColor) return spinnerColor;
       
       // For variants with dark backgrounds, use white/light spinner
-      const darkBackgroundVariants = ['default', 'primary', 'secondary', 'success', 'warning', 'danger', 'pill', 'neon'];
+      const darkBackgroundVariants = ['default', 'success', 'warning', 'danger', 'pill', 'neon'];
       // For variants with light/transparent backgrounds, use dark spinner
-      const lightBackgroundVariants = ['outline', 'ghost', 'subtle', 'elevated', 'glass'];
+      const lightBackgroundVariants = ['primary', 'secondary', 'outline', 'ghost', 'subtle', 'elevated', 'glass'];
       
       if (variant && darkBackgroundVariants.includes(variant)) {
         // For bars and dots-bounce, use bg-white
@@ -132,7 +132,7 @@ export const ButtonWithSpinner = React.forwardRef<
         variant={variant}
         {...props}
       >
-        {isLoading && (
+        {isLoading && spinnerVariant !== 'dots-bounce' && (
           <Spinner
             size={spinnerSize}
             variant={spinnerVariant}
@@ -141,6 +141,14 @@ export const ButtonWithSpinner = React.forwardRef<
           />
         )}
         <span>{isLoading ? loadingText : children}</span>
+        {isLoading && spinnerVariant === 'dots-bounce' && (
+          <Spinner
+            size={spinnerSize}
+            variant={spinnerVariant}
+            color={getSpinnerColor()}
+            className="ml-2"
+          />
+        )}
       </Button>
     );
   }

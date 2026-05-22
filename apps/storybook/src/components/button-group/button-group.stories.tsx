@@ -378,8 +378,10 @@ export const DifferentVariants: Story = {
       { value: 'danger', children: 'Danger', variant: 'danger' },
       { value: 'outline', children: 'Outline', variant: 'outline' },
     ],
+
     defaultValue: 'primary',
     spacing: 'gap-2',
+    wrap: true
   },
   render: (args) => {
     const [activeValue, setActiveValue] = useState(args.defaultValue);
