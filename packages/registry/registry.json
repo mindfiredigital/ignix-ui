@@ -1430,6 +1430,22 @@
         }
       }
     },
+    "notification-center": {
+      "name": "notification-center",
+      "description": "A composable notification center dropdown template with bell trigger, read/unread row states, type and priority filters, mark-all-as-read, per-item flag and actions, and product, system, and user notification use cases.",
+      "dependencies": [
+        "@radix-ui/react-icons"
+      ],
+      "componentDependencies": [
+        "dropdown"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/notification-center/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "imageCard": {
       "name": "ImageCard",
       "description": "An image card component with different variants",
