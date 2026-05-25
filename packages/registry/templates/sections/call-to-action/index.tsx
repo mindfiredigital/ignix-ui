@@ -1941,12 +1941,14 @@ export const CTABannerNewsletter: React.FC<{
             try {
                 if (onSubmit) {
                     await onSubmit(email);
-                }
-                // Mock API call for demo
-                setTimeout(() => {
                     setStatus('success');
                     setEmail('');
-                }, 1000);
+                } else {
+                    // Simulate a short network delay for demo purposes
+                    await new Promise<void>((resolve) => setTimeout(resolve, 500));
+                    setStatus('success');
+                    setEmail('');
+                }
             } catch (err) {
                 setStatus('error');
                 setError('Failed to subscribe. Please try again.');

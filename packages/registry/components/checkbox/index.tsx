@@ -12,7 +12,7 @@ const checkboxVariants = cva(
         variants: {
             variant: {
                 default: 'border-primary data-[state=checked]:bg-primary data-[state=checked]:border-primary',
-                primary: 'border-secondary data-[state=checked]:bg-secondary data-[state=checked]:border-secondary',
+                primary: 'border-indigo-500 data-[state=checked]:bg-indigo-500 data-[state=checked]:border-indigo-500',
                 success: 'border-success data-[state=checked]:bg-success data-[state=checked]:border-success',
                 warning: 'border-warning data-[state=checked]:bg-warning data-[state=checked]:border-warning',
                 danger: 'border-destructive data-[state=checked]:bg-destructive data-[state=checked]:border-destructive',
@@ -138,7 +138,7 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
         const getCheckmarkColor = () => {
             switch (variant) {
                 case 'primary':
-                    return 'text-secondary-foreground';
+                    return 'text-white';
                 case 'subtle':
                     return 'text-accent-foreground';
                 case 'outline':
