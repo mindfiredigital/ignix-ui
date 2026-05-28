@@ -12,13 +12,13 @@ const checkboxVariants = cva(
         variants: {
             variant: {
                 default: 'border-primary data-[state=checked]:bg-primary data-[state=checked]:border-primary',
-                primary: 'border-secondary data-[state=checked]:bg-secondary data-[state=checked]:border-secondary',
+                primary: 'border-indigo-500 data-[state=checked]:bg-indigo-500 data-[state=checked]:border-indigo-500',
                 success: 'border-success data-[state=checked]:bg-success data-[state=checked]:border-success',
                 warning: 'border-warning data-[state=checked]:bg-warning data-[state=checked]:border-warning',
                 danger: 'border-destructive data-[state=checked]:bg-destructive data-[state=checked]:border-destructive',
                 outline: 'border-input data-[state=checked]:bg-transparent data-[state=checked]:border-primary',
                 subtle: 'border-muted data-[state=checked]:bg-accent data-[state=checked]:border-accent',
-                glass: 'border-white/30 data-[state=checked]:bg-white/20 data-[state=checked]:border-white/50',
+                glass: 'border-foreground/30 data-[state=checked]:bg-foreground/10 data-[state=checked]:border-foreground/50',
                 neon: 'border-pink-500 data-[state=checked]:bg-pink-500 data-[state=checked]:border-pink-500 shadow-lg shadow-pink-500/30',
             },
             size: {
@@ -135,6 +135,21 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
 
         const animationProps = getAnimationProps();
 
+        const getCheckmarkColor = () => {
+            switch (variant) {
+                case 'primary':
+                    return 'text-white';
+                case 'subtle':
+                    return 'text-accent-foreground';
+                case 'outline':
+                    return 'text-primary';
+                case 'glass':
+                    return 'text-foreground';
+                default:
+                    return 'text-white';
+            }
+        };
+
         const CheckboxInput = (
             <motion.div
                 className={cn(
@@ -157,7 +172,7 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
                 />
 
                 <motion.svg
-                    className="h-full w-full text-white pointer-events-none"
+                    className={cn('h-full w-full pointer-events-none', getCheckmarkColor())}
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -236,7 +251,7 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
                         />
 
                         <motion.svg
-                            className="relative h-full w-full text-white z-10 pointer-events-none"
+                            className={cn('relative h-full w-full z-10 pointer-events-none', getCheckmarkColor())}
                             viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
