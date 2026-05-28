@@ -1430,6 +1430,22 @@
         }
       }
     },
+    "notification-center": {
+      "name": "notification-center",
+      "description": "A composable notification center dropdown template with bell trigger, read/unread row states, type and priority filters, mark-all-as-read, per-item flag and actions, and product, system, and user notification use cases.",
+      "dependencies": [
+        "@radix-ui/react-icons"
+      ],
+      "componentDependencies": [
+        "dropdown"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/notification-center/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "imageCard": {
       "name": "ImageCard",
       "description": "An image card component with different variants",
@@ -1790,6 +1806,26 @@
         }
       }
     },
+    "detail-view-page": {
+      "name": "detail-view-page",
+      "description": "A full-page detail layout for data-management workflows: heading, metadata (dates, status, owner), rich body content, related items list, action buttons (edit, delete, share), back navigation, and previous/next sibling navigation. Supports a loading skeleton state and exposes compound sub-components for custom compositions.",
+      "dependencies": [
+        "@radix-ui/react-icons",
+        "framer-motion"
+      ],
+      "componentDependencies": [
+        "typography",
+        "button",
+        "avatar",
+        "card"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/detail-view-page/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "kanban-board-page": {
       "name": "kanban-board-page",
       "description": "A fully interactive Kanban board with drag-and-drop columns, card management (create, edit, delete), priority filtering, full-text search, labels with color picker, assignee chips, due-date tracking, file attachments, and toast notifications.",
@@ -1809,6 +1845,25 @@
       "files": {
         "main": {
           "path": "templates/pages/kanban-board-page/index.tsx",
+          "type": "template"
+        }
+      }
+    },
+    "timeline-view-page": {
+      "name": "timeline-view-page",
+      "description": "A visually engaging timeline view template that displays events in chronological order with support for grouping, filtering, and responsive design.",
+      "dependencies": [
+        "@radix-ui/react-icons",
+        "framer-motion"
+      ],
+      "componentDependencies": [
+        "badge",
+        "button",
+        "drawer"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/timeline-view-page/index.tsx",
           "type": "template"
         }
       }

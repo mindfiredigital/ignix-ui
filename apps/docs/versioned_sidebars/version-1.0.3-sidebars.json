@@ -99,10 +99,10 @@
           "label": "Feedback",
           "items": [
             "components/dialog-box",
+            "components/modals",
             "components/progress-indicator",
             "components/spinner",
-            "components/toast",
-            "components/modals"
+            "components/toast"
           ]
         }
       ]
@@ -230,7 +230,8 @@
                 "templates/pages/account-management/notification-settings-page",
                 "templates/pages/account-management/profile",
                 "templates/pages/account-management/security-page",
-                "templates/pages/account-management/setting-page"
+                "templates/pages/account-management/setting-page",
+                "templates/pages/notification-center-page"
               ]
             },
             {
@@ -247,9 +248,9 @@
               "type": "category",
               "label": "Error Pages",
               "items": [
+                "templates/pages/empty-state",
                 "templates/pages/error-page",
-                "templates/pages/maintenance-page",
-                "templates/pages/empty-state"
+                "templates/pages/maintenance-page"
               ]
             },
             {
@@ -257,9 +258,8 @@
               "label": "Forms",
               "items": [
                 "templates/pages/forms/advanced-search-form",
-                "templates/pages/forms/dynamic-form",
                 "templates/pages/forms/contact-form",
-                "templates/pages/forms/advanced-search-form",
+                "templates/pages/forms/dynamic-form",
                 "templates/pages/forms/multi-step-form",
                 "templates/pages/forms/quiz-form"
               ]
@@ -268,10 +268,12 @@
               "type": "category",
               "label": "Data Management",
               "items": [
-                "templates/pages/data-management/data-table",
                 "templates/pages/data-management/calendar-view",
+                "templates/pages/data-management/list-view-page",
+                "templates/pages/data-management/detail-view-page",
                 "templates/pages/data-management/kanban-board-page",
-                "templates/pages/data-management/list-view-page"
+                "templates/pages/data-management/data-table",
+                "templates/pages/data-management/timeline-view"
               ]
             }
           ]

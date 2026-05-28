@@ -9,9 +9,9 @@ module.exports = {
   themeUrl:
     'https://raw.githubusercontent.com/mindfiredigital/ignix-ui/main/packages/registry/themes.json',
 
-  // URL to the raw templates.json file on GitHub
+  //URL for the templates
   templateLayoutUrl:
-    'https://raw.githubusercontent.com/mindfiredigital/ignix-ui/main/packages/registry/templates.json',
+    'https://raw.githubusercontent.com/mindfiredigital/ignix-ui/main/packages/registry/',
 
   // Default directory for UI components
   componentsDir: 'src/components/ui',
@@ -20,5 +20,5 @@ module.exports = {
   themesDir: 'src/themes',
 
   // Default directory for templates
-  templateLayoutDir: 'src/templates',
+  templateLayoutDir: 'src/components/templates',
 };

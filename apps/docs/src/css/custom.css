@@ -597,3 +597,12 @@ h1 {
 .change-color:hover {
   text-decoration: none;
 }
+
+/* Notification center docs preview: avoid clipping the dropdown */
+[role="tabpanel"]:has(.notification-center-demo) {
+  overflow: visible !important;
+}
+
+.notification-center-demo {
+  overflow: visible !important;
+}

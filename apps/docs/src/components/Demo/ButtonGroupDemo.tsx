@@ -8,7 +8,7 @@
  * @component ButtonGroupDemo
  */
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ButtonGroup, type ButtonGroupItem } from '@site/src/components/UI/button-group';
 import type { ButtonProps } from '@site/src/components/UI/button';
 import VariantSelector from './VariantSelector';
@@ -60,21 +60,40 @@ const ButtonGroupDemo = () => {
   const [activeValue, setActiveValue] = useState('option1');
   const [activeValues, setActiveValues] = useState<string[]>(['option1']);
 
-  // Sample button items
-  const items: ButtonGroupItem[] = [
-    { value: 'option1', children: 'Option 1', variant },
-    { value: 'option2', children: 'Option 2', variant },
-    { value: 'option3', children: 'Option 3', variant },
-  ];
+  const allItems: ButtonGroupItem[] = useMemo(
+    () =>
+      Array.from({ length: 10 }, (_, i) => ({
+        value: `option${i + 1}`,
+        children: `Option ${i + 1}`,
+        variant,
+      })),
+    [variant]
+  );
+
+  // More items when wrap is on so wrapping is visible; fewer when off
+  const items = wrap ? allItems : allItems.slice(0, 3);
+
+  const itemsCodeSnippet = items
+    .map((item) => `    { value: '${item.value}', children: '${item.children}' }`)
+    .join(',\n');
+
+  const handleWrapChange = (checked: boolean) => {
+    setWrap(checked);
+    const nextItems = checked ? allItems : allItems.slice(0, 3);
+    const validValues = new Set(nextItems.map((item) => item.value));
+    if (multiple) {
+      setActiveValues((prev) => prev.filter((v) => validValues.has(v)));
+    } else if (!validValues.has(activeValue)) {
+      setActiveValue(nextItems[0]?.value ?? 'option1');
+    }
+  };
 
   // Generate code string based on current state
   const codeString = multiple
     ? `
 <ButtonGroup
   items={[
-    { value: 'option1', children: 'Option 1' },
-    { value: 'option2', children: 'Option 2' },
-    { value: 'option3', children: 'Option 3' }
+${itemsCodeSnippet}
   ]}
   activeValues={[${activeValues.map(v => `'${v}'`).join(', ')}]}
   onChange={(value) => {
@@ -93,9 +112,7 @@ const ButtonGroupDemo = () => {
     : `
 <ButtonGroup
   items={[
-    { value: 'option1', children: 'Option 1' },
-    { value: 'option2', children: 'Option 2' },
-    { value: 'option3', children: 'Option 3' }
+${itemsCodeSnippet}
   ]}
   activeValue="${activeValue}"
   onChange={(value) => setActiveValue(value)}
@@ -137,7 +154,7 @@ const ButtonGroupDemo = () => {
           <input
             type="checkbox"
             checked={wrap}
-            onChange={(e) => setWrap(e.target.checked)}
+            onChange={(e) => handleWrapChange(e.target.checked)}
             className="w-4 h-4"
           />
           Wrap
@@ -171,6 +188,13 @@ const ButtonGroupDemo = () => {
         <TabItem value="preview" label="Preview" default>
           <div className="p-6 border rounded-lg mt-4">
             <div className="flex flex-col gap-4 items-center p-4">
+              <div
+                className={
+                  orientation === 'horizontal' && wrap
+                    ? 'w-full max-w-xs'
+                    : 'w-full'
+                }
+              >
               <ButtonGroup
                 items={items}
                 activeValue={multiple ? undefined : activeValue}
@@ -191,6 +215,7 @@ const ButtonGroupDemo = () => {
                 wrap={wrap}
                 multiple={multiple}
               />
+              </div>
               <div className="text-sm text-muted-foreground mt-2">
                 Active: <strong>{multiple ? (activeValues.length > 0 ? activeValues.join(', ') : 'None') : activeValue}</strong>
               </div>

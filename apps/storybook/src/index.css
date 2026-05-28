@@ -220,6 +220,16 @@
   --color-gradient-board: var(--board-bg);
   --color-board-column: var(--column-bg);
   --color-gradient-brand: var(--brand-gradient);
+
+  @keyframes shimmer {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
+  --animate-shimmer: shimmer 2s infinite;
 }
 
 /* scrollbar css - three column layout */
