@@ -1,0 +1,271 @@
+---
+sidebar_position: 14
+title: Notification Center
+description: A composable bell-triggered notification dropdown with read/unread states, type and priority filters, mark-all-as-read, and product, system, and user notification use cases.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import NotificationCenterDemo from '@site/src/components/Demo/NotificationCenterDemo';
+
+The **Notification Center** is a dropdown popup template anchored to a bell icon in your app shell. It supports read and unread row states, optional type and priority filters (via Settings), mark-all-as-read, per-item flag and actions, and a footer link. The template is **composable**: you assemble `NotificationCenter` with `Trigger`, `Content`, `Header`, `Filters`, `List`, and `Footer` so you can reorder sections, swap the list renderer, or wire your own state.
+
+<NotificationCenterDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+
+```bash
+ignix add component notification-center
+```
+
+  </TabItem>
+  <TabItem value="manual" label="Manual" className="max-h-[500px] overflow-y-auto">
+
+```tsx
+import { useCallback, useState } from "react";
+import {
+  NotificationCenter,
+  type NotificationCenterFilterState,
+  type NotificationItem,
+} from "@ignix-ui/notification-center";
+
+const initialNotifications: NotificationItem[] = [
+  {
+    id: "1",
+    type: "user",
+    priority: "medium",
+    title: "Jamie Pines responded to your note",
+    message: "Review updated materials on Applicant #112.",
+    source: "Applicant Tracking",
+    read: false,
+    createdAt: new Date(),
+    flagged: false,
+  },
+  // ...more items
+];
+
+function ComposableNotificationPage() {
+  const [notifications, setNotifications] = useState(initialNotifications);
+  const [open, setOpen] = useState(false);
+  const [filter, setFilter] = useState<NotificationCenterFilterState>({
+    type: null,
+    priority: null,
+  });
+
+  const handleMarkAsRead = useCallback((id: string) => {
+    setNotifications((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, read: true } : item)),
+    );
+  }, []);
+
+  const handleMarkAllAsRead = useCallback(() => {
+    setNotifications((prev) => prev.map((item) => ({ ...item, read: true })));
+  }, []);
+
+  return (
+    <NotificationCenter
+      notifications={notifications}
+      open={open}
+      onOpenChange={setOpen}
+      filterState={filter}
+      onFilterChange={setFilter}
+      onMarkAsRead={handleMarkAsRead}
+      onMarkAllAsRead={handleMarkAllAsRead}
+    >
+      <NotificationCenter.Trigger />
+      <NotificationCenter.Content>
+        <NotificationCenter.Header />
+        <NotificationCenter.Filters />
+        <NotificationCenter.List />
+        <NotificationCenter.Footer />
+      </NotificationCenter.Content>
+    </NotificationCenter>
+  );
+}
+```
+
+  </TabItem>
+</Tabs>
+
+## Usage Examples
+
+### Compound layout (recommended)
+
+```tsx
+function AppHeaderNotifications() {
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [open, setOpen] = useState(false);
+
+  return (
+    <NotificationCenter
+      notifications={notifications}
+      open={open}
+      onOpenChange={setOpen}
+      onMarkAsRead={(id) => {
+        setNotifications((prev) =>
+          prev.map((n) => (n.id === id ? { ...n, read: true } : n)),
+        );
+      }}
+      onMarkAllAsRead={() => {
+        setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+      }}
+    >
+      <NotificationCenter.Trigger />
+      <NotificationCenter.Content>
+        <NotificationCenter.Header title="Notifications" />
+        <NotificationCenter.Filters />
+        <NotificationCenter.List maxHeight={400} />
+        <NotificationCenter.Footer label="See All Notifications" />
+      </NotificationCenter.Content>
+    </NotificationCenter>
+  );
+}
+```
+
+### Controlled filter state
+
+```tsx
+function FilteredNotificationCenter() {
+  const [filter, setFilter] = useState<NotificationCenterFilterState>({
+    type: "product",
+    priority: null,
+  });
+
+  return (
+    <NotificationCenter
+      notifications={notifications}
+      filterState={filter}
+      onFilterChange={setFilter}
+    >
+      <NotificationCenter.Trigger />
+      <NotificationCenter.Content>
+        <NotificationCenter.Header />
+        <NotificationCenter.Filters />
+        <NotificationCenter.List />
+        <NotificationCenter.Footer />
+      </NotificationCenter.Content>
+    </NotificationCenter>
+  );
+}
+```
+
+### Custom list with `NotificationCenter.Item`
+
+```tsx
+function CustomListNotificationCenter() {
+  return (
+    <NotificationCenter notifications={notifications}>
+      <NotificationCenter.Trigger />
+      <NotificationCenter.Content>
+        <NotificationCenter.Header />
+        <div className="max-h-[360px] overflow-y-auto">
+          {notifications.map((notification) => (
+            <NotificationCenter.Item
+              key={notification.id}
+              notification={notification}
+            />
+          ))}
+        </div>
+        <NotificationCenter.Footer />
+      </NotificationCenter.Content>
+    </NotificationCenter>
+  );
+}
+```
+
+## Features
+
+- **Bell trigger** with unread badge count
+- **Read / unread row styles** for quick scanning
+- **Type filters** (product, system, user) and **priority filters** (low → critical) via Settings
+- **Mark all as read** in the panel header
+- **Per-item flag** and overflow actions menu
+- **Timestamp and source** metadata on each row
+- **Compound sections** you can reorder or replace (header, filters, list, footer)
+
+## Props
+
+### `NotificationCenter` (root)
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `notifications` | `NotificationItem[]` | Full notification list; filtering is applied internally from `filterState`. |
+| `children` | `ReactNode` | Compound tree: typically `Trigger` + `Content` with nested sections. |
+| `open` | `boolean` (optional) | Controlled open state for the dropdown panel. |
+| `onOpenChange` | `(open: boolean) => void` (optional) | Called when the panel opens or closes. |
+| `filterState` | `NotificationCenterFilterState` (optional) | Controlled type / priority filter. |
+| `onFilterChange` | `(next: NotificationCenterFilterState) => void` (optional) | Called when filters change in Settings. |
+| `onMarkAsRead` | `(id: string) => void` (optional) | Mark a single notification as read. |
+| `onMarkAllAsRead` | `() => void` (optional) | Mark every notification as read. |
+| `onToggleFlag` | `(id: string) => void` (optional) | Toggle the flagged state for an item. |
+| `onSeeAll` | `() => void` (optional) | Footer link handler; panel closes after click. |
+| `onSettings` | `() => void` (optional) | Settings control in the header (e.g. open filter UI). |
+| `className` | `string` (optional) | Extra classes on the root wrapper. |
+
+### `NotificationCenter.Trigger`
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `className` | `string` (optional) | Extra classes on the bell button. |
+
+### `NotificationCenter.Content`
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` | `ReactNode` | Panel body (header, filters, list, footer). |
+| `className` | `string` (optional) | Extra classes on the popover panel. |
+
+### `NotificationCenter.Header`
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `title` | `string` (optional) | Panel title; defaults to `"Notifications"`. |
+
+### `NotificationCenter.Filters`
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `className` | `string` (optional) | Wrapper classes when the filter strip is visible. |
+
+### `NotificationCenter.List`
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `className` | `string` (optional) | Classes on the scrollable list container. |
+| `maxHeight` | `number` (optional) | Max height in pixels for the list viewport. |
+
+### `NotificationCenter.Item`
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `notification` | `NotificationItem` | Row data for a single notification. |
+
+### `NotificationCenter.Footer`
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `label` | `string` (optional) | Footer link text; defaults to `"See All Notifications"`. |
+
+### `NotificationItem`
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | `string` | Stable identifier. |
+| `type` | `"product" \| "system" \| "user"` | Category for filtering and iconography. |
+| `priority` | `"low" \| "medium" \| "high" \| "critical"` | Triage level. |
+| `title` | `string` | Primary line. |
+| `message` | `string` | Supporting copy. |
+| `read` | `boolean` | Whether the item has been read. |
+| `createdAt` | `Date` | Used for relative timestamps. |
+| `source` | `string` (optional) | Shown beside the timestamp (e.g. module name). |
+| `contextLabel` | `string` (optional) | Extra label when needed. |
+| `flagged` | `boolean` (optional) | Bookmark / flag state. |
+
+## Notes
+
+- Keep notification state in your app store or API layer; pass `notifications` and update via `onMarkAsRead`, `onMarkAllAsRead`, and `onToggleFlag`.
+- Use **controlled** `open` and `filterState` when the panel must sync with routing or parent layout.
+- `NotificationCenter.List` renders all filtered items by default; swap in a custom map of `NotificationCenter.Item` when you need virtualized or grouped lists.
