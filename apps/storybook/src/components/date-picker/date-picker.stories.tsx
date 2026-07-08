@@ -118,7 +118,6 @@ export const SingleDatePicker = () => {
                 placeholder="Pick a date"
                 label="Select Date"
                 helperText="Choose any date from the calendar"
-                themeMode="light"
                 colorScheme="blue"
             />
             {date && (
@@ -142,7 +141,6 @@ export const RangeDatePicker = () => {
                 placeholder={['Start date', 'End date']}
                 label="Select Date Range"
                 helperText="Choose start and end dates"
-                themeMode="light"
                 colorScheme="green"
             />
             {range.start && range.end && (
@@ -155,91 +153,69 @@ export const RangeDatePicker = () => {
 };
 
 export const DifferentSizes = () => (
-    <div className="space-y-6 p-6 border rounded-lg dark:border-gray-700">
+    <div className="space-y-6 p-6 border rounded-lg border-slate-200 dark:border-slate-800">
         <div className="space-y-2">
             <Typography variant="label" color="muted">Small</Typography>
-            <DatePicker size="sm" placeholder="Small picker" themeMode="light" colorScheme="blue" />
+            <DatePicker size="sm" placeholder="Small picker" colorScheme="blue" />
         </div>
         <div className="space-y-2">
             <Typography variant="label" color="muted">Medium (Default)</Typography>
-            <DatePicker size="md" placeholder="Medium picker" themeMode="light" colorScheme="green" />
+            <DatePicker size="md" placeholder="Medium picker" colorScheme="green" />
         </div>
         <div className="space-y-2">
             <Typography variant="label" color="muted">Large</Typography>
-            <DatePicker size="lg" placeholder="Large picker" themeMode="light" colorScheme="purple" />
+            <DatePicker size="lg" placeholder="Large picker" colorScheme="purple" />
         </div>
         <div className="space-y-2">
             <Typography variant="label" color="muted">Extra Large</Typography>
-            <DatePicker size="xl" placeholder="Extra large picker" themeMode="light" colorScheme="orange" />
+            <DatePicker size="xl" placeholder="Extra large picker" colorScheme="orange" />
         </div>
     </div>
 );
 
 export const AllColorSchemes = () => {
-    const [themeMode, setThemeMode] = useState<ThemeMode>('light');
-
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <Typography variant="h3" weight="semibold">
                     All Color Schemes - Solid Backgrounds
                 </Typography>
-                <Button
-                    onClick={() => setThemeMode(themeMode === 'light' ? 'dark' : 'light')}
-                    variant="outline"
-                    className="flex items-center gap-2"
-                    animationVariant="press3DSoft"
-                >
-                    {themeMode === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                    <Typography variant="body-small" weight="medium">
-                        Switch to {themeMode === 'light' ? 'Dark' : 'Light'}
-                    </Typography>
-                </Button>
             </div>
 
-            <div className={cn(
-                "p-6 border rounded-2xl space-y-6",
-                themeMode === 'dark'
-                    ? "bg-gray-950 border-gray-800"
-                    : "bg-white border-gray-200"
-            )}>
+            <div className="p-6 border rounded-2xl space-y-6 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
                 {(['blue', 'green', 'purple', 'orange', 'slate', 'rose'] as ColorScheme[]).map((colorScheme) => (
                     <div key={colorScheme} className="space-y-2">
                         <Typography
                             variant="label"
-                            className={themeMode === 'dark' ? "text-gray-300" : "text-gray-700"}
+                            className="text-slate-700 dark:text-slate-300"
                             transform="capitalize"
                         >
                             {colorScheme} Color Scheme
                         </Typography>
                         <DatePicker
-                            themeMode={themeMode}
                             colorScheme={colorScheme}
                             placeholder={`${colorScheme} theme`}
-                            helperText={`${themeMode === 'light' ? 'Light' : 'Dark'} theme with ${colorScheme} colors`}
+                            helperText={`Theme with ${colorScheme} colors`}
                         />
                     </div>
                 ))}
             </div>
 
-            <div className={cn(
-                "p-4 rounded-lg",
-                themeMode === 'dark' ? "bg-gray-800" : "bg-gray-100"
-            )}>
-                <Typography variant="body-small" weight="medium" className={themeMode === 'dark' ? "text-gray-300" : "text-gray-700"}>
+            <div className="p-4 rounded-lg bg-slate-100 dark:bg-slate-850">
+                <Typography variant="body-small" weight="medium" className="text-slate-700 dark:text-slate-300">
                     Note: All backgrounds are now solid:
                 </Typography>
                 <ul className="mt-2 space-y-1">
-                    <Typography variant="body-small" className={themeMode === 'dark' ? "text-gray-400" : "text-gray-600"} as="li">
+                    <Typography variant="body-small" className="text-slate-600 dark:text-slate-400" as="li">
                         • Light theme: Pure white backgrounds
                     </Typography>
-                    <Typography variant="body-small" className={themeMode === 'dark' ? "text-gray-400" : "text-gray-600"} as="li">
+                    <Typography variant="body-small" className="text-slate-600 dark:text-slate-400" as="li">
                         • Dark theme: Solid black/gray-900 backgrounds
                     </Typography>
-                    <Typography variant="body-small" className={themeMode === 'dark' ? "text-gray-400" : "text-gray-600"} as="li">
+                    <Typography variant="body-small" className="text-slate-600 dark:text-slate-400" as="li">
                         • No transparency or blur effects
                     </Typography>
-                    <Typography variant="body-small" className={themeMode === 'dark' ? "text-gray-400" : "text-gray-600"} as="li">
+                    <Typography variant="body-small" className="text-slate-600 dark:text-slate-400" as="li">
                         • Better contrast and readability
                     </Typography>
                 </ul>
