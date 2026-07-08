@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect, useRef, forwardRef } from 'react';
@@ -13,15 +12,43 @@ function useDocusaurusTheme(): ThemeMode {
     const [theme, setTheme] = useState<ThemeMode>('light');
 
     useEffect(() => {
-        if (typeof document === 'undefined') return;
+        if (typeof window === 'undefined') return;
 
         const root = document.documentElement;
-        const read = () => (root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light') as ThemeMode;
+        const body = document.body;
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+        const read = (): ThemeMode => {
+            const hasDarkClass = root.classList.contains('dark') || body.classList.contains('dark');
+            const hasDarkThemeAttr = root.getAttribute('data-theme') === 'dark';
+
+            if (hasDarkClass || hasDarkThemeAttr) {
+                return 'dark';
+            }
+            if (
+                root.classList.contains('light') ||
+                body.classList.contains('light') ||
+                root.getAttribute('data-theme') === 'light'
+            ) {
+                return 'light';
+            }
+
+            return mediaQuery.matches ? 'dark' : 'light';
+        };
+
         setTheme(read());
 
         const observer = new MutationObserver(() => setTheme(read()));
-        observer.observe(root, { attributes: true, attributeFilter: ['data-theme'] });
-        return () => observer.disconnect();
+        observer.observe(root, { attributes: true, attributeFilter: ['data-theme', 'class'] });
+        observer.observe(body, { attributes: true, attributeFilter: ['class'] });
+
+        const listener = () => setTheme(read());
+        mediaQuery.addEventListener('change', listener);
+
+        return () => {
+            observer.disconnect();
+            mediaQuery.removeEventListener('change', listener);
+        };
     }, []);
 
     return theme;
@@ -691,6 +718,7 @@ const InputField: React.FC<InputFieldProps> = ({
                 placeholder={placeholder}
                 className={cn(
                     "w-full bg-transparent outline-none font-medium tracking-wide",
+                    showIcon && "pr-8",
                     themeStyles.text.primary,
                     themeStyles.placeholder,
                     disabled && "cursor-not-allowed",
@@ -772,6 +800,7 @@ const RangeInputField: React.FC<RangeInputFieldProps> = ({
 
             <Typography
                 variant="body"
+                color="inherit"
                 className={themeStyles.text.muted}
             >
                 –
@@ -786,6 +815,7 @@ const RangeInputField: React.FC<RangeInputFieldProps> = ({
                     placeholder={Array.isArray(placeholder) ? placeholder[1] : 'End date'}
                     className={cn(
                         "w-full bg-transparent outline-none font-medium tracking-wide",
+                        showIcon && "pr-8",
                         themeStyles.text.primary,
                         themeStyles.placeholder,
                         disabled && "cursor-not-allowed",
@@ -888,6 +918,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                     <Typography
                         variant="h6"
                         weight="bold"
+                        color="inherit"
                         className={cn("tracking-tight", themeStyles.header)}
                     >
                         {monthNames[currentMonthIndex]} {currentYear}
@@ -918,6 +949,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                         variant="caption"
                         weight="semibold"
                         align="center"
+                        color="inherit"
                         className={cn("py-2 tracking-wide", themeStyles.weekday)}
                     >
                         {getDayName(index)}
@@ -987,6 +1019,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                                 <Typography
                                     variant="body-small"
                                     weight={(isSelected || isStart || isEnd) ? "bold" : "normal"}
+                                    color="inherit"
                                     className={cn(
                                         "relative z-10",
                                         (isSelected || isStart || isEnd) && "!text-white",
@@ -1039,28 +1072,23 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                             variant="outline"
                             size="sm"
                             onClick={onTodayClick}
-                            className="flex-1 rounded-xl shadow-sm hover:shadow text-slate-500 cursor-pointer"
+                            className="flex-1 rounded-xl shadow-sm hover:shadow cursor-pointer border-border/60 hover:bg-muted/50 bg-background text-muted-foreground hover:text-foreground"
                             animationVariant="press3DSoft"
                         >
-                            <Typography variant="body-small" weight="medium">
+                            <Typography variant="body-small" weight="medium" color="inherit">
                                 {todayText}
                             </Typography>
                         </Button>
                     )}
                     {clearButton && (
                         <Button
-                            variant="ghost"
+                            variant="secondary"
                             size="sm"
                             onClick={onClearClick}
-                            className={cn(
-                                "flex-1 rounded-xl shadow-sm hover:shadow cursor-pointer",
-                                themeMode === 'dark'
-                                    ? "bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-gray-300"
-                                    : "bg-gradient-to-r from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-200 text-gray-600"
-                            )}
+                            className="flex-1 rounded-xl shadow-sm hover:shadow cursor-pointer bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground"
                             animationVariant="press3DSoft"
                         >
-                            <Typography variant="body-small" weight="medium">
+                            <Typography variant="body-small" weight="medium" color="inherit">
                                 {clearText}
                             </Typography>
                         </Button>
@@ -1357,16 +1385,17 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
         const hasError = Boolean(error) || !!internalError;
 
         return (
-            <div ref={containerRef} className={cn("relative", className)}>
+            <div ref={containerRef} className={cn("relative text-foreground space-y-3", themeMode, className)}>
                 {label && (
                     <motion.label
                         initial={{ opacity: 0, y: -5 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="block mb-2"
+                        className="block mb-1"
                     >
                         <Typography
                             variant="label"
                             weight="semibold"
+                            color="inherit"
                             className={cn("tracking-wide", themeStyles.text.primary)}
                         >
                             {label}
