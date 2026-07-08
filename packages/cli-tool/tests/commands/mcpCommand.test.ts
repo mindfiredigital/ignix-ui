@@ -61,7 +61,7 @@ describe('mcp commands', () => {
       await runCommand(createMcpInitCommand, ['--client', 'cursor']);
 
       expect(fs.writeJSON).toHaveBeenCalledWith(
-        expect.stringContaining('.cursor/mcp.json'),
+        expect.stringMatching(/[\\/]\.cursor[\\/]mcp\.json/),
         expect.objectContaining({ mcpServers: expect.anything() }),
         expect.anything()
       );
@@ -82,7 +82,8 @@ describe('mcp commands', () => {
   describe('status', () => {
     it('reports status as JSON', async () => {
       vi.mocked(fs.pathExists).mockImplementation((path: any) => {
-        if (path.toString().includes('.cursor/mcp.json')) return Promise.resolve(true);
+        if (path.toString().replace(/\\/g, '/').includes('.cursor/mcp.json'))
+          return Promise.resolve(true);
         return Promise.resolve(false);
       });
       vi.mocked(fs.readJSON).mockResolvedValue({
@@ -115,18 +116,21 @@ describe('mcp commands', () => {
       const { consoleOutput } = await import('../helpers');
 
       vi.mocked(fs.pathExists).mockImplementation((path: any) => {
-        if (path.toString().includes('.cursor/mcp.json')) return Promise.resolve(true);
-        if (path.toString().includes('.vscode/mcp.json')) return Promise.resolve(true);
+        if (path.toString().replace(/\\/g, '/').includes('.cursor/mcp.json'))
+          return Promise.resolve(true);
+        if (path.toString().replace(/\\/g, '/').includes('.vscode/mcp.json'))
+          return Promise.resolve(true);
         return Promise.resolve(false);
       });
 
       vi.mocked(fs.readJSON).mockImplementation((path: any) => {
-        if (path.toString().includes('.cursor/mcp.json')) {
+        const normalizedPath = path.toString().replace(/\\/g, '/');
+        if (normalizedPath.includes('.cursor/mcp.json')) {
           return Promise.resolve({
             mcpServers: { ignix: { args: ['@mindfiredigital/ignix-mcp-server@1.0.0'] } },
           });
         }
-        if (path.toString().includes('.vscode/mcp.json')) {
+        if (normalizedPath.includes('.vscode/mcp.json')) {
           return Promise.resolve({
             mcpServers: { ignix: { args: ['@mindfiredigital/ignix-mcp-server@1.1.0'] } },
           });
