@@ -1156,7 +1156,7 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
             allowEmpty = false,
             todayButton = true,
             clearButton = true,
-            autoClose = false,
+            autoClose = true,
             className,
             inputClassName,
             calendarClassName,
