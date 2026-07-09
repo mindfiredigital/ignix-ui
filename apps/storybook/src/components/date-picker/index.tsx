@@ -504,34 +504,60 @@ const parseDate = (str: string, format: DateFormat): Date | null => {
 
     try {
         let day, month, year;
+        let yearStr = '';
 
         switch (format) {
-            case 'MM/DD/YYYY':
-                [month, day, year] = str.split('/').map(Number);
+            case 'MM/DD/YYYY': {
+                const parts = str.split('/');
+                if (parts.length < 3) return null;
+                [month, day, year] = parts.map(Number);
+                yearStr = parts[2] || '';
                 break;
-            case 'DD/MM/YYYY':
-                [day, month, year] = str.split('/').map(Number);
+            }
+            case 'DD/MM/YYYY': {
+                const parts = str.split('/');
+                if (parts.length < 3) return null;
+                [day, month, year] = parts.map(Number);
+                yearStr = parts[2] || '';
                 break;
-            case 'YYYY-MM-DD':
-                [year, month, day] = str.split('-').map(Number);
+            }
+            case 'YYYY-MM-DD': {
+                const parts = str.split('-');
+                if (parts.length < 3) return null;
+                [year, month, day] = parts.map(Number);
+                yearStr = parts[0] || '';
                 break;
-            case 'YYYY/MM/DD':
-                [year, month, day] = str.split('/').map(Number);
+            }
+            case 'YYYY/MM/DD': {
+                const parts = str.split('/');
+                if (parts.length < 3) return null;
+                [year, month, day] = parts.map(Number);
+                yearStr = parts[0] || '';
                 break;
+            }
             case 'MMM DD, YYYY': {
                 const parts = str.split(' ');
+                if (parts.length < 3) return null;
                 month = MONTH_NAMES.findIndex(m => m.startsWith(parts[0])) + 1;
                 day = parseInt(parts[1]);
                 year = parseInt(parts[2]);
+                yearStr = parts[2] || '';
                 break;
             }
             case 'DD MMM YYYY': {
                 const parts2 = str.split(' ');
+                if (parts2.length < 3) return null;
                 day = parseInt(parts2[0]);
                 month = MONTH_NAMES.findIndex(m => m.startsWith(parts2[1])) + 1;
                 year = parseInt(parts2[2]);
+                yearStr = parts2[2] || '';
                 break;
             }
+        }
+
+        const cleanYearStr = yearStr.replace(/[^0-9]/g, '');
+        if (cleanYearStr.length !== 4) {
+            return null;
         }
 
         const date = new Date(year!, month! - 1, day!);
@@ -1050,7 +1076,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                                 {/* Today indicator dot */}
                                 {isToday && !isSelected && !isInRange && (
                                     <div className={cn(
-                                        "absolute -top-1 right-1 w-1.5 h-1.5 rounded-full opacity-60",
+                                        "absolute -top-1 right-0.5 w-1.5 h-1.5 rounded-full opacity-60",
                                         themeMode === 'dark' ? 'bg-blue-300' : 'bg-blue-500'
                                     )} />
                                 )}
