@@ -219,7 +219,7 @@ export const SizeVariantsDemo = () => {
             description=""
             code={codeString}
         >
-            <div className="grid grid-cols-2 gap-6 max-w-3xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
                 <DatePicker
                     themeMode={colorMode as 'light' | 'dark'}
                     size="sm"
@@ -278,7 +278,7 @@ export const ColorSchemesDemo = () => {
             code={codeString}
         >
             <div className="space-y-4 max-w-4xl">
-                <div className="grid grid-cols-3 gap-4 p-4 ">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4 w-full">
                     {colorSchemeOptions.map((color) => (
                         <DatePicker
                             key={color.value}
@@ -317,7 +317,7 @@ export const PopupPositionsDemo = () => {
             code={codeString}
         >
             <div className="space-y-6 max-w-4xl">
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full">
                     {popupPositionOptions.map((position) => (
                         <DatePicker
                             key={position.value}
@@ -514,7 +514,7 @@ export const ValidationExamplesDemo = () => {
             title=""
             description=""
         >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
                 <DatePicker
                     themeMode={colorMode as 'light' | 'dark'}
                     required

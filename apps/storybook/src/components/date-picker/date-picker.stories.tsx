@@ -52,9 +52,9 @@ export const CombinedThemes = () => (
             Combined Theme & Color Schemes
         </Typography>
 
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
             {/* Light theme with different colors */}
-            <div className="space-y-4 p-4 bg-gray-100 rounded-lg">
+            <div className="space-y-4 p-4 bg-gray-100 dark:bg-gray-900 rounded-lg">
                 <Typography variant="h4" weight="medium" className="text-gray-900">Light Theme</Typography>
                 <DatePicker themeMode="light" colorScheme="blue" placeholder="Light Blue" />
                 <DatePicker themeMode="light" colorScheme="green" placeholder="Light Green" />
@@ -79,7 +79,7 @@ export const CustomCombinations = () => (
             Custom Theme Combinations
         </Typography>
 
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-5xl">
             <DatePicker
                 themeMode="light"
                 colorScheme="rose"
@@ -111,7 +111,7 @@ export const SingleDatePicker = () => {
     const [date, setDate] = useState<Date | null>(null);
 
     return (
-        <div className="space-y-4">
+        <div className="w-[350px] space-y-4">
             <DatePicker
                 value={date || undefined}
                 onChange={(val) => setDate(val as Date | null)}
@@ -133,7 +133,7 @@ export const RangeDatePicker = () => {
     const [range, setRange] = useState<DateRange>({ start: null, end: null });
 
     return (
-        <div className="space-y-4">
+        <div className="w-[450px] space-y-4">
             <DatePicker
                 variant="range"
                 value={range}
@@ -153,7 +153,7 @@ export const RangeDatePicker = () => {
 };
 
 export const DifferentSizes = () => (
-    <div className="space-y-6 p-6 border rounded-lg border-slate-200 dark:border-slate-800">
+    <div className="w-[350px] space-y-6 p-6 border rounded-lg border-slate-200 dark:border-slate-800">
         <div className="space-y-2">
             <Typography variant="label" color="muted">Small</Typography>
             <DatePicker size="sm" placeholder="Small picker" colorScheme="blue" />
@@ -229,7 +229,7 @@ export const WithMinMaxDates = () => {
     nextWeek.setDate(today.getDate() + 7);
 
     return (
-        <div className="space-y-4">
+        <div className="w-[350px] space-y-4">
             <DatePicker
                 minDate={today}
                 maxDate={nextWeek}
@@ -260,7 +260,7 @@ export const WithDisabledDates = () => {
     ];
 
     return (
-        <div className="space-y-4">
+        <div className="w-[350px] space-y-4">
             <DatePicker
                 disabledDates={disabledDates}
                 placeholder="Select date (some dates disabled)"
@@ -294,7 +294,7 @@ export const WithHighlightedDates = () => {
     ];
 
     return (
-        <div className="space-y-4">
+        <div className="w-[350px] space-y-4">
             <DatePicker
                 highlightDates={highlightDates}
                 placeholder="Select date (some dates highlighted)"
@@ -308,7 +308,7 @@ export const WithHighlightedDates = () => {
 };
 
 export const ErrorStates = () => (
-    <div className="space-y-6 p-6 border rounded-lg dark:border-gray-700">
+    <div className="w-[350px] space-y-6 p-6 border rounded-lg dark:border-gray-700">
         <div className="space-y-2">
             <Typography variant="label" color="muted">Required Field (Empty)</Typography>
             <DatePicker
@@ -345,7 +345,7 @@ export const ErrorStates = () => (
 );
 
 export const DifferentPopupPositions = () => (
-    <div className="grid grid-cols-2 gap-6 p-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 w-full max-w-3xl">
         <div className="space-y-2">
             <Typography variant="label" color="muted">Bottom Left (Default)</Typography>
             <DatePicker popupPosition="bottom-left" placeholder="Bottom left" themeMode="light" colorScheme="blue" />
