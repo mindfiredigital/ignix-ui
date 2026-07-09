@@ -1294,7 +1294,7 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
             } else if (newRange.start && !newRange.end) {
                 // Complete the range
                 if (date < newRange.start) {
-                    newRange = { start: date, end: newRange.start };
+                    newRange = { start: date, end: null };
                 } else {
                     newRange = { start: newRange.start, end: date };
                 }
@@ -1311,7 +1311,7 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                 if (autoClose) {
                     setTimeout(() => setIsOpen(false), 100);
                 }
-            } else if (onChange && allowEmpty) {
+            } else if (onChange && (allowEmpty || !newRange.end)) {
                 onChange(newRange);
             }
         };
@@ -1367,12 +1367,27 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                 onError?.(error);
 
                 if (!error) {
+                    if (newRange.end < newRange.start) {
+                        if (index === 1) {
+                            newRange.start = newRange.end;
+                            newRange.end = null;
+                            newValues[0] = value;
+                            newValues[1] = '';
+                            setRangeInputValue(newValues);
+                        } else {
+                            newRange.end = null;
+                            newValues[1] = '';
+                            setRangeInputValue(newValues);
+                        }
+                    }
                     setSelectedRange(newRange);
                     onChange?.(newRange);
                 }
-            } else if (allowEmpty) {
+            } else {
                 setSelectedRange(newRange);
-                onChange?.(newRange);
+                if (allowEmpty || !newRange.end) {
+                    onChange?.(newRange);
+                }
             }
         };
 
