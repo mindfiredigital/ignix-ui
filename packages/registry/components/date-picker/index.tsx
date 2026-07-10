@@ -1259,7 +1259,8 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                 if (isDate(value)) {
                     setSelectedDate(value);
                     setCurrentMonth(value);
-                    if (!selectedDate || !isSameDay(selectedDate, value)) {
+                    const dateChanged = !selectedDate !== !value || (!!selectedDate && !!value && !isSameDay(selectedDate, value));
+                    if (dateChanged) {
                         setInputValue(formatDate(value, format));
                     }
                 } else if (value === null || value === undefined) {
@@ -1270,8 +1271,8 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                 if (isDateRange(value)) {
                     setSelectedRange(value);
                     if (value.start) setCurrentMonth(value.start);
-                    const startChanged = !selectedRange.start || !isSameDay(selectedRange.start, value.start);
-                    const endChanged = !selectedRange.end || !isSameDay(selectedRange.end, value.end);
+                    const startChanged = !selectedRange.start !== !value.start || (!!selectedRange.start && !!value.start && !isSameDay(selectedRange.start, value.start));
+                    const endChanged = !selectedRange.end !== !value.end || (!!selectedRange.end && !!value.end && !isSameDay(selectedRange.end, value.end));
                     if (startChanged || endChanged) {
                         setRangeInputValue([
                             formatDate(value.start, format),
