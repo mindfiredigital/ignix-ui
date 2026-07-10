@@ -2,10 +2,10 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { motion } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../utils/cn";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 // Styling variants using CVA
-const dropdownVariants = cva("z-50 min-w-[10rem] border p-2 shadow-lg", {
+const dropdownVariants = cva("z-50 min-w-[10rem] border p-2 shadow-lg outline-none", {
   variants: {
     size: {
       sm: "text-sm",
@@ -20,7 +20,7 @@ const dropdownVariants = cva("z-50 min-w-[10rem] border p-2 shadow-lg", {
     },
     bg: {
       default: "bg-background text-foreground",
-      dark: "bg-card text-card-foreground",
+      dark: "bg-background text-foreground border-border [--foreground:#ffffff] [--ifm-font-color-base:#ffffff] [--border:#2a2a2a]",
       transparent: "bg-transparent",
       glass: "bg-white/10 backdrop-blur-lg text-[var(--color-glass-text)]",
       gradient: "bg-gradient-to-r from-[var(--color-gradient-from-dropdown)] to-[var(--color-gradient-to-dropdown)] text-white",
@@ -97,6 +97,7 @@ export const Dropdown = ({
             initial="initial"
             animate="animate"
             exit="exit"
+            data-theme={bg === "dark" ? "dark" : undefined}
             className={cn(dropdownVariants({ size, rounded, bg }), className)}
           >
             {children}

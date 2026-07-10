@@ -1,12 +1,11 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { motion } from "framer-motion";
-import { Check } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../utils/cn";
 import type { ReactNode } from "react";
 
 // Styling variants using CVA
-const dropdownVariants = cva("z-50 min-w-[10rem] border p-2 shadow-lg", {
+const dropdownVariants = cva("z-50 min-w-[10rem] border p-2 shadow-lg outline-none", {
   variants: {
     size: {
       sm: "text-sm",
@@ -21,7 +20,7 @@ const dropdownVariants = cva("z-50 min-w-[10rem] border p-2 shadow-lg", {
     },
     bg: {
       default: "bg-background text-foreground",
-      dark: "bg-card text-card-foreground",
+      dark: "bg-background text-foreground border-border [--foreground:#ffffff] [--ifm-font-color-base:#ffffff] [--border:#2a2a2a]",
       transparent: "bg-transparent",
       glass: "bg-white/10 backdrop-blur-lg text-[var(--color-glass-text)]",
       gradient: "bg-gradient-to-r from-[var(--color-gradient-from-dropdown)] to-[var(--color-gradient-to-dropdown)] text-white",
@@ -98,6 +97,7 @@ export const Dropdown = ({
             initial="initial"
             animate="animate"
             exit="exit"
+            data-theme={bg === "dark" ? "dark" : undefined}
             className={cn(dropdownVariants({ size, rounded, bg }), className)}
           >
             {children}
@@ -126,25 +126,6 @@ export const DropdownItem = ({
     {children}
   </DropdownMenu.Item>
 );
-
-export const DropdownLabel = ({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) => (
-  <DropdownMenu.Label
-    className={cn("px-3 py-1.5 text-sm font-semibold", className)}
-  >
-    {children}
-  </DropdownMenu.Label>
-);
-
-export const DropdownSeparator = ({ className }: { className?: string }) => (
-  <DropdownMenu.Separator className={cn("-mx-1 my-1 h-px bg-border", className)} />
-);
-
 export const DropdownCheckboxItem = ({
   children,
   className,
@@ -162,9 +143,43 @@ export const DropdownCheckboxItem = ({
   >
     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
       <DropdownMenu.ItemIndicator>
-        <Check className="h-4 w-4" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="h-4 w-4"
+        >
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
       </DropdownMenu.ItemIndicator>
     </span>
     {children}
   </DropdownMenu.CheckboxItem>
 );
+
+export const DropdownLabel = ({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<typeof DropdownMenu.Label>) => (
+  <DropdownMenu.Label
+    className={cn("px-3 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground", className)}
+    {...props}
+  />
+);
+
+export const DropdownSeparator = ({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<typeof DropdownMenu.Separator>) => (
+  <DropdownMenu.Separator
+    className={cn("-mx-2 my-2 h-px bg-border/50", className)}
+    {...props}
+  />
+);
+
