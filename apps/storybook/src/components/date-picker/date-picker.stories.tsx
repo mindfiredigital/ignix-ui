@@ -201,11 +201,11 @@ export const AllColorSchemes = () => {
                 ))}
             </div>
 
-            <div className="p-4 rounded-lg bg-slate-100 dark:bg-slate-850">
+            <div className="p-4 rounded-lg bg-slate-100 dark:bg-slate-900">
                 <Typography variant="body-small" weight="medium" className="text-slate-700 dark:text-slate-300">
                     Note: All backgrounds are now solid:
                 </Typography>
-                <ul className="mt-2 space-y-1">
+                <ul className="mt-2 space-y-1 list-none">
                     <Typography variant="body-small" className="text-slate-600 dark:text-slate-400" as="li">
                         • Light theme: Pure white backgrounds
                     </Typography>
