@@ -364,10 +364,6 @@ export const HotelBookingDemo = () => {
         if (date.getDay() === 0 || date.getDay() === 6) {
             return date;
         }
-        // Randomly disable some weekdays for demo
-        if (Math.random() < 0.1) {
-            return date;
-        }
         return null;
     }).filter(Boolean) as Date[];
 
