@@ -603,7 +603,17 @@ const parseDate = (str: string, format: DateFormat): Date | null => {
             }
 
             const date = new Date(year!, month! - 1, day!);
-            return date.toString() !== 'Invalid Date' ? date : null;
+            if (date.toString() === 'Invalid Date') return null;
+
+            if (
+                date.getFullYear() !== year ||
+                date.getMonth() !== month! - 1 ||
+                date.getDate() !== day
+            ) {
+                return null;
+            }
+
+            return date;
         } catch {
             return null;
         }
@@ -1284,29 +1294,48 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
         const colorStyles = getColorStyles(colorScheme);
 
         useEffect(() => {
-            if (variant === 'single' && isDate(value)) {
-                setSelectedDate(value);
-                setInputValue(formatDate(value, format));
-                setCurrentMonth(value);
-            } else if (variant === 'range' && isDateRange(value)) {
-                setSelectedRange(value);
-                setRangeInputValue([
-                    formatDate(value.start, format),
-                    formatDate(value.end, format)
-                ]);
-                if (value.start) setCurrentMonth(value.start);
-
-            } else if (value === null || value === undefined) {
-                // Handle null/undefined values
-                if (variant === 'single') {
+            if (variant === 'single') {
+                if (isDate(value)) {
+                    setSelectedDate(value);
+                    setCurrentMonth(value);
+                    if (!selectedDate || !isSameDay(selectedDate, value)) {
+                        setInputValue(formatDate(value, format));
+                    }
+                } else if (value === null || value === undefined) {
                     setSelectedDate(null);
                     setInputValue('');
-                } else {
+                }
+            } else if (variant === 'range') {
+                if (isDateRange(value)) {
+                    setSelectedRange(value);
+                    if (value.start) setCurrentMonth(value.start);
+                    const startChanged = !selectedRange.start || !isSameDay(selectedRange.start, value.start);
+                    const endChanged = !selectedRange.end || !isSameDay(selectedRange.end, value.end);
+                    if (startChanged || endChanged) {
+                        setRangeInputValue([
+                            formatDate(value.start, format),
+                            formatDate(value.end, format)
+                        ]);
+                    }
+                } else if (value === null || value === undefined) {
                     setSelectedRange({ start: null, end: null });
                     setRangeInputValue(['', '']);
                 }
             }
         }, [value, variant, format]);
+
+        useEffect(() => {
+            if (!isOpen) {
+                if (variant === 'single' && selectedDate) {
+                    setInputValue(formatDate(selectedDate, format));
+                } else if (variant === 'range') {
+                    setRangeInputValue([
+                        formatDate(selectedRange.start, format),
+                        formatDate(selectedRange.end, format)
+                    ]);
+                }
+            }
+        }, [isOpen, variant, format, selectedDate, selectedRange]);
 
         // Handle click outside
         useEffect(() => {
