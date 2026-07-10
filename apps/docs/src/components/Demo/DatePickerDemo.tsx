@@ -417,7 +417,7 @@ function HotelBooking() {
       colorScheme="blue"
       todayButton
       clearButton
-      format="MMM DD, YYYY"
+      format="MM/DD/YYYY"
     />
   );
 }
@@ -446,7 +446,7 @@ function HotelBooking() {
                     colorScheme="blue"
                     todayButton
                     clearButton
-                    format="MMM DD, YYYY"
+                    format="MM/DD/YYYY"
                 />
 
                 {booking.start && booking.end && (
