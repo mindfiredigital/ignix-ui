@@ -183,10 +183,9 @@ function MyComponent() {
                     <div className="mt-4 p-3 border border-border/60 bg-muted/20 rounded-xl">
                         <Typography variant="body-small" color="muted">
                             Selected: {range.start.toLocaleDateString()} – {range.end.toLocaleDateString()}
-                            <br />
-                            <Typography variant="caption" color="muted" className="block mt-1">
-                                Duration: {Math.ceil((range.end.getTime() - range.start.getTime()) / (1000 * 60 * 60 * 24))} days
-                            </Typography>
+                        </Typography>
+                        <Typography variant="caption" color="muted" className="block mt-1">
+                            Duration: {Math.ceil((range.end.getTime() - range.start.getTime()) / (1000 * 60 * 60 * 24))} days
                         </Typography>
                     </div>
                 )}
@@ -607,7 +606,7 @@ export const DatePickerPlayground = () => {
             title=""
             description=""
         >
-            <div className="space-y-8 w-max-4xl">
+            <div className="space-y-8 max-w-4xl">
                 {/* Controls */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6 rounded-2xl border-border/60 ">
                     <div className="space-y-2">
