@@ -499,73 +499,104 @@ const formatDate = (date: Date | null, format: DateFormat): string => {
 const parseDate = (str: string, format: DateFormat): Date | null => {
     if (!str) return null;
 
-    try {
-        let day, month, year;
-        let yearStr = '';
+    const parseWithFormat = (s: string, fmt: DateFormat): Date | null => {
+        try {
+            let day, month, year;
+            let yearStr = '';
+            const cleaned = s.trim();
 
-        switch (format) {
-            case 'MM/DD/YYYY': {
-                const parts = str.split('/');
-                if (parts.length < 3) return null;
-                [month, day, year] = parts.map(Number);
-                yearStr = parts[2] || '';
-                break;
+            switch (fmt) {
+                case 'MM/DD/YYYY': {
+                    const parts = cleaned.split('/');
+                    if (parts.length < 3) return null;
+                    [month, day, year] = parts.map(Number);
+                    yearStr = parts[2] || '';
+                    break;
+                }
+                case 'DD/MM/YYYY': {
+                    const parts = cleaned.split('/');
+                    if (parts.length < 3) return null;
+                    [day, month, year] = parts.map(Number);
+                    yearStr = parts[2] || '';
+                    break;
+                }
+                case 'YYYY-MM-DD': {
+                    const parts = cleaned.split('-');
+                    if (parts.length < 3) return null;
+                    [year, month, day] = parts.map(Number);
+                    yearStr = parts[0] || '';
+                    break;
+                }
+                case 'YYYY/MM/DD': {
+                    const communicativeParts = cleaned.split('/');
+                    if (communicativeParts.length < 3) return null;
+                    [year, month, day] = communicativeParts.map(Number);
+                    yearStr = communicativeParts[0] || '';
+                    break;
+                }
+                case 'MMM DD, YYYY': {
+                    const parts = cleaned.split(/[\s,]+/);
+                    if (parts.length < 3) return null;
+                    const mIndex = MONTH_NAMES.findIndex(m => m.toLowerCase().startsWith(parts[0].toLowerCase()));
+                    if (mIndex === -1) return null;
+                    month = mIndex + 1;
+                    day = parseInt(parts[1]);
+                    year = parseInt(parts[2]);
+                    yearStr = parts[2] || '';
+                    break;
+                }
+                case 'DD MMM YYYY': {
+                    const parts2 = cleaned.split(/[\s,]+/);
+                    if (parts2.length < 3) return null;
+                    const mIndex2 = MONTH_NAMES.findIndex(m => m.toLowerCase().startsWith(parts2[1].toLowerCase()));
+                    if (mIndex2 === -1) return null;
+                    day = parseInt(parts2[0]);
+                    month = mIndex2 + 1;
+                    year = parseInt(parts2[2]);
+                    yearStr = parts2[2] || '';
+                    break;
+                }
             }
-            case 'DD/MM/YYYY': {
-                const parts = str.split('/');
-                if (parts.length < 3) return null;
-                [day, month, year] = parts.map(Number);
-                yearStr = parts[2] || '';
-                break;
-            }
-            case 'YYYY-MM-DD': {
-                const parts = str.split('-');
-                if (parts.length < 3) return null;
-                [year, month, day] = parts.map(Number);
-                yearStr = parts[0] || '';
-                break;
-            }
-            case 'YYYY/MM/DD': {
-                const parts = str.split('/');
-                if (parts.length < 3) return null;
-                [year, month, day] = parts.map(Number);
-                yearStr = parts[0] || '';
-                break;
-            }
-            case 'MMM DD, YYYY': {
-                const parts = str.split(' ');
-                if (parts.length < 3) return null;
-                const mIndex = MONTH_NAMES.findIndex(m => m.toLowerCase().startsWith(parts[0].toLowerCase()));
-                if (mIndex === -1) return null;
-                month = mIndex + 1;
-                day = parseInt(parts[1]);
-                year = parseInt(parts[2]);
-                yearStr = parts[2] || '';
-                break;
-            }
-            case 'DD MMM YYYY': {
-                const parts2 = str.split(' ');
-                if (parts2.length < 3) return null;
-                const mIndex2 = MONTH_NAMES.findIndex(m => m.toLowerCase().startsWith(parts2[1].toLowerCase()));
-                if (mIndex2 === -1) return null;
-                day = parseInt(parts2[0]);
-                month = mIndex2 + 1;
-                year = parseInt(parts2[2]);
-                yearStr = parts2[2] || '';
-                break;
-            }
-        }
 
-        const cleanYearStr = yearStr.replace(/[^0-9]/g, '');
-        if (cleanYearStr.length !== 4) {
+            const cleanYearStr = yearStr.replace(/[^0-9]/g, '');
+            if (cleanYearStr.length !== 4) {
+                return null;
+            }
+
+            const date = new Date(year!, month! - 1, day!);
+            return date.toString() !== 'Invalid Date' ? date : null;
+        } catch {
             return null;
         }
+    };
 
-        const date = new Date(year!, month! - 1, day!);
-        return date.toString() !== 'Invalid Date' ? date : null;
-    } catch {
-        return null;
+    const primaryResult = parseWithFormat(str, format);
+    if (primaryResult) return primaryResult;
+
+    const allFormats: DateFormat[] = [
+        'MM/DD/YYYY',
+        'DD/MM/YYYY',
+        'YYYY-MM-DD',
+        'YYYY/MM/DD',
+        'MMM DD, YYYY',
+        'DD MMM YYYY'
+    ];
+
+    for (const fmt of allFormats) {
+        if (fmt === format) continue;
+        const result = parseWithFormat(str, fmt);
+        if (result) return result;
     }
+
+    if (str.includes('-')) {
+        const slashed = str.replace(/-/g, '/');
+        for (const fmt of ['MM/DD/YYYY', 'DD/MM/YYYY', 'YYYY/MM/DD'] as DateFormat[]) {
+            const result = parseWithFormat(slashed, fmt);
+            if (result) return result;
+        }
+    }
+
+    return null;
 };
 
 /**
@@ -1352,16 +1383,43 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
             newValues[index] = value;
             setRangeInputValue(newValues);
 
-            const date = parseDate(value, format);
-            const newRange = { ...selectedRange };
+            if (!value) {
+                const newRange = { ...selectedRange };
+                if (index === 0) newRange.start = null;
+                else newRange.end = null;
 
+                setSelectedRange(newRange);
+                setInternalError(null);
+                onError?.(null);
+                if (allowEmpty || !newRange.end) {
+                    onChange?.(newRange);
+                }
+                return;
+            }
+
+            const date = parseDate(value, format);
+            if (!date) {
+                setInternalError('Invalid date format');
+                onError?.('Invalid date format');
+                
+                const newRange = { ...selectedRange };
+                if (index === 0) newRange.start = null;
+                else newRange.end = null;
+                setSelectedRange(newRange);
+                return;
+            }
+
+            const newRange = { ...selectedRange };
             if (index === 0) {
                 newRange.start = date;
             } else {
                 newRange.end = date;
             }
 
-            // Validate if both dates are set
+            setInternalError(null);
+            onError?.(null);
+            setCurrentMonth(date);
+
             if (newRange.start && newRange.end) {
                 const error = validateOnChange ? validateDate(newRange.start) || validateDate(newRange.end) : null;
                 setInternalError(error);
@@ -1385,6 +1443,11 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                     onChange?.(newRange);
                 }
             } else {
+                const singleDate = newRange.start || newRange.end;
+                const error = validateOnChange ? validateDate(singleDate) : null;
+                setInternalError(error);
+                onError?.(error);
+
                 setSelectedRange(newRange);
                 if (allowEmpty || !newRange.end) {
                     onChange?.(newRange);
