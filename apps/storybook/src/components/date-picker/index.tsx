@@ -1,9 +1,8 @@
-
 'use client';
 
 import React, { useState, useEffect, useRef, forwardRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AlertCircle, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
+import { AlertCircle, Calendar, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import { cn } from '../../../utils/cn';
 import { Typography } from '../typography';
 import { Button } from '../button';
@@ -835,11 +834,40 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     clearText = 'Clear',
     size = 'md',
 }) => {
-    const themeStyles = getThemeStyles(themeMode);
-    const colorStyles = getColorStyles(colorScheme);
-    const days = getDaysInMonth(currentMonth, weekStart);
+    const [selectorView, setSelectorView] = React.useState<'days' | 'months' | 'years'>('days');
+    const yearsListRef = React.useRef<HTMLDivElement>(null);
+
     const currentYear = currentMonth.getFullYear();
     const currentMonthIndex = currentMonth.getMonth();
+    const days = getDaysInMonth(currentMonth, weekStart);
+
+    const themeStyles = getThemeStyles(themeMode);
+    const colorStyles = getColorStyles(colorScheme);
+
+    React.useEffect(() => {
+        if (selectorView === 'years' && yearsListRef.current) {
+            const activeYearEl = document.getElementById(`year-${currentYear}`);
+            if (activeYearEl) {
+                activeYearEl.scrollIntoView({ block: 'center', behavior: 'instant' as any });
+            }
+        }
+    }, [selectorView, currentYear]);
+
+    const years = React.useMemo(() => {
+        const startYear = minDate ? minDate.getFullYear() : new Date().getFullYear() - 100;
+        const endYear = maxDate ? maxDate.getFullYear() : new Date().getFullYear() + 20;
+        
+        const arr: number[] = [];
+        for (let y = startYear; y <= endYear; y++) {
+            arr.push(y);
+        }
+        
+        if (!arr.includes(currentYear)) {
+            arr.push(currentYear);
+        }
+        
+        return arr.sort((a, b) => a - b);
+    }, [minDate, maxDate, currentYear]);
 
     const handlePrevMonth = () => {
         const prevMonth = new Date(currentYear, currentMonthIndex - 1, 1);
@@ -883,16 +911,25 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                 >
                     <ChevronLeft className={size === 'sm' ? "w-4 h-4" : "w-5 h-5"} />
                 </Button>
-
-                <div className="flex items-center gap-2">
-                    <Typography
-                        variant="h6"
-                        weight="bold"
-                        className={cn("tracking-tight", themeStyles.header)}
-                    >
-                        {monthNames[currentMonthIndex]} {currentYear}
-                    </Typography>
-                </div>
+                <button
+                    onClick={() => {
+                        if (selectorView === 'days') {
+                            setSelectorView('months');
+                        } else if (selectorView === 'years') {
+                            setSelectorView('months');
+                        } else {
+                            setSelectorView('days');
+                        }
+                    }}
+                    className={cn(
+                        "flex items-center gap-1 hover:bg-muted/50 font-bold rounded-lg px-2.5 py-1 text-base transition-colors cursor-pointer outline-none",
+                        themeStyles.text.primary
+                    )}
+                    aria-label="Toggle month and year selector"
+                >
+                    <span>{monthNames[currentMonthIndex]} {currentYear}</span>
+                    <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform duration-200", selectorView !== 'days' && "transform rotate-180")} />
+                </button>
 
                 <Button
                     variant="ghost"
@@ -910,162 +947,223 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                 </Button>
             </div>
 
-            {/* Week days */}
-            <div className="grid grid-cols-7 gap-2 mb-3">
-                {Array.from({ length: 7 }).map((_, index) => (
-                    <Typography
-                        key={index}
-                        variant="caption"
-                        weight="semibold"
-                        align="center"
-                        className={cn("py-2 tracking-wide", themeStyles.weekday)}
-                    >
-                        {getDayName(index)}
-                    </Typography>
-                ))}
-            </div>
-
-            {/* Calendar grid */}
-            <div className="grid grid-cols-7 gap-2">
-                {days.map((date, index) => {
-                    const isSelected = isSameDay(date, selectedDate);
-                    const isInRange = isDateInRange(date, selectedRange.start, selectedRange.end);
-                    const isDisabled = isDateDisabled(date, minDate, maxDate, disabledDates);
-                    const isHighlighted = highlightDates?.some(d => isSameDay(d, date));
-                    const isToday = isSameDay(date, new Date());
-
-                    const isStart = selectedRange.start && isSameDay(date, selectedRange.start);
-                    const isEnd = selectedRange.end && isSameDay(date, selectedRange.end);
-                    const isCurrent = isCurrentMonth(date);
-
-                    return (
-                        <motion.div
-                            key={index}
-                            className="relative"
-                            whileHover={{ scale: isDisabled ? 1 : 1.05 }}
-                        >
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => !isDisabled && onDateSelect(date)}
-                                disabled={isDisabled}
+            {selectorView === 'months' && (
+                <div className="grid grid-cols-3 gap-3 h-64 pt-2">
+                    {monthNames.map((name, index) => {
+                        const isSelected = index === currentMonthIndex;
+                        return (
+                            <button
+                                key={name}
+                                onClick={() => {
+                                    const newDate = new Date(currentYear, index, 1);
+                                    onMonthChange(newDate);
+                                    setSelectorView('years');
+                                }}
                                 className={cn(
-                                    size === 'sm' ? "h-8 w-8" : "h-11 w-11",
-                                    "rounded-xl text-sm font-medium transition-all duration-300 relative cursor-pointer",
-                                    !isCurrent && "opacity-40",
-                                    isDisabled && cn("cursor-not-allowed opacity-20", themeStyles.text.disabled),
-
-                                    // Range styling
-                                    isInRange && !isStart && !isEnd && cn(
-                                        getInRangeStyle(themeMode, colorScheme),
-                                        "rounded-xl"
-                                    ),
-                                    isStart && cn("rounded-l-xl bg-gradient-to-r", colorStyles.primary[themeMode], "text-white shadow-sm"),
-                                    isEnd && cn("rounded-r-xl bg-gradient-to-r", colorStyles.primary[themeMode], "text-white shadow-sm"),
-
-                                    // Single date selection
-                                    isSelected && !isStart && !isEnd && cn("bg-gradient-to-r", colorStyles.primary[themeMode], "text-white shadow-sm"),
-
-                                    // Today
-                                    isToday && !isSelected && !isInRange && cn(colorStyles.accent[themeMode]),
-
-                                    // Highlighted dates
-                                    isHighlighted && !isSelected && !isInRange && "ring-2 ring-yellow-400 shadow-sm",
-
-                                    // Default hover
-                                    !isSelected && !isInRange && !isDisabled && cn(
-                                        "hover:bg-opacity-50",
-                                        themeStyles.hover
-                                    ),
-
-                                    // Base styling
-                                    "shadow-sm"
+                                    "flex items-center justify-center rounded-xl text-sm font-semibold transition-colors cursor-pointer outline-none",
+                                    isSelected 
+                                        ? cn("text-white bg-gradient-to-r shadow-sm", colorStyles.primary[themeMode])
+                                        : cn("hover:bg-muted/50 text-foreground bg-muted/20")
                                 )}
-                                aria-label={`Select ${date.toLocaleDateString()}`}
-                                animationVariant={isDisabled ? undefined : "press3DSoft"}
                             >
-                                <Typography
-                                    variant="body-small"
-                                    weight={(isSelected || isStart || isEnd) ? "bold" : "normal"}
-                                    className={cn(
-                                        "relative z-10",
-                                        (isSelected || isStart || isEnd) && "!text-white",
-                                        !isSelected && !isStart && !isEnd && isCurrent
-                                            ? themeStyles.day.current
-                                            : themeStyles.day.nonCurrent
-                                    )}
-                                >
-                                    {date.getDate()}
-                                </Typography>
+                                {name}
+                            </button>
+                        );
+                    })}
+                </div>
+            )}
 
-                                {/* Range indicators */}
-                                {isStart && selectedRange.end && (
-                                    <motion.div
-                                        initial={{ width: 0 }}
-                                        animate={{ width: '50%' }}
-                                        className="absolute inset-y-0 right-0 h-full bg-gradient-to-l from-white/20 to-transparent rounded-r-xl"
-                                    />
-                                )}
-                                {isEnd && selectedRange.start && (
-                                    <motion.div
-                                        initial={{ width: 0 }}
-                                        animate={{ width: '50%' }}
-                                        className="absolute inset-y-0 left-0 h-full bg-gradient-to-r from-white/20 to-transparent rounded-l-xl"
-                                    />
-                                )}
-
-                                {/* Today indicator dot */}
-                                {isToday && !isSelected && !isInRange && (
-                                    <div className={cn(
-                                        "absolute -top-1 right-1 w-1.5 h-1.5 rounded-full opacity-60",
-                                        themeMode === 'dark' ? 'bg-blue-300' : 'bg-blue-500'
-                                    )} />
-                                )}
-                            </Button>
-                        </motion.div>
-                    );
-                })}
-            </div>
-
-            {/* Footer buttons */}
-            {(todayButton || clearButton) && (
-                <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className={cn("flex gap-3 mt-6 pt-5 border-t", themeStyles.footer)}
+            {selectorView === 'years' && (
+                <div 
+                    className="grid grid-cols-4 gap-2 h-64 overflow-y-auto pt-2"
+                    ref={yearsListRef}
+                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 >
-                    {todayButton && (
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={onTodayClick}
-                            className="flex-1 rounded-xl shadow-sm hover:shadow text-slate-500 cursor-pointer"
-                            animationVariant="press3DSoft"
-                        >
-                            <Typography variant="body-small" weight="medium">
-                                {todayText}
+                    {years.map((y) => {
+                        const isSelected = y === currentYear;
+                        return (
+                            <button
+                                key={y}
+                                id={`year-${y}`}
+                                onClick={() => {
+                                    const newDate = new Date(y, currentMonthIndex, 1);
+                                    onMonthChange(newDate);
+                                    setSelectorView('days');
+                                }}
+                                className={cn(
+                                    "flex items-center justify-center rounded-xl text-sm font-semibold py-2.5 transition-colors cursor-pointer outline-none",
+                                    isSelected 
+                                        ? cn("text-white bg-gradient-to-r shadow-sm", colorStyles.primary[themeMode])
+                                        : cn("hover:bg-muted/50 text-foreground bg-muted/20")
+                                )}
+                            >
+                                {y}
+                            </button>
+                        );
+                    })}
+                </div>
+            )}
+
+            {selectorView === 'days' && (
+                <>
+                    {/* Week days */}
+                    <div className="grid grid-cols-7 gap-2 mb-3">
+                        {Array.from({ length: 7 }).map((_, index) => (
+                            <Typography
+                                key={index}
+                                variant="caption"
+                                weight="semibold"
+                                align="center"
+                                className={cn("py-2 tracking-wide", themeStyles.weekday)}
+                            >
+                                {getDayName(index)}
                             </Typography>
-                        </Button>
-                    )}
-                    {clearButton && (
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={onClearClick}
-                            className={cn(
-                                "flex-1 rounded-xl shadow-sm hover:shadow cursor-pointer",
-                                themeMode === 'dark'
-                                    ? "bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-gray-300"
-                                    : "bg-gradient-to-r from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-200 text-gray-600"
+                        ))}
+                    </div>
+
+                    {/* Calendar grid */}
+                    <div className="grid grid-cols-7 gap-2">
+                        {days.map((date, index) => {
+                            const isSelected = isSameDay(date, selectedDate);
+                            const isInRange = isDateInRange(date, selectedRange.start, selectedRange.end);
+                            const isDisabled = isDateDisabled(date, minDate, maxDate, disabledDates);
+                            const isHighlighted = highlightDates?.some(d => isSameDay(d, date));
+                            const isToday = isSameDay(date, new Date());
+
+                            const isStart = selectedRange.start && isSameDay(date, selectedRange.start);
+                            const isEnd = selectedRange.end && isSameDay(date, selectedRange.end);
+                            const isCurrent = isCurrentMonth(date);
+
+                            return (
+                                <motion.div
+                                    key={index}
+                                    className="relative"
+                                    whileHover={{ scale: isDisabled ? 1 : 1.05 }}
+                                >
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => !isDisabled && onDateSelect(date)}
+                                        disabled={isDisabled}
+                                        className={cn(
+                                            size === 'sm' ? "h-8 w-8" : "h-11 w-11",
+                                            "rounded-xl text-sm font-medium transition-all duration-300 relative cursor-pointer",
+                                            !isCurrent && "opacity-40",
+                                            isDisabled && cn("cursor-not-allowed opacity-20", themeStyles.text.disabled),
+
+                                            // Range styling
+                                            isInRange && !isStart && !isEnd && cn(
+                                                getInRangeStyle(themeMode, colorScheme),
+                                                "rounded-xl"
+                                            ),
+                                            isStart && cn("rounded-l-xl bg-gradient-to-r", colorStyles.primary[themeMode], "text-white shadow-sm"),
+                                            isEnd && cn("rounded-r-xl bg-gradient-to-r", colorStyles.primary[themeMode], "text-white shadow-sm"),
+
+                                            // Single date selection
+                                            isSelected && !isStart && !isEnd && cn("bg-gradient-to-r", colorStyles.primary[themeMode], "text-white shadow-sm"),
+
+                                            // Today
+                                            isToday && !isSelected && !isInRange && cn(colorStyles.accent[themeMode]),
+
+                                            // Highlighted dates
+                                            isHighlighted && !isSelected && !isInRange && "ring-2 ring-yellow-400 shadow-sm",
+
+                                            // Default hover
+                                            !isSelected && !isInRange && !isDisabled && cn(
+                                                "hover:bg-opacity-50",
+                                                themeStyles.hover
+                                            ),
+
+                                            // Base styling
+                                            "shadow-sm"
+                                        )}
+                                        aria-label={`Select ${date.toLocaleDateString()}`}
+                                        animationVariant={isDisabled ? undefined : "press3DSoft"}
+                                    >
+                                        <Typography
+                                            variant="body-small"
+                                            weight={(isSelected || isStart || isEnd) ? "bold" : "normal"}
+                                            className={cn(
+                                                "relative z-10",
+                                                (isSelected || isStart || isEnd) && "!text-white",
+                                                !isSelected && !isStart && !isEnd && isCurrent
+                                                    ? themeStyles.day.current
+                                                    : themeStyles.day.nonCurrent
+                                            )}
+                                        >
+                                            {date.getDate()}
+                                        </Typography>
+
+                                        {/* Range indicators */}
+                                        {isStart && selectedRange.end && (
+                                            <motion.div
+                                                initial={{ width: 0 }}
+                                                animate={{ width: '50%' }}
+                                                className="absolute inset-y-0 right-0 h-full bg-gradient-to-l from-white/20 to-transparent rounded-r-xl"
+                                            />
+                                        )}
+                                        {isEnd && selectedRange.start && (
+                                            <motion.div
+                                                initial={{ width: 0 }}
+                                                animate={{ width: '50%' }}
+                                                className="absolute inset-y-0 left-0 h-full bg-gradient-to-r from-white/20 to-transparent rounded-l-xl"
+                                            />
+                                        )}
+
+                                        {/* Today indicator dot */}
+                                        {isToday && !isSelected && !isInRange && (
+                                            <div className={cn(
+                                                "absolute -top-1 right-1 w-1.5 h-1.5 rounded-full opacity-60",
+                                                themeMode === 'dark' ? 'bg-blue-300' : 'bg-blue-500'
+                                            )} />
+                                        )}
+                                    </Button>
+                                </motion.div>
+                            );
+                        })}
+                    </div>
+
+                    {/* Footer buttons */}
+                    {(todayButton || clearButton) && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className={cn("flex gap-3 mt-6 pt-5 border-t", themeStyles.footer)}
+                        >
+                            {todayButton && (
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={onTodayClick}
+                                    className="flex-1 rounded-xl shadow-sm hover:shadow text-slate-500 cursor-pointer"
+                                    animationVariant="press3DSoft"
+                                >
+                                    <Typography variant="body-small" weight="medium">
+                                        {todayText}
+                                    </Typography>
+                                </Button>
                             )}
-                            animationVariant="press3DSoft"
-                        >
-                            <Typography variant="body-small" weight="medium">
-                                {clearText}
-                            </Typography>
-                        </Button>
+                            {clearButton && (
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={onClearClick}
+                                    className={cn(
+                                        "flex-1 rounded-xl shadow-sm hover:shadow cursor-pointer",
+                                        themeMode === 'dark'
+                                            ? "bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-gray-300"
+                                            : "bg-gradient-to-r from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-200 text-gray-600"
+                                    )}
+                                    animationVariant="press3DSoft"
+                                >
+                                    <Typography variant="body-small" weight="medium">
+                                        {clearText}
+                                    </Typography>
+                                </Button>
+                            )}
+                        </motion.div>
                     )}
-                </motion.div>
+                </>
             )}
         </div>
     );
