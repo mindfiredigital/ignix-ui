@@ -1328,34 +1328,33 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
         // Handle range date selection
         const handleRangeDateSelect = (date: Date) => {
             let newRange = { ...selectedRange };
-            const error = validateOnChange ? validateDate(date) : null;
-            setInternalError(error);
-            onError?.(error);
+            let error = validateOnChange ? validateDate(date) : null;
 
             if (!newRange.start || (newRange.start && newRange.end)) {
                 // Start new range
                 newRange = { start: date, end: null };
             } else if (newRange.start && !newRange.end) {
                 // Complete the range
-                if (date < newRange.start) {
-                    newRange = { start: date, end: newRange.start };
-                } else {
-                    newRange = { start: newRange.start, end: date };
+                newRange = { start: newRange.start, end: date };
+                if (newRange.start && date < newRange.start) {
+                    error = 'End date cannot be earlier than start date';
                 }
             }
 
+            setInternalError(error);
+            onError?.(error);
             setSelectedRange(newRange);
             setRangeInputValue([
                 formatDate(newRange.start, format),
                 formatDate(newRange.end, format)
             ]);
 
-            if (onChange && newRange.start && newRange.end) {
+            if (onChange && newRange.start && newRange.end && !error) {
                 onChange(newRange);
                 if (autoClose) {
                     setTimeout(() => setIsOpen(false), 100);
                 }
-            } else if (onChange && allowEmpty) {
+            } else if (onChange && allowEmpty && !error) {
                 onChange(newRange);
             }
         };
@@ -1406,7 +1405,10 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
 
             // Validate if both dates are set
             if (newRange.start && newRange.end) {
-                const error = validateOnChange ? validateDate(newRange.start) || validateDate(newRange.end) : null;
+                let error = validateOnChange ? validateDate(newRange.start) || validateDate(newRange.end) : null;
+                if (!error && newRange.end < newRange.start) {
+                    error = 'End date cannot be earlier than start date';
+                }
                 setInternalError(error);
                 onError?.(error);
 

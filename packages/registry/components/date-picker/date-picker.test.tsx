@@ -23,6 +23,7 @@ vi.mock('lucide-react', () => ({
     AlertCircle: ({ className }: any) => <svg className={className} data-testid="alert-icon" />,
     ChevronLeft: ({ className }: any) => <svg className={className} data-testid="chevron-left" />,
     ChevronRight: ({ className }: any) => <svg className={className} data-testid="chevron-right" />,
+    ChevronDown: ({ className }: any) => <svg className={className} data-testid="chevron-down" />,
 }));
 
 // Mock the Typography component
@@ -267,6 +268,31 @@ describe('DatePicker', () => {
 
             await waitFor(() => {
                 expect(onError).toHaveBeenCalled();
+            });
+        });
+
+        it('displays error when end date is earlier than start date in range mode', async () => {
+            const user = userEvent.setup();
+            const onError = vi.fn();
+
+            render(
+                <DatePicker 
+                    variant="range" 
+                    placeholder={['Start date', 'End date']} 
+                    onError={onError}
+                    format="MM/DD/YYYY"
+                />
+            );
+
+            const startInput = screen.getByPlaceholderText('Start date');
+            const endInput = screen.getByPlaceholderText('End date');
+
+            await user.type(startInput, '01/15/2024');
+            await user.type(endInput, '01/10/2024');
+
+            await waitFor(() => {
+                expect(screen.getByText('End date cannot be earlier than start date')).toBeInTheDocument();
+                expect(onError).toHaveBeenCalledWith('End date cannot be earlier than start date');
             });
         });
     });
