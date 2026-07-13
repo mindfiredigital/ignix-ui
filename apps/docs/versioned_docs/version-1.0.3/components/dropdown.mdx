@@ -46,7 +46,7 @@ const dropdownVariants = cva("z-50 min-w-[10rem] border p-2 shadow-lg ml-[10px] 
     },
     bg: {
       default: "bg-background text-foreground",
-      dark: "bg-background text-foreground border-border [--foreground:#ffffff] [--ifm-font-color-base:#ffffff] [--border:#2a2a2a]",
+      dark: "bg-[var(--color-dark-dropdown-bg)] text-[var(--color-dark-dropdown-text)] border-[var(--color-dark-dropdown-border)] [--foreground:var(--color-dark-dropdown-text)] [--ifm-font-color-base:var(--color-dark-dropdown-text)] [--border:var(--color-dark-dropdown-border)]",
       transparent: "bg-transparent",
       glass: "bg-white/10 backdrop-blur-lg text-[var(--color-glass-text)]",
       gradient: "bg-gradient-to-r from-[var(--color-gradient-from-dropdown)] to-[var(--color-gradient-to-dropdown)] text-white",
@@ -141,7 +141,7 @@ export const DropdownItem = ({
 } & React.ComponentProps<typeof DropdownMenu.Item>) => (
   <DropdownMenu.Item
     className={cn(
-      "cursor-pointer select-none rounded-md px-3 py-2 text-sm outline-transparent",
+      "relative flex cursor-pointer select-none items-center rounded-md px-3 py-2 text-sm outline-transparent focus:bg-accent focus:text-accent-foreground text-foreground",
       className
     )}
     {...props}

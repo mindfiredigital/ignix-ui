@@ -1,5 +1,6 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { motion } from "framer-motion";
+import { Check } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../utils/cn";
 import type { ReactNode } from "react";
@@ -20,7 +21,7 @@ const dropdownVariants = cva("z-50 min-w-[10rem] border p-2 shadow-lg outline-no
     },
     bg: {
       default: "bg-background text-foreground",
-      dark: "bg-background text-foreground border-border [--foreground:#ffffff] [--ifm-font-color-base:#ffffff] [--border:#2a2a2a]",
+      dark: "bg-[var(--color-dark-dropdown-bg)] text-[var(--color-dark-dropdown-text)] border-[var(--color-dark-dropdown-border)] [--foreground:var(--color-dark-dropdown-text)] [--ifm-font-color-base:var(--color-dark-dropdown-text)] [--border:var(--color-dark-dropdown-border)]",
       transparent: "bg-transparent",
       glass: "bg-white/10 backdrop-blur-lg text-[var(--color-glass-text)]",
       gradient: "bg-gradient-to-r from-[var(--color-gradient-from-dropdown)] to-[var(--color-gradient-to-dropdown)] text-white",
@@ -118,7 +119,7 @@ export const DropdownItem = ({
 } & React.ComponentProps<typeof DropdownMenu.Item>) => (
   <DropdownMenu.Item
     className={cn(
-      "relative flex cursor-pointer select-none items-center rounded-md px-3 py-2 text-sm outline-transparent focus:bg-accent focus:text-accent-foreground",
+      "relative flex cursor-pointer select-none items-center rounded-md px-3 py-2 text-sm outline-transparent focus:bg-accent focus:text-accent-foreground text-foreground",
       className
     )}
     {...props}
@@ -136,27 +137,14 @@ export const DropdownCheckboxItem = ({
 } & React.ComponentProps<typeof DropdownMenu.CheckboxItem>) => (
   <DropdownMenu.CheckboxItem
     className={cn(
-      "relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 text-foreground",
       className
     )}
     {...props}
   >
     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
       <DropdownMenu.ItemIndicator>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="h-4 w-4"
-        >
-          <polyline points="20 6 9 17 4 12" />
-        </svg>
+        <Check className="h-4 w-4" />
       </DropdownMenu.ItemIndicator>
     </span>
     {children}
@@ -182,4 +170,3 @@ export const DropdownSeparator = ({
     {...props}
   />
 );
-
