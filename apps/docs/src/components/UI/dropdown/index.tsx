@@ -6,7 +6,7 @@ import { cn } from "../../../utils/cn";
 import type { ReactNode } from "react";
 
 // Styling variants using CVA
-const dropdownVariants = cva("z-50 min-w-[10rem] border p-2 shadow-lg", {
+const dropdownVariants = cva("z-50 min-w-[10rem] border p-2 shadow-lg outline-none", {
   variants: {
     size: {
       sm: "text-sm",
@@ -21,7 +21,7 @@ const dropdownVariants = cva("z-50 min-w-[10rem] border p-2 shadow-lg", {
     },
     bg: {
       default: "bg-background text-foreground",
-      dark: "bg-card text-card-foreground",
+      dark: "bg-[var(--color-dark-dropdown-bg)] text-[var(--color-dark-dropdown-text)] border-[var(--color-dark-dropdown-border)] [--foreground:var(--color-dark-dropdown-text)] [--ifm-font-color-base:var(--color-dark-dropdown-text)] [--ifm-color-emphasis-300:var(--color-dark-dropdown-border)] [--border:var(--color-dark-dropdown-border)]",
       transparent: "bg-transparent",
       glass: "bg-white/10 backdrop-blur-lg text-[var(--color-glass-text)]",
       gradient: "bg-gradient-to-r from-[var(--color-gradient-from-dropdown)] to-[var(--color-gradient-to-dropdown)] text-white",
@@ -98,6 +98,7 @@ export const Dropdown = ({
             initial="initial"
             animate="animate"
             exit="exit"
+            data-theme={bg === "dark" ? "dark" : undefined}
             className={cn(dropdownVariants({ size, rounded, bg }), className)}
           >
             {children}
@@ -118,7 +119,7 @@ export const DropdownItem = ({
 } & React.ComponentProps<typeof DropdownMenu.Item>) => (
   <DropdownMenu.Item
     className={cn(
-      "relative flex cursor-pointer select-none items-center rounded-md px-3 py-2 text-sm outline-transparent focus:bg-accent focus:text-accent-foreground",
+      "relative flex cursor-pointer select-none items-center rounded-md px-3 py-2 text-sm outline-transparent focus:bg-accent focus:text-accent-foreground text-foreground",
       className
     )}
     {...props}
@@ -126,25 +127,6 @@ export const DropdownItem = ({
     {children}
   </DropdownMenu.Item>
 );
-
-export const DropdownLabel = ({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) => (
-  <DropdownMenu.Label
-    className={cn("px-3 py-1.5 text-sm font-semibold", className)}
-  >
-    {children}
-  </DropdownMenu.Label>
-);
-
-export const DropdownSeparator = ({ className }: { className?: string }) => (
-  <DropdownMenu.Separator className={cn("-mx-1 my-1 h-px bg-border", className)} />
-);
-
 export const DropdownCheckboxItem = ({
   children,
   className,
@@ -155,7 +137,7 @@ export const DropdownCheckboxItem = ({
 } & React.ComponentProps<typeof DropdownMenu.CheckboxItem>) => (
   <DropdownMenu.CheckboxItem
     className={cn(
-      "relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 text-foreground",
       className
     )}
     {...props}
@@ -167,4 +149,24 @@ export const DropdownCheckboxItem = ({
     </span>
     {children}
   </DropdownMenu.CheckboxItem>
+);
+
+export const DropdownLabel = ({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<typeof DropdownMenu.Label>) => (
+  <DropdownMenu.Label
+    className={cn("px-3 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground", className)}
+    {...props}
+  />
+);
+
+export const DropdownSeparator = ({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<typeof DropdownMenu.Separator>) => (
+  <DropdownMenu.Separator
+    className={cn("-mx-2 my-2 h-px bg-border/50", className)}
+    {...props}
+  />
 );

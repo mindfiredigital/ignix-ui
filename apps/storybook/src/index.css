@@ -4,6 +4,9 @@
   :root {
     --color-gradient-from-dropdown: #a855f7;
     --color-gradient-to-dropdown: #ec4899;
+    --color-dark-dropdown-bg: #121212;
+    --color-dark-dropdown-text: #ffffff;
+    --color-dark-dropdown-border: #2a2a2a;
     --background: #ffffff;
     --foreground: #0f172a;
     --card: #ffffff;
