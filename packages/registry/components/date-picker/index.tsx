@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect, useRef, forwardRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -12,15 +12,43 @@ function useDocusaurusTheme(): ThemeMode {
     const [theme, setTheme] = useState<ThemeMode>('light');
 
     useEffect(() => {
-        if (typeof document === 'undefined') return;
+        if (typeof window === 'undefined') return;
 
         const root = document.documentElement;
-        const read = () => (root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light') as ThemeMode;
+        const body = document.body;
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+        const read = (): ThemeMode => {
+            const hasDarkClass = root.classList.contains('dark') || body.classList.contains('dark');
+            const hasDarkThemeAttr = root.getAttribute('data-theme') === 'dark';
+
+            if (hasDarkClass || hasDarkThemeAttr) {
+                return 'dark';
+            }
+            if (
+                root.classList.contains('light') ||
+                body.classList.contains('light') ||
+                root.getAttribute('data-theme') === 'light'
+            ) {
+                return 'light';
+            }
+
+            return mediaQuery.matches ? 'dark' : 'light';
+        };
+
         setTheme(read());
 
         const observer = new MutationObserver(() => setTheme(read()));
-        observer.observe(root, { attributes: true, attributeFilter: ['data-theme'] });
-        return () => observer.disconnect();
+        observer.observe(root, { attributes: true, attributeFilter: ['data-theme', 'class'] });
+        observer.observe(body, { attributes: true, attributeFilter: ['class'] });
+
+        const listener = () => setTheme(read());
+        mediaQuery.addEventListener('change', listener);
+
+        return () => {
+            observer.disconnect();
+            mediaQuery.removeEventListener('change', listener);
+        };
     }, []);
 
     return theme;
@@ -468,49 +496,117 @@ const formatDate = (date: Date | null, format: DateFormat): string => {
     }
 };
 
-/**
- * Parses a date string into a Date object based on specified format
- */
 const parseDate = (str: string, format: DateFormat): Date | null => {
     if (!str) return null;
 
-    try {
-        let day, month, year;
+    const parseWithFormat = (s: string, fmt: DateFormat): Date | null => {
+        try {
+            let day, month, year;
+            let yearStr = '';
+            const cleaned = s.trim();
 
-        switch (format) {
-            case 'MM/DD/YYYY':
-                [month, day, year] = str.split('/').map(Number);
-                break;
-            case 'DD/MM/YYYY':
-                [day, month, year] = str.split('/').map(Number);
-                break;
-            case 'YYYY-MM-DD':
-                [year, month, day] = str.split('-').map(Number);
-                break;
-            case 'YYYY/MM/DD':
-                [year, month, day] = str.split('/').map(Number);
-                break;
-            case 'MMM DD, YYYY': {
-                const parts = str.split(' ');
-                month = MONTH_NAMES.findIndex(m => m.startsWith(parts[0])) + 1;
-                day = parseInt(parts[1]);
-                year = parseInt(parts[2]);
-                break;
+            switch (fmt) {
+                case 'MM/DD/YYYY': {
+                    const parts = cleaned.split('/');
+                    if (parts.length < 3) return null;
+                    [month, day, year] = parts.map(Number);
+                    yearStr = parts[2] || '';
+                    break;
+                }
+                case 'DD/MM/YYYY': {
+                    const parts = cleaned.split('/');
+                    if (parts.length < 3) return null;
+                    [day, month, year] = parts.map(Number);
+                    yearStr = parts[2] || '';
+                    break;
+                }
+                case 'YYYY-MM-DD': {
+                    const parts = cleaned.split('-');
+                    if (parts.length < 3) return null;
+                    [year, month, day] = parts.map(Number);
+                    yearStr = parts[0] || '';
+                    break;
+                }
+                case 'YYYY/MM/DD': {
+                    const communicativeParts = cleaned.split('/');
+                    if (communicativeParts.length < 3) return null;
+                    [year, month, day] = communicativeParts.map(Number);
+                    yearStr = communicativeParts[0] || '';
+                    break;
+                }
+                case 'MMM DD, YYYY': {
+                    const parts = cleaned.split(/[\s,]+/);
+                    if (parts.length < 3) return null;
+                    const mIndex = MONTH_NAMES.findIndex(m => m.toLowerCase().startsWith(parts[0].toLowerCase()));
+                    if (mIndex === -1) return null;
+                    month = mIndex + 1;
+                    day = parseInt(parts[1]);
+                    year = parseInt(parts[2]);
+                    yearStr = parts[2] || '';
+                    break;
+                }
+                case 'DD MMM YYYY': {
+                    const parts2 = cleaned.split(/[\s,]+/);
+                    if (parts2.length < 3) return null;
+                    const mIndex2 = MONTH_NAMES.findIndex(m => m.toLowerCase().startsWith(parts2[1].toLowerCase()));
+                    if (mIndex2 === -1) return null;
+                    day = parseInt(parts2[0]);
+                    month = mIndex2 + 1;
+                    year = parseInt(parts2[2]);
+                    yearStr = parts2[2] || '';
+                    break;
+                }
             }
-            case 'DD MMM YYYY': {
-                const parts2 = str.split(' ');
-                day = parseInt(parts2[0]);
-                month = MONTH_NAMES.findIndex(m => m.startsWith(parts2[1])) + 1;
-                year = parseInt(parts2[2]);
-                break;
+
+            const cleanYearStr = yearStr.replace(/[^0-9]/g, '');
+            if (cleanYearStr.length !== 4) {
+                return null;
             }
+
+            const date = new Date(year!, month! - 1, day!);
+            if (date.toString() === 'Invalid Date') return null;
+
+            if (
+                date.getFullYear() !== year ||
+                date.getMonth() !== month! - 1 ||
+                date.getDate() !== day
+            ) {
+                return null;
+            }
+
+            return date;
+        } catch {
+            return null;
         }
+    };
 
-        const date = new Date(year!, month! - 1, day!);
-        return date.toString() !== 'Invalid Date' ? date : null;
-    } catch {
-        return null;
+    const primaryResult = parseWithFormat(str, format);
+    if (primaryResult) return primaryResult;
+
+    const allFormats: DateFormat[] = [
+        'MM/DD/YYYY',
+        'DD/MM/YYYY',
+        'YYYY-MM-DD',
+        'YYYY/MM/DD',
+        'MMM DD, YYYY',
+        'DD MMM YYYY'
+    ];
+
+    for (const fmt of allFormats) {
+        if (fmt === format) continue;
+        const result = parseWithFormat(str, fmt);
+        if (result) return result;
     }
+
+    if (str.includes('-')) {
+        const slashed = str.replace(/-/g, '/');
+        for (const fmt of ['MM/DD/YYYY', 'DD/MM/YYYY', 'YYYY/MM/DD'] as DateFormat[]) {
+            const result = parseWithFormat(slashed, fmt);
+            if (result) return result;
+        }
+    }
+
+    return null;
 };
 
 /**
@@ -608,10 +704,10 @@ const getInRangeStyle = (themeMode: ThemeMode, colorScheme: ColorScheme): string
  */
 const getPopupPositionClasses = (position: string): string => {
     const positions: Record<string, string> = {
-        'bottom-left': 'top-full left-0 mt-2',
-        'bottom-right': 'top-full right-0 mt-2',
-        'top-left': 'bottom-full left-0 mb-2',
-        'top-right': 'bottom-full right-0 mb-2',
+        'bottom-left': 'top-full right-0 mt-2',
+        'bottom-right': 'top-full left-0 mt-2',
+        'top-left': 'bottom-full right-0 mb-2',
+        'top-right': 'bottom-full left-0 mb-2',
         'left': 'right-full top-0 mr-2',
         'right': 'left-full top-0 ml-2',
     };
@@ -690,6 +786,7 @@ const InputField: React.FC<InputFieldProps> = ({
                 placeholder={placeholder}
                 className={cn(
                     "w-full bg-transparent outline-none font-medium tracking-wide",
+                    showIcon && "pr-8",
                     themeStyles.text.primary,
                     themeStyles.placeholder,
                     disabled && "cursor-not-allowed",
@@ -771,9 +868,10 @@ const RangeInputField: React.FC<RangeInputFieldProps> = ({
 
             <Typography
                 variant="body"
+                color="inherit"
                 className={themeStyles.text.muted}
             >
-                –
+                ΓÇô
             </Typography>
 
             <div className="relative flex-1">
@@ -785,6 +883,7 @@ const RangeInputField: React.FC<RangeInputFieldProps> = ({
                     placeholder={Array.isArray(placeholder) ? placeholder[1] : 'End date'}
                     className={cn(
                         "w-full bg-transparent outline-none font-medium tracking-wide",
+                        showIcon && "pr-8",
                         themeStyles.text.primary,
                         themeStyles.placeholder,
                         disabled && "cursor-not-allowed",
@@ -927,8 +1026,15 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                     )}
                     aria-label="Toggle month and year selector"
                 >
-                    <span>{monthNames[currentMonthIndex]} {currentYear}</span>
-                    <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform duration-200", selectorView !== 'days' && "transform rotate-180")} />
+                    <Typography
+                        variant="body"
+                        weight="bold"
+                        color="inherit"
+                        className="flex items-center gap-1"
+                    >
+                        <span>{monthNames[currentMonthIndex]} {currentYear}</span>
+                        <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform duration-200", selectorView !== 'days' && "transform rotate-180")} />
+                    </Typography>
                 </button>
 
                 <Button
@@ -966,7 +1072,9 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                                         : cn("hover:bg-muted/50 text-foreground bg-muted/20")
                                 )}
                             >
-                                {name}
+                                <Typography variant="body-small" weight="semibold" color="inherit">
+                                    {name}
+                                </Typography>
                             </button>
                         );
                     })}
@@ -997,7 +1105,9 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                                         : cn("hover:bg-muted/50 text-foreground bg-muted/20")
                                 )}
                             >
-                                {y}
+                                <Typography variant="body-small" weight="semibold" color="inherit">
+                                    {y}
+                                </Typography>
                             </button>
                         );
                     })}
@@ -1014,6 +1124,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                                 variant="caption"
                                 weight="semibold"
                                 align="center"
+                                color="inherit"
                                 className={cn("py-2 tracking-wide", themeStyles.weekday)}
                             >
                                 {getDayName(index)}
@@ -1083,6 +1194,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                                         <Typography
                                             variant="body-small"
                                             weight={(isSelected || isStart || isEnd) ? "bold" : "normal"}
+                                            color="inherit"
                                             className={cn(
                                                 "relative z-10",
                                                 (isSelected || isStart || isEnd) && "!text-white",
@@ -1138,7 +1250,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                                     className="flex-1 rounded-xl shadow-sm hover:shadow text-slate-500 cursor-pointer"
                                     animationVariant="press3DSoft"
                                 >
-                                    <Typography variant="body-small" weight="medium">
+                                    <Typography variant="body-small" weight="medium" color="inherit">
                                         {todayText}
                                     </Typography>
                                 </Button>
@@ -1156,7 +1268,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                                     )}
                                     animationVariant="press3DSoft"
                                 >
-                                    <Typography variant="body-small" weight="medium">
+                                    <Typography variant="body-small" weight="medium" color="inherit">
                                         {clearText}
                                     </Typography>
                                 </Button>
@@ -1169,16 +1281,6 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     );
 };
 
-// ========== MAIN DATEPICKER COMPONENT ==========
-/**
- * A versatile DatePicker component supporting single dates and date ranges
- * @example
- * // Single date picker
- * <DatePicker value={date} onChange={setDate} />
- * 
- * // Date range picker
- * <DatePicker variant="range" value={range} onChange={setRange} />
- */
 const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
     (
         {
@@ -1200,7 +1302,7 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
             allowEmpty = false,
             todayButton = true,
             clearButton = true,
-            autoClose = false,
+            autoClose = true,
             className,
             inputClassName,
             calendarClassName,
@@ -1257,29 +1359,49 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
         const colorStyles = getColorStyles(colorScheme);
 
         useEffect(() => {
-            if (variant === 'single' && isDate(value)) {
-                setSelectedDate(value);
-                setInputValue(formatDate(value, format));
-                setCurrentMonth(value);
-            } else if (variant === 'range' && isDateRange(value)) {
-                setSelectedRange(value);
-                setRangeInputValue([
-                    formatDate(value.start, format),
-                    formatDate(value.end, format)
-                ]);
-                if (value.start) setCurrentMonth(value.start);
-
-            } else if (value === null || value === undefined) {
-                // Handle null/undefined values
-                if (variant === 'single') {
+            if (variant === 'single') {
+                if (isDate(value)) {
+                    setSelectedDate(value);
+                    setCurrentMonth(value);
+                    const dateChanged = !selectedDate !== !value || (!!selectedDate && !!value && !isSameDay(selectedDate, value));
+                    if (dateChanged) {
+                        setInputValue(formatDate(value, format));
+                    }
+                } else if (value === null || value === undefined) {
                     setSelectedDate(null);
                     setInputValue('');
-                } else {
+                }
+            } else if (variant === 'range') {
+                if (isDateRange(value)) {
+                    setSelectedRange(value);
+                    if (value.start) setCurrentMonth(value.start);
+                    const startChanged = !selectedRange.start !== !value.start || (!!selectedRange.start && !!value.start && !isSameDay(selectedRange.start, value.start));
+                    const endChanged = !selectedRange.end !== !value.end || (!!selectedRange.end && !!value.end && !isSameDay(selectedRange.end, value.end));
+                    if (startChanged || endChanged) {
+                        setRangeInputValue([
+                            formatDate(value.start, format),
+                            formatDate(value.end, format)
+                        ]);
+                    }
+                } else if (value === null || value === undefined) {
                     setSelectedRange({ start: null, end: null });
                     setRangeInputValue(['', '']);
                 }
             }
         }, [value, variant, format]);
+
+        useEffect(() => {
+            if (!isOpen) {
+                if (variant === 'single' && selectedDate) {
+                    setInputValue(formatDate(selectedDate, format));
+                } else if (variant === 'range') {
+                    setRangeInputValue([
+                        formatDate(selectedRange.start, format),
+                        formatDate(selectedRange.end, format)
+                    ]);
+                }
+            }
+        }, [isOpen, variant, format, selectedDate, selectedRange]);
 
         // Handle click outside
         useEffect(() => {
@@ -1354,7 +1476,7 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                 if (autoClose) {
                     setTimeout(() => setIsOpen(false), 100);
                 }
-            } else if (onChange && allowEmpty && !error) {
+            } else if (onChange && (allowEmpty || !newRange.end) && !error) {
                 onChange(newRange);
             }
         };
@@ -1457,16 +1579,17 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
         const hasError = Boolean(error) || !!internalError;
 
         return (
-            <div ref={containerRef} className={cn("relative", className)}>
+            <div ref={containerRef} className={cn("relative text-foreground space-y-3", themeMode, className)}>
                 {label && (
                     <motion.label
                         initial={{ opacity: 0, y: -5 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="block mb-2"
+                        className="block mb-1"
                     >
                         <Typography
                             variant="label"
                             weight="semibold"
+                            color="inherit"
                             className={cn("tracking-wide", themeStyles.text.primary)}
                         >
                             {label}

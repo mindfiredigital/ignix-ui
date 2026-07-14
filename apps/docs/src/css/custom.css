@@ -14,6 +14,9 @@
 :root {
   --color-gradient-from-dropdown: #a855f7;
   --color-gradient-to-dropdown: #ec4899;
+  --color-dark-dropdown-bg: #121212;
+  --color-dark-dropdown-text: #ffffff;
+  --color-dark-dropdown-border: #2a2a2a;
   --ifm-color-primary: #ff0000;
   --ifm-color-primary-dark: #cc0511;
   --ifm-color-primary-darker: #b70510;
@@ -288,15 +291,31 @@
   --color-gradient-brand: var(--brand-gradient);
 
   @keyframes shine {
-    0% { background-position: 0% 0%; }
-    50% { background-position: 100% 100%; }
-    100% { background-position: 0% 0%; }
+    0% {
+      background-position: 0% 0%;
+    }
+
+    50% {
+      background-position: 100% 100%;
+    }
+
+    100% {
+      background-position: 0% 0%;
+    }
   }
 
   @keyframes gradient {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    0% {
+      background-position: 0% 50%;
+    }
+
+    50% {
+      background-position: 100% 50%;
+    }
+
+    100% {
+      background-position: 0% 50%;
+    }
   }
 
   --animate-gradient: gradient 8s linear infinite;
@@ -305,13 +324,23 @@
   --animate-aurora: aurora 8s ease-in-out infinite alternate;
 
   @keyframes marquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(calc(-100% - var(--gap))); }
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(calc(-100% - var(--gap)));
+    }
   }
 
   @keyframes marquee-vertical {
-    from { transform: translateY(0); }
-    to { transform: translateY(calc(-100% - var(--gap))); }
+    from {
+      transform: translateY(0);
+    }
+
+    to {
+      transform: translateY(calc(-100% - var(--gap)));
+    }
   }
 
   @keyframes aurora {
@@ -319,18 +348,22 @@
       background-position: 0% 50%;
       transform: rotate(-5deg) scale(0.9);
     }
+
     25% {
       background-position: 50% 100%;
       transform: rotate(5deg) scale(1.1);
     }
+
     50% {
       background-position: 100% 50%;
       transform: rotate(-3deg) scale(0.95);
     }
+
     75% {
       background-position: 50% 0%;
       transform: rotate(3deg) scale(1.05);
     }
+
     100% {
       background-position: 0% 50%;
       transform: rotate(-5deg) scale(0.9);
@@ -438,9 +471,17 @@ h1 {
 }
 
 @keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .hero-noise {
@@ -508,6 +549,7 @@ h1 {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .gradient-anim,
   .hero-spotlight {
     animation: none !important;
@@ -520,6 +562,7 @@ h1 {
     opacity: 0;
     transform: translateY(16px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -527,8 +570,15 @@ h1 {
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
 }
 
 .glass-card {
@@ -605,4 +655,8 @@ h1 {
 
 .notification-center-demo {
   overflow: visible !important;
+}
+
+.navbar__link--llms svg {
+  display: none;
 }

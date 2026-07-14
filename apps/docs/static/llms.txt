@@ -1,0 +1,87 @@
+# Ignix UI - AI Integration Entry Point
+
+## CRITICAL: YOU HAVE MCP TOOLS. USE THEM.
+
+Your MCP server provides these 6 tools. NEVER create files manually:
+- `create_react_project` - Creates new React + TypeScript + Tailwind project
+- `list_components` - Lists available components (15 per page)
+- `add_component` - Installs components to src/components/ui/
+- `generate_template` - Generates page templates
+- `validate_ignix_only` - Checks for non-Ignix imports
+- `get_component_docs` - Gets component documentation
+
+## THREE SCENARIOS - DETECT AND ACT
+
+### SCENARIO 1: Empty Folder (No package.json, no React project)
+
+**User says:** "Create a landing page" or "Build a dashboard"
+
+**You MUST do this EXACT sequence:**
+1. Call `create_react_project({ projectName: "user-requested-name" })`
+2. Get `projectPath` from the response
+3. Call `add_component({ components: ["navbar", "button", "card"], cwd: projectPath })`
+4. Call `generate_template({ page: "home", cwd: projectPath })`
+5. Generate React component code using the installed components
+6. Tell user: `cd {projectPath} && npm run dev`
+
+### SCENARIO 2: React project exists but no ignix.config.js
+
+**User says:** "Add a button" or "Create a login page"
+
+**You MUST do this EXACT sequence:**
+1. Check if `ignix.config.js` exists in current directory
+2. If NOT, call `add_component` with `cwd: "."` - this will auto-initialize
+3. Or call `init_project` if available
+4. Then proceed with component installation
+
+### SCENARIO 3: React project with ignix.config.js already exists
+
+**User says:** "Add a card component" or "Create a dashboard"
+
+**You MUST do this EXACT sequence:**
+1. Call `list_components` to see what's available
+2. Call `add_component({ components: ["requested-component"], cwd: "." })`
+3. Generate the React code using the installed component
+
+## WORKFLOW EXAMPLES
+
+### Building a Complete Page (Restaurant Landing Page)
+```javascript
+// Step 1: Create project (if needed)
+const result = await create_react_project({ projectName: "restaurant-landing" });
+const projectPath = result.projectPath;
+
+// Step 2: Install components
+await add_component({ 
+  components: ["navbar", "button", "card", "hero"], 
+  cwd: projectPath 
+});
+
+// Step 3: Generate template
+await generate_template({ page: "home", cwd: projectPath });
+
+// Step 4: Generate React component code
+// Use: import { Navbar } from '@/components/ui/navbar'
+// Use: import { Button } from '@/components/ui/button'
+// Use: import { Card } from '@/components/ui/card'
+```
+
+### Adding a Single Component
+await add_component({ components: ["button"], cwd: "." });
+// Then generate: import { Button } from '@/components/ui/button'
+
+### FORBIDDEN ACTIONS - NEVER DO THESE
+❌ Create index.html files
+❌ Create styles.css files
+❌ Write vanilla JavaScript
+❌ Use shell commands to create components
+❌ Install components manually
+❌ Use shadcn, MUI, Chakra, Ant Design
+
+ALWAYS DO THESE
+✅ Use the MCP tools
+✅ Use React components
+✅ Use Tailwind CSS classes
+✅ Use TypeScript
+✅ Return projectPath from create_react_project
+✅ Use cwd parameter for all subsequent calls

@@ -60,7 +60,7 @@ describe('TemplateService', () => {
       expect(mockRegistry.getTemplateConfig).toHaveBeenCalledWith('landing');
 
       expect(fs.writeFile).toHaveBeenCalledWith(
-        expect.stringContaining('landing/landing.tsx'),
+        expect.stringMatching(/landing[\\/]landing\.tsx/),
         'template content'
       );
     });

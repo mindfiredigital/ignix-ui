@@ -157,6 +157,7 @@ describe("SignIn Component", () => {
     });
 
     it("handles social login button clicks", async () => {
+        vi.useFakeTimers();
         render(
             <SignIn
                 onSubmit={mockOnSubmit}
@@ -181,6 +182,9 @@ describe("SignIn Component", () => {
         const microsoftButton = screen.getByLabelText("Sign in with Microsoft");
         fireEvent.click(microsoftButton);
         expect(mockOnMicrosoftSignIn).toHaveBeenCalled();
+
+        vi.runOnlyPendingTimers();
+        vi.useRealTimers();
     });
 
     it("shows loading state when social sign-in is in progress", () => {
