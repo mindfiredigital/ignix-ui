@@ -907,7 +907,7 @@ const RangeInputField: React.FC<RangeInputFieldProps> = ({
                 color="inherit"
                 className={themeStyles.text.muted}
             >
-                ΓÇô
+                -
             </Typography>
 
             <div className="relative flex-1">
@@ -1385,8 +1385,10 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
         const [inputValue, setInputValue] = useState('');
         const [rangeInputValue, setRangeInputValue] = useState<[string, string]>(['', '']);
         const [internalError, setInternalError] = useState<string | null>(null);
+        const [computedPosition, setComputedPosition] = useState<PopupPosition>(popupPosition);
 
         const containerRef = useRef<HTMLDivElement>(null);
+        const popupRef = useRef<HTMLDivElement>(null);
         const inputRef = useRef<HTMLInputElement>(null);
         const startInputRef = useRef<HTMLInputElement>(null);
         const endInputRef = useRef<HTMLInputElement>(null);
@@ -1455,6 +1457,70 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                 return () => document.removeEventListener('mousedown', handleClickOutside);
             }
         }, [isOpen]);
+
+        // Auto-adjust popup position to remain visible in viewport
+        useEffect(() => {
+            if (!isOpen) {
+                setComputedPosition(popupPosition);
+                return;
+            }
+
+            const updatePosition = () => {
+                if (!containerRef.current || !popupRef.current) return;
+
+                const triggerRect = containerRef.current.getBoundingClientRect();
+                const popupRect = popupRef.current.getBoundingClientRect();
+
+                const popupHeight = popupRect.height || 350;
+                const popupWidth = popupRect.width || 300;
+
+                const viewportHeight = window.innerHeight;
+                const viewportWidth = window.innerWidth;
+
+                let vertical = 'bottom';
+                let horizontal = 'left';
+
+                if (popupPosition.startsWith('top')) {
+                    vertical = 'top';
+                }
+                if (popupPosition.endsWith('right')) {
+                    horizontal = 'right';
+                }
+
+                const spaceBelow = viewportHeight - triggerRect.bottom;
+                const spaceAbove = triggerRect.top;
+
+                if (vertical === 'bottom' && spaceBelow < popupHeight && spaceAbove > popupHeight) {
+                    vertical = 'top';
+                } else if (vertical === 'top' && spaceAbove < popupHeight && spaceBelow > popupHeight) {
+                    vertical = 'bottom';
+                }
+
+                if (horizontal === 'right') {
+                    const rightEdge = triggerRect.left + popupWidth;
+                    if (rightEdge > viewportWidth && triggerRect.right >= popupWidth) {
+                        horizontal = 'left';
+                    }
+                } else {
+                    const leftEdge = triggerRect.right - popupWidth;
+                    if (leftEdge < 0 && (viewportWidth - triggerRect.left) >= popupWidth) {
+                        horizontal = 'right';
+                    }
+                }
+
+                setComputedPosition(`${vertical}-${horizontal}` as PopupPosition);
+            };
+
+            const handle = requestAnimationFrame(updatePosition);
+            window.addEventListener('resize', updatePosition);
+            window.addEventListener('scroll', updatePosition, true);
+
+            return () => {
+                cancelAnimationFrame(handle);
+                window.removeEventListener('resize', updatePosition);
+                window.removeEventListener('scroll', updatePosition, true);
+            };
+        }, [isOpen, popupPosition]);
 
         // Validate date
         const validateDate = (date: Date | null): string | null => {
@@ -1552,16 +1618,43 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
             newValues[index] = value;
             setRangeInputValue(newValues);
 
-            const date = parseDate(value, format);
-            const newRange = { ...selectedRange };
+            if (!value) {
+                const newRange = { ...selectedRange };
+                if (index === 0) newRange.start = null;
+                else newRange.end = null;
 
+                setSelectedRange(newRange);
+                setInternalError(null);
+                onError?.(null);
+                if (allowEmpty || !newRange.end) {
+                    onChange?.(newRange);
+                }
+                return;
+            }
+
+            const date = parseDate(value, format);
+            if (!date) {
+                setInternalError('Invalid date format');
+                onError?.('Invalid date format');
+
+                const newRange = { ...selectedRange };
+                if (index === 0) newRange.start = null;
+                else newRange.end = null;
+                setSelectedRange(newRange);
+                return;
+            }
+
+            const newRange = { ...selectedRange };
             if (index === 0) {
                 newRange.start = date;
             } else {
                 newRange.end = date;
             }
 
-            // Validate if both dates are set
+            setInternalError(null);
+            onError?.(null);
+            setCurrentMonth(date);
+
             if (newRange.start && newRange.end) {
                 let error = validateOnChange ? validateDate(newRange.start) || validateDate(newRange.end) : null;
                 if (!error && newRange.end < newRange.start) {
@@ -1574,9 +1667,16 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                     setSelectedRange(newRange);
                     onChange?.(newRange);
                 }
-            } else if (allowEmpty) {
+            } else {
+                const singleDate = newRange.start || newRange.end;
+                const error = validateOnChange ? validateDate(singleDate) : null;
+                setInternalError(error);
+                onError?.(error);
+
                 setSelectedRange(newRange);
-                onChange?.(newRange);
+                if (allowEmpty || !newRange.end) {
+                    onChange?.(newRange);
+                }
             }
         };
 
@@ -1689,6 +1789,7 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                 <AnimatePresence>
                     {isOpen && !disabled && !readOnly && (
                         <motion.div
+                            ref={popupRef}
                             initial={{ opacity: 0, scale: 0.95, y: -10 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: -10 }}
@@ -1699,7 +1800,7 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                             }}
                             className={cn(
                                 "absolute z-50",
-                                getPopupPositionClasses(popupPosition),
+                                getPopupPositionClasses(computedPosition),
                                 calendarClassName
                             )}
                         >
