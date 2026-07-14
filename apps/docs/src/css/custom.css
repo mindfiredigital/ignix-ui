@@ -648,7 +648,6 @@ h1 {
   text-decoration: none;
 }
 
-/* Notification center docs preview: avoid clipping the dropdown */
 [role="tabpanel"]:has(.notification-center-demo) {
   overflow: visible !important;
 }
@@ -659,4 +658,41 @@ h1 {
 
 .navbar__link--llms svg {
   display: none;
+}
+
+.markdown table {
+  display: table !important;
+  width: 100% !important;
+  min-width: 100% !important;
+  border-collapse: collapse !important;
+  margin: 1.5rem 0 !important;
+}
+
+.markdown table th,
+.markdown table td {
+  padding: 12px 14px !important;
+  text-align: left !important;
+}
+
+.markdown table th:nth-child(1),
+.markdown table td:nth-child(1) {
+  width: 20% !important;
+  min-width: 120px !important;
+}
+
+.markdown table th:nth-child(2),
+.markdown table td:nth-child(2) {
+  width: 25% !important;
+  min-width: 150px !important;
+}
+
+.markdown table th:nth-child(3),
+.markdown table td:nth-child(3) {
+  width: 15% !important;
+  min-width: 100px !important;
+}
+
+.markdown table th:nth-child(4),
+.markdown table td:nth-child(4) {
+  width: 40% !important;
 }
