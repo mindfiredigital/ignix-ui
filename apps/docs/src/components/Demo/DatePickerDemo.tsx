@@ -3,8 +3,7 @@ import { DatePicker, type DateRange } from '@site/src/components/UI/date-picker'
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import CodeBlock from '@theme/CodeBlock';
-import { Button } from '@site/src/components/UI/button';
-import { Moon, Sun } from 'lucide-react';
+import { Button } from '@site/src/components/UI/button'
 import { Typography } from '@site/src/components/UI/typography';
 import { useColorMode } from '@docusaurus/theme-common';
 
@@ -19,7 +18,7 @@ const DemoSection = ({ title, description, children, code }: {
     <div className="space-y-4 mb-8">
         <div>
             <Typography variant="h4" weight="semibold">{title}</Typography>
-            <Typography variant="body-small" color="muted">{description}</Typography>
+            <Typography variant="body-small" color='muted'>{description}</Typography>
         </div>
         <Tabs>
             <TabItem value="preview" label="Preview">
@@ -98,7 +97,7 @@ function MyComponent() {
             description=""
             code={codeString}
         >
-            <div className="max-w-lg">
+            <div className="max-w-md">
                 <DatePicker
                     value={date || undefined}
                     onChange={handleSingleDateChange}
@@ -108,8 +107,8 @@ function MyComponent() {
                     themeMode={colorMode as 'light' | 'dark'}
                 />
                 {date && (
-                    <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded">
-                        <Typography variant="body-small">
+                    <div className="mt-4 p-3 border border-border/60 bg-muted/20 rounded-xl">
+                        <Typography variant="body-small" color="muted">
                             Selected: {date.toLocaleDateString('en-US', {
                                 weekday: 'long',
                                 year: 'numeric',
@@ -181,13 +180,12 @@ function MyComponent() {
                     clearButton
                 />
                 {range.start && range.end && (
-                    <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded">
-                        <Typography variant="body-small">
+                    <div className="mt-4 p-3 border border-border/60 bg-muted/20 rounded-xl">
+                        <Typography variant="body-small" color="muted">
                             Selected: {range.start.toLocaleDateString()} – {range.end.toLocaleDateString()}
-                            <br />
-                            <Typography variant="caption" className="text-green-600 dark:text-green-400">
-                                Duration: {Math.ceil((range.end.getTime() - range.start.getTime()) / (1000 * 60 * 60 * 24))} days
-                            </Typography>
+                        </Typography>
+                        <Typography variant="caption" color="muted" className="block mt-1">
+                            Duration: {Math.ceil((range.end.getTime() - range.start.getTime()) / (1000 * 60 * 60 * 24))} days
                         </Typography>
                     </div>
                 )}
@@ -220,47 +218,39 @@ export const SizeVariantsDemo = () => {
             description=""
             code={codeString}
         >
-            <div className="space-y-6 max-w-2xl">
-                <div className="space-y-2">
-                    <Typography variant="label" className="text-gray-700 dark:text-gray-300">Small</Typography>
-                    <DatePicker
-                        themeMode={colorMode as 'light' | 'dark'}
-                        size="sm"
-                        placeholder="Small date picker"
-                        value={dates.sm || undefined}
-                        onChange={(date) => setDates(prev => ({ ...prev, sm: date as Date | null }))}
-                    />
-                </div>
-                <div className="space-y-2">
-                    <Typography variant="label" className="text-gray-700 dark:text-gray-300">Medium (Default)</Typography>
-                    <DatePicker
-                        themeMode={colorMode as 'light' | 'dark'}
-                        size="md"
-                        placeholder="Medium date picker"
-                        value={dates.md || undefined}
-                        onChange={(date) => setDates(prev => ({ ...prev, md: date as Date | null }))}
-                    />
-                </div>
-                <div className="space-y-2">
-                    <Typography variant="label" className="text-gray-700 dark:text-gray-300">Large</Typography>
-                    <DatePicker
-                        themeMode={colorMode as 'light' | 'dark'}
-                        size="lg"
-                        placeholder="Large date picker"
-                        value={dates.lg || undefined}
-                        onChange={(date) => setDates(prev => ({ ...prev, lg: date as Date | null }))}
-                    />
-                </div>
-                <div className="space-y-2">
-                    <Typography variant="label" className="text-gray-700 dark:text-gray-300">Extra Large</Typography>
-                    <DatePicker
-                        themeMode={colorMode as 'light' | 'dark'}
-                        size="xl"
-                        placeholder="Extra large date picker"
-                        value={dates.xl || undefined}
-                        onChange={(date) => setDates(prev => ({ ...prev, xl: date as Date | null }))}
-                    />
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
+                <DatePicker
+                    themeMode={colorMode as 'light' | 'dark'}
+                    size="sm"
+                    label="Small"
+                    placeholder="Small date picker"
+                    value={dates.sm || undefined}
+                    onChange={(date) => setDates(prev => ({ ...prev, sm: date as Date | null }))}
+                />
+                <DatePicker
+                    themeMode={colorMode as 'light' | 'dark'}
+                    size="md"
+                    label="Medium (Default)"
+                    placeholder="Medium date picker"
+                    value={dates.md || undefined}
+                    onChange={(date) => setDates(prev => ({ ...prev, md: date as Date | null }))}
+                />
+                <DatePicker
+                    themeMode={colorMode as 'light' | 'dark'}
+                    size="lg"
+                    label="Large"
+                    placeholder="Large date picker"
+                    value={dates.lg || undefined}
+                    onChange={(date) => setDates(prev => ({ ...prev, lg: date as Date | null }))}
+                />
+                <DatePicker
+                    themeMode={colorMode as 'light' | 'dark'}
+                    size="xl"
+                    label="Extra Large"
+                    placeholder="Extra large date picker"
+                    value={dates.xl || undefined}
+                    onChange={(date) => setDates(prev => ({ ...prev, xl: date as Date | null }))}
+                />
             </div>
         </DemoSection>
     );
@@ -268,7 +258,7 @@ export const SizeVariantsDemo = () => {
 
 // Demo 4: Color Schemes
 export const ColorSchemesDemo = () => {
-    const [themeMode, setThemeMode] = useState<'light' | 'dark'>('dark');
+    const { colorMode } = useColorMode();
 
     const codeString = `
 // Different color schemes
@@ -286,33 +276,17 @@ export const ColorSchemesDemo = () => {
             description=""
             code={codeString}
         >
-            <div className="space-y-4">
-                <div className="flex items-center justify-between mb-4">
-                    <Typography variant="body" weight="medium">Theme Mode</Typography>
-                    <Button
-                        onClick={() => setThemeMode(themeMode === 'light' ? 'dark' : 'light')}
-                        variant="outline"
-                        size="sm"
-                        className="flex items-center gap-2"
-                    >
-                        {themeMode === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                        {themeMode === 'dark' ? 'Light Mode' : 'Dark Mode'}
-                    </Button>
-                </div>
-
-                <div className={`grid grid-cols-2 gap-4 p-4 rounded-lg ${themeMode === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
+            <div className="space-y-4 max-w-4xl">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4 w-full">
                     {colorSchemeOptions.map((color) => (
-                        <div key={color.value} className="space-y-2">
-                            <Typography variant="label" className={themeMode === 'dark' ? 'text-gray-300' : 'text-gray-700'}>
-                                {color.label}
-                            </Typography>
-                            <DatePicker
-                                themeMode={themeMode}
-                                colorScheme={color.value as any}
-                                placeholder={`${color.label} theme`}
-                                size="sm"
-                            />
-                        </div>
+                        <DatePicker
+                            key={color.value}
+                            themeMode={colorMode as 'light' | 'dark'}
+                            colorScheme={color.value as any}
+                            label={color.label}
+                            placeholder={`${color.label} theme`}
+                            size="sm"
+                        />
                     ))}
                 </div>
             </div>
@@ -341,31 +315,28 @@ export const PopupPositionsDemo = () => {
             description=""
             code={codeString}
         >
-            <div className="space-y-6">
-                <div className="grid grid-cols-3 gap-4">
+            <div className="space-y-6 max-w-4xl">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full">
                     {popupPositionOptions.map((position) => (
-                        <div key={position.value} className="space-y-2">
-                            <Typography variant="label" className="text-gray-700 dark:text-gray-300">
-                                {position.label}
-                            </Typography>
-                            <DatePicker
-                                themeMode={colorMode as 'light' | 'dark'}
-                                popupPosition={position.value as any}
-                                placeholder={position.label}
-                                size="sm"
-                                value={selectedPositions[position.value] || undefined}
-                                onChange={(date) => setSelectedPositions(prev => ({
-                                    ...prev,
-                                    [position.value]: date as Date | null
-                                }))}
-                            />
-                        </div>
+                        <DatePicker
+                            key={position.value}
+                            themeMode={colorMode as 'light' | 'dark'}
+                            popupPosition={position.value as any}
+                            label={position.label}
+                            placeholder={position.label}
+                            size="sm"
+                            value={selectedPositions[position.value] || undefined}
+                            onChange={(date) => setSelectedPositions(prev => ({
+                                ...prev,
+                                [position.value]: date as Date | null
+                            }))}
+                        />
                     ))}
                 </div>
 
                 <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded">
                     <Typography variant="body-small" className="text-amber-800 dark:text-amber-300">
-                        💡 Tip: The popup position automatically adjusts on small screens to ensure calendar visibility
+                        Tip: The popup position automatically adjusts on small screens to ensure calendar visibility
                     </Typography>
                 </div>
             </div>
@@ -391,10 +362,6 @@ export const HotelBookingDemo = () => {
         date.setDate(today.getDate() + i);
         // Disable weekends
         if (date.getDay() === 0 || date.getDay() === 6) {
-            return date;
-        }
-        // Randomly disable some weekdays for demo
-        if (Math.random() < 0.1) {
             return date;
         }
         return null;
@@ -446,7 +413,7 @@ function HotelBooking() {
       colorScheme="blue"
       todayButton
       clearButton
-      format="MMM DD, YYYY"
+      format="MM/DD/YYYY"
     />
   );
 }
@@ -475,7 +442,7 @@ function HotelBooking() {
                     colorScheme="blue"
                     todayButton
                     clearButton
-                    format="MMM DD, YYYY"
+                    format="MM/DD/YYYY"
                 />
 
                 {booking.start && booking.end && (
@@ -542,60 +509,52 @@ export const ValidationExamplesDemo = () => {
             title=""
             description=""
         >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                    <Typography variant="label" className="text-gray-700 dark:text-gray-300">Required Field</Typography>
-                    <DatePicker
-                        themeMode={colorMode as 'light' | 'dark'}
-                        required
-                        placeholder="Select a date (required)"
-                        value={dates.required || undefined}
-                        onChange={(date) => setDates(prev => ({ ...prev, required: date as Date | null }))}
-                        helperText="This field must be filled"
-                        colorScheme="blue"
-                    />
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
+                <DatePicker
+                    themeMode={colorMode as 'light' | 'dark'}
+                    required
+                    placeholder="Select a date (required)"
+                    value={dates.required || undefined}
+                    onChange={(date) => setDates(prev => ({ ...prev, required: date as Date | null }))}
+                    helperText="This field must be filled"
+                    colorScheme="blue"
+                    label="Required Field"
+                />
 
-                <div className="space-y-2">
-                    <Typography variant="label" className="text-gray-700 dark:text-gray-300">Min/Max Date Constraints</Typography>
-                    <DatePicker
-                        themeMode={colorMode as 'light' | 'dark'}
-                        minDate={today}
-                        maxDate={nextWeek}
-                        placeholder={`Select date within next week`}
-                        value={dates.minMax || undefined}
-                        onChange={(date) => setDates(prev => ({ ...prev, minMax: date as Date | null }))}
-                        helperText={`Dates between ${today.toLocaleDateString()} and ${nextWeek.toLocaleDateString()}`}
-                        colorScheme="green"
-                    />
-                </div>
+                <DatePicker
+                    themeMode={colorMode as 'light' | 'dark'}
+                    minDate={today}
+                    maxDate={nextWeek}
+                    placeholder="Select date within next week"
+                    value={dates.minMax || undefined}
+                    onChange={(date) => setDates(prev => ({ ...prev, minMax: date as Date | null }))}
+                    helperText={`Dates between ${today.toLocaleDateString()} and ${nextWeek.toLocaleDateString()}`}
+                    colorScheme="green"
+                    label="Min/Max Date Constraints"
+                />
 
-                <div className="space-y-2">
-                    <Typography variant="label" className="text-gray-700 dark:text-gray-300">Disabled Dates</Typography>
-                    <DatePicker
-                        themeMode={colorMode as 'light' | 'dark'}
-                        disabledDates={disabledDates}
-                        placeholder="Select date (some dates disabled)"
-                        value={dates.disabled || undefined}
-                        onChange={(date) => setDates(prev => ({ ...prev, disabled: date as Date | null }))}
-                        helperText="2nd and 4th from today are unavailable"
-                        colorScheme="orange"
-                    />
-                </div>
+                <DatePicker
+                    themeMode={colorMode as 'light' | 'dark'}
+                    disabledDates={disabledDates}
+                    placeholder="Select date (some dates disabled)"
+                    value={dates.disabled || undefined}
+                    onChange={(date) => setDates(prev => ({ ...prev, disabled: date as Date | null }))}
+                    helperText="2nd and 4th from today are unavailable"
+                    colorScheme="orange"
+                    label="Disabled Dates"
+                />
 
-                <div className="space-y-2">
-                    <Typography variant="label" className="text-gray-700 dark:text-gray-300">Error State</Typography>
-                    <DatePicker
-                        themeMode={colorMode as 'light' | 'dark'}
-                        error
-                        errorMessage="Invalid date selected"
-                        placeholder="This field has an error"
-                        value={dates.error || undefined}
-                        onChange={(date) => setDates(prev => ({ ...prev, error: date as Date | null }))}
-                        helperText="Showing error state"
-                        colorScheme="rose"
-                    />
-                </div>
+                <DatePicker
+                    themeMode={colorMode as 'light' | 'dark'}
+                    error
+                    errorMessage="Invalid date selected"
+                    placeholder="This field has an error"
+                    value={dates.error || undefined}
+                    onChange={(date) => setDates(prev => ({ ...prev, error: date as Date | null }))}
+                    helperText="Showing error state"
+                    colorScheme="rose"
+                    label="Error State"
+                />
             </div>
         </DemoSection>
     );
@@ -606,7 +565,6 @@ export const DatePickerPlayground = () => {
     const [config, setConfig] = useState<PlaygroundConfig>({
         variant: 'single',
         size: 'md',
-        themeMode: 'dark',
         colorScheme: 'blue',
         popupPosition: 'bottom-left',
         showIcon: true,
@@ -644,15 +602,15 @@ export const DatePickerPlayground = () => {
             title=""
             description=""
         >
-            <div className="space-y-8">
+            <div className="space-y-8 max-w-4xl">
                 {/* Controls */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 border rounded-lg">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6 rounded-2xl border-border/60 ">
                     <div className="space-y-2">
-                        <Typography variant="caption" weight="medium">Variant</Typography>
+                        <Typography variant="caption" weight="bold" color="muted" className='pb-1'>Variant</Typography>
                         <select
                             value={config.variant}
                             onChange={(e) => handleConfigChange('variant', e.target.value as 'single' | 'range')}
-                            className="w-full px-3 py-1.5 text-sm border rounded"
+                            className="w-full px-3 py-2 text-sm rounded-xl border border-border/60 bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200 cursor-pointer"
                         >
                             <option value="single">Single Date</option>
                             <option value="range">Date Range</option>
@@ -660,11 +618,11 @@ export const DatePickerPlayground = () => {
                     </div>
 
                     <div className="space-y-2">
-                        <Typography variant="caption" weight="medium">Size</Typography>
+                        <Typography variant="caption" weight="bold" color="muted" className='pb-1'>Size</Typography>
                         <select
                             value={config.size}
                             onChange={(e) => handleConfigChange('size', e.target.value as 'sm' | 'md' | 'lg' | 'xl')}
-                            className="w-full px-3 py-1.5 text-sm border rounded"
+                            className="w-full px-3 py-2 text-sm rounded-xl border border-border/60 bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200 cursor-pointer"
                         >
                             {sizeOptions.map(option => (
                                 <option key={option.value} value={option.value}>{option.label}</option>
@@ -673,11 +631,11 @@ export const DatePickerPlayground = () => {
                     </div>
 
                     <div className="space-y-2">
-                        <Typography variant="caption" weight="medium">Color Scheme</Typography>
+                        <Typography variant="caption" weight="bold" color="muted" className='pb-1'>Color Scheme</Typography>
                         <select
                             value={config.colorScheme}
                             onChange={(e) => handleConfigChange('colorScheme', e.target.value as 'blue' | 'green' | 'purple' | 'orange' | 'slate' | 'rose')}
-                            className="w-full px-3 py-1.5 text-sm border rounded"
+                            className="w-full px-3 py-2 text-sm rounded-xl border border-border/60 bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200 cursor-pointer"
                         >
                             {colorSchemeOptions.map(option => (
                                 <option key={option.value} value={option.value}>{option.label}</option>
@@ -686,11 +644,11 @@ export const DatePickerPlayground = () => {
                     </div>
 
                     <div className="space-y-2">
-                        <Typography variant="caption" weight="medium">Popup Position</Typography>
+                        <Typography variant="caption" weight="bold" color="muted" className='pb-1'>Popup Position</Typography>
                         <select
                             value={config.popupPosition}
                             onChange={(e) => handleConfigChange('popupPosition', e.target.value as 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right' | 'left' | 'right')}
-                            className="w-full px-3 py-1.5 text-sm border rounded"
+                            className="w-full px-3 py-2 text-sm rounded-xl border border-border/60 bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200 cursor-pointer"
                         >
                             {popupPositionOptions.map(option => (
                                 <option key={option.value} value={option.value}>{option.label}</option>
@@ -698,44 +656,48 @@ export const DatePickerPlayground = () => {
                         </select>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 mt-2">
                         <input
                             type="checkbox"
                             id="showIcon"
                             checked={config.showIcon}
                             onChange={(e) => handleConfigChange('showIcon', e.target.checked)}
+                            className="rounded border-border/60 text-primary focus:ring-ring cursor-pointer h-4 w-4 bg-background"
                         />
-                        <label htmlFor="showIcon" className="text-sm">Show Icon</label>
+                        <label htmlFor="showIcon" className="text-sm text-muted-foreground cursor-pointer font-medium select-none">Show Icon</label>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 mt-2">
                         <input
                             type="checkbox"
                             id="todayButton"
                             checked={config.todayButton}
                             onChange={(e) => handleConfigChange('todayButton', e.target.checked)}
+                            className="rounded border-border/60 text-primary focus:ring-ring cursor-pointer h-4 w-4 bg-background"
                         />
-                        <label htmlFor="todayButton" className="text-sm">Today Button</label>
+                        <label htmlFor="todayButton" className="text-sm text-muted-foreground cursor-pointer font-medium select-none">Today Button</label>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 mt-2">
                         <input
                             type="checkbox"
                             id="clearButton"
                             checked={config.clearButton}
                             onChange={(e) => handleConfigChange('clearButton', e.target.checked)}
+                            className="rounded border-border/60 text-primary focus:ring-ring cursor-pointer h-4 w-4 bg-background"
                         />
-                        <label htmlFor="clearButton" className="text-sm">Clear Button</label>
+                        <label htmlFor="clearButton" className="text-sm text-muted-foreground cursor-pointer font-medium select-none">Clear Button</label>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 mt-2">
                         <input
                             type="checkbox"
                             id="required"
                             checked={config.required}
                             onChange={(e) => handleConfigChange('required', e.target.checked)}
+                            className="rounded border-border/60 text-primary focus:ring-ring cursor-pointer h-4 w-4 bg-background"
                         />
-                        <label htmlFor="required" className="text-sm">Required</label>
+                        <label htmlFor="required" className="text-sm text-muted-foreground cursor-pointer font-medium select-none">Required</label>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -744,44 +706,30 @@ export const DatePickerPlayground = () => {
                             id="disabled"
                             checked={config.disabled}
                             onChange={(e) => handleConfigChange('disabled', e.target.checked)}
+                            className="rounded border-border/60 text-primary focus:ring-ring cursor-pointer h-4 w-4 bg-background"
                         />
-                        <label htmlFor="disabled" className="text-sm">Disabled</label>
-                    </div>
-
-                    <div className="col-span-2 md:col-span-3 lg:col-span-4">
-                        <Button
-                            onClick={() => handleConfigChange('themeMode', config.themeMode === 'light' ? 'dark' : 'light')}
-                            variant="outline"
-                            size="sm"
-                            className="flex items-center gap-2"
-                        >
-                            {config.themeMode === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                            Switch to {config.themeMode === 'light' ? 'Dark' : 'Light'} Theme
-                        </Button>
+                        <label htmlFor="disabled" className="text-sm text-muted-foreground cursor-pointer font-medium select-none">Disabled</label>
                     </div>
                 </div>
 
                 {/* Preview */}
-                <div className={`p-6 rounded-lg ${config.themeMode === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
-                    <div className="max-w-md mx-auto">
-                        <DatePicker
-                            variant={config.variant}
-                            size={config.size}
-                            themeMode={config.themeMode}
-                            colorScheme={config.colorScheme as any}
-                            popupPosition={config.popupPosition as any}
-                            showIcon={config.showIcon}
-                            todayButton={config.todayButton}
-                            clearButton={config.clearButton}
-                            required={config.required}
-                            disabled={config.disabled}
-                            label={`${config.variant === 'single' ? 'Select Date' : 'Select Date Range'}`}
-                            placeholder={config.variant === 'single' ? 'Choose a date' : ['Start date', 'End date']}
-                            helperText="Interactive playground - customize using controls above"
-                            value={config.variant === 'single' ? date || undefined : range}
-                            onChange={config.variant === 'single' ? handleSingleDateChange : handleRangeDateChange}
-                        />
-                    </div>
+                <div className="max-w-md mx-auto">
+                    <DatePicker
+                        variant={config.variant}
+                        size={config.size}
+                        colorScheme={config.colorScheme as any}
+                        popupPosition={config.popupPosition as any}
+                        showIcon={config.showIcon}
+                        todayButton={config.todayButton}
+                        clearButton={config.clearButton}
+                        required={config.required}
+                        disabled={config.disabled}
+                        label={`${config.variant === 'single' ? 'Select Date' : 'Select Date Range'}`}
+                        placeholder={config.variant === 'single' ? 'Choose a date' : ['Start date', 'End date']}
+                        helperText="Interactive playground - customize using controls above"
+                        value={config.variant === 'single' ? date || undefined : range}
+                        onChange={config.variant === 'single' ? handleSingleDateChange : handleRangeDateChange}
+                    />
                 </div>
             </div>
         </DemoSection>
@@ -791,7 +739,6 @@ export const DatePickerPlayground = () => {
 type PlaygroundConfig = {
     variant: 'single' | 'range';
     size: 'sm' | 'md' | 'lg' | 'xl';
-    themeMode: 'light' | 'dark';
     colorScheme: string;
     popupPosition: string;
     showIcon: boolean;
@@ -916,7 +863,7 @@ function RangeDateExample() {
                         <Typography variant="body-small">
                             Selected Range:
                         </Typography>
-                        <Typography variant="caption" className="block">
+                        <Typography variant="caption" className="block pb-1">
                             Start: {rangeDate.start ? rangeDate.start.toLocaleDateString() : 'Not selected'}
                         </Typography>
                         <Typography variant="caption" className="block">
