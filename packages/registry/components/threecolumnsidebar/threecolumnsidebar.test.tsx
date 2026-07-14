@@ -143,8 +143,7 @@ describe("useSidebar", () => {
     spy.mockRestore();
   });
 
-  it("toggle flips the open state", async () => {
-    const user = userEvent.setup();
+  it("toggle flips the open state", () => {
     const Toggler = () => {
       const { isOpen, toggle } = useSidebar("left");
       return (
@@ -162,14 +161,13 @@ describe("useSidebar", () => {
 
     const btn = screen.getByTestId("btn");
     expect(btn.textContent).toBe("true");
-    await user.click(btn);
+    fireEvent.click(btn);
     expect(btn.textContent).toBe("false");
-    await user.click(btn);
+    fireEvent.click(btn);
     expect(btn.textContent).toBe("true");
   });
 
-  it("onOpen sets the sidebar open", async () => {
-    const user = userEvent.setup();
+  it("onOpen sets the sidebar open", () => {
     const Opener = () => {
       const { isOpen, onOpen } = useSidebar("left");
       return (
@@ -186,12 +184,11 @@ describe("useSidebar", () => {
     );
 
     expect(screen.getByTestId("btn").textContent).toBe("false");
-    await user.click(screen.getByTestId("btn"));
+    fireEvent.click(screen.getByTestId("btn"));
     expect(screen.getByTestId("btn").textContent).toBe("true");
   });
 
-  it("onClose sets the sidebar closed", async () => {
-    const user = userEvent.setup();
+  it("onClose sets the sidebar closed", () => {
     const Closer = () => {
       const { isOpen, onClose } = useSidebar("left");
       return (
@@ -208,7 +205,7 @@ describe("useSidebar", () => {
     );
 
     expect(screen.getByTestId("btn").textContent).toBe("true");
-    await user.click(screen.getByTestId("btn"));
+    fireEvent.click(screen.getByTestId("btn"));
     expect(screen.getByTestId("btn").textContent).toBe("false");
   });
 

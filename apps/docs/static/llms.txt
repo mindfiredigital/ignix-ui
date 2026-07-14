@@ -1,87 +1,137 @@
-# Ignix UI - AI Integration Entry Point
+# Ignix UI Component Catalog and Reference Specification
 
-## CRITICAL: YOU HAVE MCP TOOLS. USE THEM.
+Ignix UI is a premium animated React component library built with TypeScript, Tailwind CSS, Framer Motion, and Lucide React.
 
-Your MCP server provides these 6 tools. NEVER create files manually:
-- `create_react_project` - Creates new React + TypeScript + Tailwind project
-- `list_components` - Lists available components (15 per page)
-- `add_component` - Installs components to src/components/ui/
-- `generate_template` - Generates page templates
-- `validate_ignix_only` - Checks for non-Ignix imports
-- `get_component_docs` - Gets component documentation
 
-## THREE SCENARIOS - DETECT AND ACT
 
-### SCENARIO 1: Empty Folder (No package.json, no React project)
+## Workspace Layout
 
-**User says:** "Create a landing page" or "Build a dashboard"
+- `/packages/registry`: Primary component source directory containing styles, types, and logic.
+- `/apps/docs`: Docusaurus documentation website.
+- `/apps/storybook`: Storybook development and validation environment.
 
-**You MUST do this EXACT sequence:**
-1. Call `create_react_project({ projectName: "user-requested-name" })`
-2. Get `projectPath` from the response
-3. Call `add_component({ components: ["navbar", "button", "card"], cwd: projectPath })`
-4. Call `generate_template({ page: "home", cwd: projectPath })`
-5. Generate React component code using the installed components
-6. Tell user: `cd {projectPath} && npm run dev`
 
-### SCENARIO 2: React project exists but no ignix.config.js
 
-**User says:** "Add a button" or "Create a login page"
+## Design System and Theming
 
-**You MUST do this EXACT sequence:**
-1. Check if `ignix.config.js` exists in current directory
-2. If NOT, call `add_component` with `cwd: "."` - this will auto-initialize
-3. Or call `init_project` if available
-4. Then proceed with component installation
+All Ignix UI components consume global HSL design tokens declared in standard CSS stylesheets.
 
-### SCENARIO 3: React project with ignix.config.js already exists
+### CSS Custom Properties
+- `--background`: Base background color.
+- `--foreground`: High-contrast body text.
+- `--border`: Outer and inline boundary separation lines.
+- `--muted`: Secondary background fill colors.
+- `--muted-foreground`: Lower contrast captions and annotations.
 
-**User says:** "Add a card component" or "Create a dashboard"
+### Theme Selectors
+Components adapt theme colors through class hierarchy:
+- **Light Mode:** Default styles.
+- **Dark Mode:** Governed by parent element containing the `dark` class or `data-theme="dark"` attribute.
 
-**You MUST do this EXACT sequence:**
-1. Call `list_components` to see what's available
-2. Call `add_component({ components: ["requested-component"], cwd: "." })`
-3. Generate the React code using the installed component
 
-## WORKFLOW EXAMPLES
 
-### Building a Complete Page (Restaurant Landing Page)
-```javascript
-// Step 1: Create project (if needed)
-const result = await create_react_project({ projectName: "restaurant-landing" });
-const projectPath = result.projectPath;
+## Shared Component APIs and Patterns
 
-// Step 2: Install components
-await add_component({ 
-  components: ["navbar", "button", "card", "hero"], 
-  cwd: projectPath 
-});
+Many Ignix UI components implement standardized props for layout, resizing, and theme handling:
+- `themeMode`: `'light' | 'dark'` (explicit theme mode overriding).
+- `size`: `'sm' | 'md' | 'lg' | 'xl'` (controls padding, height, and font sizes).
+- `disabled`: `boolean` (disables interactions and applies muted styles).
+- `className`: `string` (standard Tailwind CSS class extension).
 
-// Step 3: Generate template
-await generate_template({ page: "home", cwd: projectPath });
 
-// Step 4: Generate React component code
-// Use: import { Navbar } from '@/components/ui/navbar'
-// Use: import { Button } from '@/components/ui/button'
-// Use: import { Card } from '@/components/ui/card'
-```
 
-### Adding a Single Component
-await add_component({ components: ["button"], cwd: "." });
-// Then generate: import { Button } from '@/components/ui/button'
+## Component Catalog by Category
 
-### FORBIDDEN ACTIONS - NEVER DO THESE
-❌ Create index.html files
-❌ Create styles.css files
-❌ Write vanilla JavaScript
-❌ Use shell commands to create components
-❌ Install components manually
-❌ Use shadcn, MUI, Chakra, Ant Design
+Ignix UI includes 56 modular components grouped by feature area:
 
-ALWAYS DO THESE
-✅ Use the MCP tools
-✅ Use React components
-✅ Use Tailwind CSS classes
-✅ Use TypeScript
-✅ Return projectPath from create_react_project
-✅ Use cwd parameter for all subsequent calls
+### 1. Navigation and Structure
+- **Navbar (`navbar`):** Navigation bar with desktop menus and responsive mobile drop-downs.
+- **Sidebar (`sidebar`, `threecolumnsidebar`):** Collatable panels with nested link lists and active state tracking.
+- **Floating Dock (`floating-dock`):** Floating navigation bar with hover-scaling elements.
+- **Breadcrumbs (`breadcrumbs`):** Inline path hierarchy markers.
+- **Pagination (`pagination`):** Page selectors with previous/next triggers.
+- **Stepper (`stepper`):** Progress tracking for multi-step processes.
+
+### 2. Layout and Spacing
+- **Container (`container`):** Layout wrappers with maxWidth constraints.
+- **Spacer (`spacer`):** Fixed height/width blocks for layout gaps.
+- **Scroll Area (`scroll-area`):** Custom styled scrollable viewports.
+- **Aspect Ratio (`aspectratio`):** Proportional content box wrappers.
+
+### 3. Data Entry and Controls
+- **Button (`button`, `button-group`, `button-with-spinner`, `buttonwithicon`):** Trigger controls with active micro-animations.
+- **Input (`input`, `exploding-input`, `textarea`):** Text input controls with floating labels and hover highlight transitions.
+- **DatePicker (`date-picker`):** Single date and dual range calendar selector with error showing logic.
+- **Dropdown (`dropdown`):** Option selectors with checkbox and separator support.
+- **Checkbox (`checkbox`), Radio (`radio`), Switch (`switch`):** Checkable boolean selections.
+- **Slider (`slider`):** Numerical range select sliders.
+- **Rating (`rating`):** Star selection controls.
+- **File Upload (`file-upload`):** Drag and drop file select controls.
+
+### 4. Data Display and Layouts
+- **Typography (`typography`):** Heading, body, and caption text wrappers.
+- **Card (`card`, `product-card`, `image-card`, `user-card`, `testimonial-card`):** Structured content boxes.
+- **Table (`table`, `advanced-table`, `comparison-table`, `pricing-grid`):** Grid layouts for structured data, sorting, and comparison matrixes.
+- **Accordion (`accordion`):** Vertically stacked collapsible panels.
+- **Carousel (`carousel`):** Slide transition galleries.
+- **Badge (`badge`):** Small label indicators.
+- **Avatar (`avatar`):** Circular image wrappers with fallback initials.
+
+### 5. Overlays and Feedback
+- **Modals & Dialogs (`modals`, `dialogbox`, `drawer`):** Modal windows and slide-out side drawers.
+- **Toast (`toast`):** Dismissible floating notification system.
+- **Tooltip (`tooltip`):** Contextual popup labels on hover.
+- **Progress Indicator (`progress-indicator`):** Linear loading bars.
+- **Spinner (`spinner`):** Inline rotating load indicators.
+
+
+## CLI Reference
+
+The CLI utility automates directory setups and components ingestion:
+- Installation: `npm install -g @mindfiredigital/ignix-cli`
+- Initialization: `ignix init`
+- Adding components: `ignix add <component-name>`
+
+
+
+## Workflow Scenarios and Prompt Examples
+
+This section defines developer prompt patterns and the expected logical sequences to execute them.
+
+### Scenario A: Clean Environment Initialization
+- **Prompt Example:** "Build a restaurant landing page from scratch."
+- **Execution Workflow:**
+  1. Call `create_react_project` to initialize the project directory.
+  2. Run `add_component` to import required elements (e.g. `navbar`, `button`, `card`, `hero`) into the project workspace.
+  3. Run `generate_template` or write custom React wrapper components combining the imported files.
+
+### Scenario B: Adding Features to an Existing Project
+- **Prompt Example:** "Add range date selection to my flight booking form."
+- **Execution Workflow:**
+  1. Run `add_component` for the `date-picker` package.
+  2. Implement a parent state wrapper matching the `{ start: Date | null, end: Date | null }` type shape.
+  3. Embed `<DatePicker variant="range" value={range} onChange={setRange} />` inside the form layout.
+
+### Scenario C: Customizing Component Layouts
+- **Prompt Example:** "Create a two-column contact form with name, email, message, and a submit button."
+- **Execution Workflow:**
+  1. Run `add_component` for `input`, `textarea`, and `button` packages.
+  2. Create a form container using Tailwind grid selectors (`grid grid-cols-2 gap-4`).
+  3. Arrange the components inside the grid layout, utilizing standard HTML labels or `Typography` components for input prompts.
+
+
+
+## Development Guidelines (Do's and Don'ts)
+
+### Do's:
+1. **Use Modular Component Imports:** Import components directly from their modular registry packages (e.g. `@ignix-ui/button` or relative source folders).
+2. **Leverage Design System CSS Variables:** Rely on global HSL variables (`--background`, `--foreground`, etc.) for layouts and colors to maintain color consistency across light and dark modes.
+3. **Use Framer Motion for Transitions:** Utilize Framer Motion props for custom animations and transitions rather than writing arbitrary CSS animations.
+4. **Implement Tailwind CSS Utility Classes:** Customize layout and spacing variations using Tailwind CSS utility classes appended via the `className` prop.
+5. **Set Component Sizes via the Predefined Props:** Rely on standard component size configurations (`sm`, `md`, `lg`) rather than manually specifying inline heights and widths.
+
+### Don'ts:
+1. **Do Not Style Inline Colors Directly:** Avoid hardcoding arbitrary hex colors or static values (such as `#ffffff` or `bg-slate-900`) for text or backgrounds; instead use theme tokens.
+2. **Do Not Mix Third-Party UI Libraries:** Avoid mixing other component libraries (such as Shadcn, Material UI, or Chakra) into the codebase.
+3. **Do Not Create Plain HTML/CSS files:** Avoid creating standalone `.html` or `.css` files for styled components; keep them within React `.tsx` structures.
+4. **Do Not Edit Core Registries Directly:** Avoid editing compiled component packages directly inside `packages/registry/` without verifying them against Storybook and documentation first.
