@@ -245,6 +245,11 @@ export const AnimatedInput: React.FC<AnimatedInputProps> = ({
           labelClassName
         )}
         variants={variants.label}
+        style={variant === "premiumGradient" ? {
+          backgroundClip: "text",
+          WebkitBackgroundClip: "text",
+          color: "transparent",
+        } : undefined}
       >
         {placeholder}
       </motion.label>
@@ -1606,31 +1611,45 @@ const inputVariants: Record<string, InputVariant> = {
         y: 0,
         scale: 1,
         backgroundImage: "linear-gradient(90deg, #6b7280, #6b7280)",
-        backgroundClip: "text",
-        color: "transparent"
+        backgroundSize: "200% auto",
+        backgroundPosition: "0% 50%",
       },
       animate: {
         y: -28,
         scale: 0.85,
         backgroundImage: "linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6)",
-        backgroundSize: "300% 100%",
-        backgroundPosition: "0% 50%",
-        animation: "gradientShift 3s ease infinite",
+        backgroundSize: "200% auto",
+        backgroundPosition: ["0% 50%", "200% 50%"],
+        transition: {
+          backgroundPosition: {
+            repeat: Infinity,
+            duration: 3,
+            ease: "linear"
+          },
+          y: { type: "spring", stiffness: 300, damping: 20 },
+          scale: { type: "spring", stiffness: 300, damping: 20 }
+        }
       },
     },
     input: {
       initial: {
         background: "linear-gradient(90deg, #ffffff, #ffffff)",
-        borderColor: "rgb(226, 232, 240)",
+        borderColor: "var(--border)",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
       },
       animate: {
         background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%)",
-        borderColor: "rgb(59, 130, 246)",
+        borderColor: "var(--primary)",
         boxShadow: `
-          0 8px 25px rgba(59, 130, 246, 0.15),
-          0 0 0 1px rgba(59, 130, 246, 0.1),
+          0 0 20px rgba(59, 130, 246, 0.25),
+          0 0 35px rgba(139, 92, 246, 0.2),
+          0 0 50px rgba(236, 72, 153, 0.15),
           inset 0 1px 0 rgba(255, 255, 255, 0.9)
         `,
+        transition: {
+          borderColor: { duration: 0.3 },
+          boxShadow: { duration: 0.3 }
+        }
       },
     },
   },
