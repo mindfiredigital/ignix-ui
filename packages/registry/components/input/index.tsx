@@ -697,7 +697,11 @@ const inputVariants: Record<string, InputVariant> = {
         y: -32,
         scale: 0.85,
         color: "var(--primary)",
-        transition: { type: "spring", stiffness: 500, damping: 15 },
+        transition: {
+          x: { duration: 0.6, ease: "easeInOut" },
+          y: { type: "spring", stiffness: 300, damping: 15 },
+          scale: { type: "spring", stiffness: 300, damping: 15 },
+        },
       },
     },
     input: {
