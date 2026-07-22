@@ -314,6 +314,10 @@ export const AnimatedInput: React.FC<AnimatedInputProps> = ({
             ...(variant === "borderBeam" && {
               border: "2px solid transparent",
             }),
+            ...(variant === "typewriter" && {
+              caretColor: "var(--primary)",
+              ["caretShape" as string]: "block",
+            }),
           }}
         />
 
@@ -832,23 +836,22 @@ const inputVariants: Record<string, InputVariant> = {
 
   typewriter: {
     label: {
-      initial: { width: "100%", x: 0, y: 0, color: "var(--primary)" },
+      initial: { y: 0, scale: 1, color: "var(--primary)" },
       animate: {
-        width: 0,
-        x: -60,
         y: -32,
         scale: 0.85,
         color: "var(--primary)",
-        transition: { duration: 0.6, ease: "easeInOut" }
+        transition: { duration: 0.4, ease: "easeInOut" }
       },
     },
     input: {
-      initial: { width: 0 },
+      initial: {
+        borderColor: "var(--border)",
+      },
       animate: {
-        width: "100%",
         borderColor: "var(--primary)",
         boxShadow: "0 4px 15px var(--primary)",
-        transition: { delay: 0.6, duration: 0.6, ease: "easeOut" }
+        transition: { duration: 0.4 }
       },
     },
   },

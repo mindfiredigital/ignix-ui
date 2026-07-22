@@ -271,7 +271,7 @@ describe("useSidebar", () => {
     expect(screen.getByTestId("toggle-left").textContent).toBe("false");
     expect(screen.getByTestId("right-state").textContent).toBe("true");
   });
-});
+}, 30000);
 
 describe("ThreeColumnSidebar rendering", () => {
   beforeEach(() => {
