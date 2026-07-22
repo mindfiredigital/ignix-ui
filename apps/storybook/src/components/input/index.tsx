@@ -444,6 +444,31 @@ const inputVariants: Record<string, InputVariant> = {
     },
   },
 
+  springy: {
+    label: {
+      initial: { y: 0, scale: 1, color: "var(--primary)" },
+      animate: {
+        y: -32,
+        scale: 0.85,
+        color: "var(--primary)",
+        transition: { type: "spring", stiffness: 450, damping: 10 }
+      },
+    },
+    input: {
+      initial: {
+        borderColor: "var(--border)",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+        scale: 1,
+      },
+      animate: {
+        scale: [1, 1.04, 0.98, 1.02, 1],
+        borderColor: "var(--primary)",
+        boxShadow: "0 4px 15px var(--primary)",
+        transition: { duration: 0.6 }
+      },
+    },
+  },
+
   underline: {
     label: {
       initial: { y: 0, color: "var(--primary)" },

@@ -1,7 +1,7 @@
 // SignIn.test.tsx
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { SignIn } from "."; // adjust the import path if needed
 
 // ✅ Safe synchronous mocks (Vitest hoist-friendly)
@@ -82,6 +82,11 @@ describe("SignIn Component", () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
+    });
+
+    afterEach(() => {
+        vi.clearAllTimers();
+        vi.useRealTimers();
     });
 
     it("renders centered layout by default", () => {
@@ -183,7 +188,8 @@ describe("SignIn Component", () => {
         fireEvent.click(microsoftButton);
         expect(mockOnMicrosoftSignIn).toHaveBeenCalled();
 
-        vi.runOnlyPendingTimers();
+        // Wait for async click handler microtasks to flush and trigger the timers, then run them
+        await vi.runOnlyPendingTimersAsync();
         vi.useRealTimers();
     });
 
