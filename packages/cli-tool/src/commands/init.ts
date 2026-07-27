@@ -8,6 +8,7 @@ import { DependencyService } from '../services/DependencyService';
 import prompts from 'prompts';
 import { ThemeService } from '../services/ThemeService';
 import { loadConfig } from '../utils/config';
+import { writeAgentsFile } from '../utils/agentsFile';
 
 const DEFAULT_CONFIG_PATH = 'ignix.config.js';
 
@@ -177,7 +178,7 @@ export function createInitCommand() {
           if (error instanceof Error) logger.error(error.message);
         }
 
-        process.exit(1);
+        process.exitCode = 1;
       } finally {
         restoreLogger?.();
         process.chdir(originalCwd);
@@ -205,6 +206,7 @@ async function createConfigFiles() {
   await createLlmsTxtFile();
   await createIgnixConfigFIle();
   await updateGlobalStyles();
+  await writeAgentsFile(process.cwd());
 }
 
 async function setupIgnixUIAlias(): Promise<void> {

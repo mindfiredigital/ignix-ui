@@ -122,8 +122,11 @@ export function createAddCommand() {
 
                 console.log(JSON.stringify(result, null, 2));
 
-                // 🔥 EXIT CODE LOGIC
-                process.exit(1);
+                // Set exit code without calling process.exit() directly - on Windows,
+                // process.exit() immediately after console.log() can terminate the
+                // process before the write to a piped/non-TTY stdout finishes,
+                // silently dropping the output an agent depends on.
+                process.exitCode = 1;
               } else {
                 logger.warn('No component selected. Exiting.');
               }
@@ -168,7 +171,7 @@ export function createAddCommand() {
 
               console.log(JSON.stringify(result, null, 2));
 
-              process.exit(installed.length === 0 ? 1 : 0);
+              process.exitCode = installed.length === 0 ? 1 : 0;
             }
             break;
           }
@@ -223,7 +226,7 @@ export function createAddCommand() {
                 };
 
                 console.log(JSON.stringify(result, null, 2));
-                process.exit(1);
+                process.exitCode = 1;
               }
 
               logger.warn('No themes selected. Exiting.');
@@ -260,7 +263,7 @@ export function createAddCommand() {
               };
 
               console.log(JSON.stringify(result, null, 2));
-              process.exit(installed.length === 0 ? 1 : 0);
+              process.exitCode = installed.length === 0 ? 1 : 0;
             }
 
             break;
@@ -325,7 +328,7 @@ export function createAddCommand() {
                 };
 
                 console.log(JSON.stringify(result, null, 2));
-                process.exit(1);
+                process.exitCode = 1;
               }
 
               logger.warn('No template selected. Exiting.');
@@ -362,7 +365,7 @@ export function createAddCommand() {
               };
 
               console.log(JSON.stringify(result, null, 2));
-              process.exit(installed.length === 0 ? 1 : 0);
+              process.exitCode = installed.length === 0 ? 1 : 0;
             }
 
             break;
@@ -370,7 +373,7 @@ export function createAddCommand() {
 
           default:
             logger.error(`Unknown namespace: '${namespace}'. Please use 'component' or 'theme'.`);
-            process.exit(1);
+            process.exitCode = 1;
         }
       } catch (error) {
         if (ctx.isJson) {
@@ -387,7 +390,7 @@ export function createAddCommand() {
         } else {
           logger.error(error instanceof Error ? error.message : String(error));
         }
-        process.exit(1);
+        process.exitCode = 1;
       } finally {
         process.chdir(originalCwd);
       }
