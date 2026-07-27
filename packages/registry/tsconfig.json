@@ -1,0 +1,11 @@
+{
+  "extends": "../tsconfig/base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@ignix-ui/*": ["./components/*", "./templates/*"]
+    },
+    "jsx": "react-jsx"
+  },
+  "include": ["components/**/*", "templates/**/*", "utils/**/*"]
+}
