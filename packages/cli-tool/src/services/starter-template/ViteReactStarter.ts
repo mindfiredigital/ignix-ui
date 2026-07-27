@@ -89,8 +89,7 @@ export async function createViteReactTsconfig(root: string): Promise<void> {
       baseUrl: '.',
       paths: {
         '@/*': ['./src/*'],
-        '@ignix-ui/ui/*': ['./src/components/ui/*'],
-        '@ignix-ui/templates/*': ['./src/components/templates/*'],
+        '@ignix-ui/*': ['./src/components/ui/*', './src/components/templates/*'],
       },
     },
     include: ['src'],
@@ -127,8 +126,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@ignix-ui/ui': path.resolve(__dirname, './src/components/ui'),
-      '@ignix-ui/templates': path.resolve(__dirname, './src/components/templates'),
+      '@ignix-ui': path.resolve(__dirname, './src/components/ui'),
     },
   },
   server: {
@@ -323,40 +321,47 @@ export async function createGlobalStyles(root: string): Promise<void> {
   --color-ring: var(--ring);
 }
 
+/*
+ * Values below read from --ignix-* custom properties first, falling back to the
+ * hardcoded value for the initial pre-JS paint. ThemeProvider (from
+ * @mindfiredigital/ignix-ui) writes --ignix-* variables onto document.documentElement
+ * at runtime - without this bridge, installed/applied themes have no visual effect,
+ * since Tailwind here only ever reads the unprefixed names.
+ */
 :root {
-  --background: hsl(0 0% 100%);
-  --foreground: hsl(222.2 84% 4.9%);
-  --primary: hsl(222.2 47.4% 11.2%);
-  --primary-foreground: hsl(210 40% 98%);
-  --secondary: hsl(210 40% 96.1%);
-  --secondary-foreground: hsl(222.2 47.4% 11.2%);
-  --muted: hsl(210 40% 96.1%);
-  --muted-foreground: hsl(215.4 16.3% 46.9%);
-  --accent: hsl(210 40% 96.1%);
-  --accent-foreground: hsl(222.2 47.4% 11.2%);
-  --destructive: hsl(0 84.2% 60.2%);
-  --destructive-foreground: hsl(210 40% 98%);
-  --border: hsl(214.3 31.8% 91.4%);
-  --input: hsl(214.3 31.8% 91.4%);
-  --ring: hsl(222.2 84% 4.9%);
+  --background: var(--ignix-background, hsl(0 0% 100%));
+  --foreground: var(--ignix-text, hsl(222.2 84% 4.9%));
+  --primary: var(--ignix-primary, hsl(222.2 47.4% 11.2%));
+  --primary-foreground: var(--ignix-text-inverse, hsl(210 40% 98%));
+  --secondary: var(--ignix-secondary, hsl(210 40% 96.1%));
+  --secondary-foreground: var(--ignix-text, hsl(222.2 47.4% 11.2%));
+  --muted: var(--ignix-surface-alt, hsl(210 40% 96.1%));
+  --muted-foreground: var(--ignix-text-muted, hsl(215.4 16.3% 46.9%));
+  --accent: var(--ignix-accent, hsl(210 40% 96.1%));
+  --accent-foreground: var(--ignix-text, hsl(222.2 47.4% 11.2%));
+  --destructive: var(--ignix-error, hsl(0 84.2% 60.2%));
+  --destructive-foreground: var(--ignix-text-inverse, hsl(210 40% 98%));
+  --border: var(--ignix-border, hsl(214.3 31.8% 91.4%));
+  --input: var(--ignix-border-light, hsl(214.3 31.8% 91.4%));
+  --ring: var(--ignix-primary, hsl(222.2 84% 4.9%));
 }
 
 .dark {
-  --background: hsl(222.2 84% 4.9%);
-  --foreground: hsl(210 40% 98%);
-  --primary: hsl(210 40% 98%);
-  --primary-foreground: hsl(222.2 47.4% 11.2%);
-  --secondary: hsl(217.2 32.6% 17.5%);
-  --secondary-foreground: hsl(210 40% 98%);
-  --muted: hsl(217.2 32.6% 17.5%);
-  --muted-foreground: hsl(215 20.2% 65.1%);
-  --accent: hsl(217.2 32.6% 17.5%);
-  --accent-foreground: hsl(210 40% 98%);
-  --destructive: hsl(0 62.8% 30.6%);
-  --destructive-foreground: hsl(210 40% 98%);
-  --border: hsl(217.2 32.6% 17.5%);
-  --input: hsl(217.2 32.6% 17.5%);
-  --ring: hsl(212.7 26.8% 83.9%);
+  --background: var(--ignix-background, hsl(222.2 84% 4.9%));
+  --foreground: var(--ignix-text, hsl(210 40% 98%));
+  --primary: var(--ignix-primary, hsl(210 40% 98%));
+  --primary-foreground: var(--ignix-text-inverse, hsl(222.2 47.4% 11.2%));
+  --secondary: var(--ignix-secondary, hsl(217.2 32.6% 17.5%));
+  --secondary-foreground: var(--ignix-text, hsl(210 40% 98%));
+  --muted: var(--ignix-surface-alt, hsl(217.2 32.6% 17.5%));
+  --muted-foreground: var(--ignix-text-muted, hsl(215 20.2% 65.1%));
+  --accent: var(--ignix-accent, hsl(217.2 32.6% 17.5%));
+  --accent-foreground: var(--ignix-text, hsl(210 40% 98%));
+  --destructive: var(--ignix-error, hsl(0 62.8% 30.6%));
+  --destructive-foreground: var(--ignix-text-inverse, hsl(210 40% 98%));
+  --border: var(--ignix-border, hsl(217.2 32.6% 17.5%));
+  --input: var(--ignix-border-light, hsl(217.2 32.6% 17.5%));
+  --ring: var(--ignix-primary, hsl(212.7 26.8% 83.9%));
 }
 
 @layer base {
@@ -441,4 +446,20 @@ export async function createViteEnvTypes(root: string): Promise<void> {
   const viteEnvTypes = `/// <reference types="vite/client" />
 `;
   await fs.writeFile(path.join(srcDir, 'vite-env.d.ts'), viteEnvTypes);
+}
+
+// 15. Create the cn() helper - clsx/tailwind-merge are already installed as
+// dependencies, but nothing previously wrote the file every installed component
+// and template imports it from.
+export async function createCnUtil(root: string): Promise<void> {
+  const utilsDir = path.join(root, 'src', 'utils');
+  await fs.ensureDir(utilsDir);
+  const cnTs = `import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+`;
+  await fs.writeFile(path.join(utilsDir, 'cn.ts'), cnTs);
 }
