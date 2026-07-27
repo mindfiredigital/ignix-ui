@@ -1084,7 +1084,8 @@
       "dependencies": [
         "framer-motion",
         "lucide-react",
-        "class-variance-authority"
+        "class-variance-authority",
+        "react-icons"
       ],
       "componentDependencies": [
         "button",
@@ -1836,10 +1837,10 @@
         "button",
         "input",
         "textarea",
-        "modals",
-        "date-picker",
+        "modal",
+        "datePicker",
         "dropdown",
-        "file-upload",
+        "fileUpload",
         "toast"
       ],
       "files": {
