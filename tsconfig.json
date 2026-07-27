@@ -19,5 +19,11 @@
     },
     "jsx": "react-jsx"
   },
-  "exclude": ["**/node_modules", "**/dist", "**/coverage"]
+  "exclude": [
+    "**/node_modules",
+    "**/dist",
+    "**/coverage",
+    "packages/registry/templates",
+    "packages/registry/components"
+  ]
 }
