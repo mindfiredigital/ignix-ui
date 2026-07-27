@@ -69,7 +69,7 @@ vi.mock("@ignix-ui/date-picker", () => {
 
   return {
     __esModule: true,
-    default: DatePicker,
+    DatePicker,
   };
 });
 
