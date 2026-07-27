@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
 import AnimatedInput from "@ignix-ui/input";
 import { Button } from "@ignix-ui/button";
-import FileUpload from "@ignix-ui/file-upload";
+import { FileUpload } from "@ignix-ui/file-upload";
 import AnimatedTextarea from "@ignix-ui/textarea";
 import { InfoCircledIcon, ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import { ToastContext } from "@ignix-ui/toast";
@@ -414,7 +414,7 @@ function FileUploadField() {
   return (
     <FileUpload
       buttonVariant="primary"
-      onFilesChange={(files) => {
+      onFilesChange={(files: File[]) => {
         const file = files?.[0] ?? null;
         updateField("file", file);
       }}

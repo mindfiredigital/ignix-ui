@@ -23,7 +23,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@ignix-ui/card";
-import DatePicker, { type DateRange } from "@ignix-ui/date-picker";
+import { DatePicker, type DateRange } from "@ignix-ui/date-picker";
+
 
 // =============================================================================
 // TYPES
