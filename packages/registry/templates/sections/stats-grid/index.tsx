@@ -580,7 +580,8 @@ export const StatIcon: React.FC<StatIconProps> = ({
     // Determine background color
     const getBgClass = () => {
         if (overrideAccent) {
-            return context.theme === "dark" && darkIconBg ? darkIconBg : iconBg || bgColor || "";
+            const overrideVal = context.theme === "dark" && darkIconBg ? darkIconBg : iconBg || bgColor;
+            if (overrideVal) return overrideVal;
         }
         if (bgColor) return bgColor;
         if (solid) return styles.iconBg;
@@ -590,7 +591,8 @@ export const StatIcon: React.FC<StatIconProps> = ({
     // Determine icon color
     const getFgClass = () => {
         if (overrideAccent) {
-            return context.theme === "dark" && darkIconFg ? darkIconFg : iconFg || iconColor || "";
+            const overrideVal = context.theme === "dark" && darkIconFg ? darkIconFg : iconFg || iconColor;
+            if (overrideVal) return overrideVal;
         }
         if (iconColor) return iconColor;
         if (solid) return styles.iconFg;

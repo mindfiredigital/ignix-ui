@@ -1,6 +1,6 @@
 import React from "react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 
 vi.mock("framer-motion", () => {
   const actual = vi.importActual<typeof import("framer-motion")>("framer-motion");
@@ -59,7 +59,7 @@ const manyLinks = [
   ...defaultLinks,
   { label: "Extra A", href: "/a", icon: Home },
   { label: "Extra B", href: "/b", icon: Inbox },
-  { label: "Extra C", href: "/c", icon: Settings},
+  { label: "Extra C", href: "/c", icon: Settings },
 ];
 
 function renderWithProvider(
@@ -246,11 +246,11 @@ describe("useSidebar", () => {
 
   it("each position is tracked independently", () => {
     const MultiProbe = () => {
-      const left  = useSidebar("left");
+      const left = useSidebar("left");
       const right = useSidebar("right");
       return (
         <>
-          <button onClick={left.toggle}  data-testid="toggle-left">{String(left.isOpen)}</button>
+          <button onClick={left.toggle} data-testid="toggle-left">{String(left.isOpen)}</button>
           <span data-testid="right-state">{String(right.isOpen)}</span>
         </>
       );
@@ -518,8 +518,8 @@ describe("ThreeColumnSidebar — responsive resize", () => {
     removeSpy.mockRestore();
   });
 
-  it("applies w-0 class when mobile and sidebar is closed", async () => {
-    await act(async () => setWindowWidth(480));
+  it("applies w-0 class when mobile and sidebar is closed", () => {
+    setWindowWidth(480);
 
     const { container } = renderWithProvider(
       <ThreeColumnSidebar links={defaultLinks} position="left" className="" />,
@@ -530,8 +530,8 @@ describe("ThreeColumnSidebar — responsive resize", () => {
     expect(root.className).toContain("w-0");
   });
 
-  it("does not apply w-0 class on desktop even when closed", async () => {
-    await act(async () => setWindowWidth(1280));
+  it("does not apply w-0 class on desktop even when closed", () => {
+    setWindowWidth(1280);
 
     const { container } = renderWithProvider(
       <ThreeColumnSidebar links={defaultLinks} position="left" className="" />,
@@ -637,7 +637,7 @@ describe("Dual sidebars from one provider", () => {
   it("left and right sidebars render independently", () => {
     render(
       <SidebarProvider initialState={{ left: true, right: true }}>
-        <ThreeColumnSidebar links={defaultLinks} brandName="LeftBrand" position="left"  />
+        <ThreeColumnSidebar links={defaultLinks} brandName="LeftBrand" position="left" />
         <ThreeColumnSidebar links={defaultLinks} brandName="RightBrand" position="right" />
       </SidebarProvider>
     );

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { LazyLoad } from "./index";
 
 const meta: Meta<typeof LazyLoad> = {
@@ -32,13 +32,13 @@ type Story = StoryObj<typeof LazyLoad>;
 export const Default: Story = {
   args: {
     threshold: "100px",
-    placeholder: <div style={{ height: "200px", background: "#eee" }}>Loading...</div>,
+    placeholder: <div className="h-[200px] bg-neutral-100 flex items-center justify-center text-sm text-neutral-500">Loading...</div>,
     once: true,
     animation: "fade",
   },
   render: (args) => (
     <LazyLoad {...args}>
-      <div style={{ height: "200px", background: "#ccc", display: "flex", justifyContent: "center", alignItems: "center" }}>
+      <div className="h-[200px] bg-neutral-300 flex items-center justify-center">
         Loaded Content
       </div>
     </LazyLoad>
@@ -48,13 +48,13 @@ export const Default: Story = {
 export const SlideAnimation: Story = {
   args: {
     threshold: "50px",
-    placeholder: <div style={{ height: "200px", background: "#eee" }}>Loading...</div>,
+    placeholder: <div className="h-[200px] bg-neutral-100 flex items-center justify-center text-sm text-neutral-500">Loading...</div>,
     once: false,
     animation: "slide",
   },
   render: (args) => (
     <LazyLoad {...args}>
-      <div style={{ height: "200px", background: "#ccc", display: "flex", justifyContent: "center", alignItems: "center" }}>
+      <div className="h-[200px] bg-neutral-300 flex items-center justify-center">
         Loaded Content
       </div>
     </LazyLoad>

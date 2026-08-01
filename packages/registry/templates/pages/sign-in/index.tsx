@@ -430,7 +430,7 @@ const SignIn: React.FC<SignInProps> = ({
             }
             socialTimeoutRef.current = setTimeout(() => {
                 if (isMounted.current) {
-                    setSocialLoading(null);
+                    setSocialLoading(prev => prev === provider ? null : prev);
                 }
             }, 500);
         }

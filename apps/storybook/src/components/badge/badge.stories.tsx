@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Badge } from "./index";
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { Badge, type AttachedBadgeProps } from "./index";
 import { Mail } from "lucide-react";
 
 const meta: Meta<typeof Badge> = {
@@ -81,7 +81,7 @@ export const AttachedIcon: Story = {
     mode: "attached",
   },
   render: (args) => (
-    <Badge {...args as any}>
+    <Badge {...args as AttachedBadgeProps}>
       <Mail className="h-10 w-10" />
     </Badge>
   ),
@@ -97,7 +97,7 @@ export const AttachedButton: Story = {
     mode: "attached",
   },
   render: (args) => (
-    <Badge {...args as any}>
+    <Badge {...args as AttachedBadgeProps}>
       <button className="px-4 py-2 bg-muted rounded-lg shadow">
         Components
       </button>

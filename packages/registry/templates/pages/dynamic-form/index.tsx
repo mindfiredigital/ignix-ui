@@ -1885,6 +1885,8 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className }) => {
 
     return (
         <Button
+            type="button"
+            aria-pressed={theme === 'dark'}
             variant="ghost"
             size="sm"
             onClick={toggleTheme}

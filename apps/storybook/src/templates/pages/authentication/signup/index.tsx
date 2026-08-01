@@ -616,7 +616,7 @@ const SignUp: React.FC<SignUpProps> = ({
             }
             socialTimeoutRef.current = setTimeout(() => {
                 if (isMounted.current) {
-                    setSocialLoading(null);
+                    setSocialLoading(prev => prev === provider ? null : prev);
                 }
             }, 500);
         }

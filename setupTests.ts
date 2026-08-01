@@ -7,7 +7,15 @@ import React from 'react';
 
 // Mock framer-motion for testing to avoid context issues
 vi.mock('framer-motion', () => {
-  const mockMotion = (Component: any) => Component;
+  interface MockMotion {
+    (Component: any): any;
+    div: (props: any) => React.ReactElement;
+    span: (props: any) => React.ReactElement;
+    button: (props: any) => React.ReactElement;
+    create: (Component: any) => any;
+  }
+
+  const mockMotion = (((Component: any) => Component) as unknown) as MockMotion;
   mockMotion.div = ({ children, ...props }: any) => React.createElement('div', props, children);
   mockMotion.span = ({ children, ...props }: any) => React.createElement('span', props, children);
   mockMotion.button = ({ children, ...props }: any) =>
