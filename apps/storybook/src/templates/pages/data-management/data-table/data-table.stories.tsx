@@ -122,7 +122,7 @@ const employeeColumns: Column<Employee>[] = [
     key: 'name',
     title: 'Name',
     sortable: true,
-    render: (value: any, row: Employee) => (
+    render: (_value: any, row: Employee) => (
       <div className="flex items-center gap-2">
         <Avatar
         size="sm"

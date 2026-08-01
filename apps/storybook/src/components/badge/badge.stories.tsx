@@ -81,7 +81,7 @@ export const AttachedIcon: Story = {
     mode: "attached",
   },
   render: (args) => (
-    <Badge {...args}>
+    <Badge {...args as any}>
       <Mail className="h-10 w-10" />
     </Badge>
   ),
@@ -97,7 +97,7 @@ export const AttachedButton: Story = {
     mode: "attached",
   },
   render: (args) => (
-    <Badge {...args}>
+    <Badge {...args as any}>
       <button className="px-4 py-2 bg-muted rounded-lg shadow">
         Components
       </button>

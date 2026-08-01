@@ -1,7 +1,6 @@
 import React from "react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, act } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 
 vi.mock("framer-motion", () => {
   const actual = vi.importActual<typeof import("framer-motion")>("framer-motion");
@@ -143,8 +142,7 @@ describe("useSidebar", () => {
     spy.mockRestore();
   });
 
-  it("toggle flips the open state", async () => {
-    const user = userEvent.setup();
+  it("toggle flips the open state", () => {
     const Toggler = () => {
       const { isOpen, toggle } = useSidebar("left");
       return (
@@ -162,14 +160,13 @@ describe("useSidebar", () => {
 
     const btn = screen.getByTestId("btn");
     expect(btn.textContent).toBe("true");
-    await user.click(btn);
+    fireEvent.click(btn);
     expect(btn.textContent).toBe("false");
-    await user.click(btn);
+    fireEvent.click(btn);
     expect(btn.textContent).toBe("true");
   });
 
-  it("onOpen sets the sidebar open", async () => {
-    const user = userEvent.setup();
+  it("onOpen sets the sidebar open", () => {
     const Opener = () => {
       const { isOpen, onOpen } = useSidebar("left");
       return (
@@ -186,12 +183,11 @@ describe("useSidebar", () => {
     );
 
     expect(screen.getByTestId("btn").textContent).toBe("false");
-    await user.click(screen.getByTestId("btn"));
+    fireEvent.click(screen.getByTestId("btn"));
     expect(screen.getByTestId("btn").textContent).toBe("true");
   });
 
-  it("onClose sets the sidebar closed", async () => {
-    const user = userEvent.setup();
+  it("onClose sets the sidebar closed", () => {
     const Closer = () => {
       const { isOpen, onClose } = useSidebar("left");
       return (
@@ -208,7 +204,7 @@ describe("useSidebar", () => {
     );
 
     expect(screen.getByTestId("btn").textContent).toBe("true");
-    await user.click(screen.getByTestId("btn"));
+    fireEvent.click(screen.getByTestId("btn"));
     expect(screen.getByTestId("btn").textContent).toBe("false");
   });
 
@@ -248,8 +244,7 @@ describe("useSidebar", () => {
     expect(screen.getByTestId("result").textContent).toBe("false");
   });
 
-  it("each position is tracked independently", async () => {
-    const user = userEvent.setup();
+  it("each position is tracked independently", () => {
     const MultiProbe = () => {
       const left  = useSidebar("left");
       const right = useSidebar("right");
@@ -267,7 +262,7 @@ describe("useSidebar", () => {
       </SidebarProvider>
     );
 
-    await user.click(screen.getByTestId("toggle-left"));
+    fireEvent.click(screen.getByTestId("toggle-left"));
     expect(screen.getByTestId("toggle-left").textContent).toBe("false");
     expect(screen.getByTestId("right-state").textContent).toBe("true");
   });
@@ -412,27 +407,25 @@ describe("ThreeColumnSidebar header toggle buttons", () => {
     expect(screen.queryByTestId("icon-x")).not.toBeInTheDocument();
   });
 
-  it("clicking X closes the sidebar", async () => {
-    const user = userEvent.setup();
+  it("clicking X closes the sidebar", () => {
     renderWithProvider(
       <ThreeColumnSidebar links={defaultLinks} brandName="Ignix" position="left" />,
       { left: true }
     );
 
     expect(screen.getByText("Ignix")).toBeInTheDocument();
-    await user.click(screen.getByTestId("icon-x").closest("button")!);
+    fireEvent.click(screen.getByTestId("icon-x").closest("button")!);
     expect(screen.queryByText("Ignix")).not.toBeInTheDocument();
   });
 
-  it("clicking Menu opens the sidebar", async () => {
-    const user = userEvent.setup();
+  it("clicking Menu opens the sidebar", () => {
     renderWithProvider(
       <ThreeColumnSidebar links={defaultLinks} brandName="Ignix" position="left" />,
       { left: false }
     );
 
     expect(screen.queryByText("Ignix")).not.toBeInTheDocument();
-    await user.click(screen.getByTestId("icon-menu").closest("button")!);
+    fireEvent.click(screen.getByTestId("icon-menu").closest("button")!);
     expect(screen.getByText("Ignix")).toBeInTheDocument();
   });
 });
@@ -446,72 +439,62 @@ describe("ThreeColumnSidebar mobile show-more", () => {
     setWindowWidth(1024);
   });
 
-  it("renders the '...' show-more button on mobile for bottom positions", async () => {
-    await act(async () => {
-      renderWithProvider(
-        <ThreeColumnSidebar
-          links={manyLinks}
-          position="bottomLeft"
-          sidebarLayoutMode="BOTTOM_DOCKED"
-          direction="horizontal"
-        />,
-        { bottomLeft: true }
-      );
-    });
+  it("renders the '...' show-more button on mobile for bottom positions", () => {
+    renderWithProvider(
+      <ThreeColumnSidebar
+        links={manyLinks}
+        position="bottomLeft"
+        sidebarLayoutMode="BOTTOM_DOCKED"
+        direction="horizontal"
+      />,
+      { bottomLeft: true }
+    );
 
     expect(screen.getByText("...")).toBeInTheDocument();
   });
 
-  it("does NOT render show-more button for non-bottom positions on mobile", async () => {
-    await act(async () => {
-      renderWithProvider(
-        <ThreeColumnSidebar links={manyLinks} position="left" />,
-        { left: true }
-      );
-    });
+  it("does NOT render show-more button for non-bottom positions on mobile", () => {
+    renderWithProvider(
+      <ThreeColumnSidebar links={manyLinks} position="left" />,
+      { left: true }
+    );
 
     expect(screen.queryByText("...")).not.toBeInTheDocument();
   });
 
-  it("clicking '...' reveals extra links and changes button text to 'Hide'", async () => {
-    const user = userEvent.setup();
-    await act(async () => {
-      renderWithProvider(
-        <ThreeColumnSidebar
-          links={manyLinks}
-          position="bottomLeft"
-          sidebarLayoutMode="OVERLAY_ONLY"
-          direction="horizontal"
-        />,
-        { bottomLeft: true }
-      );
-    });
+  it("clicking '...' reveals extra links and changes button text to 'Hide'", () => {
+    renderWithProvider(
+      <ThreeColumnSidebar
+        links={manyLinks}
+        position="bottomLeft"
+        sidebarLayoutMode="OVERLAY_ONLY"
+        direction="horizontal"
+      />,
+      { bottomLeft: true }
+    );
 
     expect(screen.queryByText("Extra A")).not.toBeInTheDocument();
-    await user.click(screen.getByText("..."));
+    fireEvent.click(screen.getByText("..."));
     expect(screen.getByText("Extra A")).toBeInTheDocument();
     expect(screen.getByText("Extra B")).toBeInTheDocument();
     expect(screen.getByText("Hide")).toBeInTheDocument();
   });
 
-  it("clicking 'Hide' collapses extra links again", async () => {
-    const user = userEvent.setup();
-    await act(async () => {
-      renderWithProvider(
-        <ThreeColumnSidebar
-          links={manyLinks}
-          position="bottomLeft"
-          sidebarLayoutMode="OVERLAY_ONLY"
-          direction="horizontal"
-        />,
-        { bottomLeft: true }
-      );
-    });
+  it("clicking 'Hide' collapses extra links again", () => {
+    renderWithProvider(
+      <ThreeColumnSidebar
+        links={manyLinks}
+        position="bottomLeft"
+        sidebarLayoutMode="OVERLAY_ONLY"
+        direction="horizontal"
+      />,
+      { bottomLeft: true }
+    );
 
-    await user.click(screen.getByText("..."));
+    fireEvent.click(screen.getByText("..."));
     expect(screen.getByText("Extra A")).toBeInTheDocument();
 
-    await user.click(screen.getByText("Hide"));
+    fireEvent.click(screen.getByText("Hide"));
     expect(screen.queryByText("Extra A")).not.toBeInTheDocument();
     expect(screen.getByText("...")).toBeInTheDocument();
   });
@@ -663,8 +646,7 @@ describe("Dual sidebars from one provider", () => {
     expect(screen.getByText("RightBrand")).toBeInTheDocument();
   });
 
-  it("closing left does not close right", async () => {
-    const user = userEvent.setup();
+  it("closing left does not close right", () => {
     render(
       <SidebarProvider initialState={{ left: true, right: true }}>
         <ThreeColumnSidebar links={defaultLinks} brandName="LeftBrand" position="left" />
@@ -676,7 +658,7 @@ describe("Dual sidebars from one provider", () => {
       .getAllByTestId("icon-x")
       .map((el) => el.closest("button")!);
 
-    await user.click(closeButtons[0]);
+    fireEvent.click(closeButtons[0]);
 
     expect(screen.queryByText("LeftBrand")).not.toBeInTheDocument();
     expect(screen.getByText("RightBrand")).toBeInTheDocument();

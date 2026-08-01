@@ -169,7 +169,7 @@ interface RevokeKeyModalProps {
 interface ViewKeyModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onReveal: (apiKey: ApiKey) => Promise<void>;
+    onReveal: (apiKey: ApiKey) => Promise<string | void>;
     apiKey: ApiKey | null;
     isLoading?: boolean;
     inputVariant?: string;
@@ -2541,7 +2541,7 @@ export const ApiKeysPage: React.FC<ApiKeysPageProps> = ({
 
                     {filteredKeys.length === 0 ? (
                         customEmptyState || (
-                            <div className={cn(CardVariants({ variant: cardVariant }), "p-12 text-center")}>
+                            <div className={cn(CardVariants({ variant: cardVariant as "default" | "glass" | "border" | "elevated" }), "p-12 text-center")}>
                                 <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mx-auto mb-4">
                                     <Key className="w-8 h-8 text-muted-foreground" />
                                 </div>
@@ -2614,8 +2614,8 @@ export const ApiKeysPage: React.FC<ApiKeysPageProps> = ({
                             ))}
                         </div>
                     ) : (
-                        <div className={cn(CardVariants({ variant: cardVariant }), "overflow-hidden")}>
-                            <table className={cn("w-full", TableVariants({ variant: cardVariant }))}>
+                        <div className={cn(CardVariants({ variant: cardVariant as "default" | "glass" | "border" | "elevated" }), "overflow-hidden")}>
+                            <table className={cn("w-full", TableVariants({ variant: cardVariant as "default" | "glass" | "border" }))}>
                                 <thead>
                                     <tr className="border-b border-border">
                                         <th className="px-6 py-3 text-left text-sm font-medium text-muted-foreground">

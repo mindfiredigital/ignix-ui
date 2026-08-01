@@ -191,7 +191,7 @@ export const RenderFunctionCustomization: Story = {
     args: {
         variant: "glass",
         children: <DemoContent />,
-        renderHeader: ({ logo, navLinks, authControls, mobileMenuButton, _variant }) => (
+        renderHeader: ({ logo, navLinks, authControls, mobileMenuButton, variant: _variant }) => (
             <div className="flex items-center justify-between w-full h-full px-6">
                 {logo}
                 <div className="flex-1 flex justify-center">
@@ -212,7 +212,7 @@ export const RenderFunctionCustomization: Story = {
                 </div>
             </div>
         ),
-        renderFooter: ({ _variant, content }) => (
+        renderFooter: ({ variant: _variant, content }) => (
             <div className="flex flex-col items-center justify-center py-6 space-y-4">
                 {content}
                 <div className="flex space-x-4">

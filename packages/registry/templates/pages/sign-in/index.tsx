@@ -351,10 +351,13 @@ const SignIn: React.FC<SignInProps> = ({
     const [errors, setErrors] = React.useState<Record<string, string>>({});
     const [socialLoading, setSocialLoading] = React.useState<SocialProvider | null>(null);
     const socialTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+    const isMounted = React.useRef(true);
 
     // Cleanup timeout on unmount
     React.useEffect(() => {
+        isMounted.current = true;
         return () => {
+            isMounted.current = false;
             if (socialTimeoutRef.current) {
                 clearTimeout(socialTimeoutRef.current);
             }
@@ -422,7 +425,14 @@ const SignIn: React.FC<SignInProps> = ({
         } catch (error) {
             alert(`Social sign-in failed for ${provider}: ${error}`);
         } finally {
-            socialTimeoutRef.current = setTimeout(() => setSocialLoading(null), 500);
+            if (socialTimeoutRef.current) {
+                clearTimeout(socialTimeoutRef.current);
+            }
+            socialTimeoutRef.current = setTimeout(() => {
+                if (isMounted.current) {
+                    setSocialLoading(null);
+                }
+            }, 500);
         }
     };
 

@@ -1,9 +1,10 @@
+import type { Meta, StoryObj } from "@storybook/react";
 import { Breakpoint } from "./index";
 
-export default {
+const meta: Meta<typeof Breakpoint> = {
   title: "Layouts/Breakpoint",
   component: Breakpoint,
-   tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     show: {
       control: { type: "select" },
@@ -24,31 +25,51 @@ export default {
   },
 };
 
+export default meta;
+type Story = StoryObj<typeof Breakpoint>;
 
-const Template: ComponentStory<typeof Breakpoint> = (args) => (
-  <Breakpoint {...args}>
-    <p>This content is conditionally rendered based on the viewport size.</p>
-  </Breakpoint>
-);
-
-export const ShowMobile = Template.bind({});
-ShowMobile.args = {
-  show: "mobile",
+export const ShowMobile: Story = {
+  args: {
+    show: "mobile",
+  },
+  render: (args) => (
+    <Breakpoint {...args}>
+      <p>This content is conditionally rendered based on the viewport size.</p>
+    </Breakpoint>
+  ),
 };
 
-export const HideDesktop = Template.bind({});
-HideDesktop.args = {
-  hide: "desktop",
+export const HideDesktop: Story = {
+  args: {
+    hide: "desktop",
+  },
+  render: (args) => (
+    <Breakpoint {...args}>
+      <p>This content is conditionally rendered based on the viewport size.</p>
+    </Breakpoint>
+  ),
 };
 
-export const FromTabletToDesktop = Template.bind({});
-FromTabletToDesktop.args = {
-  from: "tablet",
-  to: "desktop",
+export const FromTabletToDesktop: Story = {
+  args: {
+    from: "tablet",
+    to: "desktop",
+  },
+  render: (args) => (
+    <Breakpoint {...args}>
+      <p>This content is conditionally rendered based on the viewport size.</p>
+    </Breakpoint>
+  ),
 };
 
-export const CustomRange = Template.bind({});
-CustomRange.args = {
-  from: "mobile",
-  to: "tablet",
+export const CustomRange: Story = {
+  args: {
+    from: "mobile",
+    to: "tablet",
+  },
+  render: (args) => (
+    <Breakpoint {...args}>
+      <p>This content is conditionally rendered based on the viewport size.</p>
+    </Breakpoint>
+  ),
 };

@@ -78,7 +78,7 @@ const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
         className={`${baseClass} ${uniqueClass} ${className}`}
       >
         <AnimatePresence>
-          {React.Children.map(children, (child: any, index: number) => {
+          {React.Children.map(children, (child: React.ReactNode, index: number) => {
             if (animation === "none") return child;
 
             return (
