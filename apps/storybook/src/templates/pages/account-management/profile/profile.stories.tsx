@@ -120,20 +120,6 @@ const meta: Meta<typeof ProfilePage> = {
                 defaultValue: { summary: "Edit Profile" },
             },
         },
-        saveButtonLabel: {
-            control: "text",
-            description: "Label for save button",
-            table: {
-                defaultValue: { summary: "Save Changes" },
-            },
-        },
-        cancelButtonLabel: {
-            control: "text",
-            description: "Label for cancel button",
-            table: {
-                defaultValue: { summary: "Cancel" },
-            },
-        },
     },
     decorators: [
         (Story) => (

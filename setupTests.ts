@@ -6,14 +6,27 @@ import { vi } from 'vitest';
 import React from 'react';
 
 // Mock framer-motion for testing to avoid context issues
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }: any) => React.createElement('div', props, children),
-    span: ({ children, ...props }: any) => React.createElement('span', props, children),
-    button: ({ children, ...props }: any) => React.createElement('button', props, children),
-  },
-  AnimatePresence: ({ children }: any) => React.createElement(React.Fragment, null, children),
-}));
+vi.mock('framer-motion', () => {
+  interface MockMotion {
+    (Component: any): any;
+    div: (props: any) => React.ReactElement;
+    span: (props: any) => React.ReactElement;
+    button: (props: any) => React.ReactElement;
+    create: (Component: any) => any;
+  }
+
+  const mockMotion = (((Component: any) => Component) as unknown) as MockMotion;
+  mockMotion.div = ({ children, ...props }: any) => React.createElement('div', props, children);
+  mockMotion.span = ({ children, ...props }: any) => React.createElement('span', props, children);
+  mockMotion.button = ({ children, ...props }: any) =>
+    React.createElement('button', props, children);
+  mockMotion.create = (Component: any) => Component;
+
+  return {
+    motion: mockMotion,
+    AnimatePresence: ({ children }: any) => React.createElement(React.Fragment, null, children),
+  };
+});
 
 // Mock React 18 features if needed
 global.React = React;

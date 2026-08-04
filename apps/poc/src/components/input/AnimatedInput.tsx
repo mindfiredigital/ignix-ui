@@ -17,7 +17,7 @@ interface InputVariant {
   extra?: Variants;
 }
 
-const borderBeamVariants = {
+const borderBeamVariants: Variants = {
   initial: {
     pathLength: 0,
     opacity: 0,
@@ -480,17 +480,17 @@ const inputVariants: Record<string, InputVariant> = {
   },
   glitch: {
     label: {
-      initial: { skew: 0, y: 0 },
+      initial: { skewX: 0, y: 0 },
       animate: {
-        skew: [-5, 5, -2, 2, 0],
+        skewX: [-5, 5, -2, 2, 0],
         y: -25,
         transition: { repeat: Number.POSITIVE_INFINITY, duration: 0.5 },
       },
     },
     input: {
-      initial: { skew: 0 },
+      initial: { skewX: 0 },
       animate: {
-        skew: [0, -2, 2, -1, 1, 0],
+        skewX: [0, -2, 2, -1, 1, 0],
         transition: { repeat: Number.POSITIVE_INFINITY, duration: 0.5 },
       },
     },

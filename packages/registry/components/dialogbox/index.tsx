@@ -1,5 +1,5 @@
-import { motion, AnimatePresence, TargetAndTransition } from 'framer-motion';
-import { createContext, CSSProperties, useState } from 'react';
+import { motion, AnimatePresence, type TargetAndTransition } from 'framer-motion';
+import { createContext, type CSSProperties, useState } from 'react';
 import { X, Check, AlertTriangle, Info, XCircle } from 'lucide-react';
 
 // types/dialog.ts
