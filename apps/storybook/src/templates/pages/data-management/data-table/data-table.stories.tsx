@@ -122,7 +122,7 @@ const employeeColumns: Column<Employee>[] = [
     key: 'name',
     title: 'Name',
     sortable: true,
-    render: (value: any, row: Employee) => (
+    render: (_value: unknown, row: Employee) => (
       <div className="flex items-center gap-2">
         <Avatar
         size="sm"
@@ -141,7 +141,7 @@ const employeeColumns: Column<Employee>[] = [
     key: 'status',
     title: 'Status',
     sortable: true,
-    render: (value: any) => {
+    render: (value: unknown) => {
       const statusColors = {
         Active: 'bg-green-100 text-green-800',
         Pending: 'bg-yellow-100 text-yellow-800',
@@ -158,7 +158,7 @@ const employeeColumns: Column<Employee>[] = [
     key: 'salary',
     title: 'Salary',
     sortable: true,
-    render: (value: any) => (
+    render: (value: unknown) => (
       <span className="font-medium text-gray-900">
         ${Number(value).toLocaleString()}
       </span>
@@ -169,7 +169,7 @@ const employeeColumns: Column<Employee>[] = [
     key: 'performance',
     title: 'Rating',
     sortable: true,
-    render: (value: any) => (
+    render: (value: unknown) => (
       <div className="flex items-center gap-1">
         <StarFilledIcon className="w-4 h-4 fill-yellow-400 text-yellow-400" />
         <span className="text-sm font-medium">{Number(value).toFixed(1)}</span>
@@ -186,13 +186,13 @@ const productColumns: Column<Product>[] = [
     key: 'price',
     title: 'Price',
     sortable: true,
-    render: (value: any) => `$${Number(value).toFixed(2)}`
+    render: (value: unknown) => `$${Number(value).toFixed(2)}`
   },
   {
     key: 'stock',
     title: 'Stock',
     sortable: true,
-    render: (value: any) => (
+    render: (value: unknown) => (
       <span className={Number(value) === 0 ? 'text-red-600 font-medium' : 'text-gray-700'}>
         {Number(value)}
       </span>
@@ -202,7 +202,7 @@ const productColumns: Column<Product>[] = [
     key: 'rating',
     title: 'Rating',
     sortable: true,
-    render: (value: any) => (
+    render: (value: unknown) => (
       <div className="flex items-center gap-1">
         <StarFilledIcon className="w-4 h-4 fill-yellow-400 text-yellow-400" />
         <span>{Number(value).toFixed(1)}</span>
@@ -213,7 +213,7 @@ const productColumns: Column<Product>[] = [
     key: 'inStock',
     title: 'Availability',
     sortable: true,
-    render: (value: any) => (
+    render: (value: unknown) => (
       <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
         {value ? 'In Stock' : 'Out of Stock'}
       </span>

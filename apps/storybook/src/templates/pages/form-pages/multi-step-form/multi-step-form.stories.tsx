@@ -340,7 +340,7 @@ const registrationSteps = [
 ];
 
 // Create a Step helper component for cleaner syntax
-const Step = ({ _step, children }: { step: number; children: React.ReactNode }) => {
+const Step = ({ children }: { step: number; children: React.ReactNode }) => {
     return <>{children}</>;
 };
 

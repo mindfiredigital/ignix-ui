@@ -515,7 +515,7 @@ const SaveCancelBar = ({
             "border-t border-border animate-fade-in cursor-pointer"
         )}>
             <Button
-                variant={cancelButtonVariant as any}
+                variant={cancelButtonVariant as React.ComponentPropsWithoutRef<typeof Button>['variant']}
                 onClick={onCancel}
                 disabled={isSaving}
                 className="min-w-[100px] cursor-pointer"
@@ -525,7 +525,7 @@ const SaveCancelBar = ({
                 Cancel
             </Button>
             <Button
-                variant={saveButtonVariant as any}
+                variant={saveButtonVariant as React.ComponentPropsWithoutRef<typeof Button>['variant']}
                 onClick={onSave}
                 disabled={isSaving}
                 className="min-w-[100px] cursor-pointer"
@@ -793,7 +793,7 @@ export const ProfilePage: React.FC<ProfileProps> = ({
                             {!isEditing && (
                                 <Button
                                     onClick={handleEdit}
-                                    variant={buttonVariant as any}
+                                    variant={buttonVariant as React.ComponentPropsWithoutRef<typeof Button>['variant']}
                                     animationVariant={buttonAnimationVariant}
                                     className='cursor-pointer'
                                 >

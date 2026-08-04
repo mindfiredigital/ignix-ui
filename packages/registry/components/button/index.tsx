@@ -32,6 +32,7 @@ const buttonVariants = cva(
         elevated: 'bg-background shadow-md hover:shadow-lg',
         glass: 'bg-black/10 backdrop-blur-lg text-primary hover:bg-black/20',
         neon: 'bg-pink-500 text-white shadow-lg shadow-pink-500/50 hover:bg-pink-600',
+        pill: 'rounded-full',
         none: '',
       },
       size: {
@@ -293,7 +294,7 @@ const ninaTextVariants = {
   hover: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { delay: i * 0.045, duration: 0.3, ease: [0.75, 0, 0.125, 1] as const },
+    transition: { delay: i * 0.045, duration: 0.3, ease: [0.75, 0, 0.125, 1] as [number, number, number, number] },
   }),
 };
 
@@ -302,7 +303,7 @@ const ninaBeforeVariants = {
   hover: {
     opacity: 0,
     y: 20,
-    transition: { duration: 0.3, ease: [0.75, 0, 0.125, 1] as const },
+    transition: { duration: 0.3, ease: [0.75, 0, 0.125, 1] as [number, number, number, number] },
   },
 };
 
@@ -338,7 +339,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         <motion.button
           className={cn(buttonVariants({ variant, size }), className, 'relative overflow-hidden')}
           ref={ref}
-          {...(motionProps as any)}
+          {...(motionProps as unknown as React.ComponentPropsWithoutRef<typeof motion.button>)}
           initial="initial"
           whileHover="hover"
         >
@@ -363,7 +364,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <motion.button
         className={cn(buttonVariants({ variant, size }), className)}
         ref={ref}
-        {...(motionProps as any)}
+        {...(motionProps as unknown as React.ComponentPropsWithoutRef<typeof motion.button>)}
       >
         {children}
       </motion.button>

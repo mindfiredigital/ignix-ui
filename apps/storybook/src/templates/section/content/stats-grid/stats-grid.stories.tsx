@@ -45,6 +45,7 @@ import {
 } from "@radix-ui/react-icons";
 import { cn } from "../../../../../utils/cn";
 import React from "react";
+import { ShoppingCart as ShoppingCartIcon, Flag as FlagIcon } from "lucide-react";
 
 const meta: Meta<typeof StatsGrid> = {
     title: "Templates/Section/Content/StatsGrid",
@@ -1311,10 +1312,10 @@ export const DarkThemeGlassy: Story = {
                 </StatsGridDescription>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
                     {[
-                        { value: 10000000, label: "Users", icon: PersonIcon, color: "blue" },
-                        { value: 99.99, label: "Uptime", icon: LockClosedIcon, color: "emerald", suffix: "%" },
-                        { value: 2500000000, label: "Revenue", icon: CardStackIcon, color: "amber" },
-                        { value: 50000000, label: "Downloads", icon: DownloadIcon, color: "violet", suffix: "+" },
+                        { value: 10000000, label: "Users", icon: PersonIcon, color: "blue", format: "compact" },
+                        { value: 99.99, label: "Uptime", icon: LockClosedIcon, color: "emerald", suffix: "%", format: "percentage" },
+                        { value: 2500000000, label: "Revenue", icon: CardStackIcon, color: "amber", format: "currency" },
+                        { value: 50000000, label: "Downloads", icon: DownloadIcon, color: "violet", suffix: "+", format: "compact" },
                     ].map((stat, i) => (
                         <div key={i} className="backdrop-blur-xl bg-white/5 rounded-2xl p-6 border border-white/10 shadow-2xl">
                             <div className="flex items-start justify-between">

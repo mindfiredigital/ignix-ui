@@ -174,12 +174,11 @@ const getCurrentDateTimeForTimezone = (timezone: string) =>
 
 export function getSupportedTimezones(): string[] {
   try {
-    if (
-      typeof Intl !== "undefined" &&
-      "supportedValuesOf" in Intl &&
-      typeof (Intl as any).supportedValuesOf === "function"
-    ) {
-      return (Intl as any).supportedValuesOf("timeZone");
+    if (typeof Intl !== "undefined") {
+      const intl = Intl as typeof Intl & { supportedValuesOf?: (key: string) => string[] };
+      if (typeof intl.supportedValuesOf === "function") {
+        return intl.supportedValuesOf("timeZone");
+      }
     }
   } catch(e) { console.log (e)}
   return [

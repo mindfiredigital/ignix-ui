@@ -6,6 +6,14 @@ import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../../utils/cn';
 
+export interface ButtonProps
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onDrag'>,
+  VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+  animationVariant?: string;
+  children?: React.ReactNode;
+}
+
 const buttonVariants = cva(
   'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
   {
@@ -46,16 +54,6 @@ const buttonVariants = cva(
     },
   }
 );
-
-export type ButtonVariant = VariantProps<typeof buttonVariants>['variant'];
-
-export interface ButtonProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onDrag'>,
-  VariantProps<typeof buttonVariants> {
-  asChild?: boolean;
-  animationVariant?: string;
-  children?: React.ReactNode;
-}
 
 const animations = {
   bounce: {
@@ -296,11 +294,7 @@ const ninaTextVariants = {
   hover: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: {
-      delay: i * 0.045,
-      duration: 0.3,
-      ease: [0.75, 0, 0.125, 1] as [number, number, number, number],
-    },
+    transition: { delay: i * 0.045, duration: 0.3, ease: [0.75, 0, 0.125, 1] as [number, number, number, number] },
   }),
 };
 
@@ -309,16 +303,13 @@ const ninaBeforeVariants = {
   hover: {
     opacity: 0,
     y: 20,
-    transition: {
-      duration: 0.3,
-      ease: [0.75, 0, 0.125, 1] as [number, number, number, number],
-    },
+    transition: { duration: 0.3, ease: [0.75, 0, 0.125, 1] as [number, number, number, number] },
   },
-} as const;
+};
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, animationVariant, children, ...props }, ref) => {
-    const animationProps = animationVariant ? animations[animationVariant] || {} : {};
+    const animationProps = animationVariant ? animations[animationVariant as keyof typeof animations] || {} : {};
 
     const slotProps = asChild ? { ...props } : {};
     const motionProps = !asChild ? { ...props, ...animationProps } : {};
@@ -348,7 +339,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         <motion.button
           className={cn(buttonVariants({ variant, size }), className, 'relative overflow-hidden')}
           ref={ref}
-          {...(motionProps as any)}
+          {...(motionProps as unknown as React.ComponentPropsWithoutRef<typeof motion.button>)}
           initial="initial"
           whileHover="hover"
         >
@@ -373,7 +364,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <motion.button
         className={cn(buttonVariants({ variant, size }), className)}
         ref={ref}
-        {...(motionProps as any)}
+        {...(motionProps as unknown as React.ComponentPropsWithoutRef<typeof motion.button>)}
       >
         {children}
       </motion.button>
