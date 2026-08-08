@@ -249,6 +249,7 @@ export const AnimatedInput = React.forwardRef<HTMLInputElement, AnimatedInputPro
 
         {/* Enhanced Input Field */}
         <motion.input
+          {...props}
           ref={ref}
           id={id}
           autoFocus={autoFocus}
@@ -287,7 +288,6 @@ export const AnimatedInput = React.forwardRef<HTMLInputElement, AnimatedInputPro
               border: "2px solid transparent",
             }),
           }}
-          {...props}
         />
 
         {/* Enhanced Border Beam Effect */}

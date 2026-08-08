@@ -96,24 +96,25 @@ export const AnimatedTextarea = React.forwardRef<HTMLTextAreaElement, AnimatedTe
       showCharacterCount = false,
       autoResize = true,
       glowEffect = false,
+      theme: _theme,
       ...props
     },
     ref
   ) => {
     const [isFocused, setIsFocused] = useState(false);
     const [height, setHeight] = useState("auto");
-    const localRef = useRef<HTMLTextAreaElement>(null);
+    const localRef = useRef<HTMLTextAreaElement | null>(null);
     const particleRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
     const setRef = React.useCallback(
       (node: HTMLTextAreaElement | null) => {
-        (localRef as any).current = node;
+        localRef.current = node;
         if (ref) {
           if (typeof ref === "function") {
             ref(node);
           } else {
-            (ref as any).current = node;
+            (ref as React.MutableRefObject<HTMLTextAreaElement | null>).current = node;
           }
         }
       },
@@ -351,6 +352,7 @@ export const AnimatedTextarea = React.forwardRef<HTMLTextAreaElement, AnimatedTe
               ? `${config.minHeight * maxRows / minRows}px` 
               : undefined,
           }}
+          {...props}
           onFocus={handleFocus}
           onBlur={handleBlur}
           onChange={handleChange}
@@ -359,7 +361,6 @@ export const AnimatedTextarea = React.forwardRef<HTMLTextAreaElement, AnimatedTe
           maxLength={maxLength}
           variants={variants.textarea}
           rows={minRows}
-          {...props}
         />
 
         {variant === "particleField" && (

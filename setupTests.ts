@@ -36,7 +36,7 @@ vi.mock('framer-motion', () => {
     useMotionTemplate: (strings: TemplateStringsArray, ...values: any[]) => ({
       get: () =>
         strings.reduce(
-          (acc, str, i) => acc + str + (values[i]?.get ? values[i].get() : values[i] || ''),
+          (acc, str, i) => acc + str + (values[i]?.get ? values[i].get() : values[i] ?? ''),
           ''
         ),
     }),

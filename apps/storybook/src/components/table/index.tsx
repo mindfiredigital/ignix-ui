@@ -133,7 +133,7 @@ function ColumnTable(props: TableProps) {
   );
 
   return (
-    <div className="relative w-full rounded-lg overflow-hidden shadow-md">
+    <div className="relative w-full rounded-lg overflow-x-auto shadow-md">
       {glow && (
         <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary to-primary opacity-30 blur-lg pointer-events-none animate-pulse" />
       )}
