@@ -1,21 +1,20 @@
 "use client";
 
-import type React from "react";
+import * as React from "react";
 import { useState, useRef, useEffect } from "react";
 import { motion, type Variants, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { cn } from "../../../utils/cn";
 
-interface AnimatedTextareaProps {
-  placeholder: string;
-  variant: string;
+export interface AnimatedTextareaProps extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "size" | "onChange" | "value"> {
+  id?: string;
   className?: string;
+  placeholder?: string;
+  variant?: string;
+
   textareaClassName?: string;
   labelClassName?: string;
-  value: string;
-  id?: string;
-  autoFocus?: boolean;
-  onChange: (value: string) => void;
-  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+  value?: string;
+  onChange?: (value: string) => void;
   onFocus?: () => void;
   onBlur?: () => void;
   disabled?: boolean;
@@ -73,36 +72,53 @@ const createAdvancedParticles = (container: HTMLElement, count = 12) => {
   return particles;
 };
 
-const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
-  placeholder,
-  variant,
-  className = "",
-  textareaClassName = "",
-  labelClassName = "",
-  onChange,
-  onKeyDown,
-  value,
-  onFocus,
-  onBlur,
-  id,
-  autoFocus,
-  disabled = false,
-  error,
-  success,
-  icon: Icon,
-  maxLength = 1000,
-  minRows = 3,
-  maxRows = 10,
-  size = "md",
-  showCharacterCount = false,
-  autoResize = true,
-  glowEffect = false,
-}) => {
-  const [isFocused, setIsFocused] = useState(false);
-  const [height, setHeight] = useState("auto");
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const particleRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+export const AnimatedTextarea = React.forwardRef<HTMLTextAreaElement, AnimatedTextareaProps>(
+  (
+    {
+      id,
+      className = "",
+      placeholder = "",
+      variant = "default",
+      textareaClassName = "",
+      labelClassName = "",
+      onChange,
+      value = "",
+      onFocus,
+      onBlur,
+      disabled = false,
+      error = "",
+      success = false,
+      icon: Icon,
+      maxLength = 1000,
+      minRows = 3,
+      maxRows = 10,
+      size = "md",
+      showCharacterCount = false,
+      autoResize = true,
+      glowEffect = false,
+      ...props
+    },
+    ref
+  ) => {
+    const [isFocused, setIsFocused] = useState(false);
+    const [height, setHeight] = useState("auto");
+    const localRef = useRef<HTMLTextAreaElement>(null);
+    const particleRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    const setRef = React.useCallback(
+      (node: HTMLTextAreaElement | null) => {
+        (localRef as any).current = node;
+        if (ref) {
+          if (typeof ref === "function") {
+            ref(node);
+          } else {
+            (ref as any).current = node;
+          }
+        }
+      },
+      [ref]
+    );
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -150,8 +166,8 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
     
     onChange?.(newValue);
     
-    if ((variant === "expandable" || variant === "smoothExpand" || autoResize) && textareaRef.current) {
-      const textarea = textareaRef.current;
+    if ((variant === "expandable" || variant === "smoothExpand" || autoResize) && localRef.current) {
+      const textarea = localRef.current;
       textarea.style.height = 'auto';
       const scrollHeight = textarea.scrollHeight;
       const maxHeight = config.minHeight * maxRows / minRows;
@@ -170,8 +186,8 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
   };
 
   useEffect(() => {
-    if ((variant === "expandable" || variant === "smoothExpand" || autoResize) && textareaRef.current) {
-      const textarea = textareaRef.current;
+    if ((variant === "expandable" || variant === "smoothExpand" || autoResize) && localRef.current) {
+      const textarea = localRef.current;
       textarea.style.height = 'auto';
       const scrollHeight = textarea.scrollHeight;
       const maxHeight = config.minHeight * maxRows / minRows;
@@ -192,11 +208,12 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
     }
   }, [variant, isFocused]);
 
-  const variants = textareaVariants[variant as keyof typeof textareaVariants];
-  const hasValue = value.length > 0;
+  const safeVariant = (variant && textareaVariants[variant as keyof typeof textareaVariants]) ? variant : "default";
+  const variants = textareaVariants[safeVariant as keyof typeof textareaVariants];
+  const hasValue = value ? value.length > 0 : false;
   const isActive = isFocused || hasValue;
 
-  const characterCount = value.length;
+  const characterCount = value ? value.length : 0;
   const isNearLimit = maxLength && characterCount > maxLength * 0.8;
   const isOverLimit = maxLength && characterCount > maxLength;
 
@@ -208,6 +225,7 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
         disabled && "opacity-60 cursor-not-allowed",
         className
       )}
+
       initial="initial"
       animate={isActive ? "animate" : "initial"}
       style={{ 
@@ -303,9 +321,7 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
         )}
 
         <motion.textarea
-          ref={textareaRef}
-          id={id}
-          autoFocus={autoFocus}
+          ref={setRef}
           className={cn(
             "w-full bg-background/90 backdrop-blur-sm border border-border/60 rounded-xl resize-none",
             "text-foreground placeholder:text-transparent transition-all duration-300",
@@ -326,7 +342,9 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
             
             textareaClassName
           )}
+          id={id}
           style={{
+
             height: (variant === "expandable" || variant === "smoothExpand" || autoResize) ? height : undefined,
             minHeight: `${config.minHeight}px`,
             maxHeight: variant === "expandable" || variant === "smoothExpand" || autoResize 
@@ -336,12 +354,12 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
           onFocus={handleFocus}
           onBlur={handleBlur}
           onChange={handleChange}
-          onKeyDown={onKeyDown}
           value={value}
           disabled={disabled}
           maxLength={maxLength}
           variants={variants.textarea}
           rows={minRows}
+          {...props}
         />
 
         {variant === "particleField" && (
@@ -407,7 +425,7 @@ const AnimatedTextarea: React.FC<AnimatedTextareaProps> = ({
       </div>
     </motion.div>
   );
-};
+});
 
 const textareaVariants: Record<string, TextareaVariant> = {
   clean: {
@@ -930,5 +948,7 @@ const textareaVariants: Record<string, TextareaVariant> = {
     },
   },
 };
+
+AnimatedTextarea.displayName = "AnimatedTextarea";
 
 export default AnimatedTextarea;

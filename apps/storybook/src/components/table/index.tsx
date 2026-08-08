@@ -204,7 +204,7 @@ function ColumnTable(props: TableProps) {
                       <RadixTable.Cell
                         key={`${rowKey}-${key}`}
                         className={cn(
-                          "select-text truncate max-w-[200px] whitespace-nowrap px-3",
+                          "select-text truncate whitespace-nowrap px-3",
                           config.padding,
                           config.fontSize,
                           showBorders ? "border-r border-gray-200 dark:border-gray-700" : "",

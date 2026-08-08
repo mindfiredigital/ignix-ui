@@ -25,6 +25,21 @@ vi.mock('framer-motion', () => {
   return {
     motion: mockMotion,
     AnimatePresence: ({ children }: any) => React.createElement(React.Fragment, null, children),
+    useMotionValue: (initial: any) => ({
+      get: () => initial,
+      set: vi.fn(),
+      onChange: vi.fn(() => vi.fn()),
+      on: vi.fn(() => vi.fn()),
+    }),
+    useSpring: (val: any) => val,
+    useTransform: (val: any, _inputOrFn: any, _output?: any) => val,
+    useMotionTemplate: (strings: TemplateStringsArray, ...values: any[]) => ({
+      get: () =>
+        strings.reduce(
+          (acc, str, i) => acc + str + (values[i]?.get ? values[i].get() : values[i] || ''),
+          ''
+        ),
+    }),
   };
 });
 
@@ -37,3 +52,18 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
   unobserve: vi.fn(),
   disconnect: vi.fn(),
 }));
+
+// Mock window.matchMedia (used by CursorEffects and other components)
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockImplementation((query: string) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+});
