@@ -27,7 +27,6 @@ export interface AnimatedTextareaProps extends Omit<React.TextareaHTMLAttributes
   size?: "sm" | "md" | "lg";
   showCharacterCount?: boolean;
   autoResize?: boolean;
-  theme?: "light" | "dark" | "auto";
   glowEffect?: boolean;
 }
 
@@ -96,7 +95,6 @@ export const AnimatedTextarea = React.forwardRef<HTMLTextAreaElement, AnimatedTe
       showCharacterCount = false,
       autoResize = true,
       glowEffect = false,
-      theme: _theme,
       ...props
     },
     ref

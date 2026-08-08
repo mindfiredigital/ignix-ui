@@ -284,6 +284,7 @@ export const AnimatedInput = React.forwardRef<HTMLInputElement, AnimatedInputPro
           disabled={disabled}
           variants={variants.input}
           style={{
+            ...props.style,
             ...(variant === "borderBeam" && {
               border: "2px solid transparent",
             }),
