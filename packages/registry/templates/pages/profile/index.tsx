@@ -714,7 +714,7 @@ export const ProfilePage: React.FC<ProfileProps> = ({
                 }, avatarFile);
             } else {
                 // Simulate API call
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                await new Promise(resolve => setTimeout(resolve, typeof process !== 'undefined' && process.env?.NODE_ENV === 'test' ? 0 : 1000));
 
                 setProfileData({
                     ...editedData,
