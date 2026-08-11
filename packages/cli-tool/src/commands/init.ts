@@ -343,7 +343,14 @@ async function findGlobalCssFile(dir: string): Promise<string | null> {
 
   for (const cssPath of possibleCssPaths) {
     if (await fs.pathExists(cssPath)) {
-      return cssPath;
+      try {
+        const stat = await fs.lstat(cssPath);
+        if (!stat.isSymbolicLink()) {
+          return cssPath;
+        }
+      } catch (e) {
+        // Skip inaccessible files
+      }
     }
   }
 
@@ -354,18 +361,25 @@ async function findGlobalCssFile(dir: string): Promise<string | null> {
     try {
       const files = await fs.readdir(currentDir);
       for (const file of files) {
-        const fullPath = path.join(currentDir, file);
-        const stat = await fs.stat(fullPath);
-        if (stat.isDirectory()) {
-          if (excludedDirs.includes(file) || file.startsWith('.')) {
+        try {
+          const fullPath = path.join(currentDir, file);
+          const stat = await fs.lstat(fullPath);
+          if (stat.isSymbolicLink()) {
             continue;
           }
-          const found = await walk(fullPath);
-          if (found) return found;
-        } else if (stat.isFile()) {
-          if (targetNames.includes(file.toLowerCase())) {
-            return fullPath;
+          if (stat.isDirectory()) {
+            if (excludedDirs.includes(file) || file.startsWith('.')) {
+              continue;
+            }
+            const found = await walk(fullPath);
+            if (found) return found;
+          } else if (stat.isFile()) {
+            if (targetNames.includes(file.toLowerCase())) {
+              return fullPath;
+            }
           }
+        } catch (e) {
+          // Skip individual failed/inaccessible paths and continue scanning other siblings
         }
       }
     } catch (e) {
@@ -384,7 +398,8 @@ async function updateGlobalStyles() {
 
   try {
     const response = await axios.get(
-      'https://raw.githubusercontent.com/mindfiredigital/ignix-ui/main/apps/docs/src/css/custom.css'
+      'https://raw.githubusercontent.com/mindfiredigital/ignix-ui/main/apps/docs/src/css/custom.css',
+      { timeout: 10000 }
     );
     customCssContent = response.data;
   } catch (fetchError) {
