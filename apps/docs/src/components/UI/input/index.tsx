@@ -7,7 +7,7 @@ import type { Variants } from "framer-motion";
 import { Eye, EyeOff, Check, AlertCircle } from "lucide-react";
 import { cn } from "../../../utils/cn";
 
-export interface AnimatedInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size" | "onChange" | "value" | "onDrag" | "onDragStart" | "onDragEnd" | "onAnimationStart"> {
+export interface AnimatedInputProps extends Omit<React.ComponentPropsWithoutRef<typeof motion.input>, "size" | "onChange" | "value" | "variants"> {
   placeholder?: string;
   variant?: string;
   className?: string;
@@ -129,300 +129,300 @@ export const AnimatedInput = React.forwardRef<HTMLInputElement, AnimatedInputPro
     const particleRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
-  // Enhanced mouse tracking for premium effects
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const rotateX = useSpring(useTransform(mouseY, [-100, 100], [2, -2]));
-  const rotateY = useSpring(useTransform(mouseX, [-100, 100], [-2, 2]));
+    // Enhanced mouse tracking for premium effects
+    const mouseX = useMotionValue(0);
+    const mouseY = useMotionValue(0);
+    const rotateX = useSpring(useTransform(mouseY, [-100, 100], [2, -2]));
+    const rotateY = useSpring(useTransform(mouseX, [-100, 100], [-2, 2]));
 
-  const handleFocus = () => {
-    setIsFocused(true);
-    onFocus?.();
-  };
+    const handleFocus = () => {
+      setIsFocused(true);
+      onFocus?.();
+    };
 
-  const handleBlur = () => {
-    setIsFocused(false);
-    onBlur?.();
-  };
+    const handleBlur = () => {
+      setIsFocused(false);
+      onBlur?.();
+    };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange?.(e.target.value);
-  };
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      onChange?.(e.target.value);
+    };
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    mouseX.set((e.clientX - centerX) * 0.3);
-    mouseY.set((e.clientY - centerY) * 0.3);
-  };
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      mouseX.set((e.clientX - centerX) * 0.3);
+      mouseY.set((e.clientY - centerY) * 0.3);
+    };
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-    setInputType(showPassword ? "password" : "text");
-  };
+    const togglePasswordVisibility = () => {
+      setShowPassword(!showPassword);
+      setInputType(showPassword ? "password" : "text");
+    };
 
-  const safeVariant = (variant && inputVariants[variant as keyof typeof inputVariants]) ? variant : "default";
-  const variants = inputVariants[safeVariant as keyof typeof inputVariants];
-  const hasValue = value ? value.length > 0 : false;
-  const isActive = isFocused || hasValue;
+    const safeVariant = (variant && inputVariants[variant as keyof typeof inputVariants]) ? variant : "default";
+    const variants = inputVariants[safeVariant as keyof typeof inputVariants];
+    const hasValue = value ? value.length > 0 : false;
+    const isActive = isFocused || hasValue;
 
-  // Size configurations
-  const sizeConfig = {
-    sm: { input: "h-9 px-3 text-sm", label: "text-sm", icon: "h-4 w-4" },
-    md: { input: "h-11 px-4 text-base", label: "text-base", icon: "h-5 w-5" },
-    lg: { input: "h-13 px-5 text-lg", label: "text-lg", icon: "h-6 w-6" }
-  };
+    // Size configurations
+    const sizeConfig = {
+      sm: { input: "h-9 px-3 text-sm", label: "text-sm", icon: "h-4 w-4" },
+      md: { input: "h-11 px-4 text-base", label: "text-base", icon: "h-5 w-5" },
+      lg: { input: "h-13 px-5 text-lg", label: "text-lg", icon: "h-6 w-6" }
+    };
 
-  // Enhanced particle effects for particleField
-  useEffect(() => {
-    if (variant === "particleField" && particleRef.current && isActive) {
-      const interval = setInterval(() => {
-        if (particleRef.current) {
-          createEnhancedParticles(particleRef.current, 6);
-        }
-      }, 300);
+    // Enhanced particle effects for particleField
+    useEffect(() => {
+      if (variant === "particleField" && particleRef.current && isActive) {
+        const interval = setInterval(() => {
+          if (particleRef.current) {
+            createEnhancedParticles(particleRef.current, 6);
+          }
+        }, 300);
 
-      return () => clearInterval(interval);
-    }
-  }, [variant, isActive]);
+        return () => clearInterval(interval);
+      }
+    }, [variant, isActive]);
 
-  return (
-    <motion.div
-      ref={containerRef}
-      className={cn(
-        "relative mb-6 group",
-        disabled && "opacity-60 cursor-not-allowed",
-        className
-      )}
-      initial="initial"
-      animate={isActive ? "animate" : "initial"}
-      style={{
-        perspective: 2000,
-        rotateX: variant === "tilt3D" ? rotateX : undefined,
-        rotateY: variant === "tilt3D" ? rotateY : undefined
-      }}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={() => {
-        mouseX.set(0);
-        mouseY.set(0);
-      }}
-      variants={variants.container}
-    >
-      {/* Enhanced Label */}
-      <motion.label
+    return (
+      <motion.div
+        ref={containerRef}
         className={cn(
-          "absolute top-1/2 -translate-y-1/2 pointer-events-none transition-colors duration-300 z-10 origin-left",
-          Icon ? "left-9" : "left-4",
-          "text-muted-foreground group-focus-within:text-primary",
-          error && "text-red-500",
-          success && "text-emerald-500",
-          sizeConfig[size].label,
-          labelClassName
+          "relative mb-6 group",
+          disabled && "opacity-60 cursor-not-allowed",
+          className
         )}
-        variants={variants.label}
+        initial="initial"
+        animate={isActive ? "animate" : "initial"}
+        style={{
+          perspective: 2000,
+          rotateX: variant === "tilt3D" ? rotateX : undefined,
+          rotateY: variant === "tilt3D" ? rotateY : undefined
+        }}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={() => {
+          mouseX.set(0);
+          mouseY.set(0);
+        }}
+        variants={variants.container}
       >
-        {placeholder}
-      </motion.label>
-
-      {/* Input Container */}
-      <div className="relative">
-        {/* Leading Icon */}
-        {Icon && (
-          <motion.div
-            className={cn(
-              "absolute left-3 top-1/2 -translate-y-1/2 z-20",
-              "text-muted-foreground group-focus-within:text-primary transition-colors duration-300",
-              sizeConfig[size].icon
-            )}
-            initial={{ scale: 0.8, opacity: 0.6 }}
-            animate={{
-              scale: isActive ? 1 : 0.8,
-              opacity: isActive ? 1 : 0.6,
-            }}
-            transition={{ duration: 0.3 }}
-          >
-            <Icon className={sizeConfig[size].icon} />
-          </motion.div>
-        )}
-
-        {/* Enhanced Input Field */}
-        <motion.input
-          {...props}
-          ref={ref}
-          id={id}
-          autoFocus={autoFocus}
-          type={inputType}
+        {/* Enhanced Label */}
+        <motion.label
           className={cn(
-            // Base enhanced styles
-            "w-full bg-background/90 backdrop-blur-sm border border-border/60 rounded-xl",
-            "text-foreground placeholder:text-transparent transition-all duration-300",
-            "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/60",
-            "disabled:cursor-not-allowed disabled:opacity-50",
-            "shadow-sm hover:shadow-md focus:shadow-lg",
-            "shadow-black/5 dark:shadow-white/5",
-
-            // Size variants
-            sizeConfig[size].input,
-
-            // Icon padding
-            Icon && "pl-9",
-            (showPasswordToggle || error || success) && "pr-10",
-
-            // Status variants
-            error && "border-red-500/60 focus:border-red-500 focus:ring-red-500/20",
-            success && "border-emerald-500/60 focus:border-emerald-500 focus:ring-emerald-500/20",
-
-            inputClassName
+            "absolute top-1/2 -translate-y-1/2 pointer-events-none transition-colors duration-300 z-10 origin-left",
+            Icon ? "left-9" : "left-4",
+            "text-muted-foreground group-focus-within:text-primary",
+            error && "text-red-500",
+            success && "text-emerald-500",
+            sizeConfig[size].label,
+            labelClassName
           )}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          onChange={handleChange}
-          onKeyDown={onKeyDown}
-          value={value}
-          disabled={disabled}
-          variants={variants.input}
-          style={{
-            ...props.style,
-            ...(variant === "borderBeam" && {
-              border: "2px solid transparent",
-            }),
-          }}
-        />
+          variants={variants.label}
+        >
+          {placeholder}
+        </motion.label>
 
-        {/* Enhanced Border Beam Effect */}
-        {variant === "borderBeam" && isActive && (
-          <svg
-            className="absolute inset-0 pointer-events-none rounded-xl"
+        {/* Input Container */}
+        <div className="relative">
+          {/* Leading Icon */}
+          {Icon && (
+            <motion.div
+              className={cn(
+                "absolute left-3 top-1/2 -translate-y-1/2 z-20",
+                "text-muted-foreground group-focus-within:text-primary transition-colors duration-300",
+                sizeConfig[size].icon
+              )}
+              initial={{ scale: 0.8, opacity: 0.6 }}
+              animate={{
+                scale: isActive ? 1 : 0.8,
+                opacity: isActive ? 1 : 0.6,
+              }}
+              transition={{ duration: 0.3 }}
+            >
+              <Icon className={sizeConfig[size].icon} />
+            </motion.div>
+          )}
+
+          {/* Enhanced Input Field */}
+          <motion.input
+            {...props}
+            ref={ref}
+            id={id}
+            autoFocus={autoFocus}
+            type={inputType}
+            className={cn(
+              // Base enhanced styles
+              "w-full bg-background/90 backdrop-blur-sm border border-border/60 rounded-xl",
+              "text-foreground placeholder:text-transparent transition-all duration-300",
+              "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/60",
+              "disabled:cursor-not-allowed disabled:opacity-50",
+              "shadow-sm hover:shadow-md focus:shadow-lg",
+              "shadow-black/5 dark:shadow-white/5",
+
+              // Size variants
+              sizeConfig[size].input,
+
+              // Icon padding
+              Icon && "pl-9",
+              (showPasswordToggle || error || success) && "pr-10",
+
+              // Status variants
+              error && "border-red-500/60 focus:border-red-500 focus:ring-red-500/20",
+              success && "border-emerald-500/60 focus:border-emerald-500 focus:ring-emerald-500/20",
+
+              inputClassName
+            )}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            onChange={handleChange}
+            onKeyDown={onKeyDown}
+            value={value}
+            disabled={disabled}
+            variants={variants.input}
             style={{
-              transform: "translate(-2px, -2px)",
-              width: "calc(100% + 4px)",
-              height: "calc(100% + 4px)",
-              zIndex: 5,
+              ...props.style,
+              ...(variant === "borderBeam" && {
+                border: "2px solid transparent",
+              }),
             }}
-          >
-            <motion.rect
-              x="0"
-              y="0"
-              width="100%"
-              height="100%"
-              fill="none"
-              stroke="url(#enhancedBorderGradient)"
-              strokeWidth="2"
-              strokeLinecap="round"
-              rx="12"
-              initial="initial"
-              animate="animate"
-              variants={borderBeamVariants}
-            />
-            <defs>
-              <linearGradient
-                id="enhancedBorderGradient"
-                gradientUnits="userSpaceOnUse"
-                x1="0"
-                y1="0"
-                x2="100%"
-                y2="100%"
-              >
-                <stop offset="0%" stopColor="var(--primary)" />
-                <stop offset="25%" stopColor="var(--primary)" />
-                <stop offset="50%" stopColor="var(--primary)" />
-                <stop offset="75%" stopColor="var(--primary)" />
-                <stop offset="100%" stopColor="var(--primary)" />
-              </linearGradient>
-            </defs>
-          </svg>
-        )}
+          />
 
-        {/* Enhanced Particle Effects */}
-        {variant === "particles" && isActive && (
-          <div className="absolute inset-0 pointer-events-none rounded-xl overflow-hidden">
-            {[...Array(8)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute w-2 h-2 bg-primary rounded-full shadow-lg shadow-primary/50"
-                style={{
-                  left: `${15 + i * 10}%`,
-                  top: "50%",
-                }}
-                variants={variants.extra}
-                custom={i * 0.1}
-                animate="animate"
+          {/* Enhanced Border Beam Effect */}
+          {variant === "borderBeam" && isActive && (
+            <svg
+              className="absolute inset-0 pointer-events-none rounded-xl"
+              style={{
+                transform: "translate(-2px, -2px)",
+                width: "calc(100% + 4px)",
+                height: "calc(100% + 4px)",
+                zIndex: 5,
+              }}
+            >
+              <motion.rect
+                x="0"
+                y="0"
+                width="100%"
+                height="100%"
+                fill="none"
+                stroke="url(#enhancedBorderGradient)"
+                strokeWidth="2"
+                strokeLinecap="round"
+                rx="12"
                 initial="initial"
+                animate="animate"
+                variants={borderBeamVariants}
               />
-            ))}
-          </div>
-        )}
+              <defs>
+                <linearGradient
+                  id="enhancedBorderGradient"
+                  gradientUnits="userSpaceOnUse"
+                  x1="0"
+                  y1="0"
+                  x2="100%"
+                  y2="100%"
+                >
+                  <stop offset="0%" stopColor="var(--primary)" />
+                  <stop offset="25%" stopColor="var(--primary)" />
+                  <stop offset="50%" stopColor="var(--primary)" />
+                  <stop offset="75%" stopColor="var(--primary)" />
+                  <stop offset="100%" stopColor="var(--primary)" />
+                </linearGradient>
+              </defs>
+            </svg>
+          )}
 
-        {/* Enhanced Ripple Effect */}
-        {variant === "ripple" && isActive && (
+          {/* Enhanced Particle Effects */}
+          {variant === "particles" && isActive && (
+            <div className="absolute inset-0 pointer-events-none rounded-xl overflow-hidden">
+              {[...Array(8)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute w-2 h-2 bg-primary rounded-full shadow-lg shadow-primary/50"
+                  style={{
+                    left: `${15 + i * 10}%`,
+                    top: "50%",
+                  }}
+                  variants={variants.extra}
+                  custom={i * 0.1}
+                  animate="animate"
+                  initial="initial"
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Enhanced Ripple Effect */}
+          {variant === "ripple" && isActive && (
+            <motion.div
+              className="absolute inset-0 rounded-xl pointer-events-none"
+              initial={{ scale: 0, opacity: 0.5 }}
+              animate={{
+                scale: [0, 2, 0],
+                opacity: [0.5, 0.2, 0],
+              }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                ease: "easeOut",
+              }}
+              style={{
+                background: "radial-gradient(circle, var(--primary) 0%, transparent 70%)"
+              }}
+            />
+          )}
+
+          {/* Trailing Icons */}
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2 z-20">
+            {error && <AlertCircle className="h-4 w-4 text-red-500" />}
+            {success && <Check className="h-4 w-4 text-emerald-500" />}
+
+            {showPasswordToggle && type === "password" && (
+              <motion.button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="text-muted-foreground hover:text-foreground transition-colors duration-200"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </motion.button>
+            )}
+          </div>
+        </div>
+
+        {/* Enhanced Particle Field */}
+        {variant === "particleField" && (
           <motion.div
-            className="absolute inset-0 rounded-xl pointer-events-none"
-            initial={{ scale: 0, opacity: 0.5 }}
-            animate={{
-              scale: [0, 2, 0],
-              opacity: [0.5, 0.2, 0],
-            }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              ease: "easeOut",
-            }}
-            style={{
-              background: "radial-gradient(circle, var(--primary) 0%, transparent 70%)"
-            }}
+            ref={particleRef}
+            className="absolute inset-0 pointer-events-none overflow-hidden rounded-xl"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isActive ? 1 : 0 }}
+            transition={{ duration: 0.3 }}
           />
         )}
 
-        {/* Trailing Icons */}
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2 z-20">
-          {error && <AlertCircle className="h-4 w-4 text-red-500" />}
-          {success && <Check className="h-4 w-4 text-emerald-500" />}
-
-          {showPasswordToggle && type === "password" && (
-            <motion.button
-              type="button"
-              onClick={togglePasswordVisibility}
-              className="text-muted-foreground hover:text-foreground transition-colors duration-200"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </motion.button>
-          )}
-        </div>
-      </div>
-
-      {/* Enhanced Particle Field */}
-      {variant === "particleField" && (
-        <motion.div
-          ref={particleRef}
-          className="absolute inset-0 pointer-events-none overflow-hidden rounded-xl"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isActive ? 1 : 0 }}
-          transition={{ duration: 0.3 }}
-        />
-      )}
-
-      {/* Error/Success Message */}
-      {(error || success) && (
-        <motion.div
-          className={cn(
-            "mt-2 text-sm flex items-center gap-2",
-            error ? "text-red-500" : "text-emerald-500"
-          )}
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          {error ? <AlertCircle className="h-4 w-4" /> : <Check className="h-4 w-4" />}
-          {error ? error : successMessage ? successMessage : "Input validated successfully"}
-        </motion.div>
-      )}
-    </motion.div>
-  );
-});
+        {/* Error/Success Message */}
+        {(error || success) && (
+          <motion.div
+            className={cn(
+              "mt-2 text-sm flex items-center gap-2",
+              error ? "text-red-500" : "text-emerald-500"
+            )}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {error ? <AlertCircle className="h-4 w-4" /> : <Check className="h-4 w-4" />}
+            {error ? error : successMessage ? successMessage : "Input validated successfully"}
+          </motion.div>
+        )}
+      </motion.div>
+    );
+  });
 
 // Enhanced input variants (ALL original variants with premium improvements)
 const inputVariants: Record<string, InputVariant> = {
