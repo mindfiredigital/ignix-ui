@@ -1,0 +1,260 @@
+/* Ignix UI - Base Theme Variables */
+/* This file is injected by `ignix init` into your project's stylesheet. */
+/* Do not remove the surrounding marker comments. */
+
+@import 'tailwindcss';
+
+:root {
+  --radius: 0.625rem;
+
+  --background: #ffffff;
+  --foreground: #1c1e21;
+  --card: #ffffff;
+  --card-foreground: #1c1e21;
+  --popover: #ffffff;
+  --popover-foreground: #1c1e21;
+
+  --primary: 0 100% 50%;
+  --primary-light: 2 83% 51%;
+  --primary-dark: 357 95% 41%;
+  --primary-darker: 357 93% 37%;
+  --primary-darkest: 358 92% 31%;
+  --primary-lighter: 358 86% 58%;
+  --primary-lightest: 357 88% 72%;
+  --primary-foreground: #ffffff;
+
+  --secondary: #f5f5f5;
+  --secondary-foreground: #3e3e3e;
+  --muted: #e0e0e0;
+  --muted-foreground: #3e3e3e;
+  --accent: #f5f5f5;
+  --accent-foreground: #3e3e3e;
+  --destructive: #d93636;
+  --border: #e0e0e0;
+  --input: #e0e0e0;
+  --ring: hsl(var(--primary-light));
+
+  --destructive-light: #ef4444;
+  --destructive-dark: #b91c1c;
+  --success-light: #34d399;
+  --success-dark: #047857;
+  --warning-light: #fbbf24;
+  --warning-dark: #b45309;
+  --info: #06b6d4;
+  --info-light: #22d3ee;
+  --info-dark: #0e7490;
+  --info-foreground: #ffffff;
+
+  /* Floating Dock */
+  --dock-solid: #1e293b;
+  --dock-solid-foreground: #f8fafc;
+  --dock-glass: rgba(255, 255, 255, 0.12);
+  --dock-outlined-border: #cbd5e1;
+  --dock-neon-bg: #0f172a;
+  --dock-neon-glow: 210 100% 60%;
+  --dock-icon-bg: #334155;
+  --dock-icon-hover: #475569;
+  --dock-separator: #94a3b8;
+  --dock-outlined-dot: #0f172a;
+
+  /* Kanban Priorities */
+  --priority-urgent: #f43f5e;
+  --priority-high: #f97316;
+  --priority-medium: #0ea5e9;
+  --priority-low: #64748b;
+
+  /* Kanban Labels */
+  --label-red: #ef4444;
+  --label-rose: #f43f5e;
+  --label-amber: #f59e0b;
+  --label-emerald: #10b981;
+  --label-sky: #0ea5e9;
+  --label-violet: #8b5cf6;
+  --label-slate: #64748b;
+
+  /* Kanban Board */
+  --board-bg: linear-gradient(to bottom right, #f8fafc, #f1f5f9);
+  --column-bg: rgba(241, 245, 249, 0.5);
+  --brand-gradient: linear-gradient(135deg, #3b82f6, #8b5cf6);
+}
+
+[data-theme='dark'],
+.dark {
+  --background: #000000;
+  --foreground: #ffffff;
+  --card: #242526;
+  --card-foreground: #ffffff;
+  --popover: #242526;
+  --popover-foreground: #ffffff;
+
+  --primary: 0 100% 50%;
+  --primary-light: 0 100% 67%;
+  --primary-dark: 357 73% 55%;
+  --primary-darker: 357 63% 48%;
+  --primary-darkest: 357 56% 40%;
+  --primary-lighter: 0 100% 75%;
+  --primary-lightest: 0 100% 84%;
+  --primary-foreground: #121212;
+
+  --secondary: #303030;
+  --secondary-foreground: #d4d4d4;
+  --muted: #424242;
+  --muted-foreground: #a3a3a3;
+  --accent: #303030;
+  --accent-foreground: #d4d4d4;
+  --destructive: #ff6b6b;
+  --border: #424242;
+  --input: #424242;
+  --ring: hsl(var(--primary-light));
+
+  --destructive-light: #ef4444;
+  --destructive-dark: #b91c1c;
+  --success-light: #34d399;
+  --success-dark: #047857;
+  --warning-light: #fbbf24;
+  --warning-dark: #b45309;
+  --info: #06b6d4;
+  --info-light: #22d3ee;
+  --info-dark: #0e7490;
+  --info-foreground: #ffffff;
+
+  /* Floating Dock */
+  --dock-solid: #1e293b;
+  --dock-solid-foreground: #f8fafc;
+  --dock-glass: rgba(255, 255, 255, 0.08);
+  --dock-outlined-border: #334155;
+  --dock-neon-bg: #020617;
+  --dock-neon-glow: 210 100% 60%;
+  --dock-icon-bg: #1e293b;
+  --dock-icon-hover: #334155;
+  --dock-separator: #475569;
+  --dock-outlined-dot: #f1f5f9;
+
+  /* Kanban Board - Dark Mode */
+  --board-bg: linear-gradient(to bottom right, #0f172a, #020617);
+  --column-bg: rgba(30, 41, 59, 0.4);
+  --brand-gradient: linear-gradient(135deg, #60a5fa, #a78bfa);
+}
+
+@theme inline {
+  --color-primary: hsl(var(--primary));
+  --color-primary-light: hsl(var(--primary-light));
+  --color-primary-dark: hsl(var(--primary-dark));
+  --color-primary-darker: hsl(var(--primary-darker));
+  --color-primary-darkest: hsl(var(--primary-darkest));
+  --color-primary-lighter: hsl(var(--primary-lighter));
+  --color-primary-lightest: hsl(var(--primary-lightest));
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-destructive-light: var(--destructive-light);
+  --color-destructive-dark: var(--destructive-dark);
+  --color-success-light: var(--success-light);
+  --color-success-dark: var(--success-dark);
+  --color-warning-light: var(--warning-light);
+  --color-warning-dark: var(--warning-dark);
+  --color-info: var(--info);
+  --color-info-light: var(--info-light);
+  --color-info-dark: var(--info-dark);
+  --color-info-foreground: var(--info-foreground);
+
+  /* Floating Dock */
+  --color-dock-solid: var(--dock-solid);
+  --color-dock-solid-foreground: var(--dock-solid-foreground);
+  --color-dock-glass: var(--dock-glass);
+  --color-dock-outlined-border: var(--dock-outlined-border);
+  --color-dock-neon-bg: var(--dock-neon-bg);
+  --color-dock-neon-glow: var(--dock-neon-glow);
+  --color-dock-icon-bg: var(--dock-icon-bg);
+  --color-dock-icon-hover: var(--dock-icon-hover);
+  --color-dock-separator: var(--dock-separator);
+  --color-dock-outlined-dot: var(--dock-outlined-dot);
+
+  /* Kanban Priorities */
+  --color-priority-urgent: var(--priority-urgent);
+  --color-priority-high: var(--priority-high);
+  --color-priority-medium: var(--priority-medium);
+  --color-priority-low: var(--priority-low);
+
+  /* Kanban Labels */
+  --color-label-red: var(--label-red);
+  --color-label-rose: var(--label-rose);
+  --color-label-amber: var(--label-amber);
+  --color-label-emerald: var(--label-emerald);
+  --color-label-sky: var(--label-sky);
+  --color-label-violet: var(--label-violet);
+  --color-label-slate: var(--label-slate);
+
+  /* Kanban Board */
+  --color-gradient-board: var(--board-bg);
+  --color-board-column: var(--column-bg);
+  --color-gradient-brand: var(--brand-gradient);
+
+  /* Animations & Keyframes */
+  --animate-shine: shine var(--duration) infinite linear;
+  --animate-gradient: gradient 8s linear infinite;
+  --animate-marquee: marquee var(--duration) infinite linear;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+  --animate-aurora: aurora 8s ease-in-out infinite alternate;
+
+  @keyframes shine {
+    0% { background-position: 0% 0%; }
+    50% { background-position: 100% 100%; }
+    100% { background-position: 0% 0%; }
+  }
+
+  @keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(calc(-100% - var(--gap))); }
+  }
+
+  @keyframes marquee-vertical {
+    from { transform: translateY(0); }
+    to { transform: translateY(calc(-100% - var(--gap))); }
+  }
+
+  @keyframes aurora {
+    0% {
+      background-position: 0% 50%;
+      transform: rotate(-5deg) scale(0.9);
+    }
+    25% {
+      background-position: 50% 100%;
+      transform: rotate(5deg) scale(1.1);
+    }
+    50% {
+      background-position: 100% 50%;
+      transform: rotate(-3deg) scale(0.95);
+    }
+    75% {
+      background-position: 50% 0%;
+      transform: rotate(3deg) scale(1.05);
+    }
+    100% {
+      background-position: 0% 50%;
+      transform: rotate(-5deg) scale(0.9);
+    }
+  }
+}
