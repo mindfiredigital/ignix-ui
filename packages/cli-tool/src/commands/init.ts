@@ -8,6 +8,7 @@ import { DependencyService } from '../services/DependencyService';
 import prompts from 'prompts';
 import { ThemeService } from '../services/ThemeService';
 import { loadConfig } from '../utils/config';
+import axios from 'axios';
 
 const DEFAULT_CONFIG_PATH = 'ignix.config.js';
 
@@ -320,58 +321,95 @@ async function createIgnixConfigFIle() {
   }
 }
 
+async function findGlobalCssFile(dir: string): Promise<string | null> {
+  const possibleCssPaths = [
+    // Next.js App Router (without src/)
+    path.join(dir, 'app', 'globals.css'),
+    path.join(dir, 'app', 'global.css'),
+    // Next.js App Router (with src/)
+    path.join(dir, 'src', 'app', 'globals.css'),
+    path.join(dir, 'src', 'app', 'global.css'),
+    // Next.js Pages Router or generic styles
+    path.join(dir, 'src', 'styles', 'globals.css'),
+    path.join(dir, 'src', 'styles', 'global.css'),
+    // Vite/React / others
+    path.join(dir, 'src', 'index.css'),
+    path.join(dir, 'src', 'App.css'),
+    path.join(dir, 'src', 'styles.css'),
+    path.join(dir, 'src', 'app.css'),
+    path.join(dir, 'app.css'),
+    path.join(dir, 'index.css'),
+  ];
+
+  for (const cssPath of possibleCssPaths) {
+    if (await fs.pathExists(cssPath)) {
+      try {
+        const stat = await fs.lstat(cssPath);
+        if (!stat.isSymbolicLink()) {
+          return cssPath;
+        }
+      } catch (e) {
+        // Skip inaccessible files
+      }
+    }
+  }
+
+  const targetNames = ['globals.css', 'global.css', 'index.css', 'app.css', 'styles.css'];
+  const excludedDirs = ['node_modules', '.next', '.git', 'dist', 'build', 'out', 'coverage'];
+
+  async function walk(currentDir: string): Promise<string | null> {
+    try {
+      const files = await fs.readdir(currentDir);
+      for (const file of files) {
+        try {
+          const fullPath = path.join(currentDir, file);
+          const stat = await fs.lstat(fullPath);
+          if (stat.isSymbolicLink()) {
+            continue;
+          }
+          if (stat.isDirectory()) {
+            if (excludedDirs.includes(file) || file.startsWith('.')) {
+              continue;
+            }
+            const found = await walk(fullPath);
+            if (found) return found;
+          } else if (stat.isFile()) {
+            if (targetNames.includes(file.toLowerCase())) {
+              return fullPath;
+            }
+          }
+        } catch (e) {
+          // Skip individual failed/inaccessible paths and continue scanning other siblings
+        }
+      }
+    } catch (e) {
+      // Ignore errors for unreadable directories
+    }
+    return null;
+  }
+
+  return walk(dir);
+}
+
 async function updateGlobalStyles() {
   const root = process.cwd();
 
-  // Try multiple possible paths to find custom.css
-  // 1. Relative to CLI tool (monorepo structure)
-  // 2. Relative to project root (if docs is in the same repo)
-  const possibleCustomCssPaths = [
-    path.resolve(__dirname, '../../../apps/docs/src/css/custom.css'),
-    path.resolve(root, '../docs/src/css/custom.css'),
-    path.resolve(root, 'apps/docs/src/css/custom.css'),
-    path.resolve(root, 'docs/src/css/custom.css'),
-  ];
+  let customCssContent = '';
 
-  let customCssPath: string | null = null;
-  for (const cssPath of possibleCustomCssPaths) {
-    if (await fs.pathExists(cssPath)) {
-      customCssPath = cssPath;
-      break;
+  try {
+    const response = await axios.get(
+      'https://raw.githubusercontent.com/mindfiredigital/ignix-ui/main/apps/docs/src/css/custom.css',
+      { timeout: 10000 }
+    );
+    customCssContent = response.data;
+  } catch (fetchError) {
+    logger.error('Failed to fetch custom styles from the Ignix UI GitHub repository.');
+    if (fetchError instanceof Error) {
+      logger.error(`Reason: ${fetchError.message}`);
     }
-  }
-
-  // Check if custom.css exists
-  if (!customCssPath) {
-    logger.warn('Custom CSS file not found. Skipping CSS update.');
     return;
   }
-
-  // Read the custom.css content
-  const customCssContent = await fs.readFile(customCssPath, 'utf-8');
-
-  // Detect project type and find the appropriate CSS file
-  const possibleCssPaths = [
-    // Next.js App Router
-    path.join(root, 'src', 'styles', 'globals.css'),
-    path.join(root, 'src', 'app', 'globals.css'),
-    // Vite/React
-    path.join(root, 'src', 'index.css'),
-    path.join(root, 'src', 'App.css'),
-    // Generic
-    path.join(root, 'src', 'styles.css'),
-    path.join(root, 'src', 'app.css'),
-    path.join(root, 'app.css'),
-    path.join(root, 'index.css'),
-  ];
-
-  let cssFilePath: string | null = null;
-  for (const cssPath of possibleCssPaths) {
-    if (await fs.pathExists(cssPath)) {
-      cssFilePath = cssPath;
-      break;
-    }
-  }
+  let cssFilePath = await findGlobalCssFile(root);
 
   // If no CSS file exists, create one in the most common location
   if (!cssFilePath) {

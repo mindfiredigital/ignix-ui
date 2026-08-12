@@ -431,6 +431,11 @@ describe('ProfilePage', () => {
         });
 
         it('handles undefined onSave callback gracefully', async () => {
+            const originalSetTimeout = global.setTimeout;
+            global.setTimeout = ((fn: (...args: any[]) => void, delay?: number, ...args: any[]) => {
+                return originalSetTimeout(fn, 0, ...args);
+            }) as any;
+
             const user = userEvent.setup();
 
             render(<ProfilePage initialProfileData={defaultProfileData} />);
@@ -452,6 +457,8 @@ describe('ProfilePage', () => {
                 const viewEditButton = editButtons.find(btn => btn.textContent?.includes('Edit Profile'));
                 expect(viewEditButton).toBeInTheDocument();
             });
+
+            global.setTimeout = originalSetTimeout;
         });
 
         it('handles long text in fields', () => {
