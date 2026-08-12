@@ -8,11 +8,10 @@ import { DependencyService } from '../services/DependencyService';
 import prompts from 'prompts';
 import { ThemeService } from '../services/ThemeService';
 import { loadConfig } from '../utils/config';
-import axios from 'axios';
 
 const DEFAULT_CONFIG_PATH = 'ignix.config.js';
 
-export function createInitCommand() {
+export function createInitCommand(): Command {
   return new Command()
     .name('init')
     .description(chalk.bold(chalk.hex('#FF7A3D')('Initialize Ignix UI in your project.')))
@@ -65,8 +64,11 @@ export function createInitCommand() {
         // 2. Create project structure
         await createProjectStructure();
 
-        // 3. Create config files
-        await createConfigFiles();
+        // 3. Detect or prompt for the global CSS file path
+        const globalCssPath = await interactiveCssPrompt(ctx.cwd, ctx.isYes);
+
+        // 4. Create config files
+        await createConfigFiles(globalCssPath);
 
         // 4. Set up Ignix UI alias
         await setupIgnixUIAlias();
@@ -189,23 +191,23 @@ export function createInitCommand() {
 export const initCommand = createInitCommand();
 
 // Helper functions
-async function validateEnvironment() {
+async function validateEnvironment(): Promise<void> {
   const hasPackageJson = await fs.pathExists(path.resolve('package.json'));
   if (!hasPackageJson) {
     throw new Error('No package.json found. Please run `npm init` or `yarn init` first.');
   }
 }
 
-async function createProjectStructure() {
+async function createProjectStructure(): Promise<void> {
   await fs.ensureDir(path.resolve('src/components/ui'));
   await fs.ensureDir(path.resolve('src/utils'));
 }
 
-async function createConfigFiles() {
+async function createConfigFiles(globalCssPath: string): Promise<void> {
   await createUtilsFile();
   await createLlmsTxtFile();
-  await createIgnixConfigFIle();
-  await updateGlobalStyles();
+  await createIgnixConfigFIle(globalCssPath);
+  await updateGlobalStyles(globalCssPath);
 }
 
 async function setupIgnixUIAlias(): Promise<void> {
@@ -261,7 +263,7 @@ async function setupIgnixUIAlias(): Promise<void> {
   }
 }
 
-async function createUtilsFile() {
+async function createUtilsFile(): Promise<void> {
   const utilsPath = path.resolve('src/utils/cn.ts');
   if (await fs.pathExists(utilsPath)) return;
 
@@ -275,7 +277,7 @@ async function createUtilsFile() {
   await fs.writeFile(utilsPath, content);
 }
 
-async function createLlmsTxtFile() {
+async function createLlmsTxtFile(): Promise<void> {
   const filePath = path.resolve('llms.txt');
   if (await fs.pathExists(filePath)) return;
 
@@ -299,26 +301,105 @@ async function createLlmsTxtFile() {
   await fs.writeFile(filePath, content);
 }
 
-async function createIgnixConfigFIle() {
-  const configTemplatePath = path.resolve(__dirname, '../../templates/ignix.config.js');
+async function createIgnixConfigFIle(globalCssPath: string): Promise<void> {
   if (await fs.pathExists(DEFAULT_CONFIG_PATH)) {
     logger.info('`ignix.config.js` already exists. Skipping creation.');
-  } else {
-    if (!(await fs.pathExists(configTemplatePath))) {
-      // Fallback for bundled version
-      const bundledTemplatePath = path.resolve(__dirname, './templates/ignix.config.js');
-      if (await fs.pathExists(bundledTemplatePath)) {
-        await fs.copy(bundledTemplatePath, DEFAULT_CONFIG_PATH);
-      } else {
-        throw new Error(
-          `Config template not found at ${configTemplatePath} or ${bundledTemplatePath}`
-        );
-      }
-    } else {
-      await fs.copy(configTemplatePath, DEFAULT_CONFIG_PATH);
-    }
-    logger.success('Created `ignix.config.js`.');
+    return;
   }
+
+  const relativeCssPath = path.relative(process.cwd(), globalCssPath).replace(/\\/g, '/');
+
+  const configContent = `/* eslint-env node */
+/** @type {import('@mindfiredigital/ignix-cli').IgnixConfig} */
+module.exports = {
+  // URL to the raw registry.json file on GitHub
+  registryUrl:
+    'https://raw.githubusercontent.com/mindfiredigital/ignix-ui/main/packages/registry/registry.json',
+
+  // URL to the raw themes.json file on GitHub
+  themeUrl:
+    'https://raw.githubusercontent.com/mindfiredigital/ignix-ui/main/packages/registry/themes.json',
+
+  //URL for the templates
+  templateLayoutUrl:
+    'https://raw.githubusercontent.com/mindfiredigital/ignix-ui/main/packages/registry/',
+
+  // Path to your global CSS file (detected automatically by ignix init)
+  globalCss: '${relativeCssPath}',
+
+  // Default directory for UI components
+  componentsDir: 'src/components/ui',
+
+  // Default directory for themes
+  themesDir: 'src/themes',
+
+  // Default directory for templates
+  templateLayoutDir: 'src/components/templates',
+};
+`;
+
+  await fs.writeFile(DEFAULT_CONFIG_PATH, configContent, 'utf-8');
+  logger.success('Created `ignix.config.js`.');
+}
+
+async function interactiveCssPrompt(root: string, isYes: boolean): Promise<string> {
+  // Check if config already has a globalCss path saved from a previous run
+  try {
+    const existingConfig = await loadConfig();
+    if (existingConfig.globalCss) {
+      const savedPath = path.resolve(root, existingConfig.globalCss);
+      if (await fs.pathExists(savedPath)) {
+        logger.info(`Using stylesheet from config: ${existingConfig.globalCss}`);
+        return savedPath;
+      }
+    }
+  } catch (e) {
+    // Config doesn't exist yet, proceed normally
+  }
+
+  // Auto-detect candidate stylesheet in the project
+  const detected = await findGlobalCssFile(root);
+
+  // Determine the default suggestion
+  const isNextJs =
+    (await fs.pathExists(path.join(root, 'next.config.js'))) ||
+    (await fs.pathExists(path.join(root, 'next.config.ts'))) ||
+    (await fs.pathExists(path.join(root, 'src', 'app')));
+
+  const defaultSuggestion = detected
+    ? path.relative(root, detected).replace(/\\/g, '/')
+    : isNextJs
+    ? 'app/globals.css'
+    : 'src/index.css';
+
+  let chosenRelativePath = defaultSuggestion;
+
+  if (!isYes) {
+    const response = await prompts({
+      type: 'text',
+      name: 'globalCss',
+      message: 'Where is your global CSS file?',
+      initial: defaultSuggestion,
+    });
+
+    // Handle Ctrl+C (cancelled prompt)
+    if (response.globalCss === undefined) {
+      chosenRelativePath = defaultSuggestion;
+    } else {
+      chosenRelativePath = response.globalCss;
+    }
+  }
+
+  const resolvedPath = path.resolve(root, chosenRelativePath);
+
+  // Create the file (and its parent directories) if it doesn't exist yet
+  if (!(await fs.pathExists(resolvedPath))) {
+    await fs.ensureDir(path.dirname(resolvedPath));
+    await fs.writeFile(resolvedPath, '', 'utf-8');
+    logger.info(`Created new stylesheet: ${chosenRelativePath}`);
+  }
+
+  return resolvedPath;
 }
 
 async function findGlobalCssFile(dir: string): Promise<string | null> {
@@ -341,23 +422,13 @@ async function findGlobalCssFile(dir: string): Promise<string | null> {
     path.join(dir, 'index.css'),
   ];
 
-  for (const cssPath of possibleCssPaths) {
-    if (await fs.pathExists(cssPath)) {
-      try {
-        const stat = await fs.lstat(cssPath);
-        if (!stat.isSymbolicLink()) {
-          return cssPath;
-        }
-      } catch (e) {
-        // Skip inaccessible files
-      }
-    }
-  }
-
   const targetNames = ['globals.css', 'global.css', 'index.css', 'app.css', 'styles.css'];
   const excludedDirs = ['node_modules', '.next', '.git', 'dist', 'build', 'out', 'coverage'];
+  const startMarker = '/* --- Ignix UI Custom Styles Start --- */';
 
-  async function walk(currentDir: string): Promise<string | null> {
+  // 1. First scan: check if any CSS file in the project already has our marker.
+  // This guarantees we always target the exact same file in subsequent runs.
+  async function findFileWithMarker(currentDir: string): Promise<string | null> {
     try {
       const files = await fs.readdir(currentDir);
       for (const file of files) {
@@ -371,96 +442,193 @@ async function findGlobalCssFile(dir: string): Promise<string | null> {
             if (excludedDirs.includes(file) || file.startsWith('.')) {
               continue;
             }
-            const found = await walk(fullPath);
+            const found = await findFileWithMarker(fullPath);
             if (found) return found;
-          } else if (stat.isFile()) {
-            if (targetNames.includes(file.toLowerCase())) {
+          } else if (stat.isFile() && file.endsWith('.css')) {
+            const content = await fs.readFile(fullPath, 'utf-8');
+            if (content.includes(startMarker)) {
               return fullPath;
             }
           }
         } catch (e) {
-          // Skip individual failed/inaccessible paths and continue scanning other siblings
+          // Skip inaccessible paths
         }
       }
     } catch (e) {
-      // Ignore errors for unreadable directories
+      // Ignore walk errors
     }
     return null;
   }
 
-  return walk(dir);
+  const fileWithMarker = await findFileWithMarker(dir);
+  if (fileWithMarker) {
+    return fileWithMarker;
+  }
+
+  const candidates: { path: string; hasTailwind: boolean }[] = [];
+
+  async function inspectAndAddCandidate(filePath: string): Promise<void> {
+    try {
+      if (await fs.pathExists(filePath)) {
+        const stat = await fs.lstat(filePath);
+        if (!stat.isSymbolicLink()) {
+          const content = await fs.readFile(filePath, 'utf-8');
+          const hasTailwind =
+            content.includes('@tailwind') ||
+            content.includes('@import "tailwindcss"') ||
+            content.includes("@import 'tailwindcss'") ||
+            content.includes('@import "tailwindcss/utilities"') ||
+            content.includes('@import "tailwindcss/base"');
+          candidates.push({ path: filePath, hasTailwind });
+        }
+      }
+    } catch (e) {
+      // Ignore reading/stat errors
+    }
+  }
+
+  // Check the standard predefined paths first
+  for (const cssPath of possibleCssPaths) {
+    await inspectAndAddCandidate(cssPath);
+  }
+
+  // If one of standard candidates has tailwind, return it immediately
+  const tailwindCandidate = candidates.find((c) => c.hasTailwind);
+  if (tailwindCandidate) {
+    return tailwindCandidate.path;
+  }
+
+  async function walk(currentDir: string): Promise<void> {
+    try {
+      const files = await fs.readdir(currentDir);
+      for (const file of files) {
+        try {
+          const fullPath = path.join(currentDir, file);
+          const stat = await fs.lstat(fullPath);
+          if (stat.isSymbolicLink()) {
+            continue;
+          }
+          if (stat.isDirectory()) {
+            if (excludedDirs.includes(file) || file.startsWith('.')) {
+              continue;
+            }
+            await walk(fullPath);
+          } else if (stat.isFile()) {
+            if (targetNames.includes(file.toLowerCase())) {
+              if (!candidates.some((c) => c.path === fullPath)) {
+                await inspectAndAddCandidate(fullPath);
+              }
+            }
+          }
+        } catch (e) {
+          // Skip inaccessible paths
+        }
+      }
+    } catch (e) {
+      // Ignore walk errors
+    }
+  }
+
+  await walk(dir);
+
+  // Search the entire list of candidates for tailwind
+  const bestCandidate = candidates.find((c) => c.hasTailwind);
+  if (bestCandidate) {
+    return bestCandidate.path;
+  }
+
+  // Fallback: return the first found candidate if any exist
+  if (candidates.length > 0) {
+    return candidates[0].path;
+  }
+
+  return null;
 }
 
-async function updateGlobalStyles() {
+async function updateGlobalStyles(cssFilePath: string): Promise<void> {
   const root = process.cwd();
 
   let customCssContent = '';
 
   try {
-    const response = await axios.get(
-      'https://raw.githubusercontent.com/mindfiredigital/ignix-ui/main/apps/docs/src/css/custom.css',
-      { timeout: 10000 }
-    );
-    customCssContent = response.data;
+    // Resolve from the CLI's bundled templates directory
+    let templatesDir = path.resolve(__dirname, '../../templates');
+    if (!(await fs.pathExists(templatesDir))) {
+      templatesDir = path.resolve(__dirname, './templates');
+    }
+    const cssTemplatePath = path.join(templatesDir, 'ignix.css');
+
+    if (await fs.pathExists(cssTemplatePath)) {
+      customCssContent = await fs.readFile(cssTemplatePath, 'utf-8');
+    } else {
+      throw new Error(`Ignix CSS template not found at ${cssTemplatePath}`);
+    }
   } catch (fetchError) {
-    logger.error('Failed to fetch custom styles from the Ignix UI GitHub repository.');
+    logger.error('Failed to load custom styles from the bundled CLI template.');
     if (fetchError instanceof Error) {
       logger.error(`Reason: ${fetchError.message}`);
     }
     return;
   }
-  let cssFilePath = await findGlobalCssFile(root);
 
-  // If no CSS file exists, create one in the most common location
-  if (!cssFilePath) {
-    // Check if it's a Next.js project
-    const isNextJs =
-      (await fs.pathExists(path.join(root, 'next.config.js'))) ||
-      (await fs.pathExists(path.join(root, 'next.config.ts'))) ||
-      (await fs.pathExists(path.join(root, 'src', 'app')));
-
-    if (isNextJs) {
-      cssFilePath = path.join(root, 'src', 'styles', 'globals.css');
-      await fs.ensureDir(path.dirname(cssFilePath));
-    } else {
-      // Default to src/index.css for Vite/React
-      cssFilePath = path.join(root, 'src', 'index.css');
-      await fs.ensureDir(path.dirname(cssFilePath));
-    }
+  // Read existing content if file exists
+  let existingContent = '';
+  const fileExists = await fs.pathExists(cssFilePath);
+  if (fileExists) {
+    existingContent = await fs.readFile(cssFilePath, 'utf-8');
   }
 
-  if (cssFilePath) {
-    // Read existing content if file exists
-    let existingContent = '';
-    if (await fs.pathExists(cssFilePath)) {
-      existingContent = await fs.readFile(cssFilePath, 'utf-8');
-    }
+  const startMarker = '/* --- Ignix UI Custom Styles Start --- */';
+  const endMarker = '/* --- Ignix UI Custom Styles End --- */';
 
-    // Merge or replace: if file has Tailwind directives, prepend custom.css, otherwise replace
-    let finalContent = '';
-    if (
-      existingContent &&
-      (existingContent.includes('@tailwind') || existingContent.includes('@import'))
-    ) {
-      // Merge: keep Tailwind directives and add custom.css content
-      const tailwindDirectives =
-        existingContent.match(/@(?:tailwind|import|theme)[^;{]+(?:{[^}]*}|;?)/g)?.join('\n') || '';
-      const restOfContent = existingContent
-        .replace(/@(?:tailwind|import|theme)[^;{]+(?:{[^}]*}|;?)\n?/g, '')
-        .trim();
+  // Strip the @import 'tailwindcss' from template if the file already has one
+  const alreadyHasTailwind =
+    existingContent.includes('@tailwind') ||
+    existingContent.includes('@import "tailwindcss"') ||
+    existingContent.includes("@import 'tailwindcss'");
 
-      // Extract @import 'tailwindcss' from custom.css if present
-      const customCssWithoutTailwind = customCssContent
-        .replace(/@import\s+['"]tailwindcss['"];?\n?/g, '')
-        .trim();
+  const customCssClean = alreadyHasTailwind
+    ? customCssContent.replace(/@import\s+['"]tailwindcss['"];?\n?/g, '').trim()
+    : customCssContent.trim();
 
-      finalContent = `${tailwindDirectives}\n\n${customCssWithoutTailwind}\n\n${restOfContent}`.trim();
+  let finalContent = '';
+  if (existingContent.includes(startMarker)) {
+    // Update the block in-place without touching anything else
+    const startIndex = existingContent.indexOf(startMarker);
+    const endIndex = existingContent.indexOf(endMarker);
+    if (endIndex > startIndex) {
+      const before = existingContent.substring(0, startIndex);
+      const after = existingContent.substring(endIndex + endMarker.length);
+      finalContent = `${before}${startMarker}\n${customCssClean}\n${endMarker}${after}`;
     } else {
-      // Replace: use custom.css content
-      finalContent = customCssContent;
+      // Fallback if marker structure is corrupted
+      const cleanedExisting = existingContent
+        .replace(startMarker, '')
+        .replace(endMarker, '')
+        .trim();
+      finalContent = `${cleanedExisting}\n\n${startMarker}\n${customCssClean}\n${endMarker}`;
     }
+  } else if (existingContent.trim()) {
+    // File has content — append block after last Tailwind directive or at the end
+    const tailwindMatch = existingContent.match(/@(?:tailwind|import|theme)[^;{]+(?:{[^}]*}|;?)/g);
+    if (tailwindMatch) {
+      const lastDirective = tailwindMatch[tailwindMatch.length - 1];
+      const lastDirectiveIndex = existingContent.lastIndexOf(lastDirective) + lastDirective.length;
+      const before = existingContent.substring(0, lastDirectiveIndex);
+      const after = existingContent.substring(lastDirectiveIndex);
+      finalContent = `${before}\n\n${startMarker}\n${customCssClean}\n${endMarker}\n${after}`.trim();
+    } else {
+      finalContent = `${existingContent.trim()}\n\n${startMarker}\n${customCssClean}\n${endMarker}`;
+    }
+  } else {
+    // Empty file — write styles directly
+    finalContent = `${startMarker}\n${customCssClean}\n${endMarker}`;
+  }
 
-    await fs.writeFile(cssFilePath, finalContent, 'utf-8');
+  await fs.writeFile(cssFilePath, finalContent, 'utf-8');
+  if (fileExists && existingContent.trim()) {
     logger.success(`✔ Updated ${path.relative(root, cssFilePath)} with custom styles`);
+  } else {
+    logger.success(`✔ Created ${path.relative(root, cssFilePath)} with custom styles`);
   }
 }
