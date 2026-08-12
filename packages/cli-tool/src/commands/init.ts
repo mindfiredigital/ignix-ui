@@ -361,14 +361,14 @@ async function interactiveCssPrompt(root: string, isYes: boolean): Promise<strin
   const detected = await findGlobalCssFile(root);
 
   // Determine the default suggestion
-  const isNextJs =
-    (await fs.pathExists(path.join(root, 'next.config.js'))) ||
-    (await fs.pathExists(path.join(root, 'next.config.ts'))) ||
-    (await fs.pathExists(path.join(root, 'src', 'app')));
+  const hasSrcApp = await fs.pathExists(path.join(root, 'src', 'app'));
+  const hasApp = await fs.pathExists(path.join(root, 'app'));
 
   const defaultSuggestion = detected
     ? path.relative(root, detected).replace(/\\/g, '/')
-    : isNextJs
+    : hasSrcApp
+    ? 'src/app/globals.css'
+    : hasApp
     ? 'app/globals.css'
     : 'src/index.css';
 
@@ -581,7 +581,7 @@ async function updateGlobalStyles(cssFilePath: string): Promise<void> {
   const startMarker = '/* --- Ignix UI Custom Styles Start --- */';
   const endMarker = '/* --- Ignix UI Custom Styles End --- */';
 
-  // Strip the @import 'tailwindcss' from template if the file already has one
+  // Determine if the file already has Tailwind directives
   const alreadyHasTailwind =
     existingContent.includes('@tailwind') ||
     existingContent.includes('@import "tailwindcss"') ||
@@ -589,7 +589,7 @@ async function updateGlobalStyles(cssFilePath: string): Promise<void> {
 
   const customCssClean = alreadyHasTailwind
     ? customCssContent.replace(/@import\s+['"]tailwindcss['"];?\n?/g, '').trim()
-    : customCssContent.trim();
+    : customCssContent.replace(/@import\s+['"]tailwindcss['"];?\n?/g, '').trim();
 
   let finalContent = '';
   if (existingContent.includes(startMarker)) {
@@ -609,20 +609,23 @@ async function updateGlobalStyles(cssFilePath: string): Promise<void> {
       finalContent = `${cleanedExisting}\n\n${startMarker}\n${customCssClean}\n${endMarker}`;
     }
   } else if (existingContent.trim()) {
-    // File has content — append block after last Tailwind directive or at the end
+    // File has content — check if we can place it after a Tailwind directive
     const tailwindMatch = existingContent.match(/@(?:tailwind|import|theme)[^;{]+(?:{[^}]*}|;?)/g);
-    if (tailwindMatch) {
+    if (alreadyHasTailwind && tailwindMatch) {
       const lastDirective = tailwindMatch[tailwindMatch.length - 1];
       const lastDirectiveIndex = existingContent.lastIndexOf(lastDirective) + lastDirective.length;
       const before = existingContent.substring(0, lastDirectiveIndex);
       const after = existingContent.substring(lastDirectiveIndex);
       finalContent = `${before}\n\n${startMarker}\n${customCssClean}\n${endMarker}\n${after}`.trim();
     } else {
-      finalContent = `${existingContent.trim()}\n\n${startMarker}\n${customCssClean}\n${endMarker}`;
+      // No Tailwind directive was present in the file.
+      // We must prepend `@import 'tailwindcss';` at the top of the stylesheet (before existing rules),
+      // and append our custom style block at the end.
+      finalContent = `@import 'tailwindcss';\n\n${existingContent.trim()}\n\n${startMarker}\n${customCssClean}\n${endMarker}`;
     }
   } else {
     // Empty file — write styles directly
-    finalContent = `${startMarker}\n${customCssClean}\n${endMarker}`;
+    finalContent = `${startMarker}\n${customCssContent.trim()}\n${endMarker}`;
   }
 
   await fs.writeFile(cssFilePath, finalContent, 'utf-8');

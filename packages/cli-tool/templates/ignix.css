@@ -180,7 +180,7 @@
   --color-dock-glass: var(--dock-glass);
   --color-dock-outlined-border: var(--dock-outlined-border);
   --color-dock-neon-bg: var(--dock-neon-bg);
-  --color-dock-neon-glow: var(--dock-neon-glow);
+  --color-dock-neon-glow: hsl(var(--dock-neon-glow));
   --color-dock-icon-bg: var(--dock-icon-bg);
   --color-dock-icon-hover: var(--dock-icon-hover);
   --color-dock-separator: var(--dock-separator);
