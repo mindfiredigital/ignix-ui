@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, type Variants, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { cn } from "../../../utils/cn";
 
-export interface AnimatedTextareaProps extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "size" | "onChange" | "value" | "onDrag" | "onDragStart" | "onDragEnd" | "onAnimationStart"> {
+export interface AnimatedTextareaProps extends Omit<React.ComponentPropsWithoutRef<typeof motion.textarea>, "size" | "onChange" | "value"> {
   id?: string;
   className?: string;
   placeholder?: string;
