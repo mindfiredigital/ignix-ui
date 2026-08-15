@@ -26,6 +26,11 @@ The **AIMessageBubble** component styles and animates individual messages in a c
       options: ["default", "minimal", "glass"],
       description: "Bubble theme style",
     },
+    shape: {
+      control: "select",
+      options: ["bubble", "card", "pill", "flat"],
+      description: "Controls the visual shape of the message bubble",
+    },
     content: {
       control: "text",
       description: "Message content (string or ReactNode)",
