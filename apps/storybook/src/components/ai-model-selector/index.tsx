@@ -1,0 +1,391 @@
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { ChevronDown, Check, Sparkles, Brain, Cpu, Database, Bot, Search } from "lucide-react";
+import { cn } from "../../../utils/cn";
+import { Dropdown, DropdownItem, DropdownLabel, DropdownSeparator } from "../dropdown";
+import { Tooltip } from "../tooltip";
+
+export interface AIModel {
+  id: string;
+  name: string;
+  provider: string;
+  description?: string;
+  icon?: React.ReactNode;
+}
+
+const triggerVariants = cva(
+  "inline-flex items-center justify-between gap-2.5 font-medium transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer select-none border border-neutral-200 dark:border-neutral-800",
+  {
+    variants: {
+      size: {
+        sm: "h-8 px-3 text-xs rounded-full",
+        md: "h-10 px-4 text-sm rounded-lg",
+        lg: "h-12 px-5 text-base rounded-xl",
+      },
+      variant: {
+        default: "bg-white text-neutral-800 hover:bg-neutral-50 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800",
+        dark: "bg-neutral-950 border-neutral-900 !text-white hover:bg-neutral-900",
+        glass: "bg-white/10 border-white/20 backdrop-blur-md !text-white hover:bg-white/15",
+        minimal: "bg-transparent text-neutral-800 border-none shadow-none px-0 dark:text-neutral-100 dark:hover:text-white hover:text-neutral-950",
+      },
+    },
+    defaultVariants: {
+      size: "md",
+      variant: "default",
+    },
+  }
+);
+
+export const defaultModels: AIModel[] = [
+  {
+    id: "gpt-4o",
+    name: "GPT-4o",
+    provider: "OpenAI",
+    description: "Flagship model for high-intelligence reasoning",
+    icon: <Sparkles size={14} className="text-emerald-500" />,
+  },
+  {
+    id: "gpt-4-turbo",
+    name: "GPT-4 Turbo",
+    provider: "OpenAI",
+    description: "Previous flagship with broad training details",
+    icon: <Sparkles size={14} className="text-emerald-500" />,
+  },
+  {
+    id: "gpt-3.5-turbo",
+    name: "GPT-3.5 Turbo",
+    provider: "OpenAI",
+    description: "Fast, efficient model for simple actions",
+    icon: <Sparkles size={14} className="text-emerald-500" />,
+  },
+  {
+    id: "claude-3.5-sonnet",
+    name: "Claude 3.5 Sonnet",
+    provider: "Anthropic",
+    description: "Advanced model with coding & vision capabilities",
+    icon: <Brain size={14} className="text-orange-500" />,
+  },
+  {
+    id: "claude-3.5-haiku",
+    name: "Claude 3.5 Haiku",
+    provider: "Anthropic",
+    description: "Our fastest, lightweight model",
+    icon: <Brain size={14} className="text-orange-400" />,
+  },
+  {
+    id: "claude-3-opus",
+    name: "Claude 3 Opus",
+    provider: "Anthropic",
+    description: "Reasoning model for complex analysis",
+    icon: <Brain size={14} className="text-orange-600" />,
+  },
+  {
+    id: "gemini-1.5-pro",
+    name: "Gemini 1.5 Pro",
+    provider: "Google",
+    description: "Massive context window for large uploads",
+    icon: <Cpu size={14} className="text-blue-500" />,
+  },
+  {
+    id: "gemini-1.5-flash",
+    name: "Gemini 1.5 Flash",
+    provider: "Google",
+    description: "High speed and efficiency for chats",
+    icon: <Cpu size={14} className="text-blue-400" />,
+  },
+  {
+    id: "llama-3-70b",
+    name: "Llama 3 70B",
+    provider: "Meta",
+    description: "Open-source intelligence for general text",
+    icon: <Database size={14} className="text-purple-500" />,
+  },
+  {
+    id: "llama-3-8b",
+    name: "Llama 3 8B",
+    provider: "Meta",
+    description: "Fast, customizable local model",
+    icon: <Database size={14} className="text-purple-400" />,
+  },
+];
+
+export interface AIModelSelectorProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange">,
+  VariantProps<typeof triggerVariants> {
+  models?: AIModel[];
+  selectedModelId?: string;
+  onModelChange?: (model: AIModel) => void;
+  placeholder?: string;
+}
+
+const getProviderDefaultIcon = (provider: string) => {
+  switch (provider.toLowerCase()) {
+    case "openai":
+      return <Sparkles size={14} className="text-emerald-500" />;
+    case "anthropic":
+      return <Brain size={14} className="text-orange-500" />;
+    case "google":
+      return <Cpu size={14} className="text-blue-500" />;
+    case "meta":
+      return <Database size={14} className="text-purple-500" />;
+    default:
+      return <Bot size={14} className="text-neutral-500" />;
+  }
+};
+
+const AIModelSelector = React.forwardRef<HTMLDivElement, AIModelSelectorProps>(
+  (
+    {
+      className,
+      models = defaultModels,
+      selectedModelId = "gpt-4o",
+      onModelChange,
+      size = "md",
+      variant = "default",
+      placeholder = "Select Model",
+      ...props
+    },
+    ref
+  ) => {
+    const [searchQuery, setSearchQuery] = React.useState("");
+    const [selectedId, setSelectedId] = React.useState(selectedModelId || "gpt-4o");
+
+    React.useEffect(() => {
+      if (selectedModelId !== undefined) {
+        setSelectedId(selectedModelId);
+      }
+    }, [selectedModelId]);
+
+    const activeModel = React.useMemo(
+      () => models.find((m) => m.id === selectedId),
+      [models, selectedId]
+    );
+
+    const filteredModels = React.useMemo(() => {
+      if (!searchQuery.trim()) return models;
+      const query = searchQuery.toLowerCase();
+      return models.filter(
+        (m) =>
+          m.name.toLowerCase().includes(query) ||
+          m.provider.toLowerCase().includes(query) ||
+          (m.description && m.description.toLowerCase().includes(query))
+      );
+    }, [models, searchQuery]);
+
+    const groupedModels = React.useMemo(() => {
+      const groups: Record<string, AIModel[]> = {};
+      filteredModels.forEach((model) => {
+        if (!groups[model.provider]) {
+          groups[model.provider] = [];
+        }
+        groups[model.provider].push(model);
+      });
+      return groups;
+    }, [filteredModels]);
+
+    const activeProvider = activeModel?.provider || "";
+    const activeIcon = activeModel?.icon || getProviderDefaultIcon(activeProvider);
+
+    const triggerButton = (
+      <button className={cn(triggerVariants({ size, variant }), className)}>
+        <span className="flex items-center gap-2 overflow-hidden truncate">
+          {activeModel && (
+            <span className="flex-shrink-0 flex items-center justify-center">
+              {activeIcon}
+            </span>
+          )}
+          <Tooltip
+            content={activeModel ? activeModel.name : placeholder}
+            bg="dark"
+            rounded="md"
+          >
+            <span
+              className={cn(
+                "truncate",
+                variant === "dark"
+                  ? "text-white"
+                  : variant === "glass"
+                    ? "text-[var(--color-glass-text)]"
+                    : "text-foreground"
+              )}
+            >
+              {activeModel ? activeModel.name : placeholder}
+            </span>
+          </Tooltip>
+        </span>
+        <ChevronDown
+          size={14}
+          className={cn(
+            "flex-shrink-0",
+            variant === "dark"
+              ? "text-white"
+              : variant === "glass"
+                ? "text-[var(--color-glass-text)]"
+                : "text-muted-foreground"
+          )}
+        />      </button>
+    );
+
+    return (
+      <div ref={ref} {...props}>
+        <Dropdown
+          trigger={triggerButton}
+          align="start"
+          bg={variant === "dark" ? "dark" : variant === "glass" ? "glass" : "default"}
+          className="max-w-[280px] sm:max-w-[320px] rounded-xl overflow-hidden"
+        >
+          <div className={cn(
+            "px-2 py-1.5 border-b sticky top-0 z-10",
+            variant === "dark"
+              ? "bg-neutral-950 border-neutral-900"
+              : variant === "glass"
+                ? "bg-transparent border-white/10"
+                : "border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900"
+          )}>
+            <div className="relative flex items-center">
+              <Search size={12} className={cn("absolute left-2.5 pointer-events-none", variant === "dark" || variant === "glass" ? "text-neutral-400" : "text-neutral-400 dark:text-neutral-500")} />
+              <input
+                type="text"
+                placeholder="Search models..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Space" || e.key === " ") {
+                    e.stopPropagation();
+                  }
+                }}
+                className={cn(
+                  "w-full pl-8 pr-7 py-1 text-xs border rounded-md focus:outline-none transition-colors",
+                  variant === "dark"
+                    ? "bg-neutral-900 border-neutral-800 text-white placeholder-neutral-500 focus:border-neutral-700"
+                    : variant === "glass"
+                      ? "bg-white/10 border-white/15 text-white placeholder-white/40 focus:border-white/35"
+                      : "border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-950 text-neutral-800 dark:text-neutral-200 focus:border-neutral-300 dark:focus:border-neutral-600"
+                )}
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-2 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 text-xs font-semibold cursor-pointer select-none"
+                >
+                  ×
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="max-h-[250px] overflow-y-auto overflow-x-hidden py-1">
+            {Object.keys(groupedModels).length === 0 ? (
+              <div className="py-6 px-3 text-xs text-neutral-400 dark:text-neutral-500 text-center">
+                No models found
+              </div>
+            ) : (
+              Object.entries(groupedModels).map(([provider, providerModels], groupIndex) => (
+                <React.Fragment key={provider}>
+                  {groupIndex > 0 && <DropdownSeparator />}
+                  <DropdownLabel className="px-3 py-1.5 text-[10px] font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">
+                    {provider}
+                  </DropdownLabel>
+                  {providerModels.map((model) => {
+                    const isSelected = model.id === selectedId;
+                    const itemIcon = model.icon || getProviderDefaultIcon(model.provider);
+
+                    return (
+                      <DropdownItem
+                        key={model.id}
+                        onClick={() => {
+                          setSelectedId(model.id);
+                          onModelChange?.(model);
+                          setSearchQuery("");
+                        }}
+                        className={cn(
+                          "flex w-full min-w-0 items-center justify-between gap-3 px-3 py-2 cursor-pointer rounded-lg transition-colors mx-1 my-0.5",
+                          variant === "dark"
+                            ? "text-white data-[highlighted]:bg-neutral-800 data-[highlighted]:text-white"
+                            : variant === "glass"
+                              ? "text-neutral-900 dark:text-white data-[highlighted]:bg-white/10"
+                              : "hover:bg-neutral-100 dark:hover:bg-neutral-800",
+                          isSelected &&
+                          (variant === "dark"
+                            ? "bg-neutral-800/80 font-semibold"
+                            : variant === "glass"
+                              ? "bg-white/15 font-semibold"
+                              : "bg-neutral-50 dark:bg-neutral-800/60 font-semibold")
+                        )}
+                      >
+                        <div className="flex min-w-0 items-center gap-2 overflow-hidden">
+                          <span className="flex-shrink-0 flex items-center justify-center">
+                            {itemIcon}
+                          </span>
+
+                          <div className="flex min-w-0 flex-col text-left overflow-hidden">
+                            <Tooltip
+                              content={model.name}
+                              bg="dark"
+                              rounded="md"
+                            >
+                              <span
+                                className={cn(
+                                  "text-sm font-medium truncate",
+                                  variant === "dark"
+                                    ? "text-white"
+                                    : variant === "glass"
+                                      ? "text-neutral-900 dark:text-white"
+                                      : "text-neutral-800 dark:text-neutral-200"
+                                )}
+                              >
+                                {model.name}
+                              </span>
+                            </Tooltip>
+
+                            {model.description && (
+                              <Tooltip
+                                content={model.description}
+                                bg="dark"
+                                rounded="md"
+                              >
+                                <span
+                                  className={cn(
+                                    "text-xs truncate",
+                                    variant === "dark"
+                                      ? "text-neutral-400"
+                                      : variant === "glass"
+                                        ? "text-neutral-600 dark:text-neutral-300"
+                                        : "text-neutral-400 dark:text-neutral-500"
+                                  )}
+                                >
+                                  {model.description}
+                                </span>
+                              </Tooltip>
+                            )}
+                          </div>
+                        </div>
+
+                        {isSelected && (
+                          <Check
+                            size={14}
+                            className={cn(
+                              "ml-1 flex-shrink-0",
+                              variant === "dark" || variant === "glass"
+                                ? "text-white"
+                                : "text-neutral-800 dark:text-neutral-200"
+                            )}
+                          />
+                        )}
+                      </DropdownItem>
+                    );
+                  })}
+                </React.Fragment>
+              ))
+            )}
+          </div>
+        </Dropdown>
+      </div>
+    );
+  }
+);
+
+AIModelSelector.displayName = "AIModelSelector";
+
+export { AIModelSelector };
