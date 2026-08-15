@@ -1,0 +1,261 @@
+---
+sidebar_position: 3
+title: AIChatInput
+description: An auto-growing chat input with Enter-to-send, Shift+Enter for newlines, and a streaming/stop state.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { AIChatInput } from '@site/src/components/UI/ai-chat-input';
+import AIChatInputDemo from '@site/src/components/Demo/AIChatInputDemo';
+
+AIChatInput is a controlled, auto-growing textarea built for chat-style AI interfaces. It supports Enter to send, Shift+Enter for a newline, a streaming state that swaps the send button for a stop button, and an attachment slot for custom controls like a file-attach button.
+
+<AIChatInputDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component ai-chat-input
+    ```
+  </TabItem>
+  <TabItem value="manual" label="Manual" className="max-h-[500px] overflow-y-auto">
+    ```tsx
+    import * as React from 'react';
+    import { AnimatePresence, motion } from 'framer-motion';
+    import { Send, Square } from 'lucide-react';
+    import { cva, type VariantProps } from 'class-variance-authority';
+    import { cn } from '../../../utils/cn';
+    import { ButtonWithIcon } from '../buttonwithicon';
+
+    const chatInputVariants = cva(
+      'flex w-full flex-col gap-2 rounded-2xl border p-3 transition-colors',
+      {
+        variants: {
+          variant: {
+            default: 'bg-white border-neutral-200 dark:bg-neutral-900 dark:border-neutral-800 text-neutral-800 dark:text-neutral-100',
+            dark: 'bg-neutral-900 border-neutral-800 text-white',
+            glass: 'backdrop-blur-md bg-white/10 border-white/20 text-neutral-800 dark:text-neutral-100',
+            minimal: 'bg-transparent border-neutral-200 dark:border-neutral-800 text-neutral-800 dark:text-neutral-100',
+          },
+        },
+        defaultVariants: {
+          variant: 'default',
+        },
+      }
+    );
+
+    const LINE_HEIGHT_PX = 24;
+
+    export interface AIChatInputProps
+      extends Omit<
+        React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+        'value' | 'onChange' | 'size' | 'rows' | 'onKeyDown'
+      >,
+      VariantProps<typeof chatInputVariants> {
+      value: string;
+      onChange: (value: string) => void;
+      onSend: (value: string) => void;
+      onStop?: () => void;
+      isStreaming?: boolean;
+      minRows?: number;
+      maxRows?: number;
+      attachmentSlot?: React.ReactNode;
+      onKeyDown?: React.KeyboardEventHandler<HTMLTextAreaElement>;
+    }
+
+    const AIChatInput = React.forwardRef<HTMLTextAreaElement, AIChatInputProps>(
+      (
+        {
+          className,
+          variant,
+          value,
+          onChange,
+          onSend,
+          onStop,
+          isStreaming = false,
+          minRows = 1,
+          maxRows = 6,
+          attachmentSlot,
+          disabled,
+          placeholder = 'Message...',
+          onKeyDown,
+          ...props
+        },
+        forwardedRef
+      ) => {
+        const innerRef = React.useRef<HTMLTextAreaElement>(null);
+        React.useImperativeHandle(forwardedRef, () => innerRef.current as HTMLTextAreaElement);
+
+        React.useEffect(() => {
+          const el = innerRef.current;
+          if (!el) return;
+          el.style.height = 'auto';
+          const maxHeight = LINE_HEIGHT_PX * maxRows;
+          const nextHeight = Math.min(el.scrollHeight, maxHeight);
+          el.style.height = `${nextHeight}px`;
+          el.style.overflowY = el.scrollHeight > maxHeight ? 'auto' : 'hidden';
+        }, [value, maxRows]);
+
+        const trimmedValue = value.trim();
+
+        const handleSend = () => {
+          if (isStreaming || !trimmedValue) return;
+          onSend(trimmedValue);
+        };
+
+        const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+          onKeyDown?.(event);
+          if (event.defaultPrevented) return;
+          if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            handleSend();
+          }
+        };
+
+        return (
+          <div className={cn(chatInputVariants({ variant }), className)}>
+            <textarea
+              ref={innerRef}
+              value={value}
+              onChange={(event) => onChange(event.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder={placeholder}
+              disabled={disabled}
+              rows={minRows}
+              className={cn(
+                'w-full resize-none bg-transparent text-sm leading-6 text-inherit outline-none focus:!outline-none focus:!ring-0 focus-visible:!ring-0 focus-visible:!outline-none focus:!shadow-none focus-visible:!shadow-none',
+                'placeholder:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-50'
+              )}
+              style={{
+                boxShadow: 'none',
+                outline: 'none',
+                ...props.style
+              }}
+              {...props}
+            />
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">{attachmentSlot}</div>
+              <AnimatePresence mode="wait" initial={false}>
+                {isStreaming ? (
+                  <motion.div
+                    key="stop"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    <ButtonWithIcon
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      icon={<Square className="fill-current" size={14} />}
+                      iconPosition="only"
+                      onClick={onStop}
+                      aria-label="Stop generating"
+                    />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="send"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    <ButtonWithIcon
+                      type="button"
+                      size="icon"
+                      icon={<Send size={16} />}
+                      iconPosition="only"
+                      onClick={handleSend}
+                      disabled={disabled || !trimmedValue}
+                      aria-label="Send message"
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+        );
+      }
+    );
+
+    AIChatInput.displayName = 'AIChatInput';
+
+    export { AIChatInput, chatInputVariants };
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+Import the component:
+
+```tsx
+import { AIChatInput } from './components/ui';
+```
+
+### Basic Usage
+
+```tsx
+function BasicChatInput() {
+  const [value, setValue] = useState('');
+
+  return (
+    <AIChatInput
+      value={value}
+      onChange={setValue}
+      onSend={(message) => {
+        console.log(message);
+        setValue('');
+      }}
+    />
+  );
+}
+```
+
+### Streaming State
+
+```tsx
+<AIChatInput
+  value={value}
+  onChange={setValue}
+  onSend={handleSend}
+  isStreaming={isStreaming}
+  onStop={handleStop}
+/>
+```
+
+### Attachment Slot
+
+```tsx
+<AIChatInput
+  value={value}
+  onChange={setValue}
+  onSend={handleSend}
+  attachmentSlot={
+    <button aria-label="Attach file" onClick={openFilePicker}>
+      <Paperclip size={16} />
+    </button>
+  }
+/>
+```
+
+## Props
+
+| Prop             | Type                                    | Default        | Description                                                        |
+| ---------------- | ---------------------------------------- | -------------- | -------------------------------------------------------------------- |
+| `value`          | `string`                                 | —              | Current textarea value (required, controlled)                       |
+| `onChange`       | `(value: string) => void`                | —              | Called on every keystroke (required)                                 |
+| `onSend`         | `(value: string) => void`                | —              | Called with the trimmed value on Enter or send click (required)      |
+| `onStop`         | `() => void`                             | `undefined`    | Called when the stop button is clicked while streaming               |
+| `isStreaming`    | `boolean`                                | `false`        | Shows a stop button instead of send; suppresses Enter-to-send        |
+| `variant`        | `'default' \| 'dark' \| 'glass' \| 'minimal'` | `'default'` | Surface style                                                        |
+| `minRows`        | `number`                                 | `1`            | Minimum visible rows before the textarea starts growing              |
+| `maxRows`        | `number`                                 | `6`            | Maximum rows before the textarea scrolls internally                  |
+| `attachmentSlot` | `React.ReactNode`                        | `undefined`    | Rendered to the left of the send/stop button                         |
+| `disabled`       | `boolean`                                | `false`        | Disables the textarea and send button                                |
+| `placeholder`    | `string`                                 | `'Message...'` | Placeholder text                                                     |
