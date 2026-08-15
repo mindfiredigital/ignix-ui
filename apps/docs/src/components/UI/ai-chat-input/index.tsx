@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Send, Square } from 'lucide-react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../../utils/cn';
-import { ButtonWithIcon } from "@site/src/components/UI/button-with-icon";
+import { ButtonWithIcon } from '../button-with-icon';
 
 const chatInputVariants = cva(
   'flex w-full flex-col gap-2 rounded-2xl border p-3 transition-all duration-200',
@@ -57,6 +57,7 @@ const AIChatInput = React.forwardRef<HTMLTextAreaElement, AIChatInputProps>(
       disabled,
       placeholder = 'Message...',
       onKeyDown,
+      style,
       ...props
     },
     forwardedRef
@@ -94,6 +95,7 @@ const AIChatInput = React.forwardRef<HTMLTextAreaElement, AIChatInputProps>(
       <div className={cn(chatInputVariants({ variant }), className)}>
         <textarea
           ref={innerRef}
+          {...props}
           value={value}
           onChange={(event) => onChange(event.target.value)}
           onKeyDown={handleKeyDown}
@@ -107,9 +109,8 @@ const AIChatInput = React.forwardRef<HTMLTextAreaElement, AIChatInputProps>(
           style={{
             boxShadow: 'none',
             outline: 'none',
-            ...props.style
+            ...style
           }}
-          {...props}
         />
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">{attachmentSlot}</div>

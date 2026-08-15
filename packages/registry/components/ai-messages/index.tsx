@@ -95,6 +95,9 @@ const AIMessages = React.forwardRef<HTMLDivElement, AIMessagesProps>(
       );
     };
 
+    const lastMessageContent = messages[messages.length - 1]?.content;
+    const lastMessageLength = typeof lastMessageContent === "string" ? lastMessageContent.length : 0;
+
     React.useEffect(() => {
       if (autoScroll && isAtBottomRef.current) {
         const timeout = setTimeout(() => {
@@ -102,7 +105,7 @@ const AIMessages = React.forwardRef<HTMLDivElement, AIMessagesProps>(
         }, 50);
         return () => clearTimeout(timeout);
       }
-    }, [messages.length, isThinking, autoScroll]);
+    }, [messages.length, lastMessageLength, isThinking, autoScroll]);
 
     React.useEffect(() => {
       scrollToBottom("auto");
@@ -169,7 +172,7 @@ const AIMessages = React.forwardRef<HTMLDivElement, AIMessagesProps>(
                 className="flex flex-col space-y-1"
               >
                 {messages.map((msg, index) => (
-                  <motion.div key={msg.id || index} variants={itemVariants}>
+                  <motion.div key={msg.id ?? index} variants={itemVariants}>
                     <AIMessageBubble
                       role={msg.role}
                       variant={variant === "dark" ? "default" : (variant ?? undefined)}

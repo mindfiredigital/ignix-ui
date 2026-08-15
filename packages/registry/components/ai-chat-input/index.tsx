@@ -57,6 +57,7 @@ const AIChatInput = React.forwardRef<HTMLTextAreaElement, AIChatInputProps>(
       disabled,
       placeholder = 'Message...',
       onKeyDown,
+      style,
       ...props
     },
     forwardedRef
@@ -94,6 +95,7 @@ const AIChatInput = React.forwardRef<HTMLTextAreaElement, AIChatInputProps>(
       <div className={cn(chatInputVariants({ variant }), className)}>
         <textarea
           ref={innerRef}
+          {...props}
           value={value}
           onChange={(event) => onChange(event.target.value)}
           onKeyDown={handleKeyDown}
@@ -107,9 +109,8 @@ const AIChatInput = React.forwardRef<HTMLTextAreaElement, AIChatInputProps>(
           style={{
             boxShadow: 'none',
             outline: 'none',
-            ...props.style
+            ...style
           }}
-          {...props}
         />
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">{attachmentSlot}</div>

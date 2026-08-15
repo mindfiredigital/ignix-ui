@@ -138,7 +138,7 @@ const AIModelSelector = React.forwardRef<HTMLDivElement, AIModelSelectorProps>(
     {
       className,
       models = defaultModels,
-      selectedModelId = "gpt-4o",
+      selectedModelId,
       onModelChange,
       size = "md",
       variant = "default",
@@ -148,13 +148,11 @@ const AIModelSelector = React.forwardRef<HTMLDivElement, AIModelSelectorProps>(
     ref
   ) => {
     const [searchQuery, setSearchQuery] = React.useState("");
-    const [selectedId, setSelectedId] = React.useState(selectedModelId || "gpt-4o");
+    const [uncontrolledSelectedId, setUncontrolledSelectedId] = React.useState(() => {
+      return selectedModelId ?? models[0]?.id ?? "";
+    });
 
-    React.useEffect(() => {
-      if (selectedModelId !== undefined) {
-        setSelectedId(selectedModelId);
-      }
-    }, [selectedModelId]);
+    const selectedId = selectedModelId !== undefined ? selectedModelId : uncontrolledSelectedId;
 
     const activeModel = React.useMemo(
       () => models.find((m) => m.id === selectedId),
@@ -189,7 +187,7 @@ const AIModelSelector = React.forwardRef<HTMLDivElement, AIModelSelectorProps>(
     const activeIcon = activeModel?.icon || getProviderDefaultIcon(activeProvider);
 
     const triggerButton = (
-      <button className={cn(triggerVariants({ size, variant }), className)}>
+      <button type="button" className={cn(triggerVariants({ size, variant }), className)}>
         <span className="flex items-center gap-2 overflow-hidden truncate">
           {activeModel && (
             <span className="flex-shrink-0 flex items-center justify-center">
@@ -252,7 +250,7 @@ const AIModelSelector = React.forwardRef<HTMLDivElement, AIModelSelectorProps>(
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Space" || e.key === " ") {
+                  if (e.key !== "Tab" && e.key !== "Escape") {
                     e.stopPropagation();
                   }
                 }}
@@ -297,7 +295,7 @@ const AIModelSelector = React.forwardRef<HTMLDivElement, AIModelSelectorProps>(
                       <DropdownItem
                         key={model.id}
                         onClick={() => {
-                          setSelectedId(model.id);
+                          setUncontrolledSelectedId(model.id);
                           onModelChange?.(model);
                           setSearchQuery("");
                         }}

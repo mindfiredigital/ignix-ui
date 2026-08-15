@@ -5,6 +5,7 @@ import { cn } from "../../../utils/cn";
 import { Copy, Check, ChevronDown, ChevronUp, WrapText } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+
 type TokenType =
   | "keyword"
   | "string"
@@ -146,6 +147,7 @@ const LIGHT_COLORS: Record<TokenType, string> = {
   plain: "text-[#24292f]",
 };
 
+// Dark theme token colours
 const DARK_COLORS: Record<TokenType, string> = {
   keyword: "text-[#ff7b72]",
   string: "text-[#a5d6ff]",
@@ -160,6 +162,22 @@ const DARK_COLORS: Record<TokenType, string> = {
   property: "text-[#79c0ff]",
   builtin: "text-[#79c0ff]",
   plain: "text-[#e6edf3]",
+};
+
+const LIGHT_TO_DARK_PAIR: Record<TokenType, string> = {
+  keyword: "text-[#cf222e] [[data-theme=dark]_&]:text-[#ff7b72] [.dark_&]:text-[#ff7b72]",
+  string: "text-[#0a3069] [[data-theme=dark]_&]:text-[#a5d6ff] [.dark_&]:text-[#a5d6ff]",
+  comment: "text-[#6e7781] [[data-theme=dark]_&]:text-[#8b949e] [.dark_&]:text-[#8b949e] italic",
+  number: "text-[#0550ae] [[data-theme=dark]_&]:text-[#79c0ff] [.dark_&]:text-[#79c0ff]",
+  function: "text-[#8250df] [[data-theme=dark]_&]:text-[#d2a8ff] [.dark_&]:text-[#d2a8ff]",
+  operator: "text-[#24292f] [[data-theme=dark]_&]:text-[#e6edf3] [.dark_&]:text-[#e6edf3]",
+  punctuation: "text-[#24292f] [[data-theme=dark]_&]:text-[#e6edf3] [.dark_&]:text-[#e6edf3]",
+  tag: "text-[#116329] [[data-theme=dark]_&]:text-[#7ee787] [.dark_&]:text-[#7ee787]",
+  attr: "text-[#0550ae] [[data-theme=dark]_&]:text-[#79c0ff] [.dark_&]:text-[#79c0ff]",
+  class: "text-[#953800] [[data-theme=dark]_&]:text-[#ffa657] [.dark_&]:text-[#ffa657]",
+  property: "text-[#0550ae] [[data-theme=dark]_&]:text-[#79c0ff] [.dark_&]:text-[#79c0ff]",
+  builtin: "text-[#0550ae] [[data-theme=dark]_&]:text-[#79c0ff] [.dark_&]:text-[#79c0ff]",
+  plain: "text-[#24292f] [[data-theme=dark]_&]:text-[#e6edf3] [.dark_&]:text-[#e6edf3]",
 };
 
 
@@ -213,13 +231,17 @@ export const AICodeBlock = React.forwardRef<HTMLDivElement, AICodeBlockProps>(
     const [showLines, setShowLines] = React.useState(showLineNumbersProp);
     const [expanded, setExpanded] = React.useState(false);
 
+        // Streaming state
     const [displayedCode, setDisplayedCode] = React.useState(streaming ? "" : code);
     const frameRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+    const displayedCodeRef = React.useRef(displayedCode);
+    React.useEffect(() => {
+      displayedCodeRef.current = displayedCode;
+    }, [displayedCode]);
 
     React.useEffect(() => {
       if (!streaming) { setDisplayedCode(code); return; }
-      let idx = 0;
-      setDisplayedCode("");
+      let idx = code.startsWith(displayedCodeRef.current) ? displayedCodeRef.current.length : 0;
       const tick = () => {
         idx = Math.min(idx + streamSpeed, code.length);
         setDisplayedCode(code.slice(0, idx));
@@ -228,6 +250,7 @@ export const AICodeBlock = React.forwardRef<HTMLDivElement, AICodeBlockProps>(
       frameRef.current = setTimeout(tick, 16);
       return () => { if (frameRef.current) clearTimeout(frameRef.current); };
     }, [code, streaming, streamSpeed]);
+
 
     React.useEffect(() => {
       setShowLines(showLineNumbersProp);
@@ -240,11 +263,42 @@ export const AICodeBlock = React.forwardRef<HTMLDivElement, AICodeBlockProps>(
     const isCollapsible = collapsible && lines.length > maxLines;
     const visibleLines = isCollapsible && !expanded ? lines.slice(0, maxLines) : lines;
 
+    const timeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+    React.useEffect(() => {
+      return () => {
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      };
+    }, []);
+
     const handleCopy = () => {
-      navigator.clipboard.writeText(code);
-      setCopied(true);
-      onCopy?.(code);
-      setTimeout(() => setCopied(false), 2000);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      const performCopy = async () => {
+        try {
+          if (navigator?.clipboard?.writeText) {
+            await navigator.clipboard.writeText(code);
+            setCopied(true);
+            onCopy?.(code);
+            timeoutRef.current = setTimeout(() => setCopied(false), 2000);
+          } else {
+            const textarea = document.createElement("textarea");
+            textarea.value = code;
+            textarea.style.position = "fixed";
+            textarea.style.opacity = "0";
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textarea);
+            setCopied(true);
+            onCopy?.(code);
+            timeoutRef.current = setTimeout(() => setCopied(false), 2000);
+          }
+        } catch (err) {
+          console.error("Failed to copy code: ", err);
+        }
+      };
+      performCopy();
     };
 
     const forceDarkTokens = variant === "dark" || variant === "glass";
@@ -267,7 +321,6 @@ export const AICodeBlock = React.forwardRef<HTMLDivElement, AICodeBlockProps>(
       className
     );
 
-    
     const headerClasses = cn(
       "flex items-center justify-between px-4 py-2 border-b",
 
@@ -412,6 +465,7 @@ export const AICodeBlock = React.forwardRef<HTMLDivElement, AICodeBlockProps>(
                   const tokens = tokenizeLine(line, lang);
                   return (
                     <div key={idx} className="flex min-w-max">
+                      {/* Line number gutter */}
                       {showLines && (
                         <span
                           className={gutterClasses}
@@ -420,6 +474,7 @@ export const AICodeBlock = React.forwardRef<HTMLDivElement, AICodeBlockProps>(
                           {idx + 1}
                         </span>
                       )}
+                      {/* Token content */}
                       <span>
                         {tokens.map((tok, tIdx) => {
                           const lightClass = LIGHT_COLORS[tok.type];
@@ -491,21 +546,3 @@ export const AICodeBlock = React.forwardRef<HTMLDivElement, AICodeBlockProps>(
 );
 
 AICodeBlock.displayName = "AICodeBlock";
-
-const LIGHT_TO_DARK_PAIR: Record<TokenType, string> = {
-  keyword: "text-[#cf222e] [[data-theme=dark]_&]:text-[#ff7b72] [.dark_&]:text-[#ff7b72]",
-  string: "text-[#0a3069] [[data-theme=dark]_&]:text-[#a5d6ff] [.dark_&]:text-[#a5d6ff]",
-  comment: "text-[#6e7781] [[data-theme=dark]_&]:text-[#8b949e] [.dark_&]:text-[#8b949e] italic",
-  number: "text-[#0550ae] [[data-theme=dark]_&]:text-[#79c0ff] [.dark_&]:text-[#79c0ff]",
-  function: "text-[#8250df] [[data-theme=dark]_&]:text-[#d2a8ff] [.dark_&]:text-[#d2a8ff]",
-  operator: "text-[#24292f] [[data-theme=dark]_&]:text-[#e6edf3] [.dark_&]:text-[#e6edf3]",
-  punctuation: "text-[#24292f] [[data-theme=dark]_&]:text-[#e6edf3] [.dark_&]:text-[#e6edf3]",
-  tag: "text-[#116329] [[data-theme=dark]_&]:text-[#7ee787] [.dark_&]:text-[#7ee787]",
-  attr: "text-[#0550ae] [[data-theme=dark]_&]:text-[#79c0ff] [.dark_&]:text-[#79c0ff]",
-  class: "text-[#953800] [[data-theme=dark]_&]:text-[#ffa657] [.dark_&]:text-[#ffa657]",
-  property: "text-[#0550ae] [[data-theme=dark]_&]:text-[#79c0ff] [.dark_&]:text-[#79c0ff]",
-  builtin: "text-[#0550ae] [[data-theme=dark]_&]:text-[#79c0ff] [.dark_&]:text-[#79c0ff]",
-  plain: "text-[#24292f] [[data-theme=dark]_&]:text-[#e6edf3] [.dark_&]:text-[#e6edf3]",
-};
-
-export { };

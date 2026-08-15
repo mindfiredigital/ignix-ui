@@ -11,6 +11,7 @@ const AIModelSelectorDemo = () => {
   const [variant, setVariant] = useState<'default' | 'dark' | 'glass' | 'minimal'>('default');
 
   const codeString = `
+import { useState } from 'react';
 import { AIModelSelector } from '@mindfiredigital/ignix-ui';
 
 function ModelPicker() {

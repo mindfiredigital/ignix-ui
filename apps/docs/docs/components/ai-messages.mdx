@@ -128,6 +128,9 @@ const AIMessages = React.forwardRef<HTMLDivElement, AIMessagesProps>(
       );
     };
 
+    const lastMessageContent = messages[messages.length - 1]?.content;
+    const lastMessageLength = typeof lastMessageContent === "string" ? lastMessageContent.length : 0;
+
     React.useEffect(() => {
       if (autoScroll && isAtBottomRef.current) {
         const timeout = setTimeout(() => {
@@ -135,7 +138,7 @@ const AIMessages = React.forwardRef<HTMLDivElement, AIMessagesProps>(
         }, 50);
         return () => clearTimeout(timeout);
       }
-    }, [messages.length, isThinking, autoScroll]);
+    }, [messages.length, lastMessageLength, isThinking, autoScroll]);
 
     React.useEffect(() => {
       scrollToBottom("auto");
@@ -202,11 +205,10 @@ const AIMessages = React.forwardRef<HTMLDivElement, AIMessagesProps>(
                 className="flex flex-col space-y-1"
               >
                 {messages.map((msg, index) => (
-                  <motion.div key={msg.id || index} variants={itemVariants}>
+                  <motion.div key={msg.id ?? index} variants={itemVariants}>
                     <AIMessageBubble
                       role={msg.role}
                       variant={variant === "dark" ? "default" : (variant ?? undefined)}
-                      
                       content={msg.content}
                       senderName={msg.senderName}
                       timestamp={msg.timestamp}
@@ -271,6 +273,7 @@ const AIMessages = React.forwardRef<HTMLDivElement, AIMessagesProps>(
 AIMessages.displayName = "AIMessages";
 
 export { AIMessages };
+
 
 ```
 
@@ -342,4 +345,4 @@ Display a typing/thinking state at the bottom of the feed:
 | `autoScroll`         | `boolean`                                                | `true`        | Automatically scrolls to the bottom on incoming messages if already near the viewport end |
 | `showJumpToBottom`   | `boolean`                                                | `true`        | Displays a floating overlay shortcut to scroll back down when manually scrolled upwards |
 | `jumpToBottomButton` | `React.ReactNode`                                        | `undefined`   | Custom layout override for the floating jump-to-bottom chevron button                    |
-| `messageBubbleProps` | `Partial<AIMessageBubbleProps>`                          | `undefined`   | Props passed to every AIMessageBubble (e.g. shape, showCopy, animateEntry).                                |
+| `messageBubbleProps` | `Omit<AIMessageBubbleProps, "role" \| "content">`        | `undefined`   | Props passed to every AIMessageBubble (e.g. shape, showCopy, animateEntry).                                |

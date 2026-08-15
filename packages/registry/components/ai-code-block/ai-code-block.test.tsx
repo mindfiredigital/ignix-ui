@@ -1,6 +1,6 @@
 import * as React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { AICodeBlock } from "./index";
 
@@ -53,7 +53,7 @@ describe("AICodeBlock Component", () => {
     expect(screen.queryByText("1")).not.toBeInTheDocument();
   });
 
-  it("triggers clipboard write when Copy code button is clicked", () => {
+  it("triggers clipboard write when Copy code button is clicked", async () => {
     const handleCopy = vi.fn();
     render(
       <AICodeBlock
@@ -67,7 +67,9 @@ describe("AICodeBlock Component", () => {
     const copyBtn = screen.getByText(/copy code/i);
     fireEvent.click(copyBtn.closest("button")!);
 
-    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(sampleCode);
+    await waitFor(() => {
+      expect(navigator.clipboard.writeText).toHaveBeenCalledWith(sampleCode);
+    });
     expect(handleCopy).toHaveBeenCalledWith(sampleCode);
   });
 });
