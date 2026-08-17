@@ -8,6 +8,7 @@ export default defineConfig({
   plugins: [react(), tailwind()],
   resolve: {
     alias: {
+      '@ignix-ui/templates': path.resolve(__dirname, 'src/components/templates'),
       '@ignix-ui': path.resolve(__dirname, 'src/components/ui'),
     },
   },

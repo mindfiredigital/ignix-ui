@@ -17,11 +17,13 @@ import { createTemplateCommand } from './commands/template';
 import { createInfoCommand } from './commands/info';
 import { createMcpInitCommand } from './commands/mcp-init';
 import { createMcpStatusCommand } from './commands/mcp-status';
+import { createLlmsCommand } from './commands/llms';
 
 const program = new Command();
 
 const isMachineMode = process.argv.includes('--json');
 const isMcpMode = process.argv.includes('mcp');
+const isLlmsMode = process.argv.includes('llms');
 
 program.version(chalk.red('1.0.0'));
 // Register Commands
@@ -35,6 +37,7 @@ program.addCommand(createStartersCommandViteReact());
 program.addCommand(createTemplateCommand());
 program.addCommand(createDoctorCommand());
 program.addCommand(createInfoCommand());
+program.addCommand(createLlmsCommand());
 
 const mcpCommand = new Command('mcp').description('Ignix MCP server');
 
@@ -84,7 +87,7 @@ program.addCommand(mcpCommand);
 
 // Display welcome message
 function showWelcome(): void {
-  if (isMachineMode || isMcpMode) return;
+  if (isMachineMode || isMcpMode || isLlmsMode) return;
   console.log(`
 ${chalk.hex('#FF0000').bold('  ██╗ ██████╗ ███╗   ██╗██╗███ ███╗    ██╗   ██╗██╗')}
 ${chalk.hex('#FF2A2A').bold('  ██║██╔════╝ ████╗  ██║██║╚██ ██╝║    ██║   ██║██║')}
@@ -124,7 +127,7 @@ async function startInteractiveCLI(): Promise<void> {
       if (!response.action || response.action === 'exit') {
         console.log(chalk.yellow('\n👋 Exiting Ignix CLI. Goodbye!\n'));
         isRunning = false;
-        process.exit(0);
+        continue;
       }
 
       // Execute the selected command
@@ -286,7 +289,7 @@ async function main() {
     // No arguments provided - start interactive mode
     await startInteractiveCLI().catch((error) => {
       console.error(chalk.red('Fatal error:'), error);
-      process.exit(1);
+      process.exitCode = 1;
     });
   } else {
     // Arguments provided - run as normal CLI

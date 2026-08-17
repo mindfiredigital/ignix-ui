@@ -20,7 +20,14 @@ export default defineConfig({
   },
   // Copy templates directory to dist
   async onSuccess() {
-    const { copy } = await import('fs-extra');
+    const { copy, pathExists } = await import('fs-extra');
     await copy('templates', 'dist/templates');
+
+    // Bundle the repo-root llms.txt so `ignix llms` works fully offline and
+    // always matches the installed CLI version, without duplicating its content.
+    const rootLlmsTxt = '../../llms.txt';
+    if (await pathExists(rootLlmsTxt)) {
+      await copy(rootLlmsTxt, 'dist/llms.txt');
+    }
   },
 });

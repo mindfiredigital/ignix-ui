@@ -180,7 +180,7 @@ export function createInitCommand(): Command {
           if (error instanceof Error) logger.error(error.message);
         }
 
-        process.exit(1);
+        process.exitCode = 1;
       } finally {
         restoreLogger?.();
         process.chdir(originalCwd);

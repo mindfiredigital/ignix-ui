@@ -183,7 +183,7 @@ describe("SignIn Component", () => {
         fireEvent.click(microsoftButton);
         expect(mockOnMicrosoftSignIn).toHaveBeenCalled();
 
-        vi.runOnlyPendingTimers();
+        await vi.runAllTimersAsync();
         vi.useRealTimers();
     });
 
