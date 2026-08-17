@@ -8,7 +8,6 @@ import { DependencyService } from '../services/DependencyService';
 import prompts from 'prompts';
 import { ThemeService } from '../services/ThemeService';
 import { loadConfig } from '../utils/config';
-import { writeAgentsFile } from '../utils/agentsFile';
 
 const DEFAULT_CONFIG_PATH = 'ignix.config.js';
 
