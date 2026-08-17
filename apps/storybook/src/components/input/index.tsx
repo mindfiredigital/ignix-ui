@@ -7,7 +7,7 @@ import type { Variants } from "framer-motion";
 import { Eye, EyeOff, Check, AlertCircle } from "lucide-react";
 import { cn } from "../../../utils/cn";
 
-export interface AnimatedInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size" | "onChange" | "value"> {
+export interface AnimatedInputProps extends Omit<React.ComponentPropsWithoutRef<typeof motion.input>, "size" | "onChange" | "value"> {
   placeholder?: string;
   variant?: string;
   className?: string;

@@ -26,14 +26,13 @@ const VariantSelector: React.FC<VariantSelectorProps> = ({
   };
 
   return (
-    <div className="flex justify-end mb-4 ">
-      <Dropdown animation='default' className='max-h-[500px] overflow-y-scroll' bg='default' trigger={<Button variant="outline">{type}: {displayLabel(selectedVariant)}</Button>}>
-        {variants.map((v) => (
-          <DropdownItem key={v} onClick={() => onSelectVariant(v)}>
-            {displayLabel(v)}
-          </DropdownItem>
-        ))}
-      </Dropdown>
+    <div className="flex items-center">      <Dropdown animation='default' className='max-h-[500px] overflow-y-scroll' bg='default' trigger={<Button variant="outline">{type}: {displayLabel(selectedVariant)}</Button>}>
+      {variants.map((v) => (
+        <DropdownItem key={v} onClick={() => onSelectVariant(v)}>
+          {displayLabel(v)}
+        </DropdownItem>
+      ))}
+    </Dropdown>
     </div>
   );
 };
