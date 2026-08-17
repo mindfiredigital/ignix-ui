@@ -1314,7 +1314,7 @@ export function DataTable<T extends Record<string, any>>({
         <table className="w-full min-w-[800px] table-fixed" role="grid" aria-label="Data table">
           <colgroup>
             {enableRowSelection && <col style={{ width: '48px' }} />}
-            {visibleColumnsList.map((col, idx) => (
+            {visibleColumnsList.map((_col, idx) => (
               <col key={idx} style={{ width: `${100 / visibleColumnsList.length}%` }} />
             ))}
           </colgroup>

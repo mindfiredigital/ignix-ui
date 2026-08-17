@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
 import AnimatedInput from "../../../../components/input";
 import { Button } from "../../../../components/button";
-import FileUpload from "../../../../components/file-upload";
+import { FileUpload } from "../../../../components/file-upload";
 import AnimatedTextarea from "../../../../components/textarea";
 import { ToastContext } from "../../../../components/toast";
 import { InfoCircledIcon, ExclamationTriangleIcon } from '@radix-ui/react-icons';
@@ -412,7 +412,7 @@ function FileUploadField() {
   return (
     <FileUpload
       buttonVariant="primary"
-      onFilesChange={(files) => {
+      onFilesChange={(files: File[]) => {
         const file = files?.[0] ?? null;
         updateField("file", file);
       }}

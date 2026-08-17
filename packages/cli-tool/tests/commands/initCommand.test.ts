@@ -121,6 +121,7 @@ it('handles theming setup when requested', async () => {
   );
 
   vi.mocked(prompts)
+    .mockResolvedValueOnce({ globalCss: 'src/index.css' })
     .mockResolvedValueOnce({ setupTheming: true })
     .mockResolvedValueOnce({ themeId: 'dark' });
 

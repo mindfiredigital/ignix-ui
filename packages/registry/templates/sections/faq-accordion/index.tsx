@@ -390,7 +390,7 @@ interface AccordionItemProps {
  * </AccordionItem>
  * ```
  */
-const AccordionItem = ({ _id, children, className, disabled = false }: AccordionItemProps) => {
+const AccordionItem = ({ children, className, disabled = false }: AccordionItemProps) => {
     const context = useAccordionContext();
     // const isOpen = context.openItems.includes(id);
 

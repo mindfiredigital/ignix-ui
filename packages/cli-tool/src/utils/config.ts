@@ -13,6 +13,7 @@ export interface IgnixConfig {
   themesDir: string;
   templatesDir?: string;
   templateLayoutDir?: string;
+  globalCss?: string;
 }
 
 export async function loadConfig(): Promise<IgnixConfig> {

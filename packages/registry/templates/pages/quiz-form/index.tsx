@@ -68,7 +68,7 @@ interface QuizFormContextType {
   submitted: boolean;
   cardVariant: CardVariantType;
   stepLabels?: string[];
-  setAnswer: (id: string, value: any) => void;
+  setAnswer: (id: string, value: AnswerValue) => void;
   goNext: () => void;
   goPrev: () => void;
   handleSubmit: () => void;
@@ -780,7 +780,7 @@ export const QuizForm: React.FC<QuizFormProps> & {
   const [submitted, setSubmitted] = useState(false);
   const total = questions.length;
 
-  const setAnswer = useCallback((id: string, value: any) => {
+  const setAnswer = useCallback((id: string, value: AnswerValue) => {
     setAnswers((prev) => ({ ...prev, [id]: value }));
   }, []);
 

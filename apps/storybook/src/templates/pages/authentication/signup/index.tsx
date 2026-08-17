@@ -480,10 +480,13 @@ const SignUp: React.FC<SignUpProps> = ({
     const [socialLoading, setSocialLoading] = React.useState<SocialProvider | null>(null);
     const [captchaVerified, setCaptchaVerified] = React.useState(false);
     const socialTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+    const isMounted = React.useRef(true);
 
     // Cleanup timeout on unmount
     React.useEffect(() => {
+        isMounted.current = true;
         return () => {
+            isMounted.current = false;
             if (socialTimeoutRef.current) {
                 clearTimeout(socialTimeoutRef.current);
             }
@@ -608,7 +611,14 @@ const SignUp: React.FC<SignUpProps> = ({
         } catch (error) {
             alert(`Social sign-up failed for ${provider}: ${error}`);
         } finally {
-            socialTimeoutRef.current = setTimeout(() => setSocialLoading(null), 500);
+            if (socialTimeoutRef.current) {
+                clearTimeout(socialTimeoutRef.current);
+            }
+            socialTimeoutRef.current = setTimeout(() => {
+                if (isMounted.current) {
+                    setSocialLoading(prev => prev === provider ? null : prev);
+                }
+            }, 500);
         }
     };
 
