@@ -24,6 +24,7 @@
     "**/dist",
     "**/coverage",
     "packages/registry/templates",
-    "packages/registry/components"
+    "packages/registry/components",
+    "packages/cli-tool/templates"
   ]
 }
