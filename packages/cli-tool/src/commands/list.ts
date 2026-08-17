@@ -225,13 +225,13 @@ export function createListCommand() {
                   2
                 )
               );
-              process.exit(1);
+              process.exitCode = 1;
             }
 
             logger.error(
               `Unknown namespace: '${namespace}'. Please use 'component', 'theme', or 'template'.`
             );
-            process.exit(1);
+            process.exitCode = 1;
         }
       } catch (error) {
         if (ctx.isJson) {
@@ -245,11 +245,11 @@ export function createListCommand() {
               2
             )
           );
-          process.exit(1);
+          process.exitCode = 1;
         }
 
         logger.error(error instanceof Error ? error.message : String(error));
-        process.exit(1);
+        process.exitCode = 1;
       } finally {
         process.chdir(originalCwd);
       }

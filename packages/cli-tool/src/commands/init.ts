@@ -8,6 +8,7 @@ import { DependencyService } from '../services/DependencyService';
 import prompts from 'prompts';
 import { ThemeService } from '../services/ThemeService';
 import { loadConfig } from '../utils/config';
+import { writeAgentsFile } from '../utils/agentsFile';
 
 const DEFAULT_CONFIG_PATH = 'ignix.config.js';
 
@@ -180,7 +181,7 @@ export function createInitCommand(): Command {
           if (error instanceof Error) logger.error(error.message);
         }
 
-        process.exit(1);
+        process.exitCode = 1;
       } finally {
         restoreLogger?.();
         process.chdir(originalCwd);

@@ -115,10 +115,10 @@ export function createDoctorCommand() {
               error: error instanceof Error ? error.message : 'Unknown error',
             })
           );
-          process.exit(1);
+          process.exitCode = 1;
         }
         logger.error(error instanceof Error ? error.message : String(error));
-        process.exit(1);
+        process.exitCode = 1;
       } finally {
         if (ctx.isJson) {
           logger.setSilent(false);
