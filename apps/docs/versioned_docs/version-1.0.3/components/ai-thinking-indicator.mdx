@@ -1,0 +1,135 @@
+---
+sidebar_position: 1
+title: AIThinkingIndicator
+description: An animated thinking/typing state indicator for AI chat interfaces.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { AIThinkingIndicator } from '@site/src/components/UI/ai-thinking-indicator';
+import AIThinkingIndicatorDemo from '@site/src/components/Demo/AIThinkingIndicatorDemo';
+
+
+The AIThinkingIndicator communicates that an AI assistant is generating a response. It supports eight animation styles, four surface variants, and three sizes.
+
+<AIThinkingIndicatorDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+
+```bash
+ignix add component ai-thinking-indicator
+```
+
+</TabItem>
+
+<TabItem
+value="manual"
+label="Manual"
+className="max-h-[500px] overflow-y-auto"
+>
+```tsx
+import React, { useState } from 'react';
+import { AIThinkingIndicator } from '@site/src/components/UI/ai-thinking-indicator';
+import VariantSelector from './VariantSelector';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+
+const indicatorTypes = ['dots', 'pulse', 'wave', 'skeleton', 'sparkle', 'bloom', 'ring', 'bars'];
+const indicatorVariants = ['default', 'dark', 'glass', 'minimal'];
+
+const AIThinkingIndicatorDemo = () => {
+  const [type, setType] = useState('dots');
+  const [variant, setVariant] = useState('default');
+
+  const codeString = `
+import { AIThinkingIndicator } from '@ignix-ui/ai-thinking-indicator';
+
+<AIThinkingIndicator type="${type}" variant="${variant}" label="Thinking..." />
+`;
+
+  return (
+    <div className="flex flex-col space-y-4 mb-8">
+      <div className="flex flex-wrap gap-4 justify-start md:justify-end">
+        <VariantSelector
+          variants={indicatorTypes}
+          selectedVariant={type}
+          onSelectVariant={setType}
+          type="Type"
+        />
+        <VariantSelector
+          variants={indicatorVariants}
+          selectedVariant={variant}
+          onSelectVariant={setVariant}
+          type="Variant"
+        />
+      </div>
+      <Tabs>
+        <TabItem value="preview" label="Preview">
+          <div
+            className={
+              variant === 'dark'
+                ? 'flex items-center justify-center border rounded-lg p-8 mt-4 bg-neutral-900'
+                : 'flex items-center justify-center border rounded-lg p-8 mt-4'
+            }
+          >
+            <AIThinkingIndicator
+              type={type as any}
+              variant={variant as any}
+              label="Thinking..."
+            />
+          </div>
+        </TabItem>
+        <TabItem value="code" label="Code">
+          <CodeBlock language="tsx">{codeString}</CodeBlock>
+        </TabItem>
+      </Tabs>
+    </div>
+  );
+};
+
+export default AIThinkingIndicatorDemo;
+
+```
+</TabItem>
+</Tabs> 
+
+## Usage
+
+Import the component:
+
+```tsx
+import { AIThinkingIndicator } from '@mindfiredigital/ignix-ui';
+```
+
+### Basic Example
+
+```tsx
+function BasicThinkingIndicator() {
+  return <AIThinkingIndicator label="Thinking..." />;
+}
+```
+
+### Variants
+
+```tsx
+<AIThinkingIndicator variant="glass" />
+
+<AIThinkingIndicator variant="dark" />
+
+<AIThinkingIndicator variant="minimal" />
+```
+
+## Props
+
+| Prop       | Type                                        | Default     | Description                                    |
+| ---------- | ------------------------------------------- | ----------- | ----------------------------------------------- |
+| `type`     | `'dots' \| 'pulse' \| 'wave' \| 'skeleton' \| 'sparkle' \| 'bloom' \| 'ring' \| 'bars'` | `'dots'`    | Animation style                                 |
+| `variant`  | `'default' \| 'dark' \| 'glass' \| 'minimal'` | `'default'` | Surface style                                   |
+| `size`     | `'sm' \| 'md' \| 'lg'`                      | `'md'`      | Size of the indicator                           |
+| `label`    | `string`                                    | `undefined` | Text shown next to the animation                |
+| `sound`    | `boolean`                                   | `false`     | Whether to play a sound when the indicator mounts |
+| `soundUrl` | `string`                                    | `undefined` | Audio source played when `sound` is `true`      |
