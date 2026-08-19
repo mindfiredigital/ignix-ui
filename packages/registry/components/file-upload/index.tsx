@@ -639,13 +639,13 @@ const FileList: React.FC<FileListProps> = ({
         >
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <h4 className="text-xl font-semibold bg-gradient-to-r from-slate-800 to-slate-600 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent">
+                    <h4 className="text-xl font-semibold leading-none !mb-0 bg-gradient-to-r from-slate-800 to-slate-600 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent">
                         Selected Files
                     </h4>
                     <motion.span
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
-                        className="px-2 py-1 text-xs font-medium rounded-full bg-gradient-to-r from-slate-100 to-slate-200 dark:from-indigo-900/30 dark:to-purple-900/30 text-slate-700 dark:text-indigo-300"
+                        className="inline-flex items-center leading-none px-2 py-1 text-xs font-medium rounded-full bg-gradient-to-r from-slate-100 to-slate-200 dark:from-indigo-900/30 dark:to-purple-900/30 text-slate-700 dark:text-indigo-300"
                     >
                         {files.length} file{files.length !== 1 ? 's' : ''}
                     </motion.span>
