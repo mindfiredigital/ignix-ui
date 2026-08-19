@@ -13,7 +13,7 @@ const AIStatusBadgeDemo = () => {
   const [variant, setVariant] = useState('default');
 
   const codeString = `
-import { AIStatusBadge } from '@ignix-ui/ai-status-badge';
+import { AIStatusBadge } from '@mindfiredigital/ignix-ui';
 
 <AIStatusBadge status="${status}" variant="${variant}" model="gpt-4" />
 `;

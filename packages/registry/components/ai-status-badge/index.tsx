@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../../utils/cn';
 
@@ -51,6 +51,16 @@ export interface AIStatusBadgeProps
 const StatusDot = ({ status, size }: { status: AIStatus; size: IndicatorSize }) => {
   const dotSize = dotSizeMap[size];
   const dotColor = STATUS_CONFIG[status].dot;
+  const shouldReduceMotion = useReducedMotion();
+
+  if (shouldReduceMotion) {
+    return (
+      <span
+        className={cn('shrink-0 rounded-full', dotColor)}
+        style={{ width: dotSize, height: dotSize }}
+      />
+    );
+  }
 
   if (status === 'streaming') {
     return (
@@ -125,4 +135,4 @@ const AIStatusBadge = React.forwardRef<HTMLDivElement, AIStatusBadgeProps>(
 
 AIStatusBadge.displayName = 'AIStatusBadge';
 
-export { AIStatusBadge, statusBadgeVariants };
+export { AIStatusBadge };
