@@ -408,7 +408,6 @@ interface UploadButtonProps {
     isUploading: boolean;
     disabled: boolean;
     onClick: () => void;
-    onClearAll: () => void;
 }
 
 // Simple Button component (since the actual Button component is imported)
@@ -451,8 +450,7 @@ const UploadButtonComponent: React.FC<UploadButtonProps> = ({
     files,
     isUploading,
     disabled,
-    onClick,
-    onClearAll
+    onClick
 }) => {
     return (
         <motion.div
@@ -493,17 +491,6 @@ const UploadButtonComponent: React.FC<UploadButtonProps> = ({
                     )}
                 </div>
             </div>
-
-            {files.length > 0 && (
-                <button
-                    onClick={onClearAll}
-                    disabled={isUploading}
-                    className="text-slate-600 hover:text-rose-600 dark:text-gray-400 dark:hover:text-rose-400 font-medium transition-colors disabled:opacity-50 flex items-center"
-                >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Clear All
-                </button>
-            )}
         </motion.div>
     );
 };
@@ -1149,7 +1136,6 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                         isUploading={isUploading}
                         disabled={disabled}
                         onClick={handleButtonClick}
-                        onClearAll={clearAll}
                     />
                 )}
 
