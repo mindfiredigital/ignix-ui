@@ -1,19 +1,19 @@
 "use client";
 
-import type React from "react";
+import * as React from "react";
 import { useState, useEffect, useRef } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import type { Variants } from "framer-motion";
 import { Eye, EyeOff, Check, AlertCircle } from "lucide-react";
 import { cn } from "../../../utils/cn";
 
-interface AnimatedInputProps {
-  placeholder: string;
-  variant: string;
+export interface AnimatedInputProps extends Omit<React.ComponentPropsWithoutRef<typeof motion.input>, "size" | "onChange" | "value" | "variants"> {
+  placeholder?: string;
+  variant?: string;
   className?: string;
   inputClassName?: string;
   labelClassName?: string;
-  value: string;
+  value?: string;
   type?: string;
   id?: string;
   autoFocus?: boolean;
@@ -95,35 +95,39 @@ const createEnhancedParticles = (container: HTMLElement, count = 8) => {
   return particles;
 };
 
-export const AnimatedInput: React.FC<AnimatedInputProps> = ({
-  placeholder,
-  variant,
-  className = "",
-  inputClassName = "",
-  labelClassName = "",
-  value,
-  onChange,
-  onKeyDown,
-  onFocus,
-  onBlur,
-  type = "text",
-  id,
-  autoFocus,
-  disabled = false,
-  error = "",
-  success = false,
-  successMessage = "",
-  icon: Icon,
-  showPasswordToggle = false,
-  size = "md",
-}) => {
-  const [isFocused, setIsFocused] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [inputType, setInputType] = useState(type);
+export const AnimatedInput = React.forwardRef<HTMLInputElement, AnimatedInputProps>(
+  (
+    {
+      placeholder = "",
+      variant = "default",
+      className = "",
+      inputClassName = "",
+      labelClassName = "",
+      value = "",
+      onChange,
+      onKeyDown,
+      onFocus,
+      onBlur,
+      type = "text",
+      id,
+      autoFocus,
+      disabled = false,
+      error = "",
+      success = false,
+      successMessage = "",
+      icon: Icon,
+      showPasswordToggle = false,
+      size = "md",
+      ...props
+    },
+    ref
+  ) => {
+    const [isFocused, setIsFocused] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [inputType, setInputType] = useState(type);
 
-  const inputRef = useRef<HTMLInputElement>(null);
-  const particleRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+    const particleRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
 
   // Enhanced mouse tracking for premium effects
   const mouseX = useMotionValue(0);
@@ -159,8 +163,9 @@ export const AnimatedInput: React.FC<AnimatedInputProps> = ({
     setInputType(showPassword ? "password" : "text");
   };
 
-  const variants = inputVariants[variant as keyof typeof inputVariants];
-  const hasValue = value.length > 0;
+  const safeVariant = (variant && inputVariants[variant as keyof typeof inputVariants]) ? variant : "default";
+  const variants = inputVariants[safeVariant as keyof typeof inputVariants];
+  const hasValue = value ? value.length > 0 : false;
   const isActive = isFocused || hasValue;
 
   // Size configurations
@@ -244,7 +249,8 @@ export const AnimatedInput: React.FC<AnimatedInputProps> = ({
 
         {/* Enhanced Input Field */}
         <motion.input
-          ref={inputRef}
+          {...props}
+          ref={ref}
           id={id}
           autoFocus={autoFocus}
           type={inputType}
@@ -278,6 +284,7 @@ export const AnimatedInput: React.FC<AnimatedInputProps> = ({
           disabled={disabled}
           variants={variants.input}
           style={{
+            ...props.style,
             ...(variant === "borderBeam" && {
               border: "2px solid transparent",
             }),
@@ -415,7 +422,7 @@ export const AnimatedInput: React.FC<AnimatedInputProps> = ({
       )}
     </motion.div>
   );
-};
+});
 
 // Enhanced input variants (ALL original variants with premium improvements)
 const inputVariants: Record<string, InputVariant> = {
@@ -1579,5 +1586,7 @@ const inputVariants: Record<string, InputVariant> = {
   },
 
 };
+
+AnimatedInput.displayName = "AnimatedInput";
 
 export default AnimatedInput;

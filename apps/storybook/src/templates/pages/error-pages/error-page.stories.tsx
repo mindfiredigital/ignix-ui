@@ -472,7 +472,7 @@ export const ErrorCodeAnimations: Story = {
  */
 export const ServerVariant: Story = {
   render: () => (
-    <ErrorPage variant="server">
+    <ErrorPage variant="gradient">
       <ErrorPageContent>
         <ErrorPageErrorCode errorCode="500" animationType="glow" />
         <ErrorPageHeading title="Internal Server Error" />
@@ -490,7 +490,7 @@ export const ServerVariant: Story = {
  */
 export const ForbiddenVariant: Story = {
   render: () => (
-    <ErrorPage variant="forbidden" icon={ShieldAlert}>
+    <ErrorPage variant="dark" icon={ShieldAlert}>
       <ErrorPageContent>
         <ErrorPageErrorCode errorCode="403" animationType="glow" />
         <ErrorPageHeading title="Access Denied" />
@@ -803,7 +803,7 @@ export const Forbidden403: Story = {
     };
 
     return (
-      <ErrorPage variant="forbidden" icon={ShieldAlert}>
+      <ErrorPage variant="dark" icon={ShieldAlert}>
         <ErrorPageContent>
           <ErrorPageErrorCode 
             errorCode="403" 

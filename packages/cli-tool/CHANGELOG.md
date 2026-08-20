@@ -1,5 +1,71 @@
 # @mindfiredigital/ignix-cli
 
+## 3.5.0
+
+### Minor Changes
+
+- Merge pull request #927 from mindfiredigital/development
+
+## 3.4.3
+
+### Patch Changes
+
+- Merge pull request #924 from mindfiredigital/development
+
+## 3.4.2
+
+### Patch Changes
+
+- Merge pull request #915 from mindfiredigital/development
+
+## 3.4.1
+
+### Patch Changes
+
+- Merge pull request #912 from mindfiredigital/development
+
+## 3.4.0
+
+### Minor Changes
+
+- Merge pull request #909 from mindfiredigital/development
+
+## 3.3.1
+
+### Patch Changes
+
+- Merge pull request #906 from mindfiredigital/development
+
+## 3.3.0
+
+### Minor Changes
+
+- Merge pull request #899 from mindfiredigital/development
+
+## 3.2.0
+
+### Minor Changes
+
+- Merge pull request #888 from mindfiredigital/development
+
+## 3.1.0
+
+### Minor Changes
+
+- Merge pull request #853 from mindfiredigital/development
+
+## 3.0.2
+
+### Patch Changes
+
+- Merge pull request #842 from mindfiredigital/development
+
+## 3.0.1
+
+### Patch Changes
+
+- Merge pull request #825 from mindfiredigital/development
+
 ## 3.0.0
 
 ### Major Changes

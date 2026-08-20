@@ -8,6 +8,9 @@ import { loadConfig } from '../utils/config';
 import { logger } from '../utils/logger';
 import { DependencyService } from './DependencyService';
 import { ComponentService } from './ComponentService';
+import { findPackageRoot } from '../utils/findPackageRoot';
+import { rewriteCnImportDepth } from '../utils/rewriteCnImportDepth';
+import { resolveCnImportPath } from '../utils/resolveCnImportPath';
 
 export class TemplateService {
   private registryService = new RegistryService();
@@ -46,14 +49,25 @@ export class TemplateService {
 
       logger.info('[Template] Template config loaded');
 
+      // Resolve the actual workspace package these files (and their dependencies)
+      // belong to - for a monorepo this is packages/ui, not the repo root.
+      const templateLayoutDirForDeps =
+        config.templateLayoutDir || config.templatesDir || 'src/templates';
+      const installTargetDir = await findPackageRoot(path.resolve(templateLayoutDirForDeps));
+
       //--------------------------------------------------
       // Dependencies
       //--------------------------------------------------
       if (templateConfig.dependencies?.length) {
         spinner && (spinner.text = 'Installing dependencies...');
-        logger.info('[Template] Installing dependencies');
+        logger.info(`[Template] Installing dependencies into: ${installTargetDir}`);
 
-        await this.dependencyService.install(templateConfig.dependencies, false, this.silent);
+        await this.dependencyService.install(
+          templateConfig.dependencies,
+          false,
+          this.silent,
+          installTargetDir
+        );
       }
 
       //--------------------------------------------------
@@ -74,8 +88,20 @@ export class TemplateService {
       //--------------------------------------------------
       spinner && (spinner.text = 'Downloading template files...');
 
-      const templateLayoutDir = config.templateLayoutDir || config.templatesDir || 'src/templates';
-      const templateDir = path.resolve(templateLayoutDir, name.toLowerCase());
+      // Name the installed folder after the registry's actual source folder (e.g.
+      // "date-picker"), not the lowercased registry key - other templates/components
+      // already import this one via @ignix-ui/<source-folder-name>, since that's what
+      // resolves correctly in the registry's own source tree (and its test suite).
+      // Matching that convention on install means those existing imports resolve
+      // correctly with zero source edits.
+      const installFolderName = templateConfig.files.main
+        ? path.basename(path.dirname(templateConfig.files.main.path))
+        : name.toLowerCase();
+      const templateDir = path.resolve(templateLayoutDirForDeps, installFolderName);
+      const cnImportPath = resolveCnImportPath(
+        path.resolve(templateLayoutDirForDeps),
+        installFolderName
+      );
       await fs.ensureDir(templateDir);
 
       let baseUrl = config.templateLayoutUrl || config.templateUrl || '';
@@ -112,9 +138,14 @@ export class TemplateService {
         const fileUrl = new URL(fileInfo.path, baseUrl + '/').toString();
         logger.info(`[Template] Downloading: ${fileUrl}`);
 
-        const { data: content } = await axios.get(fileUrl, {
+        const { data: rawContent } = await axios.get(fileUrl, {
           responseType: 'text',
         });
+        // The registry's own source tree needs a deeper relative path to reach its
+        // utils/cn.ts than an installed, flattened project does - rewrite it here at
+        // install time rather than in the source file, so the registry's own test
+        // suite (which resolves the un-rewritten path) is unaffected.
+        const content = rewriteCnImportDepth(rawContent, cnImportPath);
 
         const fileName = path.basename(fileInfo.path);
         const filePath = path.join(templateDir, fileName);

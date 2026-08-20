@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import { cn } from '../../../lib/utils';
 import { Link } from 'react-router-dom';
@@ -46,7 +46,7 @@ export const Breadcrumbs = ({ variant = 'default', items, className, style }: Br
     bordered: 'mx-2 text-[var(--text)]',
   };
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0, y: -10 },
     visible: {
       opacity: 1,
@@ -60,7 +60,7 @@ export const Breadcrumbs = ({ variant = 'default', items, className, style }: Br
     },
   };
 
-  const itemAnimationVariants = {
+  const itemAnimationVariants: Variants = {
     hidden: {
       opacity: 0,
       x: -10,
@@ -97,7 +97,7 @@ export const Breadcrumbs = ({ variant = 'default', items, className, style }: Br
     },
   };
 
-  const iconVariants = {
+  const iconVariants: Variants = {
     hidden: {
       opacity: 0,
       scale: 0,
@@ -130,7 +130,7 @@ export const Breadcrumbs = ({ variant = 'default', items, className, style }: Br
     },
   };
 
-  const separatorAnimationVariants = {
+  const separatorAnimationVariants: Variants = {
     hidden: {
       opacity: 0,
       scale: 0.5,

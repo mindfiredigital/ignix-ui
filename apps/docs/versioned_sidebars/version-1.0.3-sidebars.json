@@ -104,6 +104,22 @@
             "components/spinner",
             "components/toast"
           ]
+        },
+        {
+          "type": "category",
+          "label": "AI Components",
+          "items": [
+            "components/ai-thinking-indicator",
+            "components/ai-status-badge",
+            "components/ai-chat-input",
+            "components/ai-message-bubble",
+            "components/ai-messages",
+            "components/ai-model-selector",
+            "components/ai-suggested-actions",
+            "components/ai-chat",
+            "components/ai-conversation-history",
+            "components/ai-code-block"
+          ]
         }
       ]
     },
