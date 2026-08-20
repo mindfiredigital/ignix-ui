@@ -408,7 +408,6 @@ interface UploadButtonProps {
     isUploading: boolean;
     disabled: boolean;
     onClick: () => void;
-    onClearAll: () => void;
 }
 
 // Simple Button component (since the actual Button component is imported)
@@ -451,8 +450,7 @@ const UploadButtonComponent: React.FC<UploadButtonProps> = ({
     files,
     isUploading,
     disabled,
-    onClick,
-    onClearAll
+    onClick
 }) => {
     return (
         <motion.div
@@ -493,17 +491,6 @@ const UploadButtonComponent: React.FC<UploadButtonProps> = ({
                     )}
                 </div>
             </div>
-
-            {files.length > 0 && (
-                <button
-                    onClick={onClearAll}
-                    disabled={isUploading}
-                    className="text-slate-600 hover:text-rose-600 dark:text-gray-400 dark:hover:text-rose-400 font-medium transition-colors disabled:opacity-50 flex items-center"
-                >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Clear All
-                </button>
-            )}
         </motion.div>
     );
 };
@@ -677,7 +664,7 @@ const FileList: React.FC<FileListProps> = ({
                                 exit={{ opacity: 0, x: -20 }}
                                 transition={{ delay: index * 0.05 }}
                                 className={cn(
-                                    'group relative p-4 rounded-xl border-2 transition-all duration-300',
+                                    'group relative min-w-0 p-4 rounded-xl border-2 transition-all duration-300',
                                     'bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm',
                                     'border-slate-100 dark:border-gray-700',
                                     'hover:border-slate-300 dark:hover:border-indigo-600',
@@ -732,7 +719,7 @@ const FileList: React.FC<FileListProps> = ({
 
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <div className="text-slate-800 dark:text-gray-100 truncate font-medium">
+                                            <div className="text-slate-800 dark:text-gray-100 truncate font-medium min-w-0">
                                                 {file.name}
                                             </div>
                                             {file.error ? (
@@ -1149,7 +1136,6 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                         isUploading={isUploading}
                         disabled={disabled}
                         onClick={handleButtonClick}
-                        onClearAll={clearAll}
                     />
                 )}
 

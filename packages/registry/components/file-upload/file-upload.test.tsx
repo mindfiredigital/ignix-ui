@@ -365,10 +365,9 @@ describe('FileUpload', () => {
                 expect(screen.getByText('test2.pdf')).toBeInTheDocument();
             });
 
-            // Click clear all button from the file list section (not the top one)
-            const clearAllButtons = screen.getAllByRole('button', { name: /Clear All/i });
-            // Use the second one (file list section)
-            await user.click(clearAllButtons[1]);
+            //  Click clear all button from the file list section.
+            const clearAllButton = screen.getByRole('button', { name: /Clear All/i });
+            await user.click(clearAllButton);
 
             await waitFor(() => {
                 expect(screen.queryByText('test1.pdf')).not.toBeInTheDocument();
