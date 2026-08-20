@@ -169,7 +169,7 @@ interface RevokeKeyModalProps {
 interface ViewKeyModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onReveal: (apiKey: ApiKey) => Promise<void>;
+    onReveal: (apiKey: ApiKey) => Promise<string>;
     apiKey: ApiKey | null;
     isLoading?: boolean;
     inputVariant?: string;
@@ -223,6 +223,8 @@ interface SearchFilterProps {
     searchPlaceholder?: string;
 }
 
+export type ApiKeysCardVariant = "default" | "glass" | "border" | "elevated";
+
 interface ApiKeysPageProps {
     headerTitle?: string;
     headerIcon?: React.ReactNode;
@@ -248,7 +250,7 @@ interface ApiKeysPageProps {
     | "slideUp"
     | "slideLeft"
     | "slideRight";
-    cardVariant?: string;
+    cardVariant?: ApiKeysCardVariant;
     inputVariant?: string;
     buttonVariant?: ButtonVariant;
     buttonAnimationVariant?: string;
@@ -1935,9 +1937,8 @@ const ViewKeyModal = ({
         }
 
         try {
-            const fullKey = `sk_live_${Math.random().toString(36).substring(2, 42)}`;
+            const fullKey = await onReveal(apiKey);
             setRevealedKey(fullKey);
-            await onReveal(apiKey);
             setError('');
         } catch (error) {
             setError('Failed to reveal API key');
@@ -2175,6 +2176,11 @@ export const ApiKeysPage: React.FC<ApiKeysPageProps> = ({
     autoHideDelay = 30,
     darkMode = false
 }) => {
+    const getTableVariant = (variant: ApiKeysCardVariant): "default" | "glass" | "border" => {
+        if (variant === "elevated") return "default";
+        return variant;
+    };
+
     const [apiKeys, setApiKeys] = useState<ApiKey[]>(initialApiKeys.length > 0 ? initialApiKeys : generateMockApiKeys());
     const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
@@ -2541,7 +2547,7 @@ export const ApiKeysPage: React.FC<ApiKeysPageProps> = ({
 
                     {filteredKeys.length === 0 ? (
                         customEmptyState || (
-                            <div className={cn(CardVariants({ variant: cardVariant }), "p-12 text-center")}>
+                            <div className={cn(CardVariants({ variant: cardVariant as "default" | "glass" | "border" | "elevated" }), "p-12 text-center")}>
                                 <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mx-auto mb-4">
                                     <Key className="w-8 h-8 text-muted-foreground" />
                                 </div>
@@ -2614,8 +2620,8 @@ export const ApiKeysPage: React.FC<ApiKeysPageProps> = ({
                             ))}
                         </div>
                     ) : (
-                        <div className={cn(CardVariants({ variant: cardVariant }), "overflow-hidden")}>
-                            <table className={cn("w-full", TableVariants({ variant: cardVariant }))}>
+                        <div className={cn(CardVariants({ variant: cardVariant as "default" | "glass" | "border" | "elevated" }), "overflow-hidden")}>
+                            <table className={cn("w-full", TableVariants({ variant: getTableVariant(cardVariant) }))}>
                                 <thead>
                                     <tr className="border-b border-border">
                                         <th className="px-6 py-3 text-left text-sm font-medium text-muted-foreground">

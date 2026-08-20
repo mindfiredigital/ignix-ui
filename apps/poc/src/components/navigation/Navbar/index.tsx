@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import { ChevronDown, Menu, X } from 'lucide-react';
 import { cn } from '../../../lib/utils';
@@ -36,7 +36,7 @@ export const Navbar = ({ variant = 'modern', items, logo, className, style }: Na
     accent: 'bg-[var(--button-red)] text-white rounded-lg',
   };
 
-  const navVariants = {
+  const navVariants: Variants = {
     hidden: {
       y: -20,
       opacity: 0,
@@ -53,7 +53,7 @@ export const Navbar = ({ variant = 'modern', items, logo, className, style }: Na
     },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: -10 },
     visible: {
       opacity: 1,
@@ -81,7 +81,7 @@ export const Navbar = ({ variant = 'modern', items, logo, className, style }: Na
     },
   };
 
-  const dropdownVariants = {
+  const dropdownVariants: Variants = {
     hidden: {
       opacity: 0,
       scale: 0.95,
@@ -114,7 +114,7 @@ export const Navbar = ({ variant = 'modern', items, logo, className, style }: Na
     },
   };
 
-  const mobileMenuVariants = {
+  const mobileMenuVariants: Variants = {
     hidden: {
       opacity: 0,
       x: '100%',
@@ -144,7 +144,7 @@ export const Navbar = ({ variant = 'modern', items, logo, className, style }: Na
     },
   };
 
-  const iconVariants = {
+  const iconVariants: Variants = {
     hover: {
       rotate: 10,
       scale: 1.1,
@@ -156,7 +156,7 @@ export const Navbar = ({ variant = 'modern', items, logo, className, style }: Na
     },
   };
 
-  const backdropVariants = {
+  const backdropVariants: Variants = {
     hidden: {
       opacity: 0,
       transition: {

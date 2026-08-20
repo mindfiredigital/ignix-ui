@@ -433,7 +433,7 @@ const SingleColumnLayout: React.FC<SingleColumnLayoutProps> = ({
         navLinks: DesktopNav,
         authControls: AuthControls,
         mobileMenuButton: MobileMenuButton,
-        variant,
+        variant: variant || "default",
         isMobileMenuOpen: menuOpen,
         toggleMobileMenu: () => setMenuOpen(!menuOpen),
     }) : (
@@ -528,7 +528,7 @@ const SingleColumnLayout: React.FC<SingleColumnLayoutProps> = ({
 
     /* ─────────────── Default Footer ─────────────── */
     const DefaultFooter = renderFooter ? renderFooter({
-        variant,
+        variant: variant || "default",
         content: footerContent || (
             <div className="text-center text-sm">
                 © 2025 My Application. All rights reserved.

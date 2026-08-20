@@ -406,6 +406,56 @@
         }
       }
     },
+    "ai-thinking-indicator": {
+      "name": "AIThinkingIndicator",
+      "description": "An animated thinking/typing state indicator for AI chat interfaces with dots, pulse, wave, skeleton, sparkle (Gemini-style), bloom (Claude Code-style rotating asterisk), ring, and bars variants.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "spinner"
+      ],
+      "files": {
+        "main": {
+          "path": "components/ai-thinking-indicator/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "ai-chat-input": {
+      "name": "AIChatInput",
+      "description": "An auto-growing chat input with Enter-to-send, Shift+Enter for newlines, a streaming/stop state, and an attachment slot.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "button-with-icon"
+      ],
+      "files": {
+        "main": {
+          "path": "components/ai-chat-input/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "ai-status-badge": {
+      "name": "AIStatusBadge",
+      "description": "An animated badge that displays the current AI state (idle, thinking, streaming, error, ready) with an optional model name.",
+      "dependencies": [
+        "framer-motion",
+        "class-variance-authority"
+      ],
+      "files": {
+        "main": {
+          "path": "components/ai-status-badge/index.tsx",
+          "type": "component"
+        }
+      }
+    },
     "toast": {
       "name": "Toast",
       "description": "A toast notification component with animation and different variants",
@@ -1084,7 +1134,8 @@
       "dependencies": [
         "framer-motion",
         "lucide-react",
-        "class-variance-authority"
+        "class-variance-authority",
+        "react-icons"
       ],
       "componentDependencies": [
         "button",
@@ -1836,10 +1887,10 @@
         "button",
         "input",
         "textarea",
-        "modals",
-        "date-picker",
+        "modal",
+        "datePicker",
         "dropdown",
-        "file-upload",
+        "fileUpload",
         "toast"
       ],
       "files": {
@@ -1865,6 +1916,137 @@
         "main": {
           "path": "templates/pages/timeline-view-page/index.tsx",
           "type": "template"
+        }
+      }
+    },
+    "ai-message-bubble": {
+      "name": "AIMessageBubble",
+      "description": "An animated message bubble for AI chat interfaces supporting roles (user, assistant, system), avatars, copy-to-clipboard, and glassmorphic/minimal variants.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "avatar"
+      ],
+      "files": {
+        "main": {
+          "path": "components/ai-message-bubble/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "ai-messages": {
+      "name": "AIMessages",
+      "description": "An animated scrollable message feed list for AI chat feeds with auto-scrolling, jump-to-bottom overlay controls, staggered entrance transitions, and empty states.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "ai-message-bubble",
+        "ai-thinking-indicator",
+        "avatar"
+      ],
+      "files": {
+        "main": {
+          "path": "components/ai-messages/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "ai-model-selector": {
+      "name": "AIModelSelector",
+      "description": "A provider-grouped model selection dropdown with full keyboard accessibility, supporting pill triggers and standard variants.",
+      "dependencies": [
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "dropdown"
+      ],
+      "files": {
+        "main": {
+          "path": "components/ai-model-selector/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "ai-suggested-actions": {
+      "name": "AISuggestedActions",
+      "description": "An interactive prompt suggestions component supporting inline pills, card grids, and staggered load transitions.",
+      "dependencies": [
+        "lucide-react",
+        "class-variance-authority",
+        "framer-motion"
+      ],
+      "componentDependencies": [
+        "button",
+        "card"
+      ],
+      "files": {
+        "main": {
+          "path": "components/ai-suggested-actions/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "ai-chat": {
+      "name": "AIChat",
+      "description": "A top-level orchestrator chat portal component combining messages, prompt actions, inputs, and thinking states.",
+      "dependencies": [
+        "lucide-react",
+        "class-variance-authority",
+        "framer-motion"
+      ],
+      "componentDependencies": [
+        "ai-messages",
+        "ai-chat-input",
+        "ai-thinking-indicator",
+        "ai-suggested-actions"
+      ],
+      "files": {
+        "main": {
+          "path": "components/ai-chat/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "ai-conversation-history": {
+      "name": "AIConversationHistory",
+      "description": "A conversation history sidebar panel with chronological date categorization, search boxes, and rename/delete action commands.",
+      "dependencies": [
+        "lucide-react",
+        "class-variance-authority",
+        "framer-motion"
+      ],
+      "componentDependencies": [
+        "button",
+        "input"
+      ],
+      "files": {
+        "main": {
+          "path": "components/ai-conversation-history/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "ai-code-block": {
+      "name": "AICodeBlock",
+      "description": "A premium code block component with custom regex syntax highlighting, copy action, line number toggle, and collapsible expand/collapse controls.",
+      "dependencies": [
+        "class-variance-authority",
+        "lucide-react"
+      ],
+      "componentDependencies": [
+        "button"
+      ],
+      "files": {
+        "main": {
+          "path": "components/ai-code-block/index.tsx",
+          "type": "component"
         }
       }
     }

@@ -1,6 +1,6 @@
 import React from 'react';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import { cn } from '../../../lib/utils';
 
 interface Tab {
@@ -55,7 +55,7 @@ export const Tabs = ({ variant = 'default', tabs, defaultValue, className, style
     },
   };
 
-  const tabListVariants = {
+  const tabListVariants: Variants = {
     hidden: {
       opacity: 0,
       y: -10,
@@ -74,7 +74,7 @@ export const Tabs = ({ variant = 'default', tabs, defaultValue, className, style
     },
   };
 
-  const tabContentVariants = {
+  const tabContentVariants: Variants = {
     hidden: {
       opacity: 0,
       x: 20,
@@ -105,7 +105,7 @@ export const Tabs = ({ variant = 'default', tabs, defaultValue, className, style
     },
   };
 
-  const iconVariants = {
+  const iconVariants: Variants = {
     hidden: {
       opacity: 0,
       scale: 0,
@@ -138,7 +138,7 @@ export const Tabs = ({ variant = 'default', tabs, defaultValue, className, style
     },
   };
 
-  const triggerVariants = {
+  const triggerVariants: Variants = {
     hidden: {
       opacity: 0,
       y: -10,
@@ -169,7 +169,7 @@ export const Tabs = ({ variant = 'default', tabs, defaultValue, className, style
     },
   };
 
-  const backgroundVariants = {
+  const backgroundVariants: Variants = {
     hidden: {
       opacity: 0,
       scale: 0.9,

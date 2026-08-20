@@ -5,6 +5,7 @@ import chalk from 'chalk';
 import prompts from 'prompts';
 import { logger } from '../utils/logger';
 import { getPackageManager } from '../utils/getPackageManager';
+import { writeAgentsFile } from '../utils/agentsFile';
 import {
   validateEmptyDirectory,
   createNextAppPackageJson,
@@ -20,6 +21,7 @@ import {
   createIgnixConfig,
   createGitignore,
   createReadme,
+  createCnUtil as createCnUtilNextJs,
 } from '../services/starter-template/NextJsAppStarter';
 import {
   ensureRootFiles,
@@ -45,6 +47,7 @@ import {
   createIgnixConfig as createIgnixConfigVite,
   createGitignore as createGitignoreVite,
   createViteEnvTypes,
+  createCnUtil as createCnUtilVite,
 } from '../services/starter-template/ViteReactStarter';
 
 const execa = async (...args: any[]): Promise<any> => {
@@ -109,6 +112,7 @@ export function createStartersCommandMonorepo() {
         await ensureTsconfigPackage(root);
         await scaffoldNextApp(root);
         await createIgnixConfigMonorepo(root);
+        await writeAgentsFile(root);
 
         if (!ctx.isJson) spinner.stop();
         await execa('pnpm', ['install'], { cwd: root, stdio: ctx.isJson ? 'ignore' : 'inherit' });
@@ -134,7 +138,7 @@ export function createStartersCommandMonorepo() {
         } else {
           logger.error(e instanceof Error ? e.message : String(e));
         }
-        process.exit(1);
+        process.exitCode = 1;
       } finally {
         restoreLogger?.();
         process.chdir(originalCwd);
@@ -236,6 +240,13 @@ export function createStartersCommandNextjsApp() {
         // 14. Create README.md
         await createReadme(root);
 
+        // 14.4 Create the cn() helper (clsx/tailwind-merge are installed, but nothing
+        // wrote the file every component/template imports it from)
+        await createCnUtilNextJs(root);
+
+        // 14.5 Create AGENTS.md guide for AI coding agents
+        await writeAgentsFile(root);
+
         // 15. Initialize Git repository
         if (!ctx.isJson) {
           spinner.text = 'Initializing Git repository...';
@@ -290,7 +301,7 @@ export function createStartersCommandNextjsApp() {
         } else {
           logger.error(e instanceof Error ? e.message : String(e));
         }
-        process.exit(1);
+        process.exitCode = 1;
       } finally {
         restoreLogger?.();
         process.chdir(originalCwd);
@@ -391,6 +402,13 @@ export function createStartersCommandViteReact() {
         // 14. Create vite-env.d.ts
         await createViteEnvTypes(root);
 
+        // 14.4 Create the cn() helper (clsx/tailwind-merge are installed, but nothing
+        // wrote the file every component/template imports it from)
+        await createCnUtilVite(root);
+
+        // 14.5 Create AGENTS.md guide for AI coding agents
+        await writeAgentsFile(root);
+
         // 16. Initialize Git repository
         if (!ctx.isJson) {
           spinner.text = 'Initializing Git repository...';
@@ -445,7 +463,7 @@ export function createStartersCommandViteReact() {
         } else {
           logger.error(e instanceof Error ? e.message : String(e));
         }
-        process.exit(1);
+        process.exitCode = 1;
       } finally {
         restoreLogger?.();
         process.chdir(originalCwd);
