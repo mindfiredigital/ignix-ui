@@ -677,7 +677,7 @@ const FileList: React.FC<FileListProps> = ({
                                 exit={{ opacity: 0, x: -20 }}
                                 transition={{ delay: index * 0.05 }}
                                 className={cn(
-                                    'group relative p-4 rounded-xl border-2 transition-all duration-300',
+                                    'group relative min-w-0 p-4 rounded-xl border-2 transition-all duration-300',
                                     'bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm',
                                     'border-slate-100 dark:border-gray-700',
                                     'hover:border-slate-300 dark:hover:border-indigo-600',
@@ -732,7 +732,7 @@ const FileList: React.FC<FileListProps> = ({
 
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <div className="text-slate-800 dark:text-gray-100 truncate font-medium">
+                                            <div className="text-slate-800 dark:text-gray-100 truncate font-medium min-w-0">
                                                 {file.name}
                                             </div>
                                             {file.error ? (
