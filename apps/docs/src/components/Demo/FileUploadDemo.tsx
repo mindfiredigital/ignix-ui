@@ -119,7 +119,7 @@ const FileUploadMinimalDemo = () => {
     const errors: string[] = [];
 
     if (file.name.length > 50) {
-      errors.push('File name must be less than 50 characters');
+      errors.push('File name must be 50 characters or fewer');
     }
 
     // Check for special characters
@@ -129,7 +129,7 @@ const FileUploadMinimalDemo = () => {
 
     // Custom size limit based on file type
     if (file.type.startsWith('image/') && file.size > 2 * 1024 * 1024) {
-      errors.push('Images must be smaller than 2MB');
+      errors.push('Images must be 2 MB or smaller');
     }
 
     return {
@@ -155,7 +155,7 @@ function MinimalUploadExample() {
     const errors: string[] = [];
 
     if (file.name.length > 50) {
-      errors.push('File name must be less than 50 characters');
+      errors.push('File name must be 50 characters or fewer');
     }
 
     // Check for special characters
@@ -165,7 +165,7 @@ function MinimalUploadExample() {
 
     // Custom size limit based on file type
     if (file.type.startsWith('image/') && file.size > 2 * 1024 * 1024) {
-      errors.push('Images must be smaller than 2MB');
+      errors.push('Images must be 2 MB or smaller');
     }
 
     return {
