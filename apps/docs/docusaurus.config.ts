@@ -1,5 +1,5 @@
-import {themes as prismThemes} from 'prism-react-renderer';
-import type {Config} from '@docusaurus/types';
+import { themes as prismThemes } from 'prism-react-renderer';
+import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
@@ -44,16 +44,16 @@ const config: Config = {
       {
         name: 'keywords',
         content: 'Ignix UI, UI components, React components, Tailwind CSS, Tailwind Native, Animated components, Ignix UI components, Ignix UI React components, Ignix UI Tailwind CSS, Ignix UI Tailwind Native, Ignix UI Animated components',
-      },{
+      }, {
         name: 'twitter:card',
         content: 'summary_large_image',
-      },{
+      }, {
         name: 'twitter:site',
         content: '@mindfiredigital',
-      },{
+      }, {
         name: 'twitter:title',
         content: 'Ignix UI',
-      },{
+      }, {
         name: 'twitter:description',
         content: 'Beautiful, animated UI components for modern web applications',
       }
@@ -83,10 +83,16 @@ const config: Config = {
           label: 'Components',
         },
         {
+          href: 'pathname:///ignix-ui/llms.txt',
+          label: 'llms.txt',
+          position: 'left',
+          className: 'navbar__link--llms',
+        },
+        {
           type: 'docsVersionDropdown',
           position: 'right',
           versions: {
-            '1.0.0': {label: 'Version 1.0'},
+            '1.0.0': { label: 'Version 1.0' },
           },
         },
         {
@@ -104,7 +110,7 @@ const config: Config = {
         {
           className: 'theme-code-block-highlighted-line',
           line: 'highlight-next-line',
-          block: {start: 'highlight-start', end: 'highlight-end'},
+          block: { start: 'highlight-start', end: 'highlight-end' },
         },
         {
           className: 'code-block-error-line',
