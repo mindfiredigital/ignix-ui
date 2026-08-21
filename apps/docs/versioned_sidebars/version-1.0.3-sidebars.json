@@ -302,6 +302,7 @@
             "templates/sections/content/comparison-table",
             "templates/sections/content/faq-accordion",
             "templates/sections/content/hero",
+            "templates/sections/content/logo-clouds",
             "templates/sections/content/mega-menu-multi-column-dropdown",
             "templates/sections/content/pricing-grid",
             "templates/sections/content/stats-grid",

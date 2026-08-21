@@ -1721,6 +1721,23 @@
         }
       }
     },
+    "logoClouds": {
+      "name": "LogoClouds",
+      "description": "A responsive 'trusted by' logo strip supporting a static wrapped grid or a continuous, accessible marquee scroll with grayscale hover effects.",
+      "dependencies": [
+        "framer-motion",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "typography"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/sections/logo-clouds/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "faqAccordion": {
       "name": "FAQAccordion",
       "description": "A flexible faq accordion component with custom tags and multiple interaction modes.",
