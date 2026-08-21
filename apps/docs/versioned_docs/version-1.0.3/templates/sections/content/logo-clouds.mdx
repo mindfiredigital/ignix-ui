@@ -1,0 +1,125 @@
+---
+sidebar_position: 13
+title: Logo Clouds
+description: A responsive "trusted by" logo strip supporting a static wrapped grid or a continuous, accessible marquee scroll.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { LogoCloudsDemo } from '@site/src/components/Demo/LogoCloudsDemo';
+
+**Logo Clouds** is a section content template for displaying a style strip of partner or customer logos. It supports a static, responsive wrapped grid, or a continuous marquee scroll — with grayscale-on-hover styling, optional linked logos, and full keyboard/screen-reader accessibility.
+
+Features:
+- **Grid** layout: responsive, centered, wraps with configurable columns per breakpoint
+- **Marquee** layout: continuous infinite scroll with an edge fade mask
+- Grayscale logos that restore color on hover/focus (toggleable)
+- Optional `href` per logo renders it as a link
+- Respects `prefers-reduced-motion` — the marquee simply doesn't animate for those users
+- Marquee's duplicated logo set is hidden from assistive tech, so screen readers aren't told about every logo twice
+
+<LogoCloudsDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add template logoclouds
+    ```
+  </TabItem>
+    <TabItem value="manual" label="Manual" className="max-h-[500px] overflow-y-auto">
+    Install the template and use the same API as in the demo. Import from your design system or copy the component from `apps/docs/src/components/UI/logo-clouds`.
+  </TabItem>
+</Tabs>
+
+---
+
+## Usage
+
+Import the component and pass an array of logos, each with an `id`, `name`, and either a `src` image URL or a custom `icon` node:
+
+```tsx
+import { LogoClouds } from '@ignix-ui/logoclouds';
+
+const logos = [
+  { id: 'acme', name: 'Acme Corp', src: '/logos/acme.svg' },
+  { id: 'globex', name: 'Globex', src: '/logos/globex.svg' },
+  { id: 'initech', name: 'Initech', src: '/logos/initech.svg' },
+];
+
+function TrustedBySection() {
+  return (
+    <LogoClouds
+      logos={logos}
+      title="Trusted by teams at"
+    />
+  );
+}
+```
+
+### Marquee (continuous scroll)
+
+```tsx
+<LogoClouds
+  logos={logos}
+  variant="marquee"
+  speed={25}
+  pauseOnHover
+/>
+```
+
+### Linked logos
+
+```tsx
+const logos = [
+  { id: 'acme', name: 'Acme Corp', src: '/logos/acme.svg', href: 'https://acme.example' },
+];
+
+<LogoClouds logos={logos} />
+```
+
+### Custom columns and size
+
+```tsx
+<LogoClouds
+  logos={logos}
+  columns={{ mobile: 2, tablet: 3, desktop: 5 }}
+  size="lg"
+/>
+```
+
+---
+
+## Props
+
+### LogoClouds
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `logos` | `LogoCloudItem[]` | **required** | Brands to display. |
+| `title` | `string` | - | Eyebrow/heading above the logos (e.g. "Trusted by teams at"). |
+| `subtitle` | `string` | - | Supporting text under the title. |
+| `variant` | `'grid' \| 'marquee'` | `'grid'` | Static wrapped grid, or a continuous scroll. |
+| `columns` | `{ mobile?: number; tablet?: number; desktop?: number }` | `{ mobile: 2, tablet: 3, desktop: 6 }` | Column counts per breakpoint (`grid` variant only). |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Logo height. |
+| `grayscale` | `boolean` | `true` | Render logos in grayscale, restoring color on hover/focus. |
+| `bordered` | `boolean` | `false` | Add a top/bottom divider. |
+| `speed` | `number` | `30` | Seconds for one full marquee loop (`marquee` variant only). |
+| `pauseOnHover` | `boolean` | `true` | Pause the marquee while hovered (`marquee` variant only). |
+| `className` | `string` | - | Root `<section>` class name. |
+| `logoClassName` | `string` | - | Class name applied to each logo's wrapper. |
+
+### LogoCloudItem
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `id` | `string` | **required** – Unique identifier (React key). |
+| `name` | `string` | **required** – Accessible name, used as `alt`/`aria-label`. |
+| `src` | `string` | Image URL for the logo. Omit when using `icon`. |
+| `icon` | `React.ReactNode` | Custom node (e.g. inline SVG) rendered instead of `src`. |
+| `href` | `string` | Optional link target; renders the logo as an anchor when set. |
+| `width` | `number` | Optional explicit width (px) passed to the `<img>`. |
+| `height` | `number` | Optional explicit height (px) passed to the `<img>`. |
+
+**Accessibility:** the marquee variant disables its animation entirely for users with `prefers-reduced-motion` set, and the duplicated logo set used for the seamless loop is marked `aria-hidden` so screen readers only announce each brand once.
