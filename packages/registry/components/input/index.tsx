@@ -95,33 +95,32 @@ const createEnhancedParticles = (container: HTMLElement, count = 8) => {
   return particles;
 };
 
-export const AnimatedInput = React.forwardRef<HTMLInputElement, AnimatedInputProps>(
-  (
-    {
-      placeholder = "",
-      variant = "default",
-      className = "",
-      inputClassName = "",
-      labelClassName = "",
-      value = "",
-      onChange,
-      onKeyDown,
-      onFocus,
-      onBlur,
-      type = "text",
-      id,
-      autoFocus,
-      disabled = false,
-      error = "",
-      success = false,
-      successMessage = "",
-      icon: Icon,
-      showPasswordToggle = false,
-      size = "md",
-      ...props
-    },
-    ref
-  ) => {
+const AnimatedInputRender: React.ForwardRefRenderFunction<HTMLInputElement, AnimatedInputProps> = (
+  {
+    placeholder = "",
+    variant = "default",
+    className = "",
+    inputClassName = "",
+    labelClassName = "",
+    value = "",
+    onChange,
+    onKeyDown,
+    onFocus,
+    onBlur,
+    type = "text",
+    id,
+    autoFocus,
+    disabled = false,
+    error = "",
+    success = false,
+    successMessage = "",
+    icon: Icon,
+    showPasswordToggle = false,
+    size = "md",
+    ...props
+  },
+  ref
+) => {
     const [isFocused, setIsFocused] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [inputType, setInputType] = useState(type);
@@ -431,7 +430,9 @@ export const AnimatedInput = React.forwardRef<HTMLInputElement, AnimatedInputPro
       )}
     </motion.div>
   );
-});
+};
+
+export const AnimatedInput = React.forwardRef(AnimatedInputRender);
 
 // Enhanced input variants (ALL original variants with premium improvements)
 const inputVariants: Record<string, InputVariant> = {
