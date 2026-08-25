@@ -178,6 +178,14 @@ export const TwoColumnGrid: Story = {
   },
 };
 
+export const FiveColumnGrid: Story = {
+  args: {
+    logos: baseLogos,
+    columns: { mobile: 2, tablet: 3, desktop: 5 },
+    title: "Five Column Grid",
+  },
+};
+
 export const OnDarkBackground: Story = {
   args: {
     logos: baseLogos,

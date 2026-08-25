@@ -1,6 +1,6 @@
 // logo-clouds.test.tsx
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import React from "react";
 
 // Mock Typography
@@ -23,20 +23,10 @@ vi.mock("../../../utils/cn", () => ({
     cn: (...args: any[]) => args.filter(Boolean).join(" "),
 }));
 
-// Mock framer-motion (including useReducedMotion, used to gate the marquee animation)
+// Mock framer-motion's useReducedMotion, used to gate the marquee animation.
+// The marquee itself is driven by a plain CSS animation, not framer-motion,
+// so no `motion` mock is needed here.
 vi.mock("framer-motion", () => ({
-    motion: {
-        div: ({ children, className, animate, transition: _transition, ...props }: any) => (
-            <div
-                className={className}
-                data-testid="motion-div"
-                data-animating={animate ? "true" : "false"}
-                {...props}
-            >
-                {children}
-            </div>
-        ),
-    },
     useReducedMotion: vi.fn(() => false),
 }));
 
@@ -112,6 +102,18 @@ describe("LogoClouds", () => {
             render(<LogoClouds logos={sampleLogos} />);
             expect(screen.queryByRole("link")).not.toBeInTheDocument();
         });
+
+        it("still exposes listitem roles when every logo is linked (not an empty list to assistive tech)", () => {
+            const allLinkedLogos: LogoCloudItem[] = sampleLogos.map((logo) => ({
+                ...logo,
+                href: `https://example.com/${logo.id}`,
+            }));
+            render(<LogoClouds logos={allLinkedLogos} />);
+            expect(screen.getAllByRole("listitem")).toHaveLength(allLinkedLogos.length);
+            // Each item is still reachable as a link too - the listitem role
+            // lives on a wrapper rather than overriding the anchor's own role.
+            expect(screen.getAllByRole("link")).toHaveLength(allLinkedLogos.length);
+        });
     });
 
     describe("Grid variant", () => {
@@ -123,13 +125,56 @@ describe("LogoClouds", () => {
         it("applies grayscale classes by default", () => {
             render(<LogoClouds logos={sampleLogos} />);
             const items = screen.getAllByRole("listitem");
-            expect(items[0]).toHaveClass("grayscale");
+            // The listitem role sits on a `contents` wrapper so link/non-link
+            // branches share identical list semantics; the styled element is
+            // its child.
+            expect(items[0].firstElementChild).toHaveClass("grayscale");
         });
 
         it("omits grayscale classes when grayscale is false", () => {
             render(<LogoClouds logos={sampleLogos} grayscale={false} />);
             const items = screen.getAllByRole("listitem");
-            expect(items[0]).not.toHaveClass("grayscale");
+            expect(items[0].firstElementChild).not.toHaveClass("grayscale");
+        });
+
+        it("passes each breakpoint's column count through as a CSS custom property", () => {
+            render(
+                <LogoClouds
+                    logos={sampleLogos}
+                    columns={{ mobile: 2, tablet: 3, desktop: 6 }}
+                />
+            );
+            const list = screen.getByRole("list");
+            expect(list.style.getPropertyValue("--lc-cols-mobile")).toBe("2");
+            expect(list.style.getPropertyValue("--lc-cols-tablet")).toBe("3");
+            expect(list.style.getPropertyValue("--lc-cols-desktop")).toBe("6");
+        });
+
+        it("falls each omitted breakpoint back to the previous one", () => {
+            render(<LogoClouds logos={sampleLogos} columns={{ mobile: 4 }} />);
+            const list = screen.getByRole("list");
+            expect(list.style.getPropertyValue("--lc-cols-mobile")).toBe("4");
+            expect(list.style.getPropertyValue("--lc-cols-tablet")).toBe("4");
+            expect(list.style.getPropertyValue("--lc-cols-desktop")).toBe("4");
+        });
+
+        it("uses static Tailwind arbitrary-value classes rather than per-value interpolated classes", () => {
+            render(
+                <LogoClouds
+                    logos={sampleLogos}
+                    columns={{ mobile: 2, tablet: 3, desktop: 6 }}
+                />
+            );
+            const list = screen.getByRole("list");
+            // These exact literal strings must appear in source for Tailwind's
+            // static scanner to generate CSS for them.
+            expect(list.className).toContain("grid-cols-[repeat(var(--lc-cols-mobile),minmax(0,1fr))]");
+            expect(list.className).toContain("sm:grid-cols-[repeat(var(--lc-cols-tablet),minmax(0,1fr))]");
+            expect(list.className).toContain("lg:grid-cols-[repeat(var(--lc-cols-desktop),minmax(0,1fr))]");
+            // A runtime-interpolated class like `grid-cols-6` would never be
+            // picked up by Tailwind's static scanner, so the column count
+            // would silently have no effect in a real build.
+            expect(list.className).not.toMatch(/grid-cols-\d/);
         });
     });
 
@@ -149,13 +194,34 @@ describe("LogoClouds", () => {
 
         it("animates by default when motion is not reduced", () => {
             render(<LogoClouds logos={sampleLogos} variant="marquee" />);
-            expect(screen.getByTestId("motion-div")).toHaveAttribute("data-animating", "true");
+            const list = screen.getByRole("list");
+            expect(list.style.animationName).not.toBe("none");
+            expect(list.style.animationPlayState).toBe("running");
         });
 
         it("does not animate when the user prefers reduced motion", () => {
             vi.mocked(framerMotion.useReducedMotion).mockReturnValueOnce(true);
             render(<LogoClouds logos={sampleLogos} variant="marquee" />);
-            expect(screen.getByTestId("motion-div")).toHaveAttribute("data-animating", "false");
+            expect(screen.getByRole("list").style.animationName).toBe("none");
+        });
+
+        it("pauses via animation-play-state on hover, without resetting the running animation", () => {
+            render(<LogoClouds logos={sampleLogos} variant="marquee" pauseOnHover />);
+            const list = screen.getByRole("list");
+            const hoverTarget = list.parentElement as HTMLElement;
+            const animationNameBeforePause = list.style.animationName;
+
+            fireEvent.mouseEnter(hoverTarget);
+            expect(list.style.animationPlayState).toBe("paused");
+            // Pausing toggles play-state on the same animation instance rather
+            // than swapping it out and back in, so the keyframe name (and thus
+            // the animation's progress) is preserved instead of restarting
+            // from 0% - no snap back to the start on hover.
+            expect(list.style.animationName).toBe(animationNameBeforePause);
+
+            fireEvent.mouseLeave(hoverTarget);
+            expect(list.style.animationPlayState).toBe("running");
+            expect(list.style.animationName).toBe(animationNameBeforePause);
         });
     });
 
@@ -182,7 +248,7 @@ describe("LogoClouds", () => {
         it("applies logoClassName to each logo wrapper", () => {
             render(<LogoClouds logos={sampleLogos} logoClassName="custom-logo" />);
             const items = screen.getAllByRole("listitem");
-            expect(items[0]).toHaveClass("custom-logo");
+            expect(items[0].firstElementChild).toHaveClass("custom-logo");
         });
 
         it("adds a border when bordered is true", () => {

@@ -112,14 +112,14 @@ const logos = [
 
 ### LogoCloudItem
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `id` | `string` | **required** – Unique identifier (React key). |
-| `name` | `string` | **required** – Accessible name, used as `alt`/`aria-label`. |
-| `src` | `string` | Image URL for the logo. Omit when using `icon`. |
-| `icon` | `React.ReactNode` | Custom node (e.g. inline SVG) rendered instead of `src`. |
-| `href` | `string` | Optional link target; renders the logo as an anchor when set. |
-| `width` | `number` | Optional explicit width (px) passed to the `<img>`. |
-| `height` | `number` | Optional explicit height (px) passed to the `<img>`. |
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `id` | `string` | **required** | Unique identifier (React key). |
+| `name` | `string` | **required** | Accessible name, used as `alt`/`aria-label`. |
+| `src` | `string` | - | Image URL for the logo. Omit when using `icon`. |
+| `icon` | `React.ReactNode` | - | Custom node (e.g. inline SVG) rendered instead of `src`. |
+| `href` | `string` | - | Optional link target; renders the logo as an anchor when set. |
+| `width` | `number` | - | Optional explicit width (px) passed to the `<img>`. |
+| `height` | `number` | - | Optional explicit height (px) passed to the `<img>`. |
 
 **Accessibility:** the marquee variant disables its animation entirely for users with `prefers-reduced-motion` set, and the duplicated logo set used for the seamless loop is marked `aria-hidden` so screen readers only announce each brand once.

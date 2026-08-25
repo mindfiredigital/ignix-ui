@@ -28,7 +28,7 @@ const LogoCloudsDemo = () => {
   const [grayscale, setGrayscale] = useState<boolean>(true);
   const [bordered, setBordered] = useState<boolean>(false);
 
-  const codeLines: string[] = [
+  const rawCodeLines: (string | false)[] = [
     "import { LogoClouds } from '@ignix-ui/logoclouds';",
     "",
     "const logos = [",
@@ -44,7 +44,8 @@ const LogoCloudsDemo = () => {
     `  grayscale={${grayscale}}`,
     bordered && "  bordered",
     "/>",
-  ].filter(Boolean as unknown as (v: string | false) => v is string);
+  ];
+  const codeLines = rawCodeLines.filter((line): line is string => line !== false);
 
   const codeString = codeLines.join("\n");
 
@@ -53,7 +54,7 @@ const LogoCloudsDemo = () => {
       <div className="flex flex-wrap gap-4 justify-start sm:justify-end">
         <div className="space-y-2">
           <VariantSelector
-            variants={variantOptions as unknown as string[]}
+            variants={[...variantOptions]}
             selectedVariant={variant}
             onSelectVariant={(v) => setVariant(v as (typeof variantOptions)[number])}
             type="Layout"

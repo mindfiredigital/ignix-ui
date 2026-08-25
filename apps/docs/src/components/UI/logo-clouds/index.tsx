@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import React, { useId, useMemo, useState } from "react";
+import { useReducedMotion } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Typography } from "@site/src/components/UI/typography";
 import { cn } from "@site/src/utils/cn";
@@ -41,6 +41,13 @@ const logoSizeVariants = cva("w-auto object-contain", {
     size: "md",
   },
 });
+
+/** CSS custom properties that drive the grid's per-breakpoint column count. */
+type ColumnsCSSProperties = React.CSSProperties & {
+  "--lc-cols-mobile"?: number;
+  "--lc-cols-tablet"?: number;
+  "--lc-cols-desktop"?: number;
+};
 
 /**
  * Props for the {@link LogoClouds} template.
@@ -105,25 +112,27 @@ const LogoMark: React.FC<{
     logoClassName
   );
 
-  if (logo.href) {
-    return (
-      <a
-        href={logo.href}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label={logo.name}
-        tabIndex={ariaHidden ? -1 : 0}
-        aria-hidden={ariaHidden}
-        className={cn(classes, "rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2")}
-      >
-        {content}
-      </a>
-    );
-  }
-
+  // A shared `listitem` wrapper (rather than setting the role on each branch)
+  // keeps both branches honest under `role="list"`: setting `role="listitem"`
+  // directly on the `<a>` would override its native `link` role, hiding it
+  // from assistive tech as a link. `contents` keeps the wrapper out of the
+  // grid/flex layout so it doesn't affect sizing.
   return (
-    <div role="listitem" aria-hidden={ariaHidden} className={classes}>
-      {content}
+    <div role="listitem" aria-hidden={ariaHidden} className="contents">
+      {logo.href ? (
+        <a
+          href={logo.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={logo.name}
+          tabIndex={ariaHidden ? -1 : 0}
+          className={cn(classes, "rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2")}
+        >
+          {content}
+        </a>
+      ) : (
+        <div className={classes}>{content}</div>
+      )}
     </div>
   );
 });
@@ -160,17 +169,37 @@ export const LogoClouds: React.FC<LogoCloudsProps> = ({
   const prefersReducedMotion = useReducedMotion();
   const [isPaused, setIsPaused] = useState(false);
 
+  // Column counts are applied via CSS custom properties consumed by a static,
+  // literal Tailwind arbitrary-value class
+  const mobileCols = columns.mobile ?? 2;
+  const tabletCols = columns.tablet ?? mobileCols;
+  const desktopCols = columns.desktop ?? tabletCols;
+
   const columnsClassName = cn(
     "grid items-center justify-items-center gap-x-8 gap-y-6",
-    `grid-cols-${columns.mobile ?? 2}`,
-    columns.tablet && `sm:grid-cols-${columns.tablet}`,
-    columns.desktop && `lg:grid-cols-${columns.desktop}`
+    "grid-cols-[repeat(var(--lc-cols-mobile),minmax(0,1fr))]",
+    "sm:grid-cols-[repeat(var(--lc-cols-tablet),minmax(0,1fr))]",
+    "lg:grid-cols-[repeat(var(--lc-cols-desktop),minmax(0,1fr))]"
   );
+
+  const columnsStyle: ColumnsCSSProperties = {
+    "--lc-cols-mobile": mobileCols,
+    "--lc-cols-tablet": tabletCols,
+    "--lc-cols-desktop": desktopCols,
+  };
 
   // Duplicate the track once so the marquee can loop seamlessly from -50%.
   const marqueeLogos = useMemo(() => [...logos, ...logos], [logos]);
 
   const shouldAnimate = variant === "marquee" && !prefersReducedMotion;
+
+  // A unique keyframe name per instance avoids collisions when multiple
+  // LogoClouds marquees render on the same page. Driven by a plain CSS
+  // animation (rather than swapping framer-motion's `animate` prop in and
+  // out) so pausing/resuming toggles `animation-play-state` on the same
+  // running animation instead of restarting it from 0% - the track holds its
+  // scroll position across hover instead of snapping back.
+  const marqueeAnimationName = `lc-marquee-${useId().replace(/[^a-zA-Z0-9-]/g, "")}`;
 
   if (logos.length === 0) return null;
 
@@ -204,7 +233,7 @@ export const LogoClouds: React.FC<LogoCloudsProps> = ({
         )}
 
         {variant === "grid" ? (
-          <div role="list" className={cn(columnsClassName)}>
+          <div role="list" className={columnsClassName} style={columnsStyle}>
             {logos.map((logo) => (
               <LogoMark
                 key={logo.id}
@@ -223,11 +252,17 @@ export const LogoClouds: React.FC<LogoCloudsProps> = ({
             onFocus={() => pauseOnHover && setIsPaused(true)}
             onBlur={() => pauseOnHover && setIsPaused(false)}
           >
-            <motion.div
+            <style>{`@keyframes ${marqueeAnimationName} { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
+            <div
               role="list"
               className="flex w-max items-center gap-16"
-              animate={shouldAnimate && !isPaused ? { x: ["0%", "-50%"] } : undefined}
-              transition={{ duration: speed, ease: "linear", repeat: Infinity }}
+              style={{
+                animationName: shouldAnimate ? marqueeAnimationName : "none",
+                animationDuration: `${speed}s`,
+                animationTimingFunction: "linear",
+                animationIterationCount: "infinite",
+                animationPlayState: isPaused ? "paused" : "running",
+              }}
             >
               {marqueeLogos.map((logo, index) => (
                 <LogoMark
@@ -241,7 +276,7 @@ export const LogoClouds: React.FC<LogoCloudsProps> = ({
                   ariaHidden={index >= logos.length}
                 />
               ))}
-            </motion.div>
+            </div>
           </div>
         )}
       </div>
