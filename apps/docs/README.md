@@ -28,7 +28,7 @@ docs/
 │   ├── css/           # Styles
 │   └── theme/         # Docusaurus theme
 ├── static/            # Static assets
-└── docusaurus.config.js  # Site configuration
+└── docusaurus.config.ts  # Site configuration
 ```
 
 ## Development
