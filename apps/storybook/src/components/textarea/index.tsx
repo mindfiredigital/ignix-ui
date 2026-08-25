@@ -88,7 +88,7 @@ export const AnimatedTextarea = React.forwardRef<HTMLTextAreaElement, AnimatedTe
       error = "",
       success = false,
       icon: Icon,
-      maxLength = 1000,
+      maxLength,
       minRows = 3,
       maxRows = 10,
       size = "md",
