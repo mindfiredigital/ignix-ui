@@ -25,7 +25,7 @@ const mockTemplateConfig = {
   dependencies: ['framer-motion'],
   componentDependencies: ['button'],
   files: {
-    main: { path: 'templates/landing.tsx', type: 'template' },
+    main: { path: 'templates/landing/landing.tsx', type: 'template' },
   },
 };
 
@@ -55,7 +55,12 @@ describe('TemplateService', () => {
 
       await service.install('landing');
 
-      expect(mockDependency.install).toHaveBeenCalledWith(['framer-motion'], false, false);
+      expect(mockDependency.install).toHaveBeenCalledWith(
+        ['framer-motion'],
+        false,
+        false,
+        expect.any(String)
+      );
       expect(mockComponent.install).toHaveBeenCalledWith('button');
       expect(mockRegistry.getTemplateConfig).toHaveBeenCalledWith('landing');
 

@@ -1,9 +1,10 @@
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { LazyLoad } from "./index";
 
-export default {
+const meta: Meta<typeof LazyLoad> = {
   title: "Layouts/LazyLoad",
   component: LazyLoad,
-   tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     threshold: {
       control: { type: "text" },
@@ -25,26 +26,37 @@ export default {
   },
 };
 
-const Template = (args) => (
-  <LazyLoad {...args}>
-    <div style={{ height: "200px", background: "#ccc" ,display: "flex", 
-    justifyContent: "center", 
-    alignItems: "center" }}>Loaded Content</div>
-  </LazyLoad>
-);
+export default meta;
+type Story = StoryObj<typeof LazyLoad>;
 
-export const Default = Template.bind({});
-Default.args = {
-  threshold: "100px",
-  placeholder: <div style={{ height: "200px", background: "#eee" }}>Loading...</div>,
-  once: true,
-  animation: "fade",
+export const Default: Story = {
+  args: {
+    threshold: "100px",
+    placeholder: <div className="h-[200px] bg-neutral-100 flex items-center justify-center text-sm text-neutral-500">Loading...</div>,
+    once: true,
+    animation: "fade",
+  },
+  render: (args) => (
+    <LazyLoad {...args}>
+      <div className="h-[200px] bg-neutral-300 flex items-center justify-center">
+        Loaded Content
+      </div>
+    </LazyLoad>
+  ),
 };
 
-export const SlideAnimation = Template.bind({});
-SlideAnimation.args = {
-  threshold: "50px",
-  placeholder: <div style={{ height: "200px", background: "#eee" }}>Loading...</div>,
-  once: false,
-  animation: "slide",
+export const SlideAnimation: Story = {
+  args: {
+    threshold: "50px",
+    placeholder: <div className="h-[200px] bg-neutral-100 flex items-center justify-center text-sm text-neutral-500">Loading...</div>,
+    once: false,
+    animation: "slide",
+  },
+  render: (args) => (
+    <LazyLoad {...args}>
+      <div className="h-[200px] bg-neutral-300 flex items-center justify-center">
+        Loaded Content
+      </div>
+    </LazyLoad>
+  ),
 };

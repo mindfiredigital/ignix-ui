@@ -114,6 +114,30 @@ const FileUploadMinimalDemo = () => {
     // Handle file changes here
   };
 
+  const validateFile = (file: File) => {
+    // Custom validation rules
+    const errors: string[] = [];
+
+    if (file.name.length > 50) {
+      errors.push('File name must be 50 characters or fewer');
+    }
+
+    // Check for special characters
+    if (/[<>:"/\\|?*]/.test(file.name)) {
+      errors.push('File name contains invalid characters');
+    }
+
+    // Custom size limit based on file type
+    if (file.type.startsWith('image/') && file.size > 2 * 1024 * 1024) {
+      errors.push('Images must be 2 MB or smaller');
+    }
+
+    return {
+      isValid: errors.length === 0,
+      error: errors.join(', '),
+    };
+  };
+
   const codeString = `
 import { FileUpload } from '@ignix-ui/fileupload';
 import { useState } from 'react';
@@ -126,19 +150,43 @@ function MinimalUploadExample() {
     setFiles(newFiles);
   };
 
+  const validateFile = (file: File) => {
+    // Custom validation rules
+    const errors: string[] = [];
+
+    if (file.name.length > 50) {
+      errors.push('File name must be 50 characters or fewer');
+    }
+
+    // Check for special characters
+    if (/[<>:"/\\\\|?*]/.test(file.name)) {
+      errors.push('File name contains invalid characters');
+    }
+
+    // Custom size limit based on file type
+    if (file.type.startsWith('image/') && file.size > 2 * 1024 * 1024) {
+      errors.push('Images must be 2 MB or smaller');
+    }
+
+    return {
+      isValid: errors.length === 0,
+      error: errors.join(', ')
+    };
+  };
+
   const handleUpload = async () => {
     // Example: Create FormData for upload
     const formData = new FormData();
     files.forEach(file => {
       formData.append('files', file);
     });
-    
+
     // Send to your backend
     const response = await fetch('/api/upload', {
       method: 'POST',
       body: formData,
     });
-    
+
     // Handle response...
   };
 
@@ -150,6 +198,7 @@ function MinimalUploadExample() {
         buttonText="Choose Files"
         buttonVariant="primary"
         onFilesChange={handleFilesChange}
+        validateFile={validateFile}
         className="w-full max-w-md"
       />
 
@@ -173,6 +222,7 @@ function MinimalUploadExample() {
                   buttonVariant="primary"
                   disabled={false}
                   onFilesChange={handleFilesChange}
+                  validateFile={validateFile}
                   className="w-full max-w-md"
                 />
               </div>

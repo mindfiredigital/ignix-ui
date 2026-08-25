@@ -13,14 +13,18 @@ export interface IgnixConfig {
   themesDir: string;
   templatesDir?: string;
   templateLayoutDir?: string;
+  globalCss?: string;
 }
 
 export async function loadConfig(): Promise<IgnixConfig> {
   const configPath = path.resolve(process.cwd(), DEFAULT_CONFIG_FILENAME);
   if (!(await fs.pathExists(configPath))) {
-    logger.error('Configuration file `ignix.config.js` not found.');
-    logger.info("Please run 'npx ignix init' to create a configuration file.");
-    process.exit(1);
+    // Throw instead of calling process.exit() directly - the caller's own try/catch
+    // already builds a proper JSON error response, and a direct exit() here would
+    // bypass that entirely, producing no output at all in --json mode.
+    throw new Error(
+      "Configuration file `ignix.config.js` not found. Run 'npx ignix init' to create one."
+    );
   }
 
   try {
@@ -89,7 +93,6 @@ export async function loadConfig(): Promise<IgnixConfig> {
     }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    logger.error(`Failed to load \`${DEFAULT_CONFIG_FILENAME}\`. Error: ${errorMessage}`);
-    process.exit(1);
+    throw new Error(`Failed to load \`${DEFAULT_CONFIG_FILENAME}\`. Error: ${errorMessage}`);
   }
 }

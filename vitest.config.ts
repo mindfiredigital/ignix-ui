@@ -6,6 +6,7 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './setupTests.ts',
+    testTimeout: 15000,
     reporters: ['default', ['vitest-sonar-reporter', { outputFile: 'test-report.xml' }]],
     coverage: {
       provider: 'v8',

@@ -7,6 +7,9 @@ import { RegistryService } from './RegistryService';
 import { loadConfig } from '../utils/config';
 import { logger } from '../utils/logger';
 import { DependencyService } from './DependencyService';
+import { findPackageRoot } from '../utils/findPackageRoot';
+import { rewriteCnImportDepth } from '../utils/rewriteCnImportDepth';
+import { resolveCnImportPath } from '../utils/resolveCnImportPath';
 
 export class ComponentService {
   private registryService = new RegistryService();
@@ -43,7 +46,17 @@ export class ComponentService {
       // 1. Install dependencies
       if (componentConfig.dependencies && componentConfig.dependencies.length > 0) {
         spinner.text = `Installing dependencies for ${name}...`;
-        await this.dependencyService.install(componentConfig.dependencies, false, this.silent);
+        // Resolve the actual workspace package this component belongs to - for a
+        // monorepo this is packages/ui, not the repo root.
+        const installTargetDir = await findPackageRoot(
+          path.resolve(config.componentsDir || 'src/components/ui')
+        );
+        await this.dependencyService.install(
+          componentConfig.dependencies,
+          false,
+          this.silent,
+          installTargetDir
+        );
       }
 
       // 1.a To Install internal component dependencies
@@ -72,7 +85,17 @@ export class ComponentService {
       const installedFiles: string[] = [];
 
       const componentsDir = path.resolve(config.componentsDir || 'src/components/ui');
-      const componentDir = path.join(componentsDir, name.toLowerCase());
+      // Name the installed folder after the registry's actual source folder (e.g.
+      // "date-picker"), not the lowercased registry key (e.g. "datepicker" from
+      // "datePicker") - other components/templates already import this one via
+      // @ignix-ui/<source-folder-name>, since that's what resolves correctly in the
+      // registry's own source tree (and its test suite). Matching that convention on
+      // install means those existing imports resolve correctly with zero source edits.
+      const installFolderName = componentConfig.files.main
+        ? path.basename(path.dirname(componentConfig.files.main.path))
+        : name.toLowerCase();
+      const componentDir = path.join(componentsDir, installFolderName);
+      const cnImportPath = resolveCnImportPath(componentsDir, installFolderName);
 
       // Create component directory
       await fs.ensureDir(componentDir);
@@ -88,7 +111,12 @@ export class ComponentService {
         const fileUrl = `${registryBaseUrl}/${fileInfo.path}`;
         logger.info(`[Component] Downloading: ${fileUrl}`);
 
-        const { data: content } = await axios.get(fileUrl, { responseType: 'text' });
+        const { data: rawContent } = await axios.get(fileUrl, { responseType: 'text' });
+        // The registry's own source tree needs a deeper relative path to reach its
+        // utils/cn.ts than an installed, flattened project does - rewrite it here at
+        // install time rather than in the source file, so the registry's own test
+        // suite (which resolves the un-rewritten path) is unaffected.
+        const content = rewriteCnImportDepth(rawContent, cnImportPath);
 
         // Use path.basename to handle nested file structures within the component folder
         const fileName = path.basename(fileInfo.path);

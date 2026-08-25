@@ -117,7 +117,7 @@ interface ProfileProps {
     avatarShape?: 'circle' | 'square' | 'rounded' | 'hexagon' | 'star';
     avatarSize?: 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | '8xl' | '9xl';
     inputVariant?: string;
-    buttonVariant?: string;
+    buttonVariant?: ButtonVariantType;
     buttonAnimationVariant?: string;
 
     // Custom content
@@ -521,7 +521,7 @@ const SaveCancelBar = ({
             "border-t border-border animate-fade-in cursor-pointer"
         )}>
             <Button
-                variant={cancelButtonVariant}
+                variant={cancelButtonVariant as React.ComponentPropsWithoutRef<typeof Button>['variant']}
                 onClick={onCancel}
                 disabled={isSaving}
                 className="min-w-[100px] cursor-pointer"
@@ -531,7 +531,7 @@ const SaveCancelBar = ({
                 Cancel
             </Button>
             <Button
-                variant={saveButtonVariant}
+                variant={saveButtonVariant as React.ComponentPropsWithoutRef<typeof Button>['variant']}
                 onClick={onSave}
                 disabled={isSaving}
                 className="min-w-[100px] cursor-pointer"
@@ -799,7 +799,7 @@ export const ProfilePage: React.FC<ProfileProps> = ({
                             {!isEditing && (
                                 <Button
                                     onClick={handleEdit}
-                                    variant={buttonVariant}
+                                    variant={buttonVariant as React.ComponentPropsWithoutRef<typeof Button>['variant']}
                                     animationVariant={buttonAnimationVariant}
                                     className='cursor-pointer'
                                 >

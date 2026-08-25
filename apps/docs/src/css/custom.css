@@ -112,6 +112,26 @@
   --board-bg: linear-gradient(to bottom right, #f8fafc, #f1f5f9);
   --column-bg: rgba(241, 245, 249, 0.5);
   --brand-gradient: linear-gradient(135deg, #3b82f6, #8b5cf6);
+
+  /* Glass Theme - Light */
+  --glass-bg: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.78) 0%,
+      rgba(255, 225, 235, .90) 45%,
+      rgba(255, 222, 230, 0.76) 100%);
+
+  --glass-border: rgba(255, 120, 150, 0.28);
+
+  --glass-shadow:
+    0 12px 28px rgba(255, 70, 110, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
+
+  --glass-hover: linear-gradient(135deg,
+      rgba(255, 255, 255, .88),
+      rgba(255, 225, 235, .86),
+      rgba(255, 205, 220, .82));
+
+  --glass-text: var(--foreground);
+  --glass-muted: var(--muted-foreground);
 }
 
 [data-theme='dark'] {
@@ -195,6 +215,32 @@
   --board-bg: linear-gradient(to bottom right, #0f172a, #020617);
   --column-bg: rgba(30, 41, 59, 0.4);
   --brand-gradient: linear-gradient(135deg, #60a5fa, #a78bfa);
+
+  --glass-bg:
+    linear-gradient(135deg,
+      rgba(255, 255, 255, .08),
+      rgba(255, 90, 90, .06),
+      rgba(255, 40, 90, .04));
+
+  --glass-bg-subtle:
+    linear-gradient(135deg,
+      rgba(255, 255, 255, .05),
+      rgba(255, 255, 255, .03));
+
+  --glass-border: rgba(255, 255, 255, .12);
+
+  --glass-shadow:
+    0 12px 36px rgba(0, 0, 0, .45);
+
+  --glass-text: var(--foreground);
+
+  --glass-muted: var(--muted-foreground);
+
+  --glass-hover:
+    linear-gradient(135deg,
+      rgba(255, 255, 255, .12),
+      rgba(255, 90, 90, .08),
+      rgba(255, 40, 90, .06));
 }
 
 @theme inline {
@@ -290,16 +336,40 @@
   --color-board-column: var(--column-bg);
   --color-gradient-brand: var(--brand-gradient);
 
+  --color-glass-bg: var(--glass-bg);
+  --color-glass-bg-subtle: var(--glass-bg-subtle);
+  --color-glass-border: var(--glass-border);
+  --color-glass-shadow: var(--glass-shadow);
+  --color-glass-text: var(--glass-text);
+  --color-glass-muted: var(--glass-muted);
+  --color-glass-hover: var(--glass-hover);
+
   @keyframes shine {
-    0% { background-position: 0% 0%; }
-    50% { background-position: 100% 100%; }
-    100% { background-position: 0% 0%; }
+    0% {
+      background-position: 0% 0%;
+    }
+
+    50% {
+      background-position: 100% 100%;
+    }
+
+    100% {
+      background-position: 0% 0%;
+    }
   }
 
   @keyframes gradient {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    0% {
+      background-position: 0% 50%;
+    }
+
+    50% {
+      background-position: 100% 50%;
+    }
+
+    100% {
+      background-position: 0% 50%;
+    }
   }
 
   --animate-gradient: gradient 8s linear infinite;
@@ -308,13 +378,23 @@
   --animate-aurora: aurora 8s ease-in-out infinite alternate;
 
   @keyframes marquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(calc(-100% - var(--gap))); }
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(calc(-100% - var(--gap)));
+    }
   }
 
   @keyframes marquee-vertical {
-    from { transform: translateY(0); }
-    to { transform: translateY(calc(-100% - var(--gap))); }
+    from {
+      transform: translateY(0);
+    }
+
+    to {
+      transform: translateY(calc(-100% - var(--gap)));
+    }
   }
 
   @keyframes aurora {
@@ -322,18 +402,22 @@
       background-position: 0% 50%;
       transform: rotate(-5deg) scale(0.9);
     }
+
     25% {
       background-position: 50% 100%;
       transform: rotate(5deg) scale(1.1);
     }
+
     50% {
       background-position: 100% 50%;
       transform: rotate(-3deg) scale(0.95);
     }
+
     75% {
       background-position: 50% 0%;
       transform: rotate(3deg) scale(1.05);
     }
+
     100% {
       background-position: 0% 50%;
       transform: rotate(-5deg) scale(0.9);
@@ -441,9 +525,17 @@ h1 {
 }
 
 @keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .hero-noise {
@@ -511,6 +603,7 @@ h1 {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .gradient-anim,
   .hero-spotlight {
     animation: none !important;
@@ -523,6 +616,7 @@ h1 {
     opacity: 0;
     transform: translateY(16px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -530,8 +624,15 @@ h1 {
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
 }
 
 .glass-card {

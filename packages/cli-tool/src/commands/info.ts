@@ -51,10 +51,13 @@ export function createInfoCommand() {
                 2
               )
             );
-            process.exit(1);
+            process.exitCode = 1;
+          } else {
+            logger.error(`Component "${name}" not found`);
+            process.exitCode = 1;
           }
-          logger.error(`Component "${name}" not found`);
-          process.exit(1);
+          process.chdir(originalCwd);
+          return;
         }
 
         if (ctx.isJson) {
@@ -97,10 +100,10 @@ export function createInfoCommand() {
               2
             )
           );
-          process.exit(1);
+          process.exitCode = 1;
         }
         logger.error(error instanceof Error ? error.message : String(error));
-        process.exit(1);
+        process.exitCode = 1;
       } finally {
         if (ctx.isJson) {
           logger.setSilent(false);

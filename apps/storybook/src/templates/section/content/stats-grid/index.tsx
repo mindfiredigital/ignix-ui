@@ -32,8 +32,8 @@ export interface StatItem {
 
 export interface StatsGridProps extends VariantProps<typeof statsGridVariants> {
     // Layout & Variants
-    variant?: "default" | "dark" | "light";
-    columns?: 2 | 3 | 4 | 5 | 6;
+    variant?: "default" | "dark" | "light" | "primary" | "secondary";
+    columns?: 1 | 2 | 3 | 4 | 5 | 6;
     contentAlign?: "left" | "center" | "right";
 
     // Animation
@@ -110,6 +110,8 @@ const statsGridVariants = cva("w-full transition-all duration-300", {
             default: "bg-white text-gray-900",
             dark: "bg-gray-950 text-white", // Solid dark, no gradient
             light: "bg-gray-50 text-gray-900",
+            primary: "bg-primary text-white",
+            secondary: "bg-secondary text-white",
         },
         padding: {
             sm: "py-8 md:py-12",
@@ -148,6 +150,7 @@ const gapClasses: Record<string, string> = {
 };
 
 const columnClasses: Record<number, string> = {
+    1: "grid-cols-1",
     2: "grid-cols-1 sm:grid-cols-2",
     3: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
     4: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4",
@@ -525,6 +528,12 @@ export interface StatIconProps {
     bgColor?: string;
     iconColor?: string;
     solid?: boolean; // Use solid vibrant colors instead of light backgrounds
+    // Story compatibility props
+    iconBg?: string;
+    iconFg?: string;
+    darkIconBg?: string;
+    darkIconFg?: string;
+    overrideAccent?: boolean;
 }
 
 /**
@@ -547,6 +556,11 @@ export const StatIcon: React.FC<StatIconProps> = ({
     bgColor,
     iconColor,
     solid = false,
+    iconBg,
+    iconFg,
+    darkIconBg,
+    darkIconFg,
+    overrideAccent = false,
 }) => {
     const context = useStatsGrid();
     const styles = vibrantAccentStyles[accent];
@@ -565,6 +579,10 @@ export const StatIcon: React.FC<StatIconProps> = ({
 
     // Determine background color
     const getBgClass = () => {
+        if (overrideAccent) {
+            const overrideVal = context.theme === "dark" && darkIconBg ? darkIconBg : iconBg || bgColor;
+            if (overrideVal) return overrideVal;
+        }
         if (bgColor) return bgColor;
         if (solid) return styles.iconBg;
         return context.theme === "dark" ? styles.darkBg : styles.lightBg;
@@ -572,6 +590,10 @@ export const StatIcon: React.FC<StatIconProps> = ({
 
     // Determine icon color
     const getFgClass = () => {
+        if (overrideAccent) {
+            const overrideVal = context.theme === "dark" && darkIconFg ? darkIconFg : iconFg || iconColor;
+            if (overrideVal) return overrideVal;
+        }
         if (iconColor) return iconColor;
         if (solid) return styles.iconFg;
         return context.theme === "dark" ? "text-gray-200" : `text-${accent}-600`;
