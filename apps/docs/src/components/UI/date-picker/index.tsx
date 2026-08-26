@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect, useRef, forwardRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -945,9 +945,11 @@ const CalendarView: React.FC<CalendarViewProps> = ({
 
     React.useEffect(() => {
         if (selectorView === 'years' && yearsListRef.current) {
-            const activeYearEl = document.getElementById(`year-${currentYear}`);
+            const activeYearEl = yearsListRef.current.querySelector<HTMLElement>(
+                `[data-year="${currentYear}"]`
+            );
             if (activeYearEl) {
-                activeYearEl.scrollIntoView({ block: 'center', behavior: 'instant' as any });
+                activeYearEl.scrollIntoView({ block: 'center', behavior: 'instant' });
             }
         }
     }, [selectorView, currentYear]);
@@ -1011,6 +1013,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                     <ChevronLeft className={size === 'sm' ? "w-4 h-4" : "w-5 h-5"} />
                 </Button>
                 <button
+                    type="button"
+                    aria-expanded={selectorView !== 'days'}
                     onClick={() => {
                         if (selectorView === 'days') {
                             setSelectorView('months');
@@ -1060,6 +1064,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                         return (
                             <button
                                 key={name}
+                                type="button"
                                 onClick={() => {
                                     const newDate = new Date(currentYear, index, 1);
                                     onMonthChange(newDate);
@@ -1092,7 +1097,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                         return (
                             <button
                                 key={y}
-                                id={`year-${y}`}
+                                data-year={y}
+                                type="button"
                                 onClick={() => {
                                     const newDate = new Date(y, currentMonthIndex, 1);
                                     onMonthChange(newDate);
@@ -1441,6 +1447,20 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                 const viewportHeight = window.innerHeight;
                 const viewportWidth = window.innerWidth;
 
+                if (popupPosition === 'left' || popupPosition === 'right') {
+                    let side = popupPosition;
+                    const spaceLeft = triggerRect.left;
+                    const spaceRight = viewportWidth - triggerRect.right;
+
+                    if (popupPosition === 'left' && spaceLeft < popupWidth && spaceRight > popupWidth) {
+                        side = 'right';
+                    } else if (popupPosition === 'right' && spaceRight < popupWidth && spaceLeft > popupWidth) {
+                        side = 'left';
+                    }
+                    setComputedPosition(side as PopupPosition);
+                    return;
+                }
+
                 let vertical = 'bottom';
                 let horizontal = 'left';
 
@@ -1475,14 +1495,26 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                 setComputedPosition(`${vertical}-${horizontal}` as PopupPosition);
             };
 
-            const handle = requestAnimationFrame(updatePosition);
-            window.addEventListener('resize', updatePosition);
-            window.addEventListener('scroll', updatePosition, true);
+            let animationFrameId: number | null = null;
+            const throttledUpdate = () => {
+                if (animationFrameId === null) {
+                    animationFrameId = requestAnimationFrame(() => {
+                        updatePosition();
+                        animationFrameId = null;
+                    });
+                }
+            };
+
+            throttledUpdate();
+            window.addEventListener('resize', throttledUpdate);
+            window.addEventListener('scroll', throttledUpdate, true);
 
             return () => {
-                cancelAnimationFrame(handle);
-                window.removeEventListener('resize', updatePosition);
-                window.removeEventListener('scroll', updatePosition, true);
+                if (animationFrameId !== null) {
+                    cancelAnimationFrame(animationFrameId);
+                }
+                window.removeEventListener('resize', throttledUpdate);
+                window.removeEventListener('scroll', throttledUpdate, true);
             };
         }, [isOpen, popupPosition]);
 
@@ -1627,8 +1659,8 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                 setInternalError(error);
                 onError?.(error);
 
+                setSelectedRange(newRange);
                 if (!error) {
-                    setSelectedRange(newRange);
                     onChange?.(newRange);
                 }
             } else {
