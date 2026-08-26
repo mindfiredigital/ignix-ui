@@ -193,8 +193,8 @@ export const NoHeader: Story = {
 };
 
 export const MobileView: Story = {
-  parameters: {
-    viewport: { defaultViewport: "mobile1" },
+  globals: {
+    viewport: { value: "mobile1", isRotated: false },
   },
   args: {
     header: <span className="text-sm font-bold">Ignix UI</span>,

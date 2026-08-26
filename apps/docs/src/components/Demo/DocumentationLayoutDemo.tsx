@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import VariantSelector from './VariantSelector';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -49,40 +49,50 @@ const tocHeadings = [
 
 const mainContent = (
   <article className="prose prose-sm max-w-none">
-    <h2 id="demo-overview" className="text-2xl font-bold mb-4 text-[var(--foreground)]">
-      Overview
-    </h2>
-    <p className="text-[var(--muted-foreground)] mb-6 leading-relaxed">
-      DocumentationLayout provides a sticky header, a collapsible-tree navigation sidebar
-      (a drawer on mobile), and a scroll-spy "On this page" panel - the shape most
-      documentation and reference sites need out of the box.
-    </p>
-    <h2 id="demo-installation" className="text-2xl font-bold mt-8 mb-4 text-[var(--foreground)]">
-      Installation
-    </h2>
-    <p className="text-[var(--muted-foreground)] mb-6 leading-relaxed">
-      Add the template to your project, then wrap your page content with it.
-    </p>
-    <h2 id="demo-usage" className="text-2xl font-bold mt-8 mb-4 text-[var(--foreground)]">
-      Usage
-    </h2>
-    <p className="text-[var(--muted-foreground)] mb-6 leading-relaxed">
-      Pass <code>navSections</code> for the left sidebar and <code>tocHeadings</code> for the
-      right panel - the active heading highlights automatically as you scroll.
-    </p>
-    <h2 id="demo-props" className="text-2xl font-bold mt-8 mb-4 text-[var(--foreground)]">
-      Props
-    </h2>
-    <p className="text-[var(--muted-foreground)] mb-6 leading-relaxed">
-      See the Props table below this demo for the full API, including breadcrumbs, page
-      title, and previous/next page links.
-    </p>
+    <div className="min-h-[260px]">
+      <h2 id="demo-overview" className="text-2xl font-bold mb-4 text-[var(--foreground)]">
+        Overview
+      </h2>
+      <p className="text-[var(--muted-foreground)] mb-6 leading-relaxed">
+        DocumentationLayout provides a sticky header, a collapsible-tree navigation sidebar
+        (a drawer on mobile), and a scroll-spy "On this page" panel - the shape most
+        documentation and reference sites need out of the box. Scroll this preview to see the
+        "On this page" panel on the right track which section you're reading.
+      </p>
+    </div>
+    <div className="min-h-[260px]">
+      <h2 id="demo-installation" className="text-2xl font-bold mt-8 mb-4 text-[var(--foreground)]">
+        Installation
+      </h2>
+      <p className="text-[var(--muted-foreground)] mb-6 leading-relaxed">
+        Add the template to your project, then wrap your page content with it.
+      </p>
+    </div>
+    <div className="min-h-[260px]">
+      <h2 id="demo-usage" className="text-2xl font-bold mt-8 mb-4 text-[var(--foreground)]">
+        Usage
+      </h2>
+      <p className="text-[var(--muted-foreground)] mb-6 leading-relaxed">
+        Pass <code>navSections</code> for the left sidebar and <code>tocHeadings</code> for the
+        right panel - the active heading highlights automatically as you scroll.
+      </p>
+    </div>
+    <div className="min-h-[260px]">
+      <h2 id="demo-props" className="text-2xl font-bold mt-8 mb-4 text-[var(--foreground)]">
+        Props
+      </h2>
+      <p className="text-[var(--muted-foreground)] mb-6 leading-relaxed">
+        See the Props table below this demo for the full API, including breadcrumbs, page
+        title, and previous/next page links.
+      </p>
+    </div>
   </article>
 );
 
 const DocumentationLayoutDemo = () => {
   const [sidebarWidth, setSidebarWidth] = useState<number>(280);
   const [tocWidth, setTocWidth] = useState<number>(240);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const codeString = `
 import { DocumentationLayout } from '@ignix-ui/documentationlayout';
@@ -150,8 +160,9 @@ import { DocumentationLayout } from '@ignix-ui/documentationlayout';
       <Tabs>
         <TabItem value="preview" label="Preview" default>
           <div className="border border-gray-300 rounded-lg overflow-hidden mt-4" style={{ height: 560 }}>
-            <div className="h-full overflow-y-auto">
+            <div ref={scrollContainerRef} className="h-full overflow-y-auto">
               <DocumentationLayout
+                scrollContainerRef={scrollContainerRef}
                 header={
                   <Navbar variant="primary" size="md" className="rounded-none px-4 w-full">
                     <div className="flex items-center gap-2">

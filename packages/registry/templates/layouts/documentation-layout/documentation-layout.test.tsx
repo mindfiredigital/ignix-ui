@@ -1,7 +1,7 @@
 // documentation-layout.test.tsx
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 /* ------------------ HOISTED MOCKS (must be before importing component) ------------------ */
 vi.mock("lucide-react", () => ({
@@ -16,9 +16,14 @@ vi.mock("lucide-react", () => ({
 
 vi.mock("framer-motion", () => ({
   motion: {
-    aside: React.forwardRef(({ children, initial: _i, animate: _a, transition: _t, ...props }: any, ref: any) => (
-      <aside ref={ref} {...props}>{children}</aside>
-    )),
+    aside: React.forwardRef(
+      (
+        { children, initial: _i, animate: _a, transition: _t, onAnimationComplete: _oac, ...props }: any,
+        ref: any
+      ) => (
+        <aside ref={ref} {...props}>{children}</aside>
+      )
+    ),
     div: React.forwardRef(({ children, initial: _i, animate: _a, exit: _e, ...props }: any, ref: any) => (
       <div ref={ref} {...props}>{children}</div>
     )),
@@ -56,9 +61,35 @@ const tocHeadings: TocHeading[] = [
   { id: "usage", label: "Usage", depth: 3 },
 ];
 
+function matchesMaxWidthQuery(query: string): boolean {
+  const match = /max-width:\s*(\d+)px/.exec(query);
+  const maxWidth = match ? Number(match[1]) : Infinity;
+  return window.innerWidth <= maxWidth;
+}
+
 describe("DocumentationLayout", () => {
   beforeEach(() => {
     global.innerWidth = 1280;
+    // The shared setupTests.ts mock always returns `matches: false`, which breaks real
+    // breakpoint detection - this component's mobile/desktop split relies on it. Replace it
+    // per-file with one that actually parses `(max-width: Npx)` against the current width.
+    vi.spyOn(window, "matchMedia").mockImplementation(
+      (query: string) =>
+        ({
+          matches: matchesMaxWidthQuery(query),
+          media: query,
+          onchange: null,
+          addListener: vi.fn(),
+          removeListener: vi.fn(),
+          addEventListener: vi.fn(),
+          removeEventListener: vi.fn(),
+          dispatchEvent: vi.fn(),
+        }) as unknown as MediaQueryList
+    );
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   describe("rendering", () => {
@@ -123,7 +154,7 @@ describe("DocumentationLayout", () => {
       expect(screen.getByRole("link", { name: "Installation" })).not.toHaveAttribute("aria-current");
     });
 
-    it("auto-expands a group that contains no active descendant only after being toggled", () => {
+    it("keeps a group with no active descendant collapsed until it is toggled", () => {
       render(<DocumentationLayout navSections={navSections}><p>Content</p></DocumentationLayout>);
       // "Advanced" has no active descendant, so its children start collapsed.
       expect(screen.queryByRole("link", { name: "Theming" })).not.toBeInTheDocument();
@@ -151,6 +182,39 @@ describe("DocumentationLayout", () => {
       fireEvent.click(label);
       expect(screen.queryByRole("link", { name: "Theming" })).not.toBeInTheDocument();
       expect(label).toHaveAttribute("aria-expanded", "false");
+    });
+
+    it("toggles two groups that share a label in different branches independently", () => {
+      // Both branches have a group named "Overview" - expand/collapse state is keyed by
+      // tree position, not label, so toggling one must not affect the other.
+      const duplicateLabelSections: DocNavSection[] = [
+        {
+          label: "Section A",
+          items: [{ label: "Overview", items: [{ label: "Alpha Child", href: "/alpha" }] }],
+        },
+        {
+          label: "Section B",
+          items: [{ label: "Overview", items: [{ label: "Beta Child", href: "/beta" }] }],
+        },
+      ];
+      render(
+        <DocumentationLayout navSections={duplicateLabelSections}>
+          <p>Content</p>
+        </DocumentationLayout>
+      );
+
+      expect(screen.queryByRole("link", { name: "Alpha Child" })).not.toBeInTheDocument();
+      expect(screen.queryByRole("link", { name: "Beta Child" })).not.toBeInTheDocument();
+
+      const [expandA, expandB] = screen.getAllByRole("button", { name: "Expand Overview" });
+      fireEvent.click(expandA);
+
+      expect(screen.getByRole("link", { name: "Alpha Child" })).toBeInTheDocument();
+      expect(screen.queryByRole("link", { name: "Beta Child" })).not.toBeInTheDocument();
+
+      fireEvent.click(expandB);
+      expect(screen.getByRole("link", { name: "Beta Child" })).toBeInTheDocument();
+      expect(screen.getByRole("link", { name: "Alpha Child" })).toBeInTheDocument();
     });
   });
 
@@ -262,9 +326,10 @@ describe("DocumentationLayout", () => {
     it("observes each heading element when IntersectionObserver is available", () => {
       const observe = vi.fn();
       const disconnect = vi.fn();
+      let capturedOptions: IntersectionObserverInit | undefined;
       class MockIntersectionObserver {
-        constructor(_cb: IntersectionObserverCallback) {
-          void _cb;
+        constructor(_cb: IntersectionObserverCallback, options?: IntersectionObserverInit) {
+          capturedOptions = options;
         }
         observe = observe;
         disconnect = disconnect;
@@ -280,6 +345,43 @@ describe("DocumentationLayout", () => {
       render(<DocumentationLayout tocHeadings={tocHeadings}><p>Content</p></DocumentationLayout>);
 
       expect(observe).toHaveBeenCalledWith(overview);
+      // No scrollContainerRef provided: falls back to the viewport (root: null).
+      expect(capturedOptions?.root).toBeNull();
+
+      document.body.removeChild(overview);
+      vi.unstubAllGlobals();
+    });
+
+    it("uses a provided scrollContainerRef as the IntersectionObserver root", () => {
+      let capturedOptions: IntersectionObserverInit | undefined;
+      class MockIntersectionObserver {
+        constructor(_cb: IntersectionObserverCallback, options?: IntersectionObserverInit) {
+          capturedOptions = options;
+        }
+        observe = vi.fn();
+        disconnect = vi.fn();
+        unobserve = vi.fn();
+        takeRecords = vi.fn();
+      }
+      vi.stubGlobal("IntersectionObserver", MockIntersectionObserver);
+
+      const overview = document.createElement("div");
+      overview.id = "overview";
+      document.body.appendChild(overview);
+
+      const ScrollableDemo: React.FC = () => {
+        const containerRef = React.useRef<HTMLDivElement>(null);
+        return (
+          <div ref={containerRef} data-testid="scroll-container">
+            <DocumentationLayout tocHeadings={tocHeadings} scrollContainerRef={containerRef}>
+              <p>Content</p>
+            </DocumentationLayout>
+          </div>
+        );
+      };
+      render(<ScrollableDemo />);
+
+      expect(capturedOptions?.root).toBe(screen.getByTestId("scroll-container"));
 
       document.body.removeChild(overview);
       vi.unstubAllGlobals();
@@ -333,6 +435,82 @@ describe("DocumentationLayout", () => {
       // tech) - so this specific check queries the raw DOM attribute instead.
       const drawer = container.querySelector('[aria-label="Mobile sidebar navigation"]');
       expect(drawer).toHaveAttribute("aria-hidden", "true");
+    });
+
+    it("makes the closed mobile drawer inert so its links drop out of the tab order", () => {
+      // `aria-hidden` alone doesn't stop hidden content from being keyboard-focusable - real
+      // browsers also need `inert` for that. jsdom doesn't enforce inert's actual focus-blocking
+      // behavior, so this asserts the DOM property our fix sets, which is what drives it.
+      global.innerWidth = 500;
+      global.dispatchEvent(new Event("resize"));
+      const { container } = render(
+        <DocumentationLayout navSections={navSections}><p>Content</p></DocumentationLayout>
+      );
+
+      const drawer = container.querySelector('[aria-label="Mobile sidebar navigation"]') as HTMLElement & {
+        inert: boolean;
+      };
+      expect(drawer.inert).toBe(true);
+
+      fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
+      expect(drawer.inert).toBe(false);
+
+      fireEvent.click(screen.getByRole("button", { name: "Close navigation" }));
+      expect(drawer.inert).toBe(true);
+    });
+
+    it("moves focus into the drawer on open and restores it to the trigger on close", () => {
+      global.innerWidth = 500;
+      global.dispatchEvent(new Event("resize"));
+      const { container } = render(
+        <DocumentationLayout navSections={navSections}><p>Content</p></DocumentationLayout>
+      );
+
+      const trigger = screen.getByRole("button", { name: "Open navigation" });
+      fireEvent.click(trigger);
+
+      const drawer = container.querySelector('[aria-label="Mobile sidebar navigation"]');
+      expect(document.activeElement).toBe(drawer);
+
+      fireEvent.click(screen.getByRole("button", { name: "Close navigation" }));
+      expect(document.activeElement).toBe(trigger);
+    });
+
+    it("closes the mobile drawer when Escape is pressed", () => {
+      global.innerWidth = 500;
+      global.dispatchEvent(new Event("resize"));
+      const { container } = render(
+        <DocumentationLayout navSections={navSections}><p>Content</p></DocumentationLayout>
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
+      const drawer = container.querySelector('[aria-label="Mobile sidebar navigation"]') as HTMLElement;
+      expect(drawer).toHaveAttribute("aria-hidden", "false");
+
+      fireEvent.keyDown(drawer, { key: "Escape" });
+      expect(drawer).toHaveAttribute("aria-hidden", "true");
+    });
+
+    it("traps Tab focus within the open drawer, wrapping at both ends", () => {
+      global.innerWidth = 500;
+      global.dispatchEvent(new Event("resize"));
+      const { container } = render(
+        <DocumentationLayout navSections={navSections}><p>Content</p></DocumentationLayout>
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
+      const drawer = container.querySelector('[aria-label="Mobile sidebar navigation"]') as HTMLElement;
+      const focusable = drawer.querySelectorAll<HTMLElement>('a[href], button:not([disabled])');
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      last.focus();
+      fireEvent.keyDown(drawer, { key: "Tab" });
+      expect(document.activeElement).toBe(first);
+
+      first.focus();
+      fireEvent.keyDown(drawer, { key: "Tab", shiftKey: true });
+      expect(document.activeElement).toBe(last);
     });
   });
 
