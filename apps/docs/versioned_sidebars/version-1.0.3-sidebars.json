@@ -152,7 +152,8 @@
             "templates/layouts/sidebar-left-layout",
             "templates/layouts/sidebar-right-layout",
             "templates/layouts/single-column-layout",
-            "templates/layouts/three-column-sidebar-layout"
+            "templates/layouts/three-column-sidebar-layout",
+            "templates/layouts/documentation-layout"
           ]
         },
         {

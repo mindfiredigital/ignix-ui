@@ -1109,6 +1109,20 @@
         }
       }
     },
+    "documentationlayout": {
+      "name": "DocumentationLayout",
+      "description": "A full-page documentation/reference site shell: sticky header, a collapsible-tree left navigation sidebar (a drawer on mobile), page content with breadcrumbs and prev/next links, and a scroll-spy 'On this page' panel.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/layouts/documentation-layout/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "forgot-password": {
       "name": "forgotPassword",
       "description": "A fully responsive and customizable Forgot Password component with an input field and submit button, built to support secure in-app password reset processes.",
