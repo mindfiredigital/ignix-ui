@@ -179,9 +179,15 @@ function useActiveHeading(
     // component's own render but before this effect runs, so it's already populated.
     const observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries.filter((entry) => entry.isIntersecting);
-        if (visible.length > 0) {
-          setActiveId(visible[0].target.id);
+        // `entries` order reflects browser-specific intersection-change batching, not document
+        // order, so when multiple headings cross the threshold in the same batch, pick whichever
+        // is first in `currentHeadings` (reading order) rather than trusting `entries[0]`.
+        const visibleIds = new Set(
+          entries.filter((entry) => entry.isIntersecting).map((entry) => entry.target.id)
+        );
+        const firstVisible = currentHeadings.find((heading) => visibleIds.has(heading.id));
+        if (firstVisible) {
+          setActiveId(firstVisible.id);
         }
       },
       { root: scrollContainerRef?.current ?? null, rootMargin: "0px 0px -70% 0px", threshold: 0 }
@@ -314,9 +320,12 @@ export const DocumentationLayout: React.FC<DocumentationLayoutProps> = ({
 
   const mobileBp = mobileBreakpoint === "sm" ? 640 : mobileBreakpoint === "md" ? 768 : 1024;
 
-  const [isMobile, setIsMobile] = React.useState(() =>
-    typeof window !== "undefined" ? window.innerWidth < mobileBp : false
-  );
+  // Starts `false` unconditionally (not derived from `window.innerWidth`) so server and client
+  // render the same markup on first paint; the mount effect below corrects it via `matchMedia`
+  // right after hydration. Deriving this from `window` would only match on truly client-only
+  // renders - during SSR hydration the client's own first pass already sees `window`, so the
+  // guard doesn't help there and the two renders could still disagree.
+  const [isMobile, setIsMobile] = React.useState(false);
 
   React.useEffect(() => {
     if (typeof window === "undefined" || typeof window.matchMedia !== "function") return;

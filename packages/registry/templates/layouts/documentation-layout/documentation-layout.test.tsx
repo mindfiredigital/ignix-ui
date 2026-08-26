@@ -1,6 +1,6 @@
 // documentation-layout.test.tsx
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 /* ------------------ HOISTED MOCKS (must be before importing component) ------------------ */
@@ -386,6 +386,48 @@ describe("DocumentationLayout", () => {
       document.body.removeChild(overview);
       vi.unstubAllGlobals();
     });
+
+    it("picks the heading first in currentHeadings order when multiple intersect in one batch", () => {
+      let capturedCallback: IntersectionObserverCallback | undefined;
+      class MockIntersectionObserver {
+        constructor(cb: IntersectionObserverCallback) {
+          capturedCallback = cb;
+        }
+        observe = vi.fn();
+        disconnect = vi.fn();
+        unobserve = vi.fn();
+        takeRecords = vi.fn();
+      }
+      vi.stubGlobal("IntersectionObserver", MockIntersectionObserver);
+
+      const overview = document.createElement("div");
+      overview.id = "overview";
+      document.body.appendChild(overview);
+      const usage = document.createElement("div");
+      usage.id = "usage";
+      document.body.appendChild(usage);
+
+      render(<DocumentationLayout tocHeadings={tocHeadings}><p>Content</p></DocumentationLayout>);
+
+      // Real browsers don't guarantee entries arrive in document order - simulate "usage"
+      // (second in tocHeadings) reported before "overview" (first) in the same batch.
+      act(() => {
+        capturedCallback?.(
+          [
+            { isIntersecting: true, target: usage } as unknown as IntersectionObserverEntry,
+            { isIntersecting: true, target: overview } as unknown as IntersectionObserverEntry,
+          ],
+          {} as IntersectionObserver
+        );
+      });
+
+      expect(screen.getByRole("link", { name: "Overview" })).toHaveAttribute("aria-current", "location");
+      expect(screen.getByRole("link", { name: "Usage" })).not.toHaveAttribute("aria-current");
+
+      document.body.removeChild(overview);
+      document.body.removeChild(usage);
+      vi.unstubAllGlobals();
+    });
   });
 
   describe("responsive behavior", () => {
@@ -396,9 +438,40 @@ describe("DocumentationLayout", () => {
       expect(screen.queryByRole("button", { name: "Open navigation" })).not.toBeInTheDocument();
     });
 
+    it("responds to a live breakpoint change via the matchMedia 'change' listener", () => {
+      global.innerWidth = 1280;
+      let changeHandler: ((event: MediaQueryListEvent) => void) | undefined;
+      // Capture the "change" handler the component registers, so we can fire it directly -
+      // this is what actually drives responsiveness after mount now (not a resize listener).
+      vi.mocked(window.matchMedia).mockImplementation(
+        (query: string) =>
+          ({
+            matches: matchesMaxWidthQuery(query),
+            media: query,
+            onchange: null,
+            addListener: vi.fn(),
+            removeListener: vi.fn(),
+            addEventListener: vi.fn((_event: string, handler: (event: MediaQueryListEvent) => void) => {
+              changeHandler = handler;
+            }),
+            removeEventListener: vi.fn(),
+            dispatchEvent: vi.fn(),
+          }) as unknown as MediaQueryList
+      );
+
+      render(<DocumentationLayout navSections={navSections}><p>Content</p></DocumentationLayout>);
+      expect(screen.getByRole("complementary", { name: "Sidebar navigation" })).toBeInTheDocument();
+
+      act(() => {
+        changeHandler?.({ matches: true } as MediaQueryListEvent);
+      });
+
+      expect(screen.queryByRole("complementary", { name: "Sidebar navigation" })).not.toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Open navigation" })).toBeInTheDocument();
+    });
+
     it("hides the desktop sidebar and shows a hamburger toggle at mobile widths", () => {
       global.innerWidth = 500;
-      global.dispatchEvent(new Event("resize"));
       render(<DocumentationLayout navSections={navSections}><p>Content</p></DocumentationLayout>);
       expect(screen.queryByRole("complementary", { name: "Sidebar navigation" })).not.toBeInTheDocument();
       expect(screen.getByRole("button", { name: "Open navigation" })).toBeInTheDocument();
@@ -406,7 +479,6 @@ describe("DocumentationLayout", () => {
 
     it("opens the mobile drawer when the hamburger button is clicked", () => {
       global.innerWidth = 500;
-      global.dispatchEvent(new Event("resize"));
       render(<DocumentationLayout navSections={navSections}><p>Content</p></DocumentationLayout>);
 
       const toggle = screen.getByRole("button", { name: "Open navigation" });
@@ -421,7 +493,6 @@ describe("DocumentationLayout", () => {
 
     it("closes the mobile drawer when a nav link is clicked", () => {
       global.innerWidth = 500;
-      global.dispatchEvent(new Event("resize"));
       const { container } = render(
         <DocumentationLayout navSections={navSections}><p>Content</p></DocumentationLayout>
       );
@@ -442,7 +513,6 @@ describe("DocumentationLayout", () => {
       // browsers also need `inert` for that. jsdom doesn't enforce inert's actual focus-blocking
       // behavior, so this asserts the DOM property our fix sets, which is what drives it.
       global.innerWidth = 500;
-      global.dispatchEvent(new Event("resize"));
       const { container } = render(
         <DocumentationLayout navSections={navSections}><p>Content</p></DocumentationLayout>
       );
@@ -461,7 +531,6 @@ describe("DocumentationLayout", () => {
 
     it("moves focus into the drawer on open and restores it to the trigger on close", () => {
       global.innerWidth = 500;
-      global.dispatchEvent(new Event("resize"));
       const { container } = render(
         <DocumentationLayout navSections={navSections}><p>Content</p></DocumentationLayout>
       );
@@ -478,7 +547,6 @@ describe("DocumentationLayout", () => {
 
     it("closes the mobile drawer when Escape is pressed", () => {
       global.innerWidth = 500;
-      global.dispatchEvent(new Event("resize"));
       const { container } = render(
         <DocumentationLayout navSections={navSections}><p>Content</p></DocumentationLayout>
       );
@@ -493,7 +561,6 @@ describe("DocumentationLayout", () => {
 
     it("traps Tab focus within the open drawer, wrapping at both ends", () => {
       global.innerWidth = 500;
-      global.dispatchEvent(new Event("resize"));
       const { container } = render(
         <DocumentationLayout navSections={navSections}><p>Content</p></DocumentationLayout>
       );
