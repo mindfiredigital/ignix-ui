@@ -32,11 +32,11 @@ ignix
 
 The interactive mode provides a beautiful, guided interface with the following options:
 
-- 🚀 **Initialize Ignix UI** - Set up your project
-- ➕ **Add components** - Add components to your project
-- 📋 **List components** - View available components
-- 🎨 **Manage themes** - Configure and manage themes
-- 🚪 **Exit** - Close the CLI
+- **Initialize Ignix UI** - Set up your project
+- **Add components** - Add components to your project
+- **List components** - View available components
+- **Manage themes** - Configure and manage themes
+- **Exit** - Close the CLI
 
 ### Command Mode
 

@@ -1,0 +1,242 @@
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronDown, MessageSquare } from "lucide-react";
+import { cn } from "../../../utils/cn";
+import { AIMessageBubble, type AIMessageBubbleProps } from "../ai-message-bubble";
+import { AIThinkingIndicator } from "../ai-thinking-indicator";
+import { Avatar } from "../avatar";
+
+const containerVariants = cva(
+  "relative flex-1 w-full overflow-y-auto pr-1 select-text scroll-smooth",
+  {
+    variants: {
+      variant: {
+        default: "bg-neutral-50/30 dark:bg-neutral-900/10",
+        dark: "bg-neutral-950 text-white",
+        glass: "bg-transparent",
+        minimal: "bg-transparent",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+);
+
+export interface AIMessagesItem {
+  id: string | number;
+  content: React.ReactNode;
+  role: "user" | "assistant" | "system";
+  senderName?: string;
+  timestamp?: string;
+  avatar?: React.ReactNode;
+  showCopy?: boolean;
+  actions?: React.ReactNode;
+}
+
+export interface AIMessagesProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "content" | "role">,
+  VariantProps<typeof containerVariants> {
+  messages: AIMessagesItem[];
+  isThinking?: boolean;
+  thinkingNode?: React.ReactNode;
+  emptyState?: React.ReactNode;
+  autoScroll?: boolean;
+  showJumpToBottom?: boolean;
+  jumpToBottomButton?: React.ReactNode;
+  messageBubbleProps?: Omit<AIMessageBubbleProps, "role" | "content">;
+}
+
+const AIMessages = React.forwardRef<HTMLDivElement, AIMessagesProps>(
+  (
+    {
+      className,
+      messages = [],
+      isThinking = false,
+      thinkingNode,
+      emptyState,
+      autoScroll = true,
+      showJumpToBottom = true,
+      jumpToBottomButton,
+      variant = "default",
+      messageBubbleProps,
+      ...props
+    },
+    ref
+  ) => {
+    const containerRef = React.useRef<HTMLDivElement>(null);
+    const [showJump, setShowJump] = React.useState(false);
+    const isAtBottomRef = React.useRef(true);
+
+    const scrollToBottom = (behavior: "smooth" | "auto" = "smooth") => {
+      const el = containerRef.current;
+      if (!el) return;
+      el.scrollTo({
+        top: el.scrollHeight,
+        behavior,
+      });
+      isAtBottomRef.current = true;
+      setShowJump(false);
+    };
+
+    const handleScroll = () => {
+      const el = containerRef.current;
+      if (!el) return;
+
+      const isAtBottom = el.scrollHeight - el.scrollTop - el.clientHeight <= 120;
+      isAtBottomRef.current = isAtBottom;
+
+      setShowJump(
+        showJumpToBottom &&
+        !isAtBottom &&
+        el.scrollHeight > el.clientHeight &&
+        messages.length > 0
+      );
+    };
+
+    const lastMessageContent = messages[messages.length - 1]?.content;
+    const lastMessageLength = typeof lastMessageContent === "string" ? lastMessageContent.length : 0;
+
+    React.useEffect(() => {
+      if (autoScroll && isAtBottomRef.current) {
+        const timeout = setTimeout(() => {
+          scrollToBottom("smooth");
+        }, 50);
+        return () => clearTimeout(timeout);
+      }
+    }, [messages.length, lastMessageLength, isThinking, autoScroll]);
+
+    React.useEffect(() => {
+      scrollToBottom("auto");
+    }, []);
+
+    const listVariants = {
+      hidden: { opacity: 0 },
+      show: {
+        opacity: 1,
+        transition: {
+          staggerChildren: 0.08,
+        },
+      },
+    };
+
+    const itemVariants = {
+      hidden: { opacity: 0, y: 12, scale: 0.98 },
+      show: {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] as const },
+      },
+    };
+
+    const isGlass = variant === "glass";
+
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          "relative flex flex-col w-full h-full min-h-[300px]",
+          isGlass && "bg-transparent"
+        )}
+      >
+        <div
+          ref={containerRef}
+          onScroll={handleScroll}
+          className={cn(containerVariants({ variant }), className)}
+          {...props}
+        >
+          {messages.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full min-h-[250px] p-8 text-center select-none">
+              {emptyState || (
+                <div className="flex flex-col items-center justify-center space-y-4 max-w-sm">
+                  <div className="p-4 bg-neutral-100 dark:bg-neutral-800 rounded-full text-neutral-400 dark:text-neutral-500">
+                    <MessageSquare size={24} />
+                  </div>
+                  <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+                    No messages yet
+                  </h3>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed">
+                    Start a new conversation by sending a prompt. The AI assistant's response will appear here.
+                  </p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex flex-col py-4">
+              <motion.div
+                variants={listVariants}
+                initial="hidden"
+                animate="show"
+                className="flex flex-col space-y-1"
+              >
+                {messages.map((msg, index) => (
+                  <motion.div key={msg.id ?? index} variants={itemVariants}>
+                    <AIMessageBubble
+                      role={msg.role}
+                      variant={variant === "dark" ? "default" : (variant ?? undefined)}
+                      content={msg.content}
+                      senderName={msg.senderName}
+                      timestamp={msg.timestamp}
+                      avatar={msg.avatar}
+                      showCopy={msg.showCopy}
+                      actions={msg.actions}
+                      animateEntry={false}
+                      {...messageBubbleProps}
+                    />
+                  </motion.div>
+                ))}
+              </motion.div>
+
+              {isThinking && (
+                <div className="flex items-center gap-3 p-4 select-none">
+                  {thinkingNode || (
+                    <>
+                      <Avatar
+                        alt="AI Thinking"
+                        size="sm"
+                        shape="circle"
+                        src="https://api.dicebear.com/7.x/bottts/svg?seed=thinking"
+                      />
+                      <AIThinkingIndicator type="dots" />
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        <AnimatePresence>
+          {showJump && (
+            <motion.button
+              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.95 }}
+              onClick={() => scrollToBottom("smooth")}
+              className={cn(
+                "absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-full shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer z-10 select-none",
+                variant === "dark"
+                  ? "bg-neutral-800 text-neutral-100 border border-neutral-700 hover:bg-neutral-700"
+                  : "bg-white text-neutral-800 border border-neutral-200 hover:bg-neutral-50 dark:bg-neutral-800 dark:text-neutral-200 dark:border-neutral-700 dark:hover:bg-neutral-700"
+              )}
+              title="Scroll to bottom"
+            >
+              {jumpToBottomButton || (
+                <>
+                  <ChevronDown size={14} className="animate-bounce" />
+                  <span>Jump to bottom</span>
+                </>
+              )}
+            </motion.button>
+          )}
+        </AnimatePresence>
+      </div>
+    );
+  }
+);
+
+AIMessages.displayName = "AIMessages";
+
+export { AIMessages };

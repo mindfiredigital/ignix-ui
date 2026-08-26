@@ -33,6 +33,8 @@ const spacerVariants = cva('', {
   },
 });
 
+type SpacerVariantSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+
 const Spacer = React.forwardRef<HTMLDivElement, SpacerProps>(
   (
     { className, size = 'md', direction = 'vertical', responsive, style, ...props },
@@ -43,16 +45,18 @@ const Spacer = React.forwardRef<HTMLDivElement, SpacerProps>(
     const responsiveClasses: string[] = [];
     if (responsive) {
       if (responsive.mobile && designTokenSizes.includes(responsive.mobile as string)) {
-        responsiveClasses.push(spacerVariants({ size: responsive.mobile as any, direction }));
+        responsiveClasses.push(
+          spacerVariants({ size: responsive.mobile as SpacerVariantSize, direction })
+        );
       }
       if (responsive.tablet && designTokenSizes.includes(responsive.tablet as string)) {
         responsiveClasses.push(
-          `sm:${spacerVariants({ size: responsive.tablet as any, direction })}`
+          `sm:${spacerVariants({ size: responsive.tablet as SpacerVariantSize, direction })}`
         );
       }
       if (responsive.desktop && designTokenSizes.includes(responsive.desktop as string)) {
         responsiveClasses.push(
-          `md:${spacerVariants({ size: responsive.desktop as any, direction })}`
+          `md:${spacerVariants({ size: responsive.desktop as SpacerVariantSize, direction })}`
         );
       }
     }
@@ -84,7 +88,7 @@ const Spacer = React.forwardRef<HTMLDivElement, SpacerProps>(
       <div
         ref={ref}
         className={cn(
-          !isCustomSize && spacerVariants({ size: size as any, direction }),
+          !isCustomSize && spacerVariants({ size: size as SpacerVariantSize, direction }),
           responsiveClasses,
           className
         )}

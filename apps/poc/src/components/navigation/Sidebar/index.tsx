@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import * as Collapsible from '@radix-ui/react-collapsible';
 import { ChevronRight, X } from 'lucide-react';
 import { cn } from '../../../lib/utils';
@@ -45,7 +45,7 @@ export const Sidebar = ({
     elevated: 'shadow-lg',
   };
 
-  const sidebarVariants = {
+  const sidebarVariants: Variants = {
     open: {
       width: isCollapsed ? 64 : 256,
       transition: {
@@ -67,7 +67,7 @@ export const Sidebar = ({
     },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     open: {
       x: 0,
       opacity: 1,
@@ -99,7 +99,7 @@ export const Sidebar = ({
     },
   };
 
-  const iconVariants = {
+  const iconVariants: Variants = {
     hover: {
       rotate: 10,
       scale: 1.1,
@@ -119,7 +119,7 @@ export const Sidebar = ({
     },
   };
 
-  const badgeVariants = {
+  const badgeVariants: Variants = {
     hover: {
       scale: 1.1,
       transition: {
@@ -130,7 +130,7 @@ export const Sidebar = ({
     },
   };
 
-  const tooltipVariants = {
+  const tooltipVariants: Variants = {
     hidden: {
       opacity: 0,
       x: -20,

@@ -9,17 +9,17 @@ type BadgeBaseProps = {
   className?: string;
 };
 
-type InlineBadgeProps = BadgeBaseProps & {
+export type InlineBadgeProps = BadgeBaseProps & {
   mode?: "inline";
   children?: never;
 };
 
-type AttachedBadgeProps = BadgeBaseProps & {
+export type AttachedBadgeProps = BadgeBaseProps & {
   mode: "attached";
   children: React.ReactNode;
 };
 
-type BadgeProps = InlineBadgeProps | AttachedBadgeProps;
+export type BadgeProps = InlineBadgeProps | AttachedBadgeProps;
 
 const Badge: React.FC<BadgeProps> = ({
   text,

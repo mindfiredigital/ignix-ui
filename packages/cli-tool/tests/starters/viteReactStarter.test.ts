@@ -29,7 +29,14 @@ describe('ViteReactStarter', () => {
     await ViteReactStarter.createViteReactTsconfig(root);
     expect(fs.writeJSON).toHaveBeenCalledWith(
       expect.stringContaining('tsconfig.json'),
-      expect.anything(),
+      expect.objectContaining({
+        compilerOptions: expect.objectContaining({
+          paths: expect.objectContaining({
+            '@ignix-ui/templates/*': ['./src/components/templates/*'],
+            '@ignix-ui/*': ['./src/components/ui/*'],
+          }),
+        }),
+      }),
       expect.anything()
     );
   });
@@ -38,7 +45,13 @@ describe('ViteReactStarter', () => {
     await ViteReactStarter.createViteConfig(root);
     expect(fs.writeFile).toHaveBeenCalledWith(
       expect.stringContaining('vite.config.ts'),
-      expect.stringContaining('defineConfig')
+      expect.stringContaining(
+        "'@ignix-ui/templates': path.resolve(__dirname, './src/components/templates')"
+      )
+    );
+    expect(fs.writeFile).toHaveBeenCalledWith(
+      expect.stringContaining('vite.config.ts'),
+      expect.stringContaining("'@ignix-ui': path.resolve(__dirname, './src/components/ui')")
     );
   });
 

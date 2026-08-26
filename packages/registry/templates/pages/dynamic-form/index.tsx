@@ -15,6 +15,8 @@ import {
     ChevronDownIcon,
     MagicWandIcon,
     RocketIcon,
+    SunIcon,
+    MoonIcon,
 } from '@radix-ui/react-icons';
 import { cn } from '../../../utils/cn';
 import { Button } from '@ignix-ui/button';
@@ -1862,6 +1864,43 @@ const DynamicDebugger: React.FC<DynamicDebuggerProps> = ({ className }) => {
 export interface ThemeToggleProps {
     className?: string;
 }
+
+export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className }) => {
+    const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+    useEffect(() => {
+        const isDark = document.documentElement.classList.contains('dark');
+        setTheme(isDark ? 'dark' : 'light');
+    }, []);
+
+    const toggleTheme = () => {
+        const nextTheme = theme === 'light' ? 'dark' : 'light';
+        setTheme(nextTheme);
+        if (nextTheme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    };
+
+    return (
+        <Button
+            type="button"
+            aria-pressed={theme === 'dark'}
+            variant="ghost"
+            size="sm"
+            onClick={toggleTheme}
+            className={cn("w-9 h-9 p-0", className)}
+        >
+            {theme === 'light' ? (
+                <MoonIcon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            ) : (
+                <SunIcon className="h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            )}
+            <span className="sr-only">Toggle theme</span>
+        </Button>
+    );
+};
 
 /* ============================================
    ASSIGN COMPOUND COMPONENTS

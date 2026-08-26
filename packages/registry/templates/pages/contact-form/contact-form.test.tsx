@@ -60,7 +60,7 @@ vi.mock("@ignix-ui/button", () => ({
 
 /* ================= FILE UPLOAD ================= */
 vi.mock("@ignix-ui/file-upload", () => ({
-  default: ({ onFilesChange }: any) => (
+  FileUpload: ({ onFilesChange }: any) => (
     <input
       data-testid="file"
       type="file"

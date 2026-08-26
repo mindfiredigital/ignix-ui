@@ -81,12 +81,19 @@ export class RegistryService {
   //------------------------------------------------------------
   // PUBLIC METHODS
   //------------------------------------------------------------
+  // registry.json keys each entry by its id (e.g. "advanced-search-form"); the value itself
+  // has no `id` property. Object.values() alone would discard that key, so every consumer
+  // needs entries with `id` attached from the map key.
+  private withIds(registry: ComponentRegistry): ComponentConfig[] {
+    return Object.entries(registry.components).map(([key, c]) => ({ ...c, id: c.id || key }));
+  }
+
   public async getTemplateConfig(name: string): Promise<ComponentConfig | undefined> {
     logger.info(`[Registry] Getting template config: ${name}`);
 
     const registry = await this.fetchRegistry();
 
-    const item = Object.values(registry.components).find(
+    const item = this.withIds(registry).find(
       (c) =>
         ((c.id && String(c.id).toLowerCase() === String(name).toLowerCase()) ||
           (c.name && String(c.name).toLowerCase() === String(name).toLowerCase())) &&
@@ -103,7 +110,7 @@ export class RegistryService {
   public async getAvailableTemplates(): Promise<ComponentConfig[]> {
     const registry = await this.fetchRegistry();
 
-    return Object.values(registry.components).filter((c) => c.files?.main?.type === 'template');
+    return this.withIds(registry).filter((c) => c.files?.main?.type === 'template');
   }
 
   public async getComponentConfig(name: string): Promise<ComponentConfig | undefined> {
@@ -111,7 +118,7 @@ export class RegistryService {
 
     const registry = await this.fetchRegistry();
 
-    return Object.values(registry.components).find(
+    return this.withIds(registry).find(
       (c) =>
         (c.name && String(c.name).toLowerCase() === String(name).toLowerCase()) ||
         (c.id && String(c.id).toLowerCase() === String(name).toLowerCase())
@@ -120,6 +127,6 @@ export class RegistryService {
 
   public async getAvailableComponents(): Promise<ComponentConfig[]> {
     const registry = await this.fetchRegistry();
-    return Object.values(registry.components);
+    return this.withIds(registry);
   }
 }
