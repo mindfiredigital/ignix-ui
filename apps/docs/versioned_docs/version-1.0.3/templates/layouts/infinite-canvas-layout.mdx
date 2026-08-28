@@ -113,6 +113,20 @@ const DEFAULT_VIEWPORT: CanvasViewport = { x: 0, y: 0, zoom: 1 };
 // minZoom a consumer configures.
 const MIN_SAFE_ZOOM = 0.01;
 
+/**
+ * Replaces any non-finite x/y/zoom (NaN, from a consumer's controlled `viewport` or a bad
+ * `updateViewport` computation) with a safe fallback, then clamps zoom to `[minZoom, maxZoom]`.
+ * Used everywhere a viewport is committed to rendering, refs, or `onViewportChange`, so a single
+ * bad value can't produce an invalid CSS transform or poison all subsequent pan/zoom math -
+ * once NaN enters the viewport, every calculation derived from it stays NaN.
+ */
+function normalizeViewport(viewport: CanvasViewport, minZoom: number, maxZoom: number): CanvasViewport {
+  const x = Number.isFinite(viewport.x) ? viewport.x : DEFAULT_VIEWPORT.x;
+  const y = Number.isFinite(viewport.y) ? viewport.y : DEFAULT_VIEWPORT.y;
+  const zoom = Number.isFinite(viewport.zoom) ? viewport.zoom : DEFAULT_VIEWPORT.zoom;
+  return { x, y, zoom: clamp(zoom, minZoom, maxZoom) };
+}
+
 /* -------------------------------------------------------------------------- */
 /*                              MAIN COMPONENT                                */
 /* -------------------------------------------------------------------------- */
@@ -152,13 +166,10 @@ export const InfiniteCanvasLayout: React.FC<InfiniteCanvasLayoutProps> = ({
 
   // Normalize whichever viewport is currently in effect before it's used for rendering math or
   // stored for event handlers to read. A consumer-supplied `viewport` prop (controlled mode)
-  // bypasses updateViewport's own clamping entirely, so without this, an out-of-range or zero
-  // zoom would reach the CSS transform/grid sizing - and the divide-by-zero in the wheel-zoom
-  // math - unclamped.
-  const currentViewport: CanvasViewport = {
-    ...rawViewport,
-    zoom: clamp(rawViewport.zoom, safeMinZoom, safeMaxZoom),
-  };
+  // bypasses updateViewport's own clamping entirely, so without this, an out-of-range, zero, or
+  // non-finite x/y/zoom would reach the CSS transform/grid sizing - and the divide-by-zero in
+  // the wheel-zoom math - unguarded.
+  const currentViewport: CanvasViewport = normalizeViewport(rawViewport, safeMinZoom, safeMaxZoom);
 
   // Read the latest viewport (and callback) inside event handlers without making them - or the
   // effects that attach them - depend on it. Consumers commonly pass an inline function for
@@ -172,7 +183,7 @@ export const InfiniteCanvasLayout: React.FC<InfiniteCanvasLayoutProps> = ({
   const updateViewport = React.useCallback(
     (updater: (prev: CanvasViewport) => CanvasViewport) => {
       const next = updater(viewportRef.current);
-      const clamped: CanvasViewport = { ...next, zoom: clamp(next.zoom, safeMinZoom, safeMaxZoom) };
+      const clamped: CanvasViewport = normalizeViewport(next, safeMinZoom, safeMaxZoom);
       if (!isControlled) {
         setInternalViewport(clamped);
       }

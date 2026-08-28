@@ -188,6 +188,28 @@ describe("InfiniteCanvasLayout", () => {
       expect(screen.getByText("100%")).toBeInTheDocument();
     });
 
+    it("replaces non-finite x/y with coordinate defaults instead of producing an invalid transform", () => {
+      const { container } = render(
+        <InfiniteCanvasLayout viewport={{ x: NaN, y: 0, zoom: 1 }} onViewportChange={() => undefined}>
+          <p>Content</p>
+        </InfiniteCanvasLayout>
+      );
+      const surface = getSurface(container);
+      const layer = surface.querySelector("div") as HTMLElement;
+      expect(layer.style.transform).not.toContain("NaN");
+      expect(layer.style.transform).toContain("translate(0px");
+    });
+
+    it("replaces a non-finite controlled zoom value with a finite fallback", () => {
+      render(
+        <InfiniteCanvasLayout viewport={{ x: 0, y: 0, zoom: NaN }} onViewportChange={() => undefined}>
+          <p>Content</p>
+        </InfiniteCanvasLayout>
+      );
+      expect(screen.getByText("100%")).toBeInTheDocument();
+      expect(screen.queryByText("NaN%")).not.toBeInTheDocument();
+    });
+
     it("keeps zoom finite and valid during wheel interactions when maxZoom is 0", () => {
       const onViewportChange = vi.fn();
       const { container } = render(
