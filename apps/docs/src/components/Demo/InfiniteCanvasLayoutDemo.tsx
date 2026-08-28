@@ -6,14 +6,25 @@ import CodeBlock from '@theme/CodeBlock';
 import { InfiniteCanvasLayout, CanvasNode } from '@site/src/components/UI/infinite-canvas-layout';
 import { Sparkles, Github } from 'lucide-react';
 import { Navbar } from '@site/src/components/UI/navbar';
+import { cn } from '@site/src/utils/cn';
 
 const gridSizes = ['16', '24', '32', '48'];
 const maxZooms = ['1.5', '2', '2.5', '4'];
 
-const SampleCard = ({ label, color }: { label: string; color: string }) => (
+const CARD_ACCENT_CLASSES: Record<string, string> = {
+  '#6366f1': 'border-t-indigo-500',
+  '#22c55e': 'border-t-green-500',
+  '#f59e0b': 'border-t-amber-500',
+  '#ef4444': 'border-t-red-500',
+};
+
+const SampleCard = ({ label, color, className }: { label: string; color: string; className?: string }) => (
   <div
-    className="flex h-28 w-52 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--card)] p-4 text-sm font-medium text-[var(--card-foreground)] shadow-md"
-    style={{ borderTopColor: color, borderTopWidth: 3 }}
+    className={cn(
+      'flex h-28 w-52 items-center justify-center rounded-lg border border-t-[3px] border-[var(--border)] bg-[var(--card)] p-4 text-sm font-medium text-[var(--card-foreground)] shadow-md',
+      CARD_ACCENT_CLASSES[color],
+      className
+    )}
   >
     {label}
   </div>
@@ -24,23 +35,24 @@ const InfiniteCanvasLayoutDemo = () => {
   const [maxZoom, setMaxZoom] = useState<number>(2.5);
 
   const codeString = `
-import { InfiniteCanvasLayout, CanvasNode } from '@ignix-ui/infinitecanvaslayout';
+import { InfiniteCanvasLayout, CanvasNode } from '@ignix-ui/infinite-canvas-layout';
+import { Github } from 'lucide-react';
 
 <InfiniteCanvasLayout
   header={<span className="font-bold">Board</span>}
-  actions={<a href="https://github.com" aria-label="GitHub"><GithubIcon /></a>}
+  actions={<a href="https://github.com" aria-label="GitHub"><Github className="h-4 w-4" /></a>}
   minZoom={0.25}
   maxZoom={${maxZoom}}
   gridSize={${gridSize}}
 >
   <CanvasNode x={0} y={0}>
-    <Card label="Idea" />
+    <div className="rounded-lg border p-4 shadow-md">Idea</div>
   </CanvasNode>
   <CanvasNode x={320} y={80}>
-    <Card label="Sketch" />
+    <div className="rounded-lg border p-4 shadow-md">Sketch</div>
   </CanvasNode>
   <CanvasNode x={80} y={280}>
-    <Card label="Draft" />
+    <div className="rounded-lg border p-4 shadow-md">Draft</div>
   </CanvasNode>
 </InfiniteCanvasLayout>
 `;

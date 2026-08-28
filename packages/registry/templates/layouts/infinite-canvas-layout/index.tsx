@@ -14,6 +14,7 @@ export interface CanvasViewport {
   zoom: number;
 }
 
+/** Restricts `value` to the inclusive `[min, max]` range. */
 function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
 }
@@ -79,6 +80,12 @@ export interface InfiniteCanvasLayoutProps {
 
 const DEFAULT_VIEWPORT: CanvasViewport = { x: 0, y: 0, zoom: 1 };
 
+// A zoom of exactly 0 (or less) isn't just visually degenerate (scale(0), zero-size grid) - the
+// wheel handler's zoom-to-cursor math divides by the current zoom, so it would produce
+// Infinity/NaN and permanently corrupt the viewport. This floor applies regardless of what
+// minZoom a consumer configures.
+const MIN_SAFE_ZOOM = 0.01;
+
 /* -------------------------------------------------------------------------- */
 /*                              MAIN COMPONENT                                */
 /* -------------------------------------------------------------------------- */
@@ -106,7 +113,18 @@ export const InfiniteCanvasLayout: React.FC<InfiniteCanvasLayoutProps> = ({
 }) => {
   const isControlled = viewport !== undefined;
   const [internalViewport, setInternalViewport] = React.useState<CanvasViewport>(defaultViewport);
-  const currentViewport = isControlled ? viewport : internalViewport;
+  const rawViewport = isControlled ? viewport : internalViewport;
+  const safeMinZoom = Math.max(minZoom, MIN_SAFE_ZOOM);
+
+  // Normalize whichever viewport is currently in effect before it's used for rendering math or
+  // stored for event handlers to read. A consumer-supplied `viewport` prop (controlled mode)
+  // bypasses updateViewport's own clamping entirely, so without this, an out-of-range or zero
+  // zoom would reach the CSS transform/grid sizing - and the divide-by-zero in the wheel-zoom
+  // math - unclamped.
+  const currentViewport: CanvasViewport = {
+    ...rawViewport,
+    zoom: clamp(rawViewport.zoom, safeMinZoom, maxZoom),
+  };
 
   // Read the latest viewport (and callback) inside event handlers without making them - or the
   // effects that attach them - depend on it. Consumers commonly pass an inline function for
@@ -120,13 +138,13 @@ export const InfiniteCanvasLayout: React.FC<InfiniteCanvasLayoutProps> = ({
   const updateViewport = React.useCallback(
     (updater: (prev: CanvasViewport) => CanvasViewport) => {
       const next = updater(viewportRef.current);
-      const clamped: CanvasViewport = { ...next, zoom: clamp(next.zoom, minZoom, maxZoom) };
+      const clamped: CanvasViewport = { ...next, zoom: clamp(next.zoom, safeMinZoom, maxZoom) };
       if (!isControlled) {
         setInternalViewport(clamped);
       }
       onViewportChangeRef.current?.(clamped);
     },
-    [isControlled, minZoom, maxZoom]
+    [isControlled, safeMinZoom, maxZoom]
   );
 
   const zoomIn = React.useCallback(

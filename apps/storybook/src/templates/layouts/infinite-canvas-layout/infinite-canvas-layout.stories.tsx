@@ -9,6 +9,7 @@ import React from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { InfiniteCanvasLayout, CanvasNode, type CanvasViewport } from ".";
 import { Sparkles, Github } from "lucide-react";
+import { cn } from "../../../../utils/cn";
 
 const meta: Meta<typeof InfiniteCanvasLayout> = {
   title: "Templates/Layouts/InfiniteCanvasLayout",
@@ -36,10 +37,20 @@ export default meta;
 
 type Story = StoryObj<typeof InfiniteCanvasLayout>;
 
-const SampleCard: React.FC<{ label: string; color: string }> = ({ label, color }) => (
+const CARD_ACCENT_CLASSES: Record<string, string> = {
+  "#6366f1": "border-t-indigo-500",
+  "#22c55e": "border-t-green-500",
+  "#f59e0b": "border-t-amber-500",
+  "#ef4444": "border-t-red-500",
+};
+
+const SampleCard: React.FC<{ label: string; color: string; className?: string }> = ({ label, color, className }) => (
   <div
-    className="flex h-32 w-56 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--card)] p-4 text-sm font-medium text-[var(--card-foreground)] shadow-md"
-    style={{ borderTopColor: color, borderTopWidth: 3 }}
+    className={cn(
+      "flex h-32 w-56 items-center justify-center rounded-lg border border-t-[3px] border-[var(--border)] bg-[var(--card)] p-4 text-sm font-medium text-[var(--card-foreground)] shadow-md",
+      CARD_ACCENT_CLASSES[color],
+      className
+    )}
   >
     {label}
   </div>

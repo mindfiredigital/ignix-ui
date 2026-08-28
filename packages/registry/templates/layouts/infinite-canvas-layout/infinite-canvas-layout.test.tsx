@@ -211,6 +211,36 @@ describe("InfiniteCanvasLayout", () => {
       fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
       expect(screen.getByText("120%")).toBeInTheDocument();
     });
+
+    it("clamps an out-of-range controlled zoom (including zero) instead of using it as-is", () => {
+      render(
+        <InfiniteCanvasLayout viewport={{ x: 0, y: 0, zoom: 0 }} onViewportChange={() => undefined} minZoom={0.25} maxZoom={2.5}>
+          <p>Content</p>
+        </InfiniteCanvasLayout>
+      );
+      // A raw controlled zoom of 0 must never reach the display (or the transform/grid math)
+      // unclamped - it should be floored at minZoom instead.
+      expect(screen.getByText("25%")).toBeInTheDocument();
+      expect(screen.queryByText("0%")).not.toBeInTheDocument();
+    });
+
+    it("does not corrupt the viewport via divide-by-zero when ctrl+wheel-zooming from a controlled zoom of 0", () => {
+      const onViewportChange = vi.fn();
+      const { container } = render(
+        <InfiniteCanvasLayout viewport={{ x: 0, y: 0, zoom: 0 }} onViewportChange={onViewportChange} minZoom={0.25} maxZoom={2.5}>
+          <p>Content</p>
+        </InfiniteCanvasLayout>
+      );
+      const surface = getSurface(container);
+
+      fireEvent.wheel(surface, { deltaY: -100, ctrlKey: true });
+
+      expect(onViewportChange).toHaveBeenCalled();
+      const lastViewport = onViewportChange.mock.calls.at(-1)?.[0] as CanvasViewport;
+      expect(Number.isFinite(lastViewport.zoom)).toBe(true);
+      expect(Number.isFinite(lastViewport.x)).toBe(true);
+      expect(Number.isFinite(lastViewport.y)).toBe(true);
+    });
   });
 
   describe("background grid", () => {
