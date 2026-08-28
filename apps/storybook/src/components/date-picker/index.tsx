@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, forwardRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AlertCircle, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
+import { AlertCircle, Calendar, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import { cn } from '../../../utils/cn';
 import { Typography } from '../typography';
 import { Button } from '../button';
@@ -871,7 +871,7 @@ const RangeInputField: React.FC<RangeInputFieldProps> = ({
                 color="inherit"
                 className={themeStyles.text.muted}
             >
-                –
+                -
             </Typography>
 
             <div className="relative flex-1">
@@ -933,11 +933,42 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     clearText = 'Clear',
     size = 'md',
 }) => {
-    const themeStyles = getThemeStyles(themeMode);
-    const colorStyles = getColorStyles(colorScheme);
-    const days = getDaysInMonth(currentMonth, weekStart);
+    const [selectorView, setSelectorView] = React.useState<'days' | 'months' | 'years'>('days');
+    const yearsListRef = React.useRef<HTMLDivElement>(null);
+
     const currentYear = currentMonth.getFullYear();
     const currentMonthIndex = currentMonth.getMonth();
+    const days = getDaysInMonth(currentMonth, weekStart);
+
+    const themeStyles = getThemeStyles(themeMode);
+    const colorStyles = getColorStyles(colorScheme);
+
+    React.useEffect(() => {
+        if (selectorView === 'years' && yearsListRef.current) {
+            const activeYearEl = yearsListRef.current.querySelector<HTMLElement>(
+                `[data-year="${currentYear}"]`
+            );
+            if (activeYearEl) {
+                activeYearEl.scrollIntoView({ block: 'center', behavior: 'instant' });
+            }
+        }
+    }, [selectorView, currentYear]);
+
+    const years = React.useMemo(() => {
+        const startYear = minDate ? minDate.getFullYear() : new Date().getFullYear() - 100;
+        const endYear = maxDate ? maxDate.getFullYear() : new Date().getFullYear() + 20;
+        
+        const arr: number[] = [];
+        for (let y = startYear; y <= endYear; y++) {
+            arr.push(y);
+        }
+        
+        if (!arr.includes(currentYear)) {
+            arr.push(currentYear);
+        }
+        
+        return arr.sort((a, b) => a - b);
+    }, [minDate, maxDate, currentYear]);
 
     const handlePrevMonth = () => {
         const prevMonth = new Date(currentYear, currentMonthIndex - 1, 1);
@@ -981,17 +1012,34 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                 >
                     <ChevronLeft className={size === 'sm' ? "w-4 h-4" : "w-5 h-5"} />
                 </Button>
-
-                <div className="flex items-center gap-2">
+                <button
+                    type="button"
+                    aria-expanded={selectorView !== 'days'}
+                    onClick={() => {
+                        if (selectorView === 'days') {
+                            setSelectorView('months');
+                        } else if (selectorView === 'years') {
+                            setSelectorView('months');
+                        } else {
+                            setSelectorView('days');
+                        }
+                    }}
+                    className={cn(
+                        "flex items-center gap-1 hover:bg-muted/50 font-bold rounded-lg px-2.5 py-1 text-base transition-colors cursor-pointer outline-none",
+                        themeStyles.text.primary
+                    )}
+                    aria-label="Toggle month and year selector"
+                >
                     <Typography
-                        variant="h6"
+                        variant="body"
                         weight="bold"
                         color="inherit"
-                        className={cn("tracking-tight", themeStyles.header)}
+                        className="flex items-center gap-1"
                     >
-                        {monthNames[currentMonthIndex]} {currentYear}
+                        <span>{monthNames[currentMonthIndex]} {currentYear}</span>
+                        <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform duration-200", selectorView !== 'days' && "transform rotate-180")} />
                     </Typography>
-                </div>
+                </button>
 
                 <Button
                     variant="ghost"
@@ -1009,174 +1057,236 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                 </Button>
             </div>
 
-            {/* Week days */}
-            <div className="grid grid-cols-7 gap-2 mb-3">
-                {Array.from({ length: 7 }).map((_, index) => (
-                    <Typography
-                        key={index}
-                        variant="caption"
-                        weight="semibold"
-                        align="center"
-                        color="inherit"
-                        className={cn("py-2 tracking-wide", themeStyles.weekday)}
-                    >
-                        {getDayName(index)}
-                    </Typography>
-                ))}
-            </div>
-
-            {/* Calendar grid */}
-            <div className="grid grid-cols-7 gap-2">
-                {days.map((date, index) => {
-                    const isSelected = isSameDay(date, selectedDate);
-                    const isInRange = isDateInRange(date, selectedRange.start, selectedRange.end);
-                    const isDisabled = isDateDisabled(date, minDate, maxDate, disabledDates);
-                    const isHighlighted = highlightDates?.some(d => isSameDay(d, date));
-                    const isToday = isSameDay(date, new Date());
-
-                    const isStart = selectedRange.start && isSameDay(date, selectedRange.start);
-                    const isEnd = selectedRange.end && isSameDay(date, selectedRange.end);
-                    const isCurrent = isCurrentMonth(date);
-
-                    return (
-                        <motion.div
-                            key={index}
-                            className="relative"
-                            whileHover={{ scale: isDisabled ? 1 : 1.05 }}
-                        >
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => !isDisabled && onDateSelect(date)}
-                                disabled={isDisabled}
+            {selectorView === 'months' && (
+                <div className="grid grid-cols-3 gap-3 h-64 pt-2">
+                    {monthNames.map((name, index) => {
+                        const isSelected = index === currentMonthIndex;
+                        return (
+                            <button
+                                key={name}
+                                type="button"
+                                onClick={() => {
+                                    const newDate = new Date(currentYear, index, 1);
+                                    onMonthChange(newDate);
+                                    setSelectorView('years');
+                                }}
                                 className={cn(
-                                    size === 'sm' ? "h-8 w-8" : "h-11 w-11",
-                                    "rounded-xl text-sm font-medium transition-all duration-300 relative cursor-pointer",
-                                    !isCurrent && "opacity-40",
-                                    isDisabled && cn("cursor-not-allowed opacity-20", themeStyles.text.disabled),
-
-                                    // Range styling
-                                    isInRange && !isStart && !isEnd && cn(
-                                        getInRangeStyle(themeMode, colorScheme),
-                                        "rounded-xl"
-                                    ),
-                                    isStart && cn("rounded-l-xl bg-gradient-to-r", colorStyles.primary[themeMode], "text-white shadow-sm"),
-                                    isEnd && cn("rounded-r-xl bg-gradient-to-r", colorStyles.primary[themeMode], "text-white shadow-sm"),
-
-                                    // Single date selection
-                                    isSelected && !isStart && !isEnd && cn("bg-gradient-to-r", colorStyles.primary[themeMode], "text-white shadow-sm"),
-
-                                    // Today
-                                    isToday && !isSelected && !isInRange && cn(colorStyles.accent[themeMode]),
-
-                                    // Highlighted dates
-                                    isHighlighted && !isSelected && !isInRange && "ring-2 ring-yellow-400 shadow-sm",
-
-                                    // Default hover
-                                    !isSelected && !isInRange && !isDisabled && cn(
-                                        "hover:bg-opacity-50",
-                                        themeStyles.hover
-                                    ),
-
-                                    // Base styling
-                                    "shadow-sm"
+                                    "flex items-center justify-center rounded-xl text-sm font-semibold transition-colors cursor-pointer outline-none",
+                                    isSelected 
+                                        ? cn("text-white bg-gradient-to-r shadow-sm", colorStyles.primary[themeMode])
+                                        : cn("hover:bg-muted/50 text-foreground bg-muted/20")
                                 )}
-                                aria-label={`Select ${date.toLocaleDateString()}`}
-                                animationVariant={isDisabled ? undefined : "press3DSoft"}
                             >
-                                <Typography
-                                    variant="body-small"
-                                    weight={(isSelected || isStart || isEnd) ? "bold" : "normal"}
-                                    color="inherit"
-                                    className={cn(
-                                        "relative z-10",
-                                        (isSelected || isStart || isEnd) && "!text-white",
-                                        !isSelected && !isStart && !isEnd && isCurrent
-                                            ? themeStyles.day.current
-                                            : themeStyles.day.nonCurrent
-                                    )}
-                                >
-                                    {date.getDate()}
+                                <Typography variant="body-small" weight="semibold" color="inherit">
+                                    {name}
                                 </Typography>
+                            </button>
+                        );
+                    })}
+                </div>
+            )}
 
-                                {/* Range indicators */}
-                                {isStart && selectedRange.end && (
-                                    <motion.div
-                                        initial={{ width: 0 }}
-                                        animate={{ width: '50%' }}
-                                        className="absolute inset-y-0 right-0 h-full bg-gradient-to-l from-white/20 to-transparent rounded-r-xl"
-                                    />
-                                )}
-                                {isEnd && selectedRange.start && (
-                                    <motion.div
-                                        initial={{ width: 0 }}
-                                        animate={{ width: '50%' }}
-                                        className="absolute inset-y-0 left-0 h-full bg-gradient-to-r from-white/20 to-transparent rounded-l-xl"
-                                    />
-                                )}
-
-                                {/* Today indicator dot */}
-                                {isToday && !isSelected && !isInRange && (
-                                    <div className={cn(
-                                        "absolute -top-1 right-0.5 w-1.5 h-1.5 rounded-full opacity-60",
-                                        themeMode === 'dark' ? 'bg-blue-300' : 'bg-blue-500'
-                                    )} />
-                                )}
-                            </Button>
-                        </motion.div>
-                    );
-                })}
-            </div>
-
-            {/* Footer buttons */}
-            {(todayButton || clearButton) && (
-                <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className={cn("flex gap-3 mt-6 pt-5 border-t", themeStyles.footer)}
+            {selectorView === 'years' && (
+                <div 
+                    className="grid grid-cols-4 gap-2 h-64 overflow-y-auto pt-2"
+                    ref={yearsListRef}
+                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 >
-                    {todayButton && (
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={onTodayClick}
-                            className="flex-1 rounded-xl shadow-sm hover:shadow cursor-pointer border-border/60 hover:bg-muted/50 bg-background text-muted-foreground hover:text-foreground"
-                            animationVariant="press3DSoft"
-                        >
-                            <Typography variant="body-small" weight="medium" color="inherit">
-                                {todayText}
+                    {years.map((y) => {
+                        const isSelected = y === currentYear;
+                        return (
+                            <button
+                                key={y}
+                                data-year={y}
+                                type="button"
+                                onClick={() => {
+                                    const newDate = new Date(y, currentMonthIndex, 1);
+                                    onMonthChange(newDate);
+                                    setSelectorView('days');
+                                }}
+                                className={cn(
+                                    "flex items-center justify-center rounded-xl text-sm font-semibold py-2.5 transition-colors cursor-pointer outline-none",
+                                    isSelected 
+                                        ? cn("text-white bg-gradient-to-r shadow-sm", colorStyles.primary[themeMode])
+                                        : cn("hover:bg-muted/50 text-foreground bg-muted/20")
+                                )}
+                            >
+                                <Typography variant="body-small" weight="semibold" color="inherit">
+                                    {y}
+                                </Typography>
+                            </button>
+                        );
+                    })}
+                </div>
+            )}
+
+            {selectorView === 'days' && (
+                <>
+                    {/* Week days */}
+                    <div className="grid grid-cols-7 gap-2 mb-3">
+                        {Array.from({ length: 7 }).map((_, index) => (
+                            <Typography
+                                key={index}
+                                variant="caption"
+                                weight="semibold"
+                                align="center"
+                                color="inherit"
+                                className={cn("py-2 tracking-wide", themeStyles.weekday)}
+                            >
+                                {getDayName(index)}
                             </Typography>
-                        </Button>
-                    )}
-                    {clearButton && (
-                        <Button
-                            variant="secondary"
-                            size="sm"
-                            onClick={onClearClick}
-                            className="flex-1 rounded-xl shadow-sm hover:shadow cursor-pointer bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground"
-                            animationVariant="press3DSoft"
+                        ))}
+                    </div>
+
+                    {/* Calendar grid */}
+                    <div className="grid grid-cols-7 gap-2">
+                        {days.map((date, index) => {
+                            const isSelected = isSameDay(date, selectedDate);
+                            const isInRange = isDateInRange(date, selectedRange.start, selectedRange.end);
+                            const isDisabled = isDateDisabled(date, minDate, maxDate, disabledDates);
+                            const isHighlighted = highlightDates?.some(d => isSameDay(d, date));
+                            const isToday = isSameDay(date, new Date());
+
+                            const isStart = selectedRange.start && isSameDay(date, selectedRange.start);
+                            const isEnd = selectedRange.end && isSameDay(date, selectedRange.end);
+                            const isCurrent = isCurrentMonth(date);
+
+                            return (
+                                <motion.div
+                                    key={index}
+                                    className="relative"
+                                    whileHover={{ scale: isDisabled ? 1 : 1.05 }}
+                                >
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => !isDisabled && onDateSelect(date)}
+                                        disabled={isDisabled}
+                                        className={cn(
+                                            size === 'sm' ? "h-8 w-8" : "h-11 w-11",
+                                            "rounded-xl text-sm font-medium transition-all duration-300 relative cursor-pointer",
+                                            !isCurrent && "opacity-40",
+                                            isDisabled && cn("cursor-not-allowed opacity-20", themeStyles.text.disabled),
+
+                                            // Range styling
+                                            isInRange && !isStart && !isEnd && cn(
+                                                getInRangeStyle(themeMode, colorScheme),
+                                                "rounded-xl"
+                                            ),
+                                            isStart && cn("rounded-l-xl bg-gradient-to-r", colorStyles.primary[themeMode], "text-white shadow-sm"),
+                                            isEnd && cn("rounded-r-xl bg-gradient-to-r", colorStyles.primary[themeMode], "text-white shadow-sm"),
+
+                                            // Single date selection
+                                            isSelected && !isStart && !isEnd && cn("bg-gradient-to-r", colorStyles.primary[themeMode], "text-white shadow-sm"),
+
+                                            // Today
+                                            isToday && !isSelected && !isInRange && cn(colorStyles.accent[themeMode]),
+
+                                            // Highlighted dates
+                                            isHighlighted && !isSelected && !isInRange && "ring-2 ring-yellow-400 shadow-sm",
+
+                                            // Default hover
+                                            !isSelected && !isInRange && !isDisabled && cn(
+                                                "hover:bg-opacity-50",
+                                                themeStyles.hover
+                                            ),
+
+                                            // Base styling
+                                            "shadow-sm"
+                                        )}
+                                        aria-label={`Select ${date.toLocaleDateString()}`}
+                                        animationVariant={isDisabled ? undefined : "press3DSoft"}
+                                    >
+                                        <Typography
+                                            variant="body-small"
+                                            weight={(isSelected || isStart || isEnd) ? "bold" : "normal"}
+                                            color="inherit"
+                                            className={cn(
+                                                "relative z-10",
+                                                (isSelected || isStart || isEnd) && "!text-white",
+                                                !isSelected && !isStart && !isEnd && isCurrent
+                                                    ? themeStyles.day.current
+                                                    : themeStyles.day.nonCurrent
+                                            )}
+                                        >
+                                            {date.getDate()}
+                                        </Typography>
+
+                                        {/* Range indicators */}
+                                        {isStart && selectedRange.end && (
+                                            <motion.div
+                                                initial={{ width: 0 }}
+                                                animate={{ width: '50%' }}
+                                                className="absolute inset-y-0 right-0 h-full bg-gradient-to-l from-white/20 to-transparent rounded-r-xl"
+                                            />
+                                        )}
+                                        {isEnd && selectedRange.start && (
+                                            <motion.div
+                                                initial={{ width: 0 }}
+                                                animate={{ width: '50%' }}
+                                                className="absolute inset-y-0 left-0 h-full bg-gradient-to-r from-white/20 to-transparent rounded-l-xl"
+                                            />
+                                        )}
+
+                                        {/* Today indicator dot */}
+                                        {isToday && !isSelected && !isInRange && (
+                                            <div className={cn(
+                                                "absolute -top-1 right-1 w-1.5 h-1.5 rounded-full opacity-60",
+                                                themeMode === 'dark' ? 'bg-blue-300' : 'bg-blue-500'
+                                            )} />
+                                        )}
+                                    </Button>
+                                </motion.div>
+                            );
+                        })}
+                    </div>
+
+                    {/* Footer buttons */}
+                    {(todayButton || clearButton) && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className={cn("flex gap-3 mt-6 pt-5 border-t", themeStyles.footer)}
                         >
-                            <Typography variant="body-small" weight="medium" color="inherit">
-                                {clearText}
-                            </Typography>
-                        </Button>
+                            {todayButton && (
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={onTodayClick}
+                                    className="flex-1 rounded-xl shadow-sm hover:shadow text-slate-500 cursor-pointer"
+                                    animationVariant="press3DSoft"
+                                >
+                                    <Typography variant="body-small" weight="medium" color="inherit">
+                                        {todayText}
+                                    </Typography>
+                                </Button>
+                            )}
+                            {clearButton && (
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={onClearClick}
+                                    className={cn(
+                                        "flex-1 rounded-xl shadow-sm hover:shadow cursor-pointer",
+                                        themeMode === 'dark'
+                                            ? "bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-gray-300"
+                                            : "bg-gradient-to-r from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-200 text-gray-600"
+                                    )}
+                                    animationVariant="press3DSoft"
+                                >
+                                    <Typography variant="body-small" weight="medium" color="inherit">
+                                        {clearText}
+                                    </Typography>
+                                </Button>
+                            )}
+                        </motion.div>
                     )}
-                </motion.div>
+                </>
             )}
         </div>
     );
 };
 
-// ========== MAIN DATEPICKER COMPONENT ==========
-/**
- * A versatile DatePicker component supporting single dates and date ranges
- * @example
- * // Single date picker
- * <DatePicker value={date} onChange={setDate} />
- * 
- * // Date range picker
- * <DatePicker variant="range" value={range} onChange={setRange} />
- */
 const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
     (
         {
@@ -1245,8 +1355,10 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
         const [inputValue, setInputValue] = useState('');
         const [rangeInputValue, setRangeInputValue] = useState<[string, string]>(['', '']);
         const [internalError, setInternalError] = useState<string | null>(null);
+        const [computedPosition, setComputedPosition] = useState<PopupPosition>(popupPosition);
 
         const containerRef = useRef<HTMLDivElement>(null);
+        const popupRef = useRef<HTMLDivElement>(null);
         const inputRef = useRef<HTMLInputElement>(null);
         const startInputRef = useRef<HTMLInputElement>(null);
         const endInputRef = useRef<HTMLInputElement>(null);
@@ -1316,6 +1428,96 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
             }
         }, [isOpen]);
 
+        // Auto-adjust popup position to remain visible in viewport
+        useEffect(() => {
+            if (!isOpen) {
+                setComputedPosition(popupPosition);
+                return;
+            }
+
+            const updatePosition = () => {
+                if (!containerRef.current || !popupRef.current) return;
+
+                const triggerRect = containerRef.current.getBoundingClientRect();
+                const popupRect = popupRef.current.getBoundingClientRect();
+
+                const popupHeight = popupRect.height || 350;
+                const popupWidth = popupRect.width || 300;
+
+                const viewportHeight = window.innerHeight;
+                const viewportWidth = window.innerWidth;
+
+                if (popupPosition === 'left' || popupPosition === 'right') {
+                    let side = popupPosition;
+                    const spaceLeft = triggerRect.left;
+                    const spaceRight = viewportWidth - triggerRect.right;
+
+                    if (popupPosition === 'left' && spaceLeft < popupWidth && spaceRight > popupWidth) {
+                        side = 'right';
+                    } else if (popupPosition === 'right' && spaceRight < popupWidth && spaceLeft > popupWidth) {
+                        side = 'left';
+                    }
+                    setComputedPosition(side as PopupPosition);
+                    return;
+                }
+
+                let vertical = 'bottom';
+                let horizontal = 'left';
+
+                if (popupPosition.startsWith('top')) {
+                    vertical = 'top';
+                }
+                if (popupPosition.endsWith('right')) {
+                    horizontal = 'right';
+                }
+
+                const spaceBelow = viewportHeight - triggerRect.bottom;
+                const spaceAbove = triggerRect.top;
+
+                if (vertical === 'bottom' && spaceBelow < popupHeight && spaceAbove > popupHeight) {
+                    vertical = 'top';
+                } else if (vertical === 'top' && spaceAbove < popupHeight && spaceBelow > popupHeight) {
+                    vertical = 'bottom';
+                }
+
+                if (horizontal === 'right') {
+                    const rightEdge = triggerRect.left + popupWidth;
+                    if (rightEdge > viewportWidth && triggerRect.right >= popupWidth) {
+                        horizontal = 'left';
+                    }
+                } else {
+                    const leftEdge = triggerRect.right - popupWidth;
+                    if (leftEdge < 0 && (viewportWidth - triggerRect.left) >= popupWidth) {
+                        horizontal = 'right';
+                    }
+                }
+
+                setComputedPosition(`${vertical}-${horizontal}` as PopupPosition);
+            };
+
+            let animationFrameId: number | null = null;
+            const throttledUpdate = () => {
+                if (animationFrameId === null) {
+                    animationFrameId = requestAnimationFrame(() => {
+                        updatePosition();
+                        animationFrameId = null;
+                    });
+                }
+            };
+
+            throttledUpdate();
+            window.addEventListener('resize', throttledUpdate);
+            window.addEventListener('scroll', throttledUpdate, true);
+
+            return () => {
+                if (animationFrameId !== null) {
+                    cancelAnimationFrame(animationFrameId);
+                }
+                window.removeEventListener('resize', throttledUpdate);
+                window.removeEventListener('scroll', throttledUpdate, true);
+            };
+        }, [isOpen, popupPosition]);
+
         // Validate date
         const validateDate = (date: Date | null): string | null => {
             if (required && !date) return 'Date is required';
@@ -1346,34 +1548,33 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
         // Handle range date selection
         const handleRangeDateSelect = (date: Date) => {
             let newRange = { ...selectedRange };
-            const error = validateOnChange ? validateDate(date) : null;
-            setInternalError(error);
-            onError?.(error);
+            let error = validateOnChange ? validateDate(date) : null;
 
             if (!newRange.start || (newRange.start && newRange.end)) {
                 // Start new range
                 newRange = { start: date, end: null };
             } else if (newRange.start && !newRange.end) {
                 // Complete the range
-                if (date < newRange.start) {
-                    newRange = { start: date, end: null };
-                } else {
-                    newRange = { start: newRange.start, end: date };
+                newRange = { start: newRange.start, end: date };
+                if (newRange.start && date < newRange.start) {
+                    error = 'End date cannot be earlier than start date';
                 }
             }
 
+            setInternalError(error);
+            onError?.(error);
             setSelectedRange(newRange);
             setRangeInputValue([
                 formatDate(newRange.start, format),
                 formatDate(newRange.end, format)
             ]);
 
-            if (onChange && newRange.start && newRange.end) {
+            if (onChange && newRange.start && newRange.end && !error) {
                 onChange(newRange);
                 if (autoClose) {
                     setTimeout(() => setIsOpen(false), 100);
                 }
-            } else if (onChange && (allowEmpty || !newRange.end)) {
+            } else if (onChange && (allowEmpty || !newRange.end) && !error) {
                 onChange(newRange);
             }
         };
@@ -1451,25 +1652,15 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
             setCurrentMonth(date);
 
             if (newRange.start && newRange.end) {
-                const error = validateOnChange ? validateDate(newRange.start) || validateDate(newRange.end) : null;
+                let error = validateOnChange ? validateDate(newRange.start) || validateDate(newRange.end) : null;
+                if (!error && newRange.end < newRange.start) {
+                    error = 'End date cannot be earlier than start date';
+                }
                 setInternalError(error);
                 onError?.(error);
 
+                setSelectedRange(newRange);
                 if (!error) {
-                    if (newRange.end < newRange.start) {
-                        if (index === 1) {
-                            newRange.start = newRange.end;
-                            newRange.end = null;
-                            newValues[0] = value;
-                            newValues[1] = '';
-                            setRangeInputValue(newValues);
-                        } else {
-                            newRange.end = null;
-                            newValues[1] = '';
-                            setRangeInputValue(newValues);
-                        }
-                    }
-                    setSelectedRange(newRange);
                     onChange?.(newRange);
                 }
             } else {
@@ -1594,6 +1785,7 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                 <AnimatePresence>
                     {isOpen && !disabled && !readOnly && (
                         <motion.div
+                            ref={popupRef}
                             initial={{ opacity: 0, scale: 0.95, y: -10 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: -10 }}
@@ -1604,7 +1796,7 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                             }}
                             className={cn(
                                 "absolute z-50",
-                                getPopupPositionClasses(popupPosition),
+                                getPopupPositionClasses(computedPosition),
                                 calendarClassName
                             )}
                         >

@@ -188,7 +188,6 @@ describe("SignIn Component", () => {
         fireEvent.click(microsoftButton);
         expect(mockOnMicrosoftSignIn).toHaveBeenCalled();
 
-        // Wait for async click handler microtasks to flush and trigger the timers, then run them
         await vi.runOnlyPendingTimersAsync();
         vi.useRealTimers();
     });
