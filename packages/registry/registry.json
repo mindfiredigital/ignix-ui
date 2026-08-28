@@ -2050,6 +2050,17 @@
           "type": "component"
         }
       }
+    },
+    "skeleton": {
+      "name": "Skeleton",
+      "description": "A placeholder component for loading states with pulse animations",
+      "dependencies": [],
+      "files": {
+        "main": {
+          "path": "components/skeleton/index.tsx",
+          "type": "component"
+        }
+      }
     }
   }
 }
