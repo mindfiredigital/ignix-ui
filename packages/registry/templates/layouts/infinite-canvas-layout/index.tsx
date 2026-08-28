@@ -114,7 +114,14 @@ export const InfiniteCanvasLayout: React.FC<InfiniteCanvasLayoutProps> = ({
   const isControlled = viewport !== undefined;
   const [internalViewport, setInternalViewport] = React.useState<CanvasViewport>(defaultViewport);
   const rawViewport = isControlled ? viewport : internalViewport;
-  const safeMinZoom = Math.max(minZoom, MIN_SAFE_ZOOM);
+
+  // Guard against non-finite bounds (NaN/undefined-ish props propagate NaN through every clamp
+  // call) and an inverted range (maxZoom < minZoom collapses clamp's output to a fixed constant,
+  // permanently freezing zoom) - both are consumer misconfigurations, not just edge values.
+  const safeMinZoom = Number.isFinite(minZoom) ? Math.max(minZoom, MIN_SAFE_ZOOM) : MIN_SAFE_ZOOM;
+  const safeMaxZoom = Number.isFinite(maxZoom)
+    ? Math.max(maxZoom, safeMinZoom)
+    : Math.max(safeMinZoom, DEFAULT_VIEWPORT.zoom);
 
   // Normalize whichever viewport is currently in effect before it's used for rendering math or
   // stored for event handlers to read. A consumer-supplied `viewport` prop (controlled mode)
@@ -123,7 +130,7 @@ export const InfiniteCanvasLayout: React.FC<InfiniteCanvasLayoutProps> = ({
   // math - unclamped.
   const currentViewport: CanvasViewport = {
     ...rawViewport,
-    zoom: clamp(rawViewport.zoom, safeMinZoom, maxZoom),
+    zoom: clamp(rawViewport.zoom, safeMinZoom, safeMaxZoom),
   };
 
   // Read the latest viewport (and callback) inside event handlers without making them - or the
@@ -138,13 +145,13 @@ export const InfiniteCanvasLayout: React.FC<InfiniteCanvasLayoutProps> = ({
   const updateViewport = React.useCallback(
     (updater: (prev: CanvasViewport) => CanvasViewport) => {
       const next = updater(viewportRef.current);
-      const clamped: CanvasViewport = { ...next, zoom: clamp(next.zoom, safeMinZoom, maxZoom) };
+      const clamped: CanvasViewport = { ...next, zoom: clamp(next.zoom, safeMinZoom, safeMaxZoom) };
       if (!isControlled) {
         setInternalViewport(clamped);
       }
       onViewportChangeRef.current?.(clamped);
     },
-    [isControlled, safeMinZoom, maxZoom]
+    [isControlled, safeMinZoom, safeMaxZoom]
   );
 
   const zoomIn = React.useCallback(
@@ -176,7 +183,7 @@ export const InfiniteCanvasLayout: React.FC<InfiniteCanvasLayoutProps> = ({
 
       if (event.ctrlKey || event.metaKey) {
         updateViewport((prev) => {
-          const nextZoom = clamp(prev.zoom * (1 - event.deltaY * 0.01), minZoom, maxZoom);
+          const nextZoom = clamp(prev.zoom * (1 - event.deltaY * 0.01), safeMinZoom, safeMaxZoom);
           const worldX = (pointerX - prev.x) / prev.zoom;
           const worldY = (pointerY - prev.y) / prev.zoom;
           return { x: pointerX - worldX * nextZoom, y: pointerY - worldY * nextZoom, zoom: nextZoom };
@@ -188,7 +195,7 @@ export const InfiniteCanvasLayout: React.FC<InfiniteCanvasLayoutProps> = ({
 
     surface.addEventListener("wheel", handleWheel, { passive: false });
     return () => surface.removeEventListener("wheel", handleWheel);
-  }, [updateViewport, minZoom, maxZoom]);
+  }, [updateViewport, safeMinZoom, safeMaxZoom]);
 
   const panStateRef = React.useRef<{ pointerId: number; lastX: number; lastY: number } | null>(null);
 
@@ -196,6 +203,10 @@ export const InfiniteCanvasLayout: React.FC<InfiniteCanvasLayoutProps> = ({
     // Only start a pan when the drag begins on empty canvas background, not on a CanvasNode
     // (or anything else) rendered above it - so content stays independently interactive.
     if (event.target !== event.currentTarget || event.button !== 0) return;
+    // Without this, the browser's native drag-to-select-text behavior runs independently of our
+    // own pan tracking below - so sweeping the cursor across a CanvasNode's text mid-pan would
+    // still highlight it, even though the drag started on empty background.
+    event.preventDefault();
     event.currentTarget.setPointerCapture?.(event.pointerId);
     panStateRef.current = { pointerId: event.pointerId, lastX: event.clientX, lastY: event.clientY };
   };
@@ -268,7 +279,7 @@ export const InfiniteCanvasLayout: React.FC<InfiniteCanvasLayoutProps> = ({
 
       <div
         ref={surfaceRef}
-        className="relative flex-1 touch-none overflow-hidden"
+        className="relative flex-1 touch-none select-none overflow-hidden"
         style={
           showGrid
             ? {

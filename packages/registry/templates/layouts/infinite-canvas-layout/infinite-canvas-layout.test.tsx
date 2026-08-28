@@ -70,6 +70,36 @@ describe("InfiniteCanvasLayout", () => {
       const node = screen.getByText("Positioned").closest("div.absolute") as HTMLElement;
       expect(node).toHaveStyle({ left: "120px", top: "240px", width: "100px", height: "50px" });
     });
+
+    it("disables text selection on the canvas surface, so dragging through a node's text doesn't select it", () => {
+      const { container } = render(
+        <InfiniteCanvasLayout>
+          <CanvasNode x={0} y={0}>
+            <p>Idea</p>
+          </CanvasNode>
+        </InfiniteCanvasLayout>
+      );
+      // `user-select: none` cascades to descendants (including CanvasNode content), which is
+      // what actually stops the browser's native drag-to-select from highlighting text as the
+      // cursor sweeps across it mid-pan - jsdom doesn't implement selection, so this asserts the
+      // mechanism that produces that behavior in a real browser.
+      const surface = getSurface(container);
+      expect(surface.className).toContain("select-none");
+    });
+
+    it("prevents the default (text-selection-starting) action when a pan begins on empty background", () => {
+      const { container } = render(
+        <InfiniteCanvasLayout>
+          <CanvasNode x={0} y={0}>
+            <p>Idea</p>
+          </CanvasNode>
+        </InfiniteCanvasLayout>
+      );
+      const surface = getSurface(container);
+      const event = new MouseEvent("pointerdown", { bubbles: true, cancelable: true, button: 0 });
+      const wasPrevented = !surface.dispatchEvent(event);
+      expect(wasPrevented).toBe(true);
+    });
   });
 
   describe("zoom controls", () => {
@@ -130,6 +160,53 @@ describe("InfiniteCanvasLayout", () => {
       );
       fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
       expect(screen.getByText("60%")).toBeInTheDocument();
+    });
+
+    it("recovers from an inverted zoom range (maxZoom < minZoom) instead of freezing at an unreachable value", () => {
+      render(
+        <InfiniteCanvasLayout minZoom={2} maxZoom={0.5} defaultViewport={{ x: 0, y: 0, zoom: 1 }}>
+          <p>Content</p>
+        </InfiniteCanvasLayout>
+      );
+      // maxZoom is bumped up to at least minZoom rather than silently freezing zoom at 50%.
+      expect(screen.getByText("200%")).toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
+      expect(screen.getByText("200%")).toBeInTheDocument();
+    });
+
+    it("falls back to a sane bound when maxZoom is not a finite number", () => {
+      render(
+        <InfiniteCanvasLayout minZoom={0.25} maxZoom={NaN}>
+          <p>Content</p>
+        </InfiniteCanvasLayout>
+      );
+      expect(screen.getByText("100%")).toBeInTheDocument();
+      expect(screen.queryByText("NaN%")).not.toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
+      expect(screen.getByText("100%")).toBeInTheDocument();
+    });
+
+    it("keeps zoom finite and valid during wheel interactions when maxZoom is 0", () => {
+      const onViewportChange = vi.fn();
+      const { container } = render(
+        <InfiniteCanvasLayout maxZoom={0} onViewportChange={onViewportChange}>
+          <p>Content</p>
+        </InfiniteCanvasLayout>
+      );
+      // maxZoom=0 is finite but below the default minZoom (0.25), so it's bumped up to 25%
+      // rather than collapsing the range to zero.
+      expect(screen.getByText("25%")).toBeInTheDocument();
+
+      const surface = getSurface(container);
+      fireEvent.wheel(surface, { deltaY: -100, ctrlKey: true });
+
+      expect(onViewportChange).toHaveBeenCalled();
+      const lastViewport = onViewportChange.mock.calls.at(-1)?.[0] as CanvasViewport;
+      expect(Number.isFinite(lastViewport.zoom)).toBe(true);
+      expect(lastViewport.zoom).toBeGreaterThan(0);
+      expect(lastViewport.zoom).toBeLessThanOrEqual(0.25);
     });
   });
 
