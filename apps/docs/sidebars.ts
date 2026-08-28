@@ -59,7 +59,7 @@ const sidebars: SidebarsConfig = {
             'components/ai-suggested-actions',
             'components/ai-chat',
             'components/ai-conversation-history',
-            'components/ai-code-block'
+            'components/ai-response-actions'
            
           ],
         },
