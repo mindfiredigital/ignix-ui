@@ -25,10 +25,17 @@ const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
         },
         ref
     ) => {
+        const isTailwindWidth = typeof width === "string" && width.startsWith("w-");
+        const isTailwindHeight = typeof height === "string" && height.startsWith("h-");
+
         const customStyle: React.CSSProperties = {
             ...style,
-            width: typeof width === "number" ? `${width}px` : width,
-            height: typeof height === "number" ? `${height}px` : height,
+            width: !isTailwindWidth && width !== undefined 
+                ? (typeof width === "number" ? `${width}px` : width) 
+                : undefined,
+            height: !isTailwindHeight && height !== undefined 
+                ? (typeof height === "number" ? `${height}px` : height) 
+                : undefined,
         };
 
         const isAnimatedGradient = animation === "shimmer" || animation === "wave";
@@ -88,6 +95,8 @@ const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
                         variant === "circular" && "rounded-full",
                         variant === "text" && "rounded h-4 w-full",
                         variant === "rectangular" && "rounded-xl",
+                        isTailwindWidth && width,
+                        isTailwindHeight && height,
                         className
                     )}
                     {...props}

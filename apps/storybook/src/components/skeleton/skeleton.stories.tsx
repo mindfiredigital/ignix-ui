@@ -36,12 +36,12 @@ The **Skeleton** component is a placeholder indicator used to show page loading 
     },
     animation: {
       control: "select",
-      options: ["shimmer", "pulse", "none"],
+      options: ["shimmer", "wave", "pulse", "none"],
       description: "Type of loading animation to apply",
     },
     colorTheme: {
       control: "select",
-      options: ["default", "primary", "muted"],
+      options: ["default", "primary", "success", "warning", "danger"],
       description: "Color theme styling used for background",
     },
   },
