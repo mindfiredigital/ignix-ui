@@ -95,33 +95,32 @@ const createEnhancedParticles = (container: HTMLElement, count = 8) => {
   return particles;
 };
 
-export const AnimatedInput = React.forwardRef<HTMLInputElement, AnimatedInputProps>(
-  (
-    {
-      placeholder = "",
-      variant = "default",
-      className = "",
-      inputClassName = "",
-      labelClassName = "",
-      value = "",
-      onChange,
-      onKeyDown,
-      onFocus,
-      onBlur,
-      type = "text",
-      id,
-      autoFocus,
-      disabled = false,
-      error = "",
-      success = false,
-      successMessage = "",
-      icon: Icon,
-      showPasswordToggle = false,
-      size = "md",
-      ...props
-    },
-    ref
-  ) => {
+const AnimatedInputRender: React.ForwardRefRenderFunction<HTMLInputElement, AnimatedInputProps> = (
+  {
+    placeholder = "",
+    variant = "default",
+    className = "",
+    inputClassName = "",
+    labelClassName = "",
+    value = "",
+    onChange,
+    onKeyDown,
+    onFocus,
+    onBlur,
+    type = "text",
+    id,
+    autoFocus,
+    disabled = false,
+    error = "",
+    success = false,
+    successMessage = "",
+    icon: Icon,
+    showPasswordToggle = false,
+    size = "md",
+    ...props
+  },
+  ref
+) => {
     const [isFocused, setIsFocused] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [inputType, setInputType] = useState(type);
@@ -129,300 +128,311 @@ export const AnimatedInput = React.forwardRef<HTMLInputElement, AnimatedInputPro
     const particleRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
-    // Enhanced mouse tracking for premium effects
-    const mouseX = useMotionValue(0);
-    const mouseY = useMotionValue(0);
-    const rotateX = useSpring(useTransform(mouseY, [-100, 100], [2, -2]));
-    const rotateY = useSpring(useTransform(mouseX, [-100, 100], [-2, 2]));
+  // Enhanced mouse tracking for premium effects
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const rotateX = useSpring(useTransform(mouseY, [-100, 100], [2, -2]));
+  const rotateY = useSpring(useTransform(mouseX, [-100, 100], [-2, 2]));
 
-    const handleFocus = () => {
-      setIsFocused(true);
-      onFocus?.();
-    };
+  const handleFocus = () => {
+    setIsFocused(true);
+    onFocus?.();
+  };
 
-    const handleBlur = () => {
-      setIsFocused(false);
-      onBlur?.();
-    };
+  const handleBlur = () => {
+    setIsFocused(false);
+    onBlur?.();
+  };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      onChange?.(e.target.value);
-    };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange?.(e.target.value);
+  };
 
-    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-      if (!containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      mouseX.set((e.clientX - centerX) * 0.3);
-      mouseY.set((e.clientY - centerY) * 0.3);
-    };
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    mouseX.set((e.clientX - centerX) * 0.3);
+    mouseY.set((e.clientY - centerY) * 0.3);
+  };
 
-    const togglePasswordVisibility = () => {
-      setShowPassword(!showPassword);
-      setInputType(showPassword ? "password" : "text");
-    };
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+    setInputType(showPassword ? "password" : "text");
+  };
 
-    const safeVariant = (variant && inputVariants[variant as keyof typeof inputVariants]) ? variant : "default";
-    const variants = inputVariants[safeVariant as keyof typeof inputVariants];
-    const hasValue = value ? value.length > 0 : false;
-    const isActive = isFocused || hasValue;
+  const safeVariant = (variant && inputVariants[variant as keyof typeof inputVariants]) ? variant : "default";
+  const variants = inputVariants[safeVariant as keyof typeof inputVariants];
+  const hasValue = value ? value.length > 0 : false;
+  const isActive = isFocused || hasValue;
 
-    // Size configurations
-    const sizeConfig = {
-      sm: { input: "h-9 px-3 text-sm", label: "text-sm", icon: "h-4 w-4" },
-      md: { input: "h-11 px-4 text-base", label: "text-base", icon: "h-5 w-5" },
-      lg: { input: "h-13 px-5 text-lg", label: "text-lg", icon: "h-6 w-6" }
-    };
+  // Size configurations
+  const sizeConfig = {
+    sm: { input: "h-9 px-3 text-sm", label: "text-sm", icon: "h-4 w-4" },
+    md: { input: "h-11 px-4 text-base", label: "text-base", icon: "h-5 w-5" },
+    lg: { input: "h-13 px-5 text-lg", label: "text-lg", icon: "h-6 w-6" }
+  };
 
-    // Enhanced particle effects for particleField
-    useEffect(() => {
-      if (variant === "particleField" && particleRef.current && isActive) {
-        const interval = setInterval(() => {
-          if (particleRef.current) {
-            createEnhancedParticles(particleRef.current, 6);
-          }
-        }, 300);
+  // Enhanced particle effects for particleField
+  useEffect(() => {
+    if (variant === "particleField" && particleRef.current && isActive) {
+      const interval = setInterval(() => {
+        if (particleRef.current) {
+          createEnhancedParticles(particleRef.current, 6);
+        }
+      }, 300);
 
-        return () => clearInterval(interval);
-      }
-    }, [variant, isActive]);
+      return () => clearInterval(interval);
+    }
+  }, [variant, isActive]);
 
-    return (
-      <motion.div
-        ref={containerRef}
+  return (
+    <motion.div
+      ref={containerRef}
+      className={cn(
+        "relative mb-6 group",
+        disabled && "opacity-60 cursor-not-allowed",
+        className
+      )}
+      initial="initial"
+      animate={isActive ? "animate" : "initial"}
+      style={{
+        perspective: 2000,
+        rotateX: variant === "tilt3D" ? rotateX : undefined,
+        rotateY: variant === "tilt3D" ? rotateY : undefined
+      }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={() => {
+        mouseX.set(0);
+        mouseY.set(0);
+      }}
+      variants={variants.container}
+    >
+      {/* Enhanced Label */}
+      <motion.label
         className={cn(
-          "relative mb-6 group",
-          disabled && "opacity-60 cursor-not-allowed",
-          className
+          "absolute top-1/2 -translate-y-1/2 pointer-events-none transition-colors duration-300 z-10 origin-left",
+          Icon ? "left-9" : "left-4",
+          "text-muted-foreground group-focus-within:text-primary",
+          error && "text-red-500",
+          success && "text-emerald-500",
+          sizeConfig[size].label,
+          labelClassName
         )}
-        initial="initial"
-        animate={isActive ? "animate" : "initial"}
-        style={{
-          perspective: 2000,
-          rotateX: variant === "tilt3D" ? rotateX : undefined,
-          rotateY: variant === "tilt3D" ? rotateY : undefined
-        }}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={() => {
-          mouseX.set(0);
-          mouseY.set(0);
-        }}
-        variants={variants.container}
+        variants={variants.label}
+        style={variant === "premiumGradient" ? {
+          backgroundClip: "text",
+          WebkitBackgroundClip: "text",
+          color: "transparent",
+        } : undefined}
       >
-        {/* Enhanced Label */}
-        <motion.label
-          className={cn(
-            "absolute top-1/2 -translate-y-1/2 pointer-events-none transition-colors duration-300 z-10 origin-left",
-            Icon ? "left-9" : "left-4",
-            "text-muted-foreground group-focus-within:text-primary",
-            error && "text-red-500",
-            success && "text-emerald-500",
-            sizeConfig[size].label,
-            labelClassName
-          )}
-          variants={variants.label}
-        >
-          {placeholder}
-        </motion.label>
+        {placeholder}
+      </motion.label>
 
-        {/* Input Container */}
-        <div className="relative">
-          {/* Leading Icon */}
-          {Icon && (
-            <motion.div
-              className={cn(
-                "absolute left-3 top-1/2 -translate-y-1/2 z-20",
-                "text-muted-foreground group-focus-within:text-primary transition-colors duration-300",
-                sizeConfig[size].icon
-              )}
-              initial={{ scale: 0.8, opacity: 0.6 }}
-              animate={{
-                scale: isActive ? 1 : 0.8,
-                opacity: isActive ? 1 : 0.6,
-              }}
-              transition={{ duration: 0.3 }}
-            >
-              <Icon className={sizeConfig[size].icon} />
-            </motion.div>
-          )}
-
-          {/* Enhanced Input Field */}
-          <motion.input
-            {...props}
-            ref={ref}
-            id={id}
-            autoFocus={autoFocus}
-            type={inputType}
+      {/* Input Container */}
+      <div className="relative">
+        {/* Leading Icon */}
+        {Icon && (
+          <motion.div
             className={cn(
-              // Base enhanced styles
-              "w-full bg-background/90 backdrop-blur-sm border border-border/60 rounded-xl",
-              "text-foreground placeholder:text-transparent transition-all duration-300",
-              "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/60",
-              "disabled:cursor-not-allowed disabled:opacity-50",
-              "shadow-sm hover:shadow-md focus:shadow-lg",
-              "shadow-black/5 dark:shadow-white/5",
-
-              // Size variants
-              sizeConfig[size].input,
-
-              // Icon padding
-              Icon && "pl-9",
-              (showPasswordToggle || error || success) && "pr-10",
-
-              // Status variants
-              error && "border-red-500/60 focus:border-red-500 focus:ring-red-500/20",
-              success && "border-emerald-500/60 focus:border-emerald-500 focus:ring-emerald-500/20",
-
-              inputClassName
+              "absolute left-3 top-1/2 -translate-y-1/2 z-20",
+              "text-muted-foreground group-focus-within:text-primary transition-colors duration-300",
+              sizeConfig[size].icon
             )}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            onChange={handleChange}
-            onKeyDown={onKeyDown}
-            value={value}
-            disabled={disabled}
-            variants={variants.input}
-            style={{
-              ...props.style,
-              ...(variant === "borderBeam" && {
-                border: "2px solid transparent",
-              }),
+            initial={{ scale: 0.8, opacity: 0.6 }}
+            animate={{
+              scale: isActive ? 1 : 0.8,
+              opacity: isActive ? 1 : 0.6,
             }}
-          />
-
-          {/* Enhanced Border Beam Effect */}
-          {variant === "borderBeam" && isActive && (
-            <svg
-              className="absolute inset-0 pointer-events-none rounded-xl"
-              style={{
-                transform: "translate(-2px, -2px)",
-                width: "calc(100% + 4px)",
-                height: "calc(100% + 4px)",
-                zIndex: 5,
-              }}
-            >
-              <motion.rect
-                x="0"
-                y="0"
-                width="100%"
-                height="100%"
-                fill="none"
-                stroke="url(#enhancedBorderGradient)"
-                strokeWidth="2"
-                strokeLinecap="round"
-                rx="12"
-                initial="initial"
-                animate="animate"
-                variants={borderBeamVariants}
-              />
-              <defs>
-                <linearGradient
-                  id="enhancedBorderGradient"
-                  gradientUnits="userSpaceOnUse"
-                  x1="0"
-                  y1="0"
-                  x2="100%"
-                  y2="100%"
-                >
-                  <stop offset="0%" stopColor="var(--primary)" />
-                  <stop offset="25%" stopColor="var(--primary)" />
-                  <stop offset="50%" stopColor="var(--primary)" />
-                  <stop offset="75%" stopColor="var(--primary)" />
-                  <stop offset="100%" stopColor="var(--primary)" />
-                </linearGradient>
-              </defs>
-            </svg>
-          )}
-
-          {/* Enhanced Particle Effects */}
-          {variant === "particles" && isActive && (
-            <div className="absolute inset-0 pointer-events-none rounded-xl overflow-hidden">
-              {[...Array(8)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute w-2 h-2 bg-primary rounded-full shadow-lg shadow-primary/50"
-                  style={{
-                    left: `${15 + i * 10}%`,
-                    top: "50%",
-                  }}
-                  variants={variants.extra}
-                  custom={i * 0.1}
-                  animate="animate"
-                  initial="initial"
-                />
-              ))}
-            </div>
-          )}
-
-          {/* Enhanced Ripple Effect */}
-          {variant === "ripple" && isActive && (
-            <motion.div
-              className="absolute inset-0 rounded-xl pointer-events-none"
-              initial={{ scale: 0, opacity: 0.5 }}
-              animate={{
-                scale: [0, 2, 0],
-                opacity: [0.5, 0.2, 0],
-              }}
-              transition={{
-                duration: 1.5,
-                repeat: Infinity,
-                ease: "easeOut",
-              }}
-              style={{
-                background: "radial-gradient(circle, var(--primary) 0%, transparent 70%)"
-              }}
-            />
-          )}
-
-          {/* Trailing Icons */}
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2 z-20">
-            {error && <AlertCircle className="h-4 w-4 text-red-500" />}
-            {success && <Check className="h-4 w-4 text-emerald-500" />}
-
-            {showPasswordToggle && type === "password" && (
-              <motion.button
-                type="button"
-                onClick={togglePasswordVisibility}
-                className="text-muted-foreground hover:text-foreground transition-colors duration-200"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </motion.button>
-            )}
-          </div>
-        </div>
-
-        {/* Enhanced Particle Field */}
-        {variant === "particleField" && (
-          <motion.div
-            ref={particleRef}
-            className="absolute inset-0 pointer-events-none overflow-hidden rounded-xl"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: isActive ? 1 : 0 }}
-            transition={{ duration: 0.3 }}
-          />
-        )}
-
-        {/* Error/Success Message */}
-        {(error || success) && (
-          <motion.div
-            className={cn(
-              "mt-2 text-sm flex items-center gap-2",
-              error ? "text-red-500" : "text-emerald-500"
-            )}
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
           >
-            {error ? <AlertCircle className="h-4 w-4" /> : <Check className="h-4 w-4" />}
-            {error ? error : successMessage ? successMessage : "Input validated successfully"}
+            <Icon className={sizeConfig[size].icon} />
           </motion.div>
         )}
-      </motion.div>
-    );
-  });
+
+        {/* Enhanced Input Field */}
+        <motion.input
+          {...props}
+          ref={ref}
+          id={id}
+          autoFocus={autoFocus}
+          type={inputType}
+          className={cn(
+            // Base enhanced styles
+            "w-full bg-background/90 backdrop-blur-sm border border-border/60 rounded-xl",
+            "text-foreground placeholder:text-transparent transition-all duration-300",
+            "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/60",
+            "disabled:cursor-not-allowed disabled:opacity-50",
+            "shadow-sm hover:shadow-md focus:shadow-lg",
+            "shadow-black/5 dark:shadow-white/5",
+
+            // Size variants
+            sizeConfig[size].input,
+
+            // Icon padding
+            Icon && "pl-9",
+            (showPasswordToggle || error || success) && "pr-10",
+
+            // Status variants
+            error && "border-red-500/60 focus:border-red-500 focus:ring-red-500/20",
+            success && "border-emerald-500/60 focus:border-emerald-500 focus:ring-emerald-500/20",
+
+            inputClassName
+          )}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          onChange={handleChange}
+          onKeyDown={onKeyDown}
+          value={value}
+          disabled={disabled}
+          variants={variants.input}
+          style={{
+            ...props.style,
+            ...(variant === "borderBeam" && {
+              border: "2px solid transparent",
+            }),
+            ...(variant === "typewriter" && {
+              caretColor: "var(--primary)",
+              ["caretShape" as string]: "block",
+            }),
+          }}
+        />
+
+        {/* Enhanced Border Beam Effect */}
+        {variant === "borderBeam" && isActive && (
+          <svg
+            className="absolute inset-0 pointer-events-none rounded-xl"
+            style={{
+              transform: "translate(-2px, -2px)",
+              width: "calc(100% + 4px)",
+              height: "calc(100% + 4px)",
+              zIndex: 5,
+            }}
+          >
+            <motion.rect
+              x="0"
+              y="0"
+              width="100%"
+              height="100%"
+              fill="none"
+              stroke="url(#enhancedBorderGradient)"
+              strokeWidth="2"
+              strokeLinecap="round"
+              rx="12"
+              initial="initial"
+              animate="animate"
+              variants={borderBeamVariants}
+            />
+            <defs>
+              <linearGradient
+                id="enhancedBorderGradient"
+                gradientUnits="userSpaceOnUse"
+                x1="0"
+                y1="0"
+                x2="100%"
+                y2="100%"
+              >
+                <stop offset="0%" stopColor="var(--primary)" />
+                <stop offset="25%" stopColor="var(--primary)" />
+                <stop offset="50%" stopColor="var(--primary)" />
+                <stop offset="75%" stopColor="var(--primary)" />
+                <stop offset="100%" stopColor="var(--primary)" />
+              </linearGradient>
+            </defs>
+          </svg>
+        )}
+
+        {/* Enhanced Particle Effects */}
+        {variant === "particles" && isActive && (
+          <div className="absolute inset-0 pointer-events-none rounded-xl overflow-hidden">
+            {[...Array(8)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute w-2 h-2 bg-primary rounded-full shadow-lg shadow-primary/50"
+                style={{
+                  left: `${15 + i * 10}%`,
+                  top: "50%",
+                }}
+                variants={variants.extra}
+                custom={i * 0.1}
+                animate="animate"
+                initial="initial"
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Enhanced Ripple Effect */}
+        {variant === "ripple" && isActive && (
+          <motion.div
+            className="absolute inset-0 rounded-xl pointer-events-none"
+            initial={{ scale: 0, opacity: 0.5 }}
+            animate={{
+              scale: [0, 2, 0],
+              opacity: [0.5, 0.2, 0],
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              ease: "easeOut",
+            }}
+            style={{
+              background: "radial-gradient(circle, var(--primary) 0%, transparent 70%)"
+            }}
+          />
+        )}
+
+        {/* Trailing Icons */}
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2 z-20">
+          {error && <AlertCircle className="h-4 w-4 text-red-500" />}
+          {success && <Check className="h-4 w-4 text-emerald-500" />}
+
+          {showPasswordToggle && type === "password" && (
+            <motion.button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="text-muted-foreground hover:text-foreground transition-colors duration-200"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </motion.button>
+          )}
+        </div>
+      </div>
+
+      {/* Enhanced Particle Field */}
+      {variant === "particleField" && (
+        <motion.div
+          ref={particleRef}
+          className="absolute inset-0 pointer-events-none overflow-hidden rounded-xl"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isActive ? 1 : 0 }}
+          transition={{ duration: 0.3 }}
+        />
+      )}
+
+      {/* Error/Success Message */}
+      {(error || success) && (
+        <motion.div
+          className={cn(
+            "mt-2 text-sm flex items-center gap-2",
+            error ? "text-red-500" : "text-emerald-500"
+          )}
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          {error ? <AlertCircle className="h-4 w-4" /> : <Check className="h-4 w-4" />}
+          {error ? error : successMessage ? successMessage : "Input validated successfully"}
+        </motion.div>
+      )}
+    </motion.div>
+  );
+};
+
+export const AnimatedInput = React.forwardRef(AnimatedInputRender);
 
 // Enhanced input variants (ALL original variants with premium improvements)
 const inputVariants: Record<string, InputVariant> = {
@@ -434,7 +444,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, scale: 1, color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         scale: 0.85,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 300, damping: 20 }
@@ -451,11 +461,36 @@ const inputVariants: Record<string, InputVariant> = {
     },
   },
 
+  springy: {
+    label: {
+      initial: { y: 0, scale: 1, color: "var(--primary)" },
+      animate: {
+        y: -40,
+        scale: 0.85,
+        color: "var(--primary)",
+        transition: { type: "spring", stiffness: 450, damping: 10 }
+      },
+    },
+    input: {
+      initial: {
+        borderColor: "var(--border)",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+        scale: 1,
+      },
+      animate: {
+        scale: [1, 1.04, 0.98, 1.02, 1],
+        borderColor: "var(--primary)",
+        boxShadow: "0 4px 15px var(--primary)",
+        transition: { duration: 0.6 }
+      },
+    },
+  },
+
   underline: {
     label: {
       initial: { y: 0, color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 300, damping: 20 }
       },
@@ -479,7 +514,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, scale: 1, color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         scale: 0.85,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 400, damping: 25 },
@@ -501,7 +536,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, color: "#6b7280" },
       animate: {
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         textShadow: "0 0 12px var(--primary)"
       },
@@ -522,7 +557,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, opacity: 1, color: "#6b7280" },
       animate: {
-        y: -32,
+        y: -40,
         opacity: 0.9,
         color: "var(--primary)",
         textShadow: "0 0 12px var(--primary)"
@@ -551,7 +586,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, color: "#6b7280" },
       animate: {
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         textShadow: "0 0 8px var(--primary)"
       },
@@ -589,7 +624,7 @@ const inputVariants: Record<string, InputVariant> = {
       initial: { x: 0, y: 0, color: "var(--primary)" },
       animate: {
         x: 0,
-        y: -32,
+        y: -40,
         scale: 0.85,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 300, damping: 20 }
@@ -613,7 +648,7 @@ const inputVariants: Record<string, InputVariant> = {
       initial: { scale: 1, y: 0, color: "var(--primary)" },
       animate: {
         scale: 0.85,
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 400, damping: 25 }
       },
@@ -633,7 +668,7 @@ const inputVariants: Record<string, InputVariant> = {
       initial: { rotate: 0, y: 0, color: "var(--primary)" },
       animate: {
         rotate: -8,
-        y: -32,
+        y: -40,
         scale: 0.85,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 300, damping: 20 }
@@ -653,7 +688,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 400, damping: 15 },
       },
@@ -676,10 +711,14 @@ const inputVariants: Record<string, InputVariant> = {
       initial: { x: 0, y: 0, color: "var(--primary)" },
       animate: {
         x: [-15, 15, -8, 8, 0],
-        y: -32,
+        y: -40,
         scale: 0.85,
         color: "var(--primary)",
-        transition: { type: "spring", stiffness: 500, damping: 15 },
+        transition: {
+          x: { duration: 0.6, ease: "easeInOut" },
+          y: { type: "spring", stiffness: 300, damping: 15 },
+          scale: { type: "spring", stiffness: 300, damping: 15 },
+        },
       },
     },
     input: {
@@ -697,7 +736,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, opacity: 1, color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         opacity: 0.9,
         color: "var(--primary)",
         textShadow: "0 0 15px var(--primary)"
@@ -717,7 +756,7 @@ const inputVariants: Record<string, InputVariant> = {
       initial: { x: 0, y: 0, color: "var(--primary)" },
       animate: {
         x: [-3, 3, -2, 2, 0],
-        y: -32,
+        y: -40,
         scale: 0.85,
         color: "var(--primary)",
         transition: {
@@ -752,7 +791,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, color: "var(--primary)" },
       animate: (i: number) => ({
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         transition: {
           delay: i * 0.03,
@@ -777,23 +816,22 @@ const inputVariants: Record<string, InputVariant> = {
 
   typewriter: {
     label: {
-      initial: { width: "100%", x: 0, y: 0, color: "var(--primary)" },
+      initial: { y: 0, scale: 1, color: "var(--primary)" },
       animate: {
-        width: 0,
-        x: -60,
-        y: -32,
+        y: -40,
         scale: 0.85,
         color: "var(--primary)",
-        transition: { duration: 0.6, ease: "easeInOut" }
+        transition: { duration: 0.4, ease: "easeInOut" }
       },
     },
     input: {
-      initial: { width: 0 },
+      initial: {
+        borderColor: "var(--border)",
+      },
       animate: {
-        width: "100%",
         borderColor: "var(--primary)",
         boxShadow: "0 4px 15px var(--primary)",
-        transition: { delay: 0.6, duration: 0.6, ease: "easeOut" }
+        transition: { duration: 0.4 }
       },
     },
   },
@@ -802,7 +840,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         textShadow: "0 0 12px var(--primary)"
       },
@@ -826,7 +864,7 @@ const inputVariants: Record<string, InputVariant> = {
       initial: { scale: 1, y: 0, color: "var(--primary)" },
       animate: {
         scale: 0.85,
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 300, damping: 20 }
       },
@@ -854,7 +892,7 @@ const inputVariants: Record<string, InputVariant> = {
       initial: { rotateX: 0, y: 0, color: "var(--primary)" },
       animate: {
         rotateX: 180,
-        y: -32,
+        y: -40,
         scale: 0.85,
         color: "var(--primary)",
         transition: { duration: 0.6, ease: "easeInOut" }
@@ -876,7 +914,7 @@ const inputVariants: Record<string, InputVariant> = {
       initial: { borderRadius: "0%", y: 0, color: "var(--primary)" },
       animate: {
         borderRadius: "50%",
-        y: -32,
+        y: -40,
         scale: 0.85,
         color: "var(--primary)",
         transition: { duration: 0.6, ease: "easeInOut" }
@@ -899,7 +937,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, filter: "brightness(1)", color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         filter: "brightness(1.3) drop-shadow(0 0 8px rgba(59, 130, 246, 0.5))",
         color: "var(--primary)"
       },
@@ -933,7 +971,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 300, damping: 20 }
       },
@@ -956,7 +994,7 @@ const inputVariants: Record<string, InputVariant> = {
       initial: { textShadow: "0 0 0px #fff", color: "var(--primary)" },
       animate: {
         textShadow: "0 0 12px #fff, 0 0 24px var(--primary), 0 0 36px var(--primary)",
-        y: -32,
+        y: -40,
         color: "var(--primary)",
       },
     },
@@ -977,7 +1015,7 @@ const inputVariants: Record<string, InputVariant> = {
       initial: { rotateY: 0, y: 0, color: "var(--primary)" },
       animate: {
         rotateY: 180,
-        y: -32,
+        y: -40,
         scale: 0.85,
         color: "var(--primary)",
         transition: { duration: 0.8, ease: "easeInOut" }
@@ -1001,7 +1039,7 @@ const inputVariants: Record<string, InputVariant> = {
       initial: { skewX: 0, y: 0, color: "var(--primary)" },
       animate: {
         skewX: [-8, 8, -4, 4, 0],
-        y: -32,
+        y: -40,
         scale: 0.85,
         color: "var(--primary)",
         textShadow: "2px 0 #ff0000, -2px 0 #00ff00",
@@ -1029,7 +1067,7 @@ const inputVariants: Record<string, InputVariant> = {
       initial: { opacity: 1, y: 0, color: "var(--primary)" },
       animate: {
         opacity: [1, 0.6, 1],
-        y: -32,
+        y: -40,
         scale: 0.85,
         color: "var(--primary)",
         textShadow: "0 0 15px var(--primary)",
@@ -1063,7 +1101,7 @@ const inputVariants: Record<string, InputVariant> = {
       initial: { scale: 1, y: 0, rotate: 0, color: "var(--primary)" },
       animate: {
         scale: 0.85,
-        y: -32,
+        y: -40,
         rotate: 360,
         color: "var(--primary)",
         textShadow: "0 0 15px var(--primary)",
@@ -1090,7 +1128,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         textShadow: "0 0 12px var(--primary)"
       },
@@ -1112,7 +1150,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 300, damping: 20 }
       },
@@ -1143,7 +1181,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 300, damping: 20 }
       },
@@ -1161,7 +1199,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, scale: 1, color: "#6b7280" },
       animate: {
-        y: -32,
+        y: -40,
         scale: 0.85,
         color: "#3b82f6",
         transition: { type: "spring", stiffness: 300, damping: 20 },
@@ -1187,7 +1225,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         textShadow: "0 0 15px var(--primary)"
       },
@@ -1216,7 +1254,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, opacity: 0, color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         opacity: 1,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 400, damping: 25 },
@@ -1237,7 +1275,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, borderRadius: "4px", color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         borderRadius: "16px",
         color: "var(--primary)",
         transition: { duration: 0.6, ease: "easeInOut" }
@@ -1260,7 +1298,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 300, damping: 20 }
       },
@@ -1282,7 +1320,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, color: "#6b7280" },
       animate: {
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         textShadow: "0 0 12px var(--primary)"
       },
@@ -1314,7 +1352,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, scale: 1, color: "var(--primary)" },
       animate: {
-        y: -28,
+        y: -36,
         scale: 0.85,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 300 },
@@ -1348,7 +1386,7 @@ const inputVariants: Record<string, InputVariant> = {
         textShadow: "none"
       },
       animate: {
-        y: -28,
+        y: -36,
         scale: 0.85,
         color: "#3b82f6",
         textShadow: "0 0 10px rgba(59, 130, 246, 0.5), 0 0 20px rgba(59, 130, 246, 0.3)",
@@ -1371,7 +1409,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, color: "var(--primary)" },
       animate: {
-        y: -28,
+        y: -36,
         color: "var(--primary)",
         textShadow: "0 0 8px var(--primary)",
       },
@@ -1425,7 +1463,7 @@ const inputVariants: Record<string, InputVariant> = {
         filter: "blur(0px)"
       },
       animate: {
-        y: -28,
+        y: -36,
         scale: 0.85,
         color: "#3b82f6",
         filter: "blur(0px) drop-shadow(0 0 8px rgba(59, 130, 246, 0.5))",
@@ -1460,7 +1498,7 @@ const inputVariants: Record<string, InputVariant> = {
         backgroundImage: "none"
       },
       animate: {
-        y: -28,
+        y: -36,
         scale: 0.85,
         backgroundImage: "linear-gradient(90deg, #3b82f6, #8b5cf6, #3b82f6)",
         backgroundSize: "200% 100%",
@@ -1490,7 +1528,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, scale: 1, color: "#6b7280" },
       animate: {
-        y: -28,
+        y: -36,
         scale: 0.85,
         color: "#3b82f6",
         transition: { type: "spring", stiffness: 400, damping: 25 },
@@ -1528,7 +1566,7 @@ const inputVariants: Record<string, InputVariant> = {
         filter: "hue-rotate(0deg)"
       },
       animate: {
-        y: -28,
+        y: -36,
         scale: 0.85,
         color: "#8b5cf6",
         filter: "hue-rotate(360deg)",
@@ -1556,31 +1594,45 @@ const inputVariants: Record<string, InputVariant> = {
         y: 0,
         scale: 1,
         backgroundImage: "linear-gradient(90deg, #6b7280, #6b7280)",
-        backgroundClip: "text",
-        color: "transparent"
+        backgroundSize: "200% auto",
+        backgroundPosition: "0% 50%",
       },
       animate: {
-        y: -28,
+        y: -36,
         scale: 0.85,
         backgroundImage: "linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6)",
-        backgroundSize: "300% 100%",
-        backgroundPosition: "0% 50%",
-        animation: "gradientShift 3s ease infinite",
+        backgroundSize: "200% auto",
+        backgroundPosition: ["0% 50%", "200% 50%"],
+        transition: {
+          backgroundPosition: {
+            repeat: Infinity,
+            duration: 3,
+            ease: "linear"
+          },
+          y: { type: "spring", stiffness: 300, damping: 20 },
+          scale: { type: "spring", stiffness: 300, damping: 20 }
+        }
       },
     },
     input: {
       initial: {
         background: "linear-gradient(90deg, #ffffff, #ffffff)",
-        borderColor: "rgb(226, 232, 240)",
+        borderColor: "var(--border)",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
       },
       animate: {
         background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%)",
-        borderColor: "rgb(59, 130, 246)",
+        borderColor: "var(--primary)",
         boxShadow: `
-          0 8px 25px rgba(59, 130, 246, 0.15),
-          0 0 0 1px rgba(59, 130, 246, 0.1),
+          0 0 20px rgba(59, 130, 246, 0.25),
+          0 0 35px rgba(139, 92, 246, 0.2),
+          0 0 50px rgba(236, 72, 153, 0.15),
           inset 0 1px 0 rgba(255, 255, 255, 0.9)
         `,
+        transition: {
+          borderColor: { duration: 0.3 },
+          boxShadow: { duration: 0.3 }
+        }
       },
     },
   },
