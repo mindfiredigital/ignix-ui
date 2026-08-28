@@ -78,7 +78,8 @@
             "components/advanced-table",
             "components/tooltip",
             "components/typography",
-            "components/scroll-area"
+            "components/scroll-area",
+            "components/skeleton"
           ]
         },
         {
