@@ -12,6 +12,7 @@ import { Play, Square, RotateCcw } from 'lucide-react';
 const AIStreamingTextDemo = (): React.JSX.Element => {
   const ref = useRef<AIStreamingTextRef>(null);
   const [isPlaying, setIsPlaying] = useState(true);
+  const [completed, setCompleted] = useState(false);
   const [mode, setMode] = useState<'char' | 'word' | 'sentence'>('char');
   const [speed, setSpeed] = useState(30);
   const [textKey, setTextKey] = useState(0);
@@ -24,16 +25,24 @@ const AIStreamingTextDemo = (): React.JSX.Element => {
   const handleResume = (): void => {
     ref.current?.resume();
     setIsPlaying(true);
+    setCompleted(false);
   };
 
   const handleReset = (): void => {
     ref.current?.reset();
     setIsPlaying(false);
+    setCompleted(false);
   };
 
   const restartStream = (): void => {
     setTextKey((prev) => prev + 1);
     setIsPlaying(true);
+    setCompleted(false);
+  };
+
+  const handleComplete = (): void => {
+    setCompleted(true);
+    setIsPlaying(false);
   };
 
   const sampleText = 
@@ -62,7 +71,15 @@ function TypewriterEffect() {
       
       <div className="flex flex-wrap gap-4 items-center justify-between">
         <div className="flex items-center gap-2">
-          {!isPlaying ? (
+          {completed ? (
+            <Button
+              size="sm"
+              onClick={restartStream}
+              className="flex items-center gap-1.5 cursor-pointer"
+            >
+              <Play size={12} /> Restart
+            </Button>
+          ) : !isPlaying ? (
             <Button
               size="sm"
               onClick={handleResume}
@@ -147,6 +164,7 @@ function TypewriterEffect() {
               speed={speed}
               isStreaming={isPlaying}
               showCursor={true}
+              onComplete={handleComplete}
             />
           </div>
         </TabItem>

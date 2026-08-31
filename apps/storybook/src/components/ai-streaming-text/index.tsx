@@ -51,6 +51,7 @@ const AIStreamingText = React.forwardRef<AIStreamingTextRef, AIStreamingTextProp
     
     const timerRef = React.useRef<NodeJS.Timeout | null>(null);
     const streamReaderRef = React.useRef<ReadableStreamDefaultReader<Uint8Array | string> | null>(null);
+    const cancelledStreamRef = React.useRef<ReadableStream<Uint8Array | string> | null>(null);
     const currentTextIndexRef = React.useRef(0);
     const onChunkRef = React.useRef(onChunk);
     const onCompleteRef = React.useRef(onComplete);
@@ -76,25 +77,37 @@ const AIStreamingText = React.forwardRef<AIStreamingTextRef, AIStreamingTextProp
         streamReaderRef.current.cancel().catch(() => { /* ignore */ });
         streamReaderRef.current = null;
       }
-    }, []);
+      if (stream) {
+        cancelledStreamRef.current = stream;
+      }
+    }, [stream]);
 
     const reset = React.useCallback((): void => {
       stop();
       setDisplayedText("");
       currentTextIndexRef.current = 0;
       setIsFinished(false);
+      cancelledStreamRef.current = null;
     }, [stop]);
 
     const resume = React.useCallback((): void => {
       if (isFinished) return;
+      if (stream && stream === cancelledStreamRef.current) return;
       setActive(true);
-    }, [isFinished]);
+    }, [isFinished, stream]);
 
     React.useImperativeHandle(ref, () => ({
       stop,
       reset,
       resume,
     }));
+
+    React.useEffect(() => {
+      currentTextIndexRef.current = 0;
+      setDisplayedText("");
+      setIsFinished(false);
+      cancelledStreamRef.current = null;
+    }, [text, mode, stream]);
 
     React.useEffect(() => {
       if (stream || !text) return;
