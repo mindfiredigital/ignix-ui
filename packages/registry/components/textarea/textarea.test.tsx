@@ -79,6 +79,20 @@ describe("AnimatedTextarea", () => {
       });
       expect(onChange).not.toHaveBeenCalled();
     });
+
+    it("has no character limit by default, matching native <textarea> behavior", () => {
+      renderTextarea();
+      expect(screen.getByRole("textbox")).not.toHaveAttribute("maxLength");
+    });
+
+    it("does not truncate input longer than 1000 characters when maxLength is unset", () => {
+      const { onChange } = renderTextarea();
+      const longValue = "a".repeat(1500);
+      fireEvent.change(screen.getByRole("textbox"), {
+        target: { value: longValue },
+      });
+      expect(onChange).toHaveBeenCalledWith(longValue);
+    });
   });
 
   describe("character count display", () => {
