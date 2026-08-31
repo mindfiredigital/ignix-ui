@@ -143,14 +143,20 @@ function useActiveHeading(
       .filter((el): el is HTMLElement => el !== null);
     if (elements.length === 0) return;
 
+    // Persists across callback invocations rather than being rebuilt from just this batch's
+    // `entries` - IntersectionObserver only reports entries whose intersection state just
+    // changed, so a heading that's still visible without changing wouldn't appear in `entries`
+    // at all, and a fresh-each-time set would incorrectly drop it.
+    const visibleIds = new Set<string>();
     const observer = new IntersectionObserver(
       (entries) => {
-        // `entries` order reflects browser-specific intersection-change batching, not document
-        // order, so when multiple headings cross the threshold in the same batch, pick whichever
-        // is first in `currentHeadings` (reading order) rather than trusting `entries[0]`.
-        const visibleIds = new Set(
-          entries.filter((entry) => entry.isIntersecting).map((entry) => entry.target.id)
-        );
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) visibleIds.add(entry.target.id);
+          else visibleIds.delete(entry.target.id);
+        });
+        // `currentHeadings` order (not `entries` order, which reflects browser-specific
+        // intersection-change batching) decides which visible heading wins when more than one
+        // is visible at once.
         const firstVisible = currentHeadings.find((heading) => visibleIds.has(heading.id));
         if (firstVisible) {
           setActiveId(firstVisible.id);
@@ -330,6 +336,21 @@ export const DocumentationLayout: React.FC<DocumentationLayoutProps> = ({
       mobileDrawerRef.current.inert = !isMobileNavOpen;
     }
   }, [isMobileNavOpen, isMobile, hasLeftNav]);
+
+  // Resets eagerly at the start of every open/close transition, not just via
+  // onAnimationComplete below - otherwise closing before the open transition has finished
+  // (isDrawerFullyClosed still `true` from before) would drop visibility to "hidden"
+  // immediately, clipping the close animation instead of letting it slide out. useLayoutEffect
+  // (not useEffect) so this resolves before the browser paints that intermediate state. Skips
+  // the initial mount so the drawer still starts genuinely hidden before it's ever been opened.
+  const hasMountedDrawerRef = React.useRef(false);
+  React.useLayoutEffect(() => {
+    if (!hasMountedDrawerRef.current) {
+      hasMountedDrawerRef.current = true;
+      return;
+    }
+    setIsDrawerFullyClosed(false);
+  }, [isMobileNavOpen]);
 
   // Dialog-like focus behavior for the mobile drawer: move focus into it on open, restore
   // focus to the hamburger trigger on close. Skips the very first run so mounting with the

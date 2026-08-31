@@ -428,6 +428,53 @@ describe("DocumentationLayout", () => {
       document.body.removeChild(usage);
       vi.unstubAllGlobals();
     });
+
+    it("keeps the initially visible heading active when a later batch omits it (still intersecting, unchanged)", () => {
+      let capturedCallback: IntersectionObserverCallback | undefined;
+      class MockIntersectionObserver {
+        constructor(cb: IntersectionObserverCallback) {
+          capturedCallback = cb;
+        }
+        observe = vi.fn();
+        disconnect = vi.fn();
+        unobserve = vi.fn();
+        takeRecords = vi.fn();
+      }
+      vi.stubGlobal("IntersectionObserver", MockIntersectionObserver);
+
+      const overview = document.createElement("div");
+      overview.id = "overview";
+      document.body.appendChild(overview);
+      const usage = document.createElement("div");
+      usage.id = "usage";
+      document.body.appendChild(usage);
+
+      render(<DocumentationLayout tocHeadings={tocHeadings}><p>Content</p></DocumentationLayout>);
+
+      act(() => {
+        capturedCallback?.(
+          [{ isIntersecting: true, target: overview } as unknown as IntersectionObserverEntry],
+          {} as IntersectionObserver
+        );
+      });
+      expect(screen.getByRole("link", { name: "Overview" })).toHaveAttribute("aria-current", "location");
+
+      // "overview" is still intersecting and unchanged, so a real IntersectionObserver wouldn't
+      // report it again here - only "usage" entering shows up in this batch. "overview" must
+      // stay active since it's still visible and first in reading order.
+      act(() => {
+        capturedCallback?.(
+          [{ isIntersecting: true, target: usage } as unknown as IntersectionObserverEntry],
+          {} as IntersectionObserver
+        );
+      });
+      expect(screen.getByRole("link", { name: "Overview" })).toHaveAttribute("aria-current", "location");
+      expect(screen.getByRole("link", { name: "Usage" })).not.toHaveAttribute("aria-current");
+
+      document.body.removeChild(overview);
+      document.body.removeChild(usage);
+      vi.unstubAllGlobals();
+    });
   });
 
   describe("responsive behavior", () => {
