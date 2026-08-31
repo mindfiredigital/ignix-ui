@@ -1,0 +1,351 @@
+---
+sidebar_position: 6
+title: AIStreamingText
+description: A text renderer that simulates typing animations or directly consumes ReadableStream tokens for real-time streaming interfaces.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { AIStreamingText } from '@site/src/components/UI/ai-streaming-text';
+import AIStreamingTextDemo from '@site/src/components/Demo/AIStreamingTextDemo';
+
+The AIStreamingText component facilitates real-time streaming text rendering. It supports both **simulated streaming (typewriter effect)** using timer offsets (advancing character-by-character, word-by-word, or sentence-by-sentence) and **direct consumption of browser ReadableStream nodes** for active API calls, paired with trailing blinking cursors.
+
+<AIStreamingTextDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+
+```bash
+ignix add component ai-streaming-text
+```
+
+  </TabItem>
+
+  <TabItem
+    value="manual"
+    label="Manual"
+    className="max-h-[500px] overflow-y-auto"
+  >
+
+```tsx
+import * as React from "react";
+import { cn } from "../../../utils/cn";
+
+export interface AIStreamingTextProps extends Omit<React.HTMLAttributes<HTMLSpanElement>, "children"> {
+  /** The target text content to stream. (Mutually exclusive with stream) */
+  text?: string;
+  /** A readable stream of text chunks to render dynamically. (Mutually exclusive with text) */
+  stream?: ReadableStream<Uint8Array | string>;
+  /** Streaming unit increments */
+  mode?: "char" | "word" | "sentence" | "direct";
+  /** Delay/interval in milliseconds between streaming steps. Defaults vary by mode. */
+  speed?: number;
+  /** Controls if the stream simulation should run */
+  isStreaming?: boolean;
+  /** Shows a blinking cursor at the end of the text while streaming */
+  showCursor?: boolean;
+  /** Custom element to use as the blinking cursor */
+  cursor?: React.ReactNode;
+  /** Callback fired when streaming begins */
+  onStart?: () => void;
+  /** Callback fired on each text character/chunk update */
+  onChunk?: (text: string) => void;
+  /** Callback fired when streaming finishes completely */
+  onComplete?: () => void;
+}
+
+export interface AIStreamingTextRef {
+  /** Stop the current streaming animation/consumption */
+  stop: () => void;
+  /** Reset the streaming progress and clear the output */
+  reset: () => void;
+  /** Resume/restart the streaming animation */
+  resume: () => void;
+}
+
+const speedMap = {
+  char: 20,
+  word: 60,
+  sentence: 200,
+  direct: 0,
+};
+
+const AIStreamingText = React.forwardRef<AIStreamingTextRef, AIStreamingTextProps>(
+  (
+    {
+      className,
+      text = "",
+      stream,
+      mode = "char",
+      speed,
+      isStreaming = true,
+      showCursor = true,
+      cursor,
+      onStart,
+      onChunk,
+      onComplete,
+      ...props
+    },
+    ref
+  ) => {
+    const [displayedText, setDisplayedText] = React.useState("");
+    const [active, setActive] = React.useState(isStreaming);
+    const [isFinished, setIsFinished] = React.useState(false);
+    
+    const timerRef = React.useRef<NodeJS.Timeout | null>(null);
+    const streamReaderRef = React.useRef<ReadableStreamDefaultReader<Uint8Array | string> | null>(null);
+    const currentTextIndexRef = React.useRef(0);
+    const onChunkRef = React.useRef(onChunk);
+    const onCompleteRef = React.useRef(onComplete);
+    const onStartRef = React.useRef(onStart);
+
+    React.useEffect(() => {
+      onChunkRef.current = onChunk;
+      onCompleteRef.current = onComplete;
+      onStartRef.current = onStart;
+    }, [onChunk, onComplete, onStart]);
+
+    React.useEffect(() => {
+      setActive(isStreaming);
+    }, [isStreaming]);
+
+    const stop = React.useCallback(() => {
+      setActive(false);
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+      if (streamReaderRef.current) {
+        streamReaderRef.current.cancel().catch(() => {});
+        streamReaderRef.current = null;
+      }
+    }, []);
+
+    const reset = React.useCallback(() => {
+      stop();
+      setDisplayedText("");
+      currentTextIndexRef.current = 0;
+      setIsFinished(false);
+    }, [stop]);
+
+    const resume = React.useCallback(() => {
+      if (isFinished) return;
+      setActive(true);
+    }, [isFinished]);
+
+    React.useImperativeHandle(ref, () => ({
+      stop,
+      reset,
+      resume,
+    }));
+
+    React.useEffect(() => {
+      if (stream || !text) return;
+      if (!active || isFinished) return;
+
+      const delay = speed !== undefined ? speed : speedMap[mode];
+
+      if (mode === "direct" || delay <= 0) {
+        onStartRef.current?.();
+        setDisplayedText(text);
+        onChunkRef.current?.(text);
+        setIsFinished(true);
+        onCompleteRef.current?.();
+        return;
+      }
+
+      if (currentTextIndexRef.current === 0) {
+        onStartRef.current?.();
+      }
+
+      const streamStep = () => {
+        if (mode === "char") {
+          const nextIndex = currentTextIndexRef.current + 1;
+          const nextText = text.slice(0, nextIndex);
+          setDisplayedText(nextText);
+          onChunkRef.current?.(nextText);
+          currentTextIndexRef.current = nextIndex;
+
+          if (nextIndex >= text.length) {
+            setIsFinished(true);
+            onCompleteRef.current?.();
+          } else {
+            timerRef.current = setTimeout(streamStep, delay);
+          }
+        } else if (mode === "word") {
+          const words = text.split(" ");
+          const nextIndex = currentTextIndexRef.current + 1;
+          const nextText = words.slice(0, nextIndex).join(" ");
+          setDisplayedText(nextText);
+          onChunkRef.current?.(nextText);
+          currentTextIndexRef.current = nextIndex;
+
+          if (nextIndex >= words.length) {
+            setIsFinished(true);
+            onCompleteRef.current?.();
+          } else {
+            timerRef.current = setTimeout(streamStep, delay);
+          }
+        } else if (mode === "sentence") {
+          const sentences = text.match(/[^.!?]+[.!?]*/g) || [text];
+          const nextIndex = currentTextIndexRef.current + 1;
+          const nextText = sentences.slice(0, nextIndex).join("");
+          setDisplayedText(nextText);
+          onChunkRef.current?.(nextText);
+          currentTextIndexRef.current = nextIndex;
+
+          if (nextIndex >= sentences.length) {
+            setIsFinished(true);
+            onCompleteRef.current?.();
+          } else {
+            timerRef.current = setTimeout(streamStep, delay);
+          }
+        }
+      };
+
+      timerRef.current = setTimeout(streamStep, delay);
+
+      return () => {
+        if (timerRef.current) {
+          clearTimeout(timerRef.current);
+          timerRef.current = null;
+        }
+      };
+    }, [text, stream, mode, speed, active, isFinished]);
+
+    React.useEffect(() => {
+      if (!stream) return;
+      if (!active || isFinished) return;
+
+      onStartRef.current?.();
+      const reader = stream.getReader();
+      streamReaderRef.current = reader;
+      const decoder = new TextDecoder();
+      let streamAccumulator = "";
+
+      const readStream = async () => {
+        try {
+          while (true) {
+            const { value, done } = await reader.read();
+            if (done) {
+              setIsFinished(true);
+              onCompleteRef.current?.();
+              break;
+            }
+
+            const chunk = typeof value === "string" ? value : decoder.decode(value, { stream: true });
+            streamAccumulator += chunk;
+            setDisplayedText(streamAccumulator);
+            onChunkRef.current?.(streamAccumulator);
+          }
+        } catch (err) {
+        } finally {
+          reader.releaseLock();
+          streamReaderRef.current = null;
+        }
+      };
+
+      readStream();
+
+      return () => {
+        reader.cancel().catch(() => {});
+        streamReaderRef.current = null;
+      };
+    }, [stream, active, isFinished]);
+
+    React.useEffect(() => {
+      return () => {
+        if (timerRef.current) clearTimeout(timerRef.current);
+        if (streamReaderRef.current) streamReaderRef.current.cancel().catch(() => {});
+      };
+    }, []);
+
+    const isCurrentlyStreaming = active && !isFinished && (text.length > 0 || stream !== undefined);
+
+    return (
+      <span className={cn("inline select-text leading-relaxed", className)} {...props}>
+        {displayedText}
+        {showCursor && isCurrentlyStreaming && (
+          <span 
+            className="inline-block w-[3px] h-[1em] ml-1 bg-neutral-900 dark:bg-neutral-100 rounded-sm animate-pulse align-middle"
+            style={{ animationDuration: "1s" }}
+            aria-hidden="true"
+          >
+            {cursor}
+          </span>
+        )}
+      </span>
+    );
+  }
+);
+
+AIStreamingText.displayName = "AIStreamingText";
+
+export { AIStreamingText };
+```
+
+  </TabItem>
+</Tabs>
+
+## Usage
+
+```tsx
+import { AIStreamingText } from '@mindfiredigital/ignix-ui';
+```
+
+### Basic Example
+
+Choose between character, word, or sentence-level typed progressions:
+
+```tsx
+{/* Characters */}
+<AIStreamingText text="Character layout." mode="char" speed={30} />
+
+{/* Words */}
+<AIStreamingText text="Word by word rendering." mode="word" speed={150} />
+
+{/* Sentences */}
+<AIStreamingText text="Sentence typing. Second sentence." mode="sentence" speed={500} />
+```
+
+### Streaming from a ReadableStream
+
+Pass any standard JS `ReadableStream` (typically sourced from fetch APIs) directly to render incoming tokens on the fly:
+
+```tsx
+function StreamingEndpoint() {
+  const [stream, setStream] = useState<ReadableStream | undefined>(undefined);
+
+  const startStream = async () => {
+    const res = await fetch('/api/chat');
+    if (res.body) {
+      setStream(res.body);
+    }
+  };
+
+  return (
+    <div>
+      <button onClick={startStream}>Fetch</button>
+      {stream && <AIStreamingText stream={stream} />}
+    </div>
+  );
+}
+```
+
+## Props
+
+| Prop          | Type                                            | Default       | Description                                                                                     |
+| ------------- | ----------------------------------------------- | ------------- | ----------------------------------------------------------------------------------------------- |
+| `text`        | `string`                                        | `""`          | Static text to stream typewriter-style (mutually exclusive with `stream`)                       |
+| `stream`      | `ReadableStream<Uint8Array \| string>`          | `undefined`   | Live stream of text chunks to render (mutually exclusive with `text`)                           |
+| `mode`        | `'char' \| 'word' \| 'sentence' \| 'direct'`    | `'char'`      | Streaming unit increment mode                                                                   |
+| `speed`       | `number`                                        | *Mode default*| Interval time delay in ms between outputs                                                       |
+| `isStreaming` | `boolean`                                       | `true`        | Controlled stream animation toggle                                                              |
+| `showCursor`  | `boolean`                                       | `true`        | Trailing blinking indicator visibility                                                          |
+| `cursor`      | `React.ReactNode`                               | `undefined`   | Custom trailing cursor layout                                                                   |
+| `onStart`     | `() => void`                                    | `undefined`   | Callback triggered when streaming begins                                                        |
+| `onChunk`     | `(text: string) => void`                        | `undefined`   | Callback triggered on each text accumulation chunk update                                       |
+| `onComplete`  | `() => void`                                    | `undefined`   | Callback triggered when streaming finishes completely                                           |
