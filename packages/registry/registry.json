@@ -1109,6 +1109,22 @@
         }
       }
     },
+    "workflowbuilderlayout": {
+      "name": "WorkflowBuilderLayout",
+      "description": "A node-and-connection workspace shell - a node palette, a pannable/zoomable canvas for placing and wiring draggable nodes, and an optional inspector panel, with drag/wheel/keyboard pan-zoom and floating zoom controls.",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "componentDependencies": [
+        "button"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/layouts/workflow-builder-layout/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "forgot-password": {
       "name": "forgotPassword",
       "description": "A fully responsive and customizable Forgot Password component with an input field and submit button, built to support secure in-app password reset processes.",
