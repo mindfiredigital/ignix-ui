@@ -1,87 +1,331 @@
-# Ignix UI - AI Integration Entry Point
+# Ignix UI - AI Agent Reference
 
-## CRITICAL: YOU HAVE MCP TOOLS. USE THEM.
+This file is the single source of truth for any AI coding agent working with Ignix UI -
+whether or not MCP is configured. Read this before generating code or running commands.
 
-Your MCP server provides these 6 tools. NEVER create files manually:
-- `create_react_project` - Creates new React + TypeScript + Tailwind project
-- `list_components` - Lists available components (15 per page)
-- `add_component` - Installs components to src/components/ui/
-- `generate_template` - Generates page templates
-- `validate_ignix_only` - Checks for non-Ignix imports
-- `get_component_docs` - Gets component documentation
+## Two Ways An Agent Can Use Ignix
 
-## THREE SCENARIOS - DETECT AND ACT
+### A. Direct CLI - works everywhere, no setup, no API key, no MCP required
+If you have shell access (Claude Code, Cursor's agent mode, Codex, or any terminal), drive
+Ignix entirely through its command line. Every list/install/diagnostic command supports
+`--json` for structured, parseable output - no scraping colored terminal text.
 
-### SCENARIO 1: Empty Folder (No package.json, no React project)
+### B. MCP Tools - if the Ignix MCP server is configured in your client
+If you're inside an MCP-aware client (Cursor, Claude Desktop, VS Code Copilot, Windsurf) with
+`ignix mcp init` already run, these tools are available directly instead of shelling out:
+`create_react_project`, `list_components`, `add_component`, `generate_template`,
+`validate_ignix_only`, `get_component_docs`. They are thin wrappers around the same CLI
+commands documented below - reach for whichever is available, and default to the direct CLI
+when unsure, since it always works.
 
-**User says:** "Create a landing page" or "Build a dashboard"
+## Project Structure (monorepo)
 
-**You MUST do this EXACT sequence:**
-1. Call `create_react_project({ projectName: "user-requested-name" })`
-2. Get `projectPath` from the response
-3. Call `add_component({ components: ["navbar", "button", "card"], cwd: projectPath })`
-4. Call `generate_template({ page: "home", cwd: projectPath })`
-5. Generate React component code using the installed components
-6. Tell user: `cd {projectPath} && npm run dev`
+This repository is a pnpm/Turborepo monorepo. Know what lives where before making changes:
 
-### SCENARIO 2: React project exists but no ignix.config.js
+- `packages/cli-tool` - the `ignix` CLI itself (`@mindfiredigital/ignix-cli`). Commands live in
+  `src/commands/`, business logic in `src/services/` (RegistryService, ComponentService,
+  ThemeService, TemplateService, DependencyService).
+- `packages/registry` - the source of truth for every installable component/theme/template.
+  `registry.json` and `themes.json` are the manifests; the actual component source files live
+  alongside them (e.g. `components/accordion/index.tsx`). The CLI fetches from here (or from
+  the raw GitHub URLs configured in `ignix.config.js`) and copies files into the user's project
+  - this is a copy-the-source model (like shadcn/ui), not an npm-import-only model.
+- `packages/cli` - the published component library package (`@mindfiredigital/ignix-ui`),
+  containing the theme engine (`src/themes`) and shared types.
+- `packages/ignix-mcp-server` - the MCP server (`@mindfiredigital/ignix-mcp-server`) that
+  exposes the tools listed in section B above to MCP-aware clients.
+- `apps/docs` - the public documentation site (Docusaurus).
+- `apps/storybook` - Storybook previews mirroring every component in `packages/registry`; useful
+  for seeing a component's variants/props in isolation if `ignix info`/registry description
+  isn't detailed enough.
 
-**User says:** "Add a button" or "Create a login page"
+## Design System and Theming
 
-**You MUST do this EXACT sequence:**
-1. Check if `ignix.config.js` exists in current directory
-2. If NOT, call `add_component` with `cwd: "."` - this will auto-initialize
-3. Or call `init_project` if available
-4. Then proceed with component installation
+All Ignix UI components consume global HSL design tokens declared in standard CSS stylesheets.
 
-### SCENARIO 3: React project with ignix.config.js already exists
+### CSS Custom Properties
+- `--background`: Base background color.
+- `--foreground`: High-contrast body text.
+- `--border`: Outer and inline boundary separation lines.
+- `--muted`: Secondary background fill colors.
+- `--muted-foreground`: Lower contrast captions and annotations.
 
-**User says:** "Add a card component" or "Create a dashboard"
+### Theme Selectors
+Components adapt theme colors through class hierarchy:
+- **Light Mode:** Default styles.
+- **Dark Mode:** Governed by parent element containing the `dark` class or `data-theme="dark"` attribute.
 
-**You MUST do this EXACT sequence:**
-1. Call `list_components` to see what's available
-2. Call `add_component({ components: ["requested-component"], cwd: "." })`
-3. Generate the React code using the installed component
+## Shared Component APIs and Patterns
 
-## WORKFLOW EXAMPLES
+Many Ignix UI components implement standardized props for layout, resizing, and theme handling:
+- `themeMode`: `'light' | 'dark'` (explicit theme mode overriding).
+- `size`: `'sm' | 'md' | 'lg' | 'xl'` (controls padding, height, and font sizes).
+- `disabled`: `boolean` (disables interactions and applies muted styles).
+- `className`: `string` (standard Tailwind CSS class extension).
 
-### Building a Complete Page (Restaurant Landing Page)
-```javascript
-// Step 1: Create project (if needed)
-const result = await create_react_project({ projectName: "restaurant-landing" });
-const projectPath = result.projectPath;
+### Key Component-Specific Props
+- **Button:**
+  - `variant`: `'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'outline' | 'ghost' | 'link' | 'subtle' | 'elevated' | 'glass' | 'neon'`
+  - `asChild`: `boolean` (renders child component using Radix Slot)
+  - `animationVariant`: `'none' | 'hover' | 'press' | 'press3D' | 'press3DSoft'`
+- **Input & Textarea:**
+  - `variant`: `'default' | 'clean' | 'springy' | 'underline' | 'floating' | 'borderBeam' | 'premiumGradient' | 'particleField' | 'typewriter' | 'morph' | 'spotlight'`
+  - `error`: `boolean` / `errorMessage`: `string`
+  - `success`: `boolean` / `successMessage`: `string`
+  - `icon`: `React.ReactNode` (leading icon)
+- **DatePicker:**
+  - `variant`: `'single' | 'range'`
+  - `format`: `DateFormat` (e.g. `'MM/DD/YYYY'`, `'YYYY-MM-DD'`)
+  - `minDate` / `maxDate`: `Date`
+  - `popupPosition`: `'bottom-left' | 'bottom-right' | 'top-left' | 'top-right' | 'left' | 'right'`
+- **Hero:**
+  - `variant`: `'default' | 'visual' | 'split' | 'glassmorphism' | 'interactive'`
+  - `animate`: `boolean` (enables entrance motion effects)
 
-// Step 2: Install components
-await add_component({ 
-  components: ["navbar", "button", "card", "hero"], 
-  cwd: projectPath 
-});
+## Component Catalog by Category
 
-// Step 3: Generate template
-await generate_template({ page: "home", cwd: projectPath });
+Ignix UI includes 54 modular components grouped by feature area:
 
-// Step 4: Generate React component code
-// Use: import { Navbar } from '@/components/ui/navbar'
-// Use: import { Button } from '@/components/ui/button'
-// Use: import { Card } from '@/components/ui/card'
-```
+### 1. Navigation and Structure
+- **Navbar (`navbar`):** Navigation bar with desktop menus and responsive mobile drop-downs.
+- **Sidebar (`sidebar`, `threecolumnsidebar`):** Collatable panels with nested link lists and active state tracking.
+- **Floating Dock (`floating-dock`):** Floating navigation bar with hover-scaling elements.
+- **Breadcrumbs (`breadcrumbs`):** Inline path hierarchy markers.
+- **Pagination (`pagination`):** Page selectors with previous/next triggers.
+- **Stepper (`stepper`):** Progress tracking for multi-step processes.
 
-### Adding a Single Component
-await add_component({ components: ["button"], cwd: "." });
-// Then generate: import { Button } from '@/components/ui/button'
+### 2. Layout and Spacing
+- **Container (`container`):** Layout wrappers with maxWidth constraints.
+- **Spacer (`spacer`):** Fixed height/width blocks for layout gaps.
+- **Scroll Area (`scroll-area`):** Custom styled scrollable viewports.
+- **Aspect Ratio (`aspectratio`):** Proportional content box wrappers.
 
-### FORBIDDEN ACTIONS - NEVER DO THESE
-❌ Create index.html files
-❌ Create styles.css files
-❌ Write vanilla JavaScript
-❌ Use shell commands to create components
-❌ Install components manually
-❌ Use shadcn, MUI, Chakra, Ant Design
+### 3. Data Entry and Controls
+- **Button (`button`, `button-group`, `button-with-spinner`, `buttonwithicon`):** Trigger controls with active micro-animations.
+- **Input (`input`, `exploding-input`, `textarea`):** Text input controls with floating labels and hover highlight transitions.
+- **DatePicker (`date-picker`):** Single date and dual-range calendar selector with error-showing logic.
+- **Dropdown (`dropdown`):** Option selectors with checkbox and separator support.
+- **Checkbox (`checkbox`), Radio (`radio`), Switch (`switch`):** Checkable boolean selections.
+- **Slider (`slider`):** Numerical range select sliders.
+- **Rating (`rating`):** Star selection controls.
+- **File Upload (`file-upload`):** Drag and drop file select controls.
 
-ALWAYS DO THESE
-✅ Use the MCP tools
-✅ Use React components
-✅ Use Tailwind CSS classes
-✅ Use TypeScript
-✅ Return projectPath from create_react_project
-✅ Use cwd parameter for all subsequent calls
+### 4. Data Display and Layouts
+- **Typography (`typography`):** Heading, body, and caption text wrappers.
+- **Card (`card`, `product-card`, `image-card`, `user-card`, `testimonial-card`):** Structured content boxes.
+- **Table (`table`, `advanced-table`, `comparison-table`, `pricing-grid`):** Grid layouts for structured data, sorting, and comparison matrixes.
+- **Accordion (`accordion`):** Vertically stacked collapsible panels.
+- **Carousel (`carousel`):** Slide transition galleries.
+- **Badge (`badge`):** Small label indicators.
+- **Avatar (`avatar`):** Circular image wrappers with fallback initials.
+- **Tabs (`tab`):** Tabbed content switcher panels.
+- **List (`list-basic`, `list-with-actions`, `list-with-avatars`, `list-with-status`):** Various list layouts for displaying text, actions, user avatars, and status markers.
+- **Lazy Load (`lazyload`):** Image and content placeholders with viewport intersection observer loading.
+
+### 5. Overlays and Feedback
+- **Modals & Dialogs (`modals`, `dialogbox`, `drawer`):** Modal windows and slide-out side drawers.
+- **Toast (`toast`):** Dismissible floating notification system.
+- **Tooltip (`tooltip`):** Contextual popup labels on hover.
+- **Progress Indicator (`progress-indicator`):** Linear loading bars.
+- **Spinner (`spinner`):** Inline rotating load indicators.
+
+### 6. Page Sections
+- **Hero (`hero`):** Large header section templates with headings, media, actions, and features.
+
+## Core Rules - Do's and Don'ts
+
+DO
+- Use React + TypeScript for every component and page.
+- Style exclusively with Tailwind CSS utility classes (`className="..."`).
+- Import installed components via the `@ignix-ui` path alias that `ignix init` configures:
+  `import { Accordion } from '@ignix-ui/accordion'` (maps to `src/components/ui/accordion`).
+- Wrap the app in `<ThemeProvider>` from `./themes/ThemeProvider` after init.
+- Use the `cn()` helper (`src/utils/cn.ts`) for conditional classNames.
+- Confirm `ignix.config.js` exists before assuming Ignix is initialized (see Scenarios below).
+- Pass `--json` on every command whose output you plan to parse.
+- Run `ignix doctor --json` to check project compatibility before installing anything.
+- Query the registry live (`ignix list ... --json`) instead of assuming a component/theme/
+  template exists - the registry can change independently of the installed CLI version.
+- If a component's registry `description` isn't enough to know its exact props/variants, look at
+  its real source in `packages/registry/components/<name>/index.tsx` (in this repo) or its
+  Storybook story in `apps/storybook/src/components/<name>/` - both mirror exactly what gets
+  installed into a user's project.
+
+DON'T
+- Never create `.css`/`.scss` files or `<style>` blocks - Tailwind classes only.
+- Never import from shadcn/ui, MUI, Chakra UI, Ant Design, or any other component library.
+- Never write vanilla JS/HTML for a React project.
+- Never hardcode a component/theme/template catalog in your own memory - it goes stale; always
+  re-query it.
+- Never assume a name is correct - check with `ignix list component --search <name> --json` or
+  `ignix info <name> --json` first.
+- Never assume the npm package import path (`@mindfiredigital/ignix-ui`) is how installed
+  components are used in a consumer project - installed components are copied into
+  `src/components/ui/` and imported via the `@ignix-ui` alias, not from the npm package directly.
+- Never fetch `registryUrl`/`themeUrl` from `ignix.config.js` directly, even though they're plain
+  URLs sitting in a config file - always go through the `ignix` CLI (`ignix list ...`,
+  `ignix add ...`) instead of reading or fetching them yourself.
+- Never read component/theme/template documentation from `node_modules` - the installed npm
+  package there is not the source of truth for what's installed in this project; use
+  `ignix list ... --json` / `ignix info <name> --json` instead.
+
+## CLI Command Reference
+
+### Project setup
+- `ignix init [--yes] [--json] [--cwd <path>]`
+  Initializes Ignix in an EXISTING project (a `package.json` must already exist). Creates
+  `ignix.config.js`, `src/components/ui`, `src/utils/cn.ts`, the `@ignix-ui` alias
+  (`tsconfig.app.json` / `vite.config.ts`), sets up theming, installs
+  `@mindfiredigital/ignix-ui` + `tailwindcss`.
+  NOTE: Empty folder with no `package.json`? Use a starter below instead - `ignix init` will
+  fail with "No package.json found."
+
+- `ignix vite-react [--yes] [--json] [--cwd <path>]`
+  Scaffolds a brand-new Vite + React + TypeScript + Tailwind + Ignix project from an empty folder.
+- `ignix nextjs-app [--yes] [--json] [--cwd <path>]`
+  Scaffolds a brand-new Next.js 14+ (App Router) + TypeScript + Tailwind + Ignix project.
+- `ignix monorepo [--yes] [--json] [--cwd <path>]`
+  Scaffolds a Turborepo + pnpm monorepo with an Ignix-ready app inside.
+
+### Discovering what's available (always query live - never hardcode this)
+- `ignix list component [--search <query>] [--category <layout|forms|feedback|navigation|data-display>] [--json]`
+- `ignix list theme [--json]`
+- `ignix list template [--json]`
+- `ignix info <component-name> [--json]` - full detail on one component (files, dependencies)
+
+### Installing
+- `ignix add component <name...> [--yes] [--json] [--cwd <path>]`
+  Installs one or more components in a single call, e.g.:
+  `ignix add component button accordion input --yes --json`
+  Downloads each component's source file(s) from the registry and writes them to
+  `src/components/ui/<name>/`, also installing any npm dependencies and internal
+  `componentDependencies` the component declares.
+- `ignix add theme <id...> [--yes] [--json] [--cwd <path>]`
+- `ignix add template <id...> [--yes] [--json] [--cwd <path>]`
+
+### Diagnostics
+- `ignix doctor [--json] [--cwd <path>]`
+  Checks Node/React/Tailwind/TypeScript versions and whether `ignix.config.js` exists. Returns
+  `compatible: true/false`.
+
+### Interactive-only commands (human use - agents should prefer the flag-based commands above)
+- `ignix themes` - interactive theme browser/installer.
+  Non-interactive equivalents: `ignix list theme --json` / `ignix add theme <id> --yes --json`
+- `ignix template` - interactive template browser/installer.
+  Non-interactive equivalents: `ignix list template --json` / `ignix add template <id> --yes --json`
+
+### MCP setup (only relevant inside MCP-aware clients)
+- `ignix mcp init [--client <cursor|vscode|claude|windsurf>] [--universal] [--dry-run] [--latest]`
+- `ignix mcp status [--json]`
+
+## Using a Component After Installing It
+
+1. Install it: `ignix add component accordion --yes --json`
+2. This writes `src/components/ui/accordion/index.tsx` (and any files it depends on) and installs
+   its declared npm dependencies (e.g. `@radix-ui/react-accordion`, `framer-motion`).
+3. Import it via the `@ignix-ui` alias, not the npm package:
+   ```tsx
+   import { Accordion } from '@ignix-ui/accordion';
+
+   export function FaqSection() {
+     return (
+       <Accordion>
+         {/* component-specific props - check the installed source file or its Storybook
+             story if the registry description doesn't cover them */}
+       </Accordion>
+     );
+   }
+   ```
+4. Style wrapper/layout with Tailwind classes; do not add a stylesheet for the component.
+5. If unsure of a component's exact prop API, read the file that was just written to
+   `src/components/ui/<name>/index.tsx` - it's the real, complete source, not a stub.
+
+## Using an Installed Theme
+
+Installing a theme is not enough on its own - it has to be wired into `<ThemeProvider>`
+explicitly, the same way installing a component doesn't automatically render it anywhere.
+
+1. Install it: `ignix add theme cyberpunk-neon --yes --json`
+2. This writes a file to `<themesDir>/<id>.ts` (e.g. `src/themes/cyberpunk-neon.ts`) exporting a
+   named `ThemeConfig` object. The export name is the id converted to camelCase with a `Theme`
+   suffix, e.g. `cyberpunk-neon` -> `cyberpunkNeonTheme`.
+3. Import it and pass it to `<ThemeProvider>`'s `defaultTheme` prop (NOT a string id - the full
+   `ThemeConfig` object):
+   ```tsx
+   import { ThemeProvider } from '@mindfiredigital/ignix-ui';
+   import { cyberpunkNeonTheme } from './themes/cyberpunk-neon';
+
+   export default function App() {
+     return (
+       <ThemeProvider defaultTheme={cyberpunkNeonTheme}>
+         {/* app content */}
+       </ThemeProvider>
+     );
+   }
+   ```
+4. Do not skip this step or assume `ignix add theme` alone makes a visual difference - without
+   the `defaultTheme` prop wired, the installed theme file is inert and nothing changes on screen.
+
+## JSON Output Shapes (for parsing)
+- `list component`: `{ success, components: [{ name, description, category, id }], total, searchQuery, category }`
+- `add component`: `{ success, requested, installed, dependencies, skipped }`
+- `doctor`: `{ success, checks: { nodeVersion, reactVersion, tailwind, typescript, config }, compatible }`
+- `info`: `{ success, component: { name, id, description, files, dependencies } }`
+
+## MCP Tool Reference
+Equivalent to the CLI commands above, exposed as callable tools when MCP is configured:
+- `create_react_project({ projectName })` -> same as `ignix vite-react`; returns `{ projectPath }`
+- `list_components({ page })` -> same as `ignix list component --json`
+- `add_component({ components: string[], cwd })` -> same as `ignix add component <names> --yes --json`;
+  auto-runs `ignix init` first if `ignix.config.js` is missing
+- `generate_template({ page, cwd })` -> writes ONE fixed boilerplate page at `src/pages/<page>.tsx`.
+  It does not generate bespoke content - write the actual page yourself either way, using the
+  installed components.
+- `validate_ignix_only({ cwd })` -> scans for non-Ignix imports (shadcn/MUI/etc.). No direct CLI
+  equivalent exists yet - treat as MCP-only for now.
+- `get_component_docs({ name })` -> same as `ignix info <name> --json`
+
+## Scenario Workflows
+
+### Scenario 1 - Empty folder (no package.json, no React project yet)
+User says: "Create a landing page" / "Build a dashboard app"
+
+CLI path:
+1. `ignix vite-react --yes --json` (or `ignix nextjs-app --yes --json`) - scaffolds the whole project
+2. `cd <project>`
+3. `ignix add component navbar button card hero --yes --json`
+4. Write the actual page (e.g. `src/pages/Home.tsx`) yourself in React + Tailwind, importing the
+   installed components via `@ignix-ui/<name>` - nothing auto-generates bespoke content, on
+   either path
+5. Tell the user: `npm run dev`
+
+MCP path: `create_react_project` -> `add_component` -> `generate_template` (still just boilerplate
+- write the real content yourself) -> write bespoke code
+
+### Scenario 2 - React project exists, `ignix.config.js` does NOT exist
+User says: "Add a button" / "Create a login page"
+
+CLI path:
+1. Check `ignix.config.js` exists (or run `ignix doctor --json` and read `checks.config`)
+2. If missing: `ignix init --yes --json`
+3. `ignix add component button input card --yes --json`
+4. Write the page yourself
+
+MCP path: `add_component` with `cwd: "."` (auto-initializes if needed)
+
+### Scenario 3 - React project exists, `ignix.config.js` already exists
+User says: "Add a card component" / "Create a dashboard"
+
+CLI path:
+1. `ignix list component --search <keyword> --json` to confirm the exact component id
+2. `ignix add component <name> --yes --json`
+3. Write the page yourself
+
+MCP path: `list_components` -> `add_component`
+
+## Getting This File Again
+This same reference is bundled with the CLI and reprintable fully offline, matching your exact
+installed CLI version - no network access, no MCP, no API key required:
+    ignix llms > ignix-reference.md
+Pipe it directly into an AI assistant's context, or save it once per session and point the
+assistant at the file.

@@ -50,6 +50,15 @@ const TwoFactorAuthSetupPage: React.FC<TwoFactorAuthSetupProps> = ({
   );
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
+  const copiedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (copiedTimeoutRef.current) {
+        clearTimeout(copiedTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
     `otpauth://totp/${encodeURIComponent(issuer)}:${encodeURIComponent(accountName)}?secret=${secretKey}&issuer=${encodeURIComponent(issuer)}`
@@ -146,14 +155,16 @@ const TwoFactorAuthSetupPage: React.FC<TwoFactorAuthSetupProps> = ({
   const handleCopyCode = (code: string) => {
     navigator.clipboard.writeText(code);
     setCopiedCode(code);
-    setTimeout(() => setCopiedCode(null), 2000);
+    if (copiedTimeoutRef.current) clearTimeout(copiedTimeoutRef.current);
+    copiedTimeoutRef.current = setTimeout(() => setCopiedCode(null), 2000);
   };
 
   const handleCopyAllBackupCodes = () => {
     const codesText = backupCodes.join("\n");
     navigator.clipboard.writeText(codesText);
     setCopiedCode("all");
-    setTimeout(() => setCopiedCode(null), 2000);
+    if (copiedTimeoutRef.current) clearTimeout(copiedTimeoutRef.current);
+    copiedTimeoutRef.current = setTimeout(() => setCopiedCode(null), 2000);
   };
 
   const handleDownloadBackupCodes = () => {

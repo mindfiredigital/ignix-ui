@@ -39,19 +39,14 @@ describe('loadConfig', () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
-  it('exits with code 1 when ignix.config.js does not exist', async () => {
+  it('throws error when ignix.config.js does not exist', async () => {
     vi.mocked(fs.pathExists).mockResolvedValue(false as never);
 
     const { loadConfig } = await import('../../src/utils/config');
 
-    try {
-      await loadConfig();
-    } catch (e) {
-      // process.exit throws
-    }
-
-    expect(exitCode).toBe(1);
-    expect(logger.error).toHaveBeenCalledWith(expect.stringContaining('Configuration file'));
+    await expect(loadConfig()).rejects.toThrow(
+      "Configuration file `ignix.config.js` not found. Run 'npx ignix init' to create one."
+    );
   });
 
   it('parses JSON config content correctly', async () => {
@@ -73,7 +68,7 @@ describe('loadConfig', () => {
     expect(result).toEqual(mockConfig);
   });
 
-  it('exits with code 1 when config file has invalid content', async () => {
+  it('throws error when config file has invalid content', async () => {
     vi.mocked(fs.pathExists).mockResolvedValue(true as never);
     vi.mocked(fs.readFile).mockResolvedValue('this is not valid JS or JSON {{{{' as never);
     vi.mocked(fs.writeFile).mockResolvedValue(undefined as never);
@@ -81,13 +76,6 @@ describe('loadConfig', () => {
 
     const { loadConfig } = await import('../../src/utils/config');
 
-    try {
-      await loadConfig();
-    } catch (e) {
-      // process.exit throws
-    }
-
-    expect(exitCode).toBe(1);
-    expect(logger.error).toHaveBeenCalledWith(expect.stringContaining('Failed to load'));
+    await expect(loadConfig()).rejects.toThrow('Failed to load `ignix.config.js`.');
   });
 });

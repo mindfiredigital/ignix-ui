@@ -66,7 +66,8 @@ export function createMcpInitCommand() {
         console.log(chalk.gray('  npx ignix mcp init --universal'));
         console.log(chalk.gray('  npx ignix mcp init --client cursor'));
         console.log(chalk.gray('  npx ignix mcp init --client vscode --dry-run'));
-        process.exit(1);
+        process.exitCode = 1;
+        return;
       }
 
       if (opts.client === 'all') {
@@ -80,7 +81,8 @@ export function createMcpInitCommand() {
           console.error(chalk.red(`❌ Error: Invalid client '${opts.client}'`));
           console.log(chalk.gray(`\nValid clients: ${VALID_CLIENTS.join(', ')}`));
           console.log(chalk.gray(`\nOr use --universal to configure all clients`));
-          process.exit(1);
+          process.exitCode = 1;
+          return;
         }
 
         // Handle 'all' as alias for '--universal'
