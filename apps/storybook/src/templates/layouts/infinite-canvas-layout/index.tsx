@@ -80,18 +80,14 @@ export interface InfiniteCanvasLayoutProps {
 
 const DEFAULT_VIEWPORT: CanvasViewport = { x: 0, y: 0, zoom: 1 };
 
-// A zoom of exactly 0 (or less) isn't just visually degenerate (scale(0), zero-size grid) - the
-// wheel handler's zoom-to-cursor math divides by the current zoom, so it would produce
-// Infinity/NaN and permanently corrupt the viewport. This floor applies regardless of what
-// minZoom a consumer configures.
+// Floors zoom regardless of consumer-configured minZoom - the wheel handler's zoom-to-cursor
+// math divides by zoom, so 0 (or less) would produce Infinity/NaN and corrupt the viewport.
 const MIN_SAFE_ZOOM = 0.01;
 
 /**
- * Replaces any non-finite x/y/zoom (NaN, from a consumer's controlled `viewport` or a bad
- * `updateViewport` computation) with a safe fallback, then clamps zoom to `[minZoom, maxZoom]`.
- * Used everywhere a viewport is committed to rendering, refs, or `onViewportChange`, so a single
- * bad value can't produce an invalid CSS transform or poison all subsequent pan/zoom math -
- * once NaN enters the viewport, every calculation derived from it stays NaN.
+ * Replaces non-finite x/y/zoom with safe fallbacks, then clamps zoom to `[minZoom, maxZoom]`.
+ * NaN otherwise propagates into everything derived from the viewport (CSS transform, refs,
+ * `onViewportChange`), since NaN pollutes every calculation that touches it.
  */
 function normalizeViewport(viewport: CanvasViewport, minZoom: number, maxZoom: number): CanvasViewport {
   const x = Number.isFinite(viewport.x) ? viewport.x : DEFAULT_VIEWPORT.x;
@@ -129,25 +125,19 @@ export const InfiniteCanvasLayout: React.FC<InfiniteCanvasLayoutProps> = ({
   const [internalViewport, setInternalViewport] = React.useState<CanvasViewport>(defaultViewport);
   const rawViewport = isControlled ? viewport : internalViewport;
 
-  // Guard against non-finite bounds (NaN/undefined-ish props propagate NaN through every clamp
-  // call) and an inverted range (maxZoom < minZoom collapses clamp's output to a fixed constant,
-  // permanently freezing zoom) - both are consumer misconfigurations, not just edge values.
+  // Guards against non-finite bounds (propagate NaN through clamp) and an inverted range
+  // (maxZoom < minZoom would freeze zoom at a fixed value).
   const safeMinZoom = Number.isFinite(minZoom) ? Math.max(minZoom, MIN_SAFE_ZOOM) : MIN_SAFE_ZOOM;
   const safeMaxZoom = Number.isFinite(maxZoom)
     ? Math.max(maxZoom, safeMinZoom)
     : Math.max(safeMinZoom, DEFAULT_VIEWPORT.zoom);
 
-  // Normalize whichever viewport is currently in effect before it's used for rendering math or
-  // stored for event handlers to read. A consumer-supplied `viewport` prop (controlled mode)
-  // bypasses updateViewport's own clamping entirely, so without this, an out-of-range, zero, or
-  // non-finite x/y/zoom would reach the CSS transform/grid sizing - and the divide-by-zero in
-  // the wheel-zoom math - unguarded.
+  // A controlled `viewport` prop bypasses updateViewport's own clamping, so this normalizes it
+  // before it reaches rendering or event handlers.
   const currentViewport: CanvasViewport = normalizeViewport(rawViewport, safeMinZoom, safeMaxZoom);
 
-  // Read the latest viewport (and callback) inside event handlers without making them - or the
-  // effects that attach them - depend on it. Consumers commonly pass an inline function for
-  // onViewportChange, which would otherwise get a new identity every render and tear down and
-  // reattach the wheel listener on every unrelated re-render.
+  // Lets event handlers read the latest viewport/callback without depending on them, so an
+  // inline onViewportChange doesn't tear down and reattach the wheel listener every render.
   const viewportRef = React.useRef(currentViewport);
   viewportRef.current = currentViewport;
   const onViewportChangeRef = React.useRef(onViewportChange);
@@ -180,8 +170,8 @@ export const InfiniteCanvasLayout: React.FC<InfiniteCanvasLayoutProps> = ({
 
   const surfaceRef = React.useRef<HTMLDivElement>(null);
 
-  // Wheel must call preventDefault() to stop the page from scrolling/zooming - React's JSX
-  // onWheel is passive by default, so a native listener with { passive: false } is required.
+  // React's JSX onWheel is passive by default (can't preventDefault), so a native listener
+  // with { passive: false } is used instead to stop page scroll/zoom.
   React.useEffect(() => {
     const surface = surfaceRef.current;
     if (!surface) return;
@@ -211,12 +201,11 @@ export const InfiniteCanvasLayout: React.FC<InfiniteCanvasLayoutProps> = ({
   const panStateRef = React.useRef<{ pointerId: number; lastX: number; lastY: number } | null>(null);
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>): void => {
-    // Only start a pan when the drag begins on empty canvas background, not on a CanvasNode
-    // (or anything else) rendered above it - so content stays independently interactive.
+    // Only pan when the drag starts on empty background, not on a CanvasNode, so content
+    // stays independently interactive.
     if (event.target !== event.currentTarget || event.button !== 0) return;
-    // Without this, the browser's native drag-to-select-text behavior runs independently of our
-    // own pan tracking below - so sweeping the cursor across a CanvasNode's text mid-pan would
-    // still highlight it, even though the drag started on empty background.
+    // Prevents native text selection while panning - otherwise dragging across a CanvasNode's
+    // text mid-pan would still highlight it.
     event.preventDefault();
     event.currentTarget.setPointerCapture?.(event.pointerId);
     panStateRef.current = { pointerId: event.pointerId, lastX: event.clientX, lastY: event.clientY };
