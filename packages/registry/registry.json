@@ -2093,6 +2093,10 @@
       "files": {
         "main": {
           "path": "components/ai-streaming-text/index.tsx",
+          "type": "component"
+        }
+      }
+    },
     "skeleton": {
       "name": "Skeleton",
       "description": "A placeholder component for loading states with pulse animations",
