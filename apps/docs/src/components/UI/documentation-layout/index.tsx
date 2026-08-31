@@ -116,14 +116,9 @@ function collectExpandedAncestors(items: DocNavItem[], parentPath: string, acc: 
 }
 
 /**
- * Tracks which {@link TocHeading} is currently in view via `IntersectionObserver`,
- * so the right-hand "On this page" panel can highlight it. Falls back to `null`
- * in environments without `IntersectionObserver` (e.g. tests) instead of throwing.
- *
- * `root` defaults to the browser viewport, matching the common case where this layout
- * owns page-level scroll. Pass the layout's scrollable ancestor when it's embedded inside
- * a scrollable container instead, so headings are measured against that container's
- * visible area rather than the (possibly unrelated) viewport.
+ * Tracks which {@link TocHeading} is currently in view via `IntersectionObserver`, so the
+ * right-hand "On this page" panel can highlight it. Falls back to `null` in environments
+ * without `IntersectionObserver` (e.g. tests) instead of throwing.
  */
 function useActiveHeading(
   headings?: TocHeading[],
@@ -148,8 +143,6 @@ function useActiveHeading(
       .filter((el): el is HTMLElement => el !== null);
     if (elements.length === 0) return;
 
-    // Read `.current` here (not at render time): refs attach during commit, after this
-    // component's own render but before this effect runs, so it's already populated.
     const observer = new IntersectionObserver(
       (entries) => {
         // `entries` order reflects browser-specific intersection-change batching, not document
@@ -407,7 +400,6 @@ export const DocumentationLayout: React.FC<DocumentationLayoutProps> = ({
     <div
       className={cn("flex min-h-screen w-full flex-col bg-[var(--background)] text-[var(--foreground)]", className)}
     >
-      {/* HEADER */}
       <header
         className="sticky top-0 z-40 flex h-16 w-full items-center gap-3 border-b border-[var(--border)] bg-[var(--background)] px-4"
         role="banner"
@@ -430,7 +422,6 @@ export const DocumentationLayout: React.FC<DocumentationLayoutProps> = ({
       </header>
 
       <div className="mx-auto flex w-full max-w-[1600px] flex-1">
-        {/* LEFT SIDEBAR - desktop */}
         {hasLeftNav && !isMobile && (
           <aside
             className="sticky top-16 h-[calc(100vh-4rem)] shrink-0 overflow-y-auto border-r border-[var(--border)] bg-[var(--background)]"
@@ -442,7 +433,6 @@ export const DocumentationLayout: React.FC<DocumentationLayoutProps> = ({
           </aside>
         )}
 
-        {/* LEFT SIDEBAR - mobile drawer */}
         {hasLeftNav && isMobile && (
           <>
             <AnimatePresence>
@@ -479,7 +469,6 @@ export const DocumentationLayout: React.FC<DocumentationLayoutProps> = ({
           </>
         )}
 
-        {/* MAIN CONTENT */}
         <main className="min-w-0 flex-1 px-6 py-8 md:px-10" role="main">
           <div className="mx-auto max-w-3xl">
             {breadcrumbs && breadcrumbs.length > 0 && (
@@ -553,7 +542,6 @@ export const DocumentationLayout: React.FC<DocumentationLayoutProps> = ({
           </div>
         </main>
 
-        {/* RIGHT SIDEBAR - "On this page" */}
         {hasToc && !isMobile && (
           <aside
             className="sticky top-16 hidden h-[calc(100vh-4rem)] shrink-0 overflow-y-auto border-l border-[var(--border)] bg-[var(--background)] p-4 xl:block"
@@ -595,7 +583,6 @@ export const DocumentationLayout: React.FC<DocumentationLayoutProps> = ({
         )}
       </div>
 
-      {/* FOOTER */}
       {footer && (
         <footer className="w-full border-t border-[var(--border)] bg-[var(--background)]" role="contentinfo">
           {footer}
