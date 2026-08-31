@@ -28,6 +28,7 @@ export function setupTestMocks() {
 
 export function resetTestState() {
   exitCode = undefined;
+  process.exitCode = undefined;
   consoleOutput = [];
   vi.clearAllMocks();
   exitSpy.mockImplementation((code?: any) => {
@@ -60,6 +61,10 @@ export async function runCommand(factory: () => Command, args: string[]) {
       if (error.name === 'CommanderError') return;
     }
     throw error;
+  } finally {
+    if (process.exitCode !== undefined) {
+      exitCode = process.exitCode;
+    }
   }
 }
 

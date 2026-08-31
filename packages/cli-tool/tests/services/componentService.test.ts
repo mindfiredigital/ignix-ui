@@ -68,7 +68,12 @@ describe('ComponentService', () => {
       const result = await service.install('button');
 
       // Check dependency installation
-      expect(mockDependency.install).toHaveBeenCalledWith(['lucide-react'], false, false);
+      expect(mockDependency.install).toHaveBeenCalledWith(
+        ['lucide-react'],
+        false,
+        false,
+        expect.any(String)
+      );
 
       // Check recursive component installation
       expect(mockRegistry.getComponentConfig).toHaveBeenCalledWith('button');

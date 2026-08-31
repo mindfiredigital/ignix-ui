@@ -41,9 +41,10 @@ const sidebars: SidebarsConfig = {
             'components/sidebar',
             'components/spinner',
             'components/stepper',
+            'components/skeleton',
             'components/table',
             'components/toast',
-            'components/tooltip',
+            'components/tooltip'
           ],
         },
         {
