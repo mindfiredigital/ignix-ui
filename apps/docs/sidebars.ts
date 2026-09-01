@@ -60,6 +60,7 @@ const sidebars: SidebarsConfig = {
             'components/ai-model-selector',
             'components/ai-response-actions',
             'components/ai-status-badge',
+            'components/ai-streaming-text',
             'components/ai-suggested-actions',
             'components/ai-temperature-slider',
             'components/ai-thinking-indicator',

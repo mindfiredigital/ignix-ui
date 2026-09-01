@@ -2081,6 +2081,36 @@
         }
       }
     },
+    "ai-response-actions": {
+      "name": "AIResponseActions",
+      "description": "An interactive actions toolbar for AI responses with animated thumbs, copy tooltips, and regeneration controls.",
+      "dependencies": [
+        "lucide-react",
+        "class-variance-authority",
+        "framer-motion"
+      ],
+      "componentDependencies": [
+        "button",
+        "tooltip"
+      ],
+      "files": {
+        "main": {
+          "path": "components/ai-response-actions/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "ai-streaming-text": {
+      "name": "AIStreamingText",
+      "description": "A component for rendering text chunk streams dynamically or simulating typewriter transitions with custom cursors, speeds, and controls.",
+      "dependencies": [],
+      "files": {
+        "main": {
+          "path": "components/ai-streaming-text/index.tsx",
+          "type": "component"
+        }
+      }
+    },
     "skeleton": {
       "name": "Skeleton",
       "description": "A placeholder component for loading states with pulse animations",
