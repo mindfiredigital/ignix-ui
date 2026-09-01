@@ -119,8 +119,8 @@
             "components/ai-model-selector",
             "components/ai-response-actions",
             "components/ai-status-badge",
-            "components/ai-streaming-text",
             "components/ai-suggested-actions",
+            "components/ai-temperature-slider",
             "components/ai-thinking-indicator"
           ]
         }
@@ -295,7 +295,6 @@
                 "templates/pages/data-management/kanban-board-page",
                 "templates/pages/data-management/data-table",
                 "templates/pages/data-management/timeline-view"
-                
               ]
             }
           ]
