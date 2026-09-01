@@ -179,7 +179,10 @@ interface DragState {
 
 interface ConnectingState {
   sourceId: string;
-  pointerId: number;
+  // `null` for a keyboard-initiated connection (Enter on an output port) - pointer move/up
+  // handlers compare against a real pointerId, so they naturally no-op against this instead of
+  // needing a separate keyboard-vs-pointer branch.
+  pointerId: number | null;
   x: number;
   y: number;
 }
@@ -347,10 +350,9 @@ export const WorkflowBuilderLayout: React.FC<WorkflowBuilderLayoutProps> = ({
   };
 
   const handleSurfaceKeyDown = (event: React.KeyboardEvent<HTMLDivElement>): void => {
-    // Ignores key events bubbled from a focused node (handled separately) - otherwise arrow
-    // keys would both nudge the node and pan the canvas. Escape is let through regardless of
-    // where it bubbled from, since cancelling an in-progress connection (started by a pointer
-    // drag, which never moves focus) shouldn't depend on which element currently has focus.
+    // Ignores bubbled key events from a focused node (handled separately), except Escape -
+    // cancelling a connection (started by a pointer drag, which never moves focus) shouldn't
+    // depend on what currently has focus.
     if (event.target !== event.currentTarget && event.key !== "Escape") return;
     const step = 40;
     switch (event.key) {
@@ -396,10 +398,8 @@ export const WorkflowBuilderLayout: React.FC<WorkflowBuilderLayoutProps> = ({
   };
 
   const handleNodeKeyDown = (event: React.KeyboardEvent<HTMLDivElement>, node: WorkflowNodeData): void => {
-    // Does not stopPropagation: handleSurfaceKeyDown already ignores bubbled events via its own
-    // `event.target !== event.currentTarget` check, so this can't double-handle arrow keys - and
-    // letting unhandled keys (e.g. Escape, to cancel an in-progress connection) bubble up to it,
-    // or further up to the host app, still works.
+    // Does not stopPropagation - handleSurfaceKeyDown's own target check already prevents
+    // double-handling arrow keys, and letting other keys (e.g. Escape) bubble up still works.
     const step = event.shiftKey ? NODE_KEYBOARD_STEP_LARGE : NODE_KEYBOARD_STEP;
     const move = (dx: number, dy: number): void => {
       onNodesChange?.(nodes.map((n) => (n.id === node.id ? { ...n, x: n.x + dx, y: n.y + dy } : n)));
@@ -475,6 +475,10 @@ export const WorkflowBuilderLayout: React.FC<WorkflowBuilderLayoutProps> = ({
     if (event.button !== 0) return;
     event.stopPropagation();
     event.preventDefault();
+    // preventDefault() also suppresses default click-to-focus. A port itself isn't focusable,
+    // and a connection isn't owned by either node, so this focuses the canvas - otherwise
+    // whatever had focus before (or nothing) would stay focused through and after the drag.
+    surfaceRef.current?.focus();
     event.currentTarget.setPointerCapture?.(event.pointerId);
     const outputPos = getPortPosition(node, "output");
     setConnecting({ sourceId: node.id, pointerId: event.pointerId, x: outputPos.x, y: outputPos.y });
@@ -496,14 +500,17 @@ export const WorkflowBuilderLayout: React.FC<WorkflowBuilderLayoutProps> = ({
     // document.elementFromPoint, since the pointer capture on the output port means the
     // release target is always the output port itself, never whatever's underneath it.
     let targetId: string | null = null;
-    let closestDistance = PORT_HIT_RADIUS;
+    // Strict `<` against the running minimum (not the fixed radius) so the first port
+    // encountered wins an exact tie, while a port sitting exactly at PORT_HIT_RADIUS is still
+    // selectable as the sole candidate.
+    let closestDistance = Infinity;
     inputPortRefs.current.forEach((el, nodeId) => {
       if (nodeId === connecting.sourceId) return;
       const rect = el.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;
       const centerY = rect.top + rect.height / 2;
       const distance = Math.hypot(event.clientX - centerX, event.clientY - centerY);
-      if (distance <= closestDistance) {
+      if (distance <= PORT_HIT_RADIUS && distance < closestDistance) {
         closestDistance = distance;
         targetId = nodeId;
       }
@@ -593,7 +600,7 @@ export const WorkflowBuilderLayout: React.FC<WorkflowBuilderLayoutProps> = ({
               : undefined
           }
           role="group"
-          aria-label="Workflow canvas. Drag to pan, scroll to pan, ctrl or cmd plus scroll to zoom. Drag a node's header to move it, click its edit icon to select it, and drag from an output port to an input port to connect two nodes. Focus and use arrow keys to pan, plus and minus to zoom, zero to reset the view."
+          aria-label="Workflow canvas. Drag to pan, scroll to pan, ctrl or cmd plus scroll to zoom. Drag a node's header to move it, click its edit icon to select it, and drag from an output port to an input port to connect two nodes, or press Enter on an output port then Enter on an input port. Focus and use arrow keys to pan, plus and minus to zoom, zero to reset the view."
           tabIndex={0}
           onPointerDown={handleSurfacePointerDown}
           onPointerMove={handleSurfacePointerMove}
@@ -692,9 +699,18 @@ export const WorkflowBuilderLayout: React.FC<WorkflowBuilderLayoutProps> = ({
                         if (el) inputPortRefs.current.set(node.id, el);
                         else inputPortRefs.current.delete(node.id);
                       }}
-                      aria-hidden="true"
-                      className="absolute -left-1.5 h-3 w-3 rounded-full border-2 border-[var(--background)] bg-[var(--muted-foreground)]"
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`Connect to ${node.title} input`}
+                      className="absolute -left-1.5 h-3 w-3 rounded-full border-2 border-[var(--background)] bg-[var(--muted-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                       style={{ top: NODE_HEADER_HEIGHT / 2 - 6 }}
+                      onKeyDown={(event) => {
+                        if (event.key !== "Enter" && event.key !== " ") return;
+                        if (!connecting || connecting.sourceId === node.id) return;
+                        event.preventDefault();
+                        onConnect?.({ source: connecting.sourceId, target: node.id });
+                        setConnecting(null);
+                      }}
                     />
                   )}
 
@@ -733,13 +749,21 @@ export const WorkflowBuilderLayout: React.FC<WorkflowBuilderLayoutProps> = ({
 
                   {node.hasOutput !== false && (
                     <div
-                      aria-hidden="true"
-                      className="absolute -right-1.5 h-3 w-3 cursor-crosshair rounded-full border-2 border-[var(--background)] bg-[var(--primary)]"
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`Connect ${node.title} to another node`}
+                      className="absolute -right-1.5 h-3 w-3 cursor-crosshair rounded-full border-2 border-[var(--background)] bg-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                       style={{ top: NODE_HEADER_HEIGHT / 2 - 6 }}
                       onPointerDown={(event) => handleOutputPointerDown(event, node)}
                       onPointerMove={handleOutputPointerMove}
                       onPointerUp={handleOutputPointerUp}
                       onPointerCancel={() => setConnecting(null)}
+                      onKeyDown={(event) => {
+                        if (event.key !== "Enter" && event.key !== " ") return;
+                        event.preventDefault();
+                        const outputPos = getPortPosition(node, "output");
+                        setConnecting({ sourceId: node.id, pointerId: null, x: outputPos.x, y: outputPos.y });
+                      }}
                     />
                   )}
                 </div>

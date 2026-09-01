@@ -46,6 +46,22 @@ function firePointer(
   });
 }
 
+// jsdom has no DragEvent constructor at all, so @testing-library's fireEvent.dragOver/drop fall
+// back to a bare Event that carries neither clientX/clientY nor dataTransfer. Dispatching a
+// MouseEvent (for the coordinates) with dataTransfer attached separately, under the real
+// "dragover"/"drop" type names, reaches the same onDragOver/onDrop handlers intact.
+function fireDrag(
+  el: Element,
+  type: "dragover" | "drop",
+  init: { clientX: number; clientY: number; dataTransfer: unknown }
+): void {
+  const event = new MouseEvent(type, { bubbles: true, cancelable: true, clientX: init.clientX, clientY: init.clientY });
+  Object.defineProperty(event, "dataTransfer", { value: init.dataTransfer, configurable: true });
+  act(() => {
+    el.dispatchEvent(event);
+  });
+}
+
 const NODES: WorkflowNodeData[] = [
   { id: "a", x: 0, y: 0, title: "Trigger" },
   { id: "b", x: 300, y: 0, title: "Action" },
@@ -118,6 +134,35 @@ describe("WorkflowBuilderLayout", () => {
     it("omits the palette when no items are provided", () => {
       render(<WorkflowBuilderLayout nodes={NODES} />);
       expect(screen.queryByLabelText("Node palette")).not.toBeInTheDocument();
+    });
+
+    it("calls onPaletteItemDrop with world coordinates derived from the canvas bounds and viewport", () => {
+      const onPaletteItemDrop = vi.fn();
+      const { container } = render(
+        <WorkflowBuilderLayout
+          nodes={NODES}
+          paletteItems={[{ type: "http", label: "HTTP Request" }]}
+          onPaletteItemDrop={onPaletteItemDrop}
+          viewport={{ x: 10, y: 20, zoom: 2 }}
+        />
+      );
+      const surface = getSurface(container);
+      surface.getBoundingClientRect = () =>
+        ({ left: 100, top: 50, right: 900, bottom: 650, width: 800, height: 600 }) as DOMRect;
+
+      const dataTransfer = {
+        types: ["application/workflow-node-type"],
+        dropEffect: "",
+        getData: (type: string) => (type === "application/workflow-node-type" ? "http" : ""),
+      };
+
+      fireDrag(surface, "dragover", { dataTransfer, clientX: 300, clientY: 250 });
+      expect(dataTransfer.dropEffect).toBe("copy");
+
+      fireDrag(surface, "drop", { dataTransfer, clientX: 300, clientY: 250 });
+
+      // worldX = (300 - 100 - 10) / 2 = 95; worldY = (250 - 50 - 20) / 2 = 90
+      expect(onPaletteItemDrop).toHaveBeenCalledWith({ type: "http", label: "HTTP Request" }, { x: 95, y: 90 });
     });
   });
 
@@ -208,6 +253,16 @@ describe("WorkflowBuilderLayout", () => {
       const node = getNode(container, "Trigger");
       firePointer(node.querySelector(".cursor-grab") as HTMLElement, "pointerdown", { pointerId: 1, clientX: 0, clientY: 0 });
       expect(document.activeElement).toBe(node);
+    });
+
+    it("focuses the canvas surface when starting a connection from an output port", () => {
+      // A port isn't focusable and a connection isn't owned by either node, so this should claim
+      // focus for the canvas rather than leaving it on whatever (or nothing) had it before.
+      const { container } = render(<WorkflowBuilderLayout nodes={NODES} onConnect={vi.fn()} />);
+      const surface = getSurface(container);
+      const outputPort = getNode(container, "Trigger").querySelector(".cursor-crosshair") as HTMLElement;
+      firePointer(outputPort, "pointerdown", { pointerId: 5, clientX: 220, clientY: 20 });
+      expect(document.activeElement).toBe(surface);
     });
   });
 
@@ -327,6 +382,51 @@ describe("WorkflowBuilderLayout", () => {
       expect(onConnect).not.toHaveBeenCalled();
     });
 
+    it("connects to a port sitting exactly at the hit-radius boundary", () => {
+      const onConnect = vi.fn();
+      const { container } = render(<WorkflowBuilderLayout nodes={NODES} onConnect={onConnect} />);
+      const sourceNode = getNode(container, "Trigger");
+      const targetNode = getNode(container, "Action");
+      const outputPort = sourceNode.querySelector(".cursor-crosshair") as HTMLElement;
+      const inputPort = targetNode.firstElementChild as HTMLElement;
+
+      // Port center at (224, 20); release at (200, 20) - exactly 24px away (PORT_HIT_RADIUS).
+      inputPort.getBoundingClientRect = () =>
+        ({ left: 221, top: 17, right: 227, bottom: 23, width: 6, height: 6 }) as DOMRect;
+
+      firePointer(outputPort, "pointerdown", { pointerId: 5, clientX: 220, clientY: 20 });
+      firePointer(outputPort, "pointerup", { pointerId: 5, clientX: 200, clientY: 20 });
+
+      expect(onConnect).toHaveBeenCalledWith({ source: "a", target: "b" });
+    });
+
+    it("picks the first-encountered port when two input ports are exactly equidistant", () => {
+      const onConnect = vi.fn();
+      const threeNodes: WorkflowNodeData[] = [
+        { id: "a", x: 0, y: 0, title: "Source" },
+        { id: "b", x: 300, y: 0, title: "First" },
+        { id: "c", x: 300, y: 40, title: "Second" },
+      ];
+      const { container } = render(<WorkflowBuilderLayout nodes={threeNodes} onConnect={onConnect} />);
+      const sourceNode = getNode(container, "Source");
+      const firstNode = getNode(container, "First");
+      const secondNode = getNode(container, "Second");
+      const outputPort = sourceNode.querySelector(".cursor-crosshair") as HTMLElement;
+      const firstInputPort = firstNode.firstElementChild as HTMLElement;
+      const secondInputPort = secondNode.firstElementChild as HTMLElement;
+
+      // Both ports report identical bounding rects, so they're exactly equidistant from any
+      // release point - the tie must resolve to whichever was encountered first (node "b").
+      const tiedRect = () => ({ left: 300, top: 20, right: 306, bottom: 26, width: 6, height: 6 }) as DOMRect;
+      firstInputPort.getBoundingClientRect = tiedRect;
+      secondInputPort.getBoundingClientRect = tiedRect;
+
+      firePointer(outputPort, "pointerdown", { pointerId: 5, clientX: 220, clientY: 20 });
+      firePointer(outputPort, "pointerup", { pointerId: 5, clientX: 303, clientY: 23 });
+
+      expect(onConnect).toHaveBeenCalledWith({ source: "a", target: "b" });
+    });
+
     it("cancels an in-progress connection when Escape is pressed", () => {
       const onConnect = vi.fn();
       const { container } = render(<WorkflowBuilderLayout nodes={NODES} onConnect={onConnect} />);
@@ -363,17 +463,76 @@ describe("WorkflowBuilderLayout", () => {
       firePointer(outputPort, "pointerup", { pointerId: 5, clientX: 302, clientY: 22 });
       expect(onConnect).not.toHaveBeenCalled();
     });
+
+    it("connects two nodes via keyboard: Enter on an output port, then Enter on an input port", () => {
+      const onConnect = vi.fn();
+      const { container } = render(<WorkflowBuilderLayout nodes={NODES} onConnect={onConnect} />);
+      const sourceNode = getNode(container, "Trigger");
+      const targetNode = getNode(container, "Action");
+      const outputPort = sourceNode.querySelector(".cursor-crosshair") as HTMLElement;
+      const inputPort = targetNode.firstElementChild as HTMLElement;
+
+      fireEvent.keyDown(outputPort, { key: "Enter" });
+      fireEvent.keyDown(inputPort, { key: "Enter" });
+
+      expect(onConnect).toHaveBeenCalledWith({ source: "a", target: "b" });
+    });
+
+    it("does nothing when Enter is pressed on an input port with no connection in progress", () => {
+      const onConnect = vi.fn();
+      const { container } = render(<WorkflowBuilderLayout nodes={NODES} onConnect={onConnect} />);
+      const targetNode = getNode(container, "Action");
+      const inputPort = targetNode.firstElementChild as HTMLElement;
+
+      fireEvent.keyDown(inputPort, { key: "Enter" });
+
+      expect(onConnect).not.toHaveBeenCalled();
+    });
+
+    it("does not connect a node's output to its own input via keyboard", () => {
+      const onConnect = vi.fn();
+      const { container } = render(<WorkflowBuilderLayout nodes={NODES} onConnect={onConnect} />);
+      const sourceNode = getNode(container, "Trigger");
+      const outputPort = sourceNode.querySelector(".cursor-crosshair") as HTMLElement;
+      const ownInputPort = sourceNode.firstElementChild as HTMLElement;
+
+      fireEvent.keyDown(outputPort, { key: "Enter" });
+      fireEvent.keyDown(ownInputPort, { key: "Enter" });
+
+      expect(onConnect).not.toHaveBeenCalled();
+    });
+
+    it("cancels a keyboard-initiated connection when Escape is pressed", () => {
+      const onConnect = vi.fn();
+      const { container } = render(<WorkflowBuilderLayout nodes={NODES} onConnect={onConnect} />);
+      const sourceNode = getNode(container, "Trigger");
+      const targetNode = getNode(container, "Action");
+      const outputPort = sourceNode.querySelector(".cursor-crosshair") as HTMLElement;
+      const inputPort = targetNode.firstElementChild as HTMLElement;
+
+      fireEvent.keyDown(outputPort, { key: "Enter" });
+      fireEvent.keyDown(outputPort, { key: "Escape" });
+      fireEvent.keyDown(inputPort, { key: "Enter" });
+
+      expect(onConnect).not.toHaveBeenCalled();
+    });
   });
 
   describe("controlled vs uncontrolled viewport", () => {
     it("clamps zoom to the configured minZoom/maxZoom", () => {
-      const { container } = render(<WorkflowBuilderLayout nodes={NODES} minZoom={0.5} maxZoom={1} />);
-      const surface = getSurface(container);
+      render(<WorkflowBuilderLayout nodes={NODES} minZoom={0.5} maxZoom={1} />);
       fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
       fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
       fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
       expect(screen.getByText("100%")).toBeInTheDocument();
-      void surface;
+
+      fireEvent.click(screen.getByRole("button", { name: "Zoom out" }));
+      fireEvent.click(screen.getByRole("button", { name: "Zoom out" }));
+      fireEvent.click(screen.getByRole("button", { name: "Zoom out" }));
+      fireEvent.click(screen.getByRole("button", { name: "Zoom out" }));
+      fireEvent.click(screen.getByRole("button", { name: "Zoom out" }));
+      fireEvent.click(screen.getByRole("button", { name: "Zoom out" }));
+      expect(screen.getByText("50%")).toBeInTheDocument();
     });
 
     it("recovers to a finite zoom when maxZoom is less than minZoom", () => {

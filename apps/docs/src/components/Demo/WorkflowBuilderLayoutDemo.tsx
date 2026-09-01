@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import VariantSelector from './VariantSelector';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -66,8 +66,18 @@ const WorkflowBuilderLayoutDemo = () => {
   const [edges, setEdges] = useState<WorkflowEdgeData[]>(INITIAL_EDGES);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
 
+  // `prev.length` isn't monotonic - deleting a node/edge shrinks the array, so a later drop or
+  // connection can land on the same length again and collide with an earlier id.
+  const nextIdRef = useRef(0);
+
   const onConnect = useCallback((connection: { source: string; target: string }) => {
-    setEdges((prev) => [...prev, { id: `${connection.source}-${connection.target}-${prev.length}`, ...connection }]);
+    const id = `edge-${nextIdRef.current++}`;
+    setEdges((prev) => {
+      const alreadyConnected = prev.some(
+        (edge) => edge.source === connection.source && edge.target === connection.target
+      );
+      return alreadyConnected ? prev : [...prev, { id, ...connection }];
+    });
   }, []);
 
   const onNodeDelete = useCallback((id: string) => {
@@ -77,9 +87,10 @@ const WorkflowBuilderLayoutDemo = () => {
   }, []);
 
   const onPaletteItemDrop = useCallback((item: WorkflowPaletteItem, position: { x: number; y: number }) => {
+    const id = `${item.type}-${nextIdRef.current++}`;
     setNodes((prev) => [
       ...prev,
-      { id: `${item.type}-${prev.length}`, x: position.x, y: position.y, title: item.label, icon: item.icon, status: 'idle' },
+      { id, x: position.x, y: position.y, title: item.label, icon: item.icon, status: 'idle' },
     ]);
   }, []);
 
@@ -105,6 +116,7 @@ const WorkflowBuilderLayoutDemo = () => {
         <TabItem value="preview" label="Preview" default>
           <div className="border border-gray-300 rounded-lg overflow-hidden mt-4" style={{ height: 480 }}>
             <WorkflowBuilderLayout
+              className="h-full"
               header={
                 <div className="flex items-center gap-2 rounded-md bg-primary px-3 py-1.5 text-sm font-semibold tracking-tight text-primary-foreground">
                   <Sparkles className="h-4 w-4" />

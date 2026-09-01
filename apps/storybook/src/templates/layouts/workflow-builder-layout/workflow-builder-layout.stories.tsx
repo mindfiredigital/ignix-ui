@@ -208,7 +208,10 @@ export const WithoutControls: Story = {
 export const DragFromPalette: Story = {
   render: (args) => {
     const state = useWorkflowState(PIPELINE_NODES.slice(0, 1));
-    let nextId = 1;
+    // A render-local `let` resets every re-render (e.g. the one triggered by the drop's own
+    // setNodes call), so consecutive drops would collide on the same id - a ref persists across
+    // re-renders instead.
+    const nextIdRef = React.useRef(1);
     return (
       <WorkflowBuilderLayout
         {...args}
@@ -221,7 +224,7 @@ export const DragFromPalette: Story = {
         onNodeSelect={state.setSelectedNodeId}
         paletteItems={PALETTE_ITEMS}
         onPaletteItemDrop={(item, position) => {
-          const id = `${item.type}-${nextId++}`;
+          const id = `${item.type}-${nextIdRef.current++}`;
           state.setNodes((prev) => [
             ...prev,
             { id, x: position.x, y: position.y, title: item.label, icon: item.icon, status: "idle" },
