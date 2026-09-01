@@ -1,0 +1,269 @@
+"use client";
+
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { motion, AnimatePresence } from "framer-motion";
+import { Copy, Check, RotateCcw, ThumbsUp, ThumbsDown, Share2, Bookmark } from "lucide-react";
+import { cn } from "../../../utils/cn";
+import { Button } from "../button";
+import { Tooltip } from "../tooltip";
+
+const actionsVariants = cva(
+  "inline-flex items-center gap-1 p-1 rounded-xl transition-colors select-none",
+  {
+    variants: {
+      variant: {
+        default: "bg-transparent",
+        dark: "bg-neutral-900 border border-neutral-800 text-white",
+        glass: "bg-white/10 border border-white/20 backdrop-blur-xl text-whit",
+        minimal: "p-0 bg-transparent",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+);
+
+export interface AIResponseActionsProps extends VariantProps<typeof actionsVariants> {
+  content: string;
+  className?: string;
+  size?: "sm" | "md";
+
+  onCopy?: (text: string) => void | Promise<void>;
+  onRegenerate?: () => void;
+  onFeedback?: (type: "up" | "down") => void;
+  onShare?: () => void;
+  onBookmark?: () => void;
+
+  feedback?: "up" | "down" | null;
+  isBookmarked?: boolean;
+  children?: React.ReactNode;
+}
+
+export const AIResponseActions = React.forwardRef<HTMLDivElement, AIResponseActionsProps>(
+  (
+    {
+      content,
+      className,
+      size = "sm",
+      variant = "default",
+      onCopy,
+      onRegenerate,
+      onFeedback,
+      onShare,
+      onBookmark,
+      feedback,
+      isBookmarked,
+      children,
+      ...props
+    },
+    ref
+  ) => {
+    const [copied, setCopied] = React.useState(false);
+    const [localFeedback, setLocalFeedback] = React.useState<"up" | "down" | null>(null);
+    const [localBookmarked, setLocalBookmarked] = React.useState(false);
+
+    React.useEffect(() => {
+      if (feedback !== undefined) {
+        setLocalFeedback(feedback);
+      }
+    }, [feedback]);
+
+    React.useEffect(() => {
+      if (isBookmarked !== undefined) {
+        setLocalBookmarked(isBookmarked);
+      }
+    }, [isBookmarked]);
+
+    const handleCopy = async () => {
+      if (copied) return;
+      try {
+        if (onCopy) {
+          await onCopy(content);
+        } else {
+          await navigator.clipboard.writeText(content);
+        }
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch (err) {
+        console.error("Failed to copy text: ", err);
+      }
+    };
+
+    const handleFeedback = (type: "up" | "down") => {
+      const nextFeedback = localFeedback === type ? null : type;
+      if (feedback === undefined) {
+        setLocalFeedback(nextFeedback);
+      }
+      onFeedback?.(type);
+    };
+
+    const handleBookmark = () => {
+      const nextBookmarked = !localBookmarked;
+      if (isBookmarked === undefined) {
+        setLocalBookmarked(nextBookmarked);
+      }
+      onBookmark?.();
+    };
+
+    const getButtonClass = (isActive = false) => {
+      return cn(
+        "rounded-lg p-1.5 transition-all focus-visible:ring-1 focus-visible:ring-offset-0 cursor-pointer active:scale-95",
+        variant === "glass" && (isActive ? "bg-white/15 text-white" : "text-white/70 hover:text-white hover:bg-white/10"),
+        variant === "dark" && (isActive ? "bg-neutral-800 text-white" : "text-neutral-400 hover:text-white hover:bg-neutral-800"),
+        variant === "default" && (isActive ? "text-neutral-900 dark:text-neutral-100" : "text-neutral-400 hover:text-neutral-700 hover:bg-neutral-50 dark:hover:text-neutral-200 dark:hover:bg-neutral-800/50"),
+        variant === "minimal" && (isActive ? "text-neutral-900 dark:text-neutral-100" : "text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200")
+      );
+    };
+
+    return (
+      <div
+        ref={ref}
+        className={cn(actionsVariants({ variant }), className)}
+        {...props}
+      >
+        <Tooltip content={copied ? "Copied!" : "Copy message"}>
+          <Button
+            type="button"
+            variant="none"
+            size={size === "sm" ? "compact" : "sm"}
+            className={getButtonClass(copied)}
+            onClick={handleCopy}
+            aria-label="Copy message"
+          >
+            <AnimatePresence mode="wait">
+              {copied ? (
+                <motion.div
+                  key="check"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  <Check size={size === "sm" ? 14 : 16} className="text-emerald-500" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="copy"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  <Copy size={size === "sm" ? 14 : 16} />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </Button>
+        </Tooltip>
+
+        {onRegenerate && (
+          <Tooltip content="Regenerate response">
+            <Button
+              type="button"
+              variant="none"
+              size={size === "sm" ? "compact" : "sm"}
+              className={getButtonClass()}
+              onClick={onRegenerate}
+              aria-label="Regenerate response"
+            >
+              <motion.div whileTap={{ rotate: 180 }} transition={{ duration: 0.3 }}>
+                <RotateCcw size={size === "sm" ? 14 : 16} />
+              </motion.div>
+            </Button>
+          </Tooltip>
+        )}
+
+        {onFeedback && (
+          <Tooltip content="Helpful">
+            <Button
+              type="button"
+              variant="none"
+              size={size === "sm" ? "compact" : "sm"}
+              className={getButtonClass(localFeedback === "up")}
+              onClick={() => handleFeedback("up")}
+              aria-label="Helpful feedback"
+            >
+              <motion.div
+                animate={localFeedback === "up" ? { scale: [1, 1.25, 1], rotate: [0, -10, 0] } : {}}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+              >
+                <ThumbsUp
+                  size={size === "sm" ? 14 : 16}
+                  className={cn(localFeedback === "up" && "fill-current text-blue-500")}
+                />
+              </motion.div>
+            </Button>
+          </Tooltip>
+        )}
+
+        {onFeedback && (
+          <Tooltip content="Not helpful">
+            <Button
+              type="button"
+              variant="none"
+              size={size === "sm" ? "compact" : "sm"}
+              className={getButtonClass(localFeedback === "down")}
+              onClick={() => handleFeedback("down")}
+              aria-label="Unhelpful feedback"
+            >
+              <motion.div
+                animate={localFeedback === "down" ? { scale: [1, 1.25, 1], rotate: [0, 10, 0] } : {}}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+              >
+                <ThumbsDown
+                  size={size === "sm" ? 14 : 16}
+                  className={cn(localFeedback === "down" && "fill-current text-red-500")}
+                />
+              </motion.div>
+            </Button>
+          </Tooltip>
+        )}
+
+        {onBookmark && (
+          <Tooltip content={localBookmarked ? "Remove bookmark" : "Bookmark response"}>
+            <Button
+              type="button"
+              variant="none"
+              size={size === "sm" ? "compact" : "sm"}
+              className={getButtonClass(localBookmarked)}
+              onClick={handleBookmark}
+              aria-label="Bookmark response"
+            >
+              <motion.div
+                animate={localBookmarked ? { scale: [1, 1.2, 1] } : {}}
+                transition={{ duration: 0.2 }}
+              >
+                <Bookmark
+                  size={size === "sm" ? 14 : 16}
+                  className={cn(localBookmarked && "fill-current text-amber-500")}
+                />
+              </motion.div>
+            </Button>
+          </Tooltip>
+        )}
+
+        {onShare && (
+          <Tooltip content="Share response">
+            <Button
+              type="button"
+              variant="none"
+              size={size === "sm" ? "compact" : "sm"}
+              className={getButtonClass()}
+              onClick={onShare}
+              aria-label="Share response"
+            >
+              <Share2 size={size === "sm" ? 14 : 16} />
+            </Button>
+          </Tooltip>
+        )}
+
+        {children}
+      </div>
+    );
+  }
+);
+
+AIResponseActions.displayName = "AIResponseActions";
+export { actionsVariants };

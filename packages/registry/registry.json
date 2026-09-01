@@ -1094,6 +1094,22 @@
         }
       }
     },
+    "infinitecanvaslayout": {
+      "name": "InfiniteCanvasLayout",
+      "description": "A pannable, zoomable canvas workspace shell - a toolbar plus a full-bleed dot-grid surface where content is placed at fixed coordinates via CanvasNode, with drag/wheel/keyboard pan-zoom and floating zoom controls.",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "componentDependencies": [
+        "button"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/layouts/infinite-canvas-layout/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "threecolumnsidebarlayout": {
       "name": "ThreeColumnSidebarLayout",
       "description": "A flexible layout component with header, sidebar that supports app dashboard with responsive design.",
@@ -1121,6 +1137,16 @@
       "files": {
         "main": {
           "path": "templates/layouts/workflow-builder-layout/index.tsx",
+    "documentationlayout": {
+      "name": "DocumentationLayout",
+      "description": "A full-page documentation/reference site shell: sticky header, a collapsible-tree left navigation sidebar (a drawer on mobile), page content with breadcrumbs and prev/next links, and a scroll-spy 'On this page' panel.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/layouts/documentation-layout/index.tsx",
           "type": "template"
         }
       }
@@ -2063,6 +2089,17 @@
       "files": {
         "main": {
           "path": "components/ai-code-block/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "skeleton": {
+      "name": "Skeleton",
+      "description": "A placeholder component for loading states with pulse animations",
+      "dependencies": [],
+      "files": {
+        "main": {
+          "path": "components/skeleton/index.tsx",
           "type": "component"
         }
       }

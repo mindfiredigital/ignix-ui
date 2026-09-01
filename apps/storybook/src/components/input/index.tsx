@@ -7,7 +7,7 @@ import type { Variants } from "framer-motion";
 import { Eye, EyeOff, Check, AlertCircle } from "lucide-react";
 import { cn } from "../../../utils/cn";
 
-export interface AnimatedInputProps extends Omit<React.ComponentPropsWithoutRef<typeof motion.input>, "size" | "onChange" | "value"> {
+export interface AnimatedInputProps extends Omit<React.ComponentPropsWithoutRef<typeof motion.input>, "size" | "onChange" | "value" | "variants"> {
   placeholder?: string;
   variant?: string;
   className?: string;
@@ -95,33 +95,32 @@ const createEnhancedParticles = (container: HTMLElement, count = 8) => {
   return particles;
 };
 
-export const AnimatedInput = React.forwardRef<HTMLInputElement, AnimatedInputProps>(
-  (
-    {
-      placeholder = "",
-      variant = "default",
-      className = "",
-      inputClassName = "",
-      labelClassName = "",
-      value = "",
-      onChange,
-      onKeyDown,
-      onFocus,
-      onBlur,
-      type = "text",
-      id,
-      autoFocus,
-      disabled = false,
-      error = "",
-      success = false,
-      successMessage = "",
-      icon: Icon,
-      showPasswordToggle = false,
-      size = "md",
-      ...props
-    },
-    ref
-  ) => {
+const AnimatedInputRender: React.ForwardRefRenderFunction<HTMLInputElement, AnimatedInputProps> = (
+  {
+    placeholder = "",
+    variant = "default",
+    className = "",
+    inputClassName = "",
+    labelClassName = "",
+    value = "",
+    onChange,
+    onKeyDown,
+    onFocus,
+    onBlur,
+    type = "text",
+    id,
+    autoFocus,
+    disabled = false,
+    error = "",
+    success = false,
+    successMessage = "",
+    icon: Icon,
+    showPasswordToggle = false,
+    size = "md",
+    ...props
+  },
+  ref
+) => {
     const [isFocused, setIsFocused] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [inputType, setInputType] = useState(type);
@@ -222,6 +221,11 @@ export const AnimatedInput = React.forwardRef<HTMLInputElement, AnimatedInputPro
           labelClassName
         )}
         variants={variants.label}
+        style={variant === "premiumGradient" ? {
+          backgroundClip: "text",
+          WebkitBackgroundClip: "text",
+          color: "transparent",
+        } : undefined}
       >
         {placeholder}
       </motion.label>
@@ -287,6 +291,10 @@ export const AnimatedInput = React.forwardRef<HTMLInputElement, AnimatedInputPro
             ...props.style,
             ...(variant === "borderBeam" && {
               border: "2px solid transparent",
+            }),
+            ...(variant === "typewriter" && {
+              caretColor: "var(--primary)",
+              ["caretShape" as string]: "block",
             }),
           }}
         />
@@ -422,7 +430,9 @@ export const AnimatedInput = React.forwardRef<HTMLInputElement, AnimatedInputPro
       )}
     </motion.div>
   );
-});
+};
+
+export const AnimatedInput = React.forwardRef(AnimatedInputRender);
 
 // Enhanced input variants (ALL original variants with premium improvements)
 const inputVariants: Record<string, InputVariant> = {
@@ -434,7 +444,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, scale: 1, color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         scale: 0.85,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 300, damping: 20 }
@@ -451,11 +461,36 @@ const inputVariants: Record<string, InputVariant> = {
     },
   },
 
+  springy: {
+    label: {
+      initial: { y: 0, scale: 1, color: "var(--primary)" },
+      animate: {
+        y: -40,
+        scale: 0.85,
+        color: "var(--primary)",
+        transition: { type: "spring", stiffness: 450, damping: 10 }
+      },
+    },
+    input: {
+      initial: {
+        borderColor: "var(--border)",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+        scale: 1,
+      },
+      animate: {
+        scale: [1, 1.04, 0.98, 1.02, 1],
+        borderColor: "var(--primary)",
+        boxShadow: "0 4px 15px var(--primary)",
+        transition: { duration: 0.6 }
+      },
+    },
+  },
+
   underline: {
     label: {
       initial: { y: 0, color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 300, damping: 20 }
       },
@@ -479,7 +514,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, scale: 1, color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         scale: 0.85,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 400, damping: 25 },
@@ -501,7 +536,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, color: "#6b7280" },
       animate: {
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         textShadow: "0 0 12px var(--primary)"
       },
@@ -522,7 +557,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, opacity: 1, color: "#6b7280" },
       animate: {
-        y: -32,
+        y: -40,
         opacity: 0.9,
         color: "var(--primary)",
         textShadow: "0 0 12px var(--primary)"
@@ -551,7 +586,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, color: "#6b7280" },
       animate: {
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         textShadow: "0 0 8px var(--primary)"
       },
@@ -589,7 +624,7 @@ const inputVariants: Record<string, InputVariant> = {
       initial: { x: 0, y: 0, color: "var(--primary)" },
       animate: {
         x: 0,
-        y: -32,
+        y: -40,
         scale: 0.85,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 300, damping: 20 }
@@ -613,7 +648,7 @@ const inputVariants: Record<string, InputVariant> = {
       initial: { scale: 1, y: 0, color: "var(--primary)" },
       animate: {
         scale: 0.85,
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 400, damping: 25 }
       },
@@ -633,7 +668,7 @@ const inputVariants: Record<string, InputVariant> = {
       initial: { rotate: 0, y: 0, color: "var(--primary)" },
       animate: {
         rotate: -8,
-        y: -32,
+        y: -40,
         scale: 0.85,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 300, damping: 20 }
@@ -653,7 +688,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 400, damping: 15 },
       },
@@ -676,10 +711,14 @@ const inputVariants: Record<string, InputVariant> = {
       initial: { x: 0, y: 0, color: "var(--primary)" },
       animate: {
         x: [-15, 15, -8, 8, 0],
-        y: -32,
+        y: -40,
         scale: 0.85,
         color: "var(--primary)",
-        transition: { type: "spring", stiffness: 500, damping: 15 },
+        transition: {
+          x: { duration: 0.6, ease: "easeInOut" },
+          y: { type: "spring", stiffness: 300, damping: 15 },
+          scale: { type: "spring", stiffness: 300, damping: 15 },
+        },
       },
     },
     input: {
@@ -697,7 +736,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, opacity: 1, color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         opacity: 0.9,
         color: "var(--primary)",
         textShadow: "0 0 15px var(--primary)"
@@ -717,7 +756,7 @@ const inputVariants: Record<string, InputVariant> = {
       initial: { x: 0, y: 0, color: "var(--primary)" },
       animate: {
         x: [-3, 3, -2, 2, 0],
-        y: -32,
+        y: -40,
         scale: 0.85,
         color: "var(--primary)",
         transition: {
@@ -752,7 +791,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, color: "var(--primary)" },
       animate: (i: number) => ({
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         transition: {
           delay: i * 0.03,
@@ -777,23 +816,22 @@ const inputVariants: Record<string, InputVariant> = {
 
   typewriter: {
     label: {
-      initial: { width: "100%", x: 0, y: 0, color: "var(--primary)" },
+      initial: { y: 0, scale: 1, color: "var(--primary)" },
       animate: {
-        width: 0,
-        x: -60,
-        y: -32,
+        y: -40,
         scale: 0.85,
         color: "var(--primary)",
-        transition: { duration: 0.6, ease: "easeInOut" }
+        transition: { duration: 0.4, ease: "easeInOut" }
       },
     },
     input: {
-      initial: { width: 0 },
+      initial: {
+        borderColor: "var(--border)",
+      },
       animate: {
-        width: "100%",
         borderColor: "var(--primary)",
         boxShadow: "0 4px 15px var(--primary)",
-        transition: { delay: 0.6, duration: 0.6, ease: "easeOut" }
+        transition: { duration: 0.4 }
       },
     },
   },
@@ -802,7 +840,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         textShadow: "0 0 12px var(--primary)"
       },
@@ -826,7 +864,7 @@ const inputVariants: Record<string, InputVariant> = {
       initial: { scale: 1, y: 0, color: "var(--primary)" },
       animate: {
         scale: 0.85,
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 300, damping: 20 }
       },
@@ -854,7 +892,7 @@ const inputVariants: Record<string, InputVariant> = {
       initial: { rotateX: 0, y: 0, color: "var(--primary)" },
       animate: {
         rotateX: 180,
-        y: -32,
+        y: -40,
         scale: 0.85,
         color: "var(--primary)",
         transition: { duration: 0.6, ease: "easeInOut" }
@@ -876,7 +914,7 @@ const inputVariants: Record<string, InputVariant> = {
       initial: { borderRadius: "0%", y: 0, color: "var(--primary)" },
       animate: {
         borderRadius: "50%",
-        y: -32,
+        y: -40,
         scale: 0.85,
         color: "var(--primary)",
         transition: { duration: 0.6, ease: "easeInOut" }
@@ -899,7 +937,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, filter: "brightness(1)", color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         filter: "brightness(1.3) drop-shadow(0 0 8px rgba(59, 130, 246, 0.5))",
         color: "var(--primary)"
       },
@@ -933,7 +971,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 300, damping: 20 }
       },
@@ -956,7 +994,7 @@ const inputVariants: Record<string, InputVariant> = {
       initial: { textShadow: "0 0 0px #fff", color: "var(--primary)" },
       animate: {
         textShadow: "0 0 12px #fff, 0 0 24px var(--primary), 0 0 36px var(--primary)",
-        y: -32,
+        y: -40,
         color: "var(--primary)",
       },
     },
@@ -977,7 +1015,7 @@ const inputVariants: Record<string, InputVariant> = {
       initial: { rotateY: 0, y: 0, color: "var(--primary)" },
       animate: {
         rotateY: 180,
-        y: -32,
+        y: -40,
         scale: 0.85,
         color: "var(--primary)",
         transition: { duration: 0.8, ease: "easeInOut" }
@@ -1001,7 +1039,7 @@ const inputVariants: Record<string, InputVariant> = {
       initial: { skewX: 0, y: 0, color: "var(--primary)" },
       animate: {
         skewX: [-8, 8, -4, 4, 0],
-        y: -32,
+        y: -40,
         scale: 0.85,
         color: "var(--primary)",
         textShadow: "2px 0 #ff0000, -2px 0 #00ff00",
@@ -1029,7 +1067,7 @@ const inputVariants: Record<string, InputVariant> = {
       initial: { opacity: 1, y: 0, color: "var(--primary)" },
       animate: {
         opacity: [1, 0.6, 1],
-        y: -32,
+        y: -40,
         scale: 0.85,
         color: "var(--primary)",
         textShadow: "0 0 15px var(--primary)",
@@ -1063,7 +1101,7 @@ const inputVariants: Record<string, InputVariant> = {
       initial: { scale: 1, y: 0, rotate: 0, color: "var(--primary)" },
       animate: {
         scale: 0.85,
-        y: -32,
+        y: -40,
         rotate: 360,
         color: "var(--primary)",
         textShadow: "0 0 15px var(--primary)",
@@ -1090,7 +1128,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         textShadow: "0 0 12px var(--primary)"
       },
@@ -1112,7 +1150,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 300, damping: 20 }
       },
@@ -1143,7 +1181,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 300, damping: 20 }
       },
@@ -1161,7 +1199,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, scale: 1, color: "#6b7280" },
       animate: {
-        y: -32,
+        y: -40,
         scale: 0.85,
         color: "#3b82f6",
         transition: { type: "spring", stiffness: 300, damping: 20 },
@@ -1187,7 +1225,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         textShadow: "0 0 15px var(--primary)"
       },
@@ -1216,7 +1254,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, opacity: 0, color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         opacity: 1,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 400, damping: 25 },
@@ -1237,7 +1275,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, borderRadius: "4px", color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         borderRadius: "16px",
         color: "var(--primary)",
         transition: { duration: 0.6, ease: "easeInOut" }
@@ -1260,7 +1298,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, color: "var(--primary)" },
       animate: {
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 300, damping: 20 }
       },
@@ -1282,7 +1320,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, color: "#6b7280" },
       animate: {
-        y: -32,
+        y: -40,
         color: "var(--primary)",
         textShadow: "0 0 12px var(--primary)"
       },
@@ -1314,7 +1352,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, scale: 1, color: "var(--primary)" },
       animate: {
-        y: -28,
+        y: -36,
         scale: 0.85,
         color: "var(--primary)",
         transition: { type: "spring", stiffness: 300 },
@@ -1348,7 +1386,7 @@ const inputVariants: Record<string, InputVariant> = {
         textShadow: "none"
       },
       animate: {
-        y: -28,
+        y: -36,
         scale: 0.85,
         color: "#3b82f6",
         textShadow: "0 0 10px rgba(59, 130, 246, 0.5), 0 0 20px rgba(59, 130, 246, 0.3)",
@@ -1371,7 +1409,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, color: "var(--primary)" },
       animate: {
-        y: -28,
+        y: -36,
         color: "var(--primary)",
         textShadow: "0 0 8px var(--primary)",
       },
@@ -1425,7 +1463,7 @@ const inputVariants: Record<string, InputVariant> = {
         filter: "blur(0px)"
       },
       animate: {
-        y: -28,
+        y: -36,
         scale: 0.85,
         color: "#3b82f6",
         filter: "blur(0px) drop-shadow(0 0 8px rgba(59, 130, 246, 0.5))",
@@ -1460,7 +1498,7 @@ const inputVariants: Record<string, InputVariant> = {
         backgroundImage: "none"
       },
       animate: {
-        y: -28,
+        y: -36,
         scale: 0.85,
         backgroundImage: "linear-gradient(90deg, #3b82f6, #8b5cf6, #3b82f6)",
         backgroundSize: "200% 100%",
@@ -1490,7 +1528,7 @@ const inputVariants: Record<string, InputVariant> = {
     label: {
       initial: { y: 0, scale: 1, color: "#6b7280" },
       animate: {
-        y: -28,
+        y: -36,
         scale: 0.85,
         color: "#3b82f6",
         transition: { type: "spring", stiffness: 400, damping: 25 },
@@ -1528,7 +1566,7 @@ const inputVariants: Record<string, InputVariant> = {
         filter: "hue-rotate(0deg)"
       },
       animate: {
-        y: -28,
+        y: -36,
         scale: 0.85,
         color: "#8b5cf6",
         filter: "hue-rotate(360deg)",
@@ -1556,31 +1594,45 @@ const inputVariants: Record<string, InputVariant> = {
         y: 0,
         scale: 1,
         backgroundImage: "linear-gradient(90deg, #6b7280, #6b7280)",
-        backgroundClip: "text",
-        color: "transparent"
+        backgroundSize: "200% auto",
+        backgroundPosition: "0% 50%",
       },
       animate: {
-        y: -28,
+        y: -36,
         scale: 0.85,
         backgroundImage: "linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6)",
-        backgroundSize: "300% 100%",
-        backgroundPosition: "0% 50%",
-        animation: "gradientShift 3s ease infinite",
+        backgroundSize: "200% auto",
+        backgroundPosition: ["0% 50%", "200% 50%"],
+        transition: {
+          backgroundPosition: {
+            repeat: Infinity,
+            duration: 3,
+            ease: "linear"
+          },
+          y: { type: "spring", stiffness: 300, damping: 20 },
+          scale: { type: "spring", stiffness: 300, damping: 20 }
+        }
       },
     },
     input: {
       initial: {
         background: "linear-gradient(90deg, #ffffff, #ffffff)",
-        borderColor: "rgb(226, 232, 240)",
+        borderColor: "var(--border)",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
       },
       animate: {
         background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%)",
-        borderColor: "rgb(59, 130, 246)",
+        borderColor: "var(--primary)",
         boxShadow: `
-          0 8px 25px rgba(59, 130, 246, 0.15),
-          0 0 0 1px rgba(59, 130, 246, 0.1),
+          0 0 20px rgba(59, 130, 246, 0.25),
+          0 0 35px rgba(139, 92, 246, 0.2),
+          0 0 50px rgba(236, 72, 153, 0.15),
           inset 0 1px 0 rgba(255, 255, 255, 0.9)
         `,
+        transition: {
+          borderColor: { duration: 0.3 },
+          boxShadow: { duration: 0.3 }
+        }
       },
     },
   },
