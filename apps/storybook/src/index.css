@@ -254,3 +254,14 @@
     scrollbar-width: thin;
   }
 }
+
+/* Storybook's iframe document doesn't set an explicit height chain by default, so any story
+   using `h-full` (instead of `h-screen`) to fill its container would collapse to its content's
+   natural height instead of the viewport. */
+@layer base {
+  html,
+  body,
+  #storybook-root {
+    height: 100%;
+  }
+}
