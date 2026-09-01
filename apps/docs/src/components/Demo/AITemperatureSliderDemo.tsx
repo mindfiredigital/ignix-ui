@@ -12,6 +12,7 @@ const AITemperatureSliderDemo = () => {
   const [variant, setVariant] = useState<'default' | 'dark' | 'glass'>('default');
 
   const codeString = `
+import { useState } from 'react';
 import { AITemperatureSlider } from '@mindfiredigital/ignix-ui';
 
 function Configurator() {
