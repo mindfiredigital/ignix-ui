@@ -110,16 +110,18 @@
           "type": "category",
           "label": "AI Components",
           "items": [
-            "components/ai-thinking-indicator",
-            "components/ai-status-badge",
+            "components/ai-chat",
             "components/ai-chat-input",
+            "components/ai-code-block",
+            "components/ai-conversation-history",
             "components/ai-message-bubble",
             "components/ai-messages",
             "components/ai-model-selector",
+            "components/ai-response-actions",
+            "components/ai-status-badge",
+            "components/ai-streaming-text",
             "components/ai-suggested-actions",
-            "components/ai-chat",
-            "components/ai-conversation-history",
-            "components/ai-code-block"
+            "components/ai-thinking-indicator"
           ]
         }
       ]
@@ -293,6 +295,7 @@
                 "templates/pages/data-management/kanban-board-page",
                 "templates/pages/data-management/data-table",
                 "templates/pages/data-management/timeline-view"
+                
               ]
             }
           ]
