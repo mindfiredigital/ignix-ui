@@ -1,0 +1,313 @@
+---
+sidebar_position: 8
+title: AITemperatureSlider
+description: An AI model generation temperature range selector with snap presets and dynamic hallucination risk indicators.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { AITemperatureSlider } from '@site/src/components/UI/ai-temperature-slider';
+import AITemperatureSliderDemo from '@site/src/components/Demo/AITemperatureSliderDemo';
+
+The AITemperatureSlider component manages generative model randomness offsets (typically `0.0` to `2.0` in standard LLMs). It builds on the modular `<Slider>` primitive to present custom click-snappable preset targets alongside real-time warnings indicating structured coherence versus high-hallucination creativity risks.
+
+<AITemperatureSliderDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+
+```bash
+ignix add component ai-temperature-slider
+```
+</TabItem>
+
+<TabItem
+value="manual"
+label="Manual"
+className="max-h-[500px] overflow-y-auto"
+>
+```tsx
+import * as React from "react";
+import { Sparkles, Brain, Cpu, AlertTriangle } from "lucide-react";
+import { cn } from "../../../utils/cn";
+import { Slider } from "../slider";
+
+export interface AITemperatureSliderProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange"> {
+  /** Currently active temperature value (0.0 to 2.0) */
+  value?: number;
+  /** Default temperature if uncontrolled. Defaults to 0.7 */
+  defaultValue?: number;
+  /** Callback fired when the temperature is dragged or clicked */
+  onChange?: (value: number) => void;
+  /** Size variant: 'sm' | 'md' | 'lg' */
+  size?: "sm" | "md" | "lg";
+  /** Renders quick-snap preset labels under the slider */
+  showPresets?: boolean;
+  /** Displays a dynamic warning card detailing the hallucination risk */
+  showRiskIndicator?: boolean;
+  /** Styling theme variant for the container */
+  variant?: "default" | "dark" | "glass";
+}
+
+export interface TemperaturePreset {
+  label: string;
+  value: number;
+  icon: React.ReactNode;
+}
+
+export const defaultPresets: TemperaturePreset[] = [
+  {
+    label: "Precise",
+    value: 0.2,
+    icon: <Cpu size={12} />,
+  },
+  {
+    label: "Balanced",
+    value: 0.7,
+    icon: <Brain size={12} />,
+  },
+  {
+    label: "Creative",
+    value: 1.2,
+    icon: <Sparkles size={12} />,
+  },
+];
+
+const getRiskMetadata = (val: number, variant: "default" | "dark" | "glass") => {
+  const isDarkTheme = variant === "dark";
+  const isGlassTheme = variant === "glass";
+
+  if (val <= 0.4) {
+    return {
+      label: "Precise & Focused",
+      desc: "Deterministic. Ideal for coding, mathematics, and factual QA.",
+      colorClass: isDarkTheme
+        ? "text-emerald-400 bg-emerald-950/40 border-emerald-900/50"
+        : isGlassTheme
+        ? "text-emerald-300 bg-emerald-950/30 border-white/10"
+        : "text-emerald-700 bg-emerald-50 border-emerald-100 dark:text-emerald-400 dark:bg-emerald-950/20 dark:border-emerald-900/30",
+      dotColor: "bg-emerald-500",
+    };
+  } else if (val <= 1.0) {
+    return {
+      label: "Balanced & Coherent",
+      desc: "Natural intelligence. Ideal for general chatbot responses and emails.",
+      colorClass: isDarkTheme
+        ? "text-blue-400 bg-blue-950/40 border-blue-900/50"
+        : isGlassTheme
+        ? "text-blue-300 bg-blue-950/30 border-white/10"
+        : "text-blue-700 bg-blue-50 border-blue-100 dark:text-blue-400 dark:bg-blue-950/20 dark:border-blue-900/30",
+      dotColor: "bg-blue-500",
+    };
+  } else if (val <= 1.4) {
+    return {
+      label: "Creative & Expressive",
+      desc: "Highly creative. Good for poetry, brainstorming, and story copywriting.",
+      colorClass: isDarkTheme
+        ? "text-orange-400 bg-orange-950/40 border-orange-900/50"
+        : isGlassTheme
+        ? "text-orange-300 bg-orange-950/30 border-white/10"
+        : "text-orange-700 bg-orange-50 border-orange-100 dark:text-orange-400 dark:bg-orange-950/20 dark:border-orange-900/30",
+      dotColor: "bg-orange-500",
+    };
+  } else {
+    return {
+      label: "High Randomness (Hallucination Risk)",
+      desc: "Unpredictable outputs. Hallucination and syntax errors are likely.",
+      colorClass: isDarkTheme
+        ? "text-rose-400 bg-rose-950/40 border-rose-900/50"
+        : isGlassTheme
+        ? "text-rose-300 bg-rose-950/30 border-white/10"
+        : "text-rose-700 bg-rose-50 border-rose-100 dark:text-rose-400 dark:bg-rose-950/20 dark:border-rose-900/30",
+      dotColor: "bg-rose-500",
+    };
+  }
+};
+
+const AITemperatureSlider = React.forwardRef<HTMLDivElement, AITemperatureSliderProps>(
+  (
+    {
+      className,
+      value,
+      defaultValue = 0.7,
+      onChange,
+      size = "md",
+      showPresets = true,
+      showRiskIndicator = true,
+      variant = "default",
+      ...props
+    },
+    ref
+  ) => {
+    const [selectedVal, setSelectedVal] = React.useState(
+      value !== undefined ? value : defaultValue
+    );
+
+    React.useEffect(() => {
+      if (value !== undefined) {
+        setSelectedVal(value);
+      }
+    }, [value]);
+
+    const handleValueChange = (val: number) => {
+      if (value === undefined) {
+        setSelectedVal(val);
+      }
+      onChange?.(val);
+    };
+
+    const risk = getRiskMetadata(selectedVal, variant);
+
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          "flex flex-col space-y-4 w-full p-5 border rounded-2xl transition-all shadow-sm",
+          variant === "default" && "bg-white border-neutral-200 text-neutral-800 dark:bg-neutral-900 dark:border-neutral-800 dark:text-neutral-100",
+          variant === "dark" && "bg-neutral-950 border-neutral-900 text-white",
+          variant === "glass" && "bg-white/10 border-white/20 backdrop-blur-md text-white",
+          className
+        )}
+        {...props}
+      >
+        <div className="flex items-center justify-between">
+          <span className={cn(
+            "text-xs font-bold uppercase tracking-wider",
+            variant === "glass" ? "text-white/60" : "text-neutral-400 dark:text-neutral-500"
+          )}>
+            Temperature
+          </span>
+          <span className={cn(
+            "px-2 py-0.5 text-xs font-mono font-bold rounded-md border",
+            variant === "glass"
+              ? "bg-white/10 text-white border-white/20"
+              : "bg-neutral-100 dark:bg-neutral-800 border-neutral-200 dark:border-neutral-700 text-neutral-800 dark:text-neutral-200"
+          )}>
+            {selectedVal.toFixed(1)}
+          </span>
+        </div>
+
+        <div className="py-2.5">
+          <Slider
+            min={0.0}
+            max={2.0}
+            step={0.1}
+            value={[selectedVal]}
+            onValueChange={(val) => handleValueChange(val[0])}
+            showTooltip={false}
+            className="cursor-pointer"
+          />
+        </div>
+
+        {showPresets && (
+          <div className="flex justify-between items-center px-1">
+            {defaultPresets.map((preset) => {
+              const isActive = Math.abs(selectedVal - preset.value) < 0.05;
+              return (
+                <button
+                  key={preset.value}
+                  type="button"
+                  onClick={() => handleValueChange(preset.value)}
+                  className={cn(
+                    "flex items-center gap-1.5 text-xs font-semibold px-2 py-1 rounded-md transition-all cursor-pointer select-none border border-transparent",
+                    isActive
+                      ? variant === "glass"
+                        ? "bg-white/20 text-white border-white/20"
+                        : "bg-neutral-900 text-white border-neutral-800 dark:bg-neutral-100 dark:text-neutral-950 dark:border-neutral-200"
+                      : variant === "glass"
+                      ? "text-white/60 hover:text-white"
+                      : "text-neutral-400 dark:text-neutral-500 hover:text-neutral-600 dark:hover:text-neutral-300"
+                  )}
+                >
+                  {preset.icon}
+                  <span>
+                    {preset.label} ({preset.value})
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {showRiskIndicator && (
+          <div
+            className={cn(
+              "flex gap-2.5 p-3 rounded-xl border text-xs leading-relaxed transition-all",
+              risk.colorClass
+            )}
+          >
+            <div className="flex-shrink-0 mt-0.5 flex items-center justify-center">
+              {selectedVal > 1.4 ? (
+                <AlertTriangle size={14} className="animate-pulse" />
+              ) : (
+                <span className={cn("w-2 h-2 rounded-full", risk.dotColor)} />
+              )}
+            </div>
+            <div className="flex flex-col space-y-0.5">
+              <span className="font-bold">{risk.label}</span>
+              <span className="text-[11px] opacity-90">{risk.desc}</span>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+);
+
+AITemperatureSlider.displayName = "AITemperatureSlider";
+
+export { AITemperatureSlider };
+```
+</TabItem> 
+</Tabs> 
+
+## Usage
+
+```tsx
+import { AITemperatureSlider } from '@mindfiredigital/ignix-ui';
+```
+
+### Basic Example
+
+```tsx
+import { useState } from 'react';
+import { AITemperatureSlider } from '@mindfiredigital/ignix-ui';
+
+function ConfigPage() {
+  const [temperature, setTemperature] = useState(0.7);
+
+  return (
+    <div className="w-80">
+      <AITemperatureSlider
+        value={temperature}
+        onChange={setTemperature}
+      />
+    </div>
+  );
+}
+```
+
+### Variants
+
+```tsx
+<AITemperatureSlider
+  showPresets={false}
+  showRiskIndicator={false}
+/>
+
+<AITemperatureSlider variant="glass" />
+```
+
+## Props
+
+| Prop                 | Type                                 | Default       | Description                                                                                     |
+| -------------------- | ------------------------------------ | ------------- | ----------------------------------------------------------------------------------------------- |
+| `value`              | `number`                             | `undefined`   | Controlled temperature value (0.0 to 2.0)                                                       |
+| `defaultValue`       | `number`                             | `0.7`         | Initial value if rendered in uncontrolled contexts                                              |
+| `onChange`           | `(value: number) => void`            | `undefined`   | Callback triggered when the temperature is changed                                              |
+| `showPresets`        | `boolean`                            | `true`        | Toggle visibility of quick-snap preset click tags (Precise, Balanced, Creative)                 |
+| `showRiskIndicator`  | `boolean`                            | `true`        | Toggle visibility of warning text block descriptions explaining randomness hallucination levels |
+| `variant`            | `'default' \| 'dark' \| 'glass'`     | `'default'`   | Visual styling design variant for the wrapper card panel                                        |
