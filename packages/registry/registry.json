@@ -1137,6 +1137,10 @@
       "files": {
         "main": {
           "path": "templates/layouts/workflow-builder-layout/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "documentationlayout": {
       "name": "DocumentationLayout",
       "description": "A full-page documentation/reference site shell: sticky header, a collapsible-tree left navigation sidebar (a drawer on mobile), page content with breadcrumbs and prev/next links, and a scroll-spy 'On this page' panel.",
