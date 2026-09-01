@@ -41,7 +41,8 @@ import {
   List,
   BetweenVerticalStart,
   Ruler,
-  Code2
+  Code2,
+  SquareTerminal
 } from 'lucide-react';
 
 ## App Structure
@@ -82,6 +83,12 @@ import {
 ## Page Layout
 
 <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+  <Card 
+    title="Developer Playground" 
+    href="/docs/templates/layouts/developer-playground-layout"
+    description="Code-playground shell with file tabs, resizable editor/preview split, and console."
+    icon={SquareTerminal}
+  />
   <Card 
     title="Full Height Sidebar" 
     href="/docs/templates/layouts/full-height-sidebar-layout"
