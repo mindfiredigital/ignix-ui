@@ -2108,6 +2108,24 @@
           "type": "component"
         }
       }
+    },
+    "ai-token-counter": {
+      "name": "AI-TokenCounter",
+      "description": "A premium code block component with custom regex syntax highlighting, copy action, line number toggle, and collapsible expand/collapse controls.",
+      "dependencies": [
+        "class-variance-authority",
+        "lucide-react"
+      ],
+      "componentDependencies": [
+        "button"
+      ],
+      "files": {
+        "main": {
+          "path": "components/ai-token-counter/index.tsx",
+          "type": "component"
+        }
+      }
     }
+
   }
 }

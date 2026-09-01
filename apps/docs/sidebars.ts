@@ -63,6 +63,7 @@ const sidebars: SidebarsConfig = {
             'components/ai-suggested-actions',
             'components/ai-temperature-slider',
             'components/ai-thinking-indicator',
+            'components/ai-token-counter',
            
           ],
         },
