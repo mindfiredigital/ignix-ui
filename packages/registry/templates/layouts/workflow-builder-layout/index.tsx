@@ -95,7 +95,9 @@ export interface WorkflowPaletteItem {
  * @property gridSize - Spacing between grid dots, in canvas world units. Default `32`.
  * @property showControls - Whether to render the floating zoom in/out/reset control panel.
  * Default `true`.
- * @property className - Class name for the root container.
+ * @property className - Class name for the root container. The root fills its parent's height
+ * (`h-full`), not the viewport - give it a sized ancestor, or pass a height utility here (e.g.
+ * `h-screen`) to make it fill the viewport directly.
  */
 export interface WorkflowBuilderLayoutProps {
   header?: React.ReactNode;
@@ -179,9 +181,8 @@ interface DragState {
 
 interface ConnectingState {
   sourceId: string;
-  // `null` for a keyboard-initiated connection (Enter on an output port) - pointer move/up
-  // handlers compare against a real pointerId, so they naturally no-op against this instead of
-  // needing a separate keyboard-vs-pointer branch.
+  // `null` marks a keyboard-initiated connection - pointer move/up handlers compare against a
+  // real pointerId, so they naturally no-op against this without a separate branch.
   pointerId: number | null;
   x: number;
   y: number;
@@ -541,7 +542,7 @@ export const WorkflowBuilderLayout: React.FC<WorkflowBuilderLayoutProps> = ({
   };
 
   return (
-    <div className={cn("flex h-screen w-full flex-col bg-[var(--background)] text-[var(--foreground)]", className)}>
+    <div className={cn("flex h-full min-h-0 w-full flex-col bg-[var(--background)] text-[var(--foreground)]", className)}>
       {(header || actions) && (
         <header
           className="z-10 flex h-14 w-full shrink-0 items-center gap-3 border-b border-[var(--border)] bg-[var(--background)] px-4"

@@ -117,7 +117,6 @@ const WorkflowBuilderLayoutDemo = () => {
         <TabItem value="preview" label="Preview" default>
           <div className="border border-gray-300 rounded-lg overflow-hidden mt-4" style={{ height: 480 }}>
             <WorkflowBuilderLayout
-              className="h-full"
               header={
                 <div className="flex items-center gap-2 rounded-md bg-primary px-3 py-1.5 text-sm font-semibold tracking-tight text-primary-foreground">
                   <Sparkles className="h-4 w-4" />
