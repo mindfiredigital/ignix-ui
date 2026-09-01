@@ -33,6 +33,7 @@ const INITIAL_EDGES: WorkflowEdgeData[] = [
 ];
 
 const codeString = `
+import { useState } from 'react';
 import {
   WorkflowBuilderLayout,
   type WorkflowNodeData,
