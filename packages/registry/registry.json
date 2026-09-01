@@ -2081,6 +2081,23 @@
         }
       }
     },
+    "ai-temperature-slider": {
+      "name": "AITemperatureSlider",
+      "description": "An AI model temperature range selector component with snap presets, custom tooltips, and dynamic hallucination risk warning indicators.",
+      "dependencies": [
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "slider"
+      ],
+      "files": {
+        "main": {
+          "path": "components/ai-temperature-slider/index.tsx",
+          "type": "component"
+        }
+      }
+    },
     "skeleton": {
       "name": "Skeleton",
       "description": "A placeholder component for loading states with pulse animations",
