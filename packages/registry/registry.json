@@ -2110,14 +2110,14 @@
       }
     },
     "ai-token-counter": {
-      "name": "AI-TokenCounter",
-      "description": "A premium code block component with custom regex syntax highlighting, copy action, line number toggle, and collapsible expand/collapse controls.",
+      "name": "AITokenCounter",
+      "description": "An AI token usage visualizer with progress meters, breakdown badges, and limit warning indicators.",
       "dependencies": [
         "class-variance-authority",
         "lucide-react"
       ],
       "componentDependencies": [
-        "button"
+        "progress-indicator"
       ],
       "files": {
         "main": {
