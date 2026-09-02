@@ -1110,6 +1110,19 @@
         }
       }
     },
+    "developerplaygroundlayout": {
+      "name": "DeveloperPlaygroundLayout",
+      "description": "A code-playground shell - a file tab strip above an editor pane, a draggable/keyboard-resizable divider splitting it from a live preview pane, and an optional collapsible console along the bottom.",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/layouts/developer-playground-layout/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "threecolumnsidebarlayout": {
       "name": "ThreeColumnSidebarLayout",
       "description": "A flexible layout component with header, sidebar that supports app dashboard with responsive design.",
