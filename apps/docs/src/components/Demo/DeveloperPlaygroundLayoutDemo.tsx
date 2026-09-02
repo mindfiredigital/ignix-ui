@@ -56,7 +56,7 @@ const DeveloperPlaygroundLayoutDemo = () => {
       </div>
       <Tabs>
         <TabItem value="preview" label="Preview" default>
-          <div className="border border-gray-300 rounded-lg overflow-hidden mt-4" style={{ height: 480 }}>
+          <div className="border border-gray-300 rounded-lg overflow-hidden mt-4 h-[480px]">
             <DeveloperPlaygroundLayout
               orientation={orientation}
               files={FILES}
@@ -70,7 +70,7 @@ const DeveloperPlaygroundLayoutDemo = () => {
               }
               preview={
                 <div className="flex h-full w-full items-center justify-center bg-white">
-                  <h1 style={{ color: '#6366f1', fontFamily: 'sans-serif' }}>Hello, playground!</h1>
+                  <h1 className="!text-[#6366f1] !font-sans">Hello, playground!</h1>
                 </div>
               }
               consoleContent={

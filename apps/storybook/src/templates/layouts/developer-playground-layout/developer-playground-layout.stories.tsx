@@ -50,7 +50,7 @@ const CodeEditor: React.FC<{ content: string }> = ({ content }) => (
 
 const PreviewFrame: React.FC = () => (
   <div className="flex h-full w-full items-center justify-center bg-white">
-    <h1 style={{ color: "#6366f1", fontFamily: "sans-serif" }}>Hello, playground!</h1>
+    <h1 className="text-[#6366f1] font-sans">Hello, playground!</h1>
   </div>
 );
 

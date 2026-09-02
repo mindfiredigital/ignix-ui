@@ -94,12 +94,39 @@ describe("DeveloperPlaygroundLayout", () => {
       render(<DeveloperPlaygroundLayout editor={<p>Editor</p>} />);
       expect(screen.queryByRole("tablist")).not.toBeInTheDocument();
     });
+
+    it("auto-selects the first file once an initially empty files list is populated", () => {
+      const onActiveFileChange = vi.fn();
+      const { rerender } = render(
+        <DeveloperPlaygroundLayout editor={<p>Editor</p>} files={[]} onActiveFileChange={onActiveFileChange} />
+      );
+      expect(screen.queryByRole("tablist")).not.toBeInTheDocument();
+
+      rerender(<DeveloperPlaygroundLayout editor={<p>Editor</p>} files={FILES} onActiveFileChange={onActiveFileChange} />);
+      expect(screen.getByRole("tab", { name: /index.tsx/ })).toHaveAttribute("aria-selected", "true");
+      expect(onActiveFileChange).toHaveBeenCalledWith("index.tsx");
+    });
+
+    it("falls back to a remaining file when the active file is removed from the list", () => {
+      const { rerender } = render(<DeveloperPlaygroundLayout editor={<p>Editor</p>} files={FILES} />);
+      fireEvent.click(screen.getByRole("tab", { name: /styles.css/ }));
+      expect(screen.getByRole("tab", { name: /styles.css/ })).toHaveAttribute("aria-selected", "true");
+
+      rerender(<DeveloperPlaygroundLayout editor={<p>Editor</p>} files={[FILES[0]]} />);
+      expect(screen.getByRole("tab", { name: /index.tsx/ })).toHaveAttribute("aria-selected", "true");
+    });
   });
 
   describe("console", () => {
     it("omits the console section when no consoleContent is provided", () => {
       render(<DeveloperPlaygroundLayout editor={<p>Editor</p>} />);
       expect(screen.queryByText("Console")).not.toBeInTheDocument();
+    });
+
+    it("renders the console section when consoleContent is the falsy-but-valid node 0", () => {
+      render(<DeveloperPlaygroundLayout editor={<p>Editor</p>} consoleContent={0} />);
+      expect(screen.getByText("Console")).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Collapse console" })).toBeInTheDocument();
     });
 
     it("shows console content by default and collapses it on toggle", () => {
@@ -116,6 +143,11 @@ describe("DeveloperPlaygroundLayout", () => {
 
     it("omits the clear console button when no consoleContent is provided", () => {
       render(<DeveloperPlaygroundLayout editor={<p>Editor</p>} />);
+      expect(screen.queryByRole("button", { name: "Clear console" })).not.toBeInTheDocument();
+    });
+
+    it("omits the clear console button when consoleContent is provided but onClearConsole is not", () => {
+      render(<DeveloperPlaygroundLayout editor={<p>Editor</p>} consoleContent={<p>Log output</p>} />);
       expect(screen.queryByRole("button", { name: "Clear console" })).not.toBeInTheDocument();
     });
 
@@ -198,6 +230,22 @@ describe("DeveloperPlaygroundLayout", () => {
       );
       const divider = screen.getByRole("separator");
       expect(Number(divider.getAttribute("aria-valuenow"))).toBeGreaterThanOrEqual(70);
+    });
+
+    it("clamps the non-finite split fallback into a min/max range that excludes the default", () => {
+      render(
+        <DeveloperPlaygroundLayout
+          editor={<p>Editor</p>}
+          preview={<p>Preview</p>}
+          splitPercentage={NaN}
+          minSplitPercentage={60}
+          maxSplitPercentage={80}
+        />
+      );
+      const divider = screen.getByRole("separator");
+      const value = Number(divider.getAttribute("aria-valuenow"));
+      expect(value).toBeGreaterThanOrEqual(60);
+      expect(value).toBeLessThanOrEqual(80);
     });
   });
 });

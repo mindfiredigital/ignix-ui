@@ -34,8 +34,8 @@ export type PlaygroundOrientation = "horizontal" | "vertical";
  * hide the console entirely.
  * @property onClearConsole - Called when the console's clear button is clicked. The layout does
  * not own the console's contents (`consoleContent` is an opaque node), so clearing is delegated
- * entirely to the consumer via this callback. The clear button only renders when `consoleContent`
- * is provided.
+ * entirely to the consumer via this callback. The clear button only renders when both `consoleContent`
+ * and this callback are provided.
  * @property showConsole - Controlled console-expanded state. Provide alongside
  * `onShowConsoleChange` to drive it externally; omit to let the layout manage its own state.
  * @property defaultShowConsole - Initial console-expanded state when uncontrolled. Default `true`.
@@ -128,6 +128,19 @@ export const DeveloperPlaygroundLayout: React.FC<DeveloperPlaygroundLayoutProps>
     [isActiveFileControlled, onActiveFileChange]
   );
 
+  // `files` can change after mount (populated asynchronously, or the active file removed) -
+  // the useState initializer above only runs once, so re-sync when uncontrolled and the
+  // current selection no longer points at a file that exists.
+  React.useEffect(() => {
+    if (isActiveFileControlled) return;
+    const stillExists = files?.some((file) => file.name === internalActiveFile) ?? false;
+    if (!stillExists) {
+      const fallback = files?.[0]?.name;
+      setInternalActiveFile(fallback);
+      if (fallback !== undefined) onActiveFileChange?.(fallback);
+    }
+  }, [files, isActiveFileControlled, internalActiveFile, onActiveFileChange]);
+
   const isConsoleControlled = showConsole !== undefined;
   const [internalShowConsole, setInternalShowConsole] = React.useState(defaultShowConsole);
   const currentShowConsole = isConsoleControlled ? showConsole : internalShowConsole;
@@ -146,7 +159,7 @@ export const DeveloperPlaygroundLayout: React.FC<DeveloperPlaygroundLayoutProps>
   const isSplitControlled = splitPercentage !== undefined;
   const [internalSplit, setInternalSplit] = React.useState(clamp(defaultSplitPercentage, safeMin, safeMax));
   const rawSplit = isSplitControlled ? splitPercentage : internalSplit;
-  const currentSplit = Number.isFinite(rawSplit) ? clamp(rawSplit, safeMin, safeMax) : DEFAULT_SPLIT;
+  const currentSplit = Number.isFinite(rawSplit) ? clamp(rawSplit, safeMin, safeMax) : clamp(DEFAULT_SPLIT, safeMin, safeMax);
 
   const updateSplit = React.useCallback(
     (next: number) => {
@@ -277,7 +290,7 @@ export const DeveloperPlaygroundLayout: React.FC<DeveloperPlaygroundLayoutProps>
         <div className="min-h-0 min-w-0 flex-1 overflow-auto">{preview}</div>
       </div>
 
-      {consoleContent && (
+      {consoleContent != null && (
         <div className="shrink-0 border-t border-[var(--border)] bg-[var(--background)]">
           <div className="flex items-center justify-between px-3 py-1.5">
             <div className="flex items-center gap-1.5 text-xs font-medium text-[var(--muted-foreground)]">
@@ -285,14 +298,16 @@ export const DeveloperPlaygroundLayout: React.FC<DeveloperPlaygroundLayoutProps>
               Console
             </div>
             <div className="flex items-center gap-0.5">
-              <button
-                type="button"
-                aria-label="Clear console"
-                onClick={() => onClearConsole?.()}
-                className="rounded p-1 text-[var(--muted-foreground)] hover:bg-[var(--accent)] hover:text-[var(--accent-foreground)]"
-              >
-                <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
-              </button>
+              {onClearConsole && (
+                <button
+                  type="button"
+                  aria-label="Clear console"
+                  onClick={onClearConsole}
+                  className="rounded p-1 text-[var(--muted-foreground)] hover:bg-[var(--accent)] hover:text-[var(--accent-foreground)]"
+                >
+                  <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                </button>
+              )}
               <button
                 type="button"
                 aria-label={currentShowConsole ? "Collapse console" : "Expand console"}
