@@ -18,7 +18,7 @@ The Tabs component is a versatile navigation interface that allows users to swit
 <Tabs>
   <TabItem value="cli" label="CLI" default>
     ```bash
-    ignix add component tab
+    ignix add component tabs
     ```
   </TabItem>
       <TabItem value="manual" label="Manual" className="max-h-[500px] overflow-y-auto">
@@ -37,7 +37,15 @@ export interface TabsProps
   options: string[];
   selected?: number;
   value?: (index: number) => void;
+  /**
+   * The selected tab is always persisted to localStorage and restored on mount, surviving a
+   * page refresh. Defaults to a key derived from `options` - override it when multiple `Tabs`
+   * instances share the same options but must remember their selection independently.
+   */
+  storageKey?: string;
 }
+
+const STORAGE_PREFIX = "ignix-tabs:";
 
 const tabsVariants = cva("relative flex items-center", {
   variants: {
@@ -86,9 +94,35 @@ export const Tabs: React.FC<TabsProps> = ({
   size = "md",
   className,
   theme,
+  storageKey,
   ...props
 }) => {
-  const [activeIndex, setActiveIndex] = useState(selected);
+  const resolvedStorageKey = `${STORAGE_PREFIX}${storageKey ?? options.join("|")}`;
+
+  const [activeIndex, setActiveIndex] = useState(() => {
+    try {
+      const saved = localStorage.getItem(resolvedStorageKey);
+      if (saved !== null) {
+        const parsed = Number(saved);
+        if (Number.isInteger(parsed) && parsed >= 0 && parsed < options.length) {
+          return parsed;
+        }
+      }
+    } catch {
+      console.warn("Could not load tab selection from storage");
+    }
+    return selected;
+  });
+
+  const handleSelect = (index: number) => {
+    setActiveIndex(index);
+    try {
+      localStorage.setItem(resolvedStorageKey, String(index));
+    } catch {
+      console.warn("Could not save tab selection to storage");
+    }
+    value && value(index);
+  };
 
   return (
     <div
@@ -107,10 +141,7 @@ export const Tabs: React.FC<TabsProps> = ({
             key={option}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => {
-              setActiveIndex(index);
-              value && value(index);
-            }}
+            onClick={() => handleSelect(index)}
             className={cn(
               "relative px-4 py-2 transition-all",
               isActive
@@ -169,6 +200,23 @@ function BasicTabs() {
 }
 ```
 
+### Persisting the Selected Tab
+
+The selected tab is always remembered across a page refresh - no extra prop needed. The selection is saved to `localStorage` under a key derived from `options`, and restored on mount (falling back to `selected` when nothing is stored yet).
+
+```tsx
+function PersistentTabs() {
+  return <Tabs options={["Tab 1", "Tab 2", "Tab 3"]} selected={0} />;
+}
+```
+
+If two `Tabs` instances share the same `options` but need to remember their selection independently, give each one an explicit `storageKey`:
+
+```tsx
+<Tabs options={["Tab 1", "Tab 2", "Tab 3"]} storageKey="sidebar-tabs" />
+<Tabs options={["Tab 1", "Tab 2", "Tab 3"]} storageKey="main-content-tabs" />
+```
+
 ## Props
 
 | Prop | Type | Default | Description |
@@ -176,6 +224,7 @@ function BasicTabs() {
 | `options` | `string[]` | **required** | Array of tab labels to render |
 | `selected` | `number` | `0` | Index of the initially selected tab |
 | `value` | `(index: number) => void` | `undefined` | Callback fired with the index of the newly selected tab |
+| `storageKey` | `string` | derived from `options` | Overrides the localStorage key used to persist the selected tab (always on, surviving a page refresh); set this when multiple `Tabs` instances share identical `options` but must remember their selection independently |
 | `variant` | `'underline' \| 'filled' \| 'pill' \| 'outline' \| 'ghost' \| 'shadow' \| 'gradient' \| 'glow' \| 'block'` | `'underline'` | Visual style of the tab strip |
 | `theme` | `'light' \| 'dark' \| 'glass' \| 'glassDark' \| 'glassLight' \| 'glassGradient' \| 'glassGradientDark'` | `undefined` | Color theme applied to the tab container |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Font size of the tab labels |
