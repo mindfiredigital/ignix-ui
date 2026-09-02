@@ -2124,6 +2124,24 @@
           "type": "component"
         }
       }
+    },
+    "ai-token-counter": {
+      "name": "AITokenCounter",
+      "description": "An AI token usage visualizer with progress meters, breakdown badges, and limit warning indicators.",
+      "dependencies": [
+        "class-variance-authority",
+        "lucide-react"
+      ],
+      "componentDependencies": [
+        "progress-indicator"
+      ],
+      "files": {
+        "main": {
+          "path": "components/ai-token-counter/index.tsx",
+          "type": "component"
+        }
+      }
     }
+
   }
 }
