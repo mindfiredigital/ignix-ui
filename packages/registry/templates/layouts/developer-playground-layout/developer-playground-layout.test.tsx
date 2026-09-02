@@ -67,6 +67,12 @@ describe("DeveloperPlaygroundLayout", () => {
       const { container } = render(<DeveloperPlaygroundLayout editor={<p>Editor</p>} className="custom-root" />);
       expect(container.firstChild).toHaveClass("custom-root");
     });
+
+    it("omits the divider and preview pane when no preview is provided", () => {
+      render(<DeveloperPlaygroundLayout editor={<p>Editor</p>} />);
+      expect(screen.getByText("Editor")).toBeInTheDocument();
+      expect(screen.queryByRole("separator")).not.toBeInTheDocument();
+    });
   });
 
   describe("file tabs", () => {

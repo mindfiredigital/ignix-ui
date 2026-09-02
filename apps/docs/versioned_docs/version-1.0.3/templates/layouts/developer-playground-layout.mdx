@@ -56,7 +56,8 @@ export type PlaygroundOrientation = "horizontal" | "vertical";
  * @property editor - Editor content for the currently active file. This component only provides
  * the shell (tabs, pane, split) - swapping the actual editor content per file is the consumer's
  * responsibility (typically driven by `activeFileName`).
- * @property preview - Live preview content, rendered in the other pane of the split.
+ * @property preview - Live preview content, rendered in the other pane of the split. Omit to hide
+ * the divider and preview pane entirely, letting the editor fill the container.
  * @property consoleContent - Content for the collapsible console panel at the bottom. Omit to
  * hide the console entirely.
  * @property onClearConsole - Called when the console's clear button is clicked. The layout does
@@ -266,7 +267,10 @@ export const DeveloperPlaygroundLayout: React.FC<DeveloperPlaygroundLayoutProps>
         ref={splitContainerRef}
         className={cn("flex flex-1 overflow-hidden", orientation === "vertical" ? "flex-col" : "flex-col md:flex-row")}
       >
-        <div className="flex min-h-0 min-w-0 flex-col overflow-hidden" style={{ flexBasis: `${currentSplit}%` }}>
+        <div
+          className={cn("flex min-h-0 min-w-0 flex-col overflow-hidden", preview == null && "flex-1")}
+          style={preview != null ? { flexBasis: `${currentSplit}%` } : undefined}
+        >
           {files && files.length > 0 && (
             <div role="tablist" aria-label="Files" className="flex shrink-0 overflow-x-auto border-b border-[var(--border)]">
               {files.map((file) => {
@@ -295,26 +299,30 @@ export const DeveloperPlaygroundLayout: React.FC<DeveloperPlaygroundLayoutProps>
           <div className="min-h-0 flex-1 overflow-auto">{editor}</div>
         </div>
 
-        <div
-          role="separator"
-          aria-orientation={orientation === "horizontal" ? "vertical" : "horizontal"}
-          aria-label="Resize editor and preview panes"
-          aria-valuenow={Math.round(currentSplit)}
-          aria-valuemin={Math.round(safeMin)}
-          aria-valuemax={Math.round(safeMax)}
-          tabIndex={0}
-          className={cn(
-            "shrink-0 touch-none bg-[var(--border)] transition-colors hover:bg-[var(--primary)] focus-visible:outline-none focus-visible:bg-[var(--primary)]",
-            orientation === "horizontal" ? "hidden w-1 cursor-col-resize md:block" : "h-1 cursor-row-resize"
-          )}
-          onPointerDown={handleDividerPointerDown}
-          onPointerMove={handleDividerPointerMove}
-          onPointerUp={handleDividerPointerUp}
-          onPointerCancel={handleDividerPointerUp}
-          onKeyDown={handleDividerKeyDown}
-        />
+        {preview != null && (
+          <>
+            <div
+              role="separator"
+              aria-orientation={orientation === "horizontal" ? "vertical" : "horizontal"}
+              aria-label="Resize editor and preview panes"
+              aria-valuenow={Math.round(currentSplit)}
+              aria-valuemin={Math.round(safeMin)}
+              aria-valuemax={Math.round(safeMax)}
+              tabIndex={0}
+              className={cn(
+                "shrink-0 touch-none bg-[var(--border)] transition-colors hover:bg-[var(--primary)] focus-visible:outline-none focus-visible:bg-[var(--primary)]",
+                orientation === "horizontal" ? "hidden w-1 cursor-col-resize md:block" : "h-1 cursor-row-resize"
+              )}
+              onPointerDown={handleDividerPointerDown}
+              onPointerMove={handleDividerPointerMove}
+              onPointerUp={handleDividerPointerUp}
+              onPointerCancel={handleDividerPointerUp}
+              onKeyDown={handleDividerKeyDown}
+            />
 
-        <div className="min-h-0 min-w-0 flex-1 overflow-auto">{preview}</div>
+            <div className="min-h-0 min-w-0 flex-1 overflow-auto">{preview}</div>
+          </>
+        )}
       </div>
 
       {consoleContent != null && (
@@ -476,7 +484,7 @@ function App() {
 | `activeFileName` | `string` | `undefined` | Controlled active file name; provide alongside `onActiveFileChange` to drive it externally |
 | `onActiveFileChange` | `(name: string) => void` | `undefined` | Called whenever the active file changes, whether controlled or not |
 | `editor` | `React.ReactNode` | — | Editor content for the currently active file |
-| `preview` | `React.ReactNode` | `undefined` | Live preview content, rendered in the other pane of the split |
+| `preview` | `React.ReactNode` | `undefined` | Live preview content, rendered in the other pane of the split. Omit to hide the divider and preview pane, letting the editor fill the container |
 | `consoleContent` | `React.ReactNode` | `undefined` | Content for the collapsible console panel; omit to hide the console entirely |
 | `onClearConsole` | `() => void` | `undefined` | Called when the clear-console button is clicked. The button only renders when both `consoleContent` and this callback are provided; clearing the actual content is the consumer's responsibility |
 | `showConsole` | `boolean` | `undefined` | Controlled console-expanded state; provide alongside `onShowConsoleChange` to drive it externally |
