@@ -1110,6 +1110,19 @@
         }
       }
     },
+    "developerplaygroundlayout": {
+      "name": "DeveloperPlaygroundLayout",
+      "description": "A code-playground shell - a file tab strip above an editor pane, a draggable/keyboard-resizable divider splitting it from a live preview pane, and an optional collapsible console along the bottom.",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/layouts/developer-playground-layout/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "threecolumnsidebarlayout": {
       "name": "ThreeColumnSidebarLayout",
       "description": "A flexible layout component with header, sidebar that supports app dashboard with responsive design.",
@@ -1121,6 +1134,36 @@
       "files": {
         "main": {
           "path": "templates/layouts/three-column-sidebar-layout/index.tsx",
+          "type": "template"
+        }
+      }
+    },
+    "workflowbuilderlayout": {
+      "name": "WorkflowBuilderLayout",
+      "description": "A node-and-connection workspace shell - a node palette, a pannable/zoomable canvas for placing and wiring draggable nodes, and an optional inspector panel, with drag/wheel/keyboard pan-zoom and floating zoom controls.",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "componentDependencies": [
+        "button"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/layouts/workflow-builder-layout/index.tsx",
+          "type": "template"
+        }
+      }
+    },
+    "documentationlayout": {
+      "name": "DocumentationLayout",
+      "description": "A full-page documentation/reference site shell: sticky header, a collapsible-tree left navigation sidebar (a drawer on mobile), page content with breadcrumbs and prev/next links, and a scroll-spy 'On this page' panel.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/layouts/documentation-layout/index.tsx",
           "type": "template"
         }
       }
@@ -2067,6 +2110,23 @@
         }
       }
     },
+    "ai-temperature-slider": {
+      "name": "AITemperatureSlider",
+      "description": "An AI model temperature range selector component with snap presets, custom tooltips, and dynamic hallucination risk warning indicators.",
+      "dependencies": [
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "componentDependencies": [
+        "slider"
+      ],
+      "files": {
+        "main": {
+          "path": "components/ai-temperature-slider/index.tsx",
+          "type": "component"
+        }
+      }
+    },
     "skeleton": {
       "name": "Skeleton",
       "description": "A placeholder component for loading states with pulse animations",
@@ -2077,6 +2137,24 @@
           "type": "component"
         }
       }
+    },
+    "ai-token-counter": {
+      "name": "AITokenCounter",
+      "description": "An AI token usage visualizer with progress meters, breakdown badges, and limit warning indicators.",
+      "dependencies": [
+        "class-variance-authority",
+        "lucide-react"
+      ],
+      "componentDependencies": [
+        "progress-indicator"
+      ],
+      "files": {
+        "main": {
+          "path": "components/ai-token-counter/index.tsx",
+          "type": "component"
+        }
+      }
     }
+
   }
 }

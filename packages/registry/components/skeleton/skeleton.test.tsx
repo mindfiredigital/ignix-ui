@@ -55,12 +55,14 @@ describe('Skeleton Component', () => {
         const { container } = render(<Skeleton animation="pulse" />);
         const element = container.querySelector('div') as HTMLElement;
         expect(element).toHaveClass('animate-pulse');
+        expect(element).toHaveClass('ignix-skeleton-pulse');
     });
 
     it('applies no animation classes when animation is none', () => {
         const { container } = render(<Skeleton animation="none" />);
         const element = container.querySelector('div') as HTMLElement;
         expect(element).not.toHaveClass('animate-pulse');
+        expect(element).not.toHaveClass('ignix-skeleton-pulse');
         expect(element).not.toHaveClass('ignix-skeleton-shimmer');
         expect(element).not.toHaveClass('ignix-skeleton-wave');
     });
