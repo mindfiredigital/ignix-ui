@@ -11,7 +11,15 @@ export interface TabsProps
   options: string[];
   selected?: number;
   value?: (index: any) => void;
+  /**
+   * The selected tab is always persisted to localStorage and restored on mount, surviving a
+   * page refresh. Defaults to a key derived from `options` - override it when multiple `Tabs`
+   * instances share the same options but must remember their selection independently.
+   */
+  storageKey?: string;
 }
+
+const STORAGE_PREFIX = "ignix-tabs:";
 
 const tabsVariants = cva("relative flex items-center", {
   variants: {
@@ -60,9 +68,35 @@ export const Tabs: React.FC<TabsProps> = ({
   size = "md",
   className,
   theme,
+  storageKey,
   ...props
 }) => {
-  const [activeIndex, setActiveIndex] = useState(selected);
+  const resolvedStorageKey = `${STORAGE_PREFIX}${storageKey ?? options.join("|")}`;
+
+  const [activeIndex, setActiveIndex] = useState(() => {
+    try {
+      const saved = localStorage.getItem(resolvedStorageKey);
+      if (saved !== null) {
+        const parsed = Number(saved);
+        if (Number.isInteger(parsed) && parsed >= 0 && parsed < options.length) {
+          return parsed;
+        }
+      }
+    } catch {
+      console.warn("Could not load tab selection from storage");
+    }
+    return selected;
+  });
+
+  const handleSelect = (index: number) => {
+    setActiveIndex(index);
+    try {
+      localStorage.setItem(resolvedStorageKey, String(index));
+    } catch {
+      console.warn("Could not save tab selection to storage");
+    }
+    value && value(index);
+  };
 
   return (
     <div
@@ -81,10 +115,7 @@ export const Tabs: React.FC<TabsProps> = ({
             key={option}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => {
-              setActiveIndex(index);
-              value && value(index);
-            }}
+            onClick={() => handleSelect(index)}
             className={cn(
               "relative px-4 py-2 transition-all",
               isActive
