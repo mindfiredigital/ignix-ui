@@ -396,9 +396,10 @@
     },
     "badge": {
       "name": "Badge",
-      "description": "A badge component with animation and different variants",
+      "description": "A versatile, theme-aware badge for status indicators, colored action pills, and notification counters - with icon slot, dismiss button, and size variants.",
       "dependencies": [
-        "framer-motion"
+        "framer-motion",
+        "lucide-react"
       ],
       "files": {
         "main": {

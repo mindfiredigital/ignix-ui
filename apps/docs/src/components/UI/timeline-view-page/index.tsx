@@ -36,19 +36,16 @@ export function StatusBadge({
     status: TimelineStatus;
     className?: string;
 }) {
-    const typeMap = {
+    const variantMap = {
         completed: "success",
         in_progress: "warning",
         pending: "secondary",
     } as const;
 
     return (
-        <Badge
-            text={STATUS_LABELS[status]}
-            type={typeMap[status]}
-            variant="none"
-            className={className}
-        />
+        <Badge variant={variantMap[status]} className={className}>
+            {STATUS_LABELS[status]}
+        </Badge>
     );
 }
 
