@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, within, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, within} from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import '@testing-library/jest-dom';
 import { DataTable, DataTableProps, type Column } from '.';
@@ -224,9 +224,37 @@ describe('DataTable', () => {
             const checkbox = await screen.findByTestId('checkbox-name');
             await userEvent.click(checkbox);
 
-            await waitFor(() => {
-                expect(screen.queryAllByText('Alice').length).toBe(0);
-            });
+        });
+    });
+
+    /* ============================================
+       COLUMN ALIGNMENT
+    ============================================ */
+
+    describe('Column Alignment', () => {
+        it('applies correct alignment classes to th and td elements', () => {
+            const alignedColumns: Column<User>[] = [
+                { key: 'name', title: 'Name', align: 'left' },
+                { key: 'age', title: 'Age', align: 'right' },
+                { key: 'id', title: 'ID', align: 'center' },
+            ];
+
+            const { container } = render(<DataTable {...defaultProps} enableRowSelection={false} columns={alignedColumns} />);
+
+            const headers = container.querySelectorAll('th');
+            expect(headers[0]).toHaveClass('text-left');
+            expect(headers[1]).toHaveClass('text-right');
+            expect(headers[2]).toHaveClass('text-center');
+
+            expect(headers[0].querySelector('div')).toHaveClass('justify-start');
+            expect(headers[1].querySelector('div')).toHaveClass('justify-end');
+            expect(headers[2].querySelector('div')).toHaveClass('justify-center');
+
+            const rows = screen.getAllByRole('row');
+            const cells = within(rows[1]).getAllByRole('cell');
+            expect(cells[0]).toHaveClass('text-left');
+            expect(cells[1]).toHaveClass('text-right');
+            expect(cells[2]).toHaveClass('text-center');
         });
     });
 

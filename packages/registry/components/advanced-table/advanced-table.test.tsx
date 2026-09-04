@@ -395,6 +395,35 @@ describe("AdvancedTable", () => {
     expect([...namesAfter].sort()).toEqual([...namesBefore].sort());
     expect(namesAfter).toEqual(["Delta", "Echo", "Foxtrot"]);
   });
+
+  it("applies correct alignment classes to th and td elements based on column align property", () => {
+    const alignedColumns = [
+      { key: "name", label: "Name", align: "left" as const },
+      { key: "salary", label: "Salary", align: "right" as const },
+      { key: "status", label: "Status", align: "center" as const },
+    ];
+
+    const alignedRows = [
+      { name: "Alice", salary: "$100,000", status: "Active" },
+    ];
+
+    render(
+      <AdvancedTable
+        rows={alignedRows}
+        columns={alignedColumns}
+      />
+    );
+
+    const headers = screen.getAllByRole("columnheader");
+    expect(headers[0]).toHaveClass("text-left");
+    expect(headers[1]).toHaveClass("text-right");
+    expect(headers[2]).toHaveClass("text-center");
+
+    const table = screen.getByRole("table");
+    const cells = getBodyRows(table)[0].querySelectorAll("td");
+    expect(cells[1]).toHaveClass("text-right");
+    expect(cells[2]).toHaveClass("text-center");
+  });
 });
 
 

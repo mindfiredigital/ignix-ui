@@ -20,6 +20,18 @@ export type AdvancedTableSortDirection = "asc" | "desc";
 export type AdvancedTableRow = Record<string, React.ReactNode>;
 export type AdvancedTableColumnKey = string;
 
+/**
+ * Column definition for AdvancedTable.
+ *
+ * @public
+ */
+export interface AdvancedTableColumn {
+  key: AdvancedTableColumnKey;
+  label: string;
+  sortable?: boolean;
+  align?: "left" | "right" | "center";
+}
+
 const includesQuery = (value: string, query: string): boolean => {
   if (!query) return false;
   return value.toLowerCase().includes(query.toLowerCase());
@@ -57,19 +69,44 @@ HighlightedText.displayName = "HighlightedText";
  * Props for a table cell component.
  */
 interface TableCellProps {
+  /**
+   * Cell value (can be string or ReactNode).
+   */
   cell: React.ReactNode;
+  /**
+   * Whether the cell value is a string (for highlighting).
+   */
   isString: boolean;
+  /**
+   * Current filter query for highlighting.
+   */
   filterQuery: string;
+  /**
+   * Column alignment.
+   */
+  align?: "left" | "right" | "center";
 }
 
 /**
  * Table cell component that handles highlighting for string values.
  * Memoized to prevent re-rendering when props haven't changed.
+ *
+ * @internal
  */
-const TableCell: React.FC<TableCellProps> = memo(({ cell, isString, filterQuery }) => {
+const TableCell: React.FC<TableCellProps> = memo(({ cell, isString, filterQuery, align }) => {
   return (
-    <td className="px-3 py-2 whitespace-nowrap">
-      {isString ? <HighlightedText value={cell as string} query={filterQuery} /> : cell}
+    <td
+      className={cn(
+        "px-3 py-2 whitespace-nowrap",
+        align === "right" && "text-right",
+        align === "center" && "text-center"
+      )}
+    >
+      {isString ? (
+        <HighlightedText value={cell as string} query={filterQuery} />
+      ) : (
+        cell
+      )}
     </td>
   );
 });
@@ -80,15 +117,29 @@ TableCell.displayName = "TableCell";
  * Props for a table row component.
  */
 interface TableRowProps {
+  /**
+   * Row data.
+   */
   row: AdvancedTableRow;
+  /**
+   * Row index (for striped styling).
+   */
   rowIndex: number;
-  columns: Array<{ key: AdvancedTableColumnKey; label: string; sortable?: boolean }>;
+  /**
+   * Column definitions.
+   */
+  columns: AdvancedTableColumn[];
+  /**
+   * Current filter query for highlighting.
+   */
   filterQuery: string;
 }
 
 /**
  * Table row component that renders a single row with all its cells.
  * Memoized to prevent re-rendering when props haven't changed.
+ *
+ * @internal
  */
 const TableRow: React.FC<TableRowProps> = memo(({ row, rowIndex, columns, filterQuery }) => {
   return (
@@ -108,6 +159,7 @@ const TableRow: React.FC<TableRowProps> = memo(({ row, rowIndex, columns, filter
             cell={cell}
             isString={isString}
             filterQuery={filterQuery}
+            align={column.align}
           />
         );
       })}
@@ -121,30 +173,63 @@ TableRow.displayName = "TableRow";
  * Props for a table header cell component.
  */
 interface TableHeaderCellProps {
-  column: { key: AdvancedTableColumnKey; label: string; sortable?: boolean };
+  /**
+   * Column definition.
+   */
+  column: AdvancedTableColumn;
+  /**
+   * Whether this column is currently active (being sorted).
+   */
   isActive: boolean;
+  /**
+   * Current sort direction.
+   */
   direction: AdvancedTableSortDirection;
+  /**
+   * Whether this column is sortable.
+   */
   isSortableColumn: boolean;
+  /**
+   * Click handler for sorting.
+   */
   onHeaderClick: (key: AdvancedTableColumnKey) => void;
 }
 
 /**
  * Table header cell component that renders a sortable/non-sortable header.
  * Memoized to prevent re-rendering when props haven't changed.
+ *
+ * @internal
  */
 const TableHeaderCell: React.FC<TableHeaderCellProps> = memo(
   ({ column, isActive, direction, isSortableColumn, onHeaderClick }) => {
+    const isRightAligned = column.align === "right";
+    const isCenterAligned = column.align === "center";
+
     return (
       <th
         scope="col"
         onClick={isSortableColumn ? () => onHeaderClick(column.key) : undefined}
         className={cn(
-          "select-none px-3 py-2 text-left font-semibold border-b border-border",
-          "whitespace-nowrap",
+          "select-none px-3 py-2 font-semibold border-b border-border whitespace-nowrap",
+          isRightAligned
+            ? "text-right"
+            : isCenterAligned
+              ? "text-center"
+              : "text-left",
           isSortableColumn && "cursor-pointer hover:bg-muted/80"
         )}
       >
-        <div className="flex items-center justify-between gap-2">
+        <div
+          className={cn(
+            "flex items-center gap-2",
+            isRightAligned
+              ? "justify-end"
+              : isCenterAligned
+                ? "justify-center"
+                : "justify-between"
+          )}
+        >
           <span>{column.label}</span>
           {isSortableColumn && (
             <span
@@ -168,7 +253,7 @@ TableHeaderCell.displayName = "TableHeaderCell";
 export interface AdvancedTableProps {
   className?: string;
   rows: AdvancedTableRow[];
-  columns: Array<{ key: AdvancedTableColumnKey; label: string; sortable?: boolean }>;
+  columns: AdvancedTableColumn[];
   enableSorting?: boolean;
   defaultSortKey?: AdvancedTableColumnKey;
   defaultSortDirection?: AdvancedTableSortDirection;

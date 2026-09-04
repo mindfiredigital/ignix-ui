@@ -53,6 +53,7 @@ export interface Column<T> {
   visible?: boolean;
   render?: (value: T[keyof T], row: T) => React.ReactNode;
   className?: string;
+  align?: 'left' | 'right' | 'center';
 }
 
 export interface BulkAction<T> {
@@ -1697,6 +1698,7 @@ function MyCustomTable({ data }: { data: Product[] }) {
 | `visible` | `boolean` | | Defaults to `true`. Set to `false` to hide the column on initial render. |
 | `render` | `(value: T[keyof T], row: T) => React.ReactNode` | | Custom cell renderer. Receives the raw cell value and the full row. |
 | `className` | `string` | | Extra classes applied to both `<th>` and `<td>` for this column. |
+| `align` | `'left' \| 'right' \| 'center'` | | Alignment of column header and cells. Defaults to `'left'`. |
 
 ### `BulkAction<T>` object
 

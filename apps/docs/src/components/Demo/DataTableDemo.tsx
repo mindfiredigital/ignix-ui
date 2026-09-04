@@ -75,7 +75,8 @@ const columns: Column<Employee>[] = [
     key: 'salary',
     title: 'Salary',
     sortable: true,
-    render: (value) => (
+    align: 'left',
+    render: (value: unknown): React.ReactNode => (
       <span className="font-mono text-sm">${(value as number).toLocaleString()}</span>
     ),
   },
