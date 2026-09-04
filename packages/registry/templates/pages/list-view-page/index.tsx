@@ -793,10 +793,12 @@ function Toolbar({
                                     Filters
                                     {activeFilterCount > 0 && (
                                         <Badge
-                                            text={String(activeFilterCount)}
-                                            variant="pulse"
+                                            variant="notification"
+                                            animate="pulse"
                                             className="h-5 min-w-5 rounded-full bg-primary px-1.5 text-[10px] text-primary-foreground"
-                                        />
+                                        >
+                                            {activeFilterCount}
+                                        </Badge>
                                     )}
                                 </Button>
                             )}
@@ -1237,15 +1239,13 @@ function StatusBadge({
 }) {
     const s = styles?.[status] ?? DEFAULT_STATUS_STYLE;
     return (
-        <span
-            className={cn(
-                "inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-medium",
-                s.className
-            )}
+        <Badge
+            variant="outline"
+            icon={<span className={cn("h-1.5 w-1.5 rounded-full", s.dotClassName)} />}
+            className={cn("gap-1.5 px-2 py-0.5 text-[11px] font-medium", s.className)}
         >
-            <span className={cn("h-1.5 w-1.5 rounded-full", s.dotClassName)} />
             {status}
-        </span>
+        </Badge>
     );
 }
 
@@ -1452,12 +1452,14 @@ function ViewDialog({
                         </div>
                         {item.status && statusStyles?.[item.status] && (
                             <Badge
+                                variant="outline"
                                 className={cn(
                                     "shrink-0 gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-medium whitespace-nowrap",
                                     statusStyles[item.status].className
                                 )}
-                                text={item.status}
-                            />
+                            >
+                                {item.status}
+                            </Badge>
                         )}
                     </div>
 

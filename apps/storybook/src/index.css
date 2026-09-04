@@ -53,6 +53,13 @@
     --info-dark: #0e7490;
     /* cyan-600 */
     --info-foreground: #ffffff;
+    --purple: #a855f7;
+    /* purple-500 */
+    --purple-light: #c084fc;
+    /* purple-400 */
+    --purple-dark: #7e22ce;
+    /* purple-600 */
+    --purple-foreground: #ffffff;
 
     /* Floating Dock */
     --dock-solid: #1e293b;
@@ -134,6 +141,13 @@
     --info-dark: #0e7490;
     /* cyan-600 */
     --info-foreground: #ffffff;
+    --purple: #a855f7;
+    /* purple-500 */
+    --purple-light: #c084fc;
+    /* purple-400 */
+    --purple-dark: #7e22ce;
+    /* purple-600 */
+    --purple-foreground: #ffffff;
 
     /* Floating Dock */
     --dock-solid: #1e293b;
@@ -191,6 +205,10 @@
   --color-info-light: var(--info-light);
   --color-info-dark: var(--info-dark);
   --color-info-foreground: var(--info-foreground);
+  --color-purple: var(--purple);
+  --color-purple-light: var(--purple-light);
+  --color-purple-dark: var(--purple-dark);
+  --color-purple-foreground: var(--purple-foreground);
 
   /* Floating Dock */
   --color-dock-solid: var(--dock-solid);

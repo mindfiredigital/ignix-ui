@@ -1,148 +1,164 @@
 import React from "react";
 import { motion, type Variants } from "framer-motion";
+import { X } from "lucide-react";
 import { cn } from "../../../utils/cn";
 
-type BadgeBaseProps = {
-    text?: string;
-    type?: "primary" | "secondary" | "success" | "warning" | "error";
-    variant?: "pulse" | "bounce" | "tinypop" | "none";
-    className?: string;
+export type BadgeVariant =
+  | "default"
+  | "secondary"
+  | "success"
+  | "warning"
+  | "destructive"
+  | "info"
+  | "purple"
+  | "outline"
+  | "notification";
+
+export type BadgeSize = "sm" | "md" | "lg";
+
+export type BadgeAnimation = "none" | "pulse" | "bounce" | "tinypop";
+
+export interface BadgeProps
+  extends Omit<
+    React.HTMLAttributes<HTMLSpanElement>,
+    "children" | "color" | "onAnimationStart" | "onAnimationEnd" | "onDrag" | "onDragStart" | "onDragEnd"
+  > {
+  children?: React.ReactNode;
+  /** Color/style of the badge. `"notification"` reproduces the original circular counter look. */
+  variant?: BadgeVariant;
+  size?: BadgeSize;
+  /** Leading icon, rendered before the content. */
+  icon?: React.ReactNode;
+  /** Renders a dismiss button after the content; called when it's clicked. */
+  onRemove?: () => void;
+  /** Accessible label for the dismiss button. Default `"Remove"`. */
+  removeLabel?: string;
+  /**
+   * Anchors the badge to the top-right corner of this element instead of rendering inline -
+   * reproduces the original `mode="attached"` notification-badge positioning.
+   */
+  anchor?: React.ReactNode;
+  /** Motion applied to the badge. Defaults to `"tinypop"` for `variant="notification"`, `"none"` otherwise. */
+  animate?: BadgeAnimation;
+  className?: string;
+}
+
+const VARIANT_CLASSES: Record<BadgeVariant, string> = {
+  default: "bg-primary text-primary-foreground",
+  secondary: "bg-secondary text-secondary-foreground",
+  success: "bg-success text-success-foreground",
+  warning: "bg-warning text-warning-foreground",
+  destructive: "bg-destructive text-destructive-foreground",
+  info: "bg-info text-info-foreground",
+  purple: "bg-purple text-purple-foreground",
+  outline: "bg-transparent text-foreground border border-border",
+  notification: "bg-primary text-primary-foreground shadow-lg shadow-primary/25 ring-2 ring-primary/20",
 };
 
-type InlineBadgeProps = BadgeBaseProps & {
-    mode?: "inline";
-    children?: never;
+const SIZE_CLASSES: Record<BadgeSize, string> = {
+  sm: "text-[11px] px-2 py-0.5 gap-1",
+  md: "text-xs px-2.5 py-0.5 gap-1.5",
+  lg: "text-sm px-3 py-1 gap-1.5",
 };
 
-type AttachedBadgeProps = BadgeBaseProps & {
-    mode: "attached";
-    children: React.ReactNode;
+// The notification variant is a circular counter, not a text pill, so it gets its own
+// size scale (fixed height/min-width) instead of SIZE_CLASSES' padding-based one.
+const NOTIFICATION_SIZE_CLASSES: Record<BadgeSize, string> = {
+  sm: "h-4 min-w-[16px] px-1 text-[10px]",
+  md: "h-5 min-w-[20px] px-1.5 text-xs",
+  lg: "h-6 min-w-[24px] px-2 text-sm",
 };
 
-type BadgeProps = InlineBadgeProps | AttachedBadgeProps;
+const ANIMATION_VARIANTS: Record<Exclude<BadgeAnimation, "none">, Variants> = {
+  pulse: {
+    initial: { scale: 1 },
+    animate: { scale: [1, 1.1, 1], transition: { duration: 2, repeat: Infinity, ease: "easeOut" } },
+  },
+  bounce: {
+    initial: { y: 0, scale: 1 },
+    animate: {
+      y: [0, -6, 0],
+      scale: [1, 1.15, 1],
+      transition: { duration: 0.8, repeat: Infinity, ease: "easeOut" },
+    },
+  },
+  tinypop: {
+    initial: { scale: 1 },
+    animate: { scale: [1, 1.25, 1], transition: { duration: 1.5, repeat: Infinity, ease: "easeInOut" } },
+  },
+};
 
-const Badge: React.FC<BadgeProps> = ({
-    text,
-    type = "primary",
-    variant = "tinypop",
-    mode = "inline",
-    className,
-    children,
+const NONE_VARIANT: Variants = { initial: {}, animate: {} };
+
+export const Badge: React.FC<BadgeProps> = ({
+  children,
+  variant = "default",
+  size = "md",
+  icon,
+  onRemove,
+  removeLabel = "Remove",
+  anchor,
+  animate,
+  className,
+  ...props
 }) => {
-    const types = {
-        primary: cn(
-            "bg-primary text-primary-foreground",
-            "shadow-lg shadow-primary/25",
-            "ring-2 ring-primary/20"
-        ),
-        secondary: cn(
-            "bg-secondary text-secondary-foreground",
-            "shadow-lg shadow-secondary/25",
-            "ring-2 ring-secondary/20"
-        ),
-        success: cn(
-            "bg-success text-success-foreground",
-            "shadow-lg shadow-success/25",
-            "ring-2 ring-success/20"
-        ),
-        warning: cn(
-            "bg-warning text-warning-foreground",
-            "shadow-lg shadow-warning/25",
-            "ring-2 ring-warning/30"
-        ),
-        error: cn(
-            "bg-destructive text-destructive-foreground",
-            "shadow-lg shadow-destructive/25",
-            "ring-2 ring-destructive/20"
-        ),
-    };
+  const isNotification = variant === "notification";
+  const resolvedAnimation = animate ?? (isNotification ? "tinypop" : "none");
+  const motionVariants = resolvedAnimation === "none" ? NONE_VARIANT : ANIMATION_VARIANTS[resolvedAnimation];
 
-    const animationVariants: Record<string, Variants> = {
-        none: {
-            initial: {},
-            animate: {},
-        },
-        pulse: {
-            initial: { scale: 1 },
-            animate: {
-                scale: [1, 1.1, 1],
-                transition: {
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeOut",
-                },
-            },
-        },
-        bounce: {
-            initial: { y: 0, scale: 1 },
-            animate: {
-                y: [0, -6, 0],
-                scale: [1, 1.15, 1],
-                transition: {
-                    duration: 0.8,
-                    repeat: Infinity,
-                    ease: "easeOut",
-                },
-            },
-        },
-        tinypop: {
-            initial: { scale: 1 },
-            animate: {
-                scale: [1, 1.25, 1],
-                transition: {
-                    duration: 1.5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                },
-            },
-        },
-    };
-
-    const isAttached = mode === "attached";
-
-    // Base styles
-    const baseStyles = cn(
-        "flex items-center justify-center",
-        "rounded-full font-bold tracking-tight",
-        "text-xs sm:text-sm px-1.5 sm:px-2 h-5 sm:h-6 min-w-[20px]",
-
-        types[type],
+  const content = (
+    <motion.span
+      variants={motionVariants}
+      initial="initial"
+      animate="animate"
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className={cn(
+        "relative inline-flex items-center justify-center rounded-full font-medium leading-none whitespace-nowrap",
+        VARIANT_CLASSES[variant],
+        isNotification ? NOTIFICATION_SIZE_CLASSES[size] : SIZE_CLASSES[size],
+        anchor && "absolute -top-1 -right-1 sm:-top-2 sm:-right-2",
         className
-    );
-
-    const positionStyles = isAttached
-        ? "absolute -top-1 -right-1 sm:-top-2 sm:-right-2"
-        : "relative -top-2 sm:-top-2";
-
-    const badgeContent = (
-        <motion.div
-            variants={animationVariants[variant]}
-            initial="initial"
-            animate="animate"
-            className={cn(baseStyles, positionStyles)}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+      )}
+      {...props}
+    >
+      {icon && (
+        <span className="shrink-0" aria-hidden="true">
+          {icon}
+        </span>
+      )}
+      {children}
+      {onRemove && (
+        <button
+          type="button"
+          onClick={onRemove}
+          aria-label={removeLabel}
+          className="-mr-0.5 ml-0.5 shrink-0 rounded-full p-0.5 hover:bg-black/10 focus:outline-none focus-visible:ring-1 focus-visible:ring-current dark:hover:bg-white/10"
         >
-            <span className="leading-none">{text}</span>
+          <X className="h-3 w-3" />
+        </button>
+      )}
+      {isNotification && (
+        <span
+          className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-t from-transparent to-white/20 dark:to-white/10"
+          aria-hidden="true"
+        />
+      )}
+    </motion.span>
+  );
 
-            <div
-                className="absolute inset-0 rounded-full bg-gradient-to-t from-transparent to-white/20 dark:to-white/10 pointer-events-none"
-                aria-hidden="true"
-            />
-        </motion.div>
+  if (anchor) {
+    return (
+      <span className="relative inline-flex items-center">
+        {anchor}
+        {content}
+      </span>
     );
+  }
 
-    if (isAttached) {
-        return (
-            <div className="relative inline-flex items-center">
-                {children}
-                {badgeContent}
-            </div>
-        );
-    }
-
-    return badgeContent;
+  return content;
 };
 
 Badge.displayName = "Badge";
-export { Badge };
+
+export default Badge;

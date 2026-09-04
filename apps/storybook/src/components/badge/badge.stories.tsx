@@ -1,6 +1,19 @@
+import React, { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { Badge, type AttachedBadgeProps } from "./index";
-import { Mail } from "lucide-react";
+import { Badge, type BadgeVariant } from "./index";
+import { Mail, Star } from "lucide-react";
+
+const VARIANTS: BadgeVariant[] = [
+  "default",
+  "secondary",
+  "success",
+  "warning",
+  "destructive",
+  "info",
+  "purple",
+  "outline",
+  "notification",
+];
 
 const meta: Meta<typeof Badge> = {
   title: "Components/Badge",
@@ -10,44 +23,37 @@ const meta: Meta<typeof Badge> = {
     docs: {
       description: {
         component: `
-The **Badge** component is a small status indicator used for notifications, counts, and labels.
+A versatile, theme-aware badge for status indicators, colored action pills, and notification counters.
 
 ### Features
-- Inline and attached modes
-- Multiple color types (primary, success, warning, error)
-- Built-in animation variants (pulse, bounce, tinypop)
-- Works with text, icons, buttons, and avatars
+- Color variants: default, secondary, success, warning, destructive, info, purple, outline, notification
+- Size variants: sm, md, lg
+- Optional leading icon and dismiss (\`onRemove\`) button
+- \`anchor\` prop reproduces the classic floating notification-counter positioning
+- Built-in animation variants (pulse, bounce, tinypop) via \`animate\`
         `,
       },
     },
   },
   argTypes: {
-    text: {
-      control: "text",
-      description: "Content displayed inside the badge",
-      defaultValue: "5",
-    },
-    type: {
-      control: "select",
-      options: ["primary", "secondary", "success", "warning", "error"],
-      description: "Color style of the badge",
-    },
     variant: {
       control: "select",
-      options: ["pulse", "bounce", "tinypop"],
-      description: "Animation style",
+      options: VARIANTS,
+      description: "Color/style of the badge",
     },
-    mode: {
+    size: {
       control: "select",
-      options: ["inline", "attached"],
-      description: "Layout behavior of the badge",
+      options: ["sm", "md", "lg"],
+      description: "Size of the badge",
     },
-    className: {
-      control: "text",
-      description: "Custom styles",
+    animate: {
+      control: "select",
+      options: ["none", "pulse", "bounce", "tinypop"],
+      description: "Motion applied to the badge",
     },
     children: {
-      table: { disable: true },
+      control: "text",
+      description: "Content displayed inside the badge",
     },
   },
 };
@@ -55,78 +61,124 @@ The **Badge** component is a small status indicator used for notifications, coun
 export default meta;
 type Story = StoryObj<typeof Badge>;
 
-
-// Inline Badge (default usage)
-export const Inline: Story = {
+export const Default: Story = {
   args: {
-    text: "99+",
-    type: "error",
-    mode: "inline",
+    children: "Badge",
+    variant: "default",
+    size: "md",
   },
-  render: (args) => (
-    <div className="flex items-center gap-2">
-      <span className="text-lg font-medium">Notifications</span>
-      <Badge {...args} />
+};
+
+export const AllVariants: Story = {
+  name: "All variants",
+  render: () => (
+    <div className="flex flex-wrap gap-3 items-center">
+      {VARIANTS.map((variant) => (
+        <Badge key={variant} variant={variant}>
+          {variant}
+        </Badge>
+      ))}
     </div>
   ),
 };
 
-
-// Attached to Icon
-export const AttachedIcon: Story = {
-  args: {
-    text: "3",
-    type: "primary",
-    variant: "pulse",
-    mode: "attached",
-  },
-  render: (args) => (
-    <Badge {...args as AttachedBadgeProps}>
-      <Mail className="h-10 w-10" />
-    </Badge>
-  ),
-};
-
-
-// Attached to Button
-export const AttachedButton: Story = {
-  args: {
-    text: "New",
-    type: "error",
-    variant: "tinypop",
-    mode: "attached",
-  },
-  render: (args) => (
-    <Badge {...args as AttachedBadgeProps}>
-      <button className="px-4 py-2 bg-muted rounded-lg shadow">
-        Components
-      </button>
-    </Badge>
-  ),
-};
-
-
-// Variants Showcase
-export const Variants: Story = {
+export const AllSizes: Story = {
+  name: "All sizes",
   render: () => (
-    <div className="flex gap-4 items-center">
-      <Badge text="5" variant="pulse" type="primary" />
-      <Badge text="5" variant="bounce" type="success" />
-      <Badge text="5" variant="tinypop" type="warning" />
+    <div className="flex flex-wrap items-center gap-3">
+      <Badge size="sm">Small</Badge>
+      <Badge size="md">Medium</Badge>
+      <Badge size="lg">Large</Badge>
     </div>
   ),
 };
 
+export const StatusPills: Story = {
+  args: {
+    children: "dxxx"
+  },
 
-// Types Showcase
-export const Types: Story = {
+  name: "Status pills (real-world use)",
+
+  render: () => (
+    <div className="flex flex-wrap gap-3 items-center">
+      <Badge variant="success">Published</Badge>
+      <Badge variant="secondary">Draft</Badge>
+      <Badge variant="destructive">Archived</Badge>
+      <Badge variant="info">CREATE</Badge>
+      <Badge variant="warning">UPDATE</Badge>
+      <Badge variant="destructive">DELETE</Badge>
+      <Badge variant="purple">Admin</Badge>
+      <Badge variant="outline">Disabled</Badge>
+    </div>
+  )
+};
+
+export const WithIcon: Story = {
+  name: "With icon",
+  render: () => (
+    <div className="flex flex-wrap gap-3 items-center">
+      <Badge variant="success" icon={<Star className="h-3 w-3" />}>
+        Featured
+      </Badge>
+      <Badge variant="info" icon={<Mail className="h-3 w-3" />}>
+        3 new messages
+      </Badge>
+    </div>
+  ),
+};
+
+export const Dismissible: Story = {
+  name: "Dismissible (onRemove)",
+  render: () => {
+    const [tags, setTags] = useState(["React", "TypeScript", "Tailwind"]);
+    return (
+      <div className="flex flex-wrap gap-2 items-center">
+        {tags.length === 0 && <span className="text-sm text-muted-foreground">All tags removed</span>}
+        {tags.map((tag) => (
+          <Badge key={tag} variant="secondary" onRemove={() => setTags((prev) => prev.filter((t) => t !== tag))}>
+            {tag}
+          </Badge>
+        ))}
+      </div>
+    );
+  },
+};
+
+export const NotificationCounter: Story = {
+  name: "Notification counter (attached)",
+  render: () => (
+    <div className="flex items-center gap-8">
+      <Badge variant="notification" anchor={<Mail className="h-10 w-10" />}>
+        3
+      </Badge>
+      <Badge variant="notification" animate="bounce" anchor={<button className="rounded-lg bg-muted px-4 py-2 shadow">Inbox</button>}>
+        New
+      </Badge>
+      <div className="flex items-center gap-1">
+        <span className="text-lg font-medium">Alerts</span>
+        <Badge variant="notification">99+</Badge>
+      </div>
+    </div>
+  ),
+};
+
+export const AnimationVariants: Story = {
+  name: "Animation variants",
   render: () => (
     <div className="flex gap-4 items-center">
-      <Badge text="1" type="primary" />
-      <Badge text="2" type="secondary" />
-      <Badge text="3" type="success" />
-      <Badge text="4" type="warning" />
-      <Badge text="5" type="error" />
+      <Badge variant="notification" animate="pulse">
+        5
+      </Badge>
+      <Badge variant="notification" animate="bounce">
+        5
+      </Badge>
+      <Badge variant="notification" animate="tinypop">
+        5
+      </Badge>
+      <Badge variant="notification" animate="none">
+        5
+      </Badge>
     </div>
   ),
 };
