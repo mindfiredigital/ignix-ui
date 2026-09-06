@@ -25,25 +25,35 @@ const BadgeDemo = () => {
   const [removed, setRemoved] = useState(false);
 
   const codeString = `
+import { useState } from 'react';
 import { Badge } from '@ignix-ui/badge';
+import { Mail, Star } from 'lucide-react';
 
-<div className="flex flex-wrap items-center gap-4">
-  <Badge variant="${variant}" size="${size}">
-    Status
-  </Badge>
+function BadgeExample() {
+  const [removed, setRemoved] = useState(false);
 
-  <Badge variant="${variant}" size="${size}" icon={<Star className="h-3 w-3" />}>
-    Featured
-  </Badge>
+  return (
+    <div className="flex flex-wrap items-center gap-4">
+      <Badge variant="${variant}" size="${size}">
+        Status
+      </Badge>
 
-  <Badge variant="${variant}" size="${size}" onRemove={() => setRemoved(true)}>
-    Dismissible
-  </Badge>
+      <Badge variant="${variant}" size="${size}" icon={<Star className="h-3 w-3" />}>
+        Featured
+      </Badge>
 
-  <Badge variant="notification" anchor={<Mail className="h-8 w-8" />}>
-    3
-  </Badge>
-</div>
+      {!removed && (
+        <Badge variant="${variant}" size="${size}" onRemove={() => setRemoved(true)}>
+          Dismissible
+        </Badge>
+      )}
+
+      <Badge variant="notification" anchor={<Mail className="h-8 w-8" />}>
+        3
+      </Badge>
+    </div>
+  );
+}
 `;
 
   return (

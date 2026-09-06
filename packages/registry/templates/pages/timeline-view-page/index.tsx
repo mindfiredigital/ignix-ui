@@ -29,6 +29,7 @@ export const STATUS_LABELS: Record<TimelineStatus, string> = {
 
 // Constants
 
+/** Renders a timeline item's status as a labeled Badge, colored by {@link TimelineStatus}. */
 export function StatusBadge({
     status,
     className,

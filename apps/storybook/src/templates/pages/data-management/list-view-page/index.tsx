@@ -1230,6 +1230,7 @@ function SkeletonRow() {
 /*                                BADGES                                      */
 /* -------------------------------------------------------------------------- */
 
+/** Renders an item's status as a labeled Badge with a colored dot, using a per-status style map. */
 function StatusBadge({
     status,
     styles,

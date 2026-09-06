@@ -90,7 +90,11 @@ const ANIMATION_VARIANTS: Record<Exclude<BadgeAnimation, "none">, Variants> = {
 
 const NONE_VARIANT: Variants = { initial: {}, animate: {} };
 
-export const Badge: React.FC<BadgeProps> = ({
+/**
+ * Badge is a versatile, theme-aware status indicator - color pill, outline tag, or (via
+ * `variant="notification"`) a floating counter attached to an icon or button.
+ */
+export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(({
   children,
   variant = "default",
   size = "md",
@@ -101,13 +105,14 @@ export const Badge: React.FC<BadgeProps> = ({
   animate,
   className,
   ...props
-}) => {
+}, ref) => {
   const isNotification = variant === "notification";
   const resolvedAnimation = animate ?? (isNotification ? "tinypop" : "none");
   const motionVariants = resolvedAnimation === "none" ? NONE_VARIANT : ANIMATION_VARIANTS[resolvedAnimation];
 
   const content = (
     <motion.span
+      ref={ref}
       variants={motionVariants}
       initial="initial"
       animate="animate"
@@ -131,7 +136,10 @@ export const Badge: React.FC<BadgeProps> = ({
       {onRemove && (
         <button
           type="button"
-          onClick={onRemove}
+          onClick={(event) => {
+            event.stopPropagation();
+            onRemove();
+          }}
           aria-label={removeLabel}
           className="-mr-0.5 ml-0.5 shrink-0 rounded-full p-0.5 hover:bg-black/10 focus:outline-none focus-visible:ring-1 focus-visible:ring-current dark:hover:bg-white/10"
         >
@@ -157,7 +165,7 @@ export const Badge: React.FC<BadgeProps> = ({
   }
 
   return content;
-};
+});
 
 Badge.displayName = "Badge";
 

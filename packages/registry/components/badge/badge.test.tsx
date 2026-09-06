@@ -32,6 +32,13 @@ describe("Badge rendering", () => {
   it("has correct displayName", () => {
     expect(Badge.displayName).toBe("Badge");
   });
+
+  it("forwards a ref to the underlying badge element", () => {
+    const ref = React.createRef<HTMLSpanElement>();
+    render(<Badge ref={ref}>Draft</Badge>);
+    expect(ref.current).toBeInstanceOf(HTMLSpanElement);
+    expect(ref.current?.textContent).toBe("Draft");
+  });
 });
 
 describe("Badge variant prop", () => {
@@ -144,6 +151,19 @@ describe("Badge dismiss button", () => {
       </Badge>
     );
     expect(screen.getByRole("button", { name: "Remove Draft tag" })).toBeInTheDocument();
+  });
+
+  it("does not bubble the dismiss click to the badge's own onClick", () => {
+    const onRemove = vi.fn();
+    const onClick = vi.fn();
+    render(
+      <Badge onRemove={onRemove} onClick={onClick}>
+        Removable
+      </Badge>
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Remove" }));
+    expect(onRemove).toHaveBeenCalledTimes(1);
+    expect(onClick).not.toHaveBeenCalled();
   });
 });
 
