@@ -50,6 +50,7 @@ const TabDemo = () => {
               <TabsComponent
                 options={["Home", "Profile", "Settings", "About"]}
                 selected={0}
+                storageKey="tab-demo"
                 variant={variant as any}
                 theme={theme as any}
               />

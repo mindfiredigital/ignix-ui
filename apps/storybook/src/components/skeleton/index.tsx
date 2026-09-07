@@ -39,6 +39,7 @@ const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
         };
 
         const isAnimatedGradient = animation === "shimmer" || animation === "wave";
+        const isAnimated = animation !== "none";
 
         const themeClasses = {
             default: isAnimatedGradient
@@ -60,7 +61,7 @@ const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
 
         return (
             <>
-                {isAnimatedGradient && (
+                {isAnimated && (
                     <style
                         dangerouslySetInnerHTML={{
                             __html: `
@@ -72,6 +73,10 @@ const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
                                     0% { background-position: 100% 0; }
                                     100% { background-position: -100% 0; }
                                 }
+                                @keyframes ignix-pulse {
+                                    0%, 100% { opacity: 1; }
+                                    50% { opacity: 0.35; }
+                                }
                                 .ignix-skeleton-shimmer {
                                     background-size: 200% 100%;
                                     animation: ignix-shimmer 1.6s infinite linear;
@@ -79,6 +84,9 @@ const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
                                 .ignix-skeleton-wave {
                                     background-size: 200% 100%;
                                     animation: ignix-wave 2.2s infinite linear;
+                                }
+                                .ignix-skeleton-pulse {
+                                    animation: ignix-pulse 1.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
                                 }
                             `,
                         }}
@@ -91,7 +99,7 @@ const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
                         themeClasses,
                         animation === "shimmer" && "ignix-skeleton-shimmer",
                         animation === "wave" && "ignix-skeleton-wave",
-                        animation === "pulse" && "animate-pulse",
+                        animation === "pulse" && "ignix-skeleton-pulse animate-pulse",
                         variant === "circular" && "rounded-full",
                         variant === "text" && "rounded h-4 w-full",
                         variant === "rectangular" && "rounded-xl",

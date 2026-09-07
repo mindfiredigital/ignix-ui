@@ -60,8 +60,10 @@ import {
   Code2,
   History,
   Activity,
-  Scan
-  
+  Scan,
+  Thermometer,
+  Coins
+,
 } from 'lucide-react';
 
 ## Inputs
@@ -305,41 +307,33 @@ import {
   />
 
   <ComponentCard 
-    title="AI Thinking Indicator" 
-    href="/docs/components/ai-thinking-indicator"
-    description="Animated loader showing model processing states."
-    icon={Brain}
+    title="AI Chat Input" 
+    href="/docs/components/ai-chat-input"
+    description="Controlled chat input textarea with automatic resizing and key triggers."
+    icon={TextCursorInput}
   />
+
   <ComponentCard 
     title="AI Code Block" 
     href="/docs/components/ai-code-block"
     description="Syntax highlighting container with copy-paste actions."
     icon={Code2}
   />
+
   <ComponentCard 
     title="AI Conversation History" 
     href="/docs/components/ai-conversation-history"
     description="Past session list with search queries and edit modes."
     icon={History}
   />
-  <ComponentCard 
-    title="AI Status Badge" 
-    href="/docs/components/ai-status-badge"
-    description="Badges displaying the current AI state (idle, thinking, streaming, error, ready) with optional model names."
-    icon={Activity}
-  />
-  <ComponentCard 
-    title="AI Chat Input" 
-    href="/docs/components/ai-chat-input"
-    description="Controlled chat input textarea with automatic resizing and key triggers."
-    icon={TextCursorInput}
-  />
+
   <ComponentCard 
     title="AI Message Bubble" 
     href="/docs/components/ai-message-bubble"
     description="Message containers with role styling and copy helper buttons."
     icon={MessageSquare}
   />
+
   <ComponentCard 
     title="AI Messages" 
     href="/docs/components/ai-messages"
@@ -353,11 +347,44 @@ import {
     description="Select target AI models with model information cards."
     icon={SlidersHorizontal}
   />
+
+  <ComponentCard 
+    title="AI Response Actions" 
+    href="/docs/components/ai-response-actions"
+    description="Feedback actions (like, dislike, flag, retry) for messages."
+    icon={Square}
+  />
+
+  <ComponentCard 
+    title="AI Status Badge" 
+    href="/docs/components/ai-status-badge"
+    description="Badges displaying the current AI state (idle, thinking, streaming, error, ready) with optional model names."
+    icon={Activity}
+  />
+
   <ComponentCard 
     title="AI Suggested Actions" 
     href="/docs/components/ai-suggested-actions"
     description="Preset action prompt recommendation pill components."
     icon={Sparkles}
+  />
+  <ComponentCard 
+    title="AI Temperature Slider" 
+    href="/docs/components/ai-temperature-slider"
+    description="A slider component for adjusting the randomness and creativity of AI responses, with dynamic risk indicators."
+    icon={Thermometer}
+  />
+  <ComponentCard 
+    title="AI Thinking Indicator" 
+    href="/docs/components/ai-thinking-indicator"
+    description="Animated loader showing model processing states."
+    icon={Brain}
+  />
+  <ComponentCard 
+    title="AI Token Counter" 
+    href="/docs/components/ai-token-counter"
+    description="Track input/output token usage with real-time counters and limit warnings."
+    icon={Coins}
   />
 </div>
 
