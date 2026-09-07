@@ -1489,7 +1489,7 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                 // small viewport margin) so an oversized calendar scrolls internally instead of
                 // clipping off-screen when neither side has room for it at full height.
                 const availableSpace = vertical === 'top' ? spaceAbove : spaceBelow;
-                setMaxPopupHeight(Math.max(availableSpace - 16, 150));
+                setMaxPopupHeight(availableSpace - 16);
 
                 if (horizontal === 'right') {
                     const rightEdge = triggerRect.left + popupWidth;

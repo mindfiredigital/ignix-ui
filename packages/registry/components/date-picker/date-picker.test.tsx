@@ -579,5 +579,21 @@ describe('DatePicker', () => {
                 expect(parseInt(popup.style.maxHeight, 10)).toBeLessThan(527);
             });
         });
+
+        it('does not clamp maxHeight to a 150px floor when available space is smaller', async () => {
+            const user = userEvent.setup();
+            // spaceAbove = 26, spaceBelow = 126 - 50 = 76; below stays the chosen side since
+            // it's still larger, but both are under 150px - the old `Math.max(x, 150)` floor
+            // would have forced a 150px popup here, overflowing the 76px actually available.
+            mockRects({ triggerTop: 26, viewportHeight: 126, popupHeight: 527 });
+
+            const container = await openCalendar(user);
+
+            await waitFor(() => {
+                const popup = container.querySelector('.absolute.z-50') as HTMLElement;
+                const maxHeight = parseInt(popup.style.maxHeight, 10);
+                expect(maxHeight).toBeLessThanOrEqual(76 - 16);
+            });
+        });
     });
 });
