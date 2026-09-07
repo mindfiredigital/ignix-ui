@@ -95,3 +95,34 @@ export const Controlled: Story = {
     );
   },
 };
+
+export const Persistent: Story = {
+  name: "Persistent (survives refresh)",
+  render: () => (
+    <div className="flex flex-col gap-4">
+      <Tabs options={options} variant="underline" />
+      <p className="text-sm text-muted-foreground">
+        The selected tab is always saved to localStorage under a key derived from <code>options</code> - reload this story and it stays selected. No prop needed.
+      </p>
+    </div>
+  ),
+};
+
+export const IndependentInstances: Story = {
+  name: "Independent instances (custom storageKey)",
+  render: () => (
+    <div className="flex flex-col gap-6">
+      <div>
+        <p className="text-xs text-muted-foreground mb-2">storageKey=&quot;left-tabs&quot;</p>
+        <Tabs options={options} variant="underline" storageKey="left-tabs" />
+      </div>
+      <div>
+        <p className="text-xs text-muted-foreground mb-2">storageKey=&quot;right-tabs&quot;</p>
+        <Tabs options={options} variant="underline" storageKey="right-tabs" />
+      </div>
+      <p className="text-sm text-muted-foreground">
+        Both share the same <code>options</code>, so without a <code>storageKey</code> they'd persist to the same default key and stay in sync. Giving each an explicit <code>storageKey</code> keeps their remembered selection independent.
+      </p>
+    </div>
+  ),
+};
