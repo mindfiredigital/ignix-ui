@@ -483,4 +483,101 @@ describe('DatePicker', () => {
             });
         });
     });
+
+    // Popup viewport-flip and overflow-clamping tests
+    describe('Popup positioning', () => {
+        const TRIGGER_HEIGHT = 24;
+        const originalInnerHeight = window.innerHeight;
+        const originalInnerWidth = window.innerWidth;
+        let rectSpy: ReturnType<typeof vi.spyOn> | null = null;
+
+        const mockRects = ({
+            triggerTop,
+            viewportHeight,
+            popupHeight = 527,
+        }: {
+            triggerTop: number;
+            viewportHeight: number;
+            popupHeight?: number;
+        }) => {
+            Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: viewportHeight });
+            Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: 900 });
+
+            rectSpy = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
+                if (this.className.includes('relative text-foreground')) {
+                    return {
+                        top: triggerTop,
+                        bottom: triggerTop + TRIGGER_HEIGHT,
+                        left: 300,
+                        right: 600,
+                        width: 300,
+                        height: TRIGGER_HEIGHT,
+                        x: 300,
+                        y: triggerTop,
+                        toJSON: () => ({}),
+                    } as DOMRect;
+                }
+                if (this.className.includes('z-50')) {
+                    return {
+                        top: 0,
+                        bottom: popupHeight,
+                        left: 300,
+                        right: 620,
+                        width: 320,
+                        height: popupHeight,
+                        x: 300,
+                        y: 0,
+                        toJSON: () => ({}),
+                    } as DOMRect;
+                }
+                return { top: 0, bottom: 0, left: 0, right: 0, width: 0, height: 0, x: 0, y: 0, toJSON: () => ({}) } as DOMRect;
+            });
+        };
+
+        afterEach(() => {
+            rectSpy?.mockRestore();
+            rectSpy = null;
+            Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: originalInnerHeight });
+            Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: originalInnerWidth });
+        });
+
+        it('flips to top when the opposite side has more room, even without a full fit', async () => {
+            const user = userEvent.setup();
+            mockRects({ triggerTop: 470, viewportHeight: 700, popupHeight: 527 });
+
+            const container = await openCalendar(user);
+
+            await waitFor(() => {
+                const popup = container.querySelector('.absolute.z-50') as HTMLElement;
+                expect(popup.className).toContain('bottom-full');
+            });
+        });
+
+        it('keeps the popup below when below still has more room than above', async () => {
+            const user = userEvent.setup();
+            // spaceAbove = 26, spaceBelow = 380 - 50 = 330; below remains the better side.
+            mockRects({ triggerTop: 26, viewportHeight: 380, popupHeight: 527 });
+
+            const container = await openCalendar(user);
+
+            await waitFor(() => {
+                const popup = container.querySelector('.absolute.z-50') as HTMLElement;
+                expect(popup.className).toContain('top-full');
+            });
+        });
+
+        it('caps the popup height and enables scrolling when neither side fully fits', async () => {
+            const user = userEvent.setup();
+            mockRects({ triggerTop: 26, viewportHeight: 380, popupHeight: 527 });
+
+            const container = await openCalendar(user);
+
+            await waitFor(() => {
+                const popup = container.querySelector('.absolute.z-50') as HTMLElement;
+                expect(popup.className).toContain('overflow-y-auto');
+                expect(popup.style.maxHeight).toBeTruthy();
+                expect(parseInt(popup.style.maxHeight, 10)).toBeLessThan(527);
+            });
+        });
+    });
 });

@@ -1356,6 +1356,7 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
         const [rangeInputValue, setRangeInputValue] = useState<[string, string]>(['', '']);
         const [internalError, setInternalError] = useState<string | null>(null);
         const [computedPosition, setComputedPosition] = useState<PopupPosition>(popupPosition);
+        const [maxPopupHeight, setMaxPopupHeight] = useState<number | null>(null);
 
         const containerRef = useRef<HTMLDivElement>(null);
         const popupRef = useRef<HTMLDivElement>(null);
@@ -1432,6 +1433,7 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
         useEffect(() => {
             if (!isOpen) {
                 setComputedPosition(popupPosition);
+                setMaxPopupHeight(null);
                 return;
             }
 
@@ -1474,11 +1476,20 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                 const spaceBelow = viewportHeight - triggerRect.bottom;
                 const spaceAbove = triggerRect.top;
 
-                if (vertical === 'bottom' && spaceBelow < popupHeight && spaceAbove > popupHeight) {
+                // Flip to whichever side currently has more room, not only when the other side
+                // can fully fit the popup - otherwise a popup taller than the preferred side's
+                // remaining space never flips even when the opposite side offers far more room.
+                if (vertical === 'bottom' && spaceBelow < popupHeight && spaceAbove > spaceBelow) {
                     vertical = 'top';
-                } else if (vertical === 'top' && spaceAbove < popupHeight && spaceBelow > popupHeight) {
+                } else if (vertical === 'top' && spaceAbove < popupHeight && spaceBelow > spaceAbove) {
                     vertical = 'bottom';
                 }
+
+                // Cap the popup to the space actually available on the chosen side (minus a
+                // small viewport margin) so an oversized calendar scrolls internally instead of
+                // clipping off-screen when neither side has room for it at full height.
+                const availableSpace = vertical === 'top' ? spaceAbove : spaceBelow;
+                setMaxPopupHeight(Math.max(availableSpace - 16, 150));
 
                 if (horizontal === 'right') {
                     const rightEdge = triggerRect.left + popupWidth;
@@ -1795,10 +1806,11 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                                 damping: 25
                             }}
                             className={cn(
-                                "absolute z-50",
+                                "absolute z-50 overflow-y-auto",
                                 getPopupPositionClasses(computedPosition),
                                 calendarClassName
                             )}
+                            style={maxPopupHeight != null ? { maxHeight: maxPopupHeight } : undefined}
                         >
                             <CalendarView
                                 currentMonth={currentMonth}
