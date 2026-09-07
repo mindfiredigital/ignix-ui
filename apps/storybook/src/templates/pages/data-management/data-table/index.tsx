@@ -28,6 +28,7 @@ export interface Column<T> {
   visible?: boolean;
   render?: (value: T[keyof T], row: T) => React.ReactNode;
   className?: string;
+  align?: 'left' | 'right' | 'center';
 }
 
 export interface BulkAction<T> {
@@ -350,7 +351,12 @@ export function TableHeader<T>({
           <th
             key={String(column.key)}
             className={cn(
-              "px-4 py-3 text-left text-sm font-semibold",
+              "px-4 py-3 text-sm font-semibold",
+              column.align === 'right'
+                ? 'text-right'
+                : column.align === 'center'
+                  ? 'text-center'
+                  : 'text-left',
               column.sortable !== false ? 'cursor-pointer hover:bg-muted/30' : '',
               theme === 'dark' ? 'text-gray-300' : 'text-foreground',
               column.className
@@ -372,7 +378,14 @@ export function TableHeader<T>({
                 : undefined
             }
           >
-            <div className="flex items-center gap-2">
+            <div className={cn(
+              "flex items-center gap-2",
+              column.align === 'right'
+                ? 'justify-end'
+                : column.align === 'center'
+                  ? 'justify-center'
+                  : 'justify-start'
+            )}>
               {column.title}
               {sortKey === column.key && (
                 <motion.span
@@ -451,6 +464,11 @@ export function TableRow<T>({
           key={String(column.key)}
           className={cn(
             "px-4 py-3 text-sm",
+            column.align === 'right'
+              ? 'text-right'
+              : column.align === 'center'
+                ? 'text-center'
+                : 'text-left',
             theme === 'dark' ? 'text-gray-300' : 'text-foreground',
             column.className
           )}
@@ -898,6 +916,11 @@ function MobileCardView<T>({
                     </div>
                     <div className={cn(
                       "flex-1 text-sm",
+                      column.align === 'right'
+                        ? 'text-right'
+                        : column.align === 'center'
+                          ? 'text-center'
+                          : 'text-left',
                       theme === 'dark' ? "text-gray-200" : "text-foreground"
                     )}>
                       {column.render

@@ -57,6 +57,18 @@ export type AdvancedTableRow = Record<string, React.ReactNode>;
 export type AdvancedTableColumnKey = string;
 
 /**
+ * Column definition for AdvancedTable.
+ *
+ * @public
+ */
+export interface AdvancedTableColumn {
+  key: AdvancedTableColumnKey;
+  label: string;
+  sortable?: boolean;
+  align?: "left" | "right" | "center";
+}
+
+/**
  * Utility to check if a value includes the query (case-insensitive).
  *
  * @param value - String value to inspect.
@@ -137,6 +149,10 @@ interface TableCellProps {
    * Current filter query for highlighting.
    */
   filterQuery: string;
+  /**
+   * Column alignment.
+   */
+  align?: "left" | "right" | "center";
 }
 
 /**
@@ -145,9 +161,15 @@ interface TableCellProps {
  *
  * @internal
  */
-const TableCell: React.FC<TableCellProps> = memo(({ cell, isString, filterQuery }) => {
+const TableCell: React.FC<TableCellProps> = memo(({ cell, isString, filterQuery, align }) => {
   return (
-    <td className="px-3 py-2 whitespace-nowrap">
+    <td
+      className={cn(
+        "px-3 py-2 whitespace-nowrap",
+        align === "right" && "text-right",
+        align === "center" && "text-center"
+      )}
+    >
       {isString ? (
         <HighlightedText value={cell as string} query={filterQuery} />
       ) : (
@@ -176,7 +198,7 @@ interface TableRowProps {
   /**
    * Column definitions.
    */
-  columns: Array<{ key: AdvancedTableColumnKey; label: string; sortable?: boolean }>;
+  columns: AdvancedTableColumn[];
   /**
    * Current filter query for highlighting.
    */
@@ -207,6 +229,7 @@ const TableRow: React.FC<TableRowProps> = memo(({ row, rowIndex, columns, filter
             cell={cell}
             isString={isString}
             filterQuery={filterQuery}
+            align={column.align}
           />
         );
       })}
@@ -225,7 +248,7 @@ interface TableHeaderCellProps {
   /**
    * Column definition.
    */
-  column: { key: AdvancedTableColumnKey; label: string; sortable?: boolean };
+  column: AdvancedTableColumn;
   /**
    * Whether this column is currently active (being sorted).
    */
@@ -252,17 +275,33 @@ interface TableHeaderCellProps {
  */
 const TableHeaderCell: React.FC<TableHeaderCellProps> = memo(
   ({ column, isActive, direction, isSortableColumn, onHeaderClick }) => {
+    const isRightAligned = column.align === "right";
+    const isCenterAligned = column.align === "center";
+
     return (
       <th
         scope="col"
         onClick={isSortableColumn ? () => onHeaderClick(column.key) : undefined}
         className={cn(
-          "select-none px-3 py-2 text-left font-semibold border-b border-border",
-          "whitespace-nowrap",
+          "select-none px-3 py-2 font-semibold border-b border-border whitespace-nowrap",
+          isRightAligned
+            ? "text-right"
+            : isCenterAligned
+              ? "text-center"
+              : "text-left",
           isSortableColumn && "cursor-pointer hover:bg-muted/80"
         )}
       >
-        <div className="flex items-center justify-between gap-2">
+        <div
+          className={cn(
+            "flex items-center gap-2",
+            isRightAligned
+              ? "justify-end"
+              : isCenterAligned
+                ? "justify-center"
+                : "justify-between"
+          )}
+        >
           <span>{column.label}</span>
           {isSortableColumn && (
             <span
@@ -308,7 +347,7 @@ export interface AdvancedTableProps {
    * - `sortable`: when explicitly set to `false`, the column will never be
    *   sorted even if `enableSorting` is `true`.
    */
-  columns: Array<{ key: AdvancedTableColumnKey; label: string; sortable?: boolean }>;
+  columns: AdvancedTableColumn[];
 
   /**
    * Enable sorting via clickable column headers.
