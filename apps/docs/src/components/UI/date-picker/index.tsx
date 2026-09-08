@@ -1476,20 +1476,14 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                 const spaceBelow = viewportHeight - triggerRect.bottom;
                 const spaceAbove = triggerRect.top;
 
-                // Flip to whichever side currently has more room, not only when the other side
-                // can fully fit the popup - otherwise a popup taller than the preferred side's
-                // remaining space never flips even when the opposite side offers far more room.
                 if (vertical === 'bottom' && spaceBelow < popupHeight && spaceAbove > spaceBelow) {
                     vertical = 'top';
                 } else if (vertical === 'top' && spaceAbove < popupHeight && spaceBelow > spaceAbove) {
                     vertical = 'bottom';
                 }
 
-                // Cap the popup to the space actually available on the chosen side (minus a
-                // small viewport margin) so an oversized calendar scrolls internally instead of
-                // clipping off-screen when neither side has room for it at full height.
                 const availableSpace = vertical === 'top' ? spaceAbove : spaceBelow;
-                setMaxPopupHeight(availableSpace - 16);
+                setMaxPopupHeight(Math.max(availableSpace - 16, 0));
 
                 if (horizontal === 'right') {
                     const rightEdge = triggerRect.left + popupWidth;

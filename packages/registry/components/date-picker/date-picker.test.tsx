@@ -595,5 +595,21 @@ describe('DatePicker', () => {
                 expect(maxHeight).toBeLessThanOrEqual(76 - 16);
             });
         });
+
+        it('clamps maxHeight to 0 instead of going negative when available space is 16px or less', async () => {
+            const user = userEvent.setup();
+            // spaceAbove = 5, spaceBelow = 39 - 29 = 10; below stays the chosen side (10 > 5)
+            // but is still under the 16px margin, so availableSpace - 16 would be negative
+            // without a floor.
+            mockRects({ triggerTop: 5, viewportHeight: 39, popupHeight: 527 });
+
+            const container = await openCalendar(user);
+
+            await waitFor(() => {
+                const popup = container.querySelector('.absolute.z-50') as HTMLElement;
+                const maxHeight = parseInt(popup.style.maxHeight, 10);
+                expect(maxHeight).toBe(0);
+            });
+        });
     });
 });
