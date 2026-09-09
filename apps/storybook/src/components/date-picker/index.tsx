@@ -1460,6 +1460,9 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                         side = 'left';
                     }
                     setComputedPosition(side as PopupPosition);
+
+                    const availableSpace = viewportHeight - triggerRect.top;
+                    setMaxPopupHeight(Math.max(availableSpace - 16, 0));
                     return;
                 }
 

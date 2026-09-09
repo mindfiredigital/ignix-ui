@@ -582,9 +582,7 @@ describe('DatePicker', () => {
 
         it('does not clamp maxHeight to a 150px floor when available space is smaller', async () => {
             const user = userEvent.setup();
-            // spaceAbove = 26, spaceBelow = 126 - 50 = 76; below stays the chosen side since
-            // it's still larger, but both are under 150px - the old `Math.max(x, 150)` floor
-            // would have forced a 150px popup here, overflowing the 76px actually available.
+
             mockRects({ triggerTop: 26, viewportHeight: 126, popupHeight: 527 });
 
             const container = await openCalendar(user);
@@ -598,9 +596,7 @@ describe('DatePicker', () => {
 
         it('clamps maxHeight to 0 instead of going negative when available space is 16px or less', async () => {
             const user = userEvent.setup();
-            // spaceAbove = 5, spaceBelow = 39 - 29 = 10; below stays the chosen side (10 > 5)
-            // but is still under the 16px margin, so availableSpace - 16 would be negative
-            // without a floor.
+
             mockRects({ triggerTop: 5, viewportHeight: 39, popupHeight: 527 });
 
             const container = await openCalendar(user);
@@ -609,6 +605,38 @@ describe('DatePicker', () => {
                 const popup = container.querySelector('.absolute.z-50') as HTMLElement;
                 const maxHeight = parseInt(popup.style.maxHeight, 10);
                 expect(maxHeight).toBe(0);
+            });
+        });
+
+        it('bounds maxHeight for popupPosition="left" near the viewport bottom', async () => {
+            const user = userEvent.setup();
+
+            mockRects({ triggerTop: 470, viewportHeight: 500, popupHeight: 527 });
+
+            const container = await openCalendar(user, { popupPosition: 'left' });
+
+            await waitFor(() => {
+                const popup = container.querySelector('.absolute.z-50') as HTMLElement;
+                expect(popup.className).toContain('overflow-y-auto');
+                const maxHeight = parseInt(popup.style.maxHeight, 10);
+                expect(maxHeight).toBeLessThanOrEqual(14);
+                expect(maxHeight).toBeLessThan(527);
+            });
+        });
+
+        it('bounds maxHeight for popupPosition="right" near the viewport bottom', async () => {
+            const user = userEvent.setup();
+
+            mockRects({ triggerTop: 470, viewportHeight: 500, popupHeight: 527 });
+
+            const container = await openCalendar(user, { popupPosition: 'right' });
+
+            await waitFor(() => {
+                const popup = container.querySelector('.absolute.z-50') as HTMLElement;
+                expect(popup.className).toContain('overflow-y-auto');
+                const maxHeight = parseInt(popup.style.maxHeight, 10);
+                expect(maxHeight).toBeLessThanOrEqual(14);
+                expect(maxHeight).toBeLessThan(527);
             });
         });
     });
