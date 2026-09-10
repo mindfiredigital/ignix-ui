@@ -480,6 +480,10 @@ export default function Page() {
   --accent-foreground: var(--ignix-text, hsl(222.2 47.4% 11.2%));
   --destructive: var(--ignix-error, hsl(0 84.2% 60.2%));
   --destructive-foreground: var(--ignix-text-inverse, hsl(210 40% 98%));
+  --success: var(--ignix-success, hsl(160.1 84.1% 39.4%));
+  --success-foreground: var(--ignix-text, hsl(222.2 47.4% 11.2%));
+  --warning: var(--ignix-warning, hsl(37.7 92.1% 50.2%));
+  --warning-foreground: var(--ignix-text, hsl(222.2 47.4% 11.2%));
   --border: var(--ignix-border, hsl(214.3 31.8% 91.4%));
   --input: var(--ignix-border-light, hsl(214.3 31.8% 91.4%));
   --ring: var(--ignix-primary, hsl(221.2 83.2% 53.3%));
@@ -503,6 +507,10 @@ export default function Page() {
   --accent-foreground: var(--ignix-text, hsl(210 40% 98%));
   --destructive: var(--ignix-error, hsl(0 62.8% 30.6%));
   --destructive-foreground: var(--ignix-text-inverse, hsl(210 40% 98%));
+  --success: var(--ignix-success, hsl(160.1 84.1% 39.4%));
+  --success-foreground: var(--ignix-text, hsl(222.2 47.4% 11.2%));
+  --warning: var(--ignix-warning, hsl(37.7 92.1% 50.2%));
+  --warning-foreground: var(--ignix-text, hsl(222.2 47.4% 11.2%));
   --border: var(--ignix-border, hsl(217.2 32.6% 17.5%));
   --input: var(--ignix-border-light, hsl(217.2 32.6% 17.5%));
   --ring: var(--ignix-primary, hsl(224.3 76.3% 48%));
