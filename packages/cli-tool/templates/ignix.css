@@ -30,20 +30,27 @@
   --accent: #f5f5f5;
   --accent-foreground: #3e3e3e;
   --destructive: #d93636;
+  --destructive-foreground: #ffffff;
   --border: #e0e0e0;
   --input: #e0e0e0;
   --ring: hsl(var(--primary-light));
 
   --destructive-light: #ef4444;
   --destructive-dark: #b91c1c;
+  --success: #10b981;
+  --success-foreground: #1c1e21;
   --success-light: #34d399;
   --success-dark: #047857;
+  --warning: #f59e0b;
+  --warning-foreground: #1c1e21;
   --warning-light: #fbbf24;
   --warning-dark: #b45309;
   --info: #06b6d4;
   --info-light: #22d3ee;
   --info-dark: #0e7490;
   --info-foreground: #ffffff;
+  --purple: #9333ea;
+  --purple-foreground: #ffffff;
 
   /* Floating Dock */
   --dock-solid: #1e293b;
@@ -103,20 +110,27 @@
   --accent: #303030;
   --accent-foreground: #d4d4d4;
   --destructive: #ff6b6b;
+  --destructive-foreground: #ffffff;
   --border: #424242;
   --input: #424242;
   --ring: hsl(var(--primary-light));
 
   --destructive-light: #ef4444;
   --destructive-dark: #b91c1c;
+  --success: #10b981;
+  --success-foreground: #1c1e21;
   --success-light: #34d399;
   --success-dark: #047857;
+  --warning: #f59e0b;
+  --warning-foreground: #1c1e21;
   --warning-light: #fbbf24;
   --warning-dark: #b45309;
   --info: #06b6d4;
   --info-light: #22d3ee;
   --info-dark: #0e7490;
   --info-foreground: #ffffff;
+  --purple: #9333ea;
+  --purple-foreground: #ffffff;
 
   /* Floating Dock */
   --dock-solid: #1e293b;
@@ -159,20 +173,27 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
 
   --color-destructive-light: var(--destructive-light);
   --color-destructive-dark: var(--destructive-dark);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
   --color-success-light: var(--success-light);
   --color-success-dark: var(--success-dark);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
   --color-warning-light: var(--warning-light);
   --color-warning-dark: var(--warning-dark);
   --color-info: var(--info);
   --color-info-light: var(--info-light);
   --color-info-dark: var(--info-dark);
   --color-info-foreground: var(--info-foreground);
+  --color-purple: var(--purple);
+  --color-purple-foreground: var(--purple-foreground);
 
   /* Floating Dock */
   --color-dock-solid: var(--dock-solid);
@@ -214,25 +235,45 @@
   --animate-aurora: aurora 8s ease-in-out infinite alternate;
 
   @keyframes shine {
-    0% { background-position: 0% 0%; }
-    50% { background-position: 100% 100%; }
-    100% { background-position: 0% 0%; }
+    0% {
+      background-position: 0% 0%;
+    }
+    50% {
+      background-position: 100% 100%;
+    }
+    100% {
+      background-position: 0% 0%;
+    }
   }
 
   @keyframes gradient {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
   }
 
   @keyframes marquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(calc(-100% - var(--gap))); }
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-100% - var(--gap)));
+    }
   }
 
   @keyframes marquee-vertical {
-    from { transform: translateY(0); }
-    to { transform: translateY(calc(-100% - var(--gap))); }
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(calc(-100% - var(--gap)));
+    }
   }
 
   @keyframes aurora {
