@@ -117,14 +117,52 @@ export const AnimatedPieChart = React.forwardRef<HTMLDivElement, AnimatedPieChar
     const [hoveredIndex, setHoveredIndex] = React.useState<number | null>(null);
     const [tooltip, setTooltip] = React.useState<{ x: number; y: number; item: PieDataPoint; pct: number } | null>(null);
 
-    const total = data.reduce((sum, d) => sum + d.value, 0);
+    const textColor = variant === "glass" || variant === "dark"
+      ? "text-white/70"
+      : "text-neutral-500 dark:text-neutral-400";
+
+    const validData = (data || []).filter(
+      (d) => typeof d.value === "number" && Number.isFinite(d.value) && d.value > 0
+    );
+    const total = validData.reduce((sum, d) => sum + d.value, 0);
+
+    if (total <= 0) {
+      return (
+        <div
+          ref={(node) => {
+            (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+            if (typeof ref === "function") ref(node!);
+            else if (ref) ref.current = node;
+          }}
+          className={cn(chartVariants({ variant }), "p-5", className)}
+        >
+          {(title || subtitle) && (
+            <div className="mb-4">
+              {title && (
+                <p className={cn(
+                  "text-sm font-bold tracking-tight",
+                  variant === "glass" || variant === "dark" ? "text-white" : "text-neutral-800 dark:text-neutral-100"
+                )}>{title}</p>
+              )}
+              {subtitle && (
+                <p className={cn("text-xs mt-0.5", textColor)}>{subtitle}</p>
+              )}
+            </div>
+          )}
+          <div className="flex items-center justify-center h-48 text-sm text-neutral-400 dark:text-neutral-500">
+            No data available
+          </div>
+        </div>
+      );
+    }
+
     const innerR = donutRatio > 0 ? radius * donutRatio : 0;
     const cx = radius + 8;
     const cy = radius + 8;
     const svgSize = (radius + 8) * 2;
 
     let cumAngle = 0;
-    const slices = data.map((d, i) => {
+    const slices = validData.map((d, i) => {
       const angle = (d.value / total) * 360;
       const start = cumAngle;
       cumAngle += angle;
@@ -137,10 +175,6 @@ export const AnimatedPieChart = React.forwardRef<HTMLDivElement, AnimatedPieChar
       };
     });
 
-    const textColor = variant === "glass" || variant === "dark"
-      ? "text-white/70"
-      : "text-neutral-500 dark:text-neutral-400";
-
     const handleMouseEnter = (e: React.MouseEvent, index: number) => {
       const rect = containerRef.current?.getBoundingClientRect();
       if (!rect) return;
@@ -148,7 +182,7 @@ export const AnimatedPieChart = React.forwardRef<HTMLDivElement, AnimatedPieChar
       setTooltip({
         x: e.clientX - rect.left,
         y: e.clientY - rect.top,
-        item: data[index],
+        item: validData[index],
         pct: slices[index].pct,
       });
     };
@@ -157,6 +191,19 @@ export const AnimatedPieChart = React.forwardRef<HTMLDivElement, AnimatedPieChar
       const rect = containerRef.current?.getBoundingClientRect();
       if (!rect) return;
       setTooltip((prev) => prev ? { ...prev, x: e.clientX - rect.left, y: e.clientY - rect.top } : null);
+    };
+
+    const handleSliceFocus = (index: number) => {
+      const midAngle = (slices[index].startAngle + slices[index].endAngle) / 2;
+      const labelR = innerR > 0 ? (radius + innerR) / 2 : radius * 0.7;
+      const pos = polarToCartesian(cx, cy, labelR, midAngle);
+      setHoveredIndex(index);
+      setTooltip({
+        x: pos.x,
+        y: pos.y,
+        item: validData[index],
+        pct: slices[index].pct,
+      });
     };
 
     return (
@@ -200,17 +247,22 @@ export const AnimatedPieChart = React.forwardRef<HTMLDivElement, AnimatedPieChar
                     fill={slice.color}
                     stroke={variant === "glass" || variant === "dark" ? "rgba(0,0,0,0.3)" : "#fff"}
                     strokeWidth={2}
-                    initial={animate ? { scale: 0, opacity: 0 } : {}}
+                    tabIndex={0}
+                    role="graphics-symbol"
+                    aria-label={`${slice.label}: ${slice.value.toLocaleString()} (${slice.pct.toFixed(1)}%)`}
+                    initial={animate ? { scale: 0, opacity: 0 } : { scale: scaleVal, opacity: 1 }}
                     animate={inView
                       ? { scale: scaleVal, opacity: 1 }
-                      : animate ? { scale: 0, opacity: 0 } : {}
+                      : animate ? { scale: 0, opacity: 0 } : { scale: scaleVal, opacity: 1 }
                     }
-                    transition={{ duration: 0.5, delay: i * 0.08, ease: "backOut" }}
+                    transition={animate ? { duration: 0.5, delay: i * 0.08, ease: "backOut" } : { duration: 0 }}
                     style={{ transformOrigin: `${cx}px ${cy}px` }}
                     onMouseEnter={(e) => handleMouseEnter(e, i)}
                     onMouseMove={(e) => handleMouseMove(e, i)}
                     onMouseLeave={() => { setHoveredIndex(null); setTooltip(null); }}
-                    className="cursor-pointer"
+                    onFocus={() => handleSliceFocus(i)}
+                    onBlur={() => { setHoveredIndex(null); setTooltip(null); }}
+                    className="cursor-pointer outline-none focus-visible:stroke-neutral-900 dark:focus-visible:stroke-white focus-visible:stroke-[3]"
                   />
                 );
               })}
@@ -230,9 +282,12 @@ export const AnimatedPieChart = React.forwardRef<HTMLDivElement, AnimatedPieChar
                     fontSize={11}
                     fontWeight={700}
                     fill="#fff"
-                    initial={{ opacity: 0 }}
-                    animate={inView ? { opacity: 1 } : { opacity: 0 }}
-                    transition={{ delay: i * 0.08 + 0.5 }}
+                    initial={animate ? { opacity: 0 } : { opacity: 1 }}
+                    animate={inView
+                      ? { opacity: 1 }
+                      : animate ? { opacity: 0 } : { opacity: 1 }
+                    }
+                    transition={animate ? { delay: i * 0.08 + 0.5 } : { duration: 0 }}
                   >
                     {slice.pct.toFixed(1)}%
                   </motion.text>
@@ -262,14 +317,21 @@ export const AnimatedPieChart = React.forwardRef<HTMLDivElement, AnimatedPieChar
           {showLegend && (
             <div className="flex flex-col gap-2 min-w-[130px]">
               {slices.map((slice, i) => (
-                <motion.div
+                <motion.button
                   key={i}
-                  className="flex items-center gap-2 cursor-pointer select-none"
-                  initial={{ opacity: 0, x: 8 }}
-                  animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: 8 }}
-                  transition={{ delay: i * 0.06 + 0.4 }}
+                  type="button"
+                  className="flex items-center gap-2 cursor-pointer select-none text-left bg-transparent border-0 p-0 rounded outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-400"
+                  aria-label={`${slice.label}: ${slice.value.toLocaleString()} (${slice.pct.toFixed(1)}%)`}
+                  initial={animate ? { opacity: 0, x: 8 } : { opacity: 1, x: 0 }}
+                  animate={inView
+                    ? { opacity: 1, x: 0 }
+                    : animate ? { opacity: 0, x: 8 } : { opacity: 1, x: 0 }
+                  }
+                  transition={animate ? { delay: i * 0.06 + 0.4 } : { duration: 0 }}
                   onMouseEnter={() => setHoveredIndex(i)}
                   onMouseLeave={() => setHoveredIndex(null)}
+                  onFocus={() => setHoveredIndex(i)}
+                  onBlur={() => setHoveredIndex(null)}
                 >
                   <span
                     className="inline-block w-3 h-3 rounded-full shrink-0 transition-transform duration-150"
@@ -287,7 +349,7 @@ export const AnimatedPieChart = React.forwardRef<HTMLDivElement, AnimatedPieChar
                   <span className={cn("text-xs ml-auto pl-2", textColor)}>
                     {slice.pct.toFixed(1)}%
                   </span>
-                </motion.div>
+                </motion.button>
               ))}
             </div>
           )}
