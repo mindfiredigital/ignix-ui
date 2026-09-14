@@ -70,6 +70,7 @@
           "label": "Data Display",
           "items": [
             "components/accordion",
+            "components/animated-pie-chart",
             "components/avatar",
             "components/badge",
             "components/card",
