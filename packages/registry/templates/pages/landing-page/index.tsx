@@ -369,7 +369,7 @@ function LandingFeatures({
   className,
 }: LandingFeaturesProps) {
   return (
-    <section aria-label="Features" className={cn("py-16 md:py-24", className)}>
+    <section id="features" aria-label="Features" className={cn("scroll-mt-16 py-16 md:py-24", className)}>
       <Container size="large">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">{title}</h2>
@@ -424,9 +424,10 @@ function LandingPricing({
   className,
 }: LandingPricingProps) {
   return (
-    <section aria-label="Pricing" className={cn("py-16 md:py-24", className)}>
+    <section id="pricing" aria-label="Pricing" className={cn("scroll-mt-16 py-16 md:py-24", className)}>
       <PricingGrid
         title={title}
+        titleHighlight=""
         description={description}
         tiers={tiers}
         showToggle={showToggle}
@@ -461,7 +462,7 @@ function LandingTestimonials({
   className,
 }: LandingTestimonialsProps) {
   return (
-    <section aria-label="Testimonials" className={cn("py-16 md:py-24", className)}>
+    <section id="testimonials" aria-label="Testimonials" className={cn("scroll-mt-16 py-16 md:py-24", className)}>
       <Container size="large">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">{title}</h2>
@@ -519,7 +520,7 @@ function LandingFAQ({
   const instanceId = useId();
 
   return (
-    <section aria-label="Frequently asked questions" className={cn("py-16 md:py-24", className)}>
+    <section id="faq" aria-label="Frequently asked questions" className={cn("scroll-mt-16 py-16 md:py-24", className)}>
       <Container size="normal">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">{title}</h2>
@@ -801,6 +802,7 @@ export interface LandingPageProps {
   heroSecondaryCtaLabel?: string;
   onHeroSecondaryCtaClick?: () => void;
   heroMediaSrc?: string;
+  heroMediaAlt?: string;
 
   /** Logo cloud */
   logoCloudTitle?: string;
@@ -862,6 +864,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
   heroSecondaryCtaLabel,
   onHeroSecondaryCtaClick,
   heroMediaSrc,
+  heroMediaAlt,
   logoCloudTitle,
   logos,
   renderLogo,
@@ -905,6 +908,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
           secondaryCtaLabel={heroSecondaryCtaLabel}
           onSecondaryCtaClick={onHeroSecondaryCtaClick}
           mediaSrc={heroMediaSrc}
+          mediaAlt={heroMediaAlt}
         />
         <LandingLogoCloud title={logoCloudTitle} logos={logos} renderLogo={renderLogo} />
         <LandingFeatures title={featuresTitle} description={featuresDescription} features={features} />
@@ -920,7 +924,12 @@ const LandingPage: React.FC<LandingPageProps> = ({
           <LandingCTA title={ctaTitle} description={ctaDescription} ctaLabel={ctaLabel} onCtaClick={onCtaClick} />
         )}
       </main>
-      <LandingFooter linkGroups={footerLinkGroups} socialLinks={footerSocialLinks} copyrightText={copyrightText} />
+      <LandingFooter
+        brandName={brandName}
+        linkGroups={footerLinkGroups}
+        socialLinks={footerSocialLinks}
+        copyrightText={copyrightText}
+      />
     </div>
   );
 };

@@ -64,12 +64,13 @@ vi.mock("@ignix-ui/hero", () => ({
 }));
 
 vi.mock("@ignix-ui/pricing-grid", () => ({
-  PricingGrid: ({ title, tiers, sectionBackgroundColor, titleColor, accentColor }: any) => (
+  PricingGrid: ({ title, titleHighlight, tiers, sectionBackgroundColor, titleColor, accentColor }: any) => (
     <div
       data-testid="pricing-grid"
       data-section-bg={sectionBackgroundColor}
       data-title-color={titleColor}
       data-accent-color={accentColor}
+      data-title-highlight={titleHighlight}
     >
       <span>{title}</span>
       <span data-testid="pricing-tier-count">{tiers.length}</span>
@@ -111,6 +112,33 @@ describe("LandingPage", () => {
   it("renders the full composition without crashing", () => {
     render(<LandingPage />);
     expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
+  });
+
+  it("gives every default nav link a matching section id so anchor navigation works", () => {
+    render(<LandingPage />);
+    // The default header nav links point at #features/#pricing/#testimonials/#faq -
+    // each corresponding section must expose that id or the links are dead.
+    expect(document.getElementById("features")).not.toBeNull();
+    expect(document.getElementById("pricing")).not.toBeNull();
+    expect(document.getElementById("testimonials")).not.toBeNull();
+    expect(document.getElementById("faq")).not.toBeNull();
+  });
+
+  it("passes brandName through to the footer, not just the header", () => {
+    render(<LandingPage brandName="Acme" />);
+    // Both header and footer render the brand name as plain text, so there
+    // should be exactly two matches - one per section - not one.
+    expect(screen.getAllByText("Acme")).toHaveLength(2);
+  });
+
+  it("forwards heroMediaAlt to the hero media image", () => {
+    render(<LandingPage heroMediaSrc="/dashboard.png" heroMediaAlt="Dashboard screenshot" />);
+    expect(screen.getByAltText("Dashboard screenshot")).toBeInTheDocument();
+  });
+
+  it("falls back to LandingHero's default alt text when heroMediaAlt is omitted", () => {
+    render(<LandingPage heroMediaSrc="/dashboard.png" />);
+    expect(screen.getByAltText("Product preview")).toBeInTheDocument();
   });
 });
 
@@ -266,6 +294,15 @@ describe("LandingPricing", () => {
     expect(grid).toHaveAttribute("data-section-bg", "bg-transparent");
     expect(grid).toHaveAttribute("data-title-color", "text-foreground");
     expect(grid).toHaveAttribute("data-accent-color", "text-primary");
+  });
+
+  it("suppresses PricingGrid's default titleHighlight text", () => {
+    // PricingGrid defaults titleHighlight to "with your growth" and renders it
+    // appended directly after `title` - without an explicit override every
+    // custom title would get that unrelated text tacked onto the end.
+    render(<LandingPricing title="Choose your plan" />);
+    const grid = screen.getByTestId("pricing-grid");
+    expect(grid).toHaveAttribute("data-title-highlight", "");
   });
 });
 
