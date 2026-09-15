@@ -153,9 +153,9 @@ export const AnimatedPieChart = React.forwardRef<HTMLDivElement, AnimatedPieChar
     if (total <= 0) {
       return (
         <div
-          ref={(node) => {
+          ref={(node): void => {
             (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
-            if (typeof ref === "function") ref(node!);
+            if (typeof ref === "function") ref(node);
             else if (ref) ref.current = node;
           }}
           className={cn(chartVariants({ variant }), "p-5", className)}
@@ -233,9 +233,9 @@ export const AnimatedPieChart = React.forwardRef<HTMLDivElement, AnimatedPieChar
 
     return (
       <div
-        ref={(node) => {
+        ref={(node): void => {
           (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
-          if (typeof ref === "function") ref(node!);
+          if (typeof ref === "function") ref(node);
           else if (ref) ref.current = node;
         }}
         className={cn(chartVariants({ variant }), "p-5", className)}
