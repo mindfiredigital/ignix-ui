@@ -301,6 +301,13 @@
                 "templates/pages/data-management/data-table",
                 "templates/pages/data-management/timeline-view"
               ]
+            },
+            {
+              "type": "category",
+              "label": "Marketing",
+              "items": [
+                "templates/pages/marketing/landing-page"
+              ]
             }
           ]
         },

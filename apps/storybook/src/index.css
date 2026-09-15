@@ -1,5 +1,19 @@
 @import 'tailwindcss';
 
+/*
+ * Tailwind v4's built-in `dark:` variant defaults to
+ * `@media (prefers-color-scheme: dark)` unless overridden - but every
+ * component here (and the `.dark { ... }` block below) drives dark mode
+ * off an explicit `.dark` class, applied by Storybook's own theme toggle,
+ * never off the OS/browser color-scheme preference. Without this override,
+ * any component using a `dark:` utility (e.g. testimonial-card's
+ * `dark:text-gray-200`) reads light-on-light or white-on-white for any
+ * viewer whose OS prefers dark mode, even when the page itself is still
+ * rendering light (no `.dark` class present) - the same class of bug fixed
+ * in the landing-page template's own theme-detection hook.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   :root {
     --color-gradient-from-dropdown: #a855f7;

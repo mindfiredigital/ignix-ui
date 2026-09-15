@@ -1490,6 +1490,29 @@
         }
       }
     },
+    "landing-page": {
+      "name": "landing-page",
+      "description": "A production-ready marketing/SaaS landing page composed of header, hero, logo cloud, features, pricing, testimonials, FAQ, CTA, and footer sections.",
+      "dependencies": [
+        "lucide-react",
+        "framer-motion"
+      ],
+      "componentDependencies": [
+        "navbar",
+        "hero",
+        "pricingGrid",
+        "testimonialCard",
+        "button",
+        "card",
+        "container"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/landing-page/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "dashboard-shortcuts-page": {
       "name": "dashboard-shortcuts-page",
       "description": "A composable dashboard shortcuts template with large action buttons, icon-backed shortcut grid, keyboard hints, and persisted drag-and-drop customization.",

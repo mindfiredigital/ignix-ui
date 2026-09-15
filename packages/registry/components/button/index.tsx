@@ -19,7 +19,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'px-4 py-2 bg-primary text-white hover:bg-primary/90',
+        default: 'px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90',
         primary: 'px-4 py-2 bg-secondary text-secondary-foreground hover:bg-secondary/90',
         secondary: 'bg-muted text-muted-foreground hover:bg-muted/90',
         success: 'bg-success text-success-foreground hover:bg-success/90',
