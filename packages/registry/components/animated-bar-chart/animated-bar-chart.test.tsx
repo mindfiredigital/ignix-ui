@@ -81,4 +81,18 @@ describe("AnimatedBarChart rendering", () => {
     const rects = container.querySelectorAll("rect");
     expect(rects.length).toBeGreaterThan(0);
   });
+
+  it("renders empty state message when data is empty", (): void => {
+    render(<AnimatedBarChart data={[]} />);
+    expect(screen.getByText("No data available")).toBeInTheDocument();
+  });
+
+  it("applies defaultColor fallback when provided", (): void => {
+    const dataWithoutColor = [{ label: "Chrome", value: 65 }];
+    const { container } = render(
+      <AnimatedBarChart data={dataWithoutColor} defaultColor="#ff0000" />
+    );
+    const rect = container.querySelector("rect");
+    expect(rect).toHaveAttribute("fill", "#ff0000");
+  });
 });

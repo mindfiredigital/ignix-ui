@@ -44,7 +44,6 @@ export interface AnimatedBarChartProps extends VariantProps<typeof chartVariants
   showLegend?: boolean;
   showValues?: boolean;
   barRadius?: number;
-  orientation?: "vertical" | "horizontal";
   defaultColor?: string;
   className?: string;
 }
@@ -72,8 +71,7 @@ export const AnimatedBarChart = React.forwardRef<HTMLDivElement, AnimatedBarChar
       showLegend = true,
       showValues = false,
       barRadius = 4,
-      orientation: _orientation = "vertical",
-      defaultColor: _defaultColor = "#6366f1",
+      defaultColor,
       variant = "default",
       className,
     },
@@ -110,7 +108,9 @@ export const AnimatedBarChart = React.forwardRef<HTMLDivElement, AnimatedBarChar
     const allValues = isGrouped && series
       ? series.flatMap((s) => s.data.map((d) => d.value))
       : data.map((d) => d.value);
-    const yMax = Math.ceil(Math.max(...allValues) * 1.1);
+    const hasData = allValues.length > 0 && numBars > 0;
+    const rawMax = hasData ? Math.max(...allValues) : 0;
+    const yMax = hasData ? Math.ceil(rawMax * 1.1) || 10 : 100;
     const yMin = 0;
 
     const Y_TICKS = 5;
@@ -119,10 +119,10 @@ export const AnimatedBarChart = React.forwardRef<HTMLDivElement, AnimatedBarChar
     );
 
     const numGroups = isGrouped && series ? series.length : 1;
-    const totalBarSlotWidth = chartW / numBars;
+    const totalBarSlotWidth = numBars > 0 ? chartW / numBars : 0;
     const barGroupPad = totalBarSlotWidth * 0.25;
     const barGroupWidth = totalBarSlotWidth - barGroupPad;
-    const individualBarWidth = barGroupWidth / numGroups;
+    const individualBarWidth = numGroups > 0 ? barGroupWidth / numGroups : 0;
 
     const barX = (barIndex: number, seriesIndex = 0): number =>
       PAD_LEFT + barIndex * totalBarSlotWidth + barGroupPad / 2 + seriesIndex * individualBarWidth;
@@ -204,7 +204,7 @@ export const AnimatedBarChart = React.forwardRef<HTMLDivElement, AnimatedBarChar
           {isGrouped && series
             ? series.map((s, si) =>
               s.data.map((point, bi) => {
-                const color = s.color ?? DEFAULT_COLORS[si % DEFAULT_COLORS.length];
+                const color = s.color ?? defaultColor ?? DEFAULT_COLORS[si % DEFAULT_COLORS.length];
                 const bh = barHeight(point.value);
                 const by = barY(point.value);
                 const bx = barX(bi, si);
@@ -249,7 +249,7 @@ export const AnimatedBarChart = React.forwardRef<HTMLDivElement, AnimatedBarChar
               })
             )
             : data.map((point, bi) => {
-              const color = point.color ?? DEFAULT_COLORS[bi % DEFAULT_COLORS.length];
+              const color = point.color ?? defaultColor ?? DEFAULT_COLORS[bi % DEFAULT_COLORS.length];
               const bh = barHeight(point.value);
               const by = barY(point.value);
               const bx = barX(bi);
@@ -305,13 +305,27 @@ export const AnimatedBarChart = React.forwardRef<HTMLDivElement, AnimatedBarChar
               {point.label}
             </text>
           ))}
+
+          {/* Empty state */}
+          {numBars === 0 && (
+            <text
+              x={PAD_LEFT + chartW / 2}
+              y={PAD_TOP + chartH / 2}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fontSize={12}
+              className={textColor}
+            >
+              No data available
+            </text>
+          )}
         </svg>
 
         {/* Legend (series mode) */}
         {showLegend && isGrouped && series && (
           <div className="flex flex-wrap gap-3 mt-3 pt-3 border-t border-neutral-100 dark:border-neutral-800">
             {series.map((s, si) => {
-              const color = s.color ?? DEFAULT_COLORS[si % DEFAULT_COLORS.length];
+              const color = s.color ?? defaultColor ?? DEFAULT_COLORS[si % DEFAULT_COLORS.length];
               return (
                 <div key={si} className="flex items-center gap-1.5">
                   <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: color }} />
