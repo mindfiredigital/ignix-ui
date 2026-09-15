@@ -13,7 +13,8 @@
 "use client";
 
 import React, { useEffect, useId, useState } from "react";
-import { Menu, X, ArrowRight, Star, ChevronDown } from "lucide-react";
+import { motion } from "framer-motion";
+import { Menu, X, ArrowRight, ChevronDown, Zap, Palette, ShieldCheck, Quote } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 import { cn } from "@site/src/utils/cn";
@@ -37,55 +38,89 @@ import {
   TestimonialCardRating,
 } from "../testimonial-card";
 
+/** Reads the current theme straight from the DOM - safe to call during render (SSR-guarded) or inside an effect. */
+function readThemeMode(): "light" | "dark" {
+  if (typeof window === "undefined") return "light";
+
+  const root = document.documentElement;
+  const body = document.body;
+  const hasDarkClass = root.classList.contains("dark") || body.classList.contains("dark");
+  const hasDarkThemeAttr = root.getAttribute("data-theme") === "dark";
+  return hasDarkClass || hasDarkThemeAttr ? "dark" : "light";
+}
+
 /**
  * `@ignix-ui/hero`'s `variant` prop selects between two fully hardcoded color
  * sets ("default" = light gray/white, "dark" = gray/black) rather than
  * reading the app's `--background`/`--foreground` theme tokens - unlike
  * every other section on this page, it does not auto-adapt to the current
- * theme. This hook detects the active theme (via the `.dark`/`.light`
- * class or `data-theme` attribute Ignix's own dark-mode toggle uses, falling
- * back to the OS preference) so `LandingHero` can pass the matching variant
- * and avoid rendering a light hero on an otherwise dark page (or vice versa).
+ * theme. This hook detects the active theme via the `.dark`/`.light` class
+ * or `data-theme` attribute Ignix's own dark-mode toggle uses.
+ *
+ * Deliberately does NOT fall back to `prefers-color-scheme`: none of
+ * `ignix.css`'s actual `--background`/`--primary`/etc. variables are wired
+ * to that media query, only to the explicit class/attribute above - they
+ * stay light unless something actually applies `.dark`. Falling back to the
+ * OS/browser color-scheme preference previously caused a real bug: a viewer
+ * with OS-level dark mode enabled (but no `.dark` class present, e.g. a
+ * default Storybook page) would get `variant="dark"` - white heading text -
+ * rendered over the still-light background, making it unreadable.
  */
 function useThemeMode(): "light" | "dark" {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  // Lazy initializer instead of a hardcoded "light" default: without this,
+  // a page that's already in dark mode still renders the Hero's light
+  // variant for one frame (state starts "light" and only flips to "dark"
+  // once the effect below runs after the initial paint) - a visible flash
+  // of the wrong theme. Reading the DOM synchronously here means the very
+  // first render already reflects reality instead of a hardcoded guess.
+  const [theme, setTheme] = useState<"light" | "dark">(readThemeMode);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     const root = document.documentElement;
     const body = document.body;
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
-    const read = (): "light" | "dark" => {
-      const hasDarkClass = root.classList.contains("dark") || body.classList.contains("dark");
-      const hasDarkThemeAttr = root.getAttribute("data-theme") === "dark";
-      if (hasDarkClass || hasDarkThemeAttr) return "dark";
+    setTheme(readThemeMode());
 
-      const hasLightClass = root.classList.contains("light") || body.classList.contains("light");
-      const hasLightThemeAttr = root.getAttribute("data-theme") === "light";
-      if (hasLightClass || hasLightThemeAttr) return "light";
-
-      return mediaQuery.matches ? "dark" : "light";
-    };
-
-    setTheme(read());
-
-    const observer = new MutationObserver(() => setTheme(read()));
+    const observer = new MutationObserver(() => setTheme(readThemeMode()));
     observer.observe(root, { attributes: true, attributeFilter: ["class", "data-theme"] });
     observer.observe(body, { attributes: true, attributeFilter: ["class"] });
 
-    const listener = () => setTheme(read());
-    mediaQuery.addEventListener("change", listener);
-
     return () => {
       observer.disconnect();
-      mediaQuery.removeEventListener("change", listener);
     };
   }, []);
 
   return theme;
 }
+
+/**
+ * Shared entrance-animation variants, reused by every hand-rolled section so
+ * the whole page animates in with one consistent motion language instead of
+ * each section inventing its own. `staggerContainer` orchestrates its
+ * `fadeInUp` children via variant propagation - a child only needs
+ * `variants={fadeInUp}`, no `initial`/`animate` of its own.
+ *
+ * Deliberately mount-triggered (`animate`), not scroll-triggered
+ * (`whileInView`/`viewport`): this template also renders inside Storybook's
+ * aggregated docs page, where several full LandingPage instances are
+ * stacked on one long page - `whileInView`'s IntersectionObserver-based
+ * trigger left content below the fold permanently stuck at `opacity: 0`
+ * there (never scrolled into view "enough" to fire, and `once: true` never
+ * retried), which is a real content-visibility bug, not just a missed
+ * flourish. Animating on mount instead guarantees everything becomes
+ * visible regardless of scroll position or embedding context.
+ */
+const fadeInUp = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } },
+};
+
+const staggerContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1 } },
+};
 
 /* -------------------------------------------------------------------------- */
 /*                                    TYPES                                   */
@@ -171,8 +206,8 @@ function LandingHeader({
   const mobileMenuId = `landing-mobile-menu-${useId()}`;
 
   return (
-    <header className={cn("sticky top-0 z-40 w-full", className)}>
-      <Navbar variant="default" size="md">
+    <header className={cn("sticky top-0 z-40 w-full border-b border-border/40 bg-background/80 backdrop-blur-md", className)}>
+      <Navbar variant="default" size="md" className="border-b-0 shadow-none bg-transparent">
         <div className="flex items-center gap-2 font-bold text-lg text-foreground">
           {logo ?? <span>{brandName}</span>}
         </div>
@@ -206,33 +241,52 @@ function LandingHeader({
         </div>
       </Navbar>
 
-      <div
+      {/*
+       * Animated height/opacity instead of the plain `hidden` attribute's
+       * abrupt jump. Stays mounted at all times (aria-hidden mirrors what
+       * `hidden` used to do for the a11y tree) so the collapse can animate
+       * instead of disappearing instantly.
+       */}
+      <motion.div
         id={mobileMenuId}
-        hidden={!mobileOpen}
-        className="md:hidden border-t border-border bg-background px-4 py-4 space-y-3"
+        aria-hidden={!mobileOpen}
+        initial={false}
+        animate={{ height: mobileOpen ? "auto" : 0, opacity: mobileOpen ? 1 : 0 }}
+        transition={{ duration: 0.25, ease: "easeInOut" }}
+        className="md:hidden overflow-hidden border-t border-border bg-background"
       >
-        {navLinks.map((link) => (
-          <a
-            key={link.href}
-            href={link.href}
-            onClick={() => setMobileOpen(false)}
-            className="block text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+        <div className="px-4 py-4 space-y-3">
+          {navLinks.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              onClick={() => setMobileOpen(false)}
+              // `aria-hidden`/`height: 0` only hide this panel visually and
+              // from the a11y tree - unlike the `hidden` attribute they
+              // replaced, they don't remove its contents from the tab
+              // order, so a keyboard user could still Tab into these links
+              // while the menu is visually collapsed. tabIndex -1 closes
+              // that gap without needing to unmount the panel.
+              tabIndex={mobileOpen ? undefined : -1}
+              className="block text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {link.label}
+            </a>
+          ))}
+          <Button
+            variant="default"
+            size="sm"
+            className="w-full"
+            tabIndex={mobileOpen ? undefined : -1}
+            onClick={() => {
+              setMobileOpen(false);
+              onCtaClick?.();
+            }}
           >
-            {link.label}
-          </a>
-        ))}
-        <Button
-          variant="default"
-          size="sm"
-          className="w-full"
-          onClick={() => {
-            setMobileOpen(false);
-            onCtaClick?.();
-          }}
-        >
-          {ctaLabel}
-        </Button>
-      </div>
+            {ctaLabel}
+          </Button>
+        </div>
+      </motion.div>
     </header>
   );
 }
@@ -251,6 +305,14 @@ export interface LandingHeroProps {
   onSecondaryCtaClick?: () => void;
   mediaSrc?: string;
   mediaAlt?: string;
+  /**
+   * "default" is the clean, centered, theme-adaptive hero. "bold" is a
+   * dramatic, left-aligned, always-dark hero with an oversized uppercase
+   * headline - the treatment several real SaaS marketing sites (e.g.
+   * beehiiv) use to open the page, independent of the site's own light/dark
+   * theme toggle.
+   */
+  tone?: "default" | "bold";
   className?: string;
 }
 
@@ -265,18 +327,40 @@ function LandingHero({
   onSecondaryCtaClick,
   mediaSrc,
   mediaAlt = "Product preview",
+  tone = "default",
   className,
 }: LandingHeroProps) {
   const theme = useThemeMode();
   const isSplit = Boolean(mediaSrc);
+  const isBold = tone === "bold";
 
   return (
     <Hero
-      variant={theme === "dark" ? "dark" : "default"}
-      align={isSplit ? "left" : "center"}
+      variant={isBold || theme === "dark" ? "dark" : "default"}
+      align={isBold || isSplit ? "left" : "center"}
       animationType="fadeInUp"
       split={isSplit}
-      className={className}
+      // Hero's own variant backgrounds are flat solid gray/black. "bold"
+      // tone commits to its own always-dark, deliberately moody gradient
+      // regardless of site theme; otherwise a soft radial-style wash reads
+      // far less "plain" while still respecting whichever theme is active.
+      backgroundClassName={
+        isBold
+          ? "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
+          : cn(
+              "bg-gradient-to-b",
+              theme === "dark"
+                ? "from-primary/[0.14] via-background to-background"
+                : "from-primary/[0.08] via-background to-background"
+            )
+      }
+      // Hero's own default min-h-125/150/175 is sized for a standalone hero
+      // page - inside a full landing page that stacks many sections, it
+      // leaves a huge empty gap under the content. twMerge (via `cn`) only
+      // dedupes classes within the same responsive prefix, so every
+      // breakpoint Hero sets has to be overridden explicitly here, not just
+      // the base min-h.
+      className={cn("min-h-0 md:min-h-0 lg:min-h-0 py-10 md:py-14 lg:py-16", className)}
     >
       {/*
        * HeroMedia must be nested inside HeroContent, not a sibling of it - Hero's
@@ -289,14 +373,33 @@ function LandingHero({
        */}
       <HeroContent>
         {eyebrow && <HeroBadge>{eyebrow}</HeroBadge>}
-        <HeroHeading>{headline}</HeroHeading>
+        <HeroHeading className={isBold ? "uppercase font-black tracking-tight" : undefined}>
+          {headline}
+        </HeroHeading>
         <HeroSubheading>{subheadline}</HeroSubheading>
         <HeroActions>
-          <Button variant="default" size="lg" onClick={onPrimaryCtaClick}>
+          {/*
+           * "bold" tone forces a near-black background regardless of the
+           * page's own theme, so the default variant's theme-driven
+           * `bg-primary` (which can itself be a dark color, as it is here)
+           * would blend into it. Explicit white-on-dark styling guarantees
+           * contrast independent of whatever `--primary` resolves to.
+           */}
+          <Button
+            variant="default"
+            size="lg"
+            className={isBold ? "bg-white text-slate-950 hover:bg-white/90" : undefined}
+            onClick={onPrimaryCtaClick}
+          >
             {primaryCtaLabel}
             <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
           </Button>
-          <Button variant="outline" size="lg" onClick={onSecondaryCtaClick}>
+          <Button
+            variant="outline"
+            size="lg"
+            className={isBold ? "border-white/30 text-white hover:bg-white/10 hover:text-white" : undefined}
+            onClick={onSecondaryCtaClick}
+          >
             {secondaryCtaLabel}
           </Button>
         </HeroActions>
@@ -328,25 +431,62 @@ function LandingLogoCloud({
   if (logos.length === 0) return null;
 
   return (
-    <section aria-label="Trusted by" className={cn("py-12", className)}>
+    <section aria-label="Trusted by" className={cn("py-8", className)}>
       <Container size="large">
-        <p className="text-center text-sm font-medium text-muted-foreground mb-8">{title}</p>
-        <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
+        <p className="text-center text-sm font-medium text-muted-foreground mb-6">{title}</p>
+        <motion.div
+          className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6"
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+        >
           {logos.map((logo) =>
             renderLogo ? (
-              <React.Fragment key={logo.id}>{renderLogo(logo)}</React.Fragment>
+              <motion.div key={logo.id} variants={fadeInUp}>
+                {renderLogo(logo)}
+              </motion.div>
             ) : (
-              <span
+              <motion.span
                 key={logo.id}
+                variants={fadeInUp}
                 className="text-lg font-semibold text-muted-foreground/70 grayscale hover:grayscale-0 hover:text-foreground transition-all"
               >
                 {logo.logo ?? logo.name}
-              </span>
+              </motion.span>
             )
           )}
-        </div>
+        </motion.div>
       </Container>
     </section>
+  );
+}
+
+/**
+ * Small "EYEBROW / Title / description" heading used by every hand-rolled
+ * section for visual rhythm - echoes the "PRICING" label already built into
+ * `@ignix-ui/pricing-grid`'s own heading, so the page reads as one system
+ * rather than pricing being the only section with that treatment.
+ */
+function SectionHeading({
+  eyebrow,
+  title,
+  description,
+}: {
+  eyebrow: string;
+  title: string;
+  description?: string;
+}) {
+  return (
+    <motion.div
+      className="text-center max-w-2xl mx-auto mb-10"
+      initial="hidden"
+      animate="visible"
+      variants={fadeInUp}
+    >
+      <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-3">{eyebrow}</p>
+      <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">{title}</h2>
+      {description && <p className="mt-4 text-muted-foreground">{description}</p>}
+    </motion.div>
   );
 }
 
@@ -358,39 +498,146 @@ export interface LandingFeaturesProps {
   title?: string;
   description?: string;
   features?: FeatureItem[];
+  /**
+   * "grid" (default) is a card grid; "spotlight" is an alternating editorial
+   * layout; "showcase" is a bold, alternating full-bleed panel layout (each
+   * feature paired with a large colorful device-frame panel) - the "one
+   * feature per screenful" pattern several real SaaS marketing sites use.
+   */
+  variant?: "grid" | "spotlight" | "showcase";
   className?: string;
 }
 
-/** Icon + title + description feature grid. */
+/** Icon + title + description feature grid, in a card-grid or alternating "spotlight" layout. */
 function LandingFeatures({
   title = "Everything you need to launch",
   description = "Built-in tools to help you move from idea to production without reinventing the basics.",
   features = DEFAULT_FEATURES,
+  variant = "grid",
   className,
 }: LandingFeaturesProps) {
   return (
-    <section id="features" aria-label="Features" className={cn("scroll-mt-16 py-16 md:py-24", className)}>
-      <Container size="large">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">{title}</h2>
-          <p className="mt-4 text-muted-foreground">{description}</p>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((feature) => {
-            const Icon = feature.icon;
-            return (
-              <Card key={feature.id} variant="default">
-                <CardHeader>
-                  <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                    <Icon className="h-5 w-5" aria-hidden />
+    <section
+      id="features"
+      aria-label="Features"
+      className={cn("relative scroll-mt-16 overflow-hidden py-12 md:py-16", className)}
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-24 right-0 h-72 w-72 rounded-full bg-gradient-to-br from-primary/10 to-transparent blur-3xl"
+      />
+      <Container size="large" className="relative">
+        <SectionHeading eyebrow="Features" title={title} description={description} />
+        {variant === "showcase" ? (
+          <motion.div
+            className="space-y-16 md:space-y-24"
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+          >
+            {features.map((feature, index) => {
+              const Icon = feature.icon;
+              const reversed = index % 2 === 1;
+              // Vivid, literal panel colors are intentional here (unlike the
+              // rest of the page, which is entirely semantic-token-driven) -
+              // "showcase" is the one bold, colorful variant, cycling through
+              // a small fixed palette so each panel is distinct.
+              const palette = SHOWCASE_PALETTE[index % SHOWCASE_PALETTE.length];
+              return (
+                <motion.div
+                  key={feature.id}
+                  variants={fadeInUp}
+                  className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-16"
+                >
+                  <div className={reversed ? "lg:order-2" : undefined}>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-3">
+                      {String(index + 1).padStart(2, "0")}
+                    </p>
+                    <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+                      {feature.title}
+                    </h3>
+                    <p className="mt-4 text-muted-foreground max-w-md">{feature.description}</p>
                   </div>
-                  <CardTitle size="md">{feature.title}</CardTitle>
-                  <CardDescription>{feature.description}</CardDescription>
-                </CardHeader>
-              </Card>
-            );
-          })}
-        </div>
+                  <motion.div
+                    whileHover={{ scale: 1.03 }}
+                    transition={{ duration: 0.3 }}
+                    className={cn(
+                      "relative aspect-[4/3] overflow-hidden rounded-2xl shadow-xl",
+                      palette,
+                      reversed ? "lg:order-1" : undefined
+                    )}
+                  >
+                    <div aria-hidden className="absolute top-4 left-4 flex gap-1.5">
+                      <span className="h-2.5 w-2.5 rounded-full bg-white/40" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-white/40" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-white/40" />
+                    </div>
+                    <div className="flex h-full w-full items-center justify-center">
+                      <Icon className="h-16 w-16 text-white/90" aria-hidden />
+                    </div>
+                  </motion.div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        ) : variant === "spotlight" ? (
+          <motion.div
+            className="divide-y divide-border"
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+          >
+            {features.map((feature, index) => {
+              const Icon = feature.icon;
+              const reversed = index % 2 === 1;
+              return (
+                <motion.div
+                  key={feature.id}
+                  variants={fadeInUp}
+                  className={cn(
+                    "flex flex-col items-center gap-6 py-10 text-center sm:flex-row sm:text-left",
+                    reversed && "sm:flex-row-reverse sm:text-right"
+                  )}
+                >
+                  <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 text-primary ring-1 ring-primary/10">
+                    <Icon className="h-7 w-7" aria-hidden />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-foreground">{feature.title}</h3>
+                    <p className="mt-2 text-muted-foreground">{feature.description}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        ) : (
+          <motion.div
+            className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+          >
+            {features.map((feature) => {
+              const Icon = feature.icon;
+              return (
+                <motion.div key={feature.id} variants={fadeInUp}>
+                  <Card
+                    variant="default"
+                    className="transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg"
+                  >
+                    <CardHeader>
+                      <div className="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 text-primary ring-1 ring-primary/10 transition-transform duration-300 group-hover:scale-110">
+                        <Icon className="h-5 w-5" aria-hidden />
+                      </div>
+                      <CardTitle size="md">{feature.title}</CardTitle>
+                      <CardDescription>{feature.description}</CardDescription>
+                    </CardHeader>
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        )}
       </Container>
     </section>
   );
@@ -424,22 +671,72 @@ function LandingPricing({
   className,
 }: LandingPricingProps) {
   return (
-    <section id="pricing" aria-label="Pricing" className={cn("scroll-mt-16 py-16 md:py-24", className)}>
-      <PricingGrid
-        title={title}
-        titleHighlight=""
-        description={description}
-        tiers={tiers}
-        showToggle={showToggle}
-        onCtaClick={onCtaClick}
-        sectionBackgroundColor="bg-transparent"
-        titleColor="text-foreground"
-        descriptionColor="text-muted-foreground"
-        labelColor="text-muted-foreground"
-        accentColor="text-primary"
-        toggleActiveColor="bg-primary"
+    <section
+      id="pricing"
+      aria-label="Pricing"
+      className={cn("relative scroll-mt-16 overflow-hidden py-12 md:py-16", className)}
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-24 left-0 h-72 w-72 rounded-full bg-gradient-to-tr from-primary/10 to-transparent blur-3xl"
       />
+      {/*
+       * PricingGrid's own card list isn't ours to stagger individually - it
+       * renders as one opaque block - so the whole grid gets a single
+       * reveal instead of per-card animation like the other sections.
+       */}
+      <motion.div initial="hidden" animate="visible" variants={fadeInUp}>
+        <PricingGrid
+          title={title}
+          titleHighlight=""
+          description={description}
+          tiers={tiers}
+          showToggle={showToggle}
+          onCtaClick={onCtaClick}
+          sectionBackgroundColor="bg-transparent"
+          titleColor="text-foreground"
+          descriptionColor="text-muted-foreground"
+          labelColor="text-muted-foreground"
+          accentColor="text-primary"
+          toggleActiveColor="bg-primary"
+        />
+      </motion.div>
     </section>
+  );
+}
+
+/**
+ * Single testimonial card body, shared by both LandingTestimonials layout
+ * variants so the grid and the "rest" row under a spotlight quote render
+ * identically.
+ */
+function TestimonialCardTile({ testimonial }: { testimonial: TestimonialItem }) {
+  return (
+    // h-full so the card's visible box (border/shadow/rounded corners)
+    // actually fills its grid cell instead of just sizing to its own quote
+    // length - CSS Grid already stretches every cell in a row to match the
+    // tallest one by default, but TestimonialCard itself doesn't opt into
+    // filling that stretched space without this, so shorter quotes render
+    // as visibly smaller boxes even though their grid cells match.
+    <TestimonialCard className="h-full flex flex-col">
+      {testimonial.rating != null && <TestimonialCardRating value={testimonial.rating} />}
+      {/*
+       * TestimonialCardQuote's default text color resolves correctly, but
+       * TestimonialCardAuthor's name/title/company colors are hardcoded
+       * internally with no className hook that reaches them - so the author
+       * line is hand-rolled below with explicit theme tokens instead, to
+       * guarantee contrast against the card background in both themes.
+       */}
+      <TestimonialCardQuote className="text-foreground">{testimonial.quote}</TestimonialCardQuote>
+      <div className="mt-6 pt-6 border-t border-border">
+        <p className="font-semibold text-foreground">{testimonial.name}</p>
+        {(testimonial.title || testimonial.company) && (
+          <p className="text-sm text-muted-foreground">
+            {[testimonial.title, testimonial.company].filter(Boolean).join(" · ")}
+          </p>
+        )}
+      </div>
+    </TestimonialCard>
   );
 }
 
@@ -451,46 +748,71 @@ export interface LandingTestimonialsProps {
   title?: string;
   description?: string;
   testimonials?: TestimonialItem[];
+  /** "grid" (default) is a wall of cards; "spotlight" features the first testimonial large, with the rest below. */
+  variant?: "grid" | "spotlight";
   className?: string;
 }
 
-/** Grid/wall of `@ignix-ui/testimonial-card` instances - no multi-testimonial layout exists upstream. */
+/** Grid/wall of `@ignix-ui/testimonial-card` instances, or one featured quote over a smaller supporting row. */
 function LandingTestimonials({
   title = "Loved by teams everywhere",
   description = "See what our customers have to say.",
   testimonials = DEFAULT_TESTIMONIALS,
+  variant = "grid",
   className,
 }: LandingTestimonialsProps) {
+  const [featured, ...rest] = testimonials;
+
   return (
-    <section id="testimonials" aria-label="Testimonials" className={cn("scroll-mt-16 py-16 md:py-24", className)}>
+    <section id="testimonials" aria-label="Testimonials" className={cn("scroll-mt-16 py-12 md:py-16", className)}>
       <Container size="large">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">{title}</h2>
-          <p className="mt-4 text-muted-foreground">{description}</p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {testimonials.map((testimonial) => (
-            <TestimonialCard key={testimonial.id}>
-              {testimonial.rating != null && <TestimonialCardRating value={testimonial.rating} />}
-              {/*
-               * TestimonialCardQuote's default text color resolves correctly, but
-               * TestimonialCardAuthor's name/title/company colors are hardcoded
-               * internally with no className hook that reaches them - so the author
-               * line is hand-rolled below with explicit theme tokens instead, to
-               * guarantee contrast against the card background in both themes.
-               */}
-              <TestimonialCardQuote className="text-foreground">{testimonial.quote}</TestimonialCardQuote>
-              <div className="mt-6 pt-6 border-t border-border">
-                <p className="font-semibold text-foreground">{testimonial.name}</p>
-                {(testimonial.title || testimonial.company) && (
-                  <p className="text-sm text-muted-foreground">
-                    {[testimonial.title, testimonial.company].filter(Boolean).join(" · ")}
-                  </p>
-                )}
-              </div>
-            </TestimonialCard>
-          ))}
-        </div>
+        <SectionHeading eyebrow="Testimonials" title={title} description={description} />
+        {variant === "spotlight" && featured ? (
+          <div className="space-y-10">
+            <motion.div
+              className="mx-auto max-w-3xl text-center"
+              initial="hidden"
+              animate="visible"
+              variants={fadeInUp}
+            >
+              <Quote className="mx-auto mb-4 h-10 w-10 text-primary/30" aria-hidden />
+              <p className="text-xl md:text-2xl font-medium text-foreground">&ldquo;{featured.quote}&rdquo;</p>
+              <p className="mt-6 font-semibold text-foreground">{featured.name}</p>
+              {(featured.title || featured.company) && (
+                <p className="text-sm text-muted-foreground">
+                  {[featured.title, featured.company].filter(Boolean).join(" · ")}
+                </p>
+              )}
+            </motion.div>
+            {rest.length > 0 && (
+              <motion.div
+                className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                initial="hidden"
+                animate="visible"
+                variants={staggerContainer}
+              >
+                {rest.map((testimonial) => (
+                  <motion.div key={testimonial.id} variants={fadeInUp}>
+                    <TestimonialCardTile testimonial={testimonial} />
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </div>
+        ) : (
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+          >
+            {testimonials.map((testimonial) => (
+              <motion.div key={testimonial.id} variants={fadeInUp}>
+                <TestimonialCardTile testimonial={testimonial} />
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
       </Container>
     </section>
   );
@@ -520,17 +842,26 @@ function LandingFAQ({
   const instanceId = useId();
 
   return (
-    <section id="faq" aria-label="Frequently asked questions" className={cn("scroll-mt-16 py-16 md:py-24", className)}>
+    <section id="faq" aria-label="Frequently asked questions" className={cn("scroll-mt-16 py-12 md:py-16", className)}>
       <Container size="normal">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">{title}</h2>
-          <p className="mt-4 text-muted-foreground">{description}</p>
-        </div>
-        <div className="divide-y divide-border rounded-xl border border-border">
+        <SectionHeading eyebrow="FAQ" title={title} description={description} />
+        <motion.div
+          className="space-y-3"
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+        >
           {items.map((item) => {
             const isOpen = openId === item.id;
             return (
-              <div key={item.id}>
+              <motion.div
+                key={item.id}
+                variants={fadeInUp}
+                className={cn(
+                  "rounded-xl border transition-colors",
+                  isOpen ? "border-primary/30 bg-muted/40" : "border-border hover:border-primary/20"
+                )}
+              >
                 <button
                   type="button"
                   id={`faq-trigger-${instanceId}-${item.id}`}
@@ -541,23 +872,33 @@ function LandingFAQ({
                 >
                   <span className="font-medium text-foreground">{item.question}</span>
                   <ChevronDown
-                    className={cn("h-4 w-4 shrink-0 text-muted-foreground transition-transform", isOpen && "rotate-180")}
+                    className={cn("h-4 w-4 shrink-0 text-muted-foreground transition-transform", isOpen && "rotate-180 text-primary")}
                     aria-hidden
                   />
                 </button>
-                <div
+                {/*
+                 * Animated height/opacity instead of the plain `hidden`
+                 * attribute's abrupt jump - still always mounted (aria-hidden
+                 * mirrors what `hidden` used to do for the a11y tree) so
+                 * aria-controls always resolves to a real element and the
+                 * collapse can animate instead of disappearing instantly.
+                 */}
+                <motion.div
                   id={`faq-panel-${instanceId}-${item.id}`}
                   role="region"
                   aria-labelledby={`faq-trigger-${instanceId}-${item.id}`}
-                  hidden={!isOpen}
-                  className="px-5 pb-4 text-sm text-muted-foreground"
+                  aria-hidden={!isOpen}
+                  initial={false}
+                  animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
+                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                  className="overflow-hidden"
                 >
-                  {item.answer}
-                </div>
-              </div>
+                  <div className="px-5 pb-4 text-sm text-muted-foreground">{item.answer}</div>
+                </motion.div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </Container>
     </section>
   );
@@ -584,11 +925,26 @@ function LandingCTA({
   className,
 }: LandingCTAProps) {
   return (
-    <section aria-label="Call to action" className={cn("py-16 md:py-20", className)}>
+    <section aria-label="Call to action" className={cn("py-10 md:py-14", className)}>
       <Container size="normal">
-        <div className="rounded-2xl bg-primary px-6 py-12 sm:px-12 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-primary-foreground">{title}</h2>
-          <p className="mt-3 text-primary-foreground/80 max-w-xl mx-auto">{description}</p>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="relative overflow-hidden rounded-2xl bg-primary px-6 py-12 sm:px-12 text-center"
+        >
+          {/* Decorative blurred blobs, matching the same pattern used by the
+              existing call-to-action section template's "gradient" variant. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -top-16 -left-16 h-56 w-56 rounded-full bg-gradient-to-br from-white/20 to-transparent blur-3xl"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -bottom-16 -right-16 h-56 w-56 rounded-full bg-gradient-to-tl from-white/10 to-transparent blur-3xl"
+          />
+          <h2 className="relative text-2xl md:text-3xl font-bold tracking-tight text-primary-foreground">{title}</h2>
+          <p className="relative mt-3 text-primary-foreground/80 max-w-xl mx-auto">{description}</p>
           {/*
            * variant="secondary" (bg-muted) is designed for the page's neutral
            * background, not a solid bg-primary banner, where it reads as flat/
@@ -598,12 +954,12 @@ function LandingCTA({
           <Button
             variant="default"
             size="lg"
-            className="mt-6 bg-primary-foreground text-primary hover:bg-primary-foreground/90"
+            className="relative mt-6 bg-primary-foreground text-primary hover:bg-primary-foreground/90"
             onClick={onCtaClick}
           >
             {ctaLabel}
           </Button>
-        </div>
+        </motion.div>
       </Container>
     </section>
   );
@@ -636,7 +992,7 @@ function LandingFooter({
   return (
     <footer className={cn("border-t border-border bg-muted/30", className)}>
       <Container size="large">
-        <div className="py-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8">
+        <div className="py-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8">
           <div className="col-span-2 sm:col-span-3 lg:col-span-1">
             <p className="font-bold text-lg text-foreground">{brandName}</p>
             <p className="mt-2 text-sm text-muted-foreground max-w-xs">{description}</p>
@@ -704,9 +1060,16 @@ const DEFAULT_LOGOS: LogoCloudItem[] = [
 ];
 
 const DEFAULT_FEATURES: FeatureItem[] = [
-  { id: "speed", icon: Star, title: "Built for speed", description: "Optimized components with minimal overhead so your app stays fast." },
-  { id: "themeable", icon: Star, title: "Fully themeable", description: "Light and dark mode support out of the box, driven by CSS variables." },
-  { id: "accessible", icon: Star, title: "Accessible by default", description: "Semantic markup and keyboard support across every component." },
+  { id: "speed", icon: Zap, title: "Built for speed", description: "Optimized components with minimal overhead so your app stays fast." },
+  { id: "themeable", icon: Palette, title: "Fully themeable", description: "Light and dark mode support out of the box, driven by CSS variables." },
+  { id: "accessible", icon: ShieldCheck, title: "Accessible by default", description: "Semantic markup and keyboard support across every component." },
+];
+
+/** Panel background colors cycled through by `LandingFeatures`'s "showcase" variant. */
+const SHOWCASE_PALETTE = [
+  "bg-gradient-to-br from-indigo-500 to-blue-600",
+  "bg-gradient-to-br from-fuchsia-500 to-pink-600",
+  "bg-gradient-to-br from-amber-500 to-orange-600",
 ];
 
 // Explicit theme-token colors on every tier - PricingGrid falls back to
@@ -803,6 +1166,7 @@ export interface LandingPageProps {
   onHeroSecondaryCtaClick?: () => void;
   heroMediaSrc?: string;
   heroMediaAlt?: string;
+  heroTone?: "default" | "bold";
 
   /** Logo cloud */
   logoCloudTitle?: string;
@@ -813,6 +1177,7 @@ export interface LandingPageProps {
   featuresTitle?: string;
   featuresDescription?: string;
   features?: FeatureItem[];
+  featuresVariant?: "grid" | "spotlight" | "showcase";
 
   /** Pricing */
   pricingTitle?: string;
@@ -823,6 +1188,7 @@ export interface LandingPageProps {
   /** Testimonials */
   testimonialsTitle?: string;
   testimonials?: TestimonialItem[];
+  testimonialsVariant?: "grid" | "spotlight";
 
   /** FAQ */
   faqTitle?: string;
@@ -865,18 +1231,21 @@ const LandingPage: React.FC<LandingPageProps> = ({
   onHeroSecondaryCtaClick,
   heroMediaSrc,
   heroMediaAlt,
+  heroTone,
   logoCloudTitle,
   logos,
   renderLogo,
   featuresTitle,
   featuresDescription,
   features,
+  featuresVariant,
   pricingTitle,
   pricingDescription,
   pricingTiers,
   onPricingCtaClick,
   testimonialsTitle,
   testimonials,
+  testimonialsVariant,
   faqTitle,
   faqItems,
   ctaTitle,
@@ -909,16 +1278,26 @@ const LandingPage: React.FC<LandingPageProps> = ({
           onSecondaryCtaClick={onHeroSecondaryCtaClick}
           mediaSrc={heroMediaSrc}
           mediaAlt={heroMediaAlt}
+          tone={heroTone}
         />
         <LandingLogoCloud title={logoCloudTitle} logos={logos} renderLogo={renderLogo} />
-        <LandingFeatures title={featuresTitle} description={featuresDescription} features={features} />
+        <LandingFeatures
+          title={featuresTitle}
+          description={featuresDescription}
+          features={features}
+          variant={featuresVariant}
+        />
         <LandingPricing
           title={pricingTitle}
           description={pricingDescription}
           tiers={pricingTiers}
           onCtaClick={onPricingCtaClick}
         />
-        <LandingTestimonials title={testimonialsTitle} testimonials={testimonials} />
+        <LandingTestimonials
+          title={testimonialsTitle}
+          testimonials={testimonials}
+          variant={testimonialsVariant}
+        />
         <LandingFAQ title={faqTitle} items={faqItems} />
         {customCTA ?? (
           <LandingCTA title={ctaTitle} description={ctaDescription} ctaLabel={ctaLabel} onCtaClick={onCtaClick} />

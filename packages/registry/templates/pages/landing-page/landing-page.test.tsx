@@ -29,6 +29,41 @@ import {
 /*                                Mock Ignix UI                               */
 /* -------------------------------------------------------------------------- */
 
+// Real framer-motion still renders actual DOM elements in jsdom, but its
+// motion-only props (initial/animate/whileInView/variants/...) aren't valid
+// HTML attributes - mocking it to a plain tag, stripping those props, keeps
+// tests warning-free and fast, matching how every other external import
+// here is already mocked rather than exercised for real.
+vi.mock("framer-motion", () => {
+  const MOTION_ONLY_PROPS = [
+    "initial", "animate", "exit", "variants", "transition", "viewport",
+    "whileInView", "whileHover", "whileTap", "whileFocus", "whileDrag",
+  ];
+  const stripMotionProps = (props: Record<string, unknown>) => {
+    const rest = { ...props };
+    for (const key of MOTION_ONLY_PROPS) delete rest[key];
+    return rest;
+  };
+  // Cache one component per tag so `motion.div` resolves to the *same*
+  // function reference across renders - a fresh function on every property
+  // access would give React a new component type each render, forcing an
+  // unmount/remount of the whole subtree (and losing DOM node identity)
+  // instead of a normal reconcile.
+  const cache = new Map<string, (props: any) => any>();
+  const motion = new Proxy(
+    {},
+    {
+      get: (_target, tag: string) => {
+        if (!cache.has(tag)) {
+          cache.set(tag, ({ children, ...props }: any) => React.createElement(tag, stripMotionProps(props), children));
+        }
+        return cache.get(tag);
+      },
+    }
+  );
+  return { motion };
+});
+
 vi.mock("@ignix-ui/button", () => ({
   Button: ({ children, onClick, ...props }: any) => (
     <button type="button" onClick={onClick} {...props}>
@@ -57,7 +92,7 @@ vi.mock("@ignix-ui/hero", () => ({
   Hero: ({ children, variant }: any) => <div data-testid="hero" data-variant={variant}>{children}</div>,
   HeroContent: ({ children }: any) => <div data-testid="hero-content">{children}</div>,
   HeroBadge: ({ children }: any) => <span>{children}</span>,
-  HeroHeading: ({ children }: any) => <h1>{children}</h1>,
+  HeroHeading: ({ children, className }: any) => <h1 className={className}>{children}</h1>,
   HeroSubheading: ({ children }: any) => <p>{children}</p>,
   HeroActions: ({ children }: any) => <div>{children}</div>,
   HeroMedia: (props: any) => <img alt={props.alt} src={props.src} />,
@@ -214,6 +249,48 @@ describe("LandingHeader", () => {
     expect(document.getElementById(ids[1]!)).not.toBeNull();
     expect(document.getElementById(ids[0]!)).not.toBe(document.getElementById(ids[1]!));
   });
+
+  it("removes the mobile menu's links and CTA from the tab order while it's closed", () => {
+    // Regression test: the mobile panel used to rely on the native `hidden`
+    // attribute, which removes its contents from the tab order for free.
+    // Switching to an animated height/opacity collapse (so it can transition
+    // instead of vanishing instantly) dropped that side effect - a keyboard
+    // user could still Tab into links/buttons that are visually collapsed
+    // to zero height.
+    render(<LandingHeader navLinks={[{ label: "Pricing", href: "#pricing" }]} />);
+
+    const links = screen.getAllByText("Pricing");
+    const mobileLink = links[links.length - 1];
+    // `hidden: true` opts into matching elements `getByRole` normally
+    // excludes because an ancestor is `aria-hidden="true"` - exactly the
+    // case here while the menu is closed. Without it, this query would only
+    // ever find the (always-visible) desktop CTA button and silently miss
+    // the very element this test needs to check, regardless of the fix.
+    const ctaButtons = screen.getAllByRole("button", { name: "Get Started", hidden: true });
+    const mobileCta = ctaButtons[ctaButtons.length - 1];
+
+    // `getAttribute` (lowercase "tabindex", matching the actual HTML
+    // attribute name) rather than the `.tabIndex` DOM property - jsdom
+    // doesn't reliably reflect a `tabindex="-1"` attribute back through
+    // `HTMLButtonElement.prototype.tabIndex` in this environment.
+    expect(mobileLink.getAttribute("tabindex")).toBe("-1");
+    expect(mobileCta.getAttribute("tabindex")).toBe("-1");
+  });
+
+  it("restores the mobile menu's links and CTA to the tab order once it's open", async () => {
+    const user = userEvent.setup();
+    render(<LandingHeader navLinks={[{ label: "Pricing", href: "#pricing" }]} />);
+
+    await user.click(screen.getByRole("button", { name: /toggle menu/i }));
+
+    const links = screen.getAllByText("Pricing");
+    const mobileLink = links[links.length - 1];
+    const ctaButtons = screen.getAllByRole("button", { name: "Get Started" });
+    const mobileCta = ctaButtons[ctaButtons.length - 1];
+
+    expect(mobileLink.getAttribute("tabindex")).toBeNull();
+    expect(mobileCta.getAttribute("tabindex")).toBeNull();
+  });
 });
 
 describe("LandingLogoCloud", () => {
@@ -239,6 +316,31 @@ describe("LandingFeatures", () => {
     render(<LandingFeatures features={features} />);
     expect(screen.getByText("Feature one")).toBeInTheDocument();
     expect(screen.getByText("Feature two")).toBeInTheDocument();
+  });
+
+  it("defaults to the grid layout", () => {
+    const { container } = render(<LandingFeatures features={features} />);
+    expect(container.querySelector(".grid.grid-cols-1")).not.toBeNull();
+    expect(container.querySelector(".divide-y")).toBeNull();
+  });
+
+  it("renders an alternating spotlight layout when variant is \"spotlight\"", () => {
+    const { container } = render(<LandingFeatures features={features} variant="spotlight" />);
+    expect(container.querySelector(".divide-y")).not.toBeNull();
+    expect(screen.getByText("Feature one")).toBeInTheDocument();
+    expect(screen.getByText("Feature two")).toBeInTheDocument();
+  });
+
+  it("renders alternating showcase panels when variant is \"showcase\"", () => {
+    const { container } = render(<LandingFeatures features={features} variant="showcase" />);
+    // showcase renders neither the grid's card layout nor spotlight's divide-y rows.
+    expect(container.querySelector(".grid.grid-cols-1.gap-6")).toBeNull();
+    expect(container.querySelector(".divide-y")).toBeNull();
+    expect(screen.getByText("Feature one")).toBeInTheDocument();
+    expect(screen.getByText("Feature two")).toBeInTheDocument();
+    // second panel (index 1) should be reordered before its text column.
+    const secondPanelText = screen.getByText("Feature two").closest("div");
+    expect(secondPanelText).toHaveClass("lg:order-2");
   });
 });
 
@@ -271,6 +373,31 @@ describe("LandingHero", () => {
     expect(screen.getByTestId("hero")).toHaveAttribute("data-variant", "dark");
   });
 
+  it("ignores prefers-color-scheme and stays variant=\"default\" without an explicit .dark class", async () => {
+    // Regression test: ignix.css's --background/--primary/etc. tokens are
+    // only ever flipped by an explicit .dark class or data-theme="dark" -
+    // never by the OS/browser color-scheme preference. A viewer with OS
+    // dark mode enabled but no .dark class present (e.g. a default
+    // Storybook page) previously got variant="dark" - white heading text -
+    // rendered over the still-light background, making it unreadable.
+    const originalMatchMedia = window.matchMedia;
+    window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+      matches: true, // simulates an OS/browser set to prefers-color-scheme: dark
+      media: query,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    })) as unknown as typeof window.matchMedia;
+
+    try {
+      await act(async () => {
+        render(<LandingHero />);
+      });
+      expect(screen.getByTestId("hero")).toHaveAttribute("data-variant", "default");
+    } finally {
+      window.matchMedia = originalMatchMedia;
+    }
+  });
+
   it("nests HeroMedia inside HeroContent instead of as its sibling", () => {
     // Hero treats any HeroMedia that is a *direct* child of <Hero> as
     // full-bleed background media, regardless of `position` - only media
@@ -284,6 +411,25 @@ describe("LandingHero", () => {
   it("does not render HeroMedia when no mediaSrc is provided", () => {
     render(<LandingHero />);
     expect(screen.queryByRole("img")).not.toBeInTheDocument();
+  });
+
+  it("forces the dark variant for tone=\"bold\" even in light mode", async () => {
+    await act(async () => {
+      render(<LandingHero tone="bold" />);
+    });
+    expect(screen.getByTestId("hero")).toHaveAttribute("data-variant", "dark");
+  });
+
+  it("applies uppercase/font-black styling to the heading for tone=\"bold\"", async () => {
+    await act(async () => {
+      render(<LandingHero tone="bold" headline="Bold headline" />);
+    });
+    expect(screen.getByText("Bold headline")).toHaveClass("uppercase", "font-black");
+  });
+
+  it("does not apply bold styling to the heading for the default tone", () => {
+    render(<LandingHero headline="Plain headline" />);
+    expect(screen.getByText("Plain headline")).not.toHaveClass("uppercase");
   });
 });
 
@@ -336,6 +482,16 @@ describe("LandingTestimonials", () => {
     expect(screen.getByText("Jordan")).toBeInTheDocument();
     expect(screen.queryByText(/·/)).not.toBeInTheDocument();
   });
+
+  it("features the first testimonial and renders the rest as cards when variant is \"spotlight\"", () => {
+    render(<LandingTestimonials testimonials={testimonials} variant="spotlight" />);
+    // The featured testimonial (Alex Doe / "Great product") is rendered as
+    // plain markup, not through TestimonialCard, so only the remaining item
+    // (Sam Lee / "Love it") should show up as a mocked testimonial-card.
+    expect(screen.getAllByTestId("testimonial-card")).toHaveLength(1);
+    expect(screen.getByText(/Great product/)).toBeInTheDocument();
+    expect(screen.getByText("Sam Lee")).toBeInTheDocument();
+  });
 });
 
 describe("LandingFAQ", () => {
@@ -356,7 +512,7 @@ describe("LandingFAQ", () => {
     expect(firstTrigger).toHaveAttribute("aria-expanded", "false");
   });
 
-  it("keeps every panel in the DOM (hidden, not unmounted) so aria-controls always resolves", async () => {
+  it("keeps every panel in the DOM (aria-hidden, not unmounted) so aria-controls always resolves", async () => {
     const user = userEvent.setup();
     render(<LandingFAQ items={faqItems} />);
 
@@ -365,15 +521,17 @@ describe("LandingFAQ", () => {
     const firstPanelId = firstTrigger.getAttribute("aria-controls")!;
     const secondPanelId = secondTrigger.getAttribute("aria-controls")!;
 
-    // aria-controls must reference an element that actually exists, open or not.
+    // aria-controls must reference an element that actually exists, open or
+    // not - it stays mounted and animates height/opacity instead of using
+    // the plain `hidden` attribute, so a screen reader gets aria-hidden.
     expect(document.getElementById(firstPanelId)).not.toBeNull();
     expect(document.getElementById(secondPanelId)).not.toBeNull();
-    expect(document.getElementById(firstPanelId)).not.toHaveAttribute("hidden");
-    expect(document.getElementById(secondPanelId)).toHaveAttribute("hidden");
+    expect(document.getElementById(firstPanelId)).toHaveAttribute("aria-hidden", "false");
+    expect(document.getElementById(secondPanelId)).toHaveAttribute("aria-hidden", "true");
 
     await user.click(secondTrigger);
-    expect(document.getElementById(firstPanelId)).toHaveAttribute("hidden");
-    expect(document.getElementById(secondPanelId)).not.toHaveAttribute("hidden");
+    expect(document.getElementById(firstPanelId)).toHaveAttribute("aria-hidden", "true");
+    expect(document.getElementById(secondPanelId)).toHaveAttribute("aria-hidden", "false");
   });
 
   it("uses unique trigger/panel ids per instance so two FAQs on one page don't collide", () => {

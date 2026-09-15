@@ -77,6 +77,25 @@ export const CustomCTASlot: Story = {
   ),
 };
 
+export const Bold: Story = {
+  name: "Bold (dark hero + showcase features)",
+  render: () => (
+    <LandingPage
+      heroTone="bold"
+      heroEyebrow="Now in public beta"
+      heroHeadline="Newsletters. Products. One platform."
+      heroSubheadline="The all-in-one toolkit for shipping, growing, and monetizing your SaaS - start in seconds."
+      featuresVariant="showcase"
+      testimonialsVariant="spotlight"
+    />
+  ),
+};
+
+export const Editorial: Story = {
+  name: "Editorial (spotlight features + testimonials)",
+  render: () => <LandingPage featuresVariant="spotlight" testimonialsVariant="spotlight" />,
+};
+
 export const Composable: Story = {
   name: "Composable (hand-assembled)",
   render: () => (
