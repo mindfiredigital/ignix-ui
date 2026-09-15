@@ -33,6 +33,8 @@ const sidebars: SidebarsConfig = {
           label: 'Data Display',
           items: [
             'components/accordion',
+            'components/animated-bar-chart',
+            'components/animated-pie-chart',
             'components/badge',
             'components/breadcrumbs',
             'components/card',
