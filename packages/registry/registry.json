@@ -2125,7 +2125,34 @@
           "type": "component"
         }
       }
+    },
+    "animated-bar-chart": {
+      "name": "AnimatedBarChart",
+      "description": "An animated, responsive SVG bar chart with staggered entrance animations, hover effects, grouped multi-series mode, value labels, and four theme variants.",
+      "dependencies": [
+        "framer-motion",
+        "class-variance-authority"
+      ],
+      "files": {
+        "main": {
+          "path": "components/animated-bar-chart/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "animated-pie-chart": {
+      "name": "AnimatedPieChart",
+      "description": "An animated SVG pie and donut chart with spring-animated slices, hover effects, percentage labels, interactive legend, donut center labels, and four theme variants.",
+      "dependencies": [
+        "framer-motion",
+        "class-variance-authority"
+      ],
+      "files": {
+        "main": {
+          "path": "components/animated-pie-chart/index.tsx",
+          "type": "component"
+        }
+      }
     }
-
   }
 }
