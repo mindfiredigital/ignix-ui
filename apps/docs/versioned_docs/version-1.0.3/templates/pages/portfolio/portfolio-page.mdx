@@ -1,0 +1,198 @@
+---
+sidebar_position: 1
+title: Portfolio Page
+description: A production-ready personal portfolio and project-showcase page composed of header, hero, about, skills, project gallery, experience timeline, testimonials, stats, and contact sections - responsive, accessible, and themeable out of the box.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import PortfolioPageDemo from '@site/src/components/Demo/PortfolioPageDemo';
+
+**Portfolio Page** is a complete personal portfolio/showcase page template composed from Ignix UI components - reusing `Hero`, `Avatar`, `Badge`, `ImageCard`, `TestimonialCard`, and `Navbar` for sections that already exist in the registry, and hand-rolling the ones that don't (header composition, about, skills, project gallery arrangement, experience timeline, stats, contact banner, and footer).
+
+Features:
+- **Header** with name/logo, nav links, CTA button, and an accessible mobile menu
+- **Hero** section built from `@ignix-ui/hero`'s composable parts, with an `Avatar` portrait and social links
+- **About** section with a bio and a row of "quick facts" (location, availability, experience)
+- **Skills** grouped by category, rendered as `@ignix-ui/badge` pills
+- **Project gallery** of `@ignix-ui/image-card` instances, in a `"grid"` or `"masonry"` layout
+- **Experience** timeline (roles, companies, periods, achievements)
+- **Testimonials** wall of `@ignix-ui/testimonial-card` instances
+- **Stats** row of achievement numbers - fully optional, renders nothing when empty
+- **Contact CTA banner**, fully replaceable via a custom slot
+- **Footer** with link groups, social icons, and copyright
+- Fully responsive, light/dark theme aware, and semantic (`<header>`/`<main>`/`<footer>` landmarks, one `<h1>` per page)
+- Every section is individually exported for hand-assembly into a custom layout
+
+<PortfolioPageDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component portfolio-page
+    ```
+  </TabItem>
+  <TabItem value="manual" label="Manual" className="max-h-[500px] overflow-y-auto">
+    Install the template and use the same **composable API** shown in the demo.
+    Import `PortfolioPage` (or the individual section components) from your design system - or copy the implementation from `apps/docs/src/components/UI/portfolio-page` - and wire it up with your own copy and data.
+  </TabItem>
+</Tabs>
+
+## Usage
+
+### Basic usage
+
+```tsx
+import { PortfolioPage } from "@ignix-ui/portfolio-page";
+
+export function Portfolio() {
+  return <PortfolioPage />;
+}
+```
+
+### With custom copy and callbacks
+
+```tsx
+import { PortfolioPage } from "@ignix-ui/portfolio-page";
+
+export function Portfolio() {
+  return (
+    <PortfolioPage
+      brandName="Jordan Kim"
+      heroEyebrow="Available for freelance"
+      heroHeadline="I design and build thoughtful products"
+      heroSubheadline="Full-stack product designer with 8 years of experience helping startups ship faster."
+      heroPrimaryCtaLabel="See my work"
+      onHeroPrimaryCtaClick={() => console.log("Primary CTA")}
+      onCtaClick={() => console.log("Contact CTA")}
+    />
+  );
+}
+```
+
+### Masonry project gallery
+
+```tsx
+<PortfolioPage projectsVariant="masonry" />
+```
+
+### Bold hero tone
+
+`heroTone="bold"` gives the hero a dramatic, always-dark treatment, independent of the site's own light/dark theme toggle:
+
+```tsx
+<PortfolioPage heroTone="bold" />
+```
+
+### Omitting the stats section
+
+`PortfolioStats` renders nothing when `stats` is an empty array:
+
+```tsx
+<PortfolioPage stats={[]} />
+```
+
+### Replacing the contact CTA entirely
+
+```tsx
+<PortfolioPage
+  customCTA={
+    <section className="py-16 text-center bg-muted">
+      <p className="text-2xl font-bold">Your own fully custom contact section</p>
+    </section>
+  }
+/>
+```
+
+### Composable API
+
+Every section is exported individually, so you can hand-assemble your own layout instead of using `PortfolioPage`:
+
+```tsx
+import {
+  PortfolioHeader,
+  PortfolioHero,
+  PortfolioAbout,
+  PortfolioSkills,
+  PortfolioProjects,
+  PortfolioExperience,
+  PortfolioTestimonials,
+  PortfolioStats,
+  PortfolioContactCTA,
+  PortfolioFooter,
+} from "@ignix-ui/portfolio-page";
+
+export function CustomPortfolio() {
+  return (
+    <div>
+      <PortfolioHeader brandName="Jordan Kim" />
+      <main>
+        <PortfolioHero headline="Build faster with Jordan" />
+        <PortfolioProjects />
+        <PortfolioExperience />
+      </main>
+      <PortfolioFooter />
+    </div>
+  );
+}
+```
+
+## Props
+
+### PortfolioPage
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `logo` | `ReactNode` | `-` | Replaces the default text logo in the header. |
+| `brandName` | `string` | `"Alex Rivera"` | Text logo fallback, footer brand name, and default hero name. |
+| `navLinks` | `NavLink[]` | 5 example links | Header navigation links. |
+| `headerCtaLabel` | `string` | `"Get in touch"` | Header CTA button label. |
+| `onHeaderCtaClick` | `() => void` | `-` | Called when the header CTA is clicked. |
+| `heroEyebrow` | `string` | `-` | Optional badge text above the hero headline. |
+| `heroHeadline` / `heroSubheadline` | `ReactNode` | example copy | Hero headline/subheadline. |
+| `heroAvatarSrc` / `heroAvatarAlt` | `string` | `-` / `"Profile photo"` | Hero portrait - falls back to `Avatar`'s built-in icon fallback when omitted. |
+| `heroPrimaryCtaLabel` / `onHeroPrimaryCtaClick` | `string` / `() => void` | `"View my work"` | Hero primary CTA. |
+| `heroSecondaryCtaLabel` / `onHeroSecondaryCtaClick` | `string` / `() => void` | `"Get in touch"` | Hero secondary CTA. |
+| `heroSocialLinks` | `SocialLink[]` | 4 example links | Social icon row under the hero CTAs. |
+| `heroTone` | `"default" \| "bold"` | `"default"` | `"bold"` forces an always-dark, uppercase-headline hero, independent of site theme. |
+| `aboutTitle` / `aboutBio` | `string` / `ReactNode` | example copy | About section heading/bio. |
+| `aboutFacts` | `AboutFact[]` | 3 example facts | "Quick facts" row (`{ id, icon, label, value }`). |
+| `skillsTitle` / `skillsDescription` | `string` | example copy | Skills section heading. |
+| `skillGroups` | `SkillGroup[]` | 3 example groups | Skill categories (`{ id, title, skills: string[] }`). |
+| `projectsTitle` / `projectsDescription` | `string` | example copy | Projects section heading. |
+| `projects` | `ProjectItem[]` | 4 example projects | Project gallery items. |
+| `projectsVariant` | `"grid" \| "masonry"` | `"grid"` | Gallery arrangement. |
+| `experienceTitle` / `experienceDescription` | `string` | example copy | Experience section heading. |
+| `experienceItems` | `ExperienceItem[]` | 3 example entries | Timeline entries. |
+| `testimonialsTitle` / `testimonialsDescription` | `string` | example copy | Testimonials section heading. |
+| `testimonials` | `TestimonialItem[]` | 3 example testimonials | Rendered as a grid of `TestimonialCard`s. |
+| `statsTitle` | `string` | example copy | Stats section heading. |
+| `stats` | `StatItem[]` | 4 example stats | Achievement tiles. Section renders nothing when empty. |
+| `ctaTitle` / `ctaDescription` / `ctaLabel` / `onCtaClick` | - | example copy | Default contact CTA banner content. |
+| `customCTA` | `ReactNode` | `-` | Replaces the entire contact CTA section when provided. |
+| `footerLinkGroups` | `FooterLinkGroup[]` | 2 example groups | Footer link columns. |
+| `footerSocialLinks` | `SocialLink[]` | 4 example links | Footer social icon links. |
+| `copyrightText` | `string` | computed (`© {year} {brandName}. All rights reserved.`) | Footer copyright line. |
+| `className` | `string` | `-` | Optional root wrapper class. |
+
+### Data types
+
+| Type | Shape | Description |
+| --- | --- | --- |
+| `NavLink` | `{ label, href }` | Header navigation link. |
+| `SocialLink` | `{ id, icon: LucideIcon, href, label }` | Social icon link (hero and footer). |
+| `AboutFact` | `{ id, icon: LucideIcon, label, value }` | "Quick facts" tile in the About section. |
+| `SkillGroup` | `{ id, title, skills: string[] }` | A category of skill tags. |
+| `ProjectItem` | `{ id, title, description, image?, category?, links?: CardLink[] }` | Project gallery card - maps onto `ImageCard`'s props. |
+| `ExperienceItem` | `{ id, role, company, period, description?, current?, achievements?: string[] }` | Experience timeline entry. |
+| `TestimonialItem` | `{ id, quote, name, title?, company?, rating? }` | Testimonial card content. |
+| `StatItem` | `{ id, value, label }` | Achievement tile in the Stats section. |
+| `FooterLinkGroup` | `{ id, title, links: { label, href }[] }` | Footer link column. |
+
+## Notes
+
+- Every section (`PortfolioHeader`, `PortfolioHero`, `PortfolioAbout`, `PortfolioSkills`, `PortfolioProjects`, `PortfolioExperience`, `PortfolioTestimonials`, `PortfolioStats`, `PortfolioContactCTA`, `PortfolioFooter`) is also exported individually, so you can hand-assemble a custom page layout instead of using `PortfolioPage` - see the Storybook "Composable" story.
+- Heading hierarchy is deliberate: `Hero` renders the page's only `<h1>`; every other section title is an `<h2>`, and card-level titles (project cards, experience roles, skill group names) are `<h3>`.
+- The header, hero, about, skills, project gallery arrangement, experience timeline, stats, contact banner, and footer are hand-rolled directly in this template (no separate registry entries), since no reusable primitives existed for them at the time this template was built. The avatar, badge, image card, and testimonial-card pieces reuse the existing `@ignix-ui/avatar`, `@ignix-ui/badge`, `@ignix-ui/image-card`, and `@ignix-ui/testimonial-card` components.
