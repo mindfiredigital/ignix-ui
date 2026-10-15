@@ -4,6 +4,18 @@
 
 @import 'tailwindcss';
 
+/*
+ * Tailwind v4's built-in `dark:` variant defaults to
+ * `@media (prefers-color-scheme: dark)` unless overridden - but every
+ * Ignix UI component drives dark mode off an explicit `.dark` class or
+ * `data-theme="dark"` attribute (see the block below), never off the
+ * OS/browser color-scheme preference. Without this override, any component
+ * using a `dark:` utility reads with the wrong contrast for any viewer
+ * whose OS prefers dark mode, even when the app itself is still rendering
+ * light (no `.dark` class/attribute present).
+ */
+@custom-variant dark (&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *));
+
 :root {
   --radius: 0.625rem;
 
