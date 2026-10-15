@@ -1490,6 +1490,29 @@
         }
       }
     },
+    "landing-page": {
+      "name": "landing-page",
+      "description": "A production-ready marketing/SaaS landing page composed of header, hero, logo cloud, features, pricing, testimonials, FAQ, CTA, and footer sections.",
+      "dependencies": [
+        "lucide-react",
+        "framer-motion"
+      ],
+      "componentDependencies": [
+        "navbar",
+        "hero",
+        "pricingGrid",
+        "testimonialCard",
+        "button",
+        "card",
+        "container"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/landing-page/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "dashboard-shortcuts-page": {
       "name": "dashboard-shortcuts-page",
       "description": "A composable dashboard shortcuts template with large action buttons, icon-backed shortcut grid, keyboard hints, and persisted drag-and-drop customization.",
@@ -2155,7 +2178,34 @@
           "type": "component"
         }
       }
+    },
+    "animated-bar-chart": {
+      "name": "AnimatedBarChart",
+      "description": "An animated, responsive SVG bar chart with staggered entrance animations, hover effects, grouped multi-series mode, value labels, and four theme variants.",
+      "dependencies": [
+        "framer-motion",
+        "class-variance-authority"
+      ],
+      "files": {
+        "main": {
+          "path": "components/animated-bar-chart/index.tsx",
+          "type": "component"
+        }
+      }
+    },
+    "animated-pie-chart": {
+      "name": "AnimatedPieChart",
+      "description": "An animated SVG pie and donut chart with spring-animated slices, hover effects, percentage labels, interactive legend, donut center labels, and four theme variants.",
+      "dependencies": [
+        "framer-motion",
+        "class-variance-authority"
+      ],
+      "files": {
+        "main": {
+          "path": "components/animated-pie-chart/index.tsx",
+          "type": "component"
+        }
+      }
     }
-
   }
 }

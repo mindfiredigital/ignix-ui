@@ -338,7 +338,7 @@ HeroContent.displayName = "HeroContent";
 export const HeroHeading = React.forwardRef<
   HTMLHeadingElement,
   HeroHeadingProps
->(({ children, className }) => {
+>(({ children, className }, ref) => {
   const { textColor, align, getAnimationProps } = useHeroContext();
 
   // Check if children contain gradient text pattern
@@ -347,6 +347,7 @@ export const HeroHeading = React.forwardRef<
 
   const content = (
     <Typography
+      ref={ref}
       className={cn("font-bold tracking-tight text-white text-4xl sm:text-5xl md:text-3xl lg:text-6xl",
         !hasGradientText && textColor,
         className,
@@ -365,11 +366,12 @@ HeroHeading.displayName = "HeroHeading";
 export const HeroSubheading = React.forwardRef<
   HTMLParagraphElement,
   HeroHeadingProps
->(({ children, className }) => {
+>(({ children, className }, ref) => {
   const { subheadingColor, align, getAnimationProps } = useHeroContext();
 
   const content = (
     <Typography
+      ref={ref}
       variant="lead"
       className={cn("text-lg sm:text-xl md:text-2xl m-2",
         subheadingColor,
@@ -460,7 +462,7 @@ export const HeroMedia = React.forwardRef<HTMLImageElement | HTMLVideoElement, H
     const isImageFile = !isVideoFile;
 
     // Video/GIF state management
-    const internalVideoRef = React.useRef<HTMLVideoElement>(null);
+    const internalVideoRef = React.useRef<HTMLVideoElement | null>(null);
     const imageRef = React.useRef<HTMLImageElement>(null);
     const [isVideoPlaying, setIsVideoPlaying] = React.useState<boolean>(true);
     const [hasError, setHasError] = React.useState<boolean>(false);
