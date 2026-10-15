@@ -1,0 +1,182 @@
+---
+sidebar_position: 1
+title: Landing Page
+description: A production-ready marketing/SaaS landing page composed of header, hero, logo cloud, features, pricing, testimonials, FAQ, CTA, and footer sections - responsive, accessible, and themeable out of the box.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import LandingPageDemo from '@site/src/components/Demo/LandingPageDemo';
+
+**Landing Page** is a complete marketing/SaaS landing page template composed from Ignix UI components - reusing `Hero`, `PricingGrid`, `TestimonialCard`, and `Navbar` for sections that already exist in the registry, and hand-rolling the ones that don't (header composition, logo cloud, feature grid, testimonial wall, FAQ accordion, CTA banner, and footer).
+
+Features:
+- **Header** with logo, nav links, CTA button, and an accessible mobile menu
+- **Hero** section built from `@ignix-ui/hero`'s composable parts
+- **Logo cloud** ("trusted by") strip with a custom logo renderer slot
+- **Feature grid** of icon + title + description cards
+- **Pricing** section wrapping `@ignix-ui/pricing-grid`
+- **Testimonials** wall of `@ignix-ui/testimonial-card` instances
+- **FAQ** accordion (single-open) with keyboard-accessible triggers
+- **CTA banner**, fully replaceable via a custom slot
+- **Footer** with link groups, social icons, and copyright
+- Fully responsive, light/dark theme aware, and semantic (`<header>`/`<main>`/`<footer>` landmarks, one `<h1>` per page)
+- Every section is individually exported for hand-assembly into a custom layout
+
+<LandingPageDemo />
+
+## Installation
+
+<Tabs>
+  <TabItem value="cli" label="CLI" default>
+    ```bash
+    ignix add component landing-page
+    ```
+  </TabItem>
+  <TabItem value="manual" label="Manual" className="max-h-[500px] overflow-y-auto">
+    Install the template and use the same **composable API** shown in the demo.
+    Import `LandingPage` (or the individual section components) from your design system - or copy the implementation from `apps/docs/src/components/UI/landing-page` - and wire it up with your own copy and data.
+  </TabItem>
+</Tabs>
+
+## Usage
+
+### Basic usage
+
+```tsx
+import { LandingPage } from "@ignix-ui/landing-page";
+
+export function Marketing() {
+  return <LandingPage />;
+}
+```
+
+### With custom copy and callbacks
+
+```tsx
+import { LandingPage } from "@ignix-ui/landing-page";
+
+export function Marketing() {
+  return (
+    <LandingPage
+      brandName="Nova"
+      heroEyebrow="Now in public beta"
+      heroHeadline="The fastest way to launch your SaaS"
+      heroSubheadline="Everything you need to go from idea to production in days, not months."
+      heroPrimaryCtaLabel="Start building"
+      onHeroPrimaryCtaClick={() => console.log("Primary CTA")}
+      onPricingCtaClick={(tier, billing) => console.log("Selected", tier.name, billing)}
+    />
+  );
+}
+```
+
+### Custom logo cloud renderer
+
+Real client/partner logos are almost always brand SVGs or images, not plain text - use `renderLogo` to control exactly how each logo renders:
+
+```tsx
+<LandingPage
+  logos={[{ id: "acme", name: "Acme Corp" }]}
+  renderLogo={(logo) => <img key={logo.id} src={`/logos/${logo.id}.svg`} alt={logo.name} />}
+/>
+```
+
+### Replacing the CTA section entirely
+
+```tsx
+<LandingPage
+  customCTA={
+    <section className="py-16 text-center bg-muted">
+      <p className="text-2xl font-bold">Your own fully custom CTA section</p>
+    </section>
+  }
+/>
+```
+
+### Composable API
+
+Every section is exported individually, so you can hand-assemble your own layout instead of using `LandingPage`:
+
+```tsx
+import {
+  LandingHeader,
+  LandingHero,
+  LandingLogoCloud,
+  LandingFeatures,
+  LandingPricing,
+  LandingTestimonials,
+  LandingFAQ,
+  LandingCTA,
+  LandingFooter,
+} from "@ignix-ui/landing-page";
+
+export function CustomLanding() {
+  return (
+    <div>
+      <LandingHeader brandName="Nova" />
+      <main>
+        <LandingHero headline="Build faster with Nova" />
+        <LandingFeatures />
+        <LandingPricing />
+        <LandingFAQ />
+      </main>
+      <LandingFooter />
+    </div>
+  );
+}
+```
+
+## Props
+
+### LandingPage
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `logo` | `ReactNode` | `-` | Replaces the default text logo in the header. |
+| `brandName` | `string` | `"Ignix"` | Text logo fallback and footer brand name. |
+| `navLinks` | `NavLink[]` | 4 example links | Header navigation links. |
+| `headerCtaLabel` | `string` | `"Get Started"` | Header CTA button label. |
+| `onHeaderCtaClick` | `() => void` | `-` | Called when the header CTA is clicked. |
+| `heroEyebrow` | `string` | `-` | Optional badge text above the hero headline. |
+| `heroHeadline` | `ReactNode` | example copy | Hero headline. |
+| `heroSubheadline` | `ReactNode` | example copy | Hero subheadline. |
+| `heroPrimaryCtaLabel` / `onHeroPrimaryCtaClick` | `string` / `() => void` | `"Start free trial"` | Hero primary CTA. |
+| `heroSecondaryCtaLabel` / `onHeroSecondaryCtaClick` | `string` / `() => void` | `"View demo"` | Hero secondary CTA. |
+| `heroMediaSrc` | `string` | `-` | Optional hero image/video - switches the hero to a split layout when provided. |
+| `logoCloudTitle` | `string` | `"Trusted by teams at"` | Logo cloud section title. |
+| `logos` | `LogoCloudItem[]` | 5 example logos | Logos to render. Section renders nothing when empty. |
+| `renderLogo` | `(logo: LogoCloudItem) => ReactNode` | `-` | Custom per-logo renderer (recommended for real brand logos). |
+| `featuresTitle` / `featuresDescription` | `string` | example copy | Features section heading. |
+| `features` | `FeatureItem[]` | 3 example features | Feature grid items (`{ id, icon, title, description }`). |
+| `pricingTitle` / `pricingDescription` | `string` | example copy | Pricing section heading. |
+| `pricingTiers` | `PricingTier[]` | 3 example tiers | Passed through to `@ignix-ui/pricing-grid`. |
+| `onPricingCtaClick` | `(tier, billing) => void` | `-` | Called when a pricing tier's CTA is clicked. |
+| `testimonialsTitle` | `string` | example copy | Testimonials section heading. |
+| `testimonials` | `TestimonialItem[]` | 3 example testimonials | Rendered as a grid of `TestimonialCard`s. |
+| `faqTitle` | `string` | example copy | FAQ section heading. |
+| `faqItems` | `FAQItem[]` | 3 example items | FAQ accordion items (`{ id, question, answer }`). |
+| `ctaTitle` / `ctaDescription` / `ctaLabel` / `onCtaClick` | - | example copy | Default CTA banner content. |
+| `customCTA` | `ReactNode` | `-` | Replaces the entire CTA section when provided. |
+| `footerLinkGroups` | `FooterLinkGroup[]` | 3 example groups | Footer link columns. |
+| `footerSocialLinks` | `SocialLink[]` | `[]` | Footer social icon links. |
+| `copyrightText` | `string` | computed (`© {year} {brandName}. All rights reserved.`) | Footer copyright line. |
+| `className` | `string` | `-` | Optional root wrapper class. |
+
+### Data types
+
+| Type | Shape | Description |
+| --- | --- | --- |
+| `NavLink` | `{ label, href }` | Header/footer navigation link. |
+| `LogoCloudItem` | `{ id, name, logo? }` | Logo cloud entry - `logo` overrides the text fallback for a single item. |
+| `FeatureItem` | `{ id, icon: LucideIcon, title, description }` | Feature grid card. |
+| `TestimonialItem` | `{ id, quote, name, title?, company?, rating? }` | Testimonial card content. |
+| `FAQItem` | `{ id, question, answer }` | FAQ accordion entry. |
+| `FooterLinkGroup` | `{ id, title, links: { label, href }[] }` | Footer link column. |
+| `SocialLink` | `{ id, icon: LucideIcon, href, label }` | Footer social icon link. |
+
+## Notes
+
+- Every section (`LandingHeader`, `LandingHero`, `LandingLogoCloud`, `LandingFeatures`, `LandingPricing`, `LandingTestimonials`, `LandingFAQ`, `LandingCTA`, `LandingFooter`) is also exported individually, so you can hand-assemble a custom page layout instead of using `LandingPage` - see the Storybook "Composable" story.
+- Heading hierarchy is deliberate: `Hero` renders the page's only `<h1>`; every other section title is an `<h2>`, and card-level titles (feature cards) are `<h3>`.
+- The header, hero, logo cloud, features, testimonials, and FAQ sections are hand-rolled directly in this template (no separate registry entries), since no reusable primitives existed for them at the time this template was built. The pricing and testimonial-card pieces reuse the existing `@ignix-ui/pricing-grid` and `@ignix-ui/testimonial-card` components.

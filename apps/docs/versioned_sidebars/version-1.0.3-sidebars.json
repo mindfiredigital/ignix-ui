@@ -70,6 +70,8 @@
           "label": "Data Display",
           "items": [
             "components/accordion",
+            "components/animated-bar-chart",
+            "components/animated-pie-chart",
             "components/avatar",
             "components/badge",
             "components/card",
@@ -298,6 +300,13 @@
                 "templates/pages/data-management/kanban-board-page",
                 "templates/pages/data-management/data-table",
                 "templates/pages/data-management/timeline-view"
+              ]
+            },
+            {
+              "type": "category",
+              "label": "Marketing",
+              "items": [
+                "templates/pages/marketing/landing-page"
               ]
             },
             {
