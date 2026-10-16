@@ -1513,6 +1513,31 @@
         }
       }
     },
+    "portfolio-page": {
+      "name": "portfolio-page",
+      "description": "A personal portfolio and project-showcase page composed of hero, about, skills, project gallery, experience timeline, testimonials, stats, and contact sections.",
+      "dependencies": [
+        "lucide-react",
+        "framer-motion"
+      ],
+      "componentDependencies": [
+        "navbar",
+        "hero",
+        "avatar",
+        "badge",
+        "testimonialCard",
+        "imageCard",
+        "button",
+        "card",
+        "container"
+      ],
+      "files": {
+        "main": {
+          "path": "templates/pages/portfolio-page/index.tsx",
+          "type": "template"
+        }
+      }
+    },
     "dashboard-shortcuts-page": {
       "name": "dashboard-shortcuts-page",
       "description": "A composable dashboard shortcuts template with large action buttons, icon-backed shortcut grid, keyboard hints, and persisted drag-and-drop customization.",

@@ -308,6 +308,13 @@
               "items": [
                 "templates/pages/marketing/landing-page"
               ]
+            },
+            {
+              "type": "category",
+              "label": "Portfolio",
+              "items": [
+                "templates/pages/portfolio/portfolio-page"
+              ]
             }
           ]
         },
