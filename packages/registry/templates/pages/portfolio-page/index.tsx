@@ -1167,6 +1167,7 @@ export interface PortfolioPageProps {
   customCTA?: React.ReactNode;
 
   /** Footer */
+  footerDescription?: string;
   footerLinkGroups?: FooterLinkGroup[];
   footerSocialLinks?: SocialLink[];
   copyrightText?: string;
@@ -1220,6 +1221,7 @@ const PortfolioPage: React.FC<PortfolioPageProps> = ({
   ctaLabel,
   onCtaClick,
   customCTA,
+  footerDescription,
   footerLinkGroups,
   footerSocialLinks,
   copyrightText,
@@ -1269,6 +1271,7 @@ const PortfolioPage: React.FC<PortfolioPageProps> = ({
       </main>
       <PortfolioFooter
         brandName={brandName}
+        description={footerDescription}
         linkGroups={footerLinkGroups}
         socialLinks={footerSocialLinks}
         copyrightText={copyrightText}

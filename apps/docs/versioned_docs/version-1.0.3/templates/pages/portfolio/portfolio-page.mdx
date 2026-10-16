@@ -146,7 +146,7 @@ export function CustomPortfolio() {
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
 | `logo` | `ReactNode` | `-` | Replaces the default text logo in the header. |
-| `brandName` | `string` | `"Alex Rivera"` | Text logo fallback, footer brand name, and default hero name. |
+| `brandName` | `string` | `"Alex Rivera"` | Text logo fallback in the header, and the brand name (and default copyright text) in the footer. It does not change the hero headline - set `heroHeadline` separately. |
 | `navLinks` | `NavLink[]` | 5 example links | Header navigation links. |
 | `headerCtaLabel` | `string` | `"Get in touch"` | Header CTA button label. |
 | `onHeaderCtaClick` | `() => void` | `-` | Called when the header CTA is clicked. |
@@ -172,6 +172,7 @@ export function CustomPortfolio() {
 | `stats` | `StatItem[]` | 4 example stats | Achievement tiles. Section renders nothing when empty. |
 | `ctaTitle` / `ctaDescription` / `ctaLabel` / `onCtaClick` | - | example copy | Default contact CTA banner content. |
 | `customCTA` | `ReactNode` | `-` | Replaces the entire contact CTA section when provided. |
+| `footerDescription` | `string` | `"Product designer and frontend engineer."` | Short tagline under the brand name in the footer. |
 | `footerLinkGroups` | `FooterLinkGroup[]` | 2 example groups | Footer link columns. |
 | `footerSocialLinks` | `SocialLink[]` | 4 example links | Footer social icon links. |
 | `copyrightText` | `string` | computed (`© {year} {brandName}. All rights reserved.`) | Footer copyright line. |

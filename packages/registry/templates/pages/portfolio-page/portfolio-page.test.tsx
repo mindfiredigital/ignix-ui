@@ -145,6 +145,12 @@ describe("PortfolioPage", () => {
     expect(screen.getAllByText("Jordan Lee")).toHaveLength(2);
   });
 
+  it("passes footerDescription through to the footer", () => {
+    render(<PortfolioPage footerDescription="Designing calm software." />);
+    expect(screen.getByText("Designing calm software.")).toBeInTheDocument();
+    expect(screen.queryByText("Product designer and frontend engineer.")).not.toBeInTheDocument();
+  });
+
   it("replaces the default contact CTA entirely when customCTA is provided", () => {
     render(<PortfolioPage customCTA={<div data-testid="custom-cta">Custom CTA</div>} />);
     expect(screen.getByTestId("custom-cta")).toBeInTheDocument();
